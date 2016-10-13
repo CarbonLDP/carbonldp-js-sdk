@@ -1,9 +1,25 @@
-import {module, isDefined, hasProperty, STATIC, clazz, hasMethod} from "../test/JasmineExtender";
+import {
+	STATIC,
 
-import * as ErrorResponse from "./ErrorResponse";
+	OBLIGATORY,
+
+	module,
+	clazz,
+	interfaze,
+
+	isDefined,
+	hasProperty,
+	hasMethod,
+	extendsClass,
+	hasDefaultExport,
+} from "../test/JasmineExtender";
+
 import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 import IllegalArgumentError from "../Errors/IllegalArgumentError";
+
+import * as ErrorResponse from "./ErrorResponse";
+import DefaultExport from "./ErrorResponse";
 
 describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 
@@ -51,9 +67,41 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.LDP.ErrorResponse.Class",
+		"Interface that its used to represents part of an error (or multiple of them) thrown by the server."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"errors",
+			"Carbon.LDP.Error.Class[]",
+			"Array that list the error occurred in the server."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"requestID",
+			"string",
+			"An ID that identifies the request which cause the error."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"statusCode",
+			"number",
+			"The HTTP status code that represents all the errors occurred."
+		), ():void => {} );
+
+	} );
+
 	describe( clazz(
 		"Carbon.LDP.ErrorResponse.Parser",
-		"Parser class for `Carbon.LDP.ErrorResponse.Class` objects."
+		"Parser class for `Carbon.LDP.ErrorResponse.Class` objects.", [
+			"Carbon.HTTP.Parser.Class<Carbon.LDP.ErrorResponse.Class>",
+		]
 	), ():void => {
 		let parser:ErrorResponse.Parser;
 
@@ -73,10 +121,10 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			STATIC,
 			"parse",
 			"Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.", [
-				{name: "data", type: "string", description: "The json-ld string, which represents an error response from a Carbon server."},
-				{name: "object", type: "Object", description: "The object to use as a base when parsing the ErrorResponse object", defaultValue: "{}"},
+				{ name: "data", type: "string", description: "The json-ld string, which represents an error response from a Carbon server." },
+				{ name: "object", type: "Object", description: "The object to use as a base when parsing the ErrorResponse object", defaultValue: "{}" },
 			],
-			{type: "Promise<Carbon.LDP.ErrorResponse.Class>"}
+			{ type: "Promise<Carbon.LDP.ErrorResponse.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( parser.parse ).toBeDefined();
 			expect( Utils.isFunction( parser.parse ) ).toBe( true );
@@ -244,9 +292,9 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			STATIC,
 			"getMessage",
 			"Returns a string with the message of all the errors in the ErrorResponse.", [
-				{name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from."},
+				{ name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from." },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			expect( ErrorResponse.Util.getMessage ).toBeDefined();
 			expect( Utils.isFunction( ErrorResponse.Util.getMessage ) ).toBe( true );
@@ -285,6 +333,14 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			expect( message ).toBe( "Message 01, Message 02" );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.LDP.ErrorResponse.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:ErrorResponse.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

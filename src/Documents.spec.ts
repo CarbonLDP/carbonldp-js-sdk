@@ -35,7 +35,14 @@ import * as Utils from "./Utils";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
-	describe( clazz( "Carbon.Documents", "Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server." ), ():void => {
+	describe( clazz(
+		"Carbon.Documents.Class",
+		"Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.", [
+			"Carbon.Pointer.Library",
+			"Carbon.Pointer.Validator",
+			"Carbon.ObjectSchema.Resolver",
+		]
+	), ():void => {
 
 		beforeEach( ():void => {
 			jasmine.Ajax.install();
@@ -51,7 +58,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them."},
+			{name: "context", type: "Carbon.Context.Class", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them."},
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -1373,8 +1380,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			function checkPrefer( request:JasmineAjaxRequest ):void {
-				let includes:string[] = null;
-				let omits:string[] = null;
+				let includes:string[];
+				let omits:string[];
 
 				expect( request.requestHeaders[ "prefer" ] ).toBeDefined();
 
@@ -2645,8 +2652,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			function checkPrefer( request:JasmineAjaxRequest, nonReadable:boolean = true ):void {
-				let includes:string[] = null;
-				let omits:string[] = null;
+				let includes:string[];
+				let omits:string[];
 
 				expect( request.requestHeaders[ "prefer" ] ).toBeDefined();
 

@@ -1,9 +1,24 @@
-import {module, isDefined, hasProperty, STATIC, clazz, hasMethod} from "../test/JasmineExtender";
+import {
+	STATIC,
+
+	OBLIGATORY,
+
+	module,
+	clazz,
+	interfaze,
+
+	isDefined,
+	hasMethod,
+	hasProperty,
+	extendsClass,
+	hasDefaultExport,
+} from "../test/JasmineExtender";
 import * as NS from "./../NS";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as ResponseMetadata from "./ResponseMetadata";
+import DefaultExport from "./ResponseMetadata";
 
 describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
@@ -40,6 +55,22 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
 	} );
 
+	describe( interfaze(
+		"Carbon.LDP.ResponseMetadata.Class",
+		"Interface that represents the main resource of a set of metadata resources, which references everyone resource related to an specific dynamic response of tha server."
+	), ():void => {
+
+		it( extendsClass( "Carbon.LDP.VolatileResource.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"resourcesMetadata",
+			"Carbon.LDP.ResourceMetadata.Class[]",
+			"An array with all the metadata resources of the dynamic response."
+		), ():void => {} );
+
+	} );
+
 	describe( clazz(
 		"Carbon.LDP.ResponseMetadata.Factory",
 		"Factory class for `Carbon.LDP.ResponseMetadata.Class` objects."
@@ -54,14 +85,14 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetadata.Class` object.", [
-				{name: "object", type: "Object", description: "Object to check."},
+				{ name: "object", type: "Object", description: "Object to check." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( ResponseMetadata.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ResponseMetadata.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( ResponseMetadata.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -78,14 +109,14 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			STATIC,
 			"is",
 			"Return true if the object provided is considered a `Carbon.LDP.ResponseMetadata.Class` object.", [
-				{name: "object", type: "Object", description: "Object to check"},
+				{ name: "object", type: "Object", description: "Object to check" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( ResponseMetadata.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( ResponseMetadata.Factory.is ) ).toBe( true );
 
-			let object:Object;
+			let object:Object = void 0;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 			object = null;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
@@ -109,39 +140,47 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			STATIC,
 			"hasRDFClass",
 			"Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Carbon Resource or an RDF object.", [
-				{name: "object", type: "Object", description: "Object to check."},
+				{ name: "object", type: "Object", description: "Object to check." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( ResponseMetadata.Factory.hasRDFClass ).toBeDefined();
 			expect( Utils.isFunction( ResponseMetadata.Factory.hasRDFClass ) ).toBe( true );
 
-			let object:Object;
+			let object:Object = void 0;
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
 			object = null;
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
 			object = {};
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
 
-			object = {types: [ NS.C.Class.VolatileResource ]};
+			object = { types: [ NS.C.Class.VolatileResource ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-			object = {types: [ NS.C.Class.ResponseMetadata ]};
+			object = { types: [ NS.C.Class.ResponseMetadata ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = {types: [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ]};
+			object = { types: [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = {types: [ NS.C.Class.ResponseMetadata, NS.C.Class.VolatileResource ]};
+			object = { types: [ NS.C.Class.ResponseMetadata, NS.C.Class.VolatileResource ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
 
-			object = {"@type": [ NS.C.Class.VolatileResource ]};
+			object = { "@type": [ NS.C.Class.VolatileResource ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-			object = {"@type": [ NS.C.Class.ResponseMetadata ]};
+			object = { "@type": [ NS.C.Class.ResponseMetadata ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = {"@type": [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ]};
+			object = { "@type": [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = {"@type": [ NS.C.Class.ResponseMetadata, NS.C.Class.VolatileResource ]};
+			object = { "@type": [ NS.C.Class.ResponseMetadata, NS.C.Class.VolatileResource ] };
 			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.LDP.ResponseMetadata.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:ResponseMetadata.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

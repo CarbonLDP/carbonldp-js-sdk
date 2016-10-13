@@ -1,11 +1,10 @@
 import {
-	INSTANCE,
 	STATIC,
 
 	module,
 
 	isDefined,
-	reexports
+	reexports,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
@@ -108,4 +107,5 @@ describe( module( "Carbon/HTTP" ), ():void => {
 		expect( HTTP.StringParser ).toBeDefined();
 		expect( HTTP.StringParser ).toBe( StringParser );
 	} );
+
 } );

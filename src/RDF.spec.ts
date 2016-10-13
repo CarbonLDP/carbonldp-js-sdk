@@ -1,5 +1,4 @@
 import {
-	INSTANCE,
 	STATIC,
 
 	module,

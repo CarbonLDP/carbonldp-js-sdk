@@ -4,13 +4,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var AbstractContext_1 = require("./AbstractContext");
+var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
 var App = require("./App");
 var Apps = require("./Apps");
 var Auth = require("./Auth");
 var Document = require("./Document");
-var Documents_1 = require("./Documents");
+var Documents = require("./Documents");
 var Errors = require("./Errors");
 var Fragment = require("./Fragment");
 var HTTP = require("./HTTP");
@@ -69,7 +69,7 @@ var Carbon = (function (_super) {
     Carbon.Apps = Apps;
     Carbon.Auth = Auth;
     Carbon.Document = Document;
-    Carbon.Documents = Documents_1.default;
+    Carbon.Documents = Documents;
     Carbon.Errors = Errors;
     Carbon.Fragment = Fragment;
     Carbon.HTTP = HTTP;
@@ -92,7 +92,7 @@ var Carbon = (function (_super) {
     Carbon.SPARQL = SPARQL;
     Carbon.Utils = Utils;
     return Carbon;
-}(AbstractContext_1.default));
+}(AbstractContext.Class));
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Carbon;
 

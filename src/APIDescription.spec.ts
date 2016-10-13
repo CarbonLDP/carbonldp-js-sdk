@@ -1,16 +1,20 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
-	clazz,
+	interfaze,
 
 	isDefined,
-	hasProperty
+	hasProperty,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as NS from "./NS";
 
 import * as APIDescription from "./APIDescription";
+import DefaultExport from "./APIDescription";
 
 describe( module( "Carbon/APIDescription" ), ():void => {
 
@@ -49,6 +53,36 @@ describe( module( "Carbon/APIDescription" ), ():void => {
 			"@id": NS.C.Predicate.buildDate,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.APIDescription.Class",
+		"Interface that represents a requested API description of the Carbon LDP Platform configured."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"version",
+			"string",
+			"The version of the Carbon LDP Platform configured."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"buildDate",
+			"Date",
+			"The last time the platform was built."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.APIDescription.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:APIDescription.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

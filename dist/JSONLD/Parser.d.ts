@@ -1,5 +1,5 @@
 import Parser from "./../HTTP/Parser";
-export declare class Class implements Parser<any> {
-    parse(input: string): Promise<any>;
+export declare class Class implements Parser<Object[]> {
+    parse(input: string): Promise<Object[]>;
 }
 export default Class;

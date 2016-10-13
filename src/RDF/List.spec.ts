@@ -1,23 +1,49 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
-	hasMethod
+	hasMethod,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as Value from "./Value";
-import * as Errors from "./../Errors";
 
 import * as List from "./List";
+import DefaultExport from "./List";
 
 describe( module( "Carbon/RDF/List" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( List ).toBeDefined();
 		expect( Utils.isObject( List ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.RDF.List.Class",
+		"Interface that represents an `rdf:List`."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"@list",
+			"Carbon.RDF.Value.Class[]",
+			"Array if the elements in the list."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.RDF.List.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:List.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -34,14 +60,14 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.RDF.List.Class` object.", [
-				{name: "value", type: "any"},
+				{ name: "value", type: "any" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( List.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( List.Factory.is ) ).toBe( true );
 
-			let list:any;
+			let list:any = void 0;
 			expect( List.Factory.is( list ) ).toBe( false );
 
 			list = {

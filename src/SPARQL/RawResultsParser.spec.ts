@@ -6,7 +6,7 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasDefaultExport
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as RawResults from "./RawResults";
@@ -22,8 +22,10 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.SPARQL.RawResultsParser.Class",
-		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object."
+		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.", [
+			"Carbon.HTTP.Parser.Class<Carbon.SPARQL.RawResults.Class>",
+		],
+		"Carbon.SPARQL.RawResultsParser.Class"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -39,19 +41,19 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 			INSTANCE,
 			"parse",
 			"Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object.", [
-				{name: "input", type: "string"},
+				{ name: "input", type: "string" },
 			],
-			{type: "Promise<Carbon.SPARQL.RawResult.Class>"}
+			{ type: "Promise<Carbon.SPARQL.RawResult.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			let parser:RawResultsParser.Class = new RawResultsParser.Class();
 
 			expect( parser.parse ).toBeDefined();
 			expect( Utils.isFunction( parser.parse ) ).toBe( true );
 
-			let querySelectObject = {
+			let querySelectObject:any = {
 				"head": {
 					"link": [
-						"http://www.w3.org/TR/rdf-sparql-XMLres/example.rq"
+						"http://www.w3.org/TR/rdf-sparql-XMLres/example.rq",
 					],
 					"vars": [
 						"x",
@@ -60,51 +62,51 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 						"mbox",
 						"age",
 						"blurb",
-						"friend"
-					]
+						"friend",
+					],
 				},
 				"results": {
 					"bindings": [
 						{
-							"x": {"type": "bnode", "value": "r1"},
+							"x": { "type": "bnode", "value": "r1" },
 
-							"hpage": {"type": "uri", "value": "http://work.example.org/alice/"},
+							"hpage": { "type": "uri", "value": "http://work.example.org/alice/" },
 
-							"name": {"type": "literal", "value": "Alice"},
+							"name": { "type": "literal", "value": "Alice" },
 
-							"mbox": {"type": "literal", "value": ""},
+							"mbox": { "type": "literal", "value": "" },
 
 							"blurb": {
 								"datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
 								"type": "literal",
-								"value": "<p xmlns=\"http://www.w3.org/1999/xhtml\">My name is <b>alice</b></p>"
+								"value": "<p xmlns=\"http://www.w3.org/1999/xhtml\">My name is <b>alice</b></p>",
 							},
 
-							"friend": {"type": "bnode", "value": "r2"}
+							"friend": { "type": "bnode", "value": "r2" },
 						},
 						{
-							"x": {"type": "bnode", "value": "r2"},
+							"x": { "type": "bnode", "value": "r2" },
 
-							"hpage": {"type": "uri", "value": "http://work.example.org/bob/"},
+							"hpage": { "type": "uri", "value": "http://work.example.org/bob/" },
 
-							"name": {"type": "literal", "value": "Bob", "xml:lang": "en"},
+							"name": { "type": "literal", "value": "Bob", "xml:lang": "en" },
 
-							"mbox": {"type": "uri", "value": "mailto:bob@work.example.org"},
+							"mbox": { "type": "uri", "value": "mailto:bob@work.example.org" },
 
-							"friend": {"type": "bnode", "value": "r1"}
-						}
-					]
-				}
+							"friend": { "type": "bnode", "value": "r1" },
+						},
+					],
+				},
 			};
-			let querySelectString = JSON.stringify( querySelectObject );
+			let querySelectString:string = JSON.stringify( querySelectObject );
 
-			let queryAskObject = {
+			let queryAskObject:any = {
 				"head": {},
-				"boolean": true
+				"boolean": true,
 			};
-			let queryAskString = JSON.stringify( queryAskObject );
+			let queryAskString:string = JSON.stringify( queryAskObject );
 
-			let spies = {
+			let spies:any = {
 				successSelect: ( result ) => {
 					expect( RawResults.Factory.is( result ) ).toBe( true );
 					expect( result ).toEqual( querySelectObject );
@@ -116,11 +118,11 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 				fail: ( error ) => {
 					expect( error ).toBeTruthy();
 					expect( error instanceof Error ).toBe( true );
-				}
+				},
 			};
-			let spySuccessSelect = spyOn( spies, "successSelect" ).and.callThrough();
-			let spySuccessAsk = spyOn( spies, "successAsk" ).and.callThrough();
-			let spyFail = spyOn( spies, "fail" ).and.callThrough();
+			let spySuccessSelect:jasmine.Spy = spyOn( spies, "successSelect" ).and.callThrough();
+			let spySuccessAsk:jasmine.Spy = spyOn( spies, "successAsk" ).and.callThrough();
+			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<RawResults.Class>;

@@ -9,6 +9,7 @@ import {
 	hasProperty,
 	hasMethod,
 	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
@@ -18,7 +19,8 @@ import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
-import AppContext from "./Context";
+import * as AppContext from "./Context";
+import DefaultExport from "./Context";
 
 describe( module( "Carbon/App/Context" ), ():void => {
 
@@ -27,7 +29,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		"Class that represents de scope of a CarbonLDP Application."
 	), ():void => {
 		let parentContext:AbstractContext;
-		let appContext:AppContext;
+		let appContext:AppContext.Class;
 
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
@@ -38,20 +40,20 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			parentContext = new MockedContext();
 			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
-			appContext = new AppContext( parentContext, app );
+			appContext = new AppContext.Class( parentContext, app );
 		} );
 
 		it( isDefined(), ():void => {
-			expect( AppContext ).toBeDefined();
-			expect( Utils.isFunction( AppContext ) );
+			expect( AppContext.Class ).toBeDefined();
+			expect( Utils.isFunction( AppContext.Class ) );
 		} );
 
 		it( hasConstructor( [
-			{name: "parentContext", type: "Carbon.Context"},
+			{name: "parentContext", type: "Carbon.Context.Class"},
 			{name: "app", type: "Carbon.App.Context"},
 		] ), ():void => {
 			expect( appContext ).toBeTruthy();
-			expect( appContext instanceof AppContext );
+			expect( appContext instanceof AppContext.Class );
 		} );
 
 		it( extendsClass(
@@ -96,6 +98,11 @@ describe( module( "Carbon/App/Context" ), ():void => {
 				.toBe( "http://example.com/apps/another-app/child/" );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.App.Context.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( AppContext.Class );
 	} );
 
 } );

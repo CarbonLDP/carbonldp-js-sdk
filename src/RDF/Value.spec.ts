@@ -1,11 +1,16 @@
 import {
 	STATIC,
 
+	OPTIONAL,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
-	hasMethod
+	hasMethod,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Pointer from "./../Pointer";
@@ -16,12 +21,49 @@ import AbstractContext from "./../AbstractContext";
 import * as XSD from "./../NS/XSD";
 
 import * as Value from "./Value";
+import DefaultExport from "./Value";
 
 describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Value ).toBeDefined();
 		expect( Utils.isObject( Value ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.RDF.Value.Class",
+		"Interface that represents an `rdf:Value`."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"@id",
+			"string",
+			"The ID URI of the current value."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@type",
+			"string",
+			"The URI if the XSD type of the possible value."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@value",
+			"string",
+			"The possible string value if the current object value."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.RDF.Value.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Value.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -41,74 +83,74 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 					{
 						"@id": "http://example.com/resource/",
 						"http://example.com/ns#string": [ {
-							"@value": "a string"
+							"@value": "a string",
 						} ],
 						"http://example.com/ns#integer": [ {
 							"@value": "100",
-							"@type": "http://www.w3.org/2001/XMLSchema#integer"
+							"@type": "http://www.w3.org/2001/XMLSchema#integer",
 						} ],
 						"http://example.com/ns#date": [ {
 							"@value": "2001-02-15T05:35:12.029Z",
-							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 						} ],
 						"http://example.com/ns#pointer": [ {
 							"@id": "http://example.com/pointer/1",
-							"@type": "@id"
+							"@type": "@id",
 						} ],
 						"http://example.com/ns#list": [ {
 							"@list": [ {
 								"@value": "100",
-								"@type": "http://www.w3.org/2001/XMLSchema#integer"
+								"@type": "http://www.w3.org/2001/XMLSchema#integer",
 							}, {
 								"@value": "2001-02-15T05:35:12.029Z",
-								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							}, {
 								"@id": "http://example.com/pointer/1",
-								"@type": "@id"
-							} ]
+								"@type": "@id",
+							} ],
 						} ],
 						"http://example.com/ns#set": [ {
 							"@value": "100",
-							"@type": "http://www.w3.org/2001/XMLSchema#integer"
+							"@type": "http://www.w3.org/2001/XMLSchema#integer",
 						}, {
 							"@value": "2001-02-15T05:35:12.029Z",
-							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 						}, {
 							"@id": "http://example.com/pointer/1",
-							"@type": "@id"
+							"@type": "@id",
 						} ],
 						"http://example.com/ns#internationalString": [ {
 							"@value": "a string",
 							"@language": "en",
-							"@type": "http://www.w3.org/2001/XMLSchema#string"
+							"@type": "http://www.w3.org/2001/XMLSchema#string",
 						}, {
 							"@value": "una cadena",
-							"@language": "es"
+							"@language": "es",
 						}, {
 							"@value": "文字列",
-							"@language": "ja"
+							"@language": "ja",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "_:1"},
-							{"@id": "http://example.com/resource/#1"},
-							{"@id": "http://example.com/external-resource/"},
+							{ "@id": "_:1" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" },
 						],
-						"http://example.com/ns#empty-property": [ {} ]
+						"http://example.com/ns#empty-property": [ {} ],
 					},
 					{
 						"@id": "_:1",
 						"http://example.com/ns#string": [ {
-							"@value": "Fragment 1"
+							"@value": "Fragment 1",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "http://example.com/resource/"},
-							{"@id": "http://example.com/resource/#1"},
+							{ "@id": "http://example.com/resource/" },
+							{ "@id": "http://example.com/resource/#1" },
 						],
 					},
 					{
 						"@id": "http://example.com/resource/#1",
 						"http://example.com/ns#string": [ {
-							"@value": "NamedFragment 1"
+							"@value": "NamedFragment 1",
 						} ],
 					},
 				],
@@ -135,11 +177,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getProperty",
 			"Returns the property searched, parsed in accordance to the RDF object it is.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getProperty ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getProperty ) ).toBe( true );
@@ -184,11 +226,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyPointer",
 			"Returns the property searched as a Pointer.\n" +
 			"Returns null if the property is not found or cannot be parsed as a Pointer.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyPointer ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyPointer ) ).toBe( true );
@@ -216,11 +258,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyLiteral",
 			"Returns the property searched as a javascript variable. The property must be an RDF Literal.\n" +
 			"Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "literalType", type: "string"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "literalType", type: "string" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyLiteral ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLiteral ) ).toBe( true );
@@ -250,11 +292,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyList",
 			"Returns the property searched as an Array with every element parsed to its respective type of element.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyList ) ).toBe( true );
@@ -278,11 +320,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyPointerList",
 			"Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.\n" +
 			"Returns null if the property is not found or is not a List.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyPointerList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyPointerList ) ).toBe( true );
@@ -306,11 +348,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyLiteralList",
 			"Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.\n" +
 			"Returns null if the property is not found or is not a List.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyLiteralList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLiteralList ) ).toBe( true );
@@ -333,11 +375,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getProperties",
 			"Returns the property searched as an Array with the parsed Literal, Pointer or List.\n" +
 			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getProperties ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getProperties ) ).toBe( true );
@@ -399,11 +441,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyPointers",
 			"Returns the property searched as an Array with the parsed Pointer.\n" +
 			"Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyPointers ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyPointers ) ).toBe( true );
@@ -440,10 +482,10 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyURIs",
 			"Returns the URIs of the property searched.\n" +
 			"Returns null if the property is not found or an empty array if no URI was found.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyURIs ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyURIs ) ).toBe( true );
@@ -485,11 +527,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyLiterals",
 			"Returns the property searched as an Array with the parsed Literal.\n" +
 			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "literalType", type: "string"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "literalType", type: "string" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyLiterals ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLiterals ) ).toBe( true );
@@ -543,11 +585,11 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getPropertyLanguageMap",
 			"Returns an object associating the language with the parsed string literal.\n" +
 			"Returns null if the property is not found, or an empty object if it is not a property with language.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.getPropertyLanguageMap ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getPropertyLanguageMap ) ).toBe( true );
@@ -578,9 +620,9 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"getList",
 			"Returns the List object from the provided property of an expanded JSON-LD object.\n" +
 			"Returns null if no List object is found.", [
-				{name: "propertyValues", type: "Array<any>"}
+				{ name: "propertyValues", type: "Array<any>" },
 			],
-			{type: "Carbon.RDF.List.Class"}
+			{ type: "Carbon.RDF.List.Class" }
 		), ():void => {
 			expect( Value.Util.getList ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.getList ) ).toBe( true );
@@ -599,10 +641,10 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"parseValue",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
-				{name: "propertyValue", type: "Carbon.RDF.Value.Class"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"}
+				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.parseValue ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.parseValue ) ).toBe( true );

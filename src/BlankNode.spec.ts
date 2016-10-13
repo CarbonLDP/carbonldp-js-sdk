@@ -1,14 +1,18 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
 	method,
+	interfaze,
 
 	isDefined,
 	hasProperty,
 	hasMethod,
 	hasSignature,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Document from "./Document";
 import * as NS from "./NS";
@@ -16,8 +20,9 @@ import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as BlankNode from "./BlankNode";
+import DefaultExport from "./BlankNode";
 
-describe( module( "Carbon/LDP/BlankNode" ), ():void => {
+describe( module( "Carbon/BlankNode" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BlankNode ).toBeDefined();
@@ -37,6 +42,28 @@ describe( module( "Carbon/LDP/BlankNode" ), ():void => {
 			"@id": NS.C.Predicate.bNodeIdentifier,
 			"@type": NS.XSD.DataType.string,
 		} );
+	} );
+
+	describe( interfaze(
+		"Carbon.BlankNode.Class",
+		"Interface that represents the basic data of a blank node."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"bNodeIdentifier",
+			"string",
+			"A UUID identifier for the blank node."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.BlankNode.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:BlankNode.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz( "Carbon.BlankNode.Factory", "Factory class for `Carbon.BlankNode.Class` objects." ), ():void => {

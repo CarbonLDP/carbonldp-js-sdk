@@ -12,7 +12,7 @@ import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
-declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
     jsonldConverter: JSONLD.Converter.Class;
@@ -90,4 +90,4 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
     private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
 }
-export default Documents;
+export default Class;

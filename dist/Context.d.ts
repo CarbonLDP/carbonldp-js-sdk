@@ -1,10 +1,10 @@
 import Auth from "./Auth";
 import Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
-interface Context {
+export interface Class {
     auth: Auth;
     documents: Documents;
-    parentContext: Context;
+    parentContext: Class;
     getBaseURI(): string;
     resolve(relativeURI: string): string;
     hasSetting(name: string): boolean;
@@ -19,4 +19,4 @@ interface Context {
     clearObjectSchema(type: string): void;
     clearObjectSchema(): void;
 }
-export default Context;
+export default Class;

@@ -16,14 +16,15 @@ export interface SpecDescriptor {
 }
 
 export interface InterfaceDescriptor {
+	generics?:string[];
 }
 
 export interface InterfaceSuiteDescriptor extends SuiteDescriptor, InterfaceDescriptor {
 }
 
 export interface ClassDescriptor {
-	interfaces?:string[];
-	parent?:string;
+	generics:string[];
+	interfaces:string[];
 }
 
 export interface ClassSuiteDescriptor extends SuiteDescriptor, ClassDescriptor {
@@ -111,23 +112,40 @@ export function module( name:string, description:string = null ):string {
 	return toJSON( descriptor );
 }
 
-export function clazz( name:string, description:string, parent:string = null, interfaces:Array<string> = null ):string {
+export function clazz( name:string, description:string, interfaces?:string[] ):string;
+export function clazz( name:string, generics:string[], description:string, interfaces?:string[] ):string;
+export function clazz( name:string, descriptionOrGenerics:any, interfacesOrDescription?:any, interfaces:string[] = null ):string {
+	interfaces = Utils.isArray( interfacesOrDescription ) ? interfacesOrDescription : interfaces;
+	let description:string = Utils.isArray( descriptionOrGenerics ) ? interfacesOrDescription : descriptionOrGenerics;
+	let generics:string[] = Utils.isArray( descriptionOrGenerics ) ? descriptionOrGenerics : null;
+
+
 	let descriptor:ClassSuiteDescriptor = {
 		suiteType: CLASS,
 		name: name,
 		description: description,
-		parent: parent,
+		generics: generics,
 		interfaces: interfaces,
 	};
 
 	return toJSON( descriptor );
 }
 
-export function interfaze( name:string, description:string ):string {
+export function interfaze( name:string, description:string ):string;
+export function interfaze( name:string, generics:string[], description:string ):string;
+export function interfaze( name:string, descriptionOrGenerics:any, description?:string ):string {
+	let generics:string[] = null;
+	if( Utils.isArray( descriptionOrGenerics ) ) {
+		generics = descriptionOrGenerics;
+	} else {
+		description = descriptionOrGenerics;
+	}
+
 	let descriptor:InterfaceSuiteDescriptor = {
 		suiteType: INTERFACE,
 		name: name,
 		description: description,
+		generics: generics,
 	};
 
 	return toJSON( descriptor );

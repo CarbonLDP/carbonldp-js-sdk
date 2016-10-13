@@ -1,7 +1,6 @@
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
-import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
 export const RDF_CLASS:string = NS.C.Class.RDFRepresentation;

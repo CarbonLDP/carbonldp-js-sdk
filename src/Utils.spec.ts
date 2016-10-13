@@ -25,7 +25,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 	it( hasMethod( STATIC, "hasFunction", "Checks if the object has a property with that name and if it that property is a function.", [
 		{name: "object", type: "Object"},
-		{name: "name", type: "string"},
+		{name: "name", type: "string" },
 	], {type: "boolean"} ), ():void => {
 		expect( Utils.hasFunction ).toBeDefined();
 

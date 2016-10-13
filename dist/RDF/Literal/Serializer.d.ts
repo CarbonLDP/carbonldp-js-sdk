@@ -1,4 +1,4 @@
-export interface Serializer {
+export interface Class {
     serialize(value: any): string;
 }
-export default Serializer;
+export default Class;

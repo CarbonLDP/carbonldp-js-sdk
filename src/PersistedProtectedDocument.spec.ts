@@ -2,12 +2,19 @@ import {
 	INSTANCE,
 	STATIC,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
+	hasProperty,
+	extendsClass,
 	decoratedObject,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
 import Documents from "./Documents";
@@ -17,12 +24,46 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as Utils from "./Utils";
 
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import DefaultExport from "./PersistedProtectedDocument";
 
 describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedProtectedDocument ).toBeDefined();
 		expect( Utils.isObject( PersistedProtectedDocument ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.PersistedProtectedDocument.Class",
+		"Interface that represents a persisted protected document."
+	), ():void => {
+
+		it( extendsClass( "Carbon.PersistedDocument.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"accessControlList",
+			"Carbon.Pointer.Class",
+			"A reference to the ACL of the document."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getACL",
+			"Obtains and resolve the ACL of the actual document.", [
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
+			],
+			{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.PersistedProtectedDocument.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:PersistedProtectedDocument.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -39,9 +80,9 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided contains the properties and methods of a `Carbon.PersistedProtectedDocument.Class` object.", [
-				{name: "object", type: "Object", description: "The object to check."},
+				{ name: "object", type: "Object", description: "The object to check." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( PersistedProtectedDocument.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedProtectedDocument.Factory.hasClassProperties ) ).toBe( true );
@@ -68,9 +109,9 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.PersistedProtectedDocument.Class` object.", [
-				{name: "object", type: "Object", description: "The object to check."},
+				{ name: "object", type: "Object", description: "The object to check." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( PersistedProtectedDocument.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedProtectedDocument.Factory.is ) ).toBe( true );
@@ -93,9 +134,9 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			"decorate",
 			[ "T extends Carbon.PersistedDocument.Class" ],
 			"Decorate the object with the properties and methods of a `Carbon.PersistedProtectedDocument.Class` object.", [
-				{name: "document", type: "T", description: "The persisted document to decorate."},
+				{ name: "document", type: "T", description: "The persisted document to decorate." },
 			],
-			{type: "T & Carbon.PersistedProtectedDocument.Class"}
+			{ type: "T & Carbon.PersistedProtectedDocument.Class" }
 		), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
@@ -152,8 +193,10 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"getACL",
-				"Obtains and resolve the ACL of the actual document.",
-				{type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>"}
+				"Obtains and resolve the ACL of the actual document.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( protectedDocument.getACL ).toBeDefined();
 				expect( Utils.isFunction( protectedDocument.getACL ) ).toBe( true );

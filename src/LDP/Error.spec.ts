@@ -4,11 +4,13 @@ import {
 	module,
 
 	isDefined,
-	hasProperty,
+	hasProperty, interfaze, extendsClass, OBLIGATORY, hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as Error from "./Error";
 import * as NS from "./../NS";
 import * as Utils from "./../Utils";
+
+import * as Error from "./Error";
+import DefaultExport from "./Error";
 
 describe( module( "Carbon/LDP/Error" ), ():void => {
 
@@ -47,6 +49,37 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 			"@id": NS.C.Predicate.message,
 			"@type": NS.XSD.DataType.string,
 		} );
+	} );
+
+	describe( interfaze(
+		"Carbon.LDP.Error.Class",
+		"Interface that represents an error occurred in the server."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"carbonCode",
+			"string",
+			"An specific code that indicates the type of carbon error the current object is."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"message",
+			"string",
+			"Message that explains the error occurred in the server."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.LDP.Error.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Error.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

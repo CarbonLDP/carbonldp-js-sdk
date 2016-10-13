@@ -2,31 +2,127 @@ import {
 	INSTANCE,
 	STATIC,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
-
-	isDefined,
-
 	clazz,
 	method,
+	interfaze,
 
+	isDefined,
 	hasConstructor,
 	hasMethod,
 	hasSignature,
 	hasProperty,
 	enumeration,
 	hasEnumeral,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
 import * as ObjectSchema from "./ObjectSchema";
+import DefaultExport from "./ObjectSchema";
 
 describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ObjectSchema ).toBeDefined();
 		expect( Utils.isObject( ObjectSchema ) ).toEqual( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.ObjectSchema.Class",
+		"Interface that represents an schema based in the [JSONLD contexts](https://www.w3.org/TR/json-ld/#the-context). This is used to convert from the JSONLD stored in the server to the Documents used in the SDK and vice versa."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"@base",
+			"string",
+			"An absolute URI that is used to resolve relative URIs. If it's set to `null`, will invalidate a previous `@base` value."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@vocab",
+			"string",
+			"An absolute URI that is used to as the common prefix for all the relative properties. If it's set to `null`, will invalidate a previous `@vocab` value."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@index",
+			"Object",
+			"[Not Supported] This element is ignored."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@language",
+			"string",
+			"The default language of the string properties."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@reverse",
+			"Object",
+			"[Not Supported] This element is ignored."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"[ name:string ]",
+			"(string | Carbon.ObjectSchema.PropertyDefinition)",
+			"This index can be interpreted in two forms:\n- As a prefix: When the value is as string. The name is taken a a prefix and the string value must be an absolute URI.\n- As a property: When the value is of type `Carbon.ObjectSchema.PropertyDefinition`. The name is taken as the name of the property."
+		), ():void => {} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.ObjectSchema.PropertyDefinition",
+		"Interface that defines the property of a schema."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"@id",
+			"string",
+			"The absolute URI of the property in the JSONLD which is mapped to the key name where this definition was referred."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@type",
+			"string",
+			"If the property is a literal, this specifies its XSD type."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@language",
+			"string",
+			"The language of the property."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@container",
+			"string",
+			"If the property is multiple it can be of tree types:\n- `@set`: An unsorted array of elements.\n- `@list`: An sorted array of elements\n- `@language`: An string property with multiple languages."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.ObjectSchema.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:ObjectSchema.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( enumeration(
@@ -221,9 +317,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		describe( method( STATIC, "digestSchema" ), ():void => {
 			it( hasSignature(
 				"Processes a schema to standardize it before using it.", [
-					{name: "schema", type: "Carbon.ObjectSchema.Class"},
+					{ name: "schema", type: "Carbon.ObjectSchema.Class" },
 				],
-				{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
@@ -277,9 +373,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 			it( hasSignature(
 				"Processes several schemas to standardize and combine them before using them.", [
-					{name: "schemas", type: "Array<Carbon.ObjectSchema.Class>"},
+					{ name: "schemas", type: "Array<Carbon.ObjectSchema.Class>" },
 				],
-				{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
 				expect( Utils.isFunction( ObjectSchema.Digester.digestSchema ) ).toBeDefined();
@@ -340,9 +436,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			STATIC,
 			"combineDigestedObjectSchemas",
 			"Combine several standardized schemas into one.", [
-				{name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]"},
+				{ name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]" },
 			],
-			{type: "Carbon.ObjectSchema.DigestedObjectSchema"}
+			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 		), ():void => {
 
 			expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
@@ -425,10 +521,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			STATIC,
 			"resolveURI",
 			"Resolves a prefixed URI, or relative URI with the vocab in the schema provided.", [
-				{name: "uri", type: "string", description: "The URI to ve resolved."},
-				{name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize."},
+				{ name: "uri", type: "string", description: "The URI to ve resolved." },
+				{ name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize." },
 			],
-			{type: "string", description: "The resolved absolute URI."}
+			{ type: "string", description: "The resolved absolute URI." }
 		), ():void => {
 			expect( ObjectSchema.Util.resolveURI ).toBeDefined();
 			expect( Utils.isFunction( ObjectSchema.Util.resolveURI ) ).toBe( true );

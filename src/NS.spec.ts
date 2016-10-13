@@ -1,11 +1,10 @@
 import {
-	INSTANCE,
 	STATIC,
 
 	module,
 
 	isDefined,
-	reexports
+	reexports,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 

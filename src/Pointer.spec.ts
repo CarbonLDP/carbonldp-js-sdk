@@ -2,26 +2,136 @@ import {
 	INSTANCE,
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	method,
+	interfaze,
 
 	isDefined,
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	decoratedObject,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import Documents from "./Documents";
 import NotImplementedError from "./HTTP/Errors/server/NotImplementedError";
-import Response from "./HTTP/Response";
 import * as Utils from "./Utils";
 
 import * as Pointer from "./Pointer";
+import DefaultExport from "./Pointer";
 
 describe( module( "Carbon/Pointer" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Pointer ).toBeDefined();
 		expect( Utils.isObject( Pointer ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.Pointer.Class",
+		"Interface that represents any element that can be referenced by an URI."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_id",
+			"string",
+			"Private variable for the URI that identifies the pointer."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_resolved",
+			"boolean",
+			"Private variable that indicates if the pointer has been resolved."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"id",
+			"string",
+			"Accessor for the _id variable."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isResolved",
+			"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"resolve",
+			[ "T" ],
+			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+		), ():void => {} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.Pointer.Library",
+		"Interface that represents resources that can manage pointers."
+	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"hasPointer",
+			"Returns true if the object that implements this interface has a pointer referenced by the URI provided.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getPointer",
+			"Returns the pointer referenced by the URI provided. If none exists, an empty pointer should be created.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.Pointer.Validator",
+		"Interface that represents resources that can validate pointers."
+	), ():void => {
+
+		describe( method(
+			OBLIGATORY,
+			"inScope"
+		), ():void => {
+
+			it( hasSignature(
+				"Returns true if the pointer provided is in the scope of the object that implements this interface.", [
+					{ name: "pointer", type: "Carbon.Pointer.Class" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Returns true if the URI provided is in the scope of the object that implements this interface.", [
+					{ name: "id", type: "string" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Pointer.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Pointer.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -38,9 +148,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{name: "resource", type: "Object"},
+				{ name: "resource", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Pointer.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.hasClassProperties ) ).toBe( true );
@@ -82,9 +192,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the value provided is considered a `Carbon.Pointer.Class` object.", [
-				{name: "value", type: "any"},
+				{ name: "value", type: "any" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Pointer.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.is ) ).toBe( true );
@@ -108,9 +218,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a Pointer object with the ID provided.", [
-				{name: "id", type: "string", optional: true},
+				{ name: "id", type: "string", optional: true },
 			],
-			{type: "Carbon.Pointer.Class"}
+			{ type: "Carbon.Pointer.Class" }
 		), ():void => {
 			expect( Pointer.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.create ) ).toBe( true );
@@ -133,10 +243,10 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"createFrom",
 			[ "T extends Object" ],
 			"Create a Pointer from the object provided with id if provided.", [
-				{name: "object", type: "T"},
-				{name: "id", type: "string", optional: true},
+				{ name: "object", type: "T" },
+				{ name: "id", type: "string", optional: true },
 			],
-			{type: "T & Carbon.Pointer.Class"}
+			{ type: "T & Carbon.Pointer.Class" }
 		), ():void => {
 			expect( Pointer.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.createFrom ) ).toBe( true );
@@ -152,7 +262,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			expect( pointer.id ).toBe( "" );
 			expect( pointer.myProperty ).not.toBeDefined();
 
-			pointer = Pointer.Factory.createFrom( {myProperty: "My Property"}, "http://example.com/pointer/" );
+			pointer = Pointer.Factory.createFrom( { myProperty: "My Property" }, "http://example.com/pointer/" );
 			expect( pointer ).toBeTruthy();
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.com/pointer/" );
@@ -164,9 +274,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{name: "object", type: "T"},
+				{ name: "object", type: "T" },
 			],
-			{type: "T & Carbon.Pointer.Class"}
+			{ type: "T & Carbon.Pointer.Class" }
 		), ():void => {
 			expect( Pointer.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Factory.decorate ) ).toBe( true );
@@ -179,7 +289,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			pointer = Pointer.Factory.decorate<MyResource>( {} );
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 
-			pointer = Pointer.Factory.decorate<MyResource>( {myProperty: "a property"} );
+			pointer = Pointer.Factory.decorate<MyResource>( { myProperty: "a property" } );
 			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
 			expect( pointer.myProperty ).toBeDefined();
 			expect( pointer.myProperty ).toBe( "a property" );
@@ -245,7 +355,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				INSTANCE,
 				"isResolved",
 				"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( pointer.isResolved ).toBeDefined();
 				expect( Utils.isFunction( pointer.isResolved ) ).toBe( true );
@@ -261,7 +371,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				"resolve",
 				[ "T" ],
 				"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-				{type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( pointer.resolve ).toBeDefined();
 				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );
@@ -290,9 +400,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"getIDs",
 			"Extracts the IDs of all the pointers provided.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to obtain their IDs."},
+				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to obtain their IDs." },
 			],
-			{type: "string[]"}
+			{ type: "string[]" }
 		), ():void => {
 			expect( Pointer.Util.getIDs ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.getIDs ) ).toBe( true );
@@ -316,9 +426,9 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			STATIC,
 			"resolveAll",
 			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
-				{name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to resolve."},
+				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to resolve." },
 			],
-			{type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>"}
+			{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" }
 		), ( done:{():void, fail:() => void} ):void => {
 			expect( Pointer.Util.resolveAll ).toBeDefined();
 			expect( Utils.isFunction( Pointer.Util.resolveAll ) ).toBe( true );

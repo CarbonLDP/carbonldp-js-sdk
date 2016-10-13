@@ -8,18 +8,41 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasSignature,
+	hasSignature, interfaze, hasProperty, OBLIGATORY, hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Document from "./Document";
 
 import * as Fragment from "./Fragment";
+import DefaultExport from "./Fragment";
 
 describe( module( "Carbon/Fragment" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Fragment ).toBeDefined();
 		expect( Utils.isObject( Fragment ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.Fragment.Class",
+		"Interface that an in-memory fragment of a document."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"document",
+			"Carbon.Document.Class",
+			"The document the fragment belongs to."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Fragment.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Fragment.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(

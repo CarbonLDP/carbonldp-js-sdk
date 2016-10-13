@@ -1,11 +1,11 @@
-import AbstractContext from "./AbstractContext";
+import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
-import Documents from "./Documents";
+import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
@@ -27,7 +27,7 @@ import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
-declare class Carbon extends AbstractContext {
+declare class Carbon extends AbstractContext.Class {
     static AccessPoint: typeof AccessPoint;
     static App: typeof App;
     static Apps: typeof Apps;

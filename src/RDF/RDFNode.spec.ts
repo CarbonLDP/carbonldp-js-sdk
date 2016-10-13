@@ -1,21 +1,49 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
-	hasMethod
+	hasMethod,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as RDFNode from "./RDFNode";
+import DefaultExport from "./RDFNode";
 
 describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RDFNode ).toBeDefined();
 		expect( Utils.isObject( RDFNode ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.RDF.RDFNode.Class",
+		"Interface that represents an `rdf:Node`."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"@id",
+			"string",
+			"The ID URI of the current node."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.RDF.RDFNode.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:RDFNode.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -32,20 +60,20 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` object.", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFNode.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Factory.is ) ).toBe( true );
 
-			expect( RDFNode.Factory.is( {"@id": "http://example.com/resource/"} ) ).toBe( true );
-			expect( RDFNode.Factory.is( {"@id": "http://example.com/resource/", "@type": "@id"} ) ).toBe( true );
-			expect( RDFNode.Factory.is( {"@id": "http://example.com/resource/", "something": "else"} ) ).toBe( true );
+			expect( RDFNode.Factory.is( { "@id": "http://example.com/resource/" } ) ).toBe( true );
+			expect( RDFNode.Factory.is( { "@id": "http://example.com/resource/", "@type": "@id" } ) ).toBe( true );
+			expect( RDFNode.Factory.is( { "@id": "http://example.com/resource/", "something": "else" } ) ).toBe( true );
 
-			expect( RDFNode.Factory.is( {"@id": [ "something", "else" ]} ) ).toBe( false );
-			expect( RDFNode.Factory.is( {"id": "http://example.com/resource/"} ) ).toBe( false );
-			expect( RDFNode.Factory.is( {"@type": "http://example.com/types/my-type/"} ) ).toBe( false );
+			expect( RDFNode.Factory.is( { "@id": [ "something", "else" ] } ) ).toBe( false );
+			expect( RDFNode.Factory.is( { "id": "http://example.com/resource/" } ) ).toBe( false );
+			expect( RDFNode.Factory.is( { "@type": "http://example.com/types/my-type/" } ) ).toBe( false );
 			expect( RDFNode.Factory.is( {} ) ).toBe( false );
 		} );
 
@@ -53,16 +81,16 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.", [
-				{name: "uri", type: "string"},
+				{ name: "uri", type: "string" },
 			],
-			{type: "Carbon.RDF.RDFNode.Class"}
+			{ type: "Carbon.RDF.RDFNode.Class" }
 		), ():void => {
 			expect( RDFNode.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Factory.create ) ).toBe( true );
 
-			expect( RDFNode.Factory.create( "http://example.com/resource/" ) ).toEqual( {"@id": "http://example.com/resource/"} );
-			//Does not verify if it is an URI
-			expect( RDFNode.Factory.create( "some thing that is not an URI, but works" ) ).toEqual( {"@id": "some thing that is not an URI, but works"} );
+			expect( RDFNode.Factory.create( "http://example.com/resource/" ) ).toEqual( { "@id": "http://example.com/resource/" } );
+			// Does not verify if it is an URI
+			expect( RDFNode.Factory.create( "some thing that is not an URI, but works" ) ).toEqual( { "@id": "some thing that is not an URI, but works" } );
 		} );
 
 	} );
@@ -81,17 +109,17 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"areEqual",
 			"Returns true if the objects represent the same resource.", [
-				{name: "node1", type: "Carbon.RDF.RDFDocument.Class"},
-				{name: "node2", type: "Carbon.RDF.RDFDocument.Class"},
+				{ name: "node1", type: "Carbon.RDF.RDFDocument.Class" },
+				{ name: "node2", type: "Carbon.RDF.RDFDocument.Class" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFNode.Util.areEqual ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.areEqual ) ).toBe( true );
 
-			let node1:RDFNode.Class = {"@id": "http://example.com/resouce/1-one/"};
-			let node1Copy:RDFNode.Class = {"@id": "http://example.com/resouce/1-one/"};
-			let node2:RDFNode.Class = {"@id": "http://example.com/resouce/2-two/"};
+			let node1:RDFNode.Class = { "@id": "http://example.com/resouce/1-one/" };
+			let node1Copy:RDFNode.Class = { "@id": "http://example.com/resouce/1-one/" };
+			let node2:RDFNode.Class = { "@id": "http://example.com/resouce/2-two/" };
 			expect( RDFNode.Util.areEqual( node1, node1 ) ).toBe( true );
 			expect( RDFNode.Util.areEqual( node1, node1Copy ) ).toBe( true );
 			expect( RDFNode.Util.areEqual( node1Copy, node1 ) ).toBe( true );
@@ -103,10 +131,10 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"hasType",
 			"Returns true if the RDFNode provided has the specified type.", [
-				{name: "object", type: "Object", description: "The RDFNode to evaluate."},
-				{name: "type", type: "string", description: "The type to look for it existence."},
+				{ name: "object", type: "Object", description: "The RDFNode to evaluate." },
+				{ name: "type", type: "string", description: "The type to look for it existence." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFNode.Util.hasType ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.hasType ) ).toBe( true );
@@ -114,14 +142,14 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			let node:any;
 			node = {
 				"@id": "http://example.com/resouce/",
-				"@type": [ "http://example.com/type-1/" ]
+				"@type": [ "http://example.com/type-1/" ],
 			};
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-1/" ) ).toBe( true );
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-2/" ) ).toBe( false );
 
 			node = {
 				"@id": "http://example.com/resouce/",
-				"@type": [ "http://example.com/type-1/", "http://example.com/type-2/" ]
+				"@type": [ "http://example.com/type-1/", "http://example.com/type-2/" ],
 			};
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-1/" ) ).toBe( true );
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-2/" ) ).toBe( true );
@@ -129,7 +157,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 
 			node = {
 				"@id": "http://example.com/resouce/",
-				"@type": []
+				"@type": [],
 			};
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-1/" ) ).toBe( false );
 			expect( RDFNode.Util.hasType( node, "http://example.com/type-2/" ) ).toBe( false );
@@ -145,9 +173,9 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"getTypes",
 			"Returns an array with the types of the RDFNode provided.", [
-				{name: "object", type: "Object", description: "The RDFNode to evaluate."},
+				{ name: "object", type: "Object", description: "The RDFNode to evaluate." },
 			],
-			{type: "string[]"}
+			{ type: "string[]" }
 		), ():void => {
 			expect( RDFNode.Util.hasType ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.hasType ) ).toBe( true );
@@ -155,19 +183,19 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			let node:any;
 			node = {
 				"@id": "http://example.com/resouce/",
-				"@type": [ "http://example.com/type-1/" ]
+				"@type": [ "http://example.com/type-1/" ],
 			};
 			expect( RDFNode.Util.getTypes( node ) ).toEqual( [ "http://example.com/type-1/" ] );
 
 			node = {
 				"@id": "http://example.com/resouce/",
-				"@type": [ "http://example.com/type-1/", "http://example.com/type-2/" ]
+				"@type": [ "http://example.com/type-1/", "http://example.com/type-2/" ],
 			};
 			expect( RDFNode.Util.getTypes( node ) ).toEqual( [ "http://example.com/type-1/", "http://example.com/type-2/" ] );
 
 			node = {
 				"@id": "http://example.com/resouce/",
-				"@type": []
+				"@type": [],
 			};
 			expect( RDFNode.Util.getTypes( node ) ).toEqual( [] );
 
@@ -182,10 +210,10 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyURI",
 			"Returns the URI from a property resource in the RDFNode object.\n" +
 			"Returns `null` if the property doesn't exists or the URI is not found.", [
-				{name: "node", type: "Carbon.RDF.RDFNode.Class"},
-				{name: "predicate", type: "string"},
+				{ name: "node", type: "Carbon.RDF.RDFNode.Class" },
+				{ name: "predicate", type: "string" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyURI ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyURI ) ).toBe( true );
@@ -193,15 +221,15 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			let document:Object = {
 				"@id": "http://example.com/resource-id/",
 				"http://example.com/property-1/": [ {
-					"@id": "http://example.com/property-id/"
+					"@id": "http://example.com/property-id/",
 				} ],
 				"http://example.com/member/": [ {
-					"@id": "http://example.com/member-id-1/"
+					"@id": "http://example.com/member-id-1/",
 				}, {
-					"@id": "http://example.com/member-id-2/"
+					"@id": "http://example.com/member-id-2/",
 				}, {
-					"@id": "http://example.com/member-id-3/"
-				} ]
+					"@id": "http://example.com/member-id-3/",
+				} ],
 			};
 			let node:RDFNode.Class = <RDFNode.Class>document;
 			let id:string;
@@ -225,9 +253,9 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"getFreeNodes",
 			"Returns an array with the nodes that are neither a RDFDocument nor are contained inside a one.", [
-				{name: "object", type: "T extends Object", description: "The object to evaluate for its free nodes."},
+				{ name: "object", type: "T extends Object", description: "The object to evaluate for its free nodes." },
 			],
-			{type: "Carbon.RDF.Node.Class[]"}
+			{ type: "Carbon.RDF.Node.Class[]" }
 		), ():void => {
 			expect( RDFNode.Util.getFreeNodes ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getFreeNodes ) ).toBe( true );
@@ -242,39 +270,39 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			object = [
 				{
 					"@id": "http://example.com/resouce/",
-					"@graph": [ {} ]
-				}
+					"@graph": [ {} ],
+				},
 			];
 			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [] );
 			object = [
 				{
 					"@id": "http://example.com/resouce-1/",
-					"@graph": [ {} ]
+					"@graph": [ {} ],
 				},
 				{
 					"@id": "http://example.com/resouce-2/",
-					"@graph": [ {} ]
-				}
+					"@graph": [ {} ],
+				},
 			];
 			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [] );
 
 			object = [
 				{
-					"@id": "http://example.com/free-node-1/"
+					"@id": "http://example.com/free-node-1/",
 				},
 				{
 					"@id": "http://example.com/resouce-1/",
-					"@graph": [ {} ]
+					"@graph": [ {} ],
 				},
 				{
-					"@id": "http://example.com/free-node-2/"
+					"@id": "http://example.com/free-node-2/",
 				},
 				{
 					"@id": "http://example.com/resouce-2/",
-					"@graph": [ {} ]
-				}
+					"@graph": [ {} ],
+				},
 			];
-			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [ {"@id": "http://example.com/free-node-1/"}, {"@id": "http://example.com/free-node-2/"} ] );
+			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [ { "@id": "http://example.com/free-node-1/" }, { "@id": "http://example.com/free-node-2/" } ] );
 		} );
 
 	} );

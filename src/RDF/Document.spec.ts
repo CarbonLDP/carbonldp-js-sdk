@@ -2,25 +2,60 @@ import {
 	INSTANCE,
 	STATIC,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
 	clazz,
 	method,
+	interfaze,
 
 	isDefined,
 	hasMethod,
+	hasProperty,
 	hasSignature,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as RDFNode from "./RDFNode";
-import * as Errors from "./../Errors";
 
 import * as RDFDocument from "./Document";
+import DefaultExport from "./Document";
 
 describe( module( "Carbon/RDF/Document" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RDFDocument ).toBeDefined();
 		expect( Utils.isObject( RDFDocument ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.RDF.Document.Class",
+		"Interface that represents an `rdf:Document`."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"@id",
+			"string",
+			"The ID URI of the current document."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"@graph",
+			"Carbon.RDF.RDFNode.Class[]",
+			"The graph content of the current document."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.RDF.Document.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:RDFDocument.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -37,9 +72,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object is a `Carbon.RDF.Document.Class` object.", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFDocument.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( RDFDocument.Factory.is ) ).toBe( true );
@@ -48,25 +83,25 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			object = {
 				"@id": "",
 				"@graph": [
-					{"@id": "http://example.com/resource/1"},
-					{"@id": "http://example.com/resource/1#fragment-1"},
-					{"@id": "http://example.com/resource/2"}
-				]
+					{ "@id": "http://example.com/resource/1" },
+					{ "@id": "http://example.com/resource/1#fragment-1" },
+					{ "@id": "http://example.com/resource/2" },
+				],
 			};
 			expect( RDFDocument.Factory.is( object ) ).toBe( true );
 			object = {
 				"@graph": [
-					{"@id": "http://example.com/resource/1"},
-					{"@id": "http://example.com/resource/1#fragment-1"},
-					{"@id": "http://example.com/resource/2"}
-				]
+					{ "@id": "http://example.com/resource/1" },
+					{ "@id": "http://example.com/resource/1#fragment-1" },
+					{ "@id": "http://example.com/resource/2" },
+				],
 			};
 			expect( RDFDocument.Factory.is( object ) ).toBe( true );
-			expect( RDFDocument.Factory.is( {"@graph": []} ) ).toBe( true );
+			expect( RDFDocument.Factory.is( { "@graph": [] } ) ).toBe( true );
 
-			expect( RDFDocument.Factory.is( {"something-else": []} ) ).toBe( false );
-			expect( RDFDocument.Factory.is( {"@graph": {}} ) ).toBe( false );
-			expect( RDFDocument.Factory.is( {"@graph": "something else"} ) ).toBe( false );
+			expect( RDFDocument.Factory.is( { "something-else": [] } ) ).toBe( false );
+			expect( RDFDocument.Factory.is( { "@graph": {} } ) ).toBe( false );
+			expect( RDFDocument.Factory.is( { "@graph": "something else" } ) ).toBe( false );
 			expect( RDFDocument.Factory.is( {} ) ).toBe( false );
 		} );
 
@@ -74,34 +109,34 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			STATIC,
 			"create",
 			"Returns a `Carbon.RDF.Document.Class` object created with the parameters provided.", [
-				{name: "resources", type: "Carbon.RDF.RDFNode.Class[]"},
-				{name: "uri", type: "string", optional: true},
+				{ name: "resources", type: "Carbon.RDF.RDFNode.Class[]" },
+				{ name: "uri", type: "string", optional: true },
 			],
-			{type: "Carbon.RDF.RDFDocument.Class"}
+			{ type: "Carbon.RDF.RDFDocument.Class" }
 		), ():void => {
 			expect( RDFDocument.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RDFDocument.Factory.create ) ).toBe( true );
 
 			let nodes:RDFNode.Class[];
 			nodes = [
-				{"@id": "http://example.com/resource/1"},
-				{"@id": "http://example.com/resource/1#fragment-1"},
-				{"@id": "http://example.com/resource/2"}
+				{ "@id": "http://example.com/resource/1" },
+				{ "@id": "http://example.com/resource/1#fragment-1" },
+				{ "@id": "http://example.com/resource/2" },
 			];
 			expect( RDFDocument.Factory.create( nodes ) ).toEqual( {
 				"@graph": [
-					{"@id": "http://example.com/resource/1"},
-					{"@id": "http://example.com/resource/1#fragment-1"},
-					{"@id": "http://example.com/resource/2"}
-				]
+					{ "@id": "http://example.com/resource/1" },
+					{ "@id": "http://example.com/resource/1#fragment-1" },
+					{ "@id": "http://example.com/resource/2" },
+				],
 			} );
 			expect( RDFDocument.Factory.create( nodes, "http://example.com/uri-resource/" ) ).toEqual( {
 				"@id": "http://example.com/uri-resource/",
 				"@graph": [
-					{"@id": "http://example.com/resource/1"},
-					{"@id": "http://example.com/resource/1#fragment-1"},
-					{"@id": "http://example.com/resource/2"}
-				]
+					{ "@id": "http://example.com/resource/1" },
+					{ "@id": "http://example.com/resource/1#fragment-1" },
+					{ "@id": "http://example.com/resource/2" },
+				],
 			} );
 
 			nodes = [];
@@ -125,15 +160,15 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		let node:RDFNode.Class, fragment:RDFNode.Class, bNode:RDFNode.Class;
 
 		beforeEach( ():void => {
-			node = {"@id": "http://example.com/resource/node/"};
-			fragment = {"@id": "http://example.com/resource/#fragment"};
-			bNode = {"@id": "_:IdOfBlankNode"};
+			node = { "@id": "http://example.com/resource/node/" };
+			fragment = { "@id": "http://example.com/resource/#fragment" };
+			bNode = { "@id": "_:IdOfBlankNode" };
 			document = {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					node,
 					fragment,
-					bNode
+					bNode,
 				],
 			};
 		} );
@@ -155,9 +190,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns the objects that represents a RDF Document of an array of RDF like objects.", [
-					{name: "objects", type: "Object[]"}
+					{ name: "objects", type: "Object[]" },
 				],
-				{type: "Carbon.RDF.Document.Class[]"}
+				{ type: "Carbon.RDF.Document.Class[]" }
 			), ():void => {
 				let documents:RDFDocument.Class[];
 
@@ -181,9 +216,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns an array of with the object provided, if it is an RDF Document.", [
-					{name: "object", type: "Object"},
+					{ name: "object", type: "Object" },
 				],
-				{type: "Carbon.RDF.Document.Class[]"}
+				{ type: "Carbon.RDF.Document.Class[]" }
 			), ():void => {
 				let documents:RDFDocument.Class[];
 
@@ -220,9 +255,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that not are RDF Documents from the array of RDF like objects provided.", [
-					{name: "objects", type: "Object[]"}
+					{ name: "objects", type: "Object[]" },
 				],
-				{type: "Carbon.RDF.RDFNode.Class"}
+				{ type: "Carbon.RDF.RDFNode.Class" }
 			), ():void => {
 				let nodes:RDFNode.Class[];
 
@@ -250,9 +285,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that not are RDF Documents from the RDF like object provided.", [
-					{name: "object", type: "Object"}
+					{ name: "object", type: "Object" },
 				],
-				{type: "Carbon.RDF.RDFNode.Class"}
+				{ type: "Carbon.RDF.RDFNode.Class" }
 			), ():void => {
 				let nodes:RDFNode.Class[];
 
@@ -289,9 +324,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that refers to documents from a document.", [
-					{name: "document", type: "Carbon.RDF.Document.Class"}
+					{ name: "document", type: "Carbon.RDF.Document.Class" },
 				],
-				{type: "Carbon.RDF.RDFNode.Class[]"}
+				{ type: "Carbon.RDF.RDFNode.Class[]" }
 			), ():void => {
 				let documentResources:RDFNode.Class[];
 
@@ -307,9 +342,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that refers to documents from an array of resources.", [
-					{name: "document", type: "Carbon.RDF.RDFNode.Class[]"}
+					{ name: "document", type: "Carbon.RDF.RDFNode.Class[]" },
 				],
-				{type: "Carbon.RDF.RDFNode.Class[]"}
+				{ type: "Carbon.RDF.RDFNode.Class[]" }
 			), ():void => {
 				let documentResources:RDFNode.Class[];
 
@@ -337,10 +372,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from a document. " +
 				"If documentResource is provided, it will return the fragments of the specified document.", [
-					{name: "document", type: "Carbon.RDF.Document.Class"},
-					{name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true}
+					{ name: "document", type: "Carbon.RDF.Document.Class" },
+					{ name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true },
 				],
-				{type: "Carbon.RDF.RDFNode.Class[]"}
+				{ type: "Carbon.RDF.RDFNode.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -353,14 +388,14 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					"@id": document[ "@id" ] + "#fragment-2",
 					"@type": [ "http://example.com/types/#fragment" ],
 					"http://example.com/property": [ {
-						"@value": "A property"
-					} ]
+						"@value": "A property",
+					} ],
 				};
 				let myDocument:RDFDocument.Class = RDFDocument.Factory.create( [
 					fragment,
 					node,
 					myFragment,
-					bNode
+					bNode,
 				], "http://example.com/resource-another/" );
 				let documentResource:RDFNode.Class;
 
@@ -389,10 +424,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from a document. " +
 				"If documentResourceURI is provided, it will return the fragments of the specified URI.", [
-					{name: "document", type: "Carbon.RDF.Document.Class"},
-					{name: "documentResourceURI", type: "string", optional: true}
+					{ name: "document", type: "Carbon.RDF.Document.Class" },
+					{ name: "documentResourceURI", type: "string", optional: true },
 				],
-				{type: "Carbon.RDF.RDFNode.Class[]"}
+				{ type: "Carbon.RDF.RDFNode.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -405,14 +440,14 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					"@id": document[ "@id" ] + "#fragment-2",
 					"@type": [ "http://example.com/types/#fragment" ],
 					"http://example.com/property": [ {
-						"@value": "A property"
-					} ]
+						"@value": "A property",
+					} ],
 				};
 				let myDocument:RDFDocument.Class = RDFDocument.Factory.create( [
 					fragment,
 					node,
 					myFragment,
-					bNode
+					bNode,
 				], "http://example.com/resource-another/" );
 
 				fragmentResources = RDFDocument.Util.getFragmentResources( myDocument, document[ "@id" ] );
@@ -437,10 +472,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from an array of resources. " +
 				"If documentResource is provided, it will return the fragments of the specified document.", [
-					{name: "document", type: "Carbon.RDF.Document.Class"},
-					{name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true}
+					{ name: "document", type: "Carbon.RDF.Document.Class" },
+					{ name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true },
 				],
-				{type: "Carbon.RDF.RDFNode.Class[]"}
+				{ type: "Carbon.RDF.RDFNode.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -453,8 +488,8 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					"@id": document[ "@id" ] + "#fragment-2",
 					"@type": [ "http://example.com/types/#fragment" ],
 					"http://example.com/property": [ {
-						"@value": "A property"
-					} ]
+						"@value": "A property",
+					} ],
 				};
 				let resources:RDFNode.Class[] = [ fragment, node, myFragment, bNode ];
 				let documentResource:RDFNode.Class;
@@ -482,10 +517,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			it( hasSignature(
 				"Returns all the resources that refers to fragments from a document. " +
 				"If documentResourceURI is provided, it will return the fragments of the specified URI.", [
-					{name: "document", type: "Carbon.RDF.Document.Class"},
-					{name: "documentResourceURI", type: "string", optional: true}
+					{ name: "document", type: "Carbon.RDF.Document.Class" },
+					{ name: "documentResourceURI", type: "string", optional: true },
 				],
-				{type: "Carbon.RDF.RDFNode.Class[]"}
+				{ type: "Carbon.RDF.RDFNode.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -498,8 +533,8 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					"@id": document[ "@id" ] + "#fragment-2",
 					"@type": [ "http://example.com/types/#fragment" ],
 					"http://example.com/property": [ {
-						"@value": "A property"
-					} ]
+						"@value": "A property",
+					} ],
 				};
 				let resources:RDFNode.Class[] = [ fragment, node, myFragment, bNode ];
 
@@ -527,9 +562,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			STATIC,
 			"getBNodeResources",
 			"Returns all the resources that refers to the blank nodes from a document.", [
-				{name: "document", type: "Carbon.RDF.Document.Class"},
+				{ name: "document", type: "Carbon.RDF.Document.Class" },
 			],
-			{type: "Carbon.RDF.RDFNode.Class[]"}
+			{ type: "Carbon.RDF.RDFNode.Class[]" }
 		), ():void => {
 			expect( RDFDocument.Util.getBNodeResources ).toBeDefined();
 			expect( Utils.isFunction( RDFDocument.Util.getBNodeResources ) ).toBe( true );
@@ -551,7 +586,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		"Carbon.RDF.Document.Parser",
 		"Class to parse a JSON-LD string to an array of RDFDocuments."
 	), ():void => {
-		let compactedObject = {
+		let compactedObject:any = {
 			"@context": {
 				"ex": "http://example.com/",
 				"ns": "http://example.com/ns#",
@@ -561,60 +596,60 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				{
 					"@id": "http://example.com/resource/",
 					"ns:string": [ {
-						"@value": "Document Resource"
+						"@value": "Document Resource",
 					} ],
 					"ns:pointerSet": [
-						{"@id": "_:1"},
-						{"@id": "http://example.com/resource/#1"},
-						{"@id": "http://example.com/external-resource/"},
+						{ "@id": "_:1" },
+						{ "@id": "http://example.com/resource/#1" },
+						{ "@id": "http://example.com/external-resource/" },
 					],
 				},
 				{
 					"@id": "_:1",
 					"ns:string": {
-						"@value": "Fragment 1"
+						"@value": "Fragment 1",
 					},
 					"ns:pointerSet": [
-						{"@id": "ex:resource/"},
-						{"@id": "ex:resource/#1"},
+						{ "@id": "ex:resource/" },
+						{ "@id": "ex:resource/#1" },
 					],
 				},
 				{
 					"@id": "ex:resource/#1",
 					"ns:string": {
-						"@value": "NamedFragment 1"
+						"@value": "NamedFragment 1",
 					},
 				},
 			],
 		};
-		let expandedObject = [ {
+		let expandedObject:any = [ {
 			"@id": "http://example.com/resource/",
 			"@graph": [
 				{
 					"@id": "http://example.com/resource/",
 					"http://example.com/ns#string": [ {
-						"@value": "Document Resource"
+						"@value": "Document Resource",
 					} ],
 					"http://example.com/ns#pointerSet": [
-						{"@id": "_:1"},
-						{"@id": "http://example.com/resource/#1"},
-						{"@id": "http://example.com/external-resource/"},
+						{ "@id": "_:1" },
+						{ "@id": "http://example.com/resource/#1" },
+						{ "@id": "http://example.com/external-resource/" },
 					],
 				},
 				{
 					"@id": "_:1",
 					"http://example.com/ns#string": [ {
-						"@value": "Fragment 1"
+						"@value": "Fragment 1",
 					} ],
 					"http://example.com/ns#pointerSet": [
-						{"@id": "http://example.com/resource/"},
-						{"@id": "http://example.com/resource/#1"},
+						{ "@id": "http://example.com/resource/" },
+						{ "@id": "http://example.com/resource/#1" },
 					],
 				},
 				{
 					"@id": "http://example.com/resource/#1",
 					"http://example.com/ns#string": [ {
-						"@value": "NamedFragment 1"
+						"@value": "NamedFragment 1",
 					} ],
 				},
 			],
@@ -633,15 +668,15 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			INSTANCE,
 			"parse",
 			"Parse the a JSON-LD string to an array of RDFDocuments.", [
-				{name: "input", type: "string"}
+				{ name: "input", type: "string" },
 			],
-			{type: "Promise<any>"}
+			{ type: "Promise<any>" }
 		), ( done ):void => {
 			let parser:RDFDocument.Parser = new RDFDocument.Parser();
 			let input:string;
 
 			input = JSON.stringify( compactedObject );
-			let spies = {
+			let spies:any = {
 				success: ( result ):void => {
 					expect( Utils.isArray( result ) ).toBe( true );
 					expect( result.length ).toBe( 1 );
@@ -654,11 +689,11 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				},
 				error: ( error ):void => {
 					expect( error instanceof Error ).toBe( true );
-				}
+				},
 			};
-			let success = spyOn( spies, 'success' ).and.callThrough();
-			let successEmpty = spyOn( spies, 'successEmpty' ).and.callThrough();
-			let error = spyOn( spies, 'error' ).and.callThrough();
+			let success:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let successEmpty:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
+			let error:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -671,11 +706,11 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise );
 
-			promise = parser.parse( "{}" ).then( spies.successEmpty, spies.error )
+			promise = parser.parse( "{}" ).then( spies.successEmpty, spies.error );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise );
 
-			promise = parser.parse( "[ {}, null ]" ).then( spies.successEmpty, spies.error )
+			promise = parser.parse( "[ {}, null ]" ).then( spies.successEmpty, spies.error );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise );
 
@@ -688,6 +723,6 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 		} );
 
-	} )
+	} );
 
 } );

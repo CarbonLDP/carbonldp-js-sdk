@@ -24,7 +24,9 @@ describe( module(
 
 	describe( clazz(
 		"Carbon.HTTP.JSONLDParser.Class",
-		"Wrapper class for the `expand()` function of the `jsonld` lib, using the `Promise` pattern."
+		"Class to parse strings to valid JSONLD objects.", [
+			"Carbon.HTTP.Parser.Class<Object[]>",
+		]
 	), ():void => {
 
 		beforeEach( ():void => {
@@ -46,10 +48,11 @@ describe( module(
 
 		it( hasMethod(
 			INSTANCE,
-			"parse", [
-				{name: "body", type: "string", description: "A JSON-LD string to parse."},
+			"parse",
+			"Parse the string provided using the `Carbon.JSONLD.Process.Class#expand()` method.", [
+				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
-			{type: "Promise <Object>"}
+			{ type: "Promise<Object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs an `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }
 		), ( done ):void => {
 			jasmine.Ajax.stubRequest( /Should be error context/ ).andReturn( {
 				status: 404,
@@ -68,9 +71,9 @@ describe( module(
 							"@value": "Document Resource",
 						} ],
 						"ns:pointerSet": [
-							{"@id": "_:1"},
-							{"@id": "http://example.com/resource/#1"},
-							{"@id": "http://example.com/external-resource/"},
+							{ "@id": "_:1" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" },
 						],
 					},
 					{
@@ -79,8 +82,8 @@ describe( module(
 							"@value": "Fragment 1",
 						},
 						"ns:pointerSet": [
-							{"@id": "ex:resource/"},
-							{"@id": "ex:resource/#1"},
+							{ "@id": "ex:resource/" },
+							{ "@id": "ex:resource/#1" },
 						],
 					},
 					{
@@ -100,9 +103,9 @@ describe( module(
 							"@value": "Document Resource",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "_:1"},
-							{"@id": "http://example.com/resource/#1"},
-							{"@id": "http://example.com/external-resource/"},
+							{ "@id": "_:1" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" },
 						],
 					},
 					{
@@ -111,8 +114,8 @@ describe( module(
 							"@value": "Fragment 1",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "http://example.com/resource/"},
-							{"@id": "http://example.com/resource/#1"},
+							{ "@id": "http://example.com/resource/" },
+							{ "@id": "http://example.com/resource/#1" },
 						],
 					},
 					{
@@ -131,9 +134,9 @@ describe( module(
 						"@id": "http://example.com/resource/",
 						"ex:string": "Document Resource",
 						"ex:pointerSet": [
-							{"@id": "_:1"},
-							{"@id": "http://example.com/resource/#1"},
-							{"@id": "http://example.com/external-resource/"},
+							{ "@id": "_:1" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" },
 						],
 					},
 					{
@@ -142,8 +145,8 @@ describe( module(
 							"@id": "Fragment 1",
 						} ],
 						"ex:pointerSet": [
-							{"@id": "http://example.com/resource/"},
-							{"@id": "http://example.com/resource/#1"},
+							{ "@id": "http://example.com/resource/" },
+							{ "@id": "http://example.com/resource/#1" },
 						],
 					},
 					{

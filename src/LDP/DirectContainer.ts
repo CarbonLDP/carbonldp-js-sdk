@@ -2,7 +2,6 @@ import * as Document from "./../Document";
 import * as Errors from "./../Errors";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.LDP.Class.DirectContainer;

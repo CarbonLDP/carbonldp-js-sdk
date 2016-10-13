@@ -1,19 +1,26 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as AddMemberAction from "./AddMemberAction";
 import * as Document from "./../Document";
 import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
+
+import * as AddMemberAction from "./AddMemberAction";
+import DefaultExport from "./AddMemberAction";
 
 describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 
@@ -45,8 +52,24 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
 			"@id": NS.C.Predicate.targetMember,
 			"@container": "@set",
-			"@type": "@id"
+			"@type": "@id",
 		} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.LDP.AddMemberAction.Class",
+		"Interface that represents an object to be sent in a request that add members to a container."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"targetMembers",
+			"Carbon.Pointer.Class[]",
+			"Array with the members to be added to the container."
+		), ():void => {} );
 
 	} );
 
@@ -64,14 +87,14 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties of a `Carbon.LDP.AddMemberAction.Class` object.", [
-				{name: "resource", type: "Carbon.RDF.Node.Class"},
+				{ name: "resource", type: "Carbon.RDF.Node.Class" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( AddMemberAction.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( AddMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -88,9 +111,9 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			STATIC,
 			"createDocument",
 			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.", [
-				{name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request."}
+				{ name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request." },
 			],
-			{type: "Carbon.Document.Class"}
+			{ type: "Carbon.Document.Class" }
 		), ():void => {
 			expect( AddMemberAction.Factory.createDocument ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.createDocument ) ).toBe( true );
@@ -110,6 +133,14 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			expect( addMemberAction.types ).toContain( AddMemberAction.RDF_CLASS );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.LDP.AddMemberAction.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:AddMemberAction.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

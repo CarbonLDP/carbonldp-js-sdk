@@ -1,19 +1,26 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as RemoveMemberAction from "./RemoveMemberAction";
 import * as Document from "./../Document";
 import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
+
+import * as RemoveMemberAction from "./RemoveMemberAction";
+import DefaultExport from "./RemoveMemberAction";
 
 describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
@@ -45,8 +52,24 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		expect( RemoveMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
 			"@id": NS.C.Predicate.targetMember,
 			"@container": "@set",
-			"@type": "@id"
+			"@type": "@id",
 		} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.LDP.RemoveMemberAction.Class",
+		"Interface that represents an object to be sent in a request that removes specific members to a container."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"targetMembers",
+			"Carbon.Pointer.Class[]",
+			"Array with the members to be removed from the container."
+		), ():void => {} );
 
 	} );
 
@@ -71,11 +94,11 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			expect( RemoveMemberAction.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( RemoveMemberAction.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				targetMembers: null
+				targetMembers: null,
 			};
 			expect( RemoveMemberAction.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -110,6 +133,14 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			expect( addMemberAction.types ).toContain( RemoveMemberAction.RDF_CLASS );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.LDP.RemoveMemberAction.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:RemoveMemberAction.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

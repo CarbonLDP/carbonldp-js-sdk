@@ -2,24 +2,79 @@ import {
 	INSTANCE,
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 	decoratedObject,
 
 	isDefined,
 	hasMethod,
+	hasProperty,
+	extendsClass,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as NS from "./NS";
 import * as Pointer from "./Pointer";
 import * as Utils from "./Utils";
 
 import * as Resource from "./Resource";
+import DefaultExport from "./Resource";
 
 describe( module( "Carbon/Resource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Resource ).toBeDefined();
 		expect( Utils.isObject( Resource ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.Resource.Class",
+		"Interface that represents a persisted blank node of a persisted document."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Pointer.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"types",
+			"string",
+			"An array with the types of the resource."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"addType",
+			"Adds a type to the current resource.", [
+				{ name: "type", type: "string", description: "The type to be added." },
+			]
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"hasType",
+			"Returns true if the current resource contains the type specified.", [
+				{ name: "type", type: "string", description: "The type to look for." },
+			]
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"removeType",
+			"Remove the type specified from the current resource.", [
+				{ name: "type", type: "string", description: "The type to be removed." },
+			]
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Resource.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Resource.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(

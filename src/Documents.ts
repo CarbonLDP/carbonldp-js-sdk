@@ -26,7 +26,7 @@ import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
-class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
 	private _jsonldConverter:JSONLD.Converter.Class;
@@ -179,7 +179,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 
 		if( childDocument[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The childDocument is already being persisted." ) );
-		Object.defineProperty( childDocument, "__CarbonSDK_InProgressOfPersisting", {configurable: true, enumerable: false, writable: false, value: true} );
+		Object.defineProperty( childDocument, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true } );
 
 		let body:string = childDocument.toJSON( this, this.jsonldConverter );
 
@@ -306,7 +306,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 
 		if( accessPoint[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The accessPoint is already being persisted." ) );
-		Object.defineProperty( accessPoint, "__CarbonSDK_InProgressOfPersisting", {configurable: true, enumerable: false, writable: false, value: true} );
+		Object.defineProperty( accessPoint, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true } );
 
 		let body:string = accessPointDocument.toJSON( this, this.jsonldConverter );
 
@@ -321,7 +321,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
 			let persistedAccessPoint:T & AccessPoint.DocumentClass & PersistedDocument.Class = PersistedDocument.Factory.decorate<T & AccessPoint.DocumentClass>( this.createPointerFrom( accessPointDocument, localID ), this );
-			let persistedProtectedAccessPoint: T & PersistedAccessPoint.Class = PersistedProtectedDocument.Factory.decorate<T & AccessPoint.DocumentClass & PersistedDocument.Class>( persistedAccessPoint );
+			let persistedProtectedAccessPoint:T & PersistedAccessPoint.Class = PersistedProtectedDocument.Factory.decorate<T & AccessPoint.DocumentClass & PersistedDocument.Class>( persistedAccessPoint );
 			this.pointers.set( localID, persistedAccessPoint );
 
 			return [
@@ -827,7 +827,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
 		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
-		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Documents._documentSchema );
+		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Class._documentSchema );
 
 		for( let type of objectTypes ) {
 			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
@@ -985,4 +985,4 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 }
 
-export default Documents;
+export default Class;

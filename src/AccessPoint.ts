@@ -1,7 +1,6 @@
 import * as LDP from "./LDP";
 import * as NS from "./NS";
 import * as Pointer from "./Pointer";
-import * as Utils from "./Utils";
 
 export const RDF_CLASS:string = NS.C.Class.AccessPoint;
 
@@ -12,8 +11,8 @@ export interface Class {
 }
 
 export interface DocumentClass extends LDP.DirectContainer.Class {
-	membershipResource:Pointer.Class;
 	hasMemberRelation:Pointer.Class;
+	isMemberOfRelation?:Pointer.Class;
 	insertedContentRelation?:Pointer.Class;
 }
 

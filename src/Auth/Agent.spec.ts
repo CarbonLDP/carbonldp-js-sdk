@@ -1,12 +1,17 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
 	hasProperty,
+	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
@@ -14,6 +19,7 @@ import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 
 import * as Agent from "./Agent";
+import DefaultExport from "./Agent";
 
 describe( module( "Carbon/Auth/Agent" ), ():void => {
 
@@ -60,6 +66,60 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.Auth.Agent.Class",
+		"Interface that represents an in-memory Agent of any Context."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+			let agent:Agent.Class = <any> {};
+			let document:Document.Class;
+
+			document = agent;
+			expect( document ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"name",
+			"string",
+			"The name of the agent."
+		), ():void => {
+			let name:string = "A name";
+			let agent:Agent.Class = <any> {};
+
+			agent.name = name;
+			expect( agent.name ).toEqual( jasmine.any( String ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"email",
+			"string",
+			"The email of the agent."
+		), ():void => {
+			let email:string = "a@email.com";
+			let agent:Agent.Class = <any> {};
+
+			agent.email = email;
+			expect( agent.email ).toEqual( jasmine.any( String ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"password",
+			"string",
+			"The password of the agent."
+		), ():void => {
+			let password:string = "THE-password";
+			let agent:Agent.Class = <any> {};
+
+			agent.password = password;
+			expect( agent.password ).toEqual( jasmine.any( String ) );
+		} );
+
+	} );
+
 	describe( clazz(
 		"Carbon.Auth.Agent.Factory",
 		"Factory class for `Carbon.Auth.Agent.Class` objects."
@@ -81,7 +141,7 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 			expect( Agent.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Agent.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( Agent.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -207,6 +267,14 @@ describe( module( "Carbon/Auth/Agent" ), ():void => {
 			expect( () => Agent.Factory.createFrom( {}, "", "", "" ) ).toThrowError( Errors.IllegalArgumentError );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.Agent.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let agent:Agent.Class;
+
+		agent = defaultExport;
+		expect( agent ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

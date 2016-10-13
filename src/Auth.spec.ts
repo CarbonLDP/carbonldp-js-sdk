@@ -235,7 +235,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context"},
+			{name: "context", type: "Carbon.Context.Class"},
 		] ), ():void => {
 			let context:AbstractContext;
 			class MockedContext extends AbstractContext {

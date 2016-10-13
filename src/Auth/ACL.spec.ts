@@ -2,18 +2,25 @@ import {
 	STATIC,
 	INSTANCE,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
 	method,
+	OPTIONAL,
+	interfaze,
 
 	isDefined,
 	hasProperty,
 	hasMethod,
 	hasSignature,
 	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
 } from "../test/JasmineExtender";
 
 import * as ACE from "./ACE";
+import * as Document from "./../Document";
 import Documents from "./../Documents";
 import Fragment from "./../Fragment";
 import * as NS from "./../NS";
@@ -22,6 +29,7 @@ import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
 import * as ACL from "./ACL";
+import DefaultExport from "./ACL";
 
 describe( module( "Carbon/Auth/ACL" ), ():void => {
 
@@ -70,6 +78,254 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.Auth.ACL.Class",
+		"Interface that represents an in-memory Access Control List (ACL)."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+			let acl:ACL.Class = <any> {};
+			let fragment:Document.Class;
+
+			fragment = acl;
+			expect( fragment ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"accessTo",
+			"Carbon.Pointer.Class",
+			"Reference to the document the ACL belongs."
+		), ():void => {
+			let document:Pointer.Class = Pointer.Factory.create();
+			let acl:ACL.Class = <any> {};
+
+			acl.accessTo = document;
+			expect( Pointer.Factory.is( acl.accessTo ) ).toBe( true );
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"entries",
+			"Carbon.Auth.ACE.Class[]",
+			"Array of ACEs that only grants or denies permissions of the document the ACL belongs."
+		), ():void => {
+			let entries:ACE.Class[] = [ <any> {} ];
+			let acl:ACL.Class = <any> {};
+
+			acl.entries = entries;
+			expect( acl.entries ).toEqual( jasmine.any( Array ) );
+			expect( acl.entries[ 0 ] ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"inheritableEntries",
+			"Carbon.Auth.ACE.Class[]",
+			"Array of ACEs that grants or denies permissions of the document's children the ACL belongs."
+		), ():void => {
+			let inheritableEntries:ACE.Class[] = [ <any> {} ];
+			let acl:ACL.Class = <any> {};
+
+			acl.inheritableEntries = inheritableEntries;
+			expect( acl.inheritableEntries ).toEqual( jasmine.any( Array ) );
+			expect( acl.inheritableEntries[ 0 ] ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"_parsePointer",
+			"(Internal) Function that parse string URIs to pointers.", [
+				{ name: "element", type: "string | Carbon.Pointer.Class", description: "The URI string o pointer to convert into pointer." },
+			],
+			{ type: "Carbon.Pointer.Class" }
+		), ():void => {
+			let parsePointer:( element:string | Pointer.Class ) => Pointer.Class = <any> new Function();
+			let acl:ACL.Class = <any> {};
+
+			acl._parsePointer = parsePointer;
+			expect( acl._parsePointer ).toEqual( jasmine.any( Function ) );
+		} );
+
+		describe( method( OBLIGATORY, "grant" ), ():void => {
+
+			it( hasSignature(
+				"Grant the permission specified to the subject provided for the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Grant several permissions to the subject provided for the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Grant the permission specified to the every subject provided for the document related to the ACL.", [
+					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Grant several permissions to the every subject provided for the document related to the ACL.", [
+					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
+				]
+			), ():void => {} );
+
+		} );
+
+		describe( method( OBLIGATORY, "deny" ), ():void => {
+
+			it( hasSignature(
+				"Grant the permission specified to the subject provided for the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Grant several permissions to the subject provided for the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Grant the permission specified to the every subject provided for the document related to the ACL.", [
+					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Grant several permissions to the every subject provided for the document related to the ACL.", [
+					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
+				]
+			), ():void => {} );
+
+		} );
+
+		describe( method( OBLIGATORY, "configureChildInheritance" ), ():void => {
+
+			it( hasSignature(
+				"Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.", [
+					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.", [
+					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.", [
+					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.", [
+					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
+				]
+			), ():void => {} );
+
+		} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"grants",
+			"Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
+				{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
+				{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"denies",
+			"Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
+				{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
+				{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getChildInheritance",
+			"Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
+				{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
+				{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		describe( method(
+			OBLIGATORY,
+			"remove"
+		), ():void => {
+
+			it( hasSignature(
+				"Remove the configuration of a permission from a subject for the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Remove the configuration of several permissions from a subject for the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission." },
+					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration." },
+				]
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"removeChildInheritance"
+		), ():void => {
+
+			it( hasSignature(
+				"Remove the configuration of a permission from a subject for the children of the document related to the ACL.", [
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
+				]
+			), ():void => {} );
+
+		} );
+
+	} );
+
 	describe( clazz( "Carbon.Auth.ACL.Factory", "Factory class for `Carbon.Auth.ACL.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
@@ -81,9 +337,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.", [
-				{name: "object", type: "Object", description: "The object to analise."},
+				{ name: "object", type: "Object", description: "The object to analise." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( ACL.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.hasClassProperties ) ).toBe( true );
@@ -161,9 +417,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			"decorate",
 			[ "T extends Object" ],
 			"Decorate the object with the methods o a `Carbon.Auth.ACL.Class` object.", [
-				{name: "object", type: "T", description: "The object to decorate."},
+				{ name: "object", type: "T", description: "The object to decorate." },
 			],
-			{type: "T & Carbon.Auth.ACl.Class"}
+			{ type: "T & Carbon.Auth.ACl.Class" }
 		), ():void => {
 			expect( ACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.decorate ) ).toBe( true );
@@ -205,9 +461,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant the permission specified to the subject provided for the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -273,9 +529,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant several permissions to the subject provided for the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -360,9 +616,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant the permission specified to the every subject provided for the document related to the ACL.", [
-						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."},
+						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -465,9 +721,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant several permissions to the every subject provided for the document related to the ACL.", [
-						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."},
+						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -736,9 +992,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant the permission specified to the subject provided for the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -804,9 +1060,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant several permissions to the subject provided for the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -891,9 +1147,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant the permission specified to the every subject provided for the document related to the ACL.", [
-						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."},
+						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -996,9 +1252,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Grant several permissions to the every subject provided for the document related to the ACL.", [
-						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."},
+						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1268,10 +1524,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.", [
-						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified."},
+						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1396,10 +1652,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.", [
-						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified."},
+						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1562,10 +1818,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.", [
-						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
-						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject."},
+						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -1764,10 +2020,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.", [
-						{name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied."},
-						{name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified."},
-						{name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject."},
+						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
+						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
+						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
 					]
 				), ():void => {
 					let fragments:Fragment[];
@@ -2241,10 +2497,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				INSTANCE,
 				"grants",
 				"Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-					{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration."},
-					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."},
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( acl.grants ).toBeDefined();
 				expect( Utils.isFunction( acl.grants ) ).toBe( true );
@@ -2292,10 +2548,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				INSTANCE,
 				"denies",
 				"Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-					{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration."},
-					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."},
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( acl.denies ).toBeDefined();
 				expect( Utils.isFunction( acl.denies ) ).toBe( true );
@@ -2343,10 +2599,10 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				INSTANCE,
 				"getChildInheritance",
 				"Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-					{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration."},
-					{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration."},
+					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
+					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( acl.getChildInheritance ).toBeDefined();
 				expect( Utils.isFunction( acl.getChildInheritance ) ).toBe( true );
@@ -2402,8 +2658,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Remove the configuration of a permission from a subject for the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
 					]
 				), ():void => {
 					acl.remove( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) );
@@ -2462,8 +2718,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Remove the configuration of several permissions from a subject for the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration." },
 					]
 				), ():void => {
 					acl.remove( acl.getPointer( "http://example.com/ns#Subject" ), [ acl.getPointer( "http://example.com/ns#READ" ) ] );
@@ -2534,8 +2790,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Remove the configuration of a permission from a subject for the children of the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission."},
-						{name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
+						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
 					]
 				), ():void => {
 					acl.removeChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) );
@@ -2594,8 +2850,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 				it( hasSignature(
 					"Remove the configuration of several permissions from a subject for the children of the document related to the ACL.", [
-						{name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission."},
-						{name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration."},
+						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission." },
+						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration." },
 					]
 				), ():void => {
 					acl.removeChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), [ acl.getPointer( "http://example.com/ns#READ" ) ] );
@@ -2656,6 +2912,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.ACL.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let ace:ACL.Class;
+
+		ace = defaultExport;
+		expect( ace ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

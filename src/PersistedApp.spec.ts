@@ -1,25 +1,79 @@
 import {
 	STATIC,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
+	hasProperty,
+	extendsClass,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as App from "./App";
-import * as PersistedApp from "./PersistedApp";
 import Documents from "./Documents";
 import * as NS from "./NS";
+
+import * as PersistedApp from "./PersistedApp";
+import DefaultExport from "./PersistedApp";
 
 describe( module( "Carbon/PersistedApp" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedApp ).toBeDefined();
 		expect( Utils.isObject( PersistedApp ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.PersistedApp.Class",
+		"Interface that represents a persisted Carbon LDP Application."
+	), ():void => {
+
+		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"name",
+			"string",
+			"The name of the current application."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"description",
+			"string",
+			"A brief description of the current application."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"rooContainer",
+			"Carbon.Pointer.Class",
+			"The reference to the root container where the current data of the application lives on."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"allowsOrigin",
+			"(string | Carbon.Pointer.Class)[]",
+			`An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at \`Carbon.NS.CS.Class.AllOrigins\` which translates to \`${ NS.CS.Class.AllOrigins }\`.`
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.PersistedApp.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:PersistedApp.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(

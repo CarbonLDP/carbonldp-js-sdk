@@ -1,13 +1,17 @@
 import {
 	STATIC,
 
+	OPTIONAL,
+
 	module,
 	clazz,
 	method,
+	interfaze,
 
 	isDefined,
 	hasMethod,
 	hasSignature,
+	hasProperty,
 } from "./../test/JasmineExtender";
 import * as Errors from "./Errors";
 import * as Utils from "./../Utils";
@@ -23,6 +27,74 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 	it( isDefined(), ():void => {
 		expect( Request ).toBeDefined();
 		expect( Utils.isObject( Request ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.HTTP.Request.Options",
+		"Customizable options that can change the behaviour of the request."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"headers",
+			"Map<string, Carbon.HTTP.Header.Class>",
+			"Map that contains the references to the headers to include in the request."
+		), ():void => {
+			let headers:Map<string, Header.Class> = new Map();
+			let options:Request.Options = {};
+
+			options.headers = headers;
+			expect( options.headers ).toEqual( jasmine.any( Map ) );
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"sendCredentialsOnCORS",
+			"boolean",
+			"Flag that enables Cross-Origin Resource Sharing (CORS)."
+		), ():void => {
+			let enableCORS:boolean = true;
+			let options:Request.Options = {};
+
+			options.sendCredentialsOnCORS = enableCORS;
+			expect( options.sendCredentialsOnCORS ).toEqual( jasmine.any( Boolean ) );
+		} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.HTTP.Request.ContainerRetrievalPreferences",
+		"Object used at `Carbon.HTTP.Request.Util.setContainerRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"include",
+			"string[]",
+			"Prefer URIs that indicates some specific information should be returned in the request's response."
+		), ():void => {
+			let include:string[] = [ "http://example.com/ns#Some-Prefer" ];
+			let preferences:Request.ContainerRetrievalPreferences = {};
+
+			preferences.include = include;
+			expect( preferences.include ).toEqual( jasmine.any( Array ) );
+			expect( preferences.include[ 0 ] ).toEqual( jasmine.any( String ) );
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"omit",
+			"string[]",
+			"Prefer URIs that indicates some specific information should NOT be included in the request's response."
+		), ():void => {
+			let omit:string[] = [ "http://example.com/ns#Some-Prefer" ];
+			let preferences:Request.ContainerRetrievalPreferences = {};
+
+			preferences.omit = omit;
+			expect( preferences.omit ).toEqual( jasmine.any( Array ) );
+			expect( preferences.omit[ 0 ] ).toEqual( jasmine.any( String ) );
+		} );
+
 	} );
 
 	describe( clazz(

@@ -3,8 +3,6 @@ import * as JSONLD from "./../JSONLD";
 import * as RDFNode from "./RDFNode";
 import * as Utils from "./../Utils";
 import * as URI from "./URI";
-import * as Value from "./Value";
-import * as Errors from "./../Errors";
 
 export interface Class {
 	"@id"?:string;

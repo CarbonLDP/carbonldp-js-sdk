@@ -68,7 +68,7 @@ describe( module( "Carbon/Apps" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context", description: "A context from where Carbon Apps can be administrated." },
+			{ name: "context", type: "Carbon.Context.Class", description: "A context from where Carbon Apps can be administrated." },
 		] ), ():void => {
 			expect( apps ).toBeTruthy();
 			expect( apps instanceof Apps.Class ).toBe( true );

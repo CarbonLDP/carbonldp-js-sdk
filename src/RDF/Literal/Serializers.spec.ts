@@ -2,10 +2,9 @@ import {
 	STATIC,
 
 	module,
-	clazz,
 
 	isDefined,
-	reexports
+	reexports,
 } from "./../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
 

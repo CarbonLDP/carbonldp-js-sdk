@@ -3,28 +3,24 @@ import {
 	STATIC,
 
 	module,
-	interfaze,
 	clazz,
-	method,
 
 	isDefined,
 	hasConstructor,
 	hasMethod,
-	hasSignature,
 	hasProperty,
 	extendsClass,
 	reexports,
-
 } from "./test/JasmineExtender";
 
-import AbstractContext from "./AbstractContext";
+import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
-import Documents from "./Documents";
+import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
@@ -82,7 +78,7 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( extendsClass( "Carbon.AbstractContext" ), ():void => {
-			expect( carbon instanceof AbstractContext ).toBe( true );
+			expect( carbon instanceof AbstractContext.Class ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -353,7 +349,7 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "settings", type: "Carbon.Settings.Class", optional: true},
+			{ name: "settings", type: "Carbon.Settings.Class", optional: true },
 		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
@@ -367,9 +363,9 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the scope of the CarbonLDP Platform.", [
-				{name: "uri", type: "string"},
+				{ name: "uri", type: "string" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			expect( carbon.resolve ).toBeDefined();
 			expect( Utils.isFunction( carbon.resolve ) ).toBe( true );
@@ -385,7 +381,7 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"getAPIDescription",
 			"Returns the API description of the related CarbonLDP Platform.",
-			{type: "Promise<Carbon.APIDescription.Class>"}
+			{ type: "Promise<Carbon.APIDescription.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( carbon.getAPIDescription ).toBeDefined();
 			expect( Utils.isFunction( carbon.getAPIDescription ) ).toBe( true );

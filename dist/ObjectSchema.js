@@ -98,9 +98,9 @@ var Digester = (function () {
             if (!(propertyName in schema))
                 continue;
             var value = schema[propertyName];
-            if (!Utils.isString(value))
+            if (value !== null && !Utils.isString(value))
                 throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be a string or null.");
-            if ((propertyName === "@vocab" || !!value) && !RDF.URI.Util.isAbsolute(value) && !RDF.URI.Util.isBNodeID(value))
+            if ((propertyName === "@vocab" && value === "") || !RDF.URI.Util.isAbsolute(value) && !RDF.URI.Util.isBNodeID(value))
                 throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be an absolute URI" + (propertyName === "@base" ? " or an empty string" : "") + ".");
             digestedSchema[propertyName.substr(1)] = value;
         }

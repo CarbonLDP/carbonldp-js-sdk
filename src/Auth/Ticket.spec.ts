@@ -1,18 +1,25 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as NS from "./../NS";
+import * as Resource from "./../Resource";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
 import * as Ticket from "./Ticket";
+import DefaultExport from "./Ticket";
 
 describe( module( "Carbon/Auth/Ticket" ), ():void => {
 
@@ -59,6 +66,42 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.Auth.Ticket.Class",
+		"Interface that represents an authentication ticket."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
+			let ticket:Ticket.Class = <any> {};
+			let resource:Resource.Class;
+
+			resource = ticket;
+			expect( resource ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"forURI",
+			"Carbon.Pointer.Class",
+			"Pointer that relates the document that the authentication ticket only works for."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"expirationTime",
+			"Date",
+			"The time when the ticket will expire."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"ticketKey",
+			"string",
+			"The value to provide as the authentication ticket in a request."
+		), ():void => {} );
+
+	} );
+
 	describe( clazz(
 		"Carbon.Auth.Ticket.Factory",
 		"Factory class for `Carbon.Auth.Ticket.Class` objects."
@@ -73,9 +116,9 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 			STATIC,
 			"create",
 			"Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
-				{name: "uri", type: "string", description: "The URI to get an authentication ticket for."}
+				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." }
 			],
-			{type: "Carbon.Auth.Ticket.Class"}
+			{ type: "Carbon.Auth.Ticket.Class" }
 		), ():void => {
 			expect( Ticket.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Ticket.Factory.create ) ).toBe( true );
@@ -88,6 +131,14 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 			expect( ticket.types ).toContain( Ticket.RDF_CLASS );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Ticket.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );
