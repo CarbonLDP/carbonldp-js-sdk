@@ -84,7 +84,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createResource",
-			"Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.", [
+			"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
 			{ type: "Carbon.Resource.Class" }
@@ -93,7 +93,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createResourceFrom",
-			"Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.", [
+			[ "T" ],
+			"Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.", [
+				{ name: "object", type: "T", description: "The object to be used as the new resource." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
 			{ type: "Carbon.Resource.Class" }
@@ -409,7 +411,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createResource",
-				"Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.", [
+				"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 				],
 				{ type: "Carbon.Resource.Class" }
@@ -441,7 +443,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createResourceFrom",
-				"Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.", [
+				[ "T" ],
+				"Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.", [
+					{ name: "object", type: "T", description: "The object to be used as the new resource." },
 					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 				],
 				{ type: "Carbon.Resource.Class" }

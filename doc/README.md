@@ -5030,7 +5030,7 @@ Returns true if the URI provided is inside the scope of the Document.
 
 ##### createFragment
 ```typescript 
-createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
+createFragment<T>( object:T,  slug:string ):T & Carbon.Fragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
@@ -5042,7 +5042,7 @@ If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created
 - slug
 
 ```typescript 
-createFragment<T extends Object>( object:Object ):T & Carbon.Fragment.Class
+createFragment<T>( object:Object ):T & Carbon.Fragment.Class
 ```
 
 Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.
@@ -5084,7 +5084,7 @@ If the slug has the form of a BlankNode ID, an Error is thrown.
 - slug
 
 ```typescript 
-createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.NamedFragment.Class
+createNamedFragment<T>( object:T,  slug:string ):T & Carbon.NamedFragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
@@ -5307,7 +5307,7 @@ Remove the fragment referenced by the Slug provided from the Document.
 
 ##### createFragment
 ```typescript 
-createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.Fragment.Class
+createFragment<T>( object:T,  slug:string ):T & Carbon.Fragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
@@ -5319,7 +5319,7 @@ If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created
 - slug
 
 ```typescript 
-createFragment<T extends Object>( object:Object ):T & Carbon.Fragment.Class
+createFragment<T>( object:Object ):T & Carbon.Fragment.Class
 ```
 
 Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.
@@ -5361,7 +5361,7 @@ If the slug has the form of a BlankNode ID, an Error is thrown.
 - slug
 
 ```typescript 
-createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.NamedFragment.Class
+createNamedFragment<T>( object:T,  slug:string ):T & Carbon.NamedFragment.Class
 ```
 
 Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.
@@ -5578,7 +5578,7 @@ Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved do
 
 ##### addMember
 ```typescript 
-addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Add a member relation to the resource Pointer in the document container specified.
@@ -5590,7 +5590,7 @@ Add a member relation to the resource Pointer in the document container specifie
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-addMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Add a member relation to the resource URI in the document container specified.
@@ -5606,7 +5606,7 @@ Add a member relation to the resource URI in the document container specified.
 
 ##### addMembers
 ```typescript 
-addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+addMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Add a member relation to every resource URI or Pointer provided in the document container specified.
@@ -5622,7 +5622,7 @@ Add a member relation to every resource URI or Pointer provided in the document 
 
 ##### createAccessPoint
 ```typescript 
-createAccessPoint<T extends Carbon.AccessPoint.Class>( documentURI:string,  accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
+createAccessPoint<T>( documentURI:string,  accessPoint:T & Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists an AccessPoint in the document specified.
@@ -5635,7 +5635,7 @@ Persists an AccessPoint in the document specified.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createAccessPoint<T extends Carbon.AccessPoint.Class>( documentURI:string,  accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
+createAccessPoint<T>( documentURI:string,  accessPoint:T & Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists an AccessPoint in the document specified.
@@ -5651,32 +5651,7 @@ Persists an AccessPoint in the document specified.
 
 ##### createChild
 ```typescript 
-createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Persists a child document for the respective parent source.
-
-*Parameters*
-
-- parentURI: URI of the document where to create a new child.
-- childDocument: Document to persists as a new child.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChild<T extends Carbon.Document.Class>( parentURI:string,  childDocument:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Persists a child document for the respective parent source.
-
-*Parameters*
-
-- parentURI: URI of the document where to create a new child.
-- childDocument: Document to persists as a new child.
-- slug: Slug that will be used for the URI of the new child.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChild<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source.
@@ -5688,7 +5663,7 @@ Persists JavaScript object as a child document for the respective parent source.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source.
@@ -5705,7 +5680,7 @@ Persists JavaScript object as a child document for the respective parent source.
 
 ##### createChildAndRetrieve
 ```typescript 
-createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Document.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve<T>( parentURI:string,  childObject:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
@@ -5717,7 +5692,7 @@ Persists JavaScript object as a child document for the respective parent source 
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChildAndRetrieve<T extends Object>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.Carbon.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve<T>( parentURI:string,  childObject:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Persists JavaScript object as a child document for the respective parent source and retrieves tha updated data from the server.
@@ -6048,7 +6023,7 @@ Retrieves all the members of a document without resolving them.
 
 ##### refresh
 ```typescript 
-refresh<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response ]>
+refresh<T>( persistedDocument:T & Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>
 ```
 
 Update the specified document with the data of the CarbonLDP server, if a newest version exists.
@@ -6063,7 +6038,7 @@ Update the specified document with the data of the CarbonLDP server, if a newest
 
 ##### removeAllMembers
 ```typescript 
-removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+removeAllMembers( documentURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove all the member relations from the document container specified.
@@ -6078,7 +6053,7 @@ Remove all the member relations from the document container specified.
 
 ##### removeMember
 ```typescript 
-removeMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+removeMember( documentURI:string,  member:Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the member relation between the Pointer and the resource container specified.
@@ -6090,7 +6065,7 @@ Remove the member relation between the Pointer and the resource container specif
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-removeMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+removeMember( documentURI:string,  memberURI:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the member relation between the resource URI and the resource container specified.
@@ -6106,7 +6081,7 @@ Remove the member relation between the resource URI and the resource container s
 
 ##### removeMembers
 ```typescript 
-removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response>
+removeMembers( documentURI:string,  members:(Carbon.Pointer.Class | string)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
 ```
 
 Remove the member relation to every specified resource URI or Pointer form the document container specified.
@@ -6122,7 +6097,7 @@ Remove the member relation to every specified resource URI or Pointer form the d
 
 ##### save
 ```typescript 
-save<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, Carbon.HTTP.Response.Class ]>
+save<T>( persistedDocument:T & Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Update the data of the document provided in the server.
@@ -6137,7 +6112,7 @@ Update the data of the document provided in the server.
 
 ##### saveAndRefresh
 ```typescript 
-saveAndRefresh<T extends Carbon.PersistedDocument.Class>( persistedDocument:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+saveAndRefresh<T>( persistedDocument:T & Carbon.PersistedDocument.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
 ```
 
 Save and refresh the PersistedDocument specified.
@@ -6152,7 +6127,7 @@ Save and refresh the PersistedDocument specified.
 
 ##### upload
 ```typescript 
-upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Blob,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload binary data, creating a child for the parent specified. This signature only works in a web browser.
@@ -6164,7 +6139,7 @@ Upload binary data, creating a child for the parent specified. This signature on
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-upload( parentURI:string,  data:Blob,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Blob,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload binary data, creating a child for the parent specified. This signature only works in a web browser.
@@ -6177,7 +6152,7 @@ Upload binary data, creating a child for the parent specified. This signature on
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Buffer,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload binary data, creating a child for the parent specified. This signature only works in Node.js.
@@ -6189,7 +6164,7 @@ Upload binary data, creating a child for the parent specified. This signature on
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-upload( parentURI:string,  data:Buffer,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[Carbon.Pointer.Class, Carbon.HTTP.Response.Class]>
+upload( parentURI:string,  data:Buffer,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Upload binary data, creating a child for the parent specified. This signature only works in Node.js.
@@ -6669,7 +6644,7 @@ Returns an array with all the resources inside the FreeResources object.
 createResource( id?:string ):Carbon.Resource.Class
 ```
 
-Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.
+Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.
 
 *Parameters*
 
@@ -6680,13 +6655,14 @@ Creates and returns a new Free Resource. Throw an Error if no valid ID if provid
 
 ##### createResourceFrom
 ```typescript 
-createResourceFrom( id?:string ):Carbon.Resource.Class
+createResourceFrom<T>( object:T,  id?:string ):Carbon.Resource.Class
 ```
 
-Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
+Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.
 
 *Parameters*
 
+- object: The object to be used as the new resource.
 - id: The ID of the resource to create. It should be an ID as a BlankNode.
 
 
@@ -6814,7 +6790,7 @@ Map<string, Carbon.Resource.Class>
 createResource( id?:string ):Carbon.Resource.Class
 ```
 
-Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.
+Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.
 
 *Parameters*
 
@@ -6825,13 +6801,14 @@ Creates and returns a new Free Resource. Throw an Error if no valid ID if provid
 
 ##### createResourceFrom
 ```typescript 
-createResourceFrom( id?:string ):Carbon.Resource.Class
+createResourceFrom<T>( object:T,  id?:string ):Carbon.Resource.Class
 ```
 
-Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.
+Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.
 
 *Parameters*
 
+- object: The object to be used as the new resource.
 - id: The ID of the resource to create. It should be an ID as a BlankNode.
 
 
@@ -12235,7 +12212,7 @@ Set all the current fragments in the document as fragments that are saved in the
 
 ##### refresh
 ```typescript 
-refresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class]>
+refresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Sync the persisted document with the data in the server.
@@ -12245,7 +12222,7 @@ Sync the persisted document with the data in the server.
 
 ##### save
 ```typescript 
-save<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class ]>
+save<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Save the persisted document to the server.
@@ -12255,7 +12232,7 @@ Save the persisted document to the server.
 
 ##### saveAndRefresh
 ```typescript 
-saveAndRefresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+saveAndRefresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
 ```
 
 Save and refresh the persisted document.
@@ -12517,7 +12494,7 @@ Creates a PersistedNamedFragment with the slug provided
 - slug
 
 ```typescript 
-createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedNamedFragment.Class
+createNamedFragment<T>( object:T,  slug:string ):T & Carbon.PersistedNamedFragment.Class
 ```
 
 Creates a PersistedNamedFragment from the object provided and the slug specified.
@@ -12556,7 +12533,7 @@ Adds the specified resource URI as a member of the document.
 
 ##### createChild
 ```typescript 
-createChild<T extends Object>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a document with the slug specified as a child of the current document.
@@ -12568,7 +12545,7 @@ Persists a document with the slug specified as a child of the current document.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a document as a child of the current document.
@@ -12603,12 +12580,56 @@ Creates and persists an empty child fot he current document.
 --
 
 ##### createChildAndRetrieve
+```typescript 
+createChildAndRetrieve<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- slug: The slug name for the children URI.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- slug: The slug name for the children URI.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- requestOptions: Customizable options for the request.
+
 
 --
 
 ##### createAccessPoint
 ```typescript 
-createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
+createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
 Create an AccessPoint for the document with the slug specified.
@@ -12620,7 +12641,7 @@ Create an AccessPoint for the document with the slug specified.
 - requestOptions: Customisable options for the request.
 
 ```typescript 
-createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
+createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
 Create an AccessPoint for the document.
@@ -12643,6 +12664,16 @@ Retrieves an array of resolved persisted documents that refers to the members of
 *Parameters*
 
 - includeNonReadable: By default this option is set to `true`.
+- retrievalPreferences
+
+```typescript 
+getMembers<T>( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved persisted documents that refers to the members of the current document, including the non readable elements, in accordance to the retrieval preferences specified.
+
+*Parameters*
+
 - retrievalPreferences
 
 
@@ -12882,7 +12913,7 @@ Adds a type to the Document. Relative and prefixed types are resolved before the
 
 ##### createAccessPoint
 ```typescript 
-createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
+createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
 Create an AccessPoint for the document with the slug specified.
@@ -12894,7 +12925,7 @@ Create an AccessPoint for the document with the slug specified.
 - requestOptions: Customisable options for the request.
 
 ```typescript 
-createAccessPoint<T extends Carbon.AccessPoint.Class>( accessPoint:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
+createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
 Create an AccessPoint for the document.
@@ -12909,7 +12940,7 @@ Create an AccessPoint for the document.
 
 ##### createChild
 ```typescript 
-createChild<T extends Object>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a document with the slug specified as a child of the current document.
@@ -12921,7 +12952,7 @@ Persists a document with the slug specified as a child of the current document.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChild<T extends Object>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Persists a document as a child of the current document.
@@ -12957,7 +12988,7 @@ Creates and persists an empty child fot he current document.
 
 ##### createChildAndRetrieve
 ```typescript 
-createChildAndRetrieve<T extends Object>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Create a child for the document and retrieves the updated data from the server.
@@ -12969,7 +13000,7 @@ Create a child for the document and retrieves the updated data from the server.
 - requestOptions: Customizable options for the request.
 
 ```typescript 
-createChildAndRetrieve<T extends Object>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+createChildAndRetrieve<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
 Create a child for the document and retrieves the updated data from the server.
@@ -13005,7 +13036,7 @@ Create a child for the document and retrieves the updated data from the server.
 
 ##### createFragment
 ```typescript 
-createFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedFragment.Class
+createFragment<T>( object:T,  slug:string ):T & Carbon.PersistedFragment.Class
 ```
 
 Creates a PersistedFragment from the object provided and the slug specified.
@@ -13016,7 +13047,7 @@ Creates a PersistedFragment from the object provided and the slug specified.
 - slug
 
 ```typescript 
-createFragment<T extends Object>( object:T ):T & Carbon.PersistedFragment.Class
+createFragment<T>( object:T ):T & Carbon.PersistedFragment.Class
 ```
 
 Creates a PersistedBlankNode from the object provided, sing no slug was specified.
@@ -13056,7 +13087,7 @@ Creates a PersistedNamedFragment with the slug provided
 - slug
 
 ```typescript 
-createNamedFragment<T extends Object>( object:T,  slug:string ):T & Carbon.PersistedNamedFragment.Class
+createNamedFragment<T>( object:T,  slug:string ):T & Carbon.PersistedNamedFragment.Class
 ```
 
 Creates a PersistedNamedFragment from the object provided and the slug specified.
@@ -13220,6 +13251,16 @@ Retrieves an array of resolved persisted documents that refers to the members of
 - includeNonReadable: By default this option is set to `true`.
 - retrievalPreferences
 
+```typescript 
+getMembers<T>( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of resolved persisted documents that refers to the members of the current document, including the non readable elements, in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- retrievalPreferences
+
 
 --
 
@@ -13316,7 +13357,7 @@ Retrieves an array of unresolved persisted documents that refers to the members 
 
 ##### refresh
 ```typescript 
-refresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class]>
+refresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>
 ```
 
 Sync the persisted document with the data in the server.
@@ -13388,7 +13429,7 @@ Remove the type specified from the Document. Relative and prefixed types are res
 
 ##### save
 ```typescript 
-save<T extends Carbon.PersistedDocument.Class>():Promise<[ T, Carbon.HTTP.Response.Class ]>
+save<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Save the persisted document to the server.
@@ -13398,7 +13439,7 @@ Save the persisted document to the server.
 
 ##### saveAndRefresh
 ```typescript 
-saveAndRefresh<T extends Carbon.PersistedDocument.Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+saveAndRefresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
 ```
 
 Save and refresh the persisted document.

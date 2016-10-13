@@ -245,7 +245,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Object" ],
+				[ "T" ],
 				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
 					{ name: "object", type: "T" },
@@ -255,7 +255,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Object" ],
+				[ "T" ],
 				"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
 					{ name: "object", type: "Object" },
 				],
@@ -291,7 +291,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Object" ],
+				[ "T" ],
 				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "object", type: "T" },
@@ -1229,7 +1229,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
 					"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
 						{ name: "object", type: "T" },
@@ -1295,7 +1295,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
 						{ name: "object", type: "Object" },
 					],
@@ -1424,7 +1424,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
 					"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 						{ name: "object", type: "T" },

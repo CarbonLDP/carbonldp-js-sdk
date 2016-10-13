@@ -127,13 +127,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Array with a copy of every fragment that that is currently persisted in the server."
 		), ():void => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"_savedFragments",
-			"Carbon.PersistedFragment.Class[]",
-			"Array with a copy of every fragment that that is currently persisted in the server."
-		), ():void => {} );
-
 		it( hasMethod(
 			OBLIGATORY,
 			"_syncSavedFragments",
@@ -189,7 +182,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Object" ],
+				[ "T" ],
 				"Creates a PersistedNamedFragment from the object provided and the slug specified.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
@@ -202,25 +195,25 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"refresh",
-			[ "T extends Carbon.PersistedDocument.Class" ],
+			[ "T" ],
 			"Sync the persisted document with the data in the server.",
-			{ type: "Promise<[ T, Carbon.HTTP.Response.Class]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"save",
-			[ "T extends Carbon.PersistedDocument.Class" ],
+			[ "T" ],
 			"Save the persisted document to the server.",
-			{ type: "Promise<[ T, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"saveAndRefresh",
-			[ "T extends Carbon.PersistedDocument.Class" ],
+			[ "T" ],
 			"Save and refresh the persisted document.",
-			{ type: "Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -273,7 +266,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Object" ],
+				[ "T" ],
 				"Persists a document with the slug specified as a child of the current document.", [
 					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
@@ -283,7 +276,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Object" ],
+				[ "T" ],
 				"Persists a document as a child of the current document.", [
 					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
@@ -312,7 +305,39 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"createChildAndRetrieve",
 			"Create a child for the document and retrieves the updated data from the server."
-		), ():void => {} );
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ], [
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
+					{ name: "slug", type: "string", description: "The slug name for the children URI." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ], [
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			), ():void => {} );
+
+			it( hasSignature( [
+					{ name: "slug", type: "string", description: "The slug name for the children URI." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			), ():void => {} );
+
+			it( hasSignature( [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			), ():void => {} );
+
+		} );
 
 		describe( method(
 			OBLIGATORY,
@@ -320,9 +345,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Carbon.AccessPoint.Class" ],
+				[ "T" ],
 				"Create an AccessPoint for the document with the slug specified.", [
-					{ name: "accessPoint", type: "T", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request." },
 				],
@@ -330,9 +355,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Carbon.AccessPoint.Class" ],
+				[ "T" ],
 				"Create an AccessPoint for the document.", [
-					{ name: "accessPoint", type: "T", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>" }
@@ -375,6 +400,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				[ "T" ],
 				"Retrieves an array of resolved persisted documents that refers to the members of the current document, in accordance to the retrieval preferences specified.", [
 					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
+					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Retrieves an array of resolved persisted documents that refers to the members of the current document, including the non readable elements, in accordance to the retrieval preferences specified.", [
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
@@ -1214,7 +1247,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a PersistedFragment from the object provided and the slug specified.", [
 						{ name: "object", type: "T" },
 						{ name: "slug", type: "string" },
@@ -1276,7 +1309,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
 						{ name: "object", type: "T" },
 					],
@@ -1400,7 +1433,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a PersistedNamedFragment from the object provided and the slug specified.", [
 						{ name: "object", type: "T" },
 						{ name: "slug", type: "string" },
@@ -1446,9 +1479,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"refresh",
-				[ "T extends Carbon.PersistedDocument.Class" ],
+				[ "T" ],
 				"Sync the persisted document with the data in the server.",
-				{ type: "Promise<[ T, Carbon.HTTP.Response.Class]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>" }
 			), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
@@ -1461,9 +1494,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"save",
-				[ "T extends Carbon.PersistedDocument.Class" ],
+				[ "T" ],
 				"Save the persisted document to the server.",
-				{ type: "Promise<[ T, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );
@@ -1476,9 +1509,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"saveAndRefresh",
-				[ "T extends Carbon.PersistedDocument.Class" ],
+				[ "T" ],
 				"Save and refresh the persisted document.",
-				{ type: "Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
 			), ():void => {
 				expect( document.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
@@ -1582,7 +1615,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Persists a document with the slug specified as a child of the current document.", [
 						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
 						{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
@@ -1616,7 +1649,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Persists a document as a child of the current document.", [
 						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
@@ -1700,7 +1733,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ], [
+					[ "T" ], [
 						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
 						{ name: "slug", type: "string", description: "The slug name for the children URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
@@ -1730,7 +1763,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ], [
+					[ "T" ], [
 						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
@@ -1796,9 +1829,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T extends Carbon.AccessPoint.Class" ],
+					[ "T" ],
 					"Create an AccessPoint for the document with the slug specified.", [
-						{ name: "accessPoint", type: "T", description: "AccessPoint Document to persist." },
+						{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
 						{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request." },
 					],
@@ -1814,9 +1847,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Carbon.AccessPoint.Class" ],
+					[ "T" ],
 					"Create an AccessPoint for the document.", [
-						{ name: "accessPoint", type: "T", description: "AccessPoint Document to persist." },
+						{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
 					],
 					{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>" }
@@ -1937,7 +1970,34 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					spy.calls.reset();
 
 					document.getMembers( retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", retrievalPreferences, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, retrievalPreferences );
+					spy.calls.reset();
+				} );
+
+				it( hasSignature(
+					[ "T" ],
+					"Retrieves an array of resolved persisted documents that refers to the members of the current document, including the non readable elements, in accordance to the retrieval preferences specified.", [
+						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+					],
+					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					expect( document.getMembers ).toBeDefined();
+					expect( Utils.isFunction( document.getMembers ) ).toBeDefined();
+
+					let spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
+
+					document.getMembers();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, undefined );
+					spy.calls.reset();
+
+					let retrievalPreferences:RetrievalPreferences.Class = {
+						limit: 10,
+						offset: 0,
+						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
+					};
+
+					document.getMembers( retrievalPreferences );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, retrievalPreferences );
 					spy.calls.reset();
 				} );
 

@@ -75,12 +75,12 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
 	getFragments():Fragment.Class[];
 
-	createFragment<T extends Object>( object:T, slug:string ):T & Fragment.Class;
-	createFragment<T extends Object>( object:T ):T & Fragment.Class;
+	createFragment<T>( object:T, slug:string ):T & Fragment.Class;
+	createFragment<T>( object:T ):T & Fragment.Class;
 	createFragment( slug:string ):Fragment.Class;
 	createFragment():Fragment.Class;
 
-	createNamedFragment<T extends Object>( object:T, slug:string ):T & NamedFragment.Class;
+	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment.Class;
 	createNamedFragment( slug:string ):NamedFragment.Class;
 
 	removeNamedFragment( fragment:NamedFragment.Class ):void;
