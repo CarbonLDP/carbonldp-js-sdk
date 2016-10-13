@@ -632,13 +632,13 @@
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer-Methods)
 	- [Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods)
-- [Module Carbon/RDF/RDFNode](#Module-Carbon-RDF-RDFNode)
-	- [Interface Carbon.RDF.RDFNode.Class](Carbon-RDF-RDFNode-Class)
-		- [Properties](#Carbon-RDF-RDFNode-Class-Properties)
-	- [Class Carbon.RDF.RDFNode.Factory](#Carbon-RDF-RDFNode-Factory)
-		- [Methods](#Carbon-RDF-RDFNode-Factory-Methods)
-	- [Class Carbon.RDF.RDFNode.Util](#Carbon-RDF-RDFNode-Util)
-		- [Methods](#Carbon-RDF-RDFNode-Util-Methods)
+- [Module Carbon/RDF/Node](#Module-Carbon-RDF-Node)
+	- [Interface Carbon.RDF.Node.Class](Carbon-RDF-Node-Class)
+		- [Properties](#Carbon-RDF-Node-Class-Properties)
+	- [Class Carbon.RDF.Node.Factory](#Carbon-RDF-Node-Factory)
+		- [Methods](#Carbon-RDF-Node-Factory-Methods)
+	- [Class Carbon.RDF.Node.Util](#Carbon-RDF-Node-Util)
+		- [Methods](#Carbon-RDF-Node-Util-Methods)
 - [Module Carbon/RDF/URI](#Module-Carbon-RDF-URI)
 	- [Class Carbon.RDF.URI.Class](#Carbon-RDF-URI-Class)
 		- [Constructor](#Carbon-RDF-URI-Class-Constructor)
@@ -14346,7 +14346,7 @@ The ID URI of the current document.
 --
 
 ```typescript 
-@graph:Carbon.RDF.RDFNode.Class[] 
+@graph:Carbon.RDF.Node.Class[] 
 ```
 
 The graph content of the current document.
@@ -14366,7 +14366,7 @@ The graph content of the current document.
 #### <a name="Carbon-RDF-Document-Factory-Methods"/>Methods
 ##### create
 ```typescript 
-static create( resources:Carbon.RDF.RDFNode.Class[],  uri?:string ):Carbon.RDF.RDFDocument.Class
+static create( resources:Carbon.RDF.Node.Class[],  uri?:string ):Carbon.RDF.Document.Class
 ```
 
 Returns a `Carbon.RDF.Document.Class` object created with the parameters provided.
@@ -14433,7 +14433,7 @@ Parse the a JSON-LD string to an array of RDFDocuments.
 #### <a name="Carbon-RDF-Document-Util-Methods"/>Methods
 ##### getBNodeResources
 ```typescript 
-static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNode.Class[]
+static getBNodeResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to the blank nodes from a document.
@@ -14447,7 +14447,7 @@ Returns all the resources that refers to the blank nodes from a document.
 
 ##### getDocumentResources
 ```typescript 
-static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.RDFNode.Class[]
+static getDocumentResources( document:Carbon.RDF.Document.Class ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to documents from a document.
@@ -14457,7 +14457,7 @@ Returns all the resources that refers to documents from a document.
 - document
 
 ```typescript 
-static getDocumentResources( document:Carbon.RDF.RDFNode.Class[] ):Carbon.RDF.RDFNode.Class[]
+static getDocumentResources( document:Carbon.RDF.Node.Class[] ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to documents from an array of resources.
@@ -14495,7 +14495,7 @@ Returns an array of with the object provided, if it is an RDF Document.
 
 ##### getFragmentResources
 ```typescript 
-static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResource?:Carbon.RDF.RDFNode.Class ):Carbon.RDF.RDFNode.Class[]
+static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResource?:Carbon.RDF.Node.Class ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResource is provided, it will return the fragments of the specified document.
@@ -14506,7 +14506,7 @@ Returns all the resources that refers to fragments from a document. If documentR
 - documentResource
 
 ```typescript 
-static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResourceURI?:string ):Carbon.RDF.RDFNode.Class[]
+static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResourceURI?:string ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
@@ -14517,7 +14517,7 @@ Returns all the resources that refers to fragments from a document. If documentR
 - documentResourceURI
 
 ```typescript 
-static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResource?:Carbon.RDF.RDFNode.Class ):Carbon.RDF.RDFNode.Class[]
+static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResource?:Carbon.RDF.Node.Class ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to fragments from an array of resources. If documentResource is provided, it will return the fragments of the specified document.
@@ -14528,7 +14528,7 @@ Returns all the resources that refers to fragments from an array of resources. I
 - documentResource
 
 ```typescript 
-static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResourceURI?:string ):Carbon.RDF.RDFNode.Class[]
+static getFragmentResources( document:Carbon.RDF.Document.Class,  documentResourceURI?:string ):Carbon.RDF.Node.Class[]
 ```
 
 Returns all the resources that refers to fragments from a document. If documentResourceURI is provided, it will return the fragments of the specified URI.
@@ -14543,7 +14543,7 @@ Returns all the resources that refers to fragments from a document. If documentR
 
 ##### getResources
 ```typescript 
-static getResources( objects:Object[] ):Carbon.RDF.RDFNode.Class
+static getResources( objects:Object[] ):Carbon.RDF.Node.Class
 ```
 
 Returns all the resources that not are RDF Documents from the array of RDF like objects provided.
@@ -14553,7 +14553,7 @@ Returns all the resources that not are RDF Documents from the array of RDF like 
 - objects
 
 ```typescript 
-static getResources( object:Object ):Carbon.RDF.RDFNode.Class
+static getResources( object:Object ):Carbon.RDF.Node.Class
 ```
 
 Returns all the resources that not are RDF Documents from the RDF like object provided.
@@ -15057,21 +15057,21 @@ Returns a string representing an unsigned integer from the Number provided.
 
 
 
-## <a name="Module-Carbon-RDF-RDFNode"/>Module Carbon/RDF/RDFNode
+## <a name="Module-Carbon-RDF-Node"/>Module Carbon/RDF/Node
 
 
-**Default export:** [Carbon.RDF.RDFNode.Class](#Carbon-RDF-RDFNode-Class)
+**Default export:** [Carbon.RDF.Node.Class](#Carbon-RDF-Node-Class)
 
 
 
 
 
-### <a name="Carbon-RDF-RDFNode-Class"/>Interface Carbon.RDF.RDFNode.Class
+### <a name="Carbon-RDF-Node-Class"/>Interface Carbon.RDF.Node.Class
 
 
 > Interface that represents an `rdf:Node`.
 
-#### <a name="Carbon-RDF-RDFNode-Class-Properties"/>Properties
+#### <a name="Carbon-RDF-Node-Class-Properties"/>Properties
 ```typescript 
 @id:string 
 ```
@@ -15082,21 +15082,21 @@ The ID URI of the current node.
 
 
 
-### <a name="Carbon-RDF-RDFNode-Factory"/>Class Carbon.RDF.RDFNode.Factory
+### <a name="Carbon-RDF-Node-Factory"/>Class Carbon.RDF.Node.Factory
 
 
-> Factory class for `Carbon.RDF.RDFNode.Class` objects.
+> Factory class for `Carbon.RDF.Node.Class` objects.
 
 
 
 
-#### <a name="Carbon-RDF-RDFNode-Factory-Methods"/>Methods
+#### <a name="Carbon-RDF-Node-Factory-Methods"/>Methods
 ##### create
 ```typescript 
-static create( uri:string ):Carbon.RDF.RDFNode.Class
+static create( uri:string ):Carbon.RDF.Node.Class
 ```
 
-Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.
+Creates a `Carbon.RDF.Node.Class` object with the URI provided.
 
 *Parameters*
 
@@ -15110,7 +15110,7 @@ Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.
 static is( object:Object ):boolean
 ```
 
-Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` object.
+Returns true if the object provided is considered a `Carbon.RDF.Node.Class` object.
 
 *Parameters*
 
@@ -15122,18 +15122,18 @@ Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` o
 
 
 
-### <a name="Carbon-RDF-RDFNode-Util"/>Class Carbon.RDF.RDFNode.Util
+### <a name="Carbon-RDF-Node-Util"/>Class Carbon.RDF.Node.Util
 
 
-> Class with useful functions to manage `Carbon.RDF.RDFNode.Class` objects.
+> Class with useful functions to manage `Carbon.RDF.Node.Class` objects.
 
 
 
 
-#### <a name="Carbon-RDF-RDFNode-Util-Methods"/>Methods
+#### <a name="Carbon-RDF-Node-Util-Methods"/>Methods
 ##### areEqual
 ```typescript 
-static areEqual( node1:Carbon.RDF.RDFDocument.Class,  node2:Carbon.RDF.RDFDocument.Class ):boolean
+static areEqual( node1:Carbon.RDF.Document.Class,  node2:Carbon.RDF.Document.Class ):boolean
 ```
 
 Returns true if the objects represent the same resource.
@@ -15151,7 +15151,7 @@ Returns true if the objects represent the same resource.
 static getFreeNodes( object:T extends Object ):Carbon.RDF.Node.Class[]
 ```
 
-Returns an array with the nodes that are neither a RDFDocument nor are contained inside a one.
+Returns an array with the nodes that are neither a Document nor are contained inside a one.
 
 *Parameters*
 
@@ -15160,12 +15160,197 @@ Returns an array with the nodes that are neither a RDFDocument nor are contained
 
 --
 
-##### getPropertyURI
+##### getList
 ```typescript 
-static getPropertyURI( node:Carbon.RDF.RDFNode.Class,  predicate:string ):string
+static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
 ```
 
-Returns the URI from a property resource in the RDFNode object.
+Returns the List object from the provided property of an expanded JSON-LD object.
+Returns null if no List object is found.
+
+*Parameters*
+
+- propertyValues
+
+
+--
+
+##### getProperties
+```typescript 
+static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with the parsed Literal, Pointer or List.
+Returns null if the property is not found, or an empty array if it cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getProperty
+```typescript 
+static getProperty( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched, parsed in accordance to the RDF object it is.
+Returns null if the property is not found or cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyLanguageMap
+```typescript 
+static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns an object associating the language with the parsed string literal.
+Returns null if the property is not found, or an empty object if it is not a property with language.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyList
+```typescript 
+static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with every element parsed to its respective type of element.
+Returns null if the property is not found or cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyLiteral
+```typescript 
+static getPropertyLiteral( expandedObject:any,  propertyURI:string,  literalType:string ):any
+```
+
+Returns the property searched as a javascript variable. The property must be an RDF Literal.
+Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- literalType
+
+
+--
+
+##### getPropertyLiteralList
+```typescript 
+static getPropertyLiteralList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.
+Returns null if the property is not found or is not a List.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyLiterals
+```typescript 
+static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalType:string ):any
+```
+
+Returns the property searched as an Array with the parsed Literal.
+Returns null if the property is not found, or an empty array if it cannot be parsed.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- literalType
+
+
+--
+
+##### getPropertyPointer
+```typescript 
+static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as a Pointer.
+Returns null if the property is not found or cannot be parsed as a Pointer.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyPointerList
+```typescript 
+static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
+Returns null if the property is not found or is not a List.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyPointers
+```typescript 
+static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
+```
+
+Returns the property searched as an Array with the parsed Pointer.
+Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+- pointerLibrary
+
+
+--
+
+##### getPropertyURI
+```typescript 
+static getPropertyURI( node:Carbon.RDF.Node.Class,  predicate:string ):string
+```
+
+Returns the URI from a property resource in the Node object.
 Returns `null` if the property doesn't exists or the URI is not found.
 
 *Parameters*
@@ -15176,16 +15361,32 @@ Returns `null` if the property doesn't exists or the URI is not found.
 
 --
 
+##### getPropertyURIs
+```typescript 
+static getPropertyURIs( expandedObject:any,  propertyURI:string ):any
+```
+
+Returns the URIs of the property searched.
+Returns null if the property is not found or an empty array if no URI was found.
+
+*Parameters*
+
+- expandedObject
+- propertyURI
+
+
+--
+
 ##### getTypes
 ```typescript 
 static getTypes( object:Object ):string[]
 ```
 
-Returns an array with the types of the RDFNode provided.
+Returns an array with the types of the Node provided.
 
 *Parameters*
 
-- object: The RDFNode to evaluate.
+- object: The Node to evaluate.
 
 
 --
@@ -15195,11 +15396,11 @@ Returns an array with the types of the RDFNode provided.
 static hasType( object:Object,  type:string ):boolean
 ```
 
-Returns true if the RDFNode provided has the specified type.
+Returns true if the Node provided has the specified type.
 
 *Parameters*
 
-- object: The RDFNode to evaluate.
+- object: The Node to evaluate.
 - type: The type to look for it existence.
 
 
@@ -15586,207 +15787,6 @@ The possible string value if the current object value.
 
 
 #### <a name="Carbon-RDF-Value-Util-Methods"/>Methods
-##### getList
-```typescript 
-static getList( propertyValues:Array<any> ):Carbon.RDF.List.Class
-```
-
-Returns the List object from the provided property of an expanded JSON-LD object.
-Returns null if no List object is found.
-
-*Parameters*
-
-- propertyValues
-
-
---
-
-##### getProperties
-```typescript 
-static getProperties( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with the parsed Literal, Pointer or List.
-Returns null if the property is not found, or an empty array if it cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getProperty
-```typescript 
-static getProperty( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched, parsed in accordance to the RDF object it is.
-Returns null if the property is not found or cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyLanguageMap
-```typescript 
-static getPropertyLanguageMap( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns an object associating the language with the parsed string literal.
-Returns null if the property is not found, or an empty object if it is not a property with language.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyList
-```typescript 
-static getPropertyList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with every element parsed to its respective type of element.
-Returns null if the property is not found or cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyLiteral
-```typescript 
-static getPropertyLiteral( expandedObject:any,  propertyURI:string,  literalType:string ):any
-```
-
-Returns the property searched as a javascript variable. The property must be an RDF Literal.
-Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- literalType
-
-
---
-
-##### getPropertyLiteralList
-```typescript 
-static getPropertyLiteralList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.
-Returns null if the property is not found or is not a List.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyLiterals
-```typescript 
-static getPropertyLiterals( expandedObject:any,  propertyURI:string,  literalType:string ):any
-```
-
-Returns the property searched as an Array with the parsed Literal.
-Returns null if the property is not found, or an empty array if it cannot be parsed.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- literalType
-
-
---
-
-##### getPropertyPointer
-```typescript 
-static getPropertyPointer( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as a Pointer.
-Returns null if the property is not found or cannot be parsed as a Pointer.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyPointerList
-```typescript 
-static getPropertyPointerList( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.
-Returns null if the property is not found or is not a List.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyPointers
-```typescript 
-static getPropertyPointers( expandedObject:any,  propertyURI:string,  pointerLibrary:Carbon.Pointer.Library ):any
-```
-
-Returns the property searched as an Array with the parsed Pointer.
-Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-- pointerLibrary
-
-
---
-
-##### getPropertyURIs
-```typescript 
-static getPropertyURIs( expandedObject:any,  propertyURI:string ):any
-```
-
-Returns the URIs of the property searched.
-Returns null if the property is not found or an empty array if no URI was found.
-
-*Parameters*
-
-- expandedObject
-- propertyURI
-
-
---
-
 ##### parseValue
 ```typescript 
 static parseValue( propertyValue:Carbon.RDF.Value.Class,  pointerLibrary:Carbon.Pointer.Library ):any

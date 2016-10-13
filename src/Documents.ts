@@ -64,7 +64,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			decorators.set( Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate } );
 		}
 
-		decorators.set( AppRole.RDF_CLASS , { decorator: PersistedAppRole.Factory.decorate, parameters:[ ( this.context && this.context.auth ) ? this.context.auth.roles : null ] } );
+		decorators.set( AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [ ( this.context && this.context.auth ) ? this.context.auth.roles : null ] } );
 		this._documentDecorators = decorators;
 	}
 
@@ -701,7 +701,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 
 		if( document[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The document is already being persisted." ) );
-		Object.defineProperty( document, "__CarbonSDK_InProgressOfPersisting", {configurable: true, enumerable: false, writable: false, value: true} );
+		Object.defineProperty( document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true } );
 
 		let body:string = document.toJSON( this, this.jsonldConverter );
 

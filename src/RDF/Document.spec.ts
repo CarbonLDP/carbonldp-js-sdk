@@ -17,7 +17,7 @@ import {
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as RDFNode from "./RDFNode";
+import * as RDFNode from "./Node";
 
 import * as RDFDocument from "./Document";
 import DefaultExport from "./Document";
@@ -44,7 +44,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"@graph",
-			"Carbon.RDF.RDFNode.Class[]",
+			"Carbon.RDF.Node.Class[]",
 			"The graph content of the current document."
 		), ():void => {} );
 
@@ -109,10 +109,10 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			STATIC,
 			"create",
 			"Returns a `Carbon.RDF.Document.Class` object created with the parameters provided.", [
-				{ name: "resources", type: "Carbon.RDF.RDFNode.Class[]" },
+				{ name: "resources", type: "Carbon.RDF.Node.Class[]" },
 				{ name: "uri", type: "string", optional: true },
 			],
-			{ type: "Carbon.RDF.RDFDocument.Class" }
+			{ type: "Carbon.RDF.Document.Class" }
 		), ():void => {
 			expect( RDFDocument.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RDFDocument.Factory.create ) ).toBe( true );
@@ -257,7 +257,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				"Returns all the resources that not are RDF Documents from the array of RDF like objects provided.", [
 					{ name: "objects", type: "Object[]" },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class" }
+				{ type: "Carbon.RDF.Node.Class" }
 			), ():void => {
 				let nodes:RDFNode.Class[];
 
@@ -287,7 +287,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				"Returns all the resources that not are RDF Documents from the RDF like object provided.", [
 					{ name: "object", type: "Object" },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class" }
+				{ type: "Carbon.RDF.Node.Class" }
 			), ():void => {
 				let nodes:RDFNode.Class[];
 
@@ -326,7 +326,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				"Returns all the resources that refers to documents from a document.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class[]" }
+				{ type: "Carbon.RDF.Node.Class[]" }
 			), ():void => {
 				let documentResources:RDFNode.Class[];
 
@@ -342,9 +342,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that refers to documents from an array of resources.", [
-					{ name: "document", type: "Carbon.RDF.RDFNode.Class[]" },
+					{ name: "document", type: "Carbon.RDF.Node.Class[]" },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class[]" }
+				{ type: "Carbon.RDF.Node.Class[]" }
 			), ():void => {
 				let documentResources:RDFNode.Class[];
 
@@ -373,9 +373,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				"Returns all the resources that refers to fragments from a document. " +
 				"If documentResource is provided, it will return the fragments of the specified document.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
-					{ name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true },
+					{ name: "documentResource", type: "Carbon.RDF.Node.Class", optional: true },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class[]" }
+				{ type: "Carbon.RDF.Node.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -427,7 +427,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 					{ name: "documentResourceURI", type: "string", optional: true },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class[]" }
+				{ type: "Carbon.RDF.Node.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -473,9 +473,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 				"Returns all the resources that refers to fragments from an array of resources. " +
 				"If documentResource is provided, it will return the fragments of the specified document.", [
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
-					{ name: "documentResource", type: "Carbon.RDF.RDFNode.Class", optional: true },
+					{ name: "documentResource", type: "Carbon.RDF.Node.Class", optional: true },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class[]" }
+				{ type: "Carbon.RDF.Node.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -520,7 +520,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					{ name: "document", type: "Carbon.RDF.Document.Class" },
 					{ name: "documentResourceURI", type: "string", optional: true },
 				],
-				{ type: "Carbon.RDF.RDFNode.Class[]" }
+				{ type: "Carbon.RDF.Node.Class[]" }
 			), ():void => {
 				let fragmentResources:RDFNode.Class[];
 
@@ -564,7 +564,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			"Returns all the resources that refers to the blank nodes from a document.", [
 				{ name: "document", type: "Carbon.RDF.Document.Class" },
 			],
-			{ type: "Carbon.RDF.RDFNode.Class[]" }
+			{ type: "Carbon.RDF.Node.Class[]" }
 		), ():void => {
 			expect( RDFDocument.Util.getBNodeResources ).toBeDefined();
 			expect( Utils.isFunction( RDFDocument.Util.getBNodeResources ) ).toBe( true );

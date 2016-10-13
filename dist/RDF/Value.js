@@ -1,7 +1,7 @@
 "use strict";
 var List = require("./List");
 var Literal = require("./Literal");
-var RDFNode = require("./RDFNode");
+var RDFNode = require("./Node");
 var Util = (function () {
     function Util() {
     }

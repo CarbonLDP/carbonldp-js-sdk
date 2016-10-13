@@ -2,7 +2,7 @@ import * as List from "./List";
 import * as Literal from "./Literal";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
-import * as RDFNode from "./RDFNode";
+import * as RDFNode from "./Node";
 
 export interface Class {
 	"@id"?:string;

@@ -1,6 +1,6 @@
 "use strict";
 var JSONLD = require("./../JSONLD");
-var RDFNode = require("./RDFNode");
+var Node = require("./Node");
 var Utils = require("./../Utils");
 var URI = require("./URI");
 var Factory = (function () {
@@ -11,7 +11,7 @@ var Factory = (function () {
             && Utils.isArray(object["@graph"]);
     };
     Factory.create = function (resources, uri) {
-        var document = uri ? RDFNode.Factory.create(uri) : {};
+        var document = uri ? Node.Factory.create(uri) : {};
         document["@graph"] = resources;
         return document;
     };
@@ -33,7 +33,7 @@ var Util = (function () {
         return [];
     };
     Util.getResources = function (value) {
-        var freeNodes = RDFNode.Util.getFreeNodes(value);
+        var freeNodes = Node.Util.getFreeNodes(value);
         var documents = Util.getDocuments(value);
         var resources = [].concat(freeNodes);
         for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
