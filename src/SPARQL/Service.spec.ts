@@ -117,7 +117,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					}`,
 				} );
 
-				let spyRaw = spyOn( Service.Class, "executeRawASKQuery" ).and.callThrough();
+				let spyRaw:jasmine.Spy = spyOn( Service.Class, "executeRawASKQuery" ).and.callThrough();
 
 				promises.push( Service.Class.executeASKQuery( "http://example.com/sparql-endpoint/", askQuery ).then(
 					( [ result, response ]:[ boolean, HTTP.Response.Class ] ):void => {
@@ -149,7 +149,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				expect( Utils.isFunction( Service.Class.executeSELECTQuery ) ).toEqual( true );
 			})();
 
-			let spyRaw = spyOn( Service.Class, "executeRawSELECTQuery" ).and.callThrough();
+			let spyRaw:jasmine.Spy = spyOn( Service.Class, "executeRawSELECTQuery" ).and.callThrough();
 			let promises:Promise<void>[] = [];
 
 			// Simple test
@@ -230,13 +230,13 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( results.bindings[ 0 ][ "literalBinding" ] ).toEqual( "some string" );
 
 						expect( "uriBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( results.bindings[ 0 ][ "uriBinding" ].id ).toEqual( "http://example.com/document-1/" );
+						expect( (<Pointer.Class> results.bindings[ 0 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-1/" );
 
 						expect( "literalBinding" in results.bindings[ 1 ] ).toEqual( true );
 						expect( results.bindings[ 1 ][ "literalBinding" ] ).toEqual( 12 );
 
 						expect( "uriBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( results.bindings[ 1 ][ "uriBinding" ].id ).toEqual( "http://example.com/document-2/" );
+						expect( (<Pointer.Class> results.bindings[ 1 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-2/" );
 
 						expect( response ).toBeDefined();
 						expect( response instanceof HTTP.Response.Class ).toBe( true );

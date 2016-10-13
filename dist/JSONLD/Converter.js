@@ -63,21 +63,28 @@ var Class = (function () {
             if (propertyName === "types")
                 return;
             var expandedValue;
+            var expandedPropertyName = null;
             if (digestedSchema.properties.has(propertyName)) {
-                var definition = digestedSchema.properties.get(propertyName);
+                var definition = Utils.O.clone(digestedSchema.properties.get(propertyName), { objects: true });
+                if (definition.uri !== null) {
+                    expandedPropertyName = definition.uri.toString();
+                }
+                else if (digestedSchema.vocab !== null) {
+                    expandedPropertyName = digestedSchema.vocab + propertyName;
+                    definition.uri = new RDF.URI.Class(expandedPropertyName);
+                }
+                else {
+                    throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
+                }
                 expandedValue = _this.expandProperty(value, definition, generalSchema, digestedSchema);
-                propertyName = definition.uri.toString();
             }
-            else if (RDF.URI.Util.isAbsolute(propertyName)) {
-                expandedValue = _this.expandPropertyValues(value, generalSchema, digestedSchema);
-            }
-            else if (digestedSchema.vocab) {
+            else if (RDF.URI.Util.isAbsolute(propertyName) || digestedSchema.vocab !== null) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                propertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
+                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
             }
-            if (!expandedValue)
+            if (!expandedValue || !expandedPropertyName)
                 return;
-            expandedObject[propertyName] = expandedValue;
+            expandedObject[expandedPropertyName] = expandedValue;
         });
         return expandedObject;
     };
@@ -306,26 +313,22 @@ var Class = (function () {
                 return;
             if (propertyURI === "@type")
                 return;
+            var propertyName = propertyURI;
+            var propertyValues = expandedObject[propertyURI];
+            var definition;
             if (propertyURINameMap.has(propertyURI)) {
-                var propertyName = propertyURINameMap.get(propertyURI);
-                _this.assignProperty(targetObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
+                propertyName = propertyURINameMap.get(propertyURI);
+                definition = digestedSchema.properties.get(propertyName);
             }
             else {
-                var propertyName = digestedSchema.vocab ? RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) : propertyURI;
-                _this.assignURIProperty(targetObject, expandedObject, propertyURI, propertyName, pointerLibrary);
+                if (digestedSchema.vocab !== null)
+                    propertyName = RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab);
+                definition = new ObjectSchema.DigestedPropertyDefinition();
+                definition.containerType = _this.getPropertyContainerType(propertyValues);
             }
+            targetObject[propertyName] = _this.getPropertyValue(expandedObject, propertyURI, definition, pointerLibrary);
         });
         return targetObject;
-    };
-    Class.prototype.assignProperty = function (compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary) {
-        var propertyDefinition = digestedSchema.properties.get(propertyName);
-        compactedObject[propertyName] = this.getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
-    };
-    Class.prototype.assignURIProperty = function (compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary) {
-        var guessedDefinition = new ObjectSchema.DigestedPropertyDefinition();
-        guessedDefinition.uri = new RDF.URI.Class(propertyURI);
-        guessedDefinition.containerType = this.getPropertyContainerType(expandedObject[propertyURI]);
-        compactedObject[propertyName] = this.getPropertyValue(expandedObject, guessedDefinition, pointerLibrary);
     };
     Class.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
@@ -337,225 +340,60 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyValue = function (expandedObject, propertyDefinition, pointerLibrary) {
-        var propertyURI = propertyDefinition.uri.toString();
+    Class.prototype.getPropertyValue = function (expandedObject, propertyURI, propertyDefinition, pointerLibrary) {
         switch (propertyDefinition.containerType) {
             case null:
                 if (propertyDefinition.literal) {
-                    return this.getPropertyLiteral(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                    return RDF.Node.Util.getPropertyLiteral(expandedObject, propertyURI, propertyDefinition.literalType.toString());
                 }
                 else if (propertyDefinition.literal === false) {
-                    return this.getPropertyPointer(expandedObject, propertyURI, pointerLibrary);
+                    return RDF.Node.Util.getPropertyPointer(expandedObject, propertyURI, pointerLibrary);
                 }
                 else {
-                    return this.getProperty(expandedObject, propertyURI, pointerLibrary);
+                    return RDF.Node.Util.getProperty(expandedObject, propertyURI, pointerLibrary);
                 }
             case ObjectSchema.ContainerType.LIST:
                 if (propertyDefinition.literal) {
-                    return this.getPropertyLiteralList(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                    return RDF.Node.Util.getPropertyLiteralList(expandedObject, propertyURI, propertyDefinition.literalType.toString());
                 }
                 else if (propertyDefinition.literal === false) {
-                    return this.getPropertyPointerList(expandedObject, propertyURI, pointerLibrary);
+                    return RDF.Node.Util.getPropertyPointerList(expandedObject, propertyURI, pointerLibrary);
                 }
                 else {
-                    return this.getPropertyList(expandedObject, propertyURI, pointerLibrary);
+                    return RDF.Node.Util.getPropertyList(expandedObject, propertyURI, pointerLibrary);
                 }
             case ObjectSchema.ContainerType.SET:
                 if (propertyDefinition.literal) {
-                    return this.getPropertyLiterals(expandedObject, propertyURI, propertyDefinition.literalType.toString());
+                    return RDF.Node.Util.getPropertyLiterals(expandedObject, propertyURI, propertyDefinition.literalType.toString());
                 }
                 else if (propertyDefinition.literal === false) {
-                    return this.getPropertyPointers(expandedObject, propertyURI, pointerLibrary);
+                    return RDF.Node.Util.getPropertyPointers(expandedObject, propertyURI, pointerLibrary);
                 }
                 else {
-                    return this.getProperties(expandedObject, propertyURI, pointerLibrary);
+                    return RDF.Node.Util.getProperties(expandedObject, propertyURI, pointerLibrary);
                 }
             case ObjectSchema.ContainerType.LANGUAGE:
-                return this.getPropertyLanguageMap(expandedObject, propertyURI);
+                return RDF.Node.Util.getPropertyLanguageMap(expandedObject, propertyURI);
             default:
                 throw new Errors.IllegalArgumentError("The containerType specified is not supported.");
         }
     };
-    Class.prototype.getProperty = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        if (!propertyValues.length)
-            return null;
-        var propertyValue = propertyValues[0];
-        return this.parseValue(propertyValue, pointerLibrary);
-    };
-    Class.prototype.getPropertyPointer = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        for (var _i = 0, propertyValues_3 = propertyValues; _i < propertyValues_3.length; _i++) {
-            var propertyValue = propertyValues_3[_i];
-            if (!RDF.Node.Factory.is(propertyValue))
-                continue;
-            return pointerLibrary.getPointer(propertyValue["@id"]);
-        }
-        return null;
-    };
-    Class.prototype.getPropertyLiteral = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        for (var _i = 0, propertyValues_4 = propertyValues; _i < propertyValues_4.length; _i++) {
-            var propertyValue = propertyValues_4[_i];
-            if (!RDF.Literal.Factory.is(propertyValue))
-                continue;
-            if (!RDF.Literal.Factory.hasType(propertyValue, literalType))
-                continue;
-            return RDF.Literal.Factory.parse(propertyValue);
-        }
-        return null;
-    };
-    Class.prototype.getPropertyList = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        var propertyList = this.getList(propertyValues);
-        if (!propertyList)
-            return null;
-        var listValues = [];
-        for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
-            var listValue = _a[_i];
-            listValues.push(this.parseValue(listValue, pointerLibrary));
-        }
-        return listValues;
-    };
-    Class.prototype.getPropertyPointerList = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        var propertyList = this.getList(propertyValues);
-        if (!propertyList)
-            return null;
-        var listPointers = [];
-        for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
-            var listValue = _a[_i];
-            if (!RDF.Node.Factory.is(listValue))
-                continue;
-            var pointer = pointerLibrary.getPointer(listValue["@id"]);
-            listPointers.push(pointer);
-        }
-        return listPointers;
-    };
-    Class.prototype.getPropertyLiteralList = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        var propertyList = this.getList(propertyValues);
-        if (!propertyList)
-            return null;
-        var listLiterals = [];
-        for (var _i = 0, _a = propertyList["@list"]; _i < _a.length; _i++) {
-            var listValue = _a[_i];
-            if (!RDF.Literal.Factory.is(listValue))
-                continue;
-            if (!RDF.Literal.Factory.hasType(listValue, literalType))
-                continue;
-            listLiterals.push(RDF.Literal.Factory.parse(listValue));
-        }
-        return listLiterals;
-    };
-    Class.prototype.getProperties = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        if (!propertyValues.length)
-            return null;
-        var properties = [];
-        for (var _i = 0, propertyValues_5 = propertyValues; _i < propertyValues_5.length; _i++) {
-            var propertyValue = propertyValues_5[_i];
-            properties.push(this.parseValue(propertyValue, pointerLibrary));
-        }
-        return properties;
-    };
-    Class.prototype.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        if (!propertyValues.length)
-            return null;
-        var propertyPointers = [];
-        for (var _i = 0, propertyValues_6 = propertyValues; _i < propertyValues_6.length; _i++) {
-            var propertyValue = propertyValues_6[_i];
-            if (!RDF.Node.Factory.is(propertyValue))
-                continue;
-            var pointer = pointerLibrary.getPointer(propertyValue["@id"]);
-            propertyPointers.push(pointer);
-        }
-        return propertyPointers;
-    };
-    Class.prototype.getPropertyLiterals = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        var propertyLiterals = [];
-        for (var _i = 0, propertyValues_7 = propertyValues; _i < propertyValues_7.length; _i++) {
-            var propertyValue = propertyValues_7[_i];
-            if (!RDF.Literal.Factory.is(propertyValue))
-                continue;
-            if (!RDF.Literal.Factory.hasType(propertyValue, literalType))
-                continue;
-            propertyLiterals.push(RDF.Literal.Factory.parse(propertyValue));
-        }
-        return propertyLiterals;
-    };
-    Class.prototype.getPropertyLanguageMap = function (expandedObject, propertyURI) {
-        var propertyValues = expandedObject[propertyURI];
-        if (!propertyValues)
-            return null;
-        var propertyLanguageMap = {};
-        for (var _i = 0, propertyValues_8 = propertyValues; _i < propertyValues_8.length; _i++) {
-            var propertyValue = propertyValues_8[_i];
-            if (!RDF.Literal.Factory.is(propertyValue))
-                continue;
-            if (!RDF.Literal.Factory.hasType(propertyValue, NS.XSD.DataType.string))
-                continue;
-            var languageTag = propertyValue["@language"];
-            if (!languageTag)
-                continue;
-            propertyLanguageMap[languageTag] = RDF.Literal.Factory.parse(propertyValue);
-        }
-        return propertyLanguageMap;
-    };
-    Class.prototype.getList = function (propertyValues) {
-        for (var _i = 0, propertyValues_9 = propertyValues; _i < propertyValues_9.length; _i++) {
-            var propertyValue = propertyValues_9[_i];
-            if (!RDF.List.Factory.is(propertyValue))
-                continue;
-            return propertyValue;
-        }
-        return null;
-    };
     Class.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            map.set(definition.uri.toString(), propertyName);
+            var uri;
+            if (definition.uri !== null) {
+                uri = definition.uri.toString();
+            }
+            else if (digestedSchema.vocab !== null) {
+                uri = digestedSchema.vocab + propertyName;
+            }
+            else {
+                throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
+            }
+            map.set(uri, propertyName);
         });
         return map;
-    };
-    Class.prototype.parseValue = function (propertyValue, pointerLibrary) {
-        if (RDF.Literal.Factory.is(propertyValue)) {
-            return RDF.Literal.Factory.parse(propertyValue);
-        }
-        else if (RDF.Node.Factory.is(propertyValue)) {
-            return pointerLibrary.getPointer(propertyValue["@id"]);
-        }
-        else if (RDF.List.Factory.is(propertyValue)) {
-            var parsedValue = [];
-            var listValues = propertyValue["@list"];
-            for (var _i = 0, listValues_1 = listValues; _i < listValues_1.length; _i++) {
-                var listValue = listValues_1[_i];
-                parsedValue.push(this.parseValue(listValue, pointerLibrary));
-            }
-            return parsedValue;
-        }
-        else {
-        }
     };
     return Class;
 }());

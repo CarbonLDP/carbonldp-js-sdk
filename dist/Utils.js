@@ -167,7 +167,7 @@ var O = (function () {
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
-        var clone = (isAnArray ? [] : (!!Object.getPrototypeOf(object)) ? {} : Object.create(null));
+        var clone = (isAnArray ? [] : Object.create(Object.getPrototypeOf(object)));
         return O.extend(clone, object, config, ignore);
     };
     O.areEqual = function (object1, object2, config, ignore) {

@@ -1,3 +1,46 @@
+# 0.39.0 (October 12, 2016)
+
+- Completed [LDP-818](https://jira.base22.com/browse/LDP-818) - Specify `@type` with relative URIs
+    `@type` in schemas will now be resolved with the `xsd` namespace by default:
+    
+    ```
+    carbon.extendObjectSchema( {
+        "title": {
+            "@id": "ex:title",
+            "@type": "string" // Same as "xsd:string"
+        }
+    } );
+    ```
+
+- Now `context.documents.createChild()` and `context.documents.createChildAndRetrieve()` returns an object of type `T & PersistedProtectedDocument.Class`
+- Now `context.auth.roles.createChild()` returns an object of type `T & Carbon.Auth.PersistedRole.Class`
+- Now `Carbon.Auth.PersistedRole.Class` and `Carbon.Auth.PersistedAgent.Class` extends from `Carbon.PersistedProtectedDocument.Class`
+- Add the permissions URIs into `Carbon.NS.CS.Class` class.
+- Completed [LDP-832](https://jira.base22.com/browse/LDP-832): Allow schema properties without `@id`.
+ 
+    The URI of the properties will be resolved with the default vocabulary in the expansion and compression of a document. If there isn't a default vocabulary an `InvalidJSONLDSyntaxError` will be thrown. This helps to specify the type of a property that has previously been declared with the default vocabulary. Declaring the following schema, it specify that the property `defaultVocabulary:arrayProperty` is an array of strings:
+ 
+    ```typescript
+        context.extendObjectSchema( {
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "arrayProperty": {
+                "@type": "xsd:string",
+                "@container": "@set",
+            },
+        } );
+    ```
+
+- Made decorators in `context.documents` dynamic
+- Added `context.documents.removePointer()` method, used only internally
+- Reused code between `context.documents.createChild()` and `context.documents.createAccessPoint()` methods
+- Moved some Utils functions from `RDF.Value` to `RDF.Node` module
+- Now `JSONLD.Converter` uses the Utils functions of `RDF.Node` module
+- Set types of bindings results in `SPARQL.SELECTResults` module
+- Exported version inside `package.json` into `Carbon.ts` object at build
+ 
+- Fixed [LDP-797](https://jira.base22.com/browse/LDP-797) - Add missing `createChild()` method in `Carbon.Auth.PersistedRole.Class`
+- Fixed [LDP-827](https://jira.base22.com/browse/LDP-827) - Errors with multiple `@list` on a single property
+
 # 0.38.0 (September 08, 2016)
 
 - [LDP-800](https://jira.base22.com/browse/LDP-800) - Revert changes from a PersistedDocument

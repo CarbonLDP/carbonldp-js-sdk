@@ -38,7 +38,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle."},
+			{ name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle." },
 		] ), ():void => {
 			let jsonldConverter:JSONLDConverter.Class;
 
@@ -79,12 +79,12 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 			it( hasSignature(
 				"Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.", [
-					{name: "expandedObject", type: "Object", description: "The JSON-LD object to compact."},
-					{name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object."},
-					{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object."},
-					{name: "pointerLibrary", type: "Carbon.Pointer.Library", description: "An object from where one can obtain pointers to SDK Resources."},
+					{ name: "expandedObject", type: "Object", description: "The JSON-LD object to compact." },
+					{ name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object." },
+					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
+					{ name: "pointerLibrary", type: "Carbon.Pointer.Library", description: "An object from where one can obtain pointers to SDK Resources." },
 				],
-				{type: "Object", description: "The compacted target object."}
+				{ type: "Object", description: "The compacted target object." }
 			), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
@@ -94,43 +94,46 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				let expandedObject:any = {
 					"@id": "http://example.com/expandedObject/",
 					"http://example.com/ns#string": [
-						{"@value": "some-string", "@type": "http://www.w3.org/2001/XMLSchema#string"},
+						{ "@value": "some-string", "@type": "http://www.w3.org/2001/XMLSchema#string" },
 					],
 					"http://example.com/ns#date": [
-						{"@value": "2015-12-04T23:06:57.920Z", "@type": "http://www.w3.org/2001/XMLSchema#dateTime"},
+						{ "@value": "2015-12-04T23:06:57.920Z", "@type": "http://www.w3.org/2001/XMLSchema#dateTime" },
 					],
 					"http://example.com/ns#numberList": [
 						{
 							"@list": [
-								{"@value": "2", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
-								{"@value": "3", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
-								{"@value": "4", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
-								{"@value": "5", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
-								{"@value": "6", "@type": "http://www.w3.org/2001/XMLSchema#integer"},
+								{ "@value": "2", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
+								{ "@value": "3", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
+								{ "@value": "4", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
+								{ "@value": "5", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
+								{ "@value": "6", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
 							],
 						},
 					],
 					"http://example.com/ns#languageMap": [
-						{"@value": "español", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "es"},
-						{"@value": "english", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "en"},
-						{"@value": "日本語", "@language": "ja"},
+						{ "@value": "español", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "es" },
+						{ "@value": "english", "@type": "http://www.w3.org/2001/XMLSchema#string", "@language": "en" },
+						{ "@value": "日本語", "@language": "ja" },
 					],
 					"http://example.com/ns#pointer": [
-						{"@id": "http://example.com/pointer/"},
+						{ "@id": "http://example.com/pointer/" },
 					],
 					"http://example.com/ns#pointerList": [
 						{
 							"@list": [
-								{"@id": "http://example.com/pointer-1/"},
-								{"@id": "http://example.com/pointer-2/"},
-								{"@id": "http://example.com/pointer-3/"},
+								{ "@id": "http://example.com/pointer-1/" },
+								{ "@id": "http://example.com/pointer-2/" },
+								{ "@id": "http://example.com/pointer-3/" },
 							],
 						},
 					],
 					"http://example.com/ns#pointerSet": [
-						{"@id": "http://example.com/pointer-1/"},
-						{"@id": "http://example.com/pointer-2/"},
-						{"@id": "http://example.com/pointer-3/"},
+						{ "@id": "http://example.com/pointer-1/" },
+						{ "@id": "http://example.com/pointer-2/" },
+						{ "@id": "http://example.com/pointer-3/" },
+					],
+					"http://example.com/my-vocabulary#elementWithoutID": [
+						{ "@value": "One element in a set" },
 					],
 				};
 
@@ -173,26 +176,20 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 						"@type": "@id",
 						"@container": "@set",
 					},
+					"elementWithoutID": {
+						"@type": "xsd:string",
+						"@container": "@set",
+					},
 				};
-
-				let mockedResolveFunction:() => Promise<[ Pointer.Class, HTTP.Response.Class ]> = function():Promise<[ Pointer.Class, HTTP.Response.Class ]> { throw Error( "Don't call this method, duh" ); };
 
 				let mockedPointerLibrary:Pointer.Library = {
 					hasPointer: ( id:string ):boolean => {
 						return true;
 					},
 					getPointer: ( id:string ):Pointer.Class => {
-						return {
-							_id: id,
-							_resolved: true,
-							get id():string {
-								return this._id;
-							},
-							isResolved: function():boolean {
-								return this._resolved;
-							},
-							resolve: mockedResolveFunction,
-						};
+						let pointer:Pointer.Class = Pointer.Factory.create( id );
+						pointer._resolved = true;
+						return pointer;
 					},
 				};
 
@@ -201,6 +198,9 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
+
+				expect( () => jsonldConverter.compact( expandedObject, compactedObject, digestedSchema, mockedPointerLibrary ) ).toThrowError( Errors.InvalidJSONLDSyntaxError );
+				digestedSchema.vocab = "http://example.com/my-vocabulary#";
 
 				jsonldConverter.compact( expandedObject, compactedObject, digestedSchema, mockedPointerLibrary );
 
@@ -245,6 +245,11 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( compactedObject.pointerSet[ 0 ].id ).toEqual( "http://example.com/pointer-1/" );
 				expect( compactedObject.pointerSet[ 1 ].id ).toEqual( "http://example.com/pointer-2/" );
 				expect( compactedObject.pointerSet[ 2 ].id ).toEqual( "http://example.com/pointer-3/" );
+
+				expect( Utils.hasProperty( compactedObject, "elementWithoutID" ) ).toBe( true );
+				expect( Utils.isArray( compactedObject.elementWithoutID ) ).toBe( true );
+				expect( compactedObject.elementWithoutID.length ).toBe( 1 );
+				expect( compactedObject.elementWithoutID[ 0 ] ).toBe( "One element in a set" );
 			} );
 		} );
 
@@ -253,10 +258,10 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 			it( hasSignature(
 				"Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.", [
-					{name: "compactedObject", type: "Object", description: "The compacted object to generate its expanded JSON-LD object."},
-					{name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object."},
+					{ name: "compactedObject", type: "Object", description: "The compacted object to generate its expanded JSON-LD object." },
+					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object." },
 				],
-				{type: "Object", description: "The expanded JSON-LD object generated."}
+				{ type: "Object", description: "The expanded JSON-LD object generated." }
 			), ():void => {
 				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
 
@@ -264,7 +269,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
 				let generalSchema:ObjectSchema.Class = {
-					"@vocab": "http://example.com/my-namespace#",
+					"@vocab": "http://example.com/my-vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"propertyInGeneral": {
@@ -273,8 +278,8 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					},
 				};
 
-				let schema:ObjectSchema.Class = {
-					"@vocab": "http://example.com/my-namespace#",
+				let schemas:ObjectSchema.Class[] = [ {
+					"@vocab": "http://example.com/my-vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"another": "http://example.com/another-namespace#",
@@ -334,7 +339,13 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 						"@id": "ex:relative-pointer",
 						"@type": "@id",
 					},
-				};
+				}, {
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"elementWithoutID": {
+						"@type": "xsd:string",
+						"@container": "@set",
+					},
+				} ];
 
 				let compactedObject:any = {
 					"id": "http://example.com/compactedObject/",
@@ -381,14 +392,19 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					"notInSchemaPointer": Pointer.Factory.create( "http://example.com/another-pointer/" ),
 					"vocabPointer": "to-pointer",
 					"relativePointer": Pointer.Factory.create( "relative-pointer/" ),
+					"elementWithoutID": "This element will be converted into a set",
 				};
 
 				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
-				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schemas );
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
+				digestedSchema.vocab = null;
+				expect( () => jsonldConverter.expand( compactedObject, digestedGeneralSchema, digestedSchema ) ).toThrowError( Errors.InvalidJSONLDSyntaxError );
+
+				digestedSchema.vocab = "http://example.com/my-vocabulary#";
 				let expandedObject:any = jsonldConverter.expand( compactedObject, digestedGeneralSchema, digestedSchema );
 
 				expect( expandedObject ).toBeDefined();
@@ -403,7 +419,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#MyType" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Another-Type" );
 				expect( expandedObject[ "@type" ] ).toContain( "another:Another-Namespace-Type" );
-				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/my-namespace#Another-Another-Type" );
+				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/my-vocabulary#Another-Another-Type" );
 
 				let property:RDF.Literal.Class[] | RDF.Node.Class[] | [ RDF.List.Class ];
 				let literal:RDF.Literal.Class;
@@ -523,26 +539,35 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					"@id": "http://example.com/ns#property-in-general",
 				} ] );
 
-				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaLiteral" ] ).toBeDefined();
-				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaLiteral" ] ).toEqual( [ {
+				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaLiteral" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaLiteral" ] ).toEqual( [ {
 					"@value": "Property Literal not defined in Schema",
 					"@type": NS.XSD.DataType.string,
 				} ] );
 
-				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaPointer" ] ).toBeDefined();
-				expect( expandedObject[ "http://example.com/my-namespace#notInSchemaPointer" ] ).toEqual( [ {
+				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaPointer" ] ).toBeDefined();
+				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaPointer" ] ).toEqual( [ {
 					"@id": "http://example.com/another-pointer/",
 				} ] );
 
 				expect( expandedObject[ "http://example.com/ns#vocab-pointer" ] ).toBeDefined();
 				expect( expandedObject[ "http://example.com/ns#vocab-pointer" ] ).toEqual( [ {
-					"@id": "http://example.com/my-namespace#to-pointer",
+					"@id": "http://example.com/my-vocabulary#to-pointer",
 				} ] );
 
 				expect( expandedObject[ "http://example.com/ns#relative-pointer" ] ).toBeDefined();
 				expect( expandedObject[ "http://example.com/ns#relative-pointer" ] ).toEqual( [ {
 					"@id": "relative-pointer/",
 				} ] );
+
+				expect( expandedObject[ "http://example.com/my-vocabulary#elementWithoutID" ] ).toBeDefined();
+				property = expandedObject[ "http://example.com/my-vocabulary#elementWithoutID" ];
+				expect( property ).toEqual( jasmine.any( Array ) );
+				expect( property.length ).toBe( 1 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "This element will be converted into a set" );
 
 			} );
 

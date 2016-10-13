@@ -341,6 +341,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 						"@id": "dct:created",
 						"@type": "xsd:datetime",
 					},
+					"elementWithoutID": {
+						"@type": "xsd:string",
+						"@container": "@set",
+					},
 				};
 
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
@@ -350,7 +354,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.prefixes.get( "skos" ) instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.prefixes.get( "skos" ).toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
 
-				expect( digestedSchema.properties.size ).toEqual( 3 );
+				expect( digestedSchema.properties.size ).toEqual( 4 );
 				expect( digestedSchema.properties.has( "hasTopConcept" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).literal ).toEqual( false );
@@ -369,6 +373,15 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 				expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
+
+				expect( digestedSchema.properties.has( "elementWithoutID" ) ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literal ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType instanceof RDF.URI.Class ).toEqual( true );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).uri ).toBeNull();
+				expect( digestedSchema.properties.get( "elementWithoutID" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).language ).toBeUndefined();
 			} );
 
 			it( hasSignature(

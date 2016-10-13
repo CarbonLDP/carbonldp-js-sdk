@@ -30,22 +30,8 @@ export declare class Class {
     private expandValue(propertyValue, generalSchema, digestedSchema);
     private expandLiteral(literalValue);
     private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
-    private assignProperty(compactedObject, expandedObject, propertyName, digestedSchema, pointerLibrary);
-    private assignURIProperty(compactedObject, expandedObject, propertyURI, propertyName, pointerLibrary);
     private getPropertyContainerType(propertyValues);
-    private getPropertyValue(expandedObject, propertyDefinition, pointerLibrary);
-    private getProperty(expandedObject, propertyURI, pointerLibrary);
-    private getPropertyPointer(expandedObject, propertyURI, pointerLibrary);
-    private getPropertyLiteral(expandedObject, propertyURI, literalType);
-    private getPropertyList(expandedObject, propertyURI, pointerLibrary);
-    private getPropertyPointerList(expandedObject, propertyURI, pointerLibrary);
-    private getPropertyLiteralList(expandedObject, propertyURI, literalType);
-    private getProperties(expandedObject, propertyURI, pointerLibrary);
-    private getPropertyPointers(expandedObject, propertyURI, pointerLibrary);
-    private getPropertyLiterals(expandedObject, propertyURI, literalType);
-    private getPropertyLanguageMap(expandedObject, propertyURI);
-    private getList(propertyValues);
+    private getPropertyValue(expandedObject, propertyURI, propertyDefinition, pointerLibrary);
     private getPropertyURINameMap(digestedSchema);
-    private parseValue(propertyValue, pointerLibrary);
 }
 export default Class;

@@ -12,7 +12,13 @@ import {
 	hasProperty,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
+import AbstractContext from "./../AbstractContext";
+import * as PersistedDocument from "./../PersistedDocument";
+import * as Pointer from "./../Pointer";
+import * as RDFDocument from "./Document";
+import * as RDFList from "./List";
 import * as Utils from "./../Utils";
+import * as XSD from "./../NS/XSD";
 
 import * as RDFNode from "./RDFNode";
 import DefaultExport from "./RDFNode";
@@ -47,8 +53,8 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.RDFNode.Factory",
-		"Factory class for `Carbon.RDF.RDFNode.Class` objects."
+		"Carbon.RDF.Node.Factory",
+		"Factory class for `Carbon.RDF.Node.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -59,8 +65,8 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.RDF.RDFNode.Class` object.", [
-				{ name: "object", type: "Object" },
+			"Returns true if the object provided is considered a `Carbon.RDF.Node.Class` object.", [
+				{name: "object", type: "Object"},
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -88,9 +94,9 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			expect( RDFNode.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Factory.create ) ).toBe( true );
 
-			expect( RDFNode.Factory.create( "http://example.com/resource/" ) ).toEqual( { "@id": "http://example.com/resource/" } );
+			expect( RDFNode.Factory.create( "http://example.com/resource/" ) ).toEqual( {"@id": "http://example.com/resource/"} );
 			// Does not verify if it is an URI
-			expect( RDFNode.Factory.create( "some thing that is not an URI, but works" ) ).toEqual( { "@id": "some thing that is not an URI, but works" } );
+			expect( RDFNode.Factory.create( "some thing that is not an URI, but works" ) ).toEqual( {"@id": "some thing that is not an URI, but works"} );
 		} );
 
 	} );
@@ -99,6 +105,102 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		"Carbon.RDF.RDFNode.Util",
 		"Class with useful functions to manage `Carbon.RDF.RDFNode.Class` objects."
 	), ():void => {
+		let expandedObject:any;
+		let documentResource:any;
+		let pointerLibrary:Pointer.Library;
+		let result:any;
+		let context:AbstractContext;
+
+		beforeEach( ():void => {
+			expandedObject = [ {
+				"@id": "http://example.com/resource/",
+				"@graph": [
+					{
+						"@id": "http://example.com/resource/",
+						"http://example.com/ns#string": [ {
+							"@value": "a string",
+						} ],
+						"http://example.com/ns#integer": [ {
+							"@value": "100",
+							"@type": "http://www.w3.org/2001/XMLSchema#integer",
+						} ],
+						"http://example.com/ns#date": [ {
+							"@value": "2001-02-15T05:35:12.029Z",
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+						} ],
+						"http://example.com/ns#pointer": [ {
+							"@id": "http://example.com/pointer/1",
+							"@type": "@id",
+						} ],
+						"http://example.com/ns#list": [ {
+							"@list": [ {
+								"@value": "100",
+								"@type": "http://www.w3.org/2001/XMLSchema#integer",
+							}, {
+								"@value": "2001-02-15T05:35:12.029Z",
+								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+							}, {
+								"@id": "http://example.com/pointer/1",
+								"@type": "@id",
+							} ],
+						} ],
+						"http://example.com/ns#set": [ {
+							"@value": "100",
+							"@type": "http://www.w3.org/2001/XMLSchema#integer",
+						}, {
+							"@value": "2001-02-15T05:35:12.029Z",
+							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+						}, {
+							"@id": "http://example.com/pointer/1",
+							"@type": "@id",
+						} ],
+						"http://example.com/ns#internationalString": [ {
+							"@value": "a string",
+							"@language": "en",
+							"@type": "http://www.w3.org/2001/XMLSchema#string",
+						}, {
+							"@value": "una cadena",
+							"@language": "es",
+						}, {
+							"@value": "文字列",
+							"@language": "ja",
+						} ],
+						"http://example.com/ns#pointerSet": [
+							{"@id": "_:1"},
+							{"@id": "http://example.com/resource/#1"},
+							{"@id": "http://example.com/external-resource/"},
+						],
+						"http://example.com/ns#empty-property": [ {} ],
+					},
+					{
+						"@id": "_:1",
+						"http://example.com/ns#string": [ {
+							"@value": "Fragment 1",
+						} ],
+						"http://example.com/ns#pointerSet": [
+							{"@id": "http://example.com/resource/"},
+							{"@id": "http://example.com/resource/#1"},
+						],
+					},
+					{
+						"@id": "http://example.com/resource/#1",
+						"http://example.com/ns#string": [ {
+							"@value": "NamedFragment 1",
+						} ],
+					},
+				],
+			} ];
+
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+			context = new MockedContext();
+
+			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
+			pointerLibrary = PersistedDocument.Factory.create( expandedObject[ "@id" ], context.documents );
+		} );
 
 		it( isDefined(), ():void => {
 			expect( RDFNode.Util ).toBeDefined();
@@ -303,6 +405,470 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 				},
 			];
 			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [ { "@id": "http://example.com/free-node-1/" }, { "@id": "http://example.com/free-node-2/" } ] );
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getProperty",
+			"Returns the property searched, parsed in accordance to the RDF object it is.\n" +
+			"Returns null if the property is not found or cannot be parsed.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getProperty ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getProperty ) ).toBe( true );
+
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#string", pointerLibrary );
+			expect( Utils.isString( result ) ).toBe( true );
+			expect( result ).toBe( "a string" );
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#integer", pointerLibrary );
+			expect( Utils.isNumber( result ) ).toBe( true );
+			expect( result ).toBe( 100 );
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#date", pointerLibrary );
+			expect( Utils.isDate( result ) ).toBe( true );
+			expect( result ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#pointer", pointerLibrary );
+			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( result.id ).toBe( "http://example.com/pointer/1" );
+			expect( result.isResolved() ).toBe( false );
+
+
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#list", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 3 );
+			expect( result[ 0 ] ).toBe( 100 );
+			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#set", pointerLibrary );
+			expect( Utils.isNumber( result ) ).toBe( true );
+			expect( result ).toBe( 100 );
+
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#no-property", pointerLibrary );
+			expect( result ).toBeNull();
+
+			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyPointer",
+			"Returns the property searched as a Pointer.\n" +
+			"Returns null if the property is not found or cannot be parsed as a Pointer.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyPointer ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyPointer ) ).toBe( true );
+
+			let pointer:Pointer.Class;
+
+			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#pointer", pointerLibrary );
+			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( result.id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#pointerSet", pointerLibrary );
+			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( result.id ).toBe( "_:1" );
+
+			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#string", pointerLibrary );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#no-property", pointerLibrary );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyLiteral",
+			"Returns the property searched as a javascript variable. The property must be an RDF Literal.\n" +
+			"Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "literalType", type: "string"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyLiteral ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyLiteral ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#string", XSD.DataType.string );
+			expect( Utils.isString( result ) ).toBe( true );
+			expect( result ).toBe( "a string" );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#integer", XSD.DataType.integer );
+			expect( Utils.isNumber( result ) ).toBe( true );
+			expect( result ).toBe( 100 );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#date", XSD.DataType.dateTime );
+			expect( Utils.isDate( result ) ).toBe( true );
+			expect( result ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#no-property", XSD.DataType.string );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#date", XSD.DataType.float );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#pointer", XSD.DataType.string );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyList",
+			"Returns the property searched as an Array with every element parsed to its respective type of element.\n" +
+			"Returns null if the property is not found or cannot be parsed.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyList ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyList ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyList( documentResource, "http://example.com/ns#list", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 3 );
+			expect( result[ 0 ] ).toBe( 100 );
+			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getPropertyList( documentResource, "http://example.com/ns#no-property", pointerLibrary );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyList( documentResource, "http://example.com/ns#string", pointerLibrary );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyPointerList",
+			"Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.\n" +
+			"Returns null if the property is not found or is not a List.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyPointerList ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyPointerList ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyPointerList( documentResource, "http://example.com/ns#list", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getPropertyPointerList( documentResource, "http://example.com/ns#no-property", pointerLibrary );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyPointerList( documentResource, "http://example.com/ns#string", pointerLibrary );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyPointerList( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyLiteralList",
+			"Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.\n" +
+			"Returns null if the property is not found or is not a List.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyLiteralList ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyLiteralList ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#list", XSD.DataType.integer );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( result[ 0 ] ).toBe( 100 );
+
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#no-property", XSD.DataType.integer );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#string", XSD.DataType.integer );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getProperties",
+			"Returns the property searched as an Array with the parsed Literal, Pointer or List.\n" +
+			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getProperties ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getProperties ) ).toBe( true );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#string", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isString( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toBe( "a string" );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#integer", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isNumber( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toBe( 100 );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#date", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isDate( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#pointer", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#list", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isArray( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ].length ).toBe( 3 );
+			expect( result[ 0 ][ 0 ] ).toBe( 100 );
+			expect( result[ 0 ][ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+			expect( Pointer.Factory.is( result[ 0 ][ 2 ] ) ).toBe( true );
+			expect( result[ 0 ][ 2 ].id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#pointerSet", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 3 );
+			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ].id ).toBe( "_:1" );
+			expect( Pointer.Factory.is( result[ 1 ] ) ).toBe( true );
+			expect( result[ 1 ].id ).toBe( "http://example.com/resource/#1" );
+			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( result[ 2 ].id ).toBe( "http://example.com/external-resource/" );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getProperties( documentResource, "http://example.com/ns#no-property", pointerLibrary );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyPointers",
+			"Returns the property searched as an Array with the parsed Pointer.\n" +
+			"Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyPointers ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyPointers ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyPointers( documentResource, "http://example.com/ns#pointer", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getPropertyPointers( documentResource, "http://example.com/ns#pointerSet", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 3 );
+			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ].id ).toBe( "_:1" );
+			expect( Pointer.Factory.is( result[ 1 ] ) ).toBe( true );
+			expect( result[ 1 ].id ).toBe( "http://example.com/resource/#1" );
+			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( result[ 2 ].id ).toBe( "http://example.com/external-resource/" );
+
+			result = RDFNode.Util.getPropertyPointers( documentResource, "http://example.com/ns#string", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+			result = RDFNode.Util.getPropertyPointers( documentResource, "http://example.com/ns#empty-property", pointerLibrary );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyPointers( documentResource, "http://example.com/ns#no-property", pointerLibrary );
+			expect( result ).toEqual( [] );
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyURIs",
+			"Returns the URIs of the property searched.\n" +
+			"Returns null if the property is not found or an empty array if no URI was found.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyURIs ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyURIs ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#pointer" );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( result[ 0 ] ).toBe( "http://example.com/pointer/1" );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#pointerSet" );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 3 );
+			expect( result[ 0 ] ).toBe( "_:1" );
+			expect( result[ 1 ] ).toBe( "http://example.com/resource/#1" );
+			expect( result[ 2 ] ).toBe( "http://example.com/external-resource/" );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#string" );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#integer" );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#list" );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#empty-property" );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyURIs( documentResource, "http://example.com/ns#no-property" );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyLiterals",
+			"Returns the property searched as an Array with the parsed Literal.\n" +
+			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "literalType", type: "string"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyLiterals ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyLiterals ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#string", XSD.DataType.string );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isString( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toBe( "a string" );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#integer", XSD.DataType.integer );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isNumber( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toBe( 100 );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#date", XSD.DataType.dateTime );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isDate( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#set", XSD.DataType.integer );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 1 );
+			expect( Utils.isNumber( result[ 0 ] ) ).toBe( true );
+			expect( result[ 0 ] ).toEqual( 100 );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#date", XSD.DataType.float );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#pointer", XSD.DataType.string );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#list", XSD.DataType.integer );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
+			expect( Utils.isArray( result ) ).toBe( true );
+			expect( result.length ).toBe( 0 );
+
+			result = RDFNode.Util.getPropertyLiterals( documentResource, "http://example.com/ns#no-property", XSD.DataType.string );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getPropertyLanguageMap",
+			"Returns an object associating the language with the parsed string literal.\n" +
+			"Returns null if the property is not found, or an empty object if it is not a property with language.", [
+				{name: "expandedObject", type: "any"},
+				{name: "propertyURI", type: "string"},
+				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+			],
+			{type: "any"}
+		), ():void => {
+			expect( RDFNode.Util.getPropertyLanguageMap ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getPropertyLanguageMap ) ).toBe( true );
+
+			result = RDFNode.Util.getPropertyLanguageMap( documentResource, "http://example.com/ns#internationalString" );
+			expect( Utils.isObject( result ) ).toBe( true );
+			expect( Utils.hasProperty( result, "en" ) ).toBe( true );
+			expect( result[ "en" ] ).toBe( "a string" );
+			expect( Utils.hasProperty( result, "es" ) ).toBe( true );
+			expect( result[ "es" ] ).toBe( "una cadena" );
+			expect( Utils.hasProperty( result, "ja" ) ).toBe( true );
+			expect( result[ "ja" ] ).toBe( "文字列" );
+
+			result = RDFNode.Util.getPropertyLanguageMap( documentResource, "http://example.com/ns#string" );
+			expect( Utils.isObject( result ) ).toBe( true );
+			expect( result ).toEqual( {} );
+
+			result = RDFNode.Util.getPropertyLanguageMap( documentResource, "http://example.com/ns#empty-property" );
+			expect( Utils.isObject( result ) ).toBe( true );
+			expect( result ).toEqual( {} );
+
+			result = RDFNode.Util.getPropertyLanguageMap( documentResource, "http://example.com/ns#no-property" );
+			expect( result ).toBeNull();
+		} );
+
+		it( hasMethod(
+			STATIC,
+			"getList",
+			"Returns the List object from the provided property of an expanded JSON-LD object.\n" +
+			"Returns null if no List object is found.", [
+				{name: "propertyValues", type: "Array<any>"},
+			],
+			{type: "Carbon.RDF.List.Class"}
+		), ():void => {
+			expect( RDFNode.Util.getList ).toBeDefined();
+			expect( Utils.isFunction( RDFNode.Util.getList ) ).toBe( true );
+
+			result = RDFNode.Util.getList( documentResource[ "http://example.com/ns#list" ] );
+			expect( RDFList.Factory.is( result ) ).toBe( true );
+
+			result = RDFNode.Util.getList( documentResource[ "http://example.com/ns#set" ] );
+			expect( result ).toBeNull();
+			result = RDFNode.Util.getList( documentResource[ "http://example.com/ns#string" ] );
+			expect( result ).toBeNull();
 		} );
 
 	} );

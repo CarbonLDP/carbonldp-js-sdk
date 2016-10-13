@@ -30,8 +30,10 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & Class {
-		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer" );
-		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The membershipResource cannot be null" );
+		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer." );
+		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The property membershipResource cannot be null." );
+		if( ! hasMemberRelation ) throw new Errors.IllegalArgumentError( "The property hasMemberRelation cannot be empty." );
+		if( ! isMemberOfRelation && Utils.isDefined( isMemberOfRelation ) ) throw new Errors.IllegalArgumentError( "The property isMemberOfRelation cannot be empty." );
 
 		let container:T & Class = <any> object;
 		if( ! Document.Factory.is( object ) ) container = <any> Document.Factory.createFrom( object );

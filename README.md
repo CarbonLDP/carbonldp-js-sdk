@@ -1,6 +1,8 @@
 # [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
-[![Build Status](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg)](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk) [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK](https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg)](https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm version](https://badge.fury.io/js/carbonldp.svg)](https://badge.fury.io/js/carbonldp) [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK](https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg)](https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Build Status](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg)](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk)
 
 JavaScript SDK that simplifies the use of CarbonLDP's REST API.
 
@@ -40,6 +42,7 @@ JavaScript SDK that simplifies the use of CarbonLDP's REST API.
     - **index.d.ts**: Definition file managed by [typings](https://github.com/typings/typings)
     - **typings.d.ts**: Main definitions file
 - **.gitignore**: Git configuration file to mark which files to ignore
+- **.travis.yml**: Travis configuration file
 - **CHANGELOG.md**: File to track changes. Any new addition needs to be added here
 - **gulpfile.js**: Gulp configuration file
 - **karma.conf.js**: Karma test runner configuration file

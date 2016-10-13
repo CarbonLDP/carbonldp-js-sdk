@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -23,6 +23,7 @@
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.3.0",
     "gulp-json-editor": "^2.2.1",
+    "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^5.0.0",
     "gulp-typescript": "^2.13.4",
