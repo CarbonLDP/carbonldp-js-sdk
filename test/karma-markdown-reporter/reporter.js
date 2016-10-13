@@ -13,7 +13,17 @@ swag.registerHelpers( Handlebars );
 	} );
 	Handlebars.registerHelper( "trim", str => {
 		str = str || "";
-		return str.replace( /\t/g, '' );
+		return str.replace( /\t/g, "" );
+	} );
+	Handlebars.registerHelper( "urlify", str => {
+		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
+
+		var uris = str.match( /Carbon[.A-z]*/gm ).map( uri => uri.replace( /\./g, "-" ) );
+
+		var index = 0;
+		return str.replace( /Carbon[.A-z]*/gm, ( matched ) => {
+			return "[" + matched + "]" + "(#" + uris[ index ++ ] + ")";
+		} );
 	} );
 })();
 

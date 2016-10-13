@@ -31,7 +31,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 	describe( clazz(
 		"Carbon.Auth.BasicAuthenticator.Class",
 		"Authenticates requests using HTTP Basic Authentication.", [
-			"Carbon.Auth.Authenticator<Carbon.Auth.UsernameAndPasswordToken>",
+			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
 		]
 	), ():void => {
 

@@ -7,13 +7,13 @@
 		- [Properties](#Carbon-Properties)
 		- [Methods](#Carbon-Methods)
 - [Module Carbon.App.PersistedAgent](#Module-Carbon-App-PersistedAgent)
-	- [Interface Carbon.App.PersistedAgent.Class](Carbon-App-PersistedAgent-Class)
+	- [Interface Carbon.App.PersistedAgent.Class](#Carbon-App-PersistedAgent-Class)
 - [Module Carbon.Platform.PersistedAgent](#Module-Carbon-Platform-PersistedAgent)
-	- [Interface Carbon.Platform.PersistedAgent.Class](Carbon-Platform-PersistedAgent-Class)
+	- [Interface Carbon.Platform.PersistedAgent.Class](#Carbon-Platform-PersistedAgent-Class)
 		- [Properties](#Carbon-Platform-PersistedAgent-Class-Properties)
 - [Module Carbon/APIDescription](#Module-Carbon-APIDescription)
 	- [Properties](#Carbon-APIDescription-Properties)
-	- [Interface Carbon.APIDescription.Class](Carbon-APIDescription-Class)
+	- [Interface Carbon.APIDescription.Class](#Carbon-APIDescription-Class)
 		- [Properties](#Carbon-APIDescription-Class-Properties)
 - [Module Carbon/AbstractContext](#Module-Carbon-AbstractContext)
 	- [Class Carbon.AbstractContext.Class](#Carbon-AbstractContext-Class)
@@ -22,16 +22,16 @@
 		- [Methods](#Carbon-AbstractContext-Class-Methods)
 - [Module Carbon/AccessPoint](#Module-Carbon-AccessPoint)
 	- [Properties](#Carbon-AccessPoint-Properties)
-	- [Interface Carbon.AccessPoint.Class](Carbon-AccessPoint-Class)
+	- [Interface Carbon.AccessPoint.Class](#Carbon-AccessPoint-Class)
 		- [Properties](#Carbon-AccessPoint-Class-Properties)
-	- [Interface Carbon.AccessPoint.DocumentClass](Carbon-AccessPoint-DocumentClass)
+	- [Interface Carbon.AccessPoint.DocumentClass](#Carbon-AccessPoint-DocumentClass)
 		- [Properties](#Carbon-AccessPoint-DocumentClass-Properties)
 	- [Class Carbon.AccessPoint.Factory](#Carbon-AccessPoint-Factory)
 		- [Methods](#Carbon-AccessPoint-Factory-Methods)
 - [Module Carbon/App](#Module-Carbon-App)
 	- [Reexports](#Carbon-App-Reexports)
 	- [Properties](#Carbon-App-Properties)
-	- [Interface Carbon.App.Class](Carbon-App-Class)
+	- [Interface Carbon.App.Class](#Carbon-App-Class)
 		- [Properties](#Carbon-App-Class-Properties)
 	- [Class Carbon.App.Factory](#Carbon-App-Factory)
 		- [Methods](#Carbon-App-Factory-Methods)
@@ -49,7 +49,7 @@
 		- [Properties](#Carbon-App-Context-Properties)
 		- [Methods](#Carbon-App-Context-Methods)
 - [Module Carbon/App/PersistedRole](#Module-Carbon-App-PersistedRole)
-	- [Interface Carbon.App.PersistedRole.Class](Carbon-App-PersistedRole-Class)
+	- [Interface Carbon.App.PersistedRole.Class](#Carbon-App-PersistedRole-Class)
 		- [Properties](#Carbon-App-PersistedRole-Class-Properties)
 	- [Class Carbon.App.PersistedRole.Factory](#Carbon-App-PersistedRole-Factory)
 		- [Methods](#Carbon-App-PersistedRole-Factory-Methods)
@@ -63,7 +63,7 @@
 		- [Methods](#Carbon-Apps-Class-Methods)
 - [Module Carbon/Apps/Role](#Module-Carbon-Apps-Role)
 	- [Properties](#Carbon-Apps-Role-Properties)
-	- [Interface Carbon.App.Role.Class](Carbon-App-Role-Class)
+	- [Interface Carbon.App.Role.Class](#Carbon-App-Role-Class)
 	- [Class Carbon.App.Role.Factory](#Carbon-App-Role-Factory)
 		- [Methods](#Carbon-App-Role-Factory-Methods)
 - [Module Carbon/Auth](#Module-Carbon-Auth)
@@ -74,11 +74,11 @@
 		- [Properties](#Carbon-Auth-Class-Properties)
 		- [Methods](#Carbon-Auth-Class-Methods)
 - [Module Carbon/Auth/ACE](#Module-Carbon-Auth-ACE)
-	- [Interface Carbon.Auth.PersistedACE.Class](Carbon-Auth-PersistedACE-Class)
+	- [Interface Carbon.Auth.PersistedACE.Class](#Carbon-Auth-PersistedACE-Class)
 		- [Properties](#Carbon-Auth-PersistedACE-Class-Properties)
 - [Module Carbon/Auth/ACL](#Module-Carbon-Auth-ACL)
 	- [Properties](#Carbon-Auth-ACL-Properties)
-	- [Interface Carbon.Auth.ACL.Class](Carbon-Auth-ACL-Class)
+	- [Interface Carbon.Auth.ACL.Class](#Carbon-Auth-ACL-Class)
 		- [Properties](#Carbon-Auth-ACL-Class-Properties)
 		- [Methods](#Carbon-Auth-ACL-Class-Methods)
 	- [Class Carbon.Auth.ACL.Factory](#Carbon-Auth-ACL-Factory)
@@ -87,7 +87,7 @@
 			- [Methods](#Carbon-Auth-ACL-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/Agent](#Module-Carbon-Auth-Agent)
 	- [Properties](#Carbon-Auth-Agent-Properties)
-	- [Interface Carbon.Auth.Agent.Class](Carbon-Auth-Agent-Class)
+	- [Interface Carbon.Auth.Agent.Class](#Carbon-Auth-Agent-Class)
 		- [Properties](#Carbon-Auth-Agent-Class-Properties)
 	- [Class Carbon.Auth.Agent.Factory](#Carbon-Auth-Agent-Factory)
 		- [Methods](#Carbon-Auth-Agent-Factory-Methods)
@@ -96,24 +96,24 @@
 		- [Constructor](#Carbon-Auth-Agents-Class-Constructor)
 		- [Methods](#Carbon-Auth-Agents-Class-Methods)
 - [Module Carbon/Auth/AuthenticationToken](#Module-Carbon-Auth-AuthenticationToken)
-	- [Interface Carbon.Auth.AuthenticationToken.Class](Carbon-Auth-AuthenticationToken-Class)
+	- [Interface Carbon.Auth.AuthenticationToken.Class](#Carbon-Auth-AuthenticationToken-Class)
 - [Module Carbon/Auth/Authenticator](#Module-Carbon-Auth-Authenticator)
-	- [Interface Carbon.Auth.Authenticator.Class](Carbon-Auth-Authenticator-Class)
+	- [Interface Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)
 		- [Methods](#Carbon-Auth-Authenticator-Class-Methods)
 - [Module Carbon/Auth/BasicAuthenticator](#Module-Carbon-Auth-BasicAuthenticator)
 	- [Class Carbon.Auth.BasicAuthenticator.Class](#Carbon-Auth-BasicAuthenticator-Class)
 		- [Constructor](#Carbon-Auth-BasicAuthenticator-Class-Constructor)
 		- [Methods](#Carbon-Auth-BasicAuthenticator-Class-Methods)
 - [Module Carbon/Auth/Credentials](#Module-Carbon-Auth-Credentials)
-	- [Interface Carbon.Auth.Credentials.Class](Carbon-Auth-Credentials-Class)
+	- [Interface Carbon.Auth.Credentials.Class](#Carbon-Auth-Credentials-Class)
 - [Module Carbon/Auth/PersistedACL](#Module-Carbon-Auth-PersistedACL)
-	- [Interface Carbon.Auth.PersistedACL.Class](Carbon-Auth-PersistedACL-Class)
+	- [Interface Carbon.Auth.PersistedACL.Class](#Carbon-Auth-PersistedACL-Class)
 		- [Properties](#Carbon-Auth-PersistedACL-Class-Properties)
 		- [Methods](#Carbon-Auth-PersistedACL-Class-Methods)
 	- [Class Carbon.Auth.PersistedACL.Factory](#Carbon-Auth-PersistedACL-Factory)
 		- [Methods](#Carbon-Auth-PersistedACL-Factory-Methods)
 - [Module Carbon/Auth/PersistedAgent](#Module-Carbon-Auth-PersistedAgent)
-	- [Interface Carbon.Auth.PersistedAgent.Class](Carbon-Auth-PersistedAgent-Class)
+	- [Interface Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
 		- [Properties](#Carbon-Auth-PersistedAgent-Class-Properties)
 		- [Methods](#Carbon-Auth-PersistedAgent-Class-Methods)
 	- [Class Carbon.Auth.PersistedAgent.Factory](#Carbon-Auth-PersistedAgent-Factory)
@@ -121,7 +121,7 @@
 		- [Decorated Object](#Carbon-Auth-PersistedAgent-Factory-Decorated-Object)
 			- [Methods](#Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/PersistedRole](#Module-Carbon-Auth-PersistedRole)
-	- [Interface Carbon.App.PersistedRole.Class](Carbon-App-PersistedRole-Class)
+	- [Interface Carbon.App.PersistedRole.Class](#Carbon-App-PersistedRole-Class)
 		- [Properties](#Carbon-App-PersistedRole-Class-Properties)
 		- [Methods](#Carbon-App-PersistedRole-Class-Methods)
 	- [Class Carbon.Auth.PersistedRole.Factory](#Carbon-Auth-PersistedRole-Factory)
@@ -130,7 +130,7 @@
 			- [Methods](#Carbon-Auth-PersistedRole-Factory-Decorated-Object-Methods)
 - [Module Carbon/Auth/Role](#Module-Carbon-Auth-Role)
 	- [Properties](#Carbon-Auth-Role-Properties)
-	- [Interface Carbon.Auth.Role.Class](Carbon-Auth-Role-Class)
+	- [Interface Carbon.Auth.Role.Class](#Carbon-Auth-Role-Class)
 		- [Properties](#Carbon-Auth-Role-Class-Properties)
 	- [Class Carbon.Auth.Role.Factory](#Carbon-Auth-Role-Factory)
 		- [Methods](#Carbon-Auth-Role-Factory-Methods)
@@ -140,13 +140,13 @@
 		- [Methods](#Carbon-Auth-Roles-Class-Methods)
 - [Module Carbon/Auth/Ticket](#Module-Carbon-Auth-Ticket)
 	- [Properties](#Carbon-Auth-Ticket-Properties)
-	- [Interface Carbon.Auth.Ticket.Class](Carbon-Auth-Ticket-Class)
+	- [Interface Carbon.Auth.Ticket.Class](#Carbon-Auth-Ticket-Class)
 		- [Properties](#Carbon-Auth-Ticket-Class-Properties)
 	- [Class Carbon.Auth.Ticket.Factory](#Carbon-Auth-Ticket-Factory)
 		- [Methods](#Carbon-Auth-Ticket-Factory-Methods)
 - [Module Carbon/Auth/Token](#Module-Carbon-Auth-Token)
 	- [Properties](#Carbon-Auth-Token-Properties)
-	- [Interface Carbon.Auth.Token.Class](Carbon-Auth-Token-Class)
+	- [Interface Carbon.Auth.Token.Class](#Carbon-Auth-Token-Class)
 		- [Properties](#Carbon-Auth-Token-Class-Properties)
 	- [Class Carbon.Auth.Token.Factory](#Carbon-Auth-Token-Factory)
 		- [Properties](#Carbon-Auth-Token-Factory-Properties)
@@ -165,17 +165,17 @@
 		- [Properties](#Carbon-Auth-UsernameAndPasswordToken-Class-Properties)
 - [Module Carbon/BlankNode](#Module-Carbon-BlankNode)
 	- [Properties](#Carbon-BlankNode-Properties)
-	- [Interface Carbon.BlankNode.Class](Carbon-BlankNode-Class)
+	- [Interface Carbon.BlankNode.Class](#Carbon-BlankNode-Class)
 		- [Properties](#Carbon-BlankNode-Class-Properties)
 	- [Class Carbon.BlankNode.Factory](#Carbon-BlankNode-Factory)
 		- [Methods](#Carbon-BlankNode-Factory-Methods)
 - [Module Carbon/Context](#Module-Carbon-Context)
-	- [Interface Carbon.Context.Class](Carbon-Context-Class)
+	- [Interface Carbon.Context.Class](#Carbon-Context-Class)
 		- [Properties](#Carbon-Context-Class-Properties)
 		- [Methods](#Carbon-Context-Class-Methods)
 - [Module Carbon/Document](#Module-Carbon-Document)
 	- [Properties](#Carbon-Document-Properties)
-	- [Interface Carbon.Document.Class](Carbon-Document-Class)
+	- [Interface Carbon.Document.Class](#Carbon-Document-Class)
 		- [Properties](#Carbon-Document-Class-Properties)
 		- [Methods](#Carbon-Document-Class-Methods)
 	- [Class Carbon.Document.Factory](#Carbon-Document-Factory)
@@ -217,12 +217,12 @@
 		- [Properties](#Carbon-Errors-NotImplementedError-Properties)
 		- [Methods](#Carbon-Errors-NotImplementedError-Methods)
 - [Module Carbon/Fragment](#Module-Carbon-Fragment)
-	- [Interface Carbon.Fragment.Class](Carbon-Fragment-Class)
+	- [Interface Carbon.Fragment.Class](#Carbon-Fragment-Class)
 		- [Properties](#Carbon-Fragment-Class-Properties)
 	- [Class Carbon.Fragment.Factory](#Carbon-Fragment-Factory)
 		- [Methods](#Carbon-Fragment-Factory-Methods)
 - [Module Carbon/FreeResources](#Module-Carbon-FreeResources)
-	- [Interface Carbon.FreeResources.Class](Carbon-FreeResources-Class)
+	- [Interface Carbon.FreeResources.Class](#Carbon-FreeResources-Class)
 		- [Properties](#Carbon-FreeResources-Class-Properties)
 		- [Methods](#Carbon-FreeResources-Class-Methods)
 	- [Class Carbon.FreeResources.Factory](#Carbon-FreeResources-Factory)
@@ -368,12 +368,12 @@
 - [Module Carbon/HTTP/Method](#Module-Carbon-HTTP-Method)
 	- [Enums](#Carbon-HTTP-Method-Enums)
 - [Module Carbon/HTTP/Parser](#Module-Carbon-HTTP-Parser)
-	- [Interface Carbon.Auth.ACE.Class](Carbon-Auth-ACE-Class)
+	- [Interface Carbon.Auth.ACE.Class](#Carbon-Auth-ACE-Class)
 		- [Methods](#Carbon-Auth-ACE-Class-Methods)
 - [Module Carbon/HTTP/Request](#Module-Carbon-HTTP-Request)
-	- [Interface Carbon.HTTP.Request.Options](Carbon-HTTP-Request-Options)
+	- [Interface Carbon.HTTP.Request.Options](#Carbon-HTTP-Request-Options)
 		- [Properties](#Carbon-HTTP-Request-Options-Properties)
-	- [Interface Carbon.HTTP.Request.ContainerRetrievalPreferences](Carbon-HTTP-Request-ContainerRetrievalPreferences)
+	- [Interface Carbon.HTTP.Request.ContainerRetrievalPreferences](#Carbon-HTTP-Request-ContainerRetrievalPreferences)
 		- [Properties](#Carbon-HTTP-Request-ContainerRetrievalPreferences-Properties)
 	- [Class Carbon.HTTP.Request.Service](#Carbon-HTTP-Request-Service)
 		- [Methods](#Carbon-HTTP-Request-Service-Methods)
@@ -405,23 +405,23 @@
 	- [Reexports](#Carbon-LDP-Reexports)
 - [Module Carbon/LDP/AddMemberAction](#Module-Carbon-LDP-AddMemberAction)
 	- [Properties](#Carbon-LDP-AddMemberAction-Properties)
-	- [Interface Carbon.LDP.AddMemberAction.Class](Carbon-LDP-AddMemberAction-Class)
+	- [Interface Carbon.LDP.AddMemberAction.Class](#Carbon-LDP-AddMemberAction-Class)
 		- [Properties](#Carbon-LDP-AddMemberAction-Class-Properties)
 	- [Class Carbon.LDP.AddMemberAction.Factory](#Carbon-LDP-AddMemberAction-Factory)
 		- [Methods](#Carbon-LDP-AddMemberAction-Factory-Methods)
 - [Module Carbon/LDP/DirectContainer](#Module-Carbon-LDP-DirectContainer)
 	- [Properties](#Carbon-LDP-DirectContainer-Properties)
-	- [Interface Carbon.LDP.DirectContainer.Class](Carbon-LDP-DirectContainer-Class)
+	- [Interface Carbon.LDP.DirectContainer.Class](#Carbon-LDP-DirectContainer-Class)
 		- [Properties](#Carbon-LDP-DirectContainer-Class-Properties)
 	- [Class Carbon.DirectContainer.Factory](#Carbon-DirectContainer-Factory)
 		- [Methods](#Carbon-DirectContainer-Factory-Methods)
 - [Module Carbon/LDP/Error](#Module-Carbon-LDP-Error)
 	- [Properties](#Carbon-LDP-Error-Properties)
-	- [Interface Carbon.LDP.Error.Class](Carbon-LDP-Error-Class)
+	- [Interface Carbon.LDP.Error.Class](#Carbon-LDP-Error-Class)
 		- [Properties](#Carbon-LDP-Error-Class-Properties)
 - [Module Carbon/LDP/ErrorResponse](#Module-Carbon-LDP-ErrorResponse)
 	- [Properties](#Carbon-LDP-ErrorResponse-Properties)
-	- [Interface Carbon.LDP.ErrorResponse.Class](Carbon-LDP-ErrorResponse-Class)
+	- [Interface Carbon.LDP.ErrorResponse.Class](#Carbon-LDP-ErrorResponse-Class)
 		- [Properties](#Carbon-LDP-ErrorResponse-Class-Properties)
 	- [Class Carbon.LDP.ErrorResponse.Parser](#Carbon-LDP-ErrorResponse-Parser)
 		- [Methods](#Carbon-LDP-ErrorResponse-Parser-Methods)
@@ -429,34 +429,34 @@
 		- [Methods](#Carbon-LDP-ErrorResponse-Util-Methods)
 - [Module Carbon/LDP/IndirectContainer](#Module-Carbon-LDP-IndirectContainer)
 	- [Properties](#Carbon-LDP-IndirectContainer-Properties)
-	- [Interface Carbon.LDP.IndirectContainer.Class](Carbon-LDP-IndirectContainer-Class)
+	- [Interface Carbon.LDP.IndirectContainer.Class](#Carbon-LDP-IndirectContainer-Class)
 		- [Properties](#Carbon-LDP-IndirectContainer-Class-Properties)
 	- [Class Carbon.IndirectContainer.Factory](#Carbon-IndirectContainer-Factory)
 		- [Methods](#Carbon-IndirectContainer-Factory-Methods)
 - [Module Carbon/LDP/PersistedBlankNode](#Module-Carbon-LDP-PersistedBlankNode)
-	- [Interface Carbon.PersistedBlankNode.Class](Carbon-PersistedBlankNode-Class)
+	- [Interface Carbon.PersistedBlankNode.Class](#Carbon-PersistedBlankNode-Class)
 		- [Properties](#Carbon-PersistedBlankNode-Class-Properties)
 - [Module Carbon/LDP/RemoveMemberAction](#Module-Carbon-LDP-RemoveMemberAction)
 	- [Properties](#Carbon-LDP-RemoveMemberAction-Properties)
-	- [Interface Carbon.LDP.RemoveMemberAction.Class](Carbon-LDP-RemoveMemberAction-Class)
+	- [Interface Carbon.LDP.RemoveMemberAction.Class](#Carbon-LDP-RemoveMemberAction-Class)
 		- [Properties](#Carbon-LDP-RemoveMemberAction-Class-Properties)
 	- [Class Carbon.LDP.RemoveMemberAction.Factory](#Carbon-LDP-RemoveMemberAction-Factory)
 		- [Methods](#Carbon-LDP-RemoveMemberAction-Factory-Methods)
 - [Module Carbon/LDP/ResourceMetadata](#Module-Carbon-LDP-ResourceMetadata)
 	- [Properties](#Carbon-LDP-ResourceMetadata-Properties)
-	- [Interface Carbon.LDP.ResourceMetadata.Class](Carbon-LDP-ResourceMetadata-Class)
+	- [Interface Carbon.LDP.ResourceMetadata.Class](#Carbon-LDP-ResourceMetadata-Class)
 		- [Properties](#Carbon-LDP-ResourceMetadata-Class-Properties)
 	- [Class Carbon.LDP.ResourceMetadata.Factory](#Carbon-LDP-ResourceMetadata-Factory)
 		- [Methods](#Carbon-LDP-ResourceMetadata-Factory-Methods)
 - [Module Carbon/LDP/ResponseMetadata](#Module-Carbon-LDP-ResponseMetadata)
 	- [Properties](#Carbon-LDP-ResponseMetadata-Properties)
-	- [Interface Carbon.LDP.ResponseMetadata.Class](Carbon-LDP-ResponseMetadata-Class)
+	- [Interface Carbon.LDP.ResponseMetadata.Class](#Carbon-LDP-ResponseMetadata-Class)
 		- [Properties](#Carbon-LDP-ResponseMetadata-Class-Properties)
 	- [Class Carbon.LDP.ResponseMetadata.Factory](#Carbon-LDP-ResponseMetadata-Factory)
 		- [Methods](#Carbon-LDP-ResponseMetadata-Factory-Methods)
 - [Module Carbon/LDP/VolatileResource](#Module-Carbon-LDP-VolatileResource)
 	- [Properties](#Carbon-LDP-VolatileResource-Properties)
-	- [Interface Carbon.LDP.VolatileResource.Class](Carbon-LDP-VolatileResource-Class)
+	- [Interface Carbon.LDP.VolatileResource.Class](#Carbon-LDP-VolatileResource-Class)
 	- [Class Carbon.LDP.VolatileResource.Factory](#Carbon-LDP-VolatileResource-Factory)
 		- [Methods](#Carbon-LDP-VolatileResource-Factory-Methods)
 - [Module Carbon/NS](#Module-Carbon-NS)
@@ -496,15 +496,15 @@
 	- [Class Carbon.NS.XSD.DataType](#Carbon-NS-XSD-DataType)
 		- [Properties](#Carbon-NS-XSD-DataType-Properties)
 - [Module Carbon/NamedFragment](#Module-Carbon-NamedFragment)
-	- [Interface Carbon.NamedFragment.Class](Carbon-NamedFragment-Class)
+	- [Interface Carbon.NamedFragment.Class](#Carbon-NamedFragment-Class)
 		- [Properties](#Carbon-NamedFragment-Class-Properties)
 	- [Class Carbon.NamedFragment.Factory](#Carbon-NamedFragment-Factory)
 		- [Methods](#Carbon-NamedFragment-Factory-Methods)
 - [Module Carbon/ObjectSchema](#Module-Carbon-ObjectSchema)
 	- [Enums](#Carbon-ObjectSchema-Enums)
-	- [Interface Carbon.ObjectSchema.Class](Carbon-ObjectSchema-Class)
+	- [Interface Carbon.ObjectSchema.Class](#Carbon-ObjectSchema-Class)
 		- [Properties](#Carbon-ObjectSchema-Class-Properties)
-	- [Interface Carbon.ObjectSchema.PropertyDefinition](Carbon-ObjectSchema-PropertyDefinition)
+	- [Interface Carbon.ObjectSchema.PropertyDefinition](#Carbon-ObjectSchema-PropertyDefinition)
 		- [Properties](#Carbon-ObjectSchema-PropertyDefinition-Properties)
 	- [Class Carbon.ObjectSchema.DigestedObjectSchema](#Carbon-ObjectSchema-DigestedObjectSchema)
 		- [Constructor](#Carbon-ObjectSchema-DigestedObjectSchema-Constructor)
@@ -517,15 +517,15 @@
 	- [Class Carbon.ObjectSchema.Utils](#Carbon-ObjectSchema-Utils)
 		- [Methods](#Carbon-ObjectSchema-Utils-Methods)
 - [Module Carbon/PersistedAccessPoint](#Module-Carbon-PersistedAccessPoint)
-	- [Interface Carbon.PersistedAccessPoint.Class](Carbon-PersistedAccessPoint-Class)
+	- [Interface Carbon.PersistedAccessPoint.Class](#Carbon-PersistedAccessPoint-Class)
 		- [Properties](#Carbon-PersistedAccessPoint-Class-Properties)
 - [Module Carbon/PersistedApp](#Module-Carbon-PersistedApp)
-	- [Interface Carbon.PersistedApp.Class](Carbon-PersistedApp-Class)
+	- [Interface Carbon.PersistedApp.Class](#Carbon-PersistedApp-Class)
 		- [Properties](#Carbon-PersistedApp-Class-Properties)
 	- [Class Carbon.PersistedApp.Factory](#Carbon-PersistedApp-Factory)
 		- [Methods](#Carbon-PersistedApp-Factory-Methods)
 - [Module Carbon/PersistedDocument](#Module-Carbon-PersistedDocument)
-	- [Interface Carbon.PersistedDocument.Class](Carbon-PersistedDocument-Class)
+	- [Interface Carbon.PersistedDocument.Class](#Carbon-PersistedDocument-Class)
 		- [Properties](#Carbon-PersistedDocument-Class-Properties)
 		- [Methods](#Carbon-PersistedDocument-Class-Methods)
 	- [Class Carbon.PersistedDocument.Factory](#Carbon-PersistedDocument-Factory)
@@ -533,19 +533,19 @@
 		- [Decorated Object](#Carbon-PersistedDocument-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedDocument-Factory-Decorated-Object-Methods)
 - [Module Carbon/PersistedFragment](#Module-Carbon-PersistedFragment)
-	- [Interface Carbon.PersistedFragment.Class](Carbon-PersistedFragment-Class)
+	- [Interface Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
 		- [Properties](#Carbon-PersistedFragment-Class-Properties)
 	- [Class Carbon.PersistedFragment.Factory](#Carbon-PersistedFragment-Factory)
 		- [Methods](#Carbon-PersistedFragment-Factory-Methods)
 		- [Decorated Object](#Carbon-PersistedFragment-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedFragment-Factory-Decorated-Object-Methods)
 - [Module Carbon/PersistedNamedFragment](#Module-Carbon-PersistedNamedFragment)
-	- [Interface Carbon.PersistedNamedFragment.Class](Carbon-PersistedNamedFragment-Class)
+	- [Interface Carbon.PersistedNamedFragment.Class](#Carbon-PersistedNamedFragment-Class)
 		- [Properties](#Carbon-PersistedNamedFragment-Class-Properties)
 	- [Class Carbon.PersistedNamedFragment.Factory](#Carbon-PersistedNamedFragment-Factory)
 		- [Methods](#Carbon-PersistedNamedFragment-Factory-Methods)
 - [Module Carbon/PersistedProtectedDocument](#Module-Carbon-PersistedProtectedDocument)
-	- [Interface Carbon.PersistedProtectedDocument.Class](Carbon-PersistedProtectedDocument-Class)
+	- [Interface Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
 		- [Properties](#Carbon-PersistedProtectedDocument-Class-Properties)
 		- [Methods](#Carbon-PersistedProtectedDocument-Class-Methods)
 	- [Class Carbon.PersistedProtectedDocument.Factory](#Carbon-PersistedProtectedDocument-Factory)
@@ -553,7 +553,7 @@
 		- [Decorated Object](#Carbon-PersistedProtectedDocument-Factory-Decorated-Object)
 			- [Methods](#Carbon-PersistedProtectedDocument-Factory-Decorated-Object-Methods)
 - [Module Carbon/PersistedResource](#Module-Carbon-PersistedResource)
-	- [Interface Carbon.PersistedResource.Class](Carbon-PersistedResource-Class)
+	- [Interface Carbon.PersistedResource.Class](#Carbon-PersistedResource-Class)
 		- [Properties](#Carbon-PersistedResource-Class-Properties)
 		- [Methods](#Carbon-PersistedResource-Class-Methods)
 	- [Class Carbon.PersistedResource.Factory](#Carbon-PersistedResource-Factory)
@@ -571,12 +571,12 @@
 		- [Constructor](#Carbon-Platform-Auth-Class-Constructor)
 		- [Properties](#Carbon-Platform-Auth-Class-Properties)
 - [Module Carbon/Pointer](#Module-Carbon-Pointer)
-	- [Interface Carbon.Pointer.Class](Carbon-Pointer-Class)
+	- [Interface Carbon.Pointer.Class](#Carbon-Pointer-Class)
 		- [Properties](#Carbon-Pointer-Class-Properties)
 		- [Methods](#Carbon-Pointer-Class-Methods)
-	- [Interface Carbon.Pointer.Library](Carbon-Pointer-Library)
+	- [Interface Carbon.Pointer.Library](#Carbon-Pointer-Library)
 		- [Methods](#Carbon-Pointer-Library-Methods)
-	- [Interface Carbon.Pointer.Validator](Carbon-Pointer-Validator)
+	- [Interface Carbon.Pointer.Validator](#Carbon-Pointer-Validator)
 		- [Methods](#Carbon-Pointer-Validator-Methods)
 	- [Class Carbon.Pointer.Factory](#Carbon-Pointer-Factory)
 		- [Methods](#Carbon-Pointer-Factory-Methods)
@@ -586,11 +586,11 @@
 		- [Methods](#Carbon-Pointer-Util-Methods)
 - [Module Carbon/ProtectedDocument](#Module-Carbon-ProtectedDocument)
 	- [Properties](#Carbon-ProtectedDocument-Properties)
-	- [Interface Carbon.ProtectedDocument.Class](Carbon-ProtectedDocument-Class)
+	- [Interface Carbon.ProtectedDocument.Class](#Carbon-ProtectedDocument-Class)
 - [Module Carbon/RDF](#Module-Carbon-RDF)
 	- [Reexports](#Carbon-RDF-Reexports)
 - [Module Carbon/RDF/Document](#Module-Carbon-RDF-Document)
-	- [Interface Carbon.RDF.Document.Class](Carbon-RDF-Document-Class)
+	- [Interface Carbon.RDF.Document.Class](#Carbon-RDF-Document-Class)
 		- [Properties](#Carbon-RDF-Document-Class-Properties)
 	- [Class Carbon.RDF.Document.Factory](#Carbon-RDF-Document-Factory)
 		- [Methods](#Carbon-RDF-Document-Factory-Methods)
@@ -599,18 +599,18 @@
 	- [Class Carbon.RDF.Document.Util](#Carbon-RDF-Document-Util)
 		- [Methods](#Carbon-RDF-Document-Util-Methods)
 - [Module Carbon/RDF/List](#Module-Carbon-RDF-List)
-	- [Interface Carbon.RDF.List.Class](Carbon-RDF-List-Class)
+	- [Interface Carbon.RDF.List.Class](#Carbon-RDF-List-Class)
 		- [Properties](#Carbon-RDF-List-Class-Properties)
 	- [Class Carbon.RDF.List.Factory](#Carbon-RDF-List-Factory)
 		- [Methods](#Carbon-RDF-List-Factory-Methods)
 - [Module Carbon/RDF/Literal](#Module-Carbon-RDF-Literal)
 	- [Reexports](#Carbon-RDF-Literal-Reexports)
-	- [Interface Carbon.RDF.Literal.Class](Carbon-RDF-Literal-Class)
+	- [Interface Carbon.RDF.Literal.Class](#Carbon-RDF-Literal-Class)
 		- [Properties](#Carbon-RDF-Literal-Class-Properties)
 	- [Class Carbon.RDF.Literal.Factory](#Carbon-RDF-Literal-Factory)
 		- [Methods](#Carbon-RDF-Literal-Factory-Methods)
 - [Module Carbon/RDF/Literal/Serializer](#Module-Carbon-RDF-Literal-Serializer)
-	- [Interface Carbon.RDF.Literal.Serializer.Class](Carbon-RDF-Literal-Serializer-Class)
+	- [Interface Carbon.RDF.Literal.Serializer.Class](#Carbon-RDF-Literal-Serializer-Class)
 		- [Methods](#Carbon-RDF-Literal-Serializer-Class-Methods)
 - [Module Carbon/RDF/Literal/Serializers](#Module-Carbon-RDF-Literal-Serializers)
 	- [Reexports](#Carbon-RDF-Literal-Serializers-Reexports)
@@ -633,7 +633,7 @@
 	- [Class Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer)
 		- [Methods](#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer-Methods)
 - [Module Carbon/RDF/Node](#Module-Carbon-RDF-Node)
-	- [Interface Carbon.RDF.Node.Class](Carbon-RDF-Node-Class)
+	- [Interface Carbon.RDF.Node.Class](#Carbon-RDF-Node-Class)
 		- [Properties](#Carbon-RDF-Node-Class-Properties)
 	- [Class Carbon.RDF.Node.Factory](#Carbon-RDF-Node-Factory)
 		- [Methods](#Carbon-RDF-Node-Factory-Methods)
@@ -647,18 +647,18 @@
 	- [Class Carbon.RDF.URI.Util](#Carbon-RDF-URI-Util)
 		- [Methods](#Carbon-RDF-URI-Util-Methods)
 - [Module Carbon/RDF/Value](#Module-Carbon-RDF-Value)
-	- [Interface Carbon.RDF.Value.Class](Carbon-RDF-Value-Class)
+	- [Interface Carbon.RDF.Value.Class](#Carbon-RDF-Value-Class)
 		- [Properties](#Carbon-RDF-Value-Class-Properties)
 	- [Class Carbon.RDF.Value.Util](#Carbon-RDF-Value-Util)
 		- [Methods](#Carbon-RDF-Value-Util-Methods)
 - [Module Carbon/RDFRepresentation](#Module-Carbon-RDFRepresentation)
 	- [Properties](#Carbon-RDFRepresentation-Properties)
-	- [Interface Carbon.RDFRepresentation.Class](Carbon-RDFRepresentation-Class)
+	- [Interface Carbon.RDFRepresentation.Class](#Carbon-RDFRepresentation-Class)
 		- [Properties](#Carbon-RDFRepresentation-Class-Properties)
 	- [Class Carbon.RDFRepresentation.Factory](#Carbon-RDFRepresentation-Factory)
 		- [Methods](#Carbon-RDFRepresentation-Factory-Methods)
 - [Module Carbon/Resource](#Module-Carbon-Resource)
-	- [Interface Carbon.Resource.Class](Carbon-Resource-Class)
+	- [Interface Carbon.Resource.Class](#Carbon-Resource-Class)
 		- [Properties](#Carbon-Resource-Class-Properties)
 		- [Methods](#Carbon-Resource-Class-Methods)
 	- [Class Carbon.Resource.Factory](#Carbon-Resource-Factory)
@@ -666,9 +666,9 @@
 		- [Decorated Object](#Carbon-Resource-Factory-Decorated-Object)
 			- [Methods](#Carbon-Resource-Factory-Decorated-Object-Methods)
 - [Module Carbon/RetrievalPreferences](#Module-Carbon-RetrievalPreferences)
-	- [Interface Carbon.RetrievalPreferences.Class](Carbon-RetrievalPreferences-Class)
+	- [Interface Carbon.RetrievalPreferences.Class](#Carbon-RetrievalPreferences-Class)
 		- [Properties](#Carbon-RetrievalPreferences-Class-Properties)
-	- [Interface Carbon.RetrievalPreferences.OrderByProperty](Carbon-RetrievalPreferences-OrderByProperty)
+	- [Interface Carbon.RetrievalPreferences.OrderByProperty](#Carbon-RetrievalPreferences-OrderByProperty)
 		- [Properties](#Carbon-RetrievalPreferences-OrderByProperty-Properties)
 	- [Class Carbon.RetrievalPreferences.Factory](#Carbon-RetrievalPreferences-Factory)
 		- [Methods](#Carbon-RetrievalPreferences-Factory-Methods)
@@ -683,11 +683,11 @@
 - [Module Carbon/SPARQL](#Module-Carbon-SPARQL)
 	- [Reexports](#Carbon-SPARQL-Reexports)
 - [Module Carbon/SPARQL/RawResults](#Module-Carbon-SPARQL-RawResults)
-	- [Interface Carbon.SPARQL.RawResults.Class](Carbon-SPARQL-RawResults-Class)
+	- [Interface Carbon.SPARQL.RawResults.Class](#Carbon-SPARQL-RawResults-Class)
 		- [Properties](#Carbon-SPARQL-RawResults-Class-Properties)
-	- [Interface Carbon.SPARQL.RawResults.BindingObject](Carbon-SPARQL-RawResults-BindingObject)
+	- [Interface Carbon.SPARQL.RawResults.BindingObject](#Carbon-SPARQL-RawResults-BindingObject)
 		- [Properties](#Carbon-SPARQL-RawResults-BindingObject-Properties)
-	- [Interface Carbon.SPARQL.RawResults.BindingProperty](Carbon-SPARQL-RawResults-BindingProperty)
+	- [Interface Carbon.SPARQL.RawResults.BindingProperty](#Carbon-SPARQL-RawResults-BindingProperty)
 		- [Properties](#Carbon-SPARQL-RawResults-BindingProperty-Properties)
 	- [Class Carbon.SPARQL.RawResults](#Carbon-SPARQL-RawResults)
 		- [Properties](#Carbon-SPARQL-RawResults-Properties)
@@ -697,9 +697,9 @@
 	- [Class Class to parse SPARQL Query result to a &#x60;Carbon.SPARQL.RawResult.Class&#x60; object.](#Class-to-parse-SPARQL-Query-result-to-a--Carbon-SPARQL-RawResult-Class--object-)
 		- [Methods](#Class-to-parse-SPARQL-Query-result-to-a--Carbon-SPARQL-RawResult-Class--object--Methods)
 - [Module Carbon/SPARQL/SELECTResults](#Module-Carbon-SPARQL-SELECTResults)
-	- [Interface Carbon.SPARQL.SELECTResults.Class](Carbon-SPARQL-SELECTResults-Class)
+	- [Interface Carbon.SPARQL.SELECTResults.Class](#Carbon-SPARQL-SELECTResults-Class)
 		- [Properties](#Carbon-SPARQL-SELECTResults-Class-Properties)
-	- [Interface Carbon.SPARQL.SELECTResults.BindingObject](Carbon-SPARQL-SELECTResults-BindingObject)
+	- [Interface Carbon.SPARQL.SELECTResults.BindingObject](#Carbon-SPARQL-SELECTResults-BindingObject)
 		- [Properties](#Carbon-SPARQL-SELECTResults-BindingObject-Properties)
 - [Module Carbon/SPARQL/Service](#Module-Carbon-SPARQL-Service)
 	- [Class Carbon.SPARQL.Service.Class](#Carbon-SPARQL-Service-Class)
@@ -717,7 +717,7 @@
 	- [Class Carbon.Utils.UUID](#Carbon-Utils-UUID)
 		- [Methods](#Carbon-Utils-UUID-Methods)
 - [Module Carbon/settings](#Module-Carbon-settings)
-	- [Interface Carbon.Settings.Class](Carbon-Settings-Class)
+	- [Interface Carbon.Settings.Class](#Carbon-Settings-Class)
 		- [Properties](#Carbon-Settings-Class-Properties)
 
 
@@ -738,33 +738,33 @@
 #### <a name="Carbon-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| AccessPoint | [Carbon/AccessPoint](#Carbon-AccessPoint) |
-| App | [Carbon/App](#Carbon-App) |
-| Apps | [Carbon/Apps](#Carbon-Apps) |
-| Auth | [Carbon/Auth](#Carbon-Auth) |
-| Document | [Carbon/Document](#Carbon-Document) |
-| Documents | [Carbon/Documents](#Carbon-Documents) |
-| Errors | [Carbon/Errors](#Carbon-Errors) |
-| Fragment | [Carbon/Fragment](#Carbon-Fragment) |
-| HTTP | [Carbon/HTTP](#Carbon-HTTP) |
-| JSONLD | [Carbon/JSONLD](#Carbon-JSONLD) |
-| LDP | [Carbon/LDP](#Carbon-LDP) |
-| NamedFragment | [Carbon/NamedFragment](#Carbon-NamedFragment) |
-| NS | [Carbon/NS](#Carbon-NS) |
-| ObjectSchema | [Carbon/ObjectSchema](#Carbon-ObjectSchema) |
-| PersistedApp | [Carbon/PersistedApp](#Carbon-PersistedApp) |
-| PersistedDocument | [Carbon/PersistedDocument](#Carbon-PersistedDocument) |
-| PersistedFragment | [Carbon/PersistedFragment](#Carbon-PersistedFragment) |
-| PersistedNamedFragment | [Carbon/PersistedNamedFragment](#Carbon-PersistedNamedFragment) |
-| PersistedResource | [Carbon/PersistedResource](#Carbon-PersistedResource) |
-| Platform | [Carbon/Platform](#Carbon-Platform) |
-| Pointer | [Carbon/Pointer](#Carbon-Pointer) |
-| RDF | [Carbon/RDF](#Carbon-RDF) |
-| Resource | [Carbon/Resource](#Carbon-Resource) |
-| SDKContext | [Carbon/SDKContext](#Carbon-SDKContext) |
-| Settings | [Carbon/Settings](#Carbon-Settings) |
-| SPARQL | [Carbon/SPARQL](#Carbon-SPARQL) |
-| Utils | [Carbon/Utils](#Carbon-Utils) |
+| AccessPoint | [Carbon/AccessPoint](#Module-Carbon-AccessPoint) |
+| App | [Carbon/App](#Module-Carbon-App) |
+| Apps | [Carbon/Apps](#Module-Carbon-Apps) |
+| Auth | [Carbon/Auth](#Module-Carbon-Auth) |
+| Document | [Carbon/Document](#Module-Carbon-Document) |
+| Documents | [Carbon/Documents](#Module-Carbon-Documents) |
+| Errors | [Carbon/Errors](#Module-Carbon-Errors) |
+| Fragment | [Carbon/Fragment](#Module-Carbon-Fragment) |
+| HTTP | [Carbon/HTTP](#Module-Carbon-HTTP) |
+| JSONLD | [Carbon/JSONLD](#Module-Carbon-JSONLD) |
+| LDP | [Carbon/LDP](#Module-Carbon-LDP) |
+| NamedFragment | [Carbon/NamedFragment](#Module-Carbon-NamedFragment) |
+| NS | [Carbon/NS](#Module-Carbon-NS) |
+| ObjectSchema | [Carbon/ObjectSchema](#Module-Carbon-ObjectSchema) |
+| PersistedApp | [Carbon/PersistedApp](#Module-Carbon-PersistedApp) |
+| PersistedDocument | [Carbon/PersistedDocument](#Module-Carbon-PersistedDocument) |
+| PersistedFragment | [Carbon/PersistedFragment](#Module-Carbon-PersistedFragment) |
+| PersistedNamedFragment | [Carbon/PersistedNamedFragment](#Module-Carbon-PersistedNamedFragment) |
+| PersistedResource | [Carbon/PersistedResource](#Module-Carbon-PersistedResource) |
+| Platform | [Carbon/Platform](#Module-Carbon-Platform) |
+| Pointer | [Carbon/Pointer](#Module-Carbon-Pointer) |
+| RDF | [Carbon/RDF](#Module-Carbon-RDF) |
+| Resource | [Carbon/Resource](#Module-Carbon-Resource) |
+| SDKContext | [Carbon/SDKContext](#Module-Carbon-SDKContext) |
+| Settings | [Carbon/Settings](#Module-Carbon-Settings) |
+| SPARQL | [Carbon/SPARQL](#Module-Carbon-SPARQL) |
+| Utils | [Carbon/Utils](#Module-Carbon-Utils) |
 
 #### <a name="Carbon-Constructor"/>Constructor
 ```typescript 
@@ -1120,9 +1120,9 @@ Creates a `Carbon.AccessPoint.Class` object from the object and parameters speci
 #### <a name="Carbon-App-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Context | [Carbon/App/Context](#Carbon-App-Context) |
-| Role | [Carbon/App/Role](#Carbon-App-Role) |
-| Roles | [Carbon/App/Roles](#Carbon-App-Roles) |
+| Context | [Carbon/App/Context](#Module-Carbon-App-Context) |
+| Role | [Carbon/App/Role](#Module-Carbon-App-Role) |
+| Roles | [Carbon/App/Roles](#Module-Carbon-App-Roles) |
 
 
 ### <a name="Carbon-App-Properties"/>Properties
@@ -1777,22 +1777,22 @@ Returns true if the object provided is considered a `Carbon.App.Role.Class` obje
 #### <a name="Carbon-Auth-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| ACE | [Carbon.Auth.ACE](#Carbon-Auth-ACE) |
-| ACL | [Carbon.Auth.ACL](#Carbon-Auth-ACL) |
-| Agent | [Carbon.Auth.Agent](#Carbon-Auth-Agent) |
-| Agents | [Carbon.Auth.Agents](#Carbon-Auth-Agents) |
-| AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Carbon-Auth-AuthenticationToken) |
-| Authenticator | [Carbon.Auth.Authenticator](#Carbon-Auth-Authenticator) |
-| BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Carbon-Auth-BasicAuthenticator) |
-| PersistedACE | [Carbon.Auth.PersistedACE](#Carbon-Auth-PersistedACE) |
-| PersistedACL | [Carbon.Auth.PersistedACL](#Carbon-Auth-PersistedACL) |
-| PersistedAgent | [Carbon.Auth.PersistedAgent](#Carbon-Auth-PersistedAgent) |
-| Role | [Carbon.Auth.Role](#Carbon-Auth-Role) |
-| Roles | [Carbon.Auth.Roles](#Carbon-Auth-Roles) |
-| Ticket | [Carbon.Auth.Ticket](#Carbon-Auth-Ticket) |
-| Token | [Carbon.Auth.Token](#Carbon-Auth-Token) |
-| TokenAuthenticator | [Carbon.Auth.TokenAuthenticator](#Carbon-Auth-TokenAuthenticator) |
-| UsernameAndPasswordToken | [Carbon.Auth.UsernameAndPasswordToken](#Carbon-Auth-UsernameAndPasswordToken) |
+| ACE | [Carbon.Auth.ACE](#Module-Carbon-Auth-ACE) |
+| ACL | [Carbon.Auth.ACL](#Module-Carbon-Auth-ACL) |
+| Agent | [Carbon.Auth.Agent](#Module-Carbon-Auth-Agent) |
+| Agents | [Carbon.Auth.Agents](#Module-Carbon-Auth-Agents) |
+| AuthenticationToken | [Carbon.Auth.AuthenticationToken](#Module-Carbon-Auth-AuthenticationToken) |
+| Authenticator | [Carbon.Auth.Authenticator](#Module-Carbon-Auth-Authenticator) |
+| BasicAuthenticator | [Carbon.Auth.BasicAuthenticator](#Module-Carbon-Auth-BasicAuthenticator) |
+| PersistedACE | [Carbon.Auth.PersistedACE](#Module-Carbon-Auth-PersistedACE) |
+| PersistedACL | [Carbon.Auth.PersistedACL](#Module-Carbon-Auth-PersistedACL) |
+| PersistedAgent | [Carbon.Auth.PersistedAgent](#Module-Carbon-Auth-PersistedAgent) |
+| Role | [Carbon.Auth.Role](#Module-Carbon-Auth-Role) |
+| Roles | [Carbon.Auth.Roles](#Module-Carbon-Auth-Roles) |
+| Ticket | [Carbon.Auth.Ticket](#Module-Carbon-Auth-Ticket) |
+| Token | [Carbon.Auth.Token](#Module-Carbon-Auth-Token) |
+| TokenAuthenticator | [Carbon.Auth.TokenAuthenticator](#Module-Carbon-Auth-TokenAuthenticator) |
+| UsernameAndPasswordToken | [Carbon.Auth.UsernameAndPasswordToken](#Module-Carbon-Auth-UsernameAndPasswordToken) |
 
 ### <a name="Carbon-Auth-Enums"/>Enums
 
@@ -2963,6 +2963,7 @@ If the authenticator is authenticated, it adds an authentication header in the r
 
 ### <a name="Carbon-Auth-BasicAuthenticator-Class"/>Class Carbon.Auth.BasicAuthenticator.Class
 
+**Implements:** [Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)&lt;[Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)&gt;
 
 > Authenticates requests using HTTP Basic Authentication.
 
@@ -4393,6 +4394,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Auth.
 
 ### <a name="Carbon-Auth-TokenAuthenticator-Class"/>Class Carbon.Auth.TokenAuthenticator.Class
 
+**Implements:** [Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)&lt;[Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)&gt;
 
 > Authenticates requests using JSON Web Token (JWT) Authentication.
 
@@ -4485,6 +4487,7 @@ Returns true if the instance contains stored credentials.
 
 ### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class"/>Class Carbon.Auth.UsernameAndPasswordCredentials.Class
 
+**Implements:** [Carbon.Auth.Credentials.Class](#Carbon-Auth-Credentials-Class)
 
 > Wrapper to manage Authentication Credentials in form of Username/Password.
 
@@ -4531,6 +4534,7 @@ username:string
 
 ### <a name="Carbon-Auth-UsernameAndPasswordToken-Class"/>Class Carbon.Auth.UsernameAndPasswordToken.Class
 
+**Implements:** [Carbon.Auth.AuthenticationToken.Class](#Carbon-Auth-AuthenticationToken-Class)
 
 > Wrapper to manage an Authentication Token in form of Username/Password.
 
@@ -5548,6 +5552,7 @@ Returns a JSON string from the Document using the default ObjectSchema.
 
 ### <a name="Carbon-Documents-Class"/>Class Carbon.Documents.Class
 
+**Implements:** [Carbon.Pointer.Library](#Carbon-Pointer-Library), [Carbon.Pointer.Validator](#Carbon-Pointer-Validator), [Carbon.ObjectSchema.Resolver](#Carbon-ObjectSchema-Resolver)
 
 > Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.
 
@@ -6188,12 +6193,12 @@ Upload binary data, creating a child for the parent specified. This signature on
 #### <a name="Carbon-Errors-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| IDAlreadyInUseError | [Carbon/Errors/IDAlreadyInUseError](#Carbon-Errors-IDAlreadyInUseError) |
-| IllegalActionError | [Carbon/Errors/IllegalActionError](#Carbon-Errors-IllegalActionError) |
-| IllegalArgumentError | [Carbon/Errors/IllegalArgumentError](#Carbon-Errors-IllegalArgumentError) |
-| IllegalStateError | [Carbon/Errors/IllegalStateError](#Carbon-Errors-IllegalStateError) |
-| InvalidJSONLDSyntaxError | [Carbon/Errors/InvalidJSONLDSyntaxError](#Carbon-Errors-InvalidJSONLDSyntaxError) |
-| NotImplementedError | [Carbon/Errors/NotImplementedError](#Carbon-Errors-NotImplementedError) |
+| IDAlreadyInUseError | [Carbon/Errors/IDAlreadyInUseError](#Module-Carbon-Errors-IDAlreadyInUseError) |
+| IllegalActionError | [Carbon/Errors/IllegalActionError](#Module-Carbon-Errors-IllegalActionError) |
+| IllegalArgumentError | [Carbon/Errors/IllegalArgumentError](#Module-Carbon-Errors-IllegalArgumentError) |
+| IllegalStateError | [Carbon/Errors/IllegalStateError](#Module-Carbon-Errors-IllegalStateError) |
+| InvalidJSONLDSyntaxError | [Carbon/Errors/InvalidJSONLDSyntaxError](#Module-Carbon-Errors-InvalidJSONLDSyntaxError) |
+| NotImplementedError | [Carbon/Errors/NotImplementedError](#Module-Carbon-Errors-NotImplementedError) |
 
 
 
@@ -6918,15 +6923,15 @@ Converts the resources contained in the current `Carbon.FreeResources.Class` obj
 #### <a name="Carbon-HTTP-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Errors | [Carbon/HTTP/Errors](#Carbon-HTTP-Errors) |
-| Header | [Carbon/HTTP/Header](#Carbon-HTTP-Header) |
-| JSONParser | [Carbon/HTTP/JSONParser](#Carbon-HTTP-JSONParser) |
-| Method | [Carbon/HTTP/Method](#Carbon-HTTP-Method) |
-| Parser | [Carbon/HTTP/Parser](#Carbon-HTTP-Parser) |
-| Request | [Carbon/HTTP/Request](#Carbon-HTTP-Request) |
-| Response | [Carbon/HTTP/Response](#Carbon-HTTP-Response) |
-| StatusCode | [Carbon/HTTP/StatusCode](#Carbon-HTTP-StatusCode) |
-| StringParser | [Carbon/HTTP/StringParser](#Carbon-HTTP-StringParser) |
+| Errors | [Carbon/HTTP/Errors](#Module-Carbon-HTTP-Errors) |
+| Header | [Carbon/HTTP/Header](#Module-Carbon-HTTP-Header) |
+| JSONParser | [Carbon/HTTP/JSONParser](#Module-Carbon-HTTP-JSONParser) |
+| Method | [Carbon/HTTP/Method](#Module-Carbon-HTTP-Method) |
+| Parser | [Carbon/HTTP/Parser](#Module-Carbon-HTTP-Parser) |
+| Request | [Carbon/HTTP/Request](#Module-Carbon-HTTP-Request) |
+| Response | [Carbon/HTTP/Response](#Module-Carbon-HTTP-Response) |
+| StatusCode | [Carbon/HTTP/StatusCode](#Module-Carbon-HTTP-StatusCode) |
+| StringParser | [Carbon/HTTP/StringParser](#Module-Carbon-HTTP-StringParser) |
 
 
 
@@ -6938,29 +6943,29 @@ Converts the resources contained in the current `Carbon.FreeResources.Class` obj
 #### <a name="Carbon-HTTP-Errors-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| BadGatewayError | [Carbon/HTTP/Errors/client/BadGatewayError](#Carbon-HTTP-Errors-client-BadGatewayError) |
-| BadRequestError | [Carbon/HTTP/Errors/client/BadRequestError](#Carbon-HTTP-Errors-client-BadRequestError) |
-| BadResponseError | [Carbon/HTTP/Errors/client/BadResponseError](#Carbon-HTTP-Errors-client-BadResponseError) |
-| ConflictError | [Carbon/HTTP/Errors/client/ConflictError](#Carbon-HTTP-Errors-client-ConflictError) |
-| Error | [Carbon/HTTP/Errors/HTTPError](#Carbon-HTTP-Errors-HTTPError) |
-| ForbiddenError | [Carbon/HTTP/Errors/client/ForbiddenError](#Carbon-HTTP-Errors-client-ForbiddenError) |
-| GatewayTimeoutError | [Carbon/HTTP/Errors/client/GatewayTimeoutError](#Carbon-HTTP-Errors-client-GatewayTimeoutError) |
-| HTTPVersionNotSupportedError | [Carbon/HTTP/Errors/client/HTTPVersionNotSupportedError](#Carbon-HTTP-Errors-client-HTTPVersionNotSupportedError) |
-| InternalServerErrorError | [Carbon/HTTP/Errors/client/InternalServerErrorError](#Carbon-HTTP-Errors-client-InternalServerErrorError) |
-| MethodNotAllowedError | [Carbon/HTTP/Errors/client/MethodNotAllowedError](#Carbon-HTTP-Errors-client-MethodNotAllowedError) |
-| NotAcceptableError | [Carbon/HTTP/Errors/client/NotAcceptableError](#Carbon-HTTP-Errors-client-NotAcceptableError) |
-| NotFoundError | [Carbon/HTTP/Errors/client/NotFoundError](#Carbon-HTTP-Errors-client-NotFoundError) |
-| NotImplementedError | [Carbon/HTTP/Errors/client/NotImplementedError](#Carbon-HTTP-Errors-client-NotImplementedError) |
-| PreconditionFailedError | [Carbon/HTTP/Errors/client/PreconditionFailedError](#Carbon-HTTP-Errors-client-PreconditionFailedError) |
-| PreconditionRequiredError | [Carbon/HTTP/Errors/client/PreconditionRequiredError](#Carbon-HTTP-Errors-client-PreconditionRequiredError) |
-| RequestEntityTooLargeError | [Carbon/HTTP/Errors/client/RequestEntityTooLargeError](#Carbon-HTTP-Errors-client-RequestEntityTooLargeError) |
-| RequestHeaderFieldsTooLargeError | [Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError](#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError) |
-| RequestURITooLongError | [Carbon/HTTP/Errors/client/RequestURITooLongError](#Carbon-HTTP-Errors-client-RequestURITooLongError) |
-| ServiceUnavailableError | [Carbon/HTTP/Errors/client/ServiceUnavailableError](#Carbon-HTTP-Errors-client-ServiceUnavailableError) |
-| TooManyRequestsError | [Carbon/HTTP/Errors/client/TooManyRequestsError](#Carbon-HTTP-Errors-client-TooManyRequestsError) |
-| UnauthorizedError | [Carbon/HTTP/Errors/client/UnauthorizedError](#Carbon-HTTP-Errors-client-UnauthorizedError) |
-| UnknownError | [Carbon/HTTP/Errors/client/UnknownError](#Carbon-HTTP-Errors-client-UnknownError) |
-| UnsupportedMediaTypeError | [Carbon/HTTP/Errors/client/UnsupportedMediaTypeError](#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError) |
+| BadGatewayError | [Carbon/HTTP/Errors/client/BadGatewayError](#Module-Carbon-HTTP-Errors-client-BadGatewayError) |
+| BadRequestError | [Carbon/HTTP/Errors/client/BadRequestError](#Module-Carbon-HTTP-Errors-client-BadRequestError) |
+| BadResponseError | [Carbon/HTTP/Errors/client/BadResponseError](#Module-Carbon-HTTP-Errors-client-BadResponseError) |
+| ConflictError | [Carbon/HTTP/Errors/client/ConflictError](#Module-Carbon-HTTP-Errors-client-ConflictError) |
+| Error | [Carbon/HTTP/Errors/HTTPError](#Module-Carbon-HTTP-Errors-HTTPError) |
+| ForbiddenError | [Carbon/HTTP/Errors/client/ForbiddenError](#Module-Carbon-HTTP-Errors-client-ForbiddenError) |
+| GatewayTimeoutError | [Carbon/HTTP/Errors/client/GatewayTimeoutError](#Module-Carbon-HTTP-Errors-client-GatewayTimeoutError) |
+| HTTPVersionNotSupportedError | [Carbon/HTTP/Errors/client/HTTPVersionNotSupportedError](#Module-Carbon-HTTP-Errors-client-HTTPVersionNotSupportedError) |
+| InternalServerErrorError | [Carbon/HTTP/Errors/client/InternalServerErrorError](#Module-Carbon-HTTP-Errors-client-InternalServerErrorError) |
+| MethodNotAllowedError | [Carbon/HTTP/Errors/client/MethodNotAllowedError](#Module-Carbon-HTTP-Errors-client-MethodNotAllowedError) |
+| NotAcceptableError | [Carbon/HTTP/Errors/client/NotAcceptableError](#Module-Carbon-HTTP-Errors-client-NotAcceptableError) |
+| NotFoundError | [Carbon/HTTP/Errors/client/NotFoundError](#Module-Carbon-HTTP-Errors-client-NotFoundError) |
+| NotImplementedError | [Carbon/HTTP/Errors/client/NotImplementedError](#Module-Carbon-HTTP-Errors-client-NotImplementedError) |
+| PreconditionFailedError | [Carbon/HTTP/Errors/client/PreconditionFailedError](#Module-Carbon-HTTP-Errors-client-PreconditionFailedError) |
+| PreconditionRequiredError | [Carbon/HTTP/Errors/client/PreconditionRequiredError](#Module-Carbon-HTTP-Errors-client-PreconditionRequiredError) |
+| RequestEntityTooLargeError | [Carbon/HTTP/Errors/client/RequestEntityTooLargeError](#Module-Carbon-HTTP-Errors-client-RequestEntityTooLargeError) |
+| RequestHeaderFieldsTooLargeError | [Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError](#Module-Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError) |
+| RequestURITooLongError | [Carbon/HTTP/Errors/client/RequestURITooLongError](#Module-Carbon-HTTP-Errors-client-RequestURITooLongError) |
+| ServiceUnavailableError | [Carbon/HTTP/Errors/client/ServiceUnavailableError](#Module-Carbon-HTTP-Errors-client-ServiceUnavailableError) |
+| TooManyRequestsError | [Carbon/HTTP/Errors/client/TooManyRequestsError](#Module-Carbon-HTTP-Errors-client-TooManyRequestsError) |
+| UnauthorizedError | [Carbon/HTTP/Errors/client/UnauthorizedError](#Module-Carbon-HTTP-Errors-client-UnauthorizedError) |
+| UnknownError | [Carbon/HTTP/Errors/client/UnknownError](#Module-Carbon-HTTP-Errors-client-UnknownError) |
+| UnsupportedMediaTypeError | [Carbon/HTTP/Errors/client/UnsupportedMediaTypeError](#Module-Carbon-HTTP-Errors-client-UnsupportedMediaTypeError) |
 
 
 ### <a name="Carbon-HTTP-Errors-Properties"/>Properties
@@ -8451,6 +8456,7 @@ toString():string
 
 ### <a name="Carbon-HTTP-JSONLDParser-Class"/>Class Carbon.HTTP.JSONLDParser.Class
 
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;Object[]&gt;
 
 > Class to parse strings to valid JSONLD objects.
 
@@ -8486,6 +8492,7 @@ Parse the string provided using the `Carbon.JSONLD.Process.Class#expand()` metho
 
 ### <a name="Carbon-HTTP-JSONParser-Class"/>Class Carbon.HTTP.JSONParser.Class
 
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;Object&gt;
 
 > Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.
 
@@ -9152,6 +9159,7 @@ Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if
 
 ### <a name="Carbon-HTTP-StringParser-Class"/>Class Carbon.HTTP.StringParser.Class
 
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;string&gt;
 
 > Parses a `Carbon.HTTP.Response.Class` and returns a string.
 
@@ -9183,9 +9191,9 @@ Gets a string and returns a Promise with the same string.
 #### <a name="Carbon-JSONLD-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Converter | [Carbon/JSONLD/Converter](#Carbon-JSONLD-Converter) |
-| Parser | [Carbon/JSONLD/Parser](#Carbon-JSONLD-Parser) |
-| Processor | [Carbon/JSONLD/Processor](#Carbon-JSONLD-Processor) |
+| Converter | [Carbon/JSONLD/Converter](#Module-Carbon-JSONLD-Converter) |
+| Parser | [Carbon/JSONLD/Parser](#Module-Carbon-JSONLD-Parser) |
+| Processor | [Carbon/JSONLD/Processor](#Module-Carbon-JSONLD-Processor) |
 
 
 
@@ -9305,14 +9313,14 @@ Static method that expand a compacted JSON-LD object.
 #### <a name="Carbon-LDP-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| AddMemberAction | [Carbon/LDP/AddMemberAction](#Carbon-LDP-AddMemberAction) |
-| DirectContainer | [Carbon/LDP/DirectContainer](#Carbon-LDP-DirectContainer) |
-| Error | [Carbon/LDP/Error](#Carbon-LDP-Error) |
-| ErrorResponse | [Carbon/LDP/ErrorResponse](#Carbon-LDP-ErrorResponse) |
-| IndirectContainer | [Carbon/LDP/IndirectContainer](#Carbon-LDP-IndirectContainer) |
-| RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Carbon-LDP-RemoveMemberAction) |
-| ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Carbon-LDP-ResourceMetadata) |
-| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Carbon-LDP-ResponseMetadata) |
+| AddMemberAction | [Carbon/LDP/AddMemberAction](#Module-Carbon-LDP-AddMemberAction) |
+| DirectContainer | [Carbon/LDP/DirectContainer](#Module-Carbon-LDP-DirectContainer) |
+| Error | [Carbon/LDP/Error](#Module-Carbon-LDP-Error) |
+| ErrorResponse | [Carbon/LDP/ErrorResponse](#Module-Carbon-LDP-ErrorResponse) |
+| IndirectContainer | [Carbon/LDP/IndirectContainer](#Module-Carbon-LDP-IndirectContainer) |
+| RemoveMemberAction | [Carbon/LDP/RemoveMemberAction](#Module-Carbon-LDP-RemoveMemberAction) |
+| ResourceMetadata | [Carbon/LDP/ResourceMetadata](#Module-Carbon-LDP-ResourceMetadata) |
+| ResponseMetadata | [Carbon/LDP/ResponseMetadata](#Module-Carbon-LDP-ResponseMetadata) |
 
 
 
@@ -9617,6 +9625,7 @@ The HTTP status code that represents all the errors occurred.
 
 ### <a name="Carbon-LDP-ErrorResponse-Parser"/>Class Carbon.LDP.ErrorResponse.Parser
 
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;[Carbon.LDP.ErrorResponse.Class](#Carbon-LDP-ErrorResponse-Class)&gt;
 
 > Parser class for `Carbon.LDP.ErrorResponse.Class` objects.
 
@@ -10110,13 +10119,13 @@ Return true if the object provided is considered a `Carbon.LDP.VolatileResource.
 #### <a name="Carbon-NS-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| C | [Carbon/NS/C](#Carbon-NS-C) |
-| CP | [Carbon/NS/CP](#Carbon-NS-CP) |
-| CS | [Carbon/NS/CS](#Carbon-NS-CS) |
-| LDP | [Carbon/NS/LDP](#Carbon-NS-LDP) |
-| RDF | [Carbon/NS/RDF](#Carbon-NS-RDF) |
-| VCARD | [Carbon/NS/VCARD](#Carbon-NS-VCARD) |
-| XSD | [Carbon/NS/XSD](#Carbon-NS-XSD) |
+| C | [Carbon/NS/C](#Module-Carbon-NS-C) |
+| CP | [Carbon/NS/CP](#Module-Carbon-NS-CP) |
+| CS | [Carbon/NS/CS](#Module-Carbon-NS-CS) |
+| LDP | [Carbon/NS/LDP](#Module-Carbon-NS-LDP) |
+| RDF | [Carbon/NS/RDF](#Module-Carbon-NS-RDF) |
+| VCARD | [Carbon/NS/VCARD](#Module-Carbon-NS-VCARD) |
+| XSD | [Carbon/NS/XSD](#Module-Carbon-NS-XSD) |
 
 
 
@@ -13915,9 +13924,9 @@ Revert the changes made to the resource into the state of the snapshot.
 #### <a name="Carbon-Platform-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Agents | [Carbon/Platform/Agents](#Carbon-Platform-Agents) |
-| Auth | [Carbon/Platform/Auth](#Carbon-Platform-Auth) |
-| PersistedAgent | [Carbon/Platform/PersistedAgent](#Carbon-Platform-PersistedAgent) |
+| Agents | [Carbon/Platform/Agents](#Module-Carbon-Platform-Agents) |
+| Auth | [Carbon/Platform/Auth](#Module-Carbon-Platform-Auth) |
+| PersistedAgent | [Carbon/Platform/PersistedAgent](#Module-Carbon-Platform-PersistedAgent) |
 
 
 
@@ -14353,12 +14362,12 @@ static SCHEMA:Carbon.ObjectSchema.Class
 #### <a name="Carbon-RDF-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Document | [Carbon/RDF/Document](#Carbon-RDF-Document) |
-| List | [Carbon/RDF/List](#Carbon-RDF-List) |
-| Literal | [Carbon/RDF/Literal](#Carbon-RDF-Literal) |
-| Node | [Carbon/RDF/Node](#Carbon-RDF-Node) |
-| URI | [Carbon/RDF/URI](#Carbon-RDF-URI) |
-| Value | [Carbon/RDF/Value](#Carbon-RDF-Value) |
+| Document | [Carbon/RDF/Document](#Module-Carbon-RDF-Document) |
+| List | [Carbon/RDF/List](#Module-Carbon-RDF-List) |
+| Literal | [Carbon/RDF/Literal](#Module-Carbon-RDF-Literal) |
+| Node | [Carbon/RDF/Node](#Module-Carbon-RDF-Node) |
+| URI | [Carbon/RDF/URI](#Module-Carbon-RDF-URI) |
+| Value | [Carbon/RDF/Value](#Module-Carbon-RDF-Value) |
 
 
 
@@ -14668,8 +14677,8 @@ Returns true if the object provided is considered a `Carbon.RDF.List.Class` obje
 #### <a name="Carbon-RDF-Literal-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| Serializer | [Carbon/RDF/Literal/Serializer](#Carbon-RDF-Literal-Serializer) |
-| Serializers | [Carbon/RDF/Literal/Serializers](#Carbon-RDF-Literal-Serializers) |
+| Serializer | [Carbon/RDF/Literal/Serializer](#Module-Carbon-RDF-Literal-Serializer) |
+| Serializers | [Carbon/RDF/Literal/Serializers](#Module-Carbon-RDF-Literal-Serializers) |
 
 
 
@@ -14803,7 +14812,7 @@ Method that serialize the provided element into a string value.
 #### <a name="Carbon-RDF-Literal-Serializers-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| XSD | [Carbon/RDF/Literal/Serializers/XSD](#Carbon-RDF-Literal-Serializers-XSD) |
+| XSD | [Carbon/RDF/Literal/Serializers/XSD](#Module-Carbon-RDF-Literal-Serializers-XSD) |
 
 
 
@@ -16286,6 +16295,7 @@ Instance of `Carbon.SDKContext.Class` that is used as the root parent in every c
 
 ### <a name="Carbon-SDKContext-Class"/>Class Carbon.SDKContext.Class
 
+**Implements:** [Carbon.Context.Class](#Carbon-Context-Class)
 
 > Base class of every Context in the SDK.
 
@@ -16486,10 +16496,10 @@ Set a setting in the current context.
 #### <a name="Carbon-SPARQL-Reexports" />Reexports 
 | Export name | Original Location | 
 | --- | --- |
-| RawResultsParserRawResultsParser | [Carbon/SPARQL/RawResultsParser](#Carbon-SPARQL-RawResultsParser) |
-| RawResultsRawResults | [Carbon/SPARQL/RawResults](#Carbon-SPARQL-RawResults) |
-| SELECTResults | [Carbon/SPARQL/SELECTResults](#Carbon-SPARQL-SELECTResults) |
-| Service | [Carbon/SPARQL/Service](#Carbon-SPARQL-Service) |
+| RawResultsParserRawResultsParser | [Carbon/SPARQL/RawResultsParser](#Module-Carbon-SPARQL-RawResultsParser) |
+| RawResultsRawResults | [Carbon/SPARQL/RawResults](#Module-Carbon-SPARQL-RawResults) |
+| SELECTResults | [Carbon/SPARQL/SELECTResults](#Module-Carbon-SPARQL-SELECTResults) |
+| Service | [Carbon/SPARQL/Service](#Module-Carbon-SPARQL-Service) |
 
 
 

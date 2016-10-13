@@ -50,7 +50,7 @@
 		{{/with}}
 
 		{{#if super-classes~}}
-			**Extends:** {{#each super-classes}}[{{name}}](#{{sanitize name}}){{^if @last}}, {{/if}}{{/each}}
+			**Extends:** {{#each super-classes}}{{urlify name}}{{^if @last}}, {{/if}}{{/each}}
 		{{/if}}
 
 		{{#with description~}}
@@ -77,6 +77,9 @@
 
 		{{#if super-classes~}}
 			**Extends:** {{#each super-classes}}[{{name}}](#{{sanitize name}}){{^if @last}}, {{/if}}{{/each}}
+		{{/if}}
+		{{#if interfaces~}}
+			**Implements:** {{#each interfaces}}{{urlify this}}{{^if @last}}, {{/if}}{{/each}}
 		{{/if}}
 
 		{{#with description~}}
