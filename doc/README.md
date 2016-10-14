@@ -371,10 +371,10 @@
 	- [Interface Carbon.Auth.ACE.Class](#Carbon-Auth-ACE-Class)
 		- [Methods](#Carbon-Auth-ACE-Class-Methods)
 - [Module Carbon/HTTP/Request](#Module-Carbon-HTTP-Request)
-	- [Interface Carbon.HTTP.Request.Options](#Carbon-HTTP-Request-Options)
-		- [Properties](#Carbon-HTTP-Request-Options-Properties)
 	- [Interface Carbon.HTTP.Request.ContainerRetrievalPreferences](#Carbon-HTTP-Request-ContainerRetrievalPreferences)
 		- [Properties](#Carbon-HTTP-Request-ContainerRetrievalPreferences-Properties)
+	- [Interface Carbon.HTTP.Request.Options](#Carbon-HTTP-Request-Options)
+		- [Properties](#Carbon-HTTP-Request-Options-Properties)
 	- [Class Carbon.HTTP.Request.Service](#Carbon-HTTP-Request-Service)
 		- [Methods](#Carbon-HTTP-Request-Service-Methods)
 	- [Class Carbon.HTTP.Request.Util](#Carbon-HTTP-Request-Util)
@@ -683,12 +683,12 @@
 - [Module Carbon/SPARQL](#Module-Carbon-SPARQL)
 	- [Reexports](#Carbon-SPARQL-Reexports)
 - [Module Carbon/SPARQL/RawResults](#Module-Carbon-SPARQL-RawResults)
-	- [Interface Carbon.SPARQL.RawResults.Class](#Carbon-SPARQL-RawResults-Class)
-		- [Properties](#Carbon-SPARQL-RawResults-Class-Properties)
 	- [Interface Carbon.SPARQL.RawResults.BindingObject](#Carbon-SPARQL-RawResults-BindingObject)
 		- [Properties](#Carbon-SPARQL-RawResults-BindingObject-Properties)
 	- [Interface Carbon.SPARQL.RawResults.BindingProperty](#Carbon-SPARQL-RawResults-BindingProperty)
 		- [Properties](#Carbon-SPARQL-RawResults-BindingProperty-Properties)
+	- [Interface Carbon.SPARQL.RawResults.Class](#Carbon-SPARQL-RawResults-Class)
+		- [Properties](#Carbon-SPARQL-RawResults-Class-Properties)
 	- [Class Carbon.SPARQL.RawResults](#Carbon-SPARQL-RawResults)
 		- [Properties](#Carbon-SPARQL-RawResults-Properties)
 	- [Class Carbon.SPARQL.RawResults.Factory](#Carbon-SPARQL-RawResults-Factory)
@@ -697,10 +697,10 @@
 	- [Class Class to parse SPARQL Query result to a &#x60;Carbon.SPARQL.RawResult.Class&#x60; object.](#Class-to-parse-SPARQL-Query-result-to-a--Carbon-SPARQL-RawResult-Class--object-)
 		- [Methods](#Class-to-parse-SPARQL-Query-result-to-a--Carbon-SPARQL-RawResult-Class--object--Methods)
 - [Module Carbon/SPARQL/SELECTResults](#Module-Carbon-SPARQL-SELECTResults)
-	- [Interface Carbon.SPARQL.SELECTResults.Class](#Carbon-SPARQL-SELECTResults-Class)
-		- [Properties](#Carbon-SPARQL-SELECTResults-Class-Properties)
 	- [Interface Carbon.SPARQL.SELECTResults.BindingObject](#Carbon-SPARQL-SELECTResults-BindingObject)
 		- [Properties](#Carbon-SPARQL-SELECTResults-BindingObject-Properties)
+	- [Interface Carbon.SPARQL.SELECTResults.Class](#Carbon-SPARQL-SELECTResults-Class)
+		- [Properties](#Carbon-SPARQL-SELECTResults-Class-Properties)
 - [Module Carbon/SPARQL/Service](#Module-Carbon-SPARQL-Service)
 	- [Class Carbon.SPARQL.Service.Class](#Carbon-SPARQL-Service-Class)
 		- [Methods](#Carbon-SPARQL-Service-Class-Methods)
@@ -8577,30 +8577,6 @@ Method that parse the provided string to an specified T element.
 
 
 
-### <a name="Carbon-HTTP-Request-Options"/>Interface Carbon.HTTP.Request.Options
-
-
-> Customizable options that can change the behaviour of the request.
-
-#### <a name="Carbon-HTTP-Request-Options-Properties"/>Properties
-```typescript 
-headers?:Map<string, Carbon.HTTP.Header.Class> 
-```
-
-Map that contains the references to the headers to include in the request.
-
---
-
-```typescript 
-sendCredentialsOnCORS?:boolean 
-```
-
-Flag that enables Cross-Origin Resource Sharing (CORS).
-
-
-
-
-
 ### <a name="Carbon-HTTP-Request-ContainerRetrievalPreferences"/>Interface Carbon.HTTP.Request.ContainerRetrievalPreferences
 
 
@@ -8620,6 +8596,30 @@ omit?:string[]
 ```
 
 Prefer URIs that indicates some specific information should NOT be included in the request's response.
+
+
+
+
+
+### <a name="Carbon-HTTP-Request-Options"/>Interface Carbon.HTTP.Request.Options
+
+
+> Customizable options that can change the behaviour of the request.
+
+#### <a name="Carbon-HTTP-Request-Options-Properties"/>Properties
+```typescript 
+headers?:Map<string, Carbon.HTTP.Header.Class> 
+```
+
+Map that contains the references to the headers to include in the request.
+
+--
+
+```typescript 
+sendCredentialsOnCORS?:boolean 
+```
+
+Flag that enables Cross-Origin Resource Sharing (CORS).
 
 
 
@@ -16513,38 +16513,6 @@ Set a setting in the current context.
 
 
 
-### <a name="Carbon-SPARQL-RawResults-Class"/>Interface Carbon.SPARQL.RawResults.Class
-
-
-> Interface that represents the raw response of a SPARQL query.
-
-#### <a name="Carbon-SPARQL-RawResults-Class-Properties"/>Properties
-```typescript 
-head:{ "vars"?:string[], "links"?:string[] } 
-```
-
-Contains an array `vars` with the possible elements inside the results bindings properties. Can also contains an array `link`, that contains URI to further information about the results.
-
---
-
-```typescript 
-results?:{ "bindings":Carbon.SPARQL.RawResults.BindingObject[] } 
-```
-
-The results of a `SELECT` query.
-
---
-
-```typescript 
-boolean?:boolean 
-```
-
-The result of an `ASK` query.
-
-
-
-
-
 ### <a name="Carbon-SPARQL-RawResults-BindingObject"/>Interface Carbon.SPARQL.RawResults.BindingObject
 
 
@@ -16596,6 +16564,38 @@ xml:lang?:string
 ```
 
 If the property is a `literal` and of data type `xsd:string`, this property indicates if it has an specific language.
+
+
+
+
+
+### <a name="Carbon-SPARQL-RawResults-Class"/>Interface Carbon.SPARQL.RawResults.Class
+
+
+> Interface that represents the raw response of a SPARQL query.
+
+#### <a name="Carbon-SPARQL-RawResults-Class-Properties"/>Properties
+```typescript 
+head:{ "vars"?:string[], "links"?:string[] } 
+```
+
+Contains an array `vars` with the possible elements inside the results bindings properties. Can also contains an array `link`, that contains URI to further information about the results.
+
+--
+
+```typescript 
+results?:{ "bindings":Carbon.SPARQL.RawResults.BindingObject[] } 
+```
+
+The results of a `SELECT` query.
+
+--
+
+```typescript 
+boolean?:boolean 
+```
+
+The result of an `ASK` query.
 
 
 
@@ -16718,6 +16718,22 @@ Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object
 
 
 
+### <a name="Carbon-SPARQL-SELECTResults-BindingObject"/>Interface Carbon.SPARQL.SELECTResults.BindingObject
+
+
+> Interface that represents an entry of a element asked for in the SELECT query.
+
+#### <a name="Carbon-SPARQL-SELECTResults-BindingObject-Properties"/>Properties
+```typescript 
+[ binding:string ]:any 
+```
+
+An entry peer every `vars` selected for, which contains the parsed value requested. This elements can be from every literal type (`String`, `Number`, `Date`, etc.), to a `Carbon.Pointer.Class` if it is an URI.
+
+
+
+
+
 ### <a name="Carbon-SPARQL-SELECTResults-Class"/>Interface Carbon.SPARQL.SELECTResults.Class
 
 
@@ -16737,22 +16753,6 @@ bindings:Carbon.SPARQL.SELECTResult.BindingObject[]
 ```
 
 Array with the entries of the parsed elements asked in the query.
-
-
-
-
-
-### <a name="Carbon-SPARQL-SELECTResults-BindingObject"/>Interface Carbon.SPARQL.SELECTResults.BindingObject
-
-
-> Interface that represents an entry of a element asked for in the SELECT query.
-
-#### <a name="Carbon-SPARQL-SELECTResults-BindingObject-Properties"/>Properties
-```typescript 
-[ binding:string ]:any 
-```
-
-An entry peer every `vars` selected for, which contains the parsed value requested. This elements can be from every literal type (`String`, `Number`, `Date`, etc.), to a `Carbon.Pointer.Class` if it is an URI.
 
 
 

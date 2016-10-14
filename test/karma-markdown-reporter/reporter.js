@@ -235,12 +235,20 @@ var MarkdownReporter = (() => {
 			parseSpecs( container, specs[ key ] );
 
 			sortObjectProperty( container, "classes" );
+			sortObjectProperty( container, "interfaces" );
 			sortObjectProperty( container, "reexports" );
 			sortObjectProperty( container, "enums" );
-			sortObjectProperty( container, "methods", "instance" );
-			sortObjectProperty( container, "methods", "static" );
-			sortObjectProperty( container, "properties", "instance" );
-			sortObjectProperty( container, "properties", "static" );
+
+			if( container[ "access" ] !== null ) {
+				sortObjectProperty( container, "methods", "instance" );
+				sortObjectProperty( container, "methods", "static" );
+				sortObjectProperty( container, "properties", "instance" );
+				sortObjectProperty( container, "properties", "static" );
+
+			} else {
+				sortObjectProperty( container, "methods" );
+				sortObjectProperty( container, "properties" );
+			}
 		}
 	}
 
@@ -273,10 +281,12 @@ var MarkdownReporter = (() => {
 			propertyObject = propertyObject[ extra ];
 		}
 
-		if( Array.isArray( propertyObject ) )
+		if( Array.isArray( propertyObject ) ) {
+			if( typeof propertyObject[ 0 ] === "string" ) return;
 			return propertyObject.sort( function( a, b ) {
 				return a.name.localeCompare( b.name )
 			} );
+		}
 
 		return object[ property ] = sortObject( propertyObject );
 	}
