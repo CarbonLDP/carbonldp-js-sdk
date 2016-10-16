@@ -1,0 +1,50 @@
+{{#each signatures~}}
+
+	<br>
+	<pre><code class="typescript">{{../name}}{{#if generics}}&lt;{{#each generics}}{{this}}{{^if @last}}, {{/if}}{{/each}}&gt;{{/if}}({{#each arguments}}{{#if @first}} {{/if}}{{name}}{{#if optional}}?{{/if}}:{{type}}{{^if @last}}, {{else}} {{/if}}{{/each}}){{#with returns}}:{{type}}{{/with}}</code></pre>
+	<br>
+
+	{{#if description}}
+		<div class="doc-description">
+			{{>text-markdown element=description}}
+		</div>
+		<br>
+	{{/if}}
+
+	{{#if arguments~}}
+		<table class="ui celled padded table">
+			<thead>
+				<tr>
+					<th class="single line">Param</th>
+					<th>Type</th>
+					<th>Default</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each arguments~}}
+					<tr>
+						<td class="single line">
+							{{#if optional}}<label class="ui blue ribbon label">Optional</label>{{/if}}
+							<code class="code-label">{{name}}</code>
+						</td>
+						<td class="single line">
+							{{>text-markdown element=type enclose="code" noParagraph=true}}
+						</td>
+						<td class="single line">
+							{{>text-markdown element=defaultValue enclose="code" noParagraph=true}}
+						</td>
+						<td class="justified">
+							{{>text-markdown element=description}}
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	{{/if}}
+
+	{{^if @last}}
+		<div class="ui divider"></div>
+	{{/if}}
+
+{{/each}}

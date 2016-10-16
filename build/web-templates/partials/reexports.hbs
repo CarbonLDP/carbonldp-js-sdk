@@ -1,0 +1,40 @@
+{{!--#if reexports~}}
+	<div class="ui divider"></div>
+	{{>header level=4 path=(concat path ".Reexports") name="Reexports" }}
+
+	<table class="ui celled table">
+		<thead>
+			<tr>
+				<th>Export name</th>
+				<th>Module path</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each reexports~}}
+				<tr>
+					<td>
+						{{name}}
+					</td>
+					<td>
+						<a href="#{{sanitize originalLocation}}">{{originalLocation}}</a>
+					</td>
+				</tr>
+			{{/each}}
+		</tbody>
+	</table>
+{{/if--}}
+
+{{>header level=3 path=(concat path "--Reexports") name="Reexports" }}
+<div class="ui list">
+	{{#each reexports~}}
+		<div class="item">
+			<i class="mail forward icon"></i>
+			<div class="content">
+				<span class="header">{{name}}</span>
+				<div class="description">
+					<a href="#{{sanitize originalLocation}}">{{originalLocation}}</a>
+				</div>
+			</div>
+		</div>
+	{{/each}}
+</div>

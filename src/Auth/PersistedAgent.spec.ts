@@ -71,14 +71,14 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			OBLIGATORY,
 			"enable",
 			"Activate the account of the agent.",
-			{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
-			INSTANCE,
+			OBLIGATORY,
 			"disable",
 			"Deactivate the account of the agent.",
-			{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 	} );
@@ -241,7 +241,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				INSTANCE,
 				"enable",
 				"Activate the account of the agent.",
-				{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				let persistedDocument:PersistedDocument.Class;
@@ -273,7 +273,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				INSTANCE,
 				"disable",
 				"Deactivate the account of the agent.",
-				{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				let persistedDocument:PersistedDocument.Class;

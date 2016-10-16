@@ -1,0 +1,12 @@
+{{#each methods~}}
+	{{>header level=4 path=(concat ../path (concat "-" name) ) name=(concat ../access (concat name "()") ) secondary=returns.type}}
+
+	{{>signatures access=../access}}
+
+	{{br 2}}
+
+	{{^if @last}}
+		<div class="ui divider"></div>
+	{{/if}}
+
+{{/each}}

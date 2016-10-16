@@ -42,7 +42,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.AccessPoint.Class",
-		"Interface that represents the basic properties to construct an `Carbon.AccessPoint.DocumentClass`."
+		"Interface that represents the basic properties to construct a `Carbon.AccessPoint.DocumentClass`."
 	), ():void => {
 
 		it( hasProperty(

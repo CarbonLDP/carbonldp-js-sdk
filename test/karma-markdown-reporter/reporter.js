@@ -5,6 +5,8 @@ var glob = require( "glob" );
 var path = require( "path" );
 var Handlebars = require( "handlebars" );
 var swag = require( "swag" );
+var markdown = require( "helper-markdown" );
+
 swag.registerHelpers( Handlebars );
 
 (() => {
@@ -15,16 +17,28 @@ swag.registerHelpers( Handlebars );
 		str = str || "";
 		return str.replace( /\t/g, "" );
 	} );
-	Handlebars.registerHelper( "urlify", str => {
-		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
 
-		var uris = str.match( /Carbon[.A-z]*/gm ).map( uri => uri.replace( /\./g, "-" ) );
+	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph ) {
+		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
+		isHTML = ! ! isHTML;
+		noParagraph = ! ! noParagraph;
+
+		if( noParagraph )
+			str = str.replace( /<p>/gm, "" ).replace( /<\/p>/gm, "" );
+
+		var uris = str.match( /Carbon\.[.A-z]*/gm );
+		if( uris !== null )
+			uris = uris.map( uri => uri.replace( /\./g, "-" ).replace( /\(\)/, "" ) );
 
 		var index = 0;
-		return str.replace( /Carbon[.A-z]*/gm, ( matched ) => {
-			return "[" + matched + "]" + "(#" + uris[ index ++ ] + ")";
+		return str.replace( /Carbon\.[.A-z]*/gm, ( matched ) => {
+			if( isHTML )
+				return `<a href="#${ uris[ index ++ ] }">${ matched }</a>`;
+			return `[${ matched }](#${ uris[ index ++ ] })`;
 		} );
 	} );
+
+	Handlebars.registerHelper( "markdown", markdown );
 
 	Handlebars.registerHelper( "toc-tree", ( modules, options ) => {
 		var elements = [];
@@ -34,10 +48,10 @@ swag.registerHelpers( Handlebars );
 			var classes = modules[ i ][ "classes" ] || [];
 
 			Array.prototype.push.apply( elements, interfaces.map( element => {
-				return { path: element.path, type: "I" };
+				return { path: element.path, description: element.description, type: "I" };
 			} ) );
 			Array.prototype.push.apply( elements, classes.map( element => {
-				return { path: element.path, type: "C" };
+				return { path: element.path, description: element.description, type: "C" };
 			} ) );
 		}
 
@@ -51,6 +65,48 @@ swag.registerHelpers( Handlebars );
 		}
 
 		return ret;
+	} );
+
+	Handlebars.registerHelper( "combineElements", ( module, options ) => {
+		var elements = [];
+
+		var interfaces = module[ "interfaces" ] || [];
+		var classes = module[ "classes" ] || [];
+
+		Array.prototype.push.apply( elements, interfaces.map( element => {
+			return { element: element, isInterface: true };
+		} ) );
+		Array.prototype.push.apply( elements, classes.map( element => {
+			return { element: element, isClass: true };
+		} ) );
+
+		elements = elements.sort( function( a, b ) {
+			return a.element.path.localeCompare( b.element.path );
+		} );
+
+		var ret = "";
+		for( var j = 0, length = elements.length; j < length; j ++ ) {
+			ret = ret + options.fn( elements[ j ] );
+		}
+
+		return ret;
+	} );
+
+
+	Handlebars.registerHelper( "concat", function( value, string ) {
+		value = "" + ( value || "" );
+		string = "" + ( string || "" );
+
+		return value + string;
+	} );
+
+	Handlebars.registerHelper( "areEqual", function( value1, value2, response1, response2 ) {
+		response1 = response1 !== void 0 ? response1 : true;
+		response2 = response1 !== void 0 ? response2 : false;
+
+		if( value1 === value2 )
+			return response1;
+		return response2;
 	} );
 })();
 
@@ -124,6 +180,8 @@ var MarkdownReporter = (() => {
 
 			case "enum":
 				parent = parent[ "enums" ] || ( parent[ "enums" ] = {} );
+				suite.path = suite.name;
+				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			default:
@@ -156,6 +214,11 @@ var MarkdownReporter = (() => {
 				var method = methods[ spec.name ] = { name: spec.name };
 
 				signatures = method[ "signatures" ] || ( method[ "signatures" ] = [] );
+				if( ! spec.returns )
+					spec.returns = { type: "void" };
+				if( ! method.returns )
+					method.returns = spec.returns;
+
 				signatures.push( spec );
 				break;
 
@@ -175,6 +238,10 @@ var MarkdownReporter = (() => {
 
 				if( ! spec.description )
 					spec.description = parent.description;
+				if( ! spec.returns )
+					spec.returns = { type: "void" };
+				if( ! parent.returns )
+					parent.returns = spec.returns;
 
 				break;
 

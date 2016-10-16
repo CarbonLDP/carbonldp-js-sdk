@@ -49,10 +49,10 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the string provided using the `Carbon.JSONLD.Process.Class#expand()` method.", [
+			"Parse the string provided using the `Carbon.JSONLD.Process.Class.expand()` method.", [
 				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
-			{ type: "Promise<Object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs an `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }
+			{ type: "Promise<Object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }
 		), ( done ):void => {
 			jasmine.Ajax.stubRequest( /Should be error context/ ).andReturn( {
 				status: 404,

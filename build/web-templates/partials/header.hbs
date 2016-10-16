@@ -1,0 +1,12 @@
+<div class="ui header doc-module__header{{#if secondary}} doc-object__header-section{{/if}} doc-header" id="{{sanitize path}}">
+	<div class="ui basic ribbon label symbol">
+		<a class="symbol__anchor" href="#{{sanitize path}}"><i class="large grey linkify icon"></i></a>
+	</div>
+	<h{{#if level}}{{level}}{{else}}1{{/if}} class="doc-header__label doc-label">
+		<span class="{{#if secondary}}doc-label__main code-label{{/if}}">{{name}}</span>
+		{{#if secondary}}<span class="doc-label__secondary"> : {{>text-markdown element=secondary noParagraph=true}}</span>{{/if}}
+	</h{{#if level}}{{level}}{{else}}1{{/if}}>
+	{{#unless level}}
+		<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} horizontal basic label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}</span>
+	{{/unless}}
+</div>

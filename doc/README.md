@@ -339,7 +339,7 @@ Resolve the URI provided in the scope of the CarbonLDP Platform.
 
 ### <a name="Carbon-App-PersistedAgent-Class"/>Interface Carbon.App.PersistedAgent.Class
 
-**Extends:** [Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedAgent-Class&quot;&gt;Carbon.Auth.PersistedAgent.Class&lt;/a&gt;
 
 > Specific interface that represents the persisted agents from an application.
 
@@ -356,7 +356,7 @@ Resolve the URI provided in the scope of the CarbonLDP Platform.
 
 ### <a name="Carbon-Platform-PersistedAgent-Class"/>Interface Carbon.Platform.PersistedAgent.Class
 
-**Extends:** [Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedAgent-Class&quot;&gt;Carbon.Auth.PersistedAgent.Class&lt;/a&gt;
 
 > Interface that specify an persisted agent in platform context i.e. Carbon context.
 
@@ -493,7 +493,7 @@ static RDF_CLASS:string
 ### <a name="Carbon-AccessPoint-Class"/>Interface Carbon.AccessPoint.Class
 
 
-> Interface that represents the basic properties to construct an `Carbon.AccessPoint.DocumentClass`.
+> Interface that represents the basic properties to construct a `Carbon.AccessPoint.DocumentClass`.
 
 #### <a name="Carbon-AccessPoint-Class-Properties"/>Properties
 ```typescript 
@@ -524,7 +524,7 @@ The string URI or pointer URI that represents the inserted content relation of t
 
 ### <a name="Carbon-AccessPoint-DocumentClass"/>Interface Carbon.AccessPoint.DocumentClass
 
-**Extends:** [Carbon.LDP.DirectContainer.Class](#Carbon-LDP-DirectContainer-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-LDP-DirectContainer-Class&quot;&gt;Carbon.LDP.DirectContainer.Class&lt;/a&gt;
 
 > Interface that represents the document of an in-memory access point.
 
@@ -896,7 +896,7 @@ Resolve the URI provided in the scope of the application.
 
 ### <a name="Carbon-App-PersistedRole-Class"/>Interface Carbon.App.PersistedRole.Class
 
-**Extends:** [Carbon.Auth.PersistedRole.Class](#Carbon-Auth-PersistedRole-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedRole-Class&quot;&gt;Carbon.Auth.PersistedRole.Class&lt;/a&gt;
 
 > Specific interface that represents a persisted role of an application.
 
@@ -1182,7 +1182,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-App-Role-Class"/>Interface Carbon.App.Role.Class
 
-**Extends:** [Carbon.Auth.Role.Class](#Carbon-Auth-Role-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-Role-Class&quot;&gt;Carbon.Auth.Role.Class&lt;/a&gt;
 
 > Specific interface that represents an in memory role for an application.
 
@@ -1344,7 +1344,7 @@ In this class the property is set to `null`, and implementations of this class s
 
 ##### addAuthentication
 ```typescript 
-addAuthentication( options:Carbon.HTTP.Request.Options )
+addAuthentication( options:Carbon.HTTP.Request.Options ):void
 ```
 
 Adds the authentication header to a `Carbon.HTTP.Request.Options` object.
@@ -1412,7 +1412,7 @@ Authenticates the user with a `Carbon.Auth.Token.Class`, which contains a JSON W
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 Deletes the authentication of the current instance.
@@ -1477,7 +1477,7 @@ Returns true if the user is authenticated.
 
 ### <a name="Carbon-Auth-PersistedACE-Class"/>Interface Carbon.Auth.PersistedACE.Class
 
-**Extends:** [Carbon.Auth.ACE.Class](#Carbon-Auth-ACE-Class), [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-ACE-Class&quot;&gt;Carbon.Auth.ACE.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;
 
 > Interface that represents a persisted Access Control Entry (ACE) of a persisted Access Control List (ACL).
 
@@ -1519,7 +1519,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-ACL-Class"/>Interface Carbon.Auth.ACL.Class
 
-**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
 
 > Interface that represents an in-memory Access Control List (ACL).
 
@@ -1614,7 +1614,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### grant
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -1626,7 +1626,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -1638,7 +1638,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -1650,7 +1650,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -1666,7 +1666,7 @@ Grant several permissions to the every subject provided for the document related
 
 ##### deny
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -1678,7 +1678,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -1690,7 +1690,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -1702,7 +1702,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -1718,7 +1718,7 @@ Grant several permissions to the every subject provided for the document related
 
 ##### configureChildInheritance
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
@@ -1731,7 +1731,7 @@ Configures the permission specified to the subject provided either granting or d
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
@@ -1744,7 +1744,7 @@ Configure several permissions to the subject provided either granting or denying
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
@@ -1757,7 +1757,7 @@ Configure the permission specified to the every subject provided either granting
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
@@ -1774,7 +1774,7 @@ Configure several permissions to the every subject provided either granting or d
 
 ##### remove
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the document related to the ACL.
@@ -1785,7 +1785,7 @@ Remove the configuration of a permission from a subject for the document related
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the document related to the ACL.
@@ -1800,7 +1800,7 @@ Remove the configuration of several permissions from a subject for the document 
 
 ##### removeChildInheritance
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the children of the document related to the ACL.
@@ -1862,7 +1862,7 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 ##### <a name="Carbon-Auth-ACL-Factory-Decorated-Object-Methods"/>Methods
 ##### configureChildInheritance
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
@@ -1875,7 +1875,7 @@ Configures the permission specified to the subject provided either granting or d
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
@@ -1888,7 +1888,7 @@ Configure several permissions to the subject provided either granting or denying
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
@@ -1901,7 +1901,7 @@ Configure the permission specified to the every subject provided either granting
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
@@ -1934,7 +1934,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### deny
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -1946,7 +1946,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -1958,7 +1958,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -1970,7 +1970,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2002,7 +2002,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### grant
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -2014,7 +2014,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -2026,7 +2026,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -2038,7 +2038,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2070,7 +2070,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### remove
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the document related to the ACL.
@@ -2081,7 +2081,7 @@ Remove the configuration of a permission from a subject for the document related
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the document related to the ACL.
@@ -2096,7 +2096,7 @@ Remove the configuration of several permissions from a subject for the document 
 
 ##### removeChildInheritance
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the children of the document related to the ACL.
@@ -2107,7 +2107,7 @@ Remove the configuration of a permission from a subject for the children of the 
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the children of the document related to the ACL.
@@ -2148,7 +2148,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Agent-Class"/>Interface Carbon.Auth.Agent.Class
 
-**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
 
 > Interface that represents an in-memory Agent of any Context.
 
@@ -2417,7 +2417,7 @@ Performs an authentication and stores the credentials for future use.
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 Removes the stored credentials of any.
@@ -2451,7 +2451,7 @@ If the authenticator is authenticated, it adds an authentication header in the r
 
 ### <a name="Carbon-Auth-BasicAuthenticator-Class"/>Class Carbon.Auth.BasicAuthenticator.Class
 
-**Implements:** [Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)&lt;[Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-Authenticator-Class&quot;&gt;Carbon.Auth.Authenticator.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-Auth-UsernameAndPasswordToken-Class&quot;&gt;Carbon.Auth.UsernameAndPasswordToken.Class&lt;/a&gt;&gt;
 
 > Authenticates requests using HTTP Basic Authentication.
 
@@ -2497,7 +2497,7 @@ Stores credentials to authenticate future requests.
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 Clears any saved credentials and restores the Authenticator to its initial state.
@@ -2544,7 +2544,7 @@ Returns true if the instance contains stored credentials.
 
 ### <a name="Carbon-Auth-PersistedACL-Class"/>Interface Carbon.Auth.PersistedACL.Class
 
-**Extends:** [Carbon.PersistedDocument.Class](#Carbon-PersistedDocument-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedDocument-Class&quot;&gt;Carbon.PersistedDocument.Class&lt;/a&gt;
 
 > Interface that represents a persisted Access Control List (ACL).
 
@@ -2639,7 +2639,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### grant
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -2651,7 +2651,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -2663,7 +2663,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -2675,7 +2675,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2691,7 +2691,7 @@ Grant several permissions to the every subject provided for the document related
 
 ##### deny
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -2703,7 +2703,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -2715,7 +2715,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -2727,7 +2727,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2743,7 +2743,7 @@ Grant several permissions to the every subject provided for the document related
 
 ##### configureChildInheritance
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
@@ -2756,7 +2756,7 @@ Configures the permission specified to the subject provided either granting or d
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
@@ -2769,7 +2769,7 @@ Configure several permissions to the subject provided either granting or denying
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
@@ -2782,7 +2782,7 @@ Configure the permission specified to the every subject provided either granting
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
@@ -2799,7 +2799,7 @@ Configure several permissions to the every subject provided either granting or d
 
 ##### remove
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the document related to the ACL.
@@ -2810,7 +2810,7 @@ Remove the configuration of a permission from a subject for the document related
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the document related to the ACL.
@@ -2825,7 +2825,7 @@ Remove the configuration of several permissions from a subject for the document 
 
 ##### removeChildInheritance
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the children of the document related to the ACL.
@@ -2890,7 +2890,7 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 
 ### <a name="Carbon-Auth-PersistedAgent-Class"/>Interface Carbon.Auth.PersistedAgent.Class
 
-**Extends:** [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedProtectedDocument-Class&quot;&gt;Carbon.PersistedProtectedDocument.Class&lt;/a&gt;
 
 > Interface that represents the base of a persisted Agent in any context.
 
@@ -2931,7 +2931,7 @@ Property that represents the password of the agent. This property is not retriev
 #### <a name="Carbon-Auth-PersistedAgent-Class-Methods"/>Methods
 ##### enable
 ```typescript 
-enable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+enable():Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Activate the account of the agent.
@@ -2939,7 +2939,13 @@ Activate the account of the agent.
 
 --
 
-##### 
+##### disable
+```typescript 
+disable():Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Deactivate the account of the agent.
+
 
 
 
@@ -3006,7 +3012,7 @@ Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.
 ##### <a name="Carbon-Auth-PersistedAgent-Factory-Decorated-Object-Methods"/>Methods
 ##### disable
 ```typescript 
-disable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+disable():Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Deactivate the account of the agent.
@@ -3016,7 +3022,7 @@ Deactivate the account of the agent.
 
 ##### enable
 ```typescript 
-enable():Promise<[ Carbon.Auth.PersistedAgent.Class Carbon.HTTP.Response.Class ]>
+enable():Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>
 ```
 
 Activate the account of the agent.
@@ -3035,7 +3041,7 @@ Activate the account of the agent.
 
 ### <a name="Carbon-App-PersistedRole-Class"/>Interface Carbon.App.PersistedRole.Class
 
-**Extends:** [Carbon.Auth.PersistedRole.Class](#Carbon-Auth-PersistedRole-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedRole-Class&quot;&gt;Carbon.Auth.PersistedRole.Class&lt;/a&gt;
 
 > Specific interface that represents a persisted role of an application.
 
@@ -3400,7 +3406,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Role-Class"/>Interface Carbon.Auth.Role.Class
 
-**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
 
 > Specific interface that represents the base of an in-memory role for any context.
 
@@ -3693,7 +3699,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Ticket-Class"/>Interface Carbon.Auth.Ticket.Class
 
-**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
 
 > Interface that represents an authentication ticket.
 
@@ -3777,7 +3783,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Token-Class"/>Interface Carbon.Auth.Token.Class
 
-**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class), [Carbon.Auth.Credentials.Class](#Carbon-Auth-Credentials-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Auth-Credentials-Class&quot;&gt;Carbon.Auth.Credentials.Class&lt;/a&gt;
 
 > Interface that represents an authentication token for every context.
 
@@ -3882,7 +3888,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Auth.
 
 ### <a name="Carbon-Auth-TokenAuthenticator-Class"/>Class Carbon.Auth.TokenAuthenticator.Class
 
-**Implements:** [Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)&lt;[Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-Authenticator-Class&quot;&gt;Carbon.Auth.Authenticator.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-Auth-UsernameAndPasswordToken-Class&quot;&gt;Carbon.Auth.UsernameAndPasswordToken.Class&lt;/a&gt;&gt;
 
 > Authenticates requests using JSON Web Token (JWT) Authentication.
 
@@ -3942,7 +3948,7 @@ Stores credentials to authenticate future requests.
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 
@@ -3975,7 +3981,7 @@ Returns true if the instance contains stored credentials.
 
 ### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class"/>Class Carbon.Auth.UsernameAndPasswordCredentials.Class
 
-**Implements:** [Carbon.Auth.Credentials.Class](#Carbon-Auth-Credentials-Class)
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-Credentials-Class&quot;&gt;Carbon.Auth.Credentials.Class&lt;/a&gt;
 
 > Wrapper to manage Authentication Credentials in form of Username/Password.
 
@@ -4022,7 +4028,7 @@ username:string
 
 ### <a name="Carbon-Auth-UsernameAndPasswordToken-Class"/>Class Carbon.Auth.UsernameAndPasswordToken.Class
 
-**Implements:** [Carbon.Auth.AuthenticationToken.Class](#Carbon-Auth-AuthenticationToken-Class)
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-AuthenticationToken-Class&quot;&gt;Carbon.Auth.AuthenticationToken.Class&lt;/a&gt;
 
 > Wrapper to manage an Authentication Token in form of Username/Password.
 
@@ -4241,7 +4247,7 @@ Returns the value of the setting looked for.
 
 ##### setSetting
 ```typescript 
-setSetting( name:string,  value:any )
+setSetting( name:string,  value:any ):void
 ```
 
 Set a setting in the current context.
@@ -4256,7 +4262,7 @@ Set a setting in the current context.
 
 ##### deleteSetting
 ```typescript 
-deleteSetting( name:string )
+deleteSetting( name:string ):void
 ```
 
 Deletes the setting specified by the name provided from the current context.
@@ -4298,7 +4304,7 @@ Returns the ObjectSchema for the specified type. If no type is specified, the ge
 
 ##### clearObjectSchema
 ```typescript 
-clearObjectSchema( type?:string )
+clearObjectSchema( type?:string ):void
 ```
 
 Remove the schema of the type specified, or the general schema if no type is provided.
@@ -4312,7 +4318,7 @@ Remove the schema of the type specified, or the general schema if no type is pro
 
 ##### extendObjectSchema
 ```typescript 
-extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
 Extends the schema for a specified type of Resource.
@@ -4324,7 +4330,7 @@ If a schema for the type exists in the parent context, this is duplicated for th
 - objectSchema: The new schema that will extends the previous one.
 
 ```typescript 
-extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
 Extends the general schema of the current context.
@@ -4405,7 +4411,7 @@ Map that stores the fragments (named fragments and blank nodes) of the Document.
 #### <a name="Carbon-Document-Class-Methods"/>Methods
 ##### _normalize
 ```typescript 
-_normalize()
+_normalize():void
 ```
 
 Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
@@ -4592,7 +4598,7 @@ If the slug has the form of a BlankNode ID, an Error is thrown.
 
 ##### _removeFragment
 ```typescript 
-_removeFragment( fragment:Carbon.Fragment.Class )
+_removeFragment( fragment:Carbon.Fragment.Class ):void
 ```
 
 Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
@@ -4602,7 +4608,7 @@ Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the 
 - fragment
 
 ```typescript 
-_removeFragment( slug:string )
+_removeFragment( slug:string ):void
 ```
 
 Remove the fragment referenced by the Slug provided from the Document.
@@ -4616,7 +4622,7 @@ Remove the fragment referenced by the Slug provided from the Document.
 
 ##### removeNamedFragment
 ```typescript 
-removeNamedFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class ):void
 ```
 
 Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
@@ -4626,7 +4632,7 @@ Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provide
 - fragment
 
 ```typescript 
-removeNamedFragment( slug:string )
+removeNamedFragment( slug:string ):void
 ```
 
 Remove the named fragment referenced by the Slug provided from the Document.
@@ -4765,7 +4771,7 @@ Map that stores the fragments (named fragments and blank nodes) of the Document.
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods"/>Methods
 ##### _normalize
 ```typescript 
-_normalize()
+_normalize():void
 ```
 
 Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
@@ -4775,7 +4781,7 @@ Search over the document for normal objects to convert into fragments, and unuse
 
 ##### _removeFragment
 ```typescript 
-_removeFragment( fragment:Carbon.Fragment.Class )
+_removeFragment( fragment:Carbon.Fragment.Class ):void
 ```
 
 Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
@@ -4785,7 +4791,7 @@ Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the 
 - fragment
 
 ```typescript 
-_removeFragment( slug:string )
+_removeFragment( slug:string ):void
 ```
 
 Remove the fragment referenced by the Slug provided from the Document.
@@ -4976,7 +4982,7 @@ Returns true if the URI provided is inside the scope of the Document.
 
 ##### removeNamedFragment
 ```typescript 
-removeNamedFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class ):void
 ```
 
 Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
@@ -4986,7 +4992,7 @@ Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provide
 - fragment
 
 ```typescript 
-removeNamedFragment( slug:string )
+removeNamedFragment( slug:string ):void
 ```
 
 Remove the named fragment referenced by the Slug provided from the Document.
@@ -5040,7 +5046,7 @@ Returns a JSON string from the Document using the default ObjectSchema.
 
 ### <a name="Carbon-Documents-Class"/>Class Carbon.Documents.Class
 
-**Implements:** [Carbon.Pointer.Library](#Carbon-Pointer-Library), [Carbon.Pointer.Validator](#Carbon-Pointer-Validator), [Carbon.ObjectSchema.Resolver](#Carbon-ObjectSchema-Resolver)
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-Pointer-Library&quot;&gt;Carbon.Pointer.Library&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Pointer-Validator&quot;&gt;Carbon.Pointer.Validator&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-ObjectSchema-Resolver&quot;&gt;Carbon.ObjectSchema.Resolver&lt;/a&gt;
 
 > Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.
 
@@ -6071,7 +6077,7 @@ Returns true if the object provided has the properties and methods of a `Class.F
 
 ### <a name="Carbon-FreeResources-Class"/>Interface Carbon.FreeResources.Class
 
-**Extends:** [Carbon.Pointer.Library](#Carbon-Pointer-Library), [Carbon.Pointer.Validator](#Carbon-Pointer-Validator)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Pointer-Library&quot;&gt;Carbon.Pointer.Library&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Pointer-Validator&quot;&gt;Carbon.Pointer.Validator&lt;/a&gt;
 
 > Interface that represents a set of free resources.
 
@@ -6458,7 +6464,7 @@ Converts the resources contained in the current `Carbon.FreeResources.Class` obj
 
 ### <a name="Carbon-HTTP-Errors-Properties"/>Properties
 ```typescript 
-static client:Array <Carbon.HTTP.Error.HTTPError> 
+static client:Array<Carbon.HTTP.Errors.HTTPError> 
 ```
 
 Array that contains all the error classes that represents the errors induced by the client.
@@ -6466,7 +6472,7 @@ Array that contains all the error classes that represents the errors induced by 
 --
 
 ```typescript 
-static server:Array <Carbon.HTTP.Error.HTTPError> 
+static server:Array<Carbon.HTTP.Errors.HTTPError> 
 ```
 
 Array that contains all the error classes that represents the errors caused by the server.
@@ -6474,7 +6480,7 @@ Array that contains all the error classes that represents the errors caused by t
 --
 
 ```typescript 
-static statusCodeMap:Map <number, Carbon.HTTP.Error.HTTPError> 
+static statusCodeMap:Map<number, Carbon.HTTP.Error.HTTPError> 
 ```
 
 Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class.
@@ -7833,7 +7839,7 @@ toString():string
 
 #### <a name="Carbon-HTTP-Header-Class-Constructor"/>Constructor
 ```typescript 
-Class( values:Array <Carbon.HTTP.Header.Value> )
+Class( values:Array <Carbon.HTTP.Header.Value> ):void
 ```
 
 
@@ -7842,7 +7848,7 @@ Class( values:Array <Carbon.HTTP.Header.Value> )
 - values
 
 ```typescript 
-Class( value:string )
+Class( value:string ):void
 ```
 
 
@@ -7866,7 +7872,7 @@ Array that contains each value of the header.
 
 ##### toString
 ```typescript 
-toString()
+toString():void
 ```
 
 string
@@ -7944,7 +7950,7 @@ toString():string
 
 ### <a name="Carbon-HTTP-JSONLDParser-Class"/>Class Carbon.HTTP.JSONLDParser.Class
 
-**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;Object[]&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;Object[]&gt;
 
 > Class to parse strings to valid JSONLD objects.
 
@@ -7958,7 +7964,7 @@ toString():string
 parse( body:string ):Promise<Object[]>
 ```
 
-Parse the string provided using the `Carbon.JSONLD.Process.Class#expand()` method.
+Parse the string provided using the `Carbon.JSONLD.Process.Class.expand()` method.
 
 *Parameters*
 
@@ -7980,7 +7986,7 @@ Parse the string provided using the `Carbon.JSONLD.Process.Class#expand()` metho
 
 ### <a name="Carbon-HTTP-JSONParser-Class"/>Class Carbon.HTTP.JSONParser.Class
 
-**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;Object&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;Object&gt;
 
 > Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.
 
@@ -7991,7 +7997,7 @@ Parse the string provided using the `Carbon.JSONLD.Process.Class#expand()` metho
 
 ##### parse
 ```typescript 
-parse( body:string ):Promise <Object>
+parse( body:string ):Promise<Object>
 ```
 
 
@@ -8481,7 +8487,7 @@ Set a Slug header in an options object request.
 
 #### <a name="Carbon-HTTP-Response-Class-Constructor"/>Constructor
 ```typescript 
-Class( request:XMLHttpRequest )
+Class( request:XMLHttpRequest ):void
 ```
 
 Signature that only works in a web browser.
@@ -8491,7 +8497,7 @@ Signature that only works in a web browser.
 - request
 
 ```typescript 
-Class( request:ClientRequest,  data:string,  response:IncomingMessage )
+Class( request:ClientRequest,  data:string,  response:IncomingMessage ):void
 ```
 
 Signature that only works in Node.js.
@@ -8647,7 +8653,7 @@ Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if
 
 ### <a name="Carbon-HTTP-StringParser-Class"/>Class Carbon.HTTP.StringParser.Class
 
-**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;string&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;string&gt;
 
 > Parses a `Carbon.HTTP.Response.Class` and returns a string.
 
@@ -8840,7 +8846,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-AddMemberAction-Class"/>Interface Carbon.LDP.AddMemberAction.Class
 
-**Extends:** [Carbon.Fragment.Class](#Carbon-Fragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
 
 > Interface that represents an object to be sent in a request that add members to a container.
 
@@ -8915,7 +8921,7 @@ static RDF_CLASS:string
 
 ### <a name="Carbon-LDP-DirectContainer-Class"/>Interface Carbon.LDP.DirectContainer.Class
 
-**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
 
 > Interface that represents an `ldp:DirectContainer`.
 
@@ -9030,7 +9036,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-Error-Class"/>Interface Carbon.LDP.Error.Class
 
-**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
 
 > Interface that represents an error occurred in the server.
 
@@ -9080,7 +9086,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-ErrorResponse-Class"/>Interface Carbon.LDP.ErrorResponse.Class
 
-**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
 
 > Interface that its used to represents part of an error (or multiple of them) thrown by the server.
 
@@ -9113,7 +9119,7 @@ The HTTP status code that represents all the errors occurred.
 
 ### <a name="Carbon-LDP-ErrorResponse-Parser"/>Class Carbon.LDP.ErrorResponse.Parser
 
-**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;[Carbon.LDP.ErrorResponse.Class](#Carbon-LDP-ErrorResponse-Class)&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-LDP-ErrorResponse-Class&quot;&gt;Carbon.LDP.ErrorResponse.Class&lt;/a&gt;&gt;
 
 > Parser class for `Carbon.LDP.ErrorResponse.Class` objects.
 
@@ -9126,7 +9132,7 @@ The HTTP status code that represents all the errors occurred.
 static parse( data:string,  object:Object ):Promise<Carbon.LDP.ErrorResponse.Class>
 ```
 
-Parse the string data provided and create an `Carbon.LDP.ResponseError.Class` object.
+Parse the string data provided and create a `Carbon.LDP.ResponseError.Class` object.
 
 *Parameters*
 
@@ -9185,7 +9191,7 @@ static RDF_CLASS:string
 
 ### <a name="Carbon-LDP-IndirectContainer-Class"/>Interface Carbon.LDP.IndirectContainer.Class
 
-**Extends:** [Carbon.DirectContainer.Class](#Carbon-DirectContainer-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-DirectContainer-Class&quot;&gt;Carbon.DirectContainer.Class&lt;/a&gt;
 
 > Interface that represents an `ldp:IndirectContainer`.
 
@@ -9237,7 +9243,7 @@ Returns true if the object provided has the properties of a `Carbon.LDP.Indirect
 
 ### <a name="Carbon-PersistedBlankNode-Class"/>Interface Carbon.PersistedBlankNode.Class
 
-**Extends:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -9279,7 +9285,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-RemoveMemberAction-Class"/>Interface Carbon.LDP.RemoveMemberAction.Class
 
-**Extends:** [Carbon.Fragment.Class](#Carbon-Fragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
 
 > Interface that represents an object to be sent in a request that removes specific members to a container.
 
@@ -9361,7 +9367,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-ResourceMetadata-Class"/>Interface Carbon.LDP.ResourceMetadata.Class
 
-**Extends:** [Carbon.LDP.VolatileResource.Class](#Carbon-LDP-VolatileResource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-LDP-VolatileResource-Class&quot;&gt;Carbon.LDP.VolatileResource.Class&lt;/a&gt;
 
 > Interface that represents a free node resource that contains dynamic information about an specific resource.
 
@@ -9465,7 +9471,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-ResponseMetadata-Class"/>Interface Carbon.LDP.ResponseMetadata.Class
 
-**Extends:** [Carbon.LDP.VolatileResource.Class](#Carbon-LDP-VolatileResource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-LDP-VolatileResource-Class&quot;&gt;Carbon.LDP.VolatileResource.Class&lt;/a&gt;
 
 > Interface that represents the main resource of a set of metadata resources, which references everyone resource related to an specific dynamic response of tha server.
 
@@ -9554,7 +9560,7 @@ static RDF_CLASS:string
 
 ### <a name="Carbon-LDP-VolatileResource-Class"/>Interface Carbon.LDP.VolatileResource.Class
 
-**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
 
 > Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form.
 
@@ -11058,7 +11064,7 @@ static unsignedShort:string
 
 ### <a name="Carbon-NamedFragment-Class"/>Interface Carbon.NamedFragment.Class
 
-**Extends:** [Carbon.Fragment.Class](#Carbon-Fragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
 
 > Interface that represents a named fragment from a Carbon LDP document.
 
@@ -11462,7 +11468,7 @@ Resolves a prefixed URI, or relative URI with the vocab in the schema provided.
 
 ### <a name="Carbon-PersistedAccessPoint-Class"/>Interface Carbon.PersistedAccessPoint.Class
 
-**Extends:** [Carbon.AccessPoint.Class](#Carbon-AccessPoint-Class), [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-AccessPoint-Class&quot;&gt;Carbon.AccessPoint.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-PersistedProtectedDocument-Class&quot;&gt;Carbon.PersistedProtectedDocument.Class&lt;/a&gt;
 
 > Interface that represents a persisted Carbon LDP AccessPoint.
 
@@ -11512,7 +11518,7 @@ The inserted content relation of the access point.
 
 ### <a name="Carbon-PersistedApp-Class"/>Interface Carbon.PersistedApp.Class
 
-**Extends:** [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedProtectedDocument-Class&quot;&gt;Carbon.PersistedProtectedDocument.Class&lt;/a&gt;
 
 > Interface that represents a persisted Carbon LDP Application.
 
@@ -11602,7 +11608,7 @@ Returns true if the object provided is considered a `Carbon.PersistedApp.Class` 
 
 ### <a name="Carbon-PersistedDocument-Class"/>Interface Carbon.PersistedDocument.Class
 
-**Extends:** [Carbon.PersistedResource.Class](#Carbon-PersistedResource-Class), [Carbon.Document.Class](#Carbon-Document-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedResource-Class&quot;&gt;Carbon.PersistedResource.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -11699,7 +11705,7 @@ Array with a copy of every fragment that that is currently persisted in the serv
 #### <a name="Carbon-PersistedDocument-Class-Methods"/>Methods
 ##### _syncSavedFragments
 ```typescript 
-_syncSavedFragments()
+_syncSavedFragments():void
 ```
 
 Set all the current fragments in the document as fragments that are saved in the server.
@@ -12396,7 +12402,7 @@ Adds the specified resources as members of the document.
 
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the Document. Relative and prefixed types are resolved before the operation.
@@ -12792,7 +12798,7 @@ Returns true if the persisted document object has a pointer referenced by the UR
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
@@ -12912,7 +12918,7 @@ Remove the specified resources URI or Pointers as members of the current documen
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
@@ -13002,7 +13008,7 @@ Upload a File to the server as a child of the current document. This signature o
 
 ### <a name="Carbon-PersistedFragment-Class"/>Interface Carbon.PersistedFragment.Class
 
-**Extends:** [Carbon.PersistedResource.Class](#Carbon-PersistedResource-Class), [Carbon.Fragment.Class](#Carbon-Fragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedResource-Class&quot;&gt;Carbon.PersistedResource.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
 
 > Interface that represents a persisted fragment of a persisted document.
 
@@ -13028,7 +13034,7 @@ A reference to the persisted document the current fragment belongs to.
 #### <a name="Carbon-PersistedFragment-Factory-Methods"/>Methods
 ##### decorate
 ```typescript 
-static decorate( fragment:T extends Carbon.Fragment.Class,  snapshot?:Object )
+static decorate( fragment:T extends Carbon.Fragment.Class,  snapshot?:Object ):void
 ```
 
 Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.
@@ -13052,7 +13058,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 ##### <a name="Carbon-PersistedFragment-Factory-Decorated-Object-Methods"/>Methods
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the PersistedFragment. Relative and prefixed types are resolved before the operation.
@@ -13066,7 +13072,7 @@ Adds a type to the PersistedFragment. Relative and prefixed types are resolved b
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the PersistedFragment contains the type specified. Relative and prefixed types are resolved before the operation.
@@ -13080,7 +13086,7 @@ Returns true if the PersistedFragment contains the type specified. Relative and 
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the PersistedFragment. Relative and prefixed types are resolved before the operation.
@@ -13104,7 +13110,7 @@ Remove the type specified from the PersistedFragment. Relative and prefixed type
 
 ### <a name="Carbon-PersistedNamedFragment-Class"/>Interface Carbon.PersistedNamedFragment.Class
 
-**Extends:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class), [Carbon.NamedFragment.Class](#Carbon-NamedFragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-NamedFragment-Class&quot;&gt;Carbon.NamedFragment.Class&lt;/a&gt;
 
 > Interface that represents a persisted named fragment of a persisted document.
 
@@ -13130,7 +13136,7 @@ A reference to the persisted document the current named fragment belongs to.
 #### <a name="Carbon-PersistedNamedFragment-Factory-Methods"/>Methods
 ##### decorate
 ```typescript 
-static decorate( fragment:T extends Carbon.NamedFragment.Class,  snapshot?:Object )
+static decorate( fragment:T extends Carbon.NamedFragment.Class,  snapshot?:Object ):void
 ```
 
 Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.
@@ -13157,7 +13163,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 
 ### <a name="Carbon-PersistedProtectedDocument-Class"/>Interface Carbon.PersistedProtectedDocument.Class
 
-**Extends:** [Carbon.PersistedDocument.Class](#Carbon-PersistedDocument-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedDocument-Class&quot;&gt;Carbon.PersistedDocument.Class&lt;/a&gt;
 
 > Interface that represents a persisted protected document.
 
@@ -13289,7 +13295,7 @@ The shallow copy of the resource, which is used to track the changes on the reso
 #### <a name="Carbon-PersistedResource-Class-Methods"/>Methods
 ##### _syncSnapshot
 ```typescript 
-_syncSnapshot()
+_syncSnapshot():void
 ```
 
 Updates the snapshot with the data of the resource.
@@ -13299,7 +13305,7 @@ Updates the snapshot with the data of the resource.
 
 ##### isDirty
 ```typescript 
-isDirty()
+isDirty():void
 ```
 
 Returns true if the resource presents differences from its snapshot.
@@ -13309,7 +13315,7 @@ Returns true if the resource presents differences from its snapshot.
 
 ##### revert
 ```typescript 
-revert()
+revert():void
 ```
 
 Revert the changes made to the resource into the state of the snapshot.
@@ -13329,7 +13335,7 @@ Revert the changes made to the resource into the state of the snapshot.
 #### <a name="Carbon-PersistedResource-Factory-Methods"/>Methods
 ##### decorate
 ```typescript 
-static decorate( fragment:T extends Object,  snapshot?:Object )
+static decorate( fragment:T extends Object,  snapshot?:Object ):void
 ```
 
 Decorates the object provided with the properties and methods of a `Carbon.PersistedResource.Class` object.
@@ -13376,7 +13382,7 @@ The shallow copy of the resource, which is used to track the changes on the reso
 ##### <a name="Carbon-PersistedResource-Factory-Decorated-Object-Methods"/>Methods
 ##### _syncSnapshot
 ```typescript 
-_syncSnapshot()
+_syncSnapshot():void
 ```
 
 Updates the snapshot with the data of the resource.
@@ -13386,7 +13392,7 @@ Updates the snapshot with the data of the resource.
 
 ##### isDirty
 ```typescript 
-isDirty()
+isDirty():void
 ```
 
 Returns true if the resource presents differences from its snapshot.
@@ -13396,7 +13402,7 @@ Returns true if the resource presents differences from its snapshot.
 
 ##### revert
 ```typescript 
-revert()
+revert():void
 ```
 
 Revert the changes made to the resource into the state of the snapshot.
@@ -13837,7 +13843,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-ProtectedDocument-Class"/>Interface Carbon.ProtectedDocument.Class
 
-**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -14206,7 +14212,7 @@ The actual string value if the literal.
 #### <a name="Carbon-RDF-Literal-Factory-Methods"/>Methods
 ##### from
 ```typescript 
-static from()
+static from():void
 ```
 
 Convert the value provided to a `Carbon.RDF.Literal.Class` object.
@@ -14272,7 +14278,7 @@ Returns `null` if the Literal can't be parsed.
 
 ### <a name="Carbon-RDF-Literal-Serializer-Class"/>Interface Carbon.RDF.Literal.Serializer.Class
 
-**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
 
 > Interface that serializer classes must implement.
 
@@ -15009,7 +15015,7 @@ Returns a string that represents the URI of the class.
 #### <a name="Carbon-RDF-URI-Util-Methods"/>Methods
 ##### generateBNodeID
 ```typescript 
-static generateBNodeID()
+static generateBNodeID():void
 ```
 
 Returns an ID for a BlankNode using an universally unique identifier (UUID).
@@ -15019,7 +15025,7 @@ Returns an ID for a BlankNode using an universally unique identifier (UUID).
 
 ##### getDocumentURI
 ```typescript 
-static getDocumentURI( uri:string )
+static getDocumentURI( uri:string ):void
 ```
 
 Returns the URI that just reference to the Document of the URI provided.
@@ -15371,7 +15377,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-RDFRepresentation-Class"/>Interface Carbon.RDFRepresentation.Class
 
-**Extends:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;
 
 > Interface that represents a persisted NonRDFDocument.
 
@@ -15445,7 +15451,7 @@ Returns true if the object provided is considered a `Carbon.RDFRepresentation.Cl
 
 ### <a name="Carbon-Resource-Class"/>Interface Carbon.Resource.Class
 
-**Extends:** [Carbon.Pointer.Class](#Carbon-Pointer-Class)
+**Extends:** &lt;a href&#x3D;&quot;#Carbon-Pointer-Class&quot;&gt;Carbon.Pointer.Class&lt;/a&gt;
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -15462,7 +15468,7 @@ An array with the types of the resource.
 #### <a name="Carbon-Resource-Class-Methods"/>Methods
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the current resource.
@@ -15476,7 +15482,7 @@ Adds a type to the current resource.
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the current resource contains the type specified.
@@ -15490,7 +15496,7 @@ Returns true if the current resource contains the type specified.
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the current resource.
@@ -15596,7 +15602,7 @@ Returns true if the object provided is considered a `Carbon.Resource.Class` obje
 ##### <a name="Carbon-Resource-Factory-Decorated-Object-Methods"/>Methods
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the Resource.
@@ -15610,7 +15616,7 @@ Adds a type to the Resource.
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the Resource contains the type specified.
@@ -15624,7 +15630,7 @@ Returns true if the Resource contains the type specified.
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the Resource.
@@ -15783,7 +15789,7 @@ Instance of `Carbon.SDKContext.Class` that is used as the root parent in every c
 
 ### <a name="Carbon-SDKContext-Class"/>Class Carbon.SDKContext.Class
 
-**Implements:** [Carbon.Context.Class](#Carbon-Context-Class)
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-Context-Class&quot;&gt;Carbon.Context.Class&lt;/a&gt;
 
 > Base class of every Context in the SDK.
 
@@ -15827,7 +15833,7 @@ Parent context of the current context. For an instance of `Carbon.SDKContext.Cla
 
 ##### clearObjectSchema
 ```typescript 
-clearObjectSchema( type?:string )
+clearObjectSchema( type?:string ):void
 ```
 
 Remove the schema of the type specified, or the general schema if no type is provided.
@@ -15841,7 +15847,7 @@ Remove the schema of the type specified, or the general schema if no type is pro
 
 ##### deleteSetting
 ```typescript 
-deleteSetting( name:string )
+deleteSetting( name:string ):void
 ```
 
 Deletes the setting specified by the name provided from the current context.
@@ -15855,7 +15861,7 @@ Deletes the setting specified by the name provided from the current context.
 
 ##### extendObjectSchema
 ```typescript 
-extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
 Extends the schema for a specified type of Resource.
@@ -15867,7 +15873,7 @@ If a schema for the type exists in the parent context, this is duplicated for th
 - objectSchema: The new schema that will extends the previous one.
 
 ```typescript 
-extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
 Extends the general schema of the current context.
@@ -15962,7 +15968,7 @@ Returns the resolved relative URI specified, in accordance with the scope of the
 
 ##### setSetting
 ```typescript 
-setSetting( name:string,  value:any )
+setSetting( name:string,  value:any ):void
 ```
 
 Set a setting in the current context.
@@ -16173,7 +16179,7 @@ Returns true if the object provided is considered a `Carbon.SPARQL.RawResult.Cla
 
 ### <a name="Carbon-SPARQL-RawResultsParser"/>Class Carbon.SPARQL.RawResultsParser
 
-**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;[Carbon.SPARQL.RawResults.Class](#Carbon-SPARQL-RawResults-Class)&gt;
+**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-SPARQL-RawResults-Class&quot;&gt;Carbon.SPARQL.RawResults.Class&lt;/a&gt;&gt;
 
 > Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.
 
@@ -16484,7 +16490,7 @@ URI to be used as the default vocabulary. If a relative one is provided, the URI
 ### <a name="Carbon-Utils-Methods"/>Methods
 ##### extend
 ```typescript 
-static extend( target:Object,  ...objects:Objects[] )
+static extend( target:Object,  ...objects:Objects[] ):void
 ```
 
 Extends the target object’s properties with the properties of the objects provided.
@@ -16499,7 +16505,7 @@ Extends the target object’s properties with the properties of the objects prov
 
 ##### forEachOwnProperty
 ```typescript 
-static forEachOwnProperty( object:Object,  action:( name:string, value:any ) => boolean )
+static forEachOwnProperty( object:Object,  action:( name:string, value:any ) => boolean ):void
 ```
 
 Executes an action for each own property of the object.
