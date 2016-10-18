@@ -22,10 +22,10 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 	} );
 
 	describe( clazz(
+		"Carbon.SPARQL.RawResultsParser",
 		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.", [
 			"Carbon.HTTP.Parser.Class<Carbon.SPARQL.RawResults.Class>",
-		],
-		"Carbon.SPARQL.RawResultsParser.Class"
+		]
 	), ():void => {
 
 		it( isDefined(), ():void => {

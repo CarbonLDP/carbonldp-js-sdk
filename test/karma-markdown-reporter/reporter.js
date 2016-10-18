@@ -25,6 +25,33 @@ swag.registerHelpers( Handlebars );
 			return "[" + matched + "]" + "(#" + uris[ index ++ ] + ")";
 		} );
 	} );
+
+	Handlebars.registerHelper( "toc-tree", ( modules, options ) => {
+		var elements = [];
+
+		for( var i = 0; i < modules.length; ++ i ) {
+			var interfaces = modules[ i ][ "interfaces" ] || [];
+			var classes = modules[ i ][ "classes" ] || [];
+
+			Array.prototype.push.apply( elements, interfaces.map( element => {
+				return { path: element.path, type: "I" };
+			} ) );
+			Array.prototype.push.apply( elements, classes.map( element => {
+				return { path: element.path, type: "C" };
+			} ) );
+		}
+
+		elements = elements.sort( function( a, b ) {
+			return a.path.localeCompare( b.path );
+		} );
+
+		var ret = "";
+		for( var j = 0, length = elements.length; j < length; j ++ ) {
+			ret = ret + options.fn( elements[ j ] );
+		}
+
+		return ret;
+	} );
 })();
 
 var MarkdownReporter = (() => {

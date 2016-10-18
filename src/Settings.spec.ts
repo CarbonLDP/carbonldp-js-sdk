@@ -14,7 +14,7 @@ import * as Auth from "./Auth";
 import * as settings from "./Settings";
 import defaultExport from "./Settings";
 
-describe( module( "Carbon/settings" ), ():void => {
+describe( module( "Carbon/Settings" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( settings ).toBeDefined();
