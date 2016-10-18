@@ -18,7 +18,7 @@ export interface Class extends Pointer.Library, Pointer.Validator {
 	getPointer( id:string ):Resource.Class;
 
 	createResource( id?:string ):Resource.Class;
-	createResourceFrom<T extends Object>( object:T, id?:string ):Resource.Class & T;
+	createResourceFrom<T>( object:T, id?:string ):Resource.Class & T;
 
 	toJSON():string;
 }

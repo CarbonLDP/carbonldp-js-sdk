@@ -3,7 +3,6 @@ import * as Auth from "./Auth";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
-import * as ProtectedDocument from "./ProtectedDocument";
 import * as Resource from "./Resource";
 import SELECTResults from "./SPARQL/SELECTResults";
 import * as Utils from "./Utils";

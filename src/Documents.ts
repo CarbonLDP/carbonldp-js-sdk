@@ -26,7 +26,7 @@ import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
-class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
 	private _jsonldConverter:JSONLD.Converter.Class;
@@ -64,7 +64,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 			decorators.set( Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate } );
 		}
 
-		decorators.set( AppRole.RDF_CLASS , { decorator: PersistedAppRole.Factory.decorate, parameters:[ ( this.context && this.context.auth ) ? this.context.auth.roles : null ] } );
+		decorators.set( AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [ ( this.context && this.context.auth ) ? this.context.auth.roles : null ] } );
 		this._documentDecorators = decorators;
 	}
 
@@ -184,11 +184,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createChild<T extends Document.Class>( parentURI:string, childDocument:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Document.Class>( parentURI:string, childDocument:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
+	createChild<T>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -199,9 +197,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return this.persistDocument<T & Document.Class, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
-	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
-	createChildAndRetrieve<T extends Object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
+	createChildAndRetrieve<T>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
 		let createResponse:HTTP.Response.Class;
 		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then( ( [ document, response ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			createResponse = response;
@@ -275,9 +273,9 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	createAccessPoint<T extends AccessPoint.Class>( documentURI:string, accessPoint:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
-	createAccessPoint<T extends AccessPoint.Class>( documentURI:string, accessPoint:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
-	createAccessPoint<T extends AccessPoint.Class>( documentURI:string, accessPoint:T, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
+	createAccessPoint<T>( documentURI:string, accessPoint:T & AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint<T>( documentURI:string, accessPoint:T & AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint<T>( documentURI:string, accessPoint:T & AccessPoint.Class, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -511,7 +509,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		return HTTP.Request.Service.delete( documentURI, requestOptions );
 	}
 
-	save<T extends PersistedDocument.Class>( persistedDocument:T, requestOptions:HTTP.Request.Options = {} ):Promise<[ T, HTTP.Response.Class ]> {
+	save<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		// TODO: Check if the document isDirty
 		/*
 		if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
@@ -531,7 +529,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	refresh<T extends PersistedDocument.Class>( persistedDocument:T, requestOptions:HTTP.Request.Options = {} ):Promise<[ T, HTTP.Response.Class ]> {
+	refresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		let uri:string = this.getRequestURI( persistedDocument.id );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
@@ -557,7 +555,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		} );
 	}
 
-	saveAndRefresh<T extends PersistedDocument.Class>( persistedDocument:T, requestOptions:HTTP.Request.Options = {} ):Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
 		// TODO: Check how to manage the requestOptions for the multiple calls
 
 		let saveResponse:HTTP.Response.Class;
@@ -701,7 +699,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		}
 
 		if( document[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The document is already being persisted." ) );
-		Object.defineProperty( document, "__CarbonSDK_InProgressOfPersisting", {configurable: true, enumerable: false, writable: false, value: true} );
+		Object.defineProperty( document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true } );
 
 		let body:string = document.toJSON( this, this.jsonldConverter );
 
@@ -825,7 +823,7 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
 		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
-		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Documents._documentSchema );
+		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Class._documentSchema );
 
 		for( let type of objectTypes ) {
 			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
@@ -986,4 +984,4 @@ class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Reso
 
 }
 
-export default Documents;
+export default Class;

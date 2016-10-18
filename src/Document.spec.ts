@@ -2,15 +2,20 @@ import {
 	INSTANCE,
 	STATIC,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
 	clazz,
 	method,
+	interfaze,
 
 	isDefined,
 	hasMethod,
 	hasSignature,
 	hasProperty,
 	decoratedObject,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
 import * as Errors from "./Errors";
@@ -24,6 +29,7 @@ import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
 import * as Document from "./Document";
+import DefaultExport from "./Document";
 
 describe( module( "Carbon/Document" ), ():void => {
 
@@ -116,6 +122,261 @@ describe( module( "Carbon/Document" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.Document.Class",
+		"Interface that represents an in-memory Carbon LDP Document."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"defaultInteractionModel",
+			"Carbon.Pointer.Class",
+			"A Pointer URI representing the default interaction model of the document when persisted."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"isMemberOfRelation",
+			"Carbon.Pointer.Class",
+			"A Pointer with the member of relation of the document."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"hasMemberRelation",
+			"Carbon.Pointer.Class",
+			"A Pointer with the inverted relation the document will have."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_fragmentsIndex",
+			"Map<string, Carbon.Fragment.Class>",
+			"Map that stores the fragments (named fragments and blank nodes) of the Document."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"_normalize",
+			"Search over the document for normal objects to convert into fragments, and unused fragments to eliminate."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"hasPointer",
+			"Returns true if the Document has a pointer referenced by the URI provided.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getPointer",
+			"Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.\n" +
+			"Returns `null` if the URI is outside the scope of the Document.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		describe( method(
+			OBLIGATORY,
+			"inScope"
+		), ():void => {
+
+			it( hasSignature(
+				"Returns true if the pointer provided is inside the scope of the Document.", [
+					{ name: "pointer", type: "Carbon.Pointer.Class" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Returns true if the URI provided is inside the scope of the Document.", [
+					{ name: "id", type: "string" },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+		} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"hasFragment",
+			"Returns true if the Document has the fragment referenced by the ID provided.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getFragment",
+			[ "T" ],
+			"Returns the fragment referenced by the ID provided.\n" +
+			"Returns `null` if no fragment exists in the Document.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "T & Carbon.Fragment.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getNamedFragment",
+			[ "T" ],
+			"Returns the fragment referenced by the ID provided.\n" +
+			"Returns `null` if no fragment exists in the Document.", [
+				{ name: "id", type: "string" },
+			],
+			{ type: "T & Carbon.Fragment.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getFragments",
+			"Returns an array with all the fragments in the Document.",
+			{ type: "Carbon.Fragment.Class[]" }
+		), ():void => {} );
+
+		describe( method(
+			OBLIGATORY,
+			"createFragment"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
+					{ name: "object", type: "T" },
+					{ name: "slug", type: "string" },
+				],
+				{ type: "T & Carbon.Fragment.Class" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
+					{ name: "object", type: "Object" },
+				],
+				{ type: "T & Carbon.Fragment.Class" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Creates an empty `Carbon.NamedFragment.Class` with the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
+					{ name: "slug", type: "string" },
+				],
+				{ type: "Carbon.Fragment.Class" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Creates an empty `Carbon.Fragment.Class`, since no slug is provided.",
+				{ type: "Carbon.Fragment.Class" }
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"createNamedFragment"
+		), ():void => {
+
+			it( hasSignature(
+				"Creates a `Carbon.NamedFragment.Class` with the slug provided.\n" +
+				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
+					{ name: "slug", type: "string" },
+				],
+				{ type: "Carbon.NamedFragment.Class" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
+					{ name: "object", type: "T" },
+					{ name: "slug", type: "string" },
+				],
+				{ type: "T & Carbon.NamedFragment.Class" }
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"_removeFragment"
+		), ():void => {
+
+			it( hasSignature(
+				"Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.", [
+					{ name: "fragment", type: "Carbon.Fragment.Class" },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Remove the fragment referenced by the Slug provided from the Document.", [
+					{ name: "slug", type: "string" },
+				]
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"removeNamedFragment"
+		), ():void => {
+
+			it( hasSignature(
+				"Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
+					{ name: "fragment", type: "Carbon.NamedFragment.Class" },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				"Remove the named fragment referenced by the Slug provided from the Document.", [
+					{ name: "slug", type: "string" },
+				]
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"toJSON"
+		), ():void => {
+
+			it( hasSignature(
+				"Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.", [
+					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
+					{ name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class" },
+				],
+				{ type: "string" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Returns a JSON string from the Document using an ObjectSchema", [
+					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
+				],
+				{ type: "string" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Returns a JSON string from the Document using the default ObjectSchema.",
+				{ type: "string" }
+			), ():void => {} );
+
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Document.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Document.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+	} );
+
 	describe( clazz(
 		"Carbon.Document.Factory",
 		"Factory class for `Carbon.Document.Class` objects."
@@ -130,9 +391,9 @@ describe( module( "Carbon/Document" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.Document.Class` object.", [
-				{name: "documentResource", type: "Object"},
+				{ name: "documentResource", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Document.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
@@ -220,9 +481,9 @@ describe( module( "Carbon/Document" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Document.Class` object.", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Document.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
@@ -265,7 +526,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				"Creates a `Carbon.Document.Class` object.",
-				{type: "Carbon.Document.Class"}
+				{ type: "Carbon.Document.Class" }
 			), ():void => {
 				expect( Document.Factory.create ).toBeDefined();
 				expect( Utils.isFunction( Document.Factory.create ) ).toBe( true );
@@ -287,9 +548,9 @@ describe( module( "Carbon/Document" ), ():void => {
 			it( hasSignature(
 				[ "T extends Object" ],
 				"Creates a `Carbon.Document.Class` object from the object provided.", [
-					{name: "object", type: "T", description: "Object to be converted into a Document."},
+					{ name: "object", type: "T", description: "Object to be converted into a Document." },
 				],
-				{type: "T & Carbon.Document.Class"}
+				{ type: "T & Carbon.Document.Class" }
 			), ():void => {
 				expect( Document.Factory.createFrom ).toBeDefined();
 				expect( Utils.isFunction( Document.Factory.createFrom ) ).toBe( true );
@@ -305,7 +566,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( document.myProperty ).toBeUndefined();
 
 
-				document = Document.Factory.createFrom<MyInterface>( {myProperty: "a property"} );
+				document = Document.Factory.createFrom<MyInterface>( { myProperty: "a property" } );
 				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
 				expect( document.id ).toBe( "" );
 				expect( document.myProperty ).toBe( "a property" );
@@ -602,9 +863,9 @@ describe( module( "Carbon/Document" ), ():void => {
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Document.Class` object.", [
-				{name: "object", type: "T", description: "Object to be decorated."},
+				{ name: "object", type: "T", description: "Object to be decorated." },
 			],
-			{type: "T & Carbon.Document.Class"}
+			{ type: "T & Carbon.Document.Class" }
 		), ():void => {
 			expect( Document.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Document.Factory.decorate ) ).toBe( true );
@@ -615,7 +876,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			document = Document.Factory.decorate( {} );
 			expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
 
-			document = Document.Factory.decorate( {myProperty: "a property"} );
+			document = Document.Factory.decorate( { myProperty: "a property" } );
 			expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
 			expect( document.myProperty ).toBeDefined();
 			expect( document.myProperty ).toBe( "a property" );
@@ -654,7 +915,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( document._normalize ).toBeDefined();
 				expect( Utils.isFunction( document._normalize ) ).toBe( true );
 
-				document[ "object" ] = {string: "A new object"};
+				document[ "object" ] = { string: "A new object" };
 				expect( Pointer.Factory.is( document[ "object" ] ) ).toBe( false );
 
 				document._normalize();
@@ -663,8 +924,8 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( URI.Util.isBNodeID( document[ "object" ].id ) ).toBe( true );
 				expect( document.hasFragment( document[ "object" ].id ) ).toBe( true );
 
-				document[ "array" ] = [ {string: "Element 1"}, {string: "Element 2"} ];
-				document[ "object" ][ "object" ] = {string: "Nested object inside the new object"};
+				document[ "array" ] = [ { string: "Element 1" }, { string: "Element 2" } ];
+				document[ "object" ][ "object" ] = { string: "Nested object inside the new object" };
 
 				document._normalize();
 				expect( document[ "array" ].length ).toBe( 2 );
@@ -680,17 +941,17 @@ describe( module( "Carbon/Document" ), ():void => {
 				expect( document[ "object" ][ "object" ][ "string" ] ).toBe( "Nested object inside the new object" );
 
 				let fragment:Fragment.Class;
-				fragment = document.createFragment( {string: "Fragment that will be deleted"} );
+				fragment = document.createFragment( { string: "Fragment that will be deleted" } );
 
 				document._normalize();
 				expect( document.hasFragment( fragment.id ) ).toBe( false );
 
-				document.createFragment( {string: "Fragment that will not be deleted"}, "named-fragment" );
+				document.createFragment( { string: "Fragment that will not be deleted" }, "named-fragment" );
 
-				fragment = document.createFragment( {string: "Fragment with a reference"} );
+				fragment = document.createFragment( { string: "Fragment with a reference" } );
 				document[ "fragment" ] = fragment;
 
-				fragment = document.createFragment( {string: "Another fragment that will be deleted"} );
+				fragment = document.createFragment( { string: "Another fragment that will be deleted" } );
 
 				document._normalize();
 				expect( document.hasFragment( fragment.id ) ).toBe( false );
@@ -726,9 +987,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"hasPointer",
 				"Returns true if the Document has a pointer referenced by the URI provided.", [
-					{name: "id", type: "string"},
+					{ name: "id", type: "string" },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( document.hasPointer ).toBeDefined();
 				expect( Utils.isFunction( document.hasPointer ) ).toBe( true );
@@ -745,9 +1006,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				"getPointer",
 				"Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.\n" +
 				"Returns `null` if the URI is outside the scope of the Document.", [
-					{name: "id", type: "string"},
+					{ name: "id", type: "string" },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( document.getPointer ).toBeDefined();
 				expect( Utils.isFunction( document.getPointer ) ).toBe( true );
@@ -776,9 +1037,9 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the pointer provided is inside the scope of the Document.", [
-						{name: "pointer", type: "Carbon.Pointer.Class"},
+						{ name: "pointer", type: "Carbon.Pointer.Class" },
 					],
-					{type: "boolean"}
+					{ type: "boolean" }
 				), ():void => {
 					expect( document.inScope ).toBeDefined();
 					expect( Utils.isFunction( document.inScope ) ).toBe( true );
@@ -812,9 +1073,9 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the URI provided is inside the scope of the Document.", [
-						{name: "id", type: "string"},
+						{ name: "id", type: "string" },
 					],
-					{type: "boolean"}
+					{ type: "boolean" }
 				), ():void => {
 					expect( document.inScope ).toBeDefined();
 					expect( Utils.isFunction( document.inScope ) ).toBe( true );
@@ -838,9 +1099,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"hasFragment",
 				"Returns true if the Document has the fragment referenced by the ID provided.", [
-					{name: "id", type: "string"},
+					{ name: "id", type: "string" },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( document.hasFragment ).toBeDefined();
 				expect( Utils.isFunction( document.hasFragment ) ).toBe( true );
@@ -868,9 +1129,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				[ "T" ],
 				"Returns the fragment referenced by the ID provided.\n" +
 				"Returns `null` if no fragment exists in the Document.", [
-					{name: "id", type: "string"},
+					{ name: "id", type: "string" },
 				],
-				{type: "T & Carbon.Fragment.Class"}
+				{ type: "T & Carbon.Fragment.Class" }
 			), ():void => {
 				expect( document.getFragment ).toBeDefined();
 				expect( Utils.isFunction( document.getFragment ) ).toBe( true );
@@ -904,9 +1165,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				[ "T" ],
 				"Returns the fragment referenced by the ID provided.\n" +
 				"Returns `null` if no fragment exists in the Document.", [
-					{name: "id", type: "string"},
+					{ name: "id", type: "string" },
 				],
-				{type: "T & Carbon.Fragment.Class"}
+				{ type: "T & Carbon.Fragment.Class" }
 			), ():void => {
 				expect( document.getNamedFragment ).toBeDefined();
 				expect( Utils.isFunction( document.getNamedFragment ) ).toBe( true );
@@ -937,7 +1198,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				INSTANCE,
 				"getFragments",
 				"Returns an array with all the fragments in the Document.",
-				{type: "Carbon.Fragment.Class[]"}
+				{ type: "Carbon.Fragment.Class[]" }
 			), ():void => {
 				expect( document.getFragments ).toBeDefined();
 				expect( Utils.isFunction( document.getFragments ) ).toBe( true );
@@ -968,13 +1229,13 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
 					"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
-						{name: "object", type: "T"},
-						{name: "slug", type: "string"},
+						{ name: "object", type: "T" },
+						{ name: "slug", type: "string" },
 					],
-					{type: "T & Carbon.Fragment.Class"}
+					{ type: "T & Carbon.Fragment.Class" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -994,19 +1255,19 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 					expect( fragment.myProperty ).toBeUndefined();
 
-					object = {myProperty: "The property"};
+					object = { myProperty: "The property" };
 					fragment = document.createFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 					expect( fragment.myProperty ).toBe( "The property" );
 
-					object = {myProperty: "The BlankNode property"};
+					object = { myProperty: "The BlankNode property" };
 					fragment = document.createFragment<MyInterface>( object, "_:BlankNode" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "_:BlankNode" );
 					expect( fragment.myProperty ).toBe( "The BlankNode property" );
 
-					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
 					fragment = document.createFragment<MyInterface>( object, "#another-another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
@@ -1017,7 +1278,7 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 
-					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
 					fragment = document.createFragment<MyInterface>( object, "_:AnotherBlankNode" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "_:AnotherBlankNode" );
@@ -1034,11 +1295,11 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
-						{name: "object", type: "Object"},
+						{ name: "object", type: "Object" },
 					],
-					{type: "T & Carbon.Fragment.Class"}
+					{ type: "T & Carbon.Fragment.Class" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -1058,13 +1319,13 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 					expect( fragment.myProperty ).toBeUndefined();
 
-					object = {myProperty: "The property"};
+					object = { myProperty: "The property" };
 					fragment = document.createFragment<MyInterface>( object );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 					expect( fragment.myProperty ).toBe( "The property" );
 
-					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
 					fragment = document.createFragment<MyInterface>( object );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
@@ -1079,9 +1340,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				it( hasSignature(
 					"Creates an empty `Carbon.NamedFragment.Class` with the slug specified.\n" +
 					"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
-						{name: "slug", type: "string"},
+						{ name: "slug", type: "string" },
 					],
-					{type: "Carbon.Fragment.Class"}
+					{ type: "Carbon.Fragment.Class" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -1107,7 +1368,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Creates an empty `Carbon.Fragment.Class`, since no slug is provided.",
-					{type: "Carbon.Fragment.Class"}
+					{ type: "Carbon.Fragment.Class" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -1138,9 +1399,9 @@ describe( module( "Carbon/Document" ), ():void => {
 				it( hasSignature(
 					"Creates a `Carbon.NamedFragment.Class` with the slug provided.\n" +
 					"If the slug has the form of a BlankNode ID, an Error is thrown.", [
-						{name: "slug", type: "string"},
+						{ name: "slug", type: "string" },
 					],
-					{type: "Carbon.NamedFragment.Class"}
+					{ type: "Carbon.NamedFragment.Class" }
 				), ():void => {
 					expect( document.createNamedFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
@@ -1163,13 +1424,13 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Object" ],
+					[ "T" ],
 					"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
 					"If the slug has the form of a BlankNode ID, an Error is thrown.", [
-						{name: "object", type: "T"},
-						{name: "slug", type: "string"},
+						{ name: "object", type: "T" },
+						{ name: "slug", type: "string" },
 					],
-					{type: "T & Carbon.NamedFragment.Class"}
+					{ type: "T & Carbon.NamedFragment.Class" }
 				), ():void => {
 
 					expect( document.createNamedFragment ).toBeDefined();
@@ -1190,13 +1451,13 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 					expect( fragment.myProperty ).toBeUndefined();
 
-					object = {myProperty: "The property"};
+					object = { myProperty: "The property" };
 					fragment = document.createNamedFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 					expect( fragment.myProperty ).toBe( "The property" );
 
-					object = {myProperty: "Fragment with nested object", myPointer: {myProperty: "The Nested object"}};
+					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
 					fragment = document.createNamedFragment<MyInterface>( object, "#another-another-fragment" );
 					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
@@ -1222,7 +1483,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.", [
-						{name: "fragment", type: "Carbon.Fragment.Class"},
+						{ name: "fragment", type: "Carbon.Fragment.Class" },
 					]
 				), ():void => {
 					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
@@ -1243,7 +1504,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Remove the fragment referenced by the Slug provided from the Document.", [
-						{name: "slug", type: "string"},
+						{ name: "slug", type: "string" },
 					]
 				), ():void => {
 					document.createNamedFragment( "slug" );
@@ -1276,7 +1537,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
-						{name: "fragment", type: "Carbon.NamedFragment.Class"},
+						{ name: "fragment", type: "Carbon.NamedFragment.Class" },
 					]
 				), ():void => {
 					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
@@ -1294,7 +1555,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Remove the named fragment referenced by the Slug provided from the Document.", [
-						{name: "slug", type: "string"},
+						{ name: "slug", type: "string" },
 					]
 				), ():void => {
 					document.createNamedFragment( "slug" );
@@ -1373,7 +1634,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				beforeEach( ():void => {
-					document.createFragment( {bNodeIdentifier: "cbc92415-5bdd-4a2a-873b-16a165315e7d"}, "_:BlankNode" );
+					document.createFragment( { bNodeIdentifier: "cbc92415-5bdd-4a2a-873b-16a165315e7d" }, "_:BlankNode" );
 					document.createFragment( "fragment" );
 					document[ "myProperty" ] = "a property";
 					document[ "myDate" ] = new Date( "2016-06-01" );
@@ -1382,10 +1643,10 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.", [
-						{name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver"},
-						{name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class"},
+						{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
+						{ name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class" },
 					],
-					{type: "string"}
+					{ type: "string" }
 				), ():void => {
 					expect( document.toJSON ).toBeDefined();
 					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
@@ -1426,9 +1687,9 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Returns a JSON string from the Document using an ObjectSchema", [
-						{name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver"},
+						{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
 					],
-					{type: "string"}
+					{ type: "string" }
 				), ():void => {
 					expect( document.toJSON ).toBeDefined();
 					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
@@ -1502,7 +1763,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 				it( hasSignature(
 					"Returns a JSON string from the Document using the default ObjectSchema.",
-					{type: "string"}
+					{ type: "string" }
 				), ():void => {
 					expect( document.toJSON ).toBeDefined();
 					expect( Utils.isFunction( document.toJSON ) ).toBe( true );

@@ -3,17 +3,21 @@ import {
 
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
 	hasProperty,
+	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Errors from "./../Errors";
 import * as NS from "./../NS";
-import * as Role from "./../Auth/Role";
+import * as AuthRole from "./../Auth/Role";
 import * as Utils from "./../Utils";
 
 import * as AppRole from "./Role";
+import DefaultExport from "./Role";
 
 describe( module( "Carbon/Apps/Role" ), ():void => {
 
@@ -53,6 +57,21 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			"@type": "@id",
 			"@container": "@set",
 		} );
+	} );
+
+	describe( interfaze(
+		"Carbon.App.Role.Class",
+		"Specific interface that represents an in memory role for an application."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Auth.Role.Class" ), ():void => {
+			let appRole:AppRole.Class = <any> {};
+			let authRole:AuthRole.Class;
+
+			authRole = appRole;
+			expect( authRole ).toEqual( jasmine.any( Object ) );
+		} );
+
 	} );
 
 	describe( clazz(
@@ -105,7 +124,7 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			object.types = [ NS.CS.Class.AppRole ];
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 
-			object = Role.Factory.create( "Role name" );
+			object = AuthRole.Factory.create( "Role name" );
 			expect( AppRole.Factory.is( object ) ).toBe( false );
 			object.types.push( NS.CS.Class.AppRole );
 			expect( AppRole.Factory.is( object ) ).toBe( true );
@@ -170,6 +189,14 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( () => AppRole.Factory.createFrom( {}, undefined ) ).toThrowError( Errors.IllegalArgumentError );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.App.Role.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let role:AppRole.Class;
+
+		role = defaultExport;
+		expect( role ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

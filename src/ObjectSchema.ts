@@ -13,10 +13,10 @@ export interface PropertyDefinition {
 
 export interface Class {
 	"@base"?:string;
+	"@vocab"?:string;
 	"@index"?:Object;
 	"@language"?:string;
 	"@reverse"?:Object;
-	"@vocab"?:string;
 	[ name:string ]:(string | PropertyDefinition);
 }
 
@@ -131,8 +131,8 @@ export class Digester {
 			if( ! ( propertyName in schema ) ) continue;
 			let value:string = <string> schema[ propertyName ];
 
-			if( ! Utils.isString( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( ( propertyName === "@vocab" || ! ! value ) && ! RDF.URI.Util.isAbsolute( value ) && ! RDF.URI.Util.isBNodeID( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( value !== null && ! Utils.isString( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
+			if( ( propertyName === "@vocab" && value === "" ) || ! RDF.URI.Util.isAbsolute( value ) && ! RDF.URI.Util.isBNodeID( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}

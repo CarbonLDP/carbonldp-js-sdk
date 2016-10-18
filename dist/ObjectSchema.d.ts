@@ -7,10 +7,10 @@ export interface PropertyDefinition {
 }
 export interface Class {
     "@base"?: string;
+    "@vocab"?: string;
     "@index"?: Object;
     "@language"?: string;
     "@reverse"?: Object;
-    "@vocab"?: string;
     [name: string]: (string | PropertyDefinition);
 }
 export declare enum ContainerType {

@@ -1,10 +1,26 @@
-import {module, isDefined, hasProperty, STATIC, clazz, hasMethod} from "../test/JasmineExtender";
+import {
+	STATIC,
 
+	OBLIGATORY,
+
+	module,
+	clazz,
+	interfaze,
+
+	isDefined,
+	hasProperty,
+	hasMethod,
+	extendsClass,
+	hasDefaultExport,
+} from "../test/JasmineExtender";
+
+import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
 import * as ACE from "./ACE";
+import DefaultExport from "./ACE";
 
 describe( module( "Carbon/Auth/ACE" ), ():void => {
 
@@ -59,6 +75,75 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.Auth.ACE.Class",
+		"Interface that represents an Access Control Entry (ACE) of an Access Control List (ACL)."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {
+			let ace:ACE.Class = <any> {};
+			let fragment:Fragment.Class;
+
+			fragment = ace;
+			expect( fragment ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"granting",
+			"boolean",
+			"Flag that indicates if the entry grants or denies the permissions its permissions."
+		), ():void => {
+			let granting:boolean = true;
+			let ace:ACE.Class = <any> {};
+
+			ace.granting = granting;
+			expect( ace.granting ).toEqual( jasmine.any( Boolean ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"permissions",
+			"Carbon.Pointer.Class[]",
+			"An array with all the permissions to grant or deny."
+		), ():void => {
+			let permissions:Pointer.Class[] = [ Pointer.Factory.create() ];
+			let ace:ACE.Class = <any> {};
+
+			ace.permissions = permissions;
+			expect( ace.permissions ).toEqual( jasmine.any( Array ) );
+			expect( Pointer.Factory.is( ace.permissions[ 0 ] ) ).toBe( true );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"subjects",
+			"Carbon.Pointer.Class[]",
+			"An array with all the subjects to grant or deny its permissions."
+		), ():void => {
+			let subjects:Pointer.Class[] = [ Pointer.Factory.create() ];
+			let ace:ACE.Class = <any> {};
+
+			ace.subjects = subjects;
+			expect( ace.subjects ).toEqual( jasmine.any( Array ) );
+			expect( Pointer.Factory.is( ace.subjects[ 0 ] ) ).toBe( true );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"subjectsClass",
+			"Carbon.Pointer.Class",
+			"An pointer that contains the URI of the type that all the subject in the ace are.."
+		), ():void => {
+			let subjectsClass:Pointer.Class = Pointer.Factory.create();
+			let ace:ACE.Class = <any> {};
+
+			ace.subjectsClass = subjectsClass;
+			expect( Pointer.Factory.is( ace.subjectsClass ) ).toBe( true );
+		} );
+
+	} );
+
 	describe( clazz(
 		"Carbon.Auth.ACE.Factory",
 		"Factory class for `Carbon.Auth.ACE.Class` objects."
@@ -73,9 +158,9 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.ACE.Class` object.", [
-				{name: "object", type: "Object", description: "The object to evaluate its properties."},
+				{ name: "object", type: "Object", description: "The object to evaluate its properties." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( ACE.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( ACE.Factory.hasClassProperties ) ).toBe( true );
@@ -113,13 +198,13 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			"createFrom",
 			[ "T extends Object" ],
 			"Creates a `Carbon.Auth.ACE.Class` object with the parameters specified.", [
-				{name: "object", type: "T", description: "The object that will be converted into a `Carbon.Auth.ACE.Class`"},
-				{name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions."},
-				{name: "subjects", type: "Carbon.Pointer.Class[]", description: "Subjects that will have the permissions specified."},
-				{name: "subjectClass", type: "Carbon.Pointer.Class", description: "The type of the subjects provided."},
-				{name: "permissions", type: "Carbon.Pointer.Class[]", description: "The permissions that will be granted or denied."},
+				{ name: "object", type: "T", description: "The object that will be converted into a `Carbon.Auth.ACE.Class`" },
+				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
+				{ name: "subjects", type: "Carbon.Pointer.Class[]", description: "Subjects that will have the permissions specified." },
+				{ name: "subjectClass", type: "Carbon.Pointer.Class", description: "The type of the subjects provided." },
+				{ name: "permissions", type: "Carbon.Pointer.Class[]", description: "The permissions that will be granted or denied." },
 			],
-			{type: "T & Carbon.Auth.ACE.Class"}
+			{ type: "T & Carbon.Auth.ACE.Class" }
 		), ():void => {
 			expect( ACE.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( ACE.Factory.createFrom ) ).toBe( true );
@@ -137,7 +222,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "3" );
 			expect( ace[ "some" ] ).toBeUndefined();
 
-			object = {some: "some"};
+			object = { some: "some" };
 			ace = ACE.Factory.createFrom( object, false, [ Pointer.Factory.create( "4" ) ], Pointer.Factory.create( "5" ), [ Pointer.Factory.create( "6" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ) .toContain( ACE.RDF_CLASS );
@@ -148,6 +233,14 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			expect( ace[ "some" ] ).toBe( "some" );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.ACE.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let ace:ACE.Class;
+
+		ace = defaultExport;
+		expect( ace ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

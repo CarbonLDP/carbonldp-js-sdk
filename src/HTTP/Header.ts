@@ -1,5 +1,3 @@
-import * as Utils from "./../Utils";
-
 export class Class {
 	values:Value[] = [];
 

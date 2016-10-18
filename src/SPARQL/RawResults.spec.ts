@@ -1,16 +1,22 @@
 import {
 	STATIC,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
-	hasProperty,
 	hasMethod,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as RawResults from "./RawResults";
+import DefaultExport from "./RawResults";
 
 describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 
@@ -64,6 +70,91 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 
 	} );
 
+	describe( interfaze(
+		"Carbon.SPARQL.RawResults.Class",
+		"Interface that represents the raw response of a SPARQL query."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"head",
+			`{ "vars"?:string[], "links"?:string[] }`,
+			"Contains an array `vars` with the possible elements inside the results bindings properties. Can also contains an array `link`, that contains URI to further information about the results."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"results",
+			`{ "bindings":Carbon.SPARQL.RawResults.BindingObject[] }`,
+			"The results of a `SELECT` query."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"boolean",
+			"boolean",
+			"The result of an `ASK` query."
+		), ():void => {} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.SPARQL.RawResults.BindingObject",
+		"Interface that represents the raw response of a SPARQL query."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"[ name:string ]",
+			"Carbon.SPARQL.RawResults.BindingProperty",
+			"An entry of every `vars` requested as the `name` variable, containing the binding property with its value."
+		), ():void => {} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.SPARQL.RawResults.BindingProperty",
+		"Interface that represents every entry of a `Carbon.SPARQL.RawResults.BindingObject`."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"type",
+			"string",
+			"The type of binding property, it could be `uri`, `literal` or `bnode`."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"value",
+			"string",
+			"The string value of binding property."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"datatype",
+			"string",
+			"The URI of the type of the binding property. This is only present when the property is of type `literal`."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"xml:lang",
+			"string",
+			"If the property is a `literal` and of data type `xsd:string`, this property indicates if it has an specific language."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.SPARQL.RawResults.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:RawResults.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+	} );
+
 	describe( clazz(
 		"Carbon.SPARQL.RawResults.Factory",
 		"Factory class for `Carbon.SPARQL.RawResults.Class` objects."
@@ -78,14 +169,14 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.SPARQL.RawResult.Class` object.", [
-				{name: "value", type: "Object"},
+				{ name: "value", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RawResults.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( RawResults.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( RawResults.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -114,25 +205,25 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.SPARQL.RawResult.Class` object.", [
-				{name: "value", type: "any"},
+				{ name: "value", type: "any" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RawResults.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( RawResults.Factory.is ) ).toBe( true );
 
 			let object:Object;
 
-			object = {"head": {}};
+			object = { "head": {} };
 			expect( RawResults.Factory.is( object ) ).toBe( true );
-			object = {"head": {}, results: {}};
+			object = { "head": {}, results: {} };
 			expect( RawResults.Factory.is( object ) ).toBe( true );
-			object = {"head": {}, boolean: {}};
+			object = { "head": {}, boolean: {} };
 			expect( RawResults.Factory.is( object ) ).toBe( true );
 
-			object = {"boolean": {}};
+			object = { "boolean": {} };
 			expect( RawResults.Factory.is( object ) ).toBe( false );
-			object = {"results": {}};
+			object = { "results": {} };
 			expect( RawResults.Factory.is( object ) ).toBe( false );
 
 			expect( RawResults.Factory.is( "another thing" ) ).toBe( false );

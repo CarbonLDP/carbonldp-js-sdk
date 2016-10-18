@@ -1,8 +1,5 @@
-import AbstractContext from "./AbstractContext";
-
 import {
 	INSTANCE,
-	STATIC,
 
 	module,
 	clazz,
@@ -11,27 +8,31 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasProperty,
-	extendsClass
+	extendsClass,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as SDKContext from "./SDKContext";
 
+import * as AbstractContext from "./AbstractContext";
+import DefaultExport from "./AbstractContext";
+
 describe( module( "Carbon/AbstractContext" ), ():void => {
-	class MockedContext extends AbstractContext {
+	class MockedContext extends AbstractContext.Class {
 		resolve( uri:string ):string {
 			return uri;
 		}
 	}
-	let context:AbstractContext;
+	let context:AbstractContext.Class;
 
 	describe( clazz(
-		"Carbon.AbstractContext",
+		"Carbon.AbstractContext.Class",
 		"Abstract class for defining contexts."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( AbstractContext ).toBeDefined();
-			expect( Utils.isFunction( AbstractContext ) ).toBe( true );
+			expect( AbstractContext.Class ).toBeDefined();
+			expect( Utils.isFunction( AbstractContext.Class ) ).toBe( true );
 		} );
 
 		beforeEach( ():void => {
@@ -40,7 +41,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 
 		it( hasConstructor(), ():void => {
 			expect( context ).toBeTruthy();
-			expect( context instanceof AbstractContext ).toBe( true );
+			expect( context instanceof AbstractContext.Class ).toBe( true );
 		} );
 
 		it( extendsClass(
@@ -53,9 +54,9 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Abstract method that returns an absolute URI in accordance to the context scope from the relative URI provided.", [
-				{name: "relativeURI", type: "string"}
+				{ name: "relativeURI", type: "string" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			expect( context.resolve ).toBeDefined();
 			expect( Utils.isFunction( context.resolve ) ).toBe( true );
@@ -66,7 +67,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"Carbon.Context",
+			"Carbon.Context.Class",
 			"The parent context provided in the constructor. " +
 			"If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
 		), ():void => {
@@ -74,10 +75,15 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 
 			expect( context.parentContext ).toBe( SDKContext.instance );
 
-			let newContext = new MockedContext( context );
+			let newContext:AbstractContext.Class = new MockedContext( context );
 			expect( newContext.parentContext ).toBe( context );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.AbstractContext.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( AbstractContext.Class );
 	} );
 
 } );

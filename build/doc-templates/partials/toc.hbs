@@ -1,5 +1,5 @@
 {{#each modules}}
-- [Module {{path}}](#{{sanitize path}})
+- [Module {{path}}](#Module-{{sanitize path}})
 {{#if reexports}}
 	- [Reexports](#{{sanitize path}}-Reexports)
 {{/if}}
@@ -12,6 +12,15 @@
 {{#if methods}}
 	- [Methods](#{{sanitize path}}-Methods)
 {{/if}}
+{{#each interfaces}}
+	- [Interface {{path}}](#{{sanitize path}})
+	{{#if properties}}
+		- [Properties](#{{sanitize path}}-Properties)
+	{{/if}}
+	{{#if methods}}
+		- [Methods](#{{sanitize path}}-Methods)
+	{{/if}}
+{{/each}}
 {{#each classes}}
 	- [Class {{path}}](#{{sanitize path}})
 	{{#if reexports}}

@@ -22,7 +22,12 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 		expect( Utils.isObject( StringParser ) ).toEqual( true );
 	} );
 
-	describe( clazz( "Carbon.HTTP.StringParser.Class", "Parses a `Carbon.HTTP.Response.Class` and returns a string." ), ():void => {
+	describe( clazz(
+		"Carbon.HTTP.StringParser.Class",
+		"Parses a `Carbon.HTTP.Response.Class` and returns a string.", [
+			"Carbon.HTTP.Parser.Class<string>",
+		]
+	), ():void => {
 
 		it( hasMethod(
 			INSTANCE,

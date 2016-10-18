@@ -8,7 +8,7 @@ import {
 	clazz,
 
 	hasConstructor,
-	hasMethod,
+	hasMethod, hasDefaultExport,
 } from "./../test/JasmineExtender";
 
 import * as Errors from "./../Errors";
@@ -19,14 +19,22 @@ import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 
 import * as BasicAuthenticator from "./BasicAuthenticator";
+import DefaultExport from "./BasicAuthenticator";
 
 describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
+
 	it( isDefined(), ():void => {
 		expect( BasicAuthenticator ).toBeDefined();
 		expect( Utils.isObject( BasicAuthenticator ) ).toEqual( true );
 	} );
 
-	describe( clazz( "Carbon.Auth.BasicAuthenticator.Class", "Authenticates requests using HTTP Basic Authentication." ), ():void => {
+	describe( clazz(
+		"Carbon.Auth.BasicAuthenticator.Class",
+		"Authenticates requests using HTTP Basic Authentication.", [
+			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
+		]
+	), ():void => {
+
 		it( isDefined(), ():void => {
 			expect( BasicAuthenticator.Class ).toBeDefined();
 			expect( Utils.isFunction( BasicAuthenticator.Class ) ).toEqual( true );
@@ -43,7 +51,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			INSTANCE,
 			"isAuthenticated",
 			"Returns true if the instance contains stored credentials.",
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ( done:() => void ):void => {
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -67,9 +75,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			INSTANCE,
 			"authenticate",
 			"Stores credentials to authenticate future requests.", [
-				{name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken"},
+				{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
 			],
-			{type: "Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >"}
+			{ type: "Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >" }
 		), ( done:{():void; fail:( error:any ) => void} ):void => {
 
 			// Property Integrity
@@ -133,9 +141,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			"addAuthentication",
 			"Adds the Basic authentication header to the passed request options object.\n" +
 			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers."},
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." },
 			],
-			{type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers."}
+			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." }
 		), ( done:{():void; fail:( error:any ) => void} ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
@@ -314,6 +322,11 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.BasicAuthenticator.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( BasicAuthenticator.Class ).toBe( DefaultExport );
 	} );
 
 } );

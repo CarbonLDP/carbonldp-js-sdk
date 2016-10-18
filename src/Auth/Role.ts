@@ -2,7 +2,6 @@ import * as Utils from "./../Utils";
 import * as Document from "./../Document";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
 import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 
 export const SCHEMA:ObjectSchema.Class = {

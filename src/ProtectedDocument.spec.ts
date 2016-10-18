@@ -2,20 +2,41 @@ import {
 	STATIC,
 
 	module,
+	interfaze,
 
 	isDefined,
 	hasProperty,
+	extendsClass,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as NS from "./NS";
 import * as Utils from "./Utils";
 
 import * as ProtectedDocument from "./ProtectedDocument";
+import DefaultExport from "./ProtectedDocument";
 
 describe( module( "Carbon/ProtectedDocument" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ProtectedDocument ).toBeDefined();
 		expect( Utils.isObject( ProtectedDocument ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.ProtectedDocument.Class",
+		"Interface that represents a persisted blank node of a persisted document."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.ProtectedDocument.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:ProtectedDocument.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	it( hasProperty(

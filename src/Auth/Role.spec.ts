@@ -1,12 +1,17 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
-	hasProperty
+	hasProperty,
+	extendsClass,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as NS from "./../NS";
@@ -14,6 +19,7 @@ import * as Errors from "./../Errors";
 import * as Document from "./../Document";
 
 import * as Role from "./Role";
+import DefaultExport from "./Role";
 
 describe( module( "Carbon/Auth/Role" ), ():void => {
 
@@ -44,6 +50,28 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		} );
 	} );
 
+	describe( interfaze(
+		"Carbon.Auth.Role.Class",
+		"Specific interface that represents the base of an in-memory role for any context."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+			let role:Role.Class = <any> {};
+			let document:Document.Class;
+
+			document = role;
+			expect( document ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"name",
+			"string",
+			"A descriptive name for the role."
+		), ():void => {} );
+
+	} );
+
 	describe( clazz(
 		"Carbon.Auth.Role.Factory",
 		"Factory class for `Carbon.Auth.Role.Class` objects"
@@ -58,14 +86,14 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.Auth.Role.Class` object", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Role.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
@@ -82,9 +110,9 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Auth.Role.Class` object", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Role.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.is ) ).toBe( true );
@@ -106,9 +134,9 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			STATIC,
 			"create",
 			"Create a `Carbon.Auth.Role.Class` object with the name specified.", [
-				{name: "name", type: "string", description: "The name of the role to create."},
+				{ name: "name", type: "string", description: "The name of the role to create." },
 			],
-			{type: "Carbon.Auth.Role.Class"}
+			{ type: "Carbon.Auth.Role.Class" }
 		), ():void => {
 			expect( Role.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.create ) ).toBe( true );
@@ -129,9 +157,9 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			STATIC,
 			"createFrom",
 			"Create a `Carbon.Auth.Role.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
+				{ name: "object", type: "T extends Object" },
 			],
-			{type: "T & Carbon.Auth.Role.Class"}
+			{ type: "T & Carbon.Auth.Role.Class" }
 		), ():void => {
 			expect( Role.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.createFrom ) ).toBe( true );
@@ -147,7 +175,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			expect( role.myProperty ).toBeUndefined();
 			expect( role.name ).toBe( "Role name" );
 
-			role = Role.Factory.createFrom<TheAppRole>( {myProperty: "a property"}, "Role name" );
+			role = Role.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name" );
 			expect( Role.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );
@@ -158,6 +186,14 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			expect( () => Role.Factory.createFrom( {}, undefined ) ).toThrowError( Errors.IllegalArgumentError );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.Role.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Role.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

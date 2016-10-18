@@ -1,4 +1,21 @@
-import {module, isDefined, clazz, hasMethod, STATIC, decoratedObject, hasProperty, INSTANCE, method, hasSignature} from "./test/JasmineExtender";
+import {
+	STATIC,
+	INSTANCE,
+
+	OBLIGATORY,
+
+	module,
+	clazz,
+	method,
+	interfaze,
+
+	isDefined,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	decoratedObject,
+	hasDefaultExport, extendsClass,
+} from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -8,12 +25,106 @@ import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
 import * as FreeResources from "./FreeResources";
+import DefaultExport from "./FreeResources";
 
 describe( module( "Carbon/FreeResources" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( FreeResources ).toBeDefined();
 		expect( Utils.isObject( FreeResources ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.FreeResources.Class",
+		"Interface that represents a set of free resources."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Pointer.Library" ), ():void => {} );
+		it( extendsClass( "Carbon.Pointer.Validator" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_documents",
+			"Private property that contains the Documents class where the object scope is in.",
+			"Carbon.Documents.Class"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_resourcesIndex",
+			"Private property that contains the references of every free resource in a map form.",
+			"Map<string, Carbon.Resource.Class>"
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"hasResource",
+			"Returns true if a resource with the ID specified exists.", [
+				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getResource",
+			"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
+				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
+			],
+			{ type: "Carbon.Resource.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getResources",
+			"Returns an array with all the resources inside the FreeResources object.",
+			{ type: "Carbon.Resource.Class[]" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createResource",
+			"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
+				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
+			],
+			{ type: "Carbon.Resource.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createResourceFrom",
+			[ "T" ],
+			"Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.", [
+				{ name: "object", type: "T", description: "The object to be used as the new resource." },
+				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
+			],
+			{ type: "Carbon.Resource.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getPointer",
+			"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
+				{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." },
+			],
+			{ type: "Carbon.Pointer.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"toJSON",
+			"Converts the resources contained in the current `Carbon.FreeResources.Class` object to a JSON string.",
+			{ type: "string" }
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.FreeResources.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:FreeResources.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz( "Carbon.FreeResources.Factory", "Factory class for `Carbon.FreeResources.Class` objects." ), ():void => {
@@ -27,14 +138,14 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.FreeResources.Class` object.", [
-				{name: "object", type: "Object", description: "Object to evaluate."},
+				{ name: "object", type: "Object", description: "Object to evaluate." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( FreeResources.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 			expect( FreeResources.Factory.hasClassProperties( object ) ).toBe( false );
 
 			let fx:Function = () => {};
@@ -102,9 +213,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a empty `Carbon.FreeResources.Class` object.", [
-				{name: "documents", type: "Carbon.Documents", description: "A `Carbon.Documents` object where the FreeResources scope is in."},
+				{ name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents.Class` object where the FreeResources scope is in." },
 			],
-			{type: "Carbon.FreeResources.Class"}
+			{ type: "Carbon.FreeResources.Class" }
 		), ():void => {
 			expect( FreeResources.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.create ) ).toBe( true );
@@ -121,10 +232,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"createFrom",
 			[ "T extends Object" ],
 			"Creates a `Carbon.FreeResources.Class` object from the plain object provided.", [
-				{name: "object", type: "T", description: "The object that wants be converted in a `Carbon.FreeResources.Class`."},
-				{name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents` object where the FreeResource scope is in."},
+				{ name: "object", type: "T", description: "The object that wants be converted in a `Carbon.FreeResources.Class`." },
+				{ name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents.Class` object where the FreeResource scope is in." },
 			],
-			{type: "T & Carbon.FreeResources.Class"}
+			{ type: "T & Carbon.FreeResources.Class" }
 		), ():void => {
 			expect( FreeResources.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.createFrom ) ).toBe( true );
@@ -136,7 +247,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			expect( FreeResources.Factory.hasClassProperties( freeResources ) );
 
 			interface My { myProperty:string; }
-			let myFreeResources:FreeResources.Class & My = FreeResources.Factory.createFrom( {myProperty: "The property"}, documents );
+			let myFreeResources:FreeResources.Class & My = FreeResources.Factory.createFrom( { myProperty: "The property" }, documents );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.Factory.hasClassProperties( myFreeResources ) );
 			expect( myFreeResources.myProperty ).toBeDefined();
@@ -148,9 +259,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.FreeResources.Class` object.", [
-				{name: "object", type: "T"},
+				{ name: "object", type: "T" },
 			],
-			{type: "T & Carbon.FreeResources.Class"}
+			{ type: "T & Carbon.FreeResources.Class" }
 		), ():void => {
 			expect( FreeResources.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( FreeResources.Factory.decorate ) ).toBe( true );
@@ -177,7 +288,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			expect( freeResources.getResources ).toBe( fx );
 
 			interface My { myProperty:string; }
-			let anotherFreeResources:FreeResources.Class & My = FreeResources.Factory.decorate<My>( {myProperty: "The property"} );
+			let anotherFreeResources:FreeResources.Class & My = FreeResources.Factory.decorate<My>( { myProperty: "The property" } );
 			expect( anotherFreeResources ).toBeTruthy();
 			expect( anotherFreeResources._resourcesIndex ).not.toBeNull();
 			expect( anotherFreeResources.hasResource ).not.toBe( fx );
@@ -214,7 +325,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"_documents",
 				"Private property that contains the Documents class where the object scope is in.",
-				"Carbon.Documents"
+				"Carbon.Documents.Class"
 			), ():void => {
 				expect( freeResources._documents ).toBeDefined();
 				expect( freeResources._documents instanceof Documents ).toBe( true );
@@ -234,16 +345,16 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"hasResource",
 				"Returns true if a resource with the ID specified exists.", [
-					{name: "id", type: "string", description: "The ID of the resource to sought for."},
+					{ name: "id", type: "string", description: "The ID of the resource to sought for." },
 				],
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( freeResources.hasResource ).toBeDefined();
 				expect( Utils.isFunction( freeResources.hasResource ) ).toBe( true );
 
 				expect( freeResources.hasResource( "_:any..." ) ).toBe( false );
 
-				let resource:Resource.Class & { val:string } = Resource.Factory.createFrom( {val: "The resource"} );
+				let resource:Resource.Class & { val:string } = Resource.Factory.createFrom( { val: "The resource" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.hasResource( "_:some" ) ).toBe( true );
 
@@ -254,9 +365,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"getResource",
 				"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
-					{name: "id", type: "string", description: "The ID of the resource to sought for."},
+					{ name: "id", type: "string", description: "The ID of the resource to sought for." },
 				],
-				{type: "Carbon.Resource.Class"}
+				{ type: "Carbon.Resource.Class" }
 			), ():void => {
 				expect( freeResources.getResource ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getResource ) ).toBe( true );
@@ -264,7 +375,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				expect( freeResources.getResource( "_:any..." ) ).toBeNull();
 
-				let resource:Resource.Class & { val:string } = Resource.Factory.createFrom( {val: "The resource"}, "_:some" );
+				let resource:Resource.Class & { val:string } = Resource.Factory.createFrom( { val: "The resource" }, "_:some" );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getResource( "_:some" ) ).toBe( resource );
 
@@ -275,7 +386,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"getResources",
 				"Returns an array with all the resources inside the FreeResources object.",
-				{type: "Carbon.Resource.Class[]"}
+				{ type: "Carbon.Resource.Class[]" }
 			), ():void => {
 				expect( freeResources.getResources ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getResources ) ).toBe( true );
@@ -300,10 +411,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createResource",
-				"Creates and returns a new Free Resource. Throw an Error if no valid ID if provided or if it's already in use.", [
-					{name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode."},
+				"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
+					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 				],
-				{type: "Carbon.Resource.Class"}
+				{ type: "Carbon.Resource.Class" }
 			), ():void => {
 				expect( freeResources.createResource ).toBeDefined();
 				expect( Utils.isFunction( freeResources.createResource ) ).toBe( true );
@@ -332,10 +443,12 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"createResourceFrom",
-				"Create and returns a new Free Resource. Throw an Error if no valid id is provided or if it is already in use.", [
-					{name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode."},
+				[ "T" ],
+				"Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.", [
+					{ name: "object", type: "T", description: "The object to be used as the new resource." },
+					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 				],
-				{type: "Carbon.Resource.Class"}
+				{ type: "Carbon.Resource.Class" }
 			), ():void => {
 				expect( freeResources.createResourceFrom ).toBeDefined();
 				expect( Utils.isFunction( freeResources.createResourceFrom ) ).toBe( true );
@@ -371,7 +484,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"hasPointer",
 				"Returns true if a pointer exists in the scope of the FreeResources object and its parents.",
-				{type: "boolean"}
+				{ type: "boolean" }
 			), ():void => {
 				expect( freeResources.hasPointer ).toBeDefined();
 				expect( Utils.isFunction( freeResources.hasPointer ) ).toBe( true );
@@ -391,9 +504,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"getPointer",
 				"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
-					{name: "id", type: "string", description: "The ID of the pointer sought for or the one to create."},
+					{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." },
 				],
-				{type: "Carbon.Pointer.Class"}
+				{ type: "Carbon.Pointer.Class" }
 			), ():void => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getPointer ) ).toBe( true );
@@ -424,9 +537,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the the ID provided is in the scope of the object.", [
-						{name: "id", type: "string", description: "The ID to evaluate if is in the scope."},
+						{ name: "id", type: "string", description: "The ID to evaluate if is in the scope." },
 					],
-					{type: "boolean"}
+					{ type: "boolean" }
 				), ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
 
@@ -437,9 +550,9 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the the Pointer provided can be in the scope of the object.", [
-						{name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to be evaluated if can be in the scope."},
+						{ name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to be evaluated if can be in the scope." },
 					],
-					{type: "boolean"}
+					{ type: "boolean" }
 				), ():void => {
 					expect( freeResources.inScope( Pointer.Factory.create( "_:some" ) ) ).toBe( true );
 
@@ -454,7 +567,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"toJSON",
 				"Converts the resources contained in the current `Carbon.FreeResources.Class` object to a JSON string.",
-				{type: "string"}
+				{ type: "string" }
 			), ():void => {
 				expect( freeResources.toJSON ).toBeDefined();
 				expect( Utils.isFunction( freeResources.toJSON ) ).toBe( true );

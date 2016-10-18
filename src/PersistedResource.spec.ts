@@ -2,24 +2,69 @@ import {
 	STATIC,
 	INSTANCE,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
+	decoratedObject,
 
 	isDefined,
 	hasMethod,
 	hasProperty,
-	decoratedObject,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
 import * as PersistedResource from "./PersistedResource";
+import DefaultExport from "./PersistedResource";
 
 describe( module( "Carbon/PersistedResource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedResource ).toBeDefined();
 		expect( Utils.isObject( PersistedResource ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.PersistedResource.Class",
+		"Interface that represents any persisted resource in the SDK."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_snapshot",
+			"Object",
+			"The shallow copy of the resource, which is used to track the changes on the resource."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"_syncSnapshot",
+			"Updates the snapshot with the data of the resource."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDirty",
+			"Returns true if the resource presents differences from its snapshot."
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"revert",
+			"Revert the changes made to the resource into the state of the snapshot."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.PersistedResource.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:PersistedResource.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz( "Carbon.PersistedResource.Factory", "Factory class for `Carbon.PersistedResource.Class` objects." ), ():void => {

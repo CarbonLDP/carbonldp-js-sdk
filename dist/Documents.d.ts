@@ -2,7 +2,6 @@ import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
 import * as AccessPoint from "./AccessPoint";
-import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLD from "./JSONLD";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -12,7 +11,7 @@ import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
-declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
     jsonldConverter: JSONLD.Converter.Class;
@@ -33,17 +32,15 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     removePointer(id: string): boolean;
     get<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
-    createChild<T extends Document.Class>(parentURI: string, childDocument: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
-    createChild<T extends Document.Class>(parentURI: string, childDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
-    createChild<T extends Object>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
-    createChild<T extends Object>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
-    createChildAndRetrieve<T extends Object>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildAndRetrieve<T extends Object>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChild<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
+    createChild<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
+    createChildAndRetrieve<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getChildren<T>(parentURI: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getChildren<T>(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
-    createAccessPoint<T extends AccessPoint.Class>(documentURI: string, accessPoint: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
-    createAccessPoint<T extends AccessPoint.Class>(documentURI: string, accessPoint: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T>(documentURI: string, accessPoint: T & AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T>(documentURI: string, accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     upload(parentURI: string, data: Buffer, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     upload(parentURI: string, data: Blob, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
@@ -61,9 +58,9 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     removeMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    save<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
-    refresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, HTTP.Response.Class]>;
-    saveAndRefresh<T extends PersistedDocument.Class>(persistedDocument: T, requestOptions?: HTTP.Request.Options): Promise<[T, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    save<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    refresh<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    saveAndRefresh<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
@@ -99,4 +96,4 @@ declare class Documents implements Pointer.Library, Pointer.Validator, ObjectSch
     private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
     private decoratePersistedDocument(persistedDocument);
 }
-export default Documents;
+export default Class;

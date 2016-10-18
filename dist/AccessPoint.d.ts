@@ -7,8 +7,8 @@ export interface Class {
     insertedContentRelation?: string | Pointer.Class;
 }
 export interface DocumentClass extends LDP.DirectContainer.Class {
-    membershipResource: Pointer.Class;
     hasMemberRelation: Pointer.Class;
+    isMemberOfRelation?: Pointer.Class;
     insertedContentRelation?: Pointer.Class;
 }
 export declare class Factory {

@@ -2,11 +2,11 @@ import Auth from "./Auth";
 import Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 
-interface Context {
+export interface Class {
 	auth:Auth;
 	documents:Documents;
 
-	parentContext:Context;
+	parentContext:Class;
 
 	getBaseURI():string;
 
@@ -32,4 +32,4 @@ interface Context {
 	clearObjectSchema():void;
 }
 
-export default Context;
+export default Class;

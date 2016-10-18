@@ -8,6 +8,7 @@ export interface Class extends PersistedProtectedDocument.Class {
 	name:string;
 	email:string;
 	enabled:boolean;
+	password?:string;
 
 	enable():Promise<[ Class, HTTP.Response.Class ]>;
 	disable():Promise<[ Class, HTTP.Response.Class ]>;

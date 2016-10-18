@@ -3,7 +3,6 @@ import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";
 import Context from "./Context";
-import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Error from "./LDP/Error";
 import * as ErrorResponse from "./LDP/ErrorResponse";

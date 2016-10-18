@@ -1,11 +1,16 @@
 import {
 	STATIC,
 
+	OPTIONAL,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Pointer from "./../Pointer";
@@ -14,12 +19,49 @@ import * as RDFDocument from "./../RDF/Document";
 import AbstractContext from "./../AbstractContext";
 
 import * as Value from "./Value";
+import DefaultExport from "./Value";
 
 describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Value ).toBeDefined();
 		expect( Utils.isObject( Value ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.RDF.Value.Class",
+		"Interface that represents an `rdf:Value`."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"@id",
+			"string",
+			"The ID URI of the current value."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@type",
+			"string",
+			"The URI if the XSD type of the possible value."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"@value",
+			"string",
+			"The possible string value if the current object value."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.RDF.Value.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Value.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -87,9 +129,9 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 							"@language": "ja",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "_:1"},
-							{"@id": "http://example.com/resource/#1"},
-							{"@id": "http://example.com/external-resource/"},
+							{ "@id": "_:1" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" },
 						],
 						"http://example.com/ns#empty-property": [ {} ],
 					},
@@ -99,8 +141,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 							"@value": "Fragment 1",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "http://example.com/resource/"},
-							{"@id": "http://example.com/resource/#1"},
+							{ "@id": "http://example.com/resource/" },
+							{ "@id": "http://example.com/resource/#1" },
 						],
 					},
 					{
@@ -136,7 +178,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 				{name: "propertyValue", type: "Carbon.RDF.Value.Class"},
 				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( Value.Util.parseValue ).toBeDefined();
 			expect( Utils.isFunction( Value.Util.parseValue ) ).toBe( true );

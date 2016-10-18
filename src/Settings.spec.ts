@@ -1,11 +1,12 @@
 import {
-	INSTANCE,
-	STATIC,
+	OPTIONAL,
 
 	module,
+	interfaze,
 
 	isDefined,
-	hasDefaultExport
+	hasProperty,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import * as Auth from "./Auth";
@@ -18,6 +19,69 @@ describe( module( "Carbon/settings" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( settings ).toBeDefined();
 		expect( Utils.isObject( settings ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.Settings.Class",
+		"Interface that represents the possible settings used by the SDK."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"domain",
+			"string",
+			"The domain of the Carbon LDP server to be used."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"http.ssl",
+			"boolean",
+			"Indicates if the server uses secure HTTP (HTTPS) or not."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"auth.method",
+			"Carbon.Auth.Method",
+			"(Not supported) Indicates the default method of authentication to use."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"platform.container",
+			"string",
+			"URI relative to the domain that indicates the slug of the platform container."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"platform.apps.container",
+			"string",
+			"Relative URI that indicates the slug of the apps container."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"platform.agents.container",
+			"string",
+			"Relative URI to any context, that indicates the slug of the agents container."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"platform.roles.container",
+			"string",
+			"Relative URI to any context, that indicates the slug of the roles container."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"vocabulary",
+			"string",
+			"URI to be used as the default vocabulary. If a relative one is provided, the URI will be resolved by the context were it has been requested."
+		), ():void => {} );
+
 	} );
 
 	it( hasDefaultExport(

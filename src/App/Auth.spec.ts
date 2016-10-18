@@ -64,7 +64,7 @@ describe( module( "Carbon/App/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "appContext", type: "Carbon.App.Context"}
+			{ name: "appContext", type: "Carbon.App.Context", description: "Instance of the application context to manage its authentications and authorizations." },
 		] ), ():void => {
 			let auth:AppAuth.Class = new AppAuth.Class( context );
 

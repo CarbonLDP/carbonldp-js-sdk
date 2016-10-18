@@ -1,15 +1,8 @@
-import * as Auth from "./Auth";
 import Context from "./Context";
-import Documents from "./Documents";
-import * as Errors from "./Errors";
-import * as JSONLDConverter from "./JSONLD/Converter";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
 import * as SDKContext from "./SDKContext";
-import * as Utils from "./Utils";
 import * as ObjectSchema from "./ObjectSchema";
 
-abstract class AbstractContext extends SDKContext.Class {
+export abstract class Class extends SDKContext.Class {
 	_parentContext:Context;
 	get parentContext():Context { return this._parentContext; };
 
@@ -27,4 +20,4 @@ abstract class AbstractContext extends SDKContext.Class {
 	abstract resolve( relativeURI:string ):string;
 }
 
-export default AbstractContext;
+export default Class;

@@ -3,7 +3,6 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedResource from "./PersistedResource";
 import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 
 export interface Class extends PersistedResource.Class, Fragment.Class {
 	document: PersistedDocument.Class;

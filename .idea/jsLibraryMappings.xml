@@ -3,6 +3,7 @@
   <component name="JavaScriptLibraryMappings">
     <file url="PROJECT" libraries="{ts-external-references}" />
     <includedPredefinedLibrary name="ECMAScript 6" />
+    <includedPredefinedLibrary name="Node.js Core" />
     <excludedPredefinedLibrary name="HTML5 / EcmaScript 5" />
   </component>
 </project>

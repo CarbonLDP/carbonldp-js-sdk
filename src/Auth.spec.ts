@@ -235,7 +235,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context"},
+			{name: "context", type: "Carbon.Context.Class"},
 		] ), ():void => {
 			let context:AbstractContext;
 			class MockedContext extends AbstractContext {
@@ -434,7 +434,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"isAuthenticated",
 			"Returns true if the user is authenticated.", [
-				{ name: "askParent", type: "boolean", optional: true, default: "true" },
+				{ name: "askParent", type: "boolean", optional: true, defaultValue: "true" },
 			],
 			{ type: "boolean" }
 		), ():void => {

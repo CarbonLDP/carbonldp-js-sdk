@@ -136,9 +136,15 @@ function listMembers(includeNonReadable) {
     if (includeNonReadable === void 0) { includeNonReadable = true; }
     return this._documents.listMembers(this.id, includeNonReadable);
 }
-function getMembers(nonReadRetPref, retrievalPreferences) {
-    if (nonReadRetPref === void 0) { nonReadRetPref = true; }
-    return this._documents.getMembers(this.id, nonReadRetPref, retrievalPreferences);
+function getMembers(includeNonReadableOrRetrievalPreferences, retrievalPreferences) {
+    var includeNonReadable = true;
+    if (Utils.isBoolean(includeNonReadableOrRetrievalPreferences)) {
+        includeNonReadable = includeNonReadableOrRetrievalPreferences;
+    }
+    else {
+        retrievalPreferences = includeNonReadableOrRetrievalPreferences;
+    }
+    return this._documents.getMembers(this.id, includeNonReadable, retrievalPreferences);
 }
 function removeMember(memberOrUri) {
     return this._documents.removeMember(this.id, memberOrUri);

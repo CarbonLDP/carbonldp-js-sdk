@@ -1,5 +1,5 @@
-import {Url} from "url";
-import {isString} from "../Utils";
+import { Url } from "url";
+import * as Utils from "../Utils";
 
 export interface SuiteDescriptor {
 	access?:string;
@@ -16,35 +16,34 @@ export interface SpecDescriptor {
 }
 
 export interface InterfaceDescriptor {
-	parent?:string;
+	generics?:string[];
 }
 
 export interface InterfaceSuiteDescriptor extends SuiteDescriptor, InterfaceDescriptor {
-
 }
 
-export interface InterfaceSpecDescriptor extends SpecDescriptor, InterfaceDescriptor {
-
-}
-
-export interface ClassDescriptor extends InterfaceDescriptor {
-	interfaces?:string[];
+export interface ClassDescriptor {
+	generics:string[];
+	interfaces:string[];
 }
 
 export interface ClassSuiteDescriptor extends SuiteDescriptor, ClassDescriptor {
 }
 
-export interface ClassSpecDescriptor extends SpecDescriptor, ClassDescriptor {
-}
-
 export interface PropertyDescriptor extends SpecDescriptor {
 	type:string;
+	optional?:boolean;
+}
+
+export interface MethodSuiteDescriptor extends SuiteDescriptor {
+	optional?:boolean;
 }
 
 export interface MethodDescriptor extends SpecDescriptor {
 	generics?:string[];
 	arguments?:MethodArgument[];
 	returns?:MethodReturn;
+	optional?:boolean;
 }
 
 export interface ReexportsDescriptor extends SpecDescriptor {
@@ -59,7 +58,7 @@ export interface MethodArgument {
 	type:string;
 	description?:string;
 	optional?:boolean;
-	default?:string;
+	defaultValue?:string;
 }
 
 export interface MethodReturn {
@@ -87,9 +86,11 @@ export const MODULE:string = "module";
 export const CLASS:string = "class";
 export const INTERFACE:string = "interface";
 
-
 export const STATIC:string = "static";
 export const INSTANCE:string = "instance";
+
+export const OPTIONAL:boolean = true;
+export const OBLIGATORY:boolean = false;
 
 export const CONSTRUCTOR:string = "constructor";
 export const METHOD:string = "method";
@@ -111,24 +112,40 @@ export function module( name:string, description:string = null ):string {
 	return toJSON( descriptor );
 }
 
-export function clazz( name:string, description:string, parent:string = null, interfaces:Array<string> = null ):string {
+export function clazz( name:string, description:string, interfaces?:string[] ):string;
+export function clazz( name:string, generics:string[], description:string, interfaces?:string[] ):string;
+export function clazz( name:string, descriptionOrGenerics:any, interfacesOrDescription?:any, interfaces:string[] = null ):string {
+	interfaces = Utils.isArray( interfacesOrDescription ) ? interfacesOrDescription : interfaces;
+	let description:string = Utils.isArray( descriptionOrGenerics ) ? interfacesOrDescription : descriptionOrGenerics;
+	let generics:string[] = Utils.isArray( descriptionOrGenerics ) ? descriptionOrGenerics : null;
+
+
 	let descriptor:ClassSuiteDescriptor = {
 		suiteType: CLASS,
 		name: name,
 		description: description,
-		parent: parent,
+		generics: generics,
 		interfaces: interfaces,
 	};
 
 	return toJSON( descriptor );
 }
 
-export function interfaze( name:string, description:string, parent:string = null ):string {
+export function interfaze( name:string, description:string ):string;
+export function interfaze( name:string, generics:string[], description:string ):string;
+export function interfaze( name:string, descriptionOrGenerics:any, description?:string ):string {
+	let generics:string[] = null;
+	if( Utils.isArray( descriptionOrGenerics ) ) {
+		generics = descriptionOrGenerics;
+	} else {
+		description = descriptionOrGenerics;
+	}
+
 	let descriptor:InterfaceSuiteDescriptor = {
 		suiteType: INTERFACE,
 		name: name,
 		description: description,
-		parent: parent,
+		generics: generics,
 	};
 
 	return toJSON( descriptor );
@@ -174,18 +191,6 @@ export function decoratedObject( description:string, type:string[] ):string {
 	return toJSON( descriptor );
 }
 
-export function hasInterface( access:string, name:string ):string;
-export function hasInterface( access:string, name:string, description:string = null ):string {
-	let descriptor:InterfaceSpecDescriptor = {
-		access: access,
-		specType: INTERFACE,
-		name: name,
-		description: description,
-	};
-
-	return toJSON( descriptor );
-}
-
 export function isDefined():string {
 	return "is defined";
 }
@@ -212,6 +217,27 @@ export function hasConstructor( argumentsOrDescription:any = null, constructorAr
 	return toJSON( descriptor );
 }
 
+// Interface versions
+export function hasMethod( optional:boolean, name:string ):string;
+
+export function hasMethod( optional:boolean, name:string, description:string ):string;
+export function hasMethod( optional:boolean, name:string, methodArguments:MethodArgument[] ):string;
+export function hasMethod( optional:boolean, name:string, generics:string[], methodArguments:MethodArgument[] ):string;
+export function hasMethod( optional:boolean, name:string, returns:MethodReturn ):string;
+export function hasMethod( optional:boolean, name:string, generics:string[], returns:MethodReturn ):string;
+
+export function hasMethod( optional:boolean, name:string, description:string, methodArguments:MethodArgument[] ):string;
+export function hasMethod( optional:boolean, name:string, generics:string[], description:string, methodArguments:MethodArgument[] ):string;
+export function hasMethod( optional:boolean, name:string, description:string, returns:MethodReturn ):string;
+export function hasMethod( optional:boolean, name:string, generics:string[], description:string, returns:MethodReturn ):string;
+export function hasMethod( optional:boolean, name:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasMethod( optional:boolean, name:string, generics:string[], methodArguments:MethodArgument[], returns:MethodReturn ):string;
+
+export function hasMethod( optional:boolean, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+export function hasMethod( optional:boolean, name:string, generics:string[], description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
+
+// Class versions
+
 export function hasMethod( access:string, name:string ):string;
 
 export function hasMethod( access:string, name:string, description:string ):string;
@@ -230,7 +256,15 @@ export function hasMethod( access:string, name:string, generics:string[], method
 export function hasMethod( access:string, name:string, description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 export function hasMethod( access:string, name:string, generics:string[], description:string, methodArguments:MethodArgument[], returns:MethodReturn ):string;
 
-export function hasMethod( access:string, name:string, genericsOrDescriptionOrArgumentsOrReturns:any = null, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+export function hasMethod( accessOrOptional:string | boolean, name:string, genericsOrDescriptionOrArgumentsOrReturns:any = null, descriptionOrArgumentsOrReturns:any = null, argumentsOrReturns:any = null, returns:MethodReturn = null ):string {
+	let access:string = null;
+	let optional:boolean = null;
+	if( Utils.isBoolean( accessOrOptional ) ) {
+		optional = <boolean> accessOrOptional;
+	} else {
+		access = <string> accessOrOptional;
+	}
+
 	let generics:string[] = null;
 	let description:string = null;
 	let methodArguments:MethodArgument[] = [];
@@ -265,19 +299,35 @@ export function hasMethod( access:string, name:string, genericsOrDescriptionOrAr
 		description: description,
 		arguments: methodArguments,
 		returns: returns,
+		optional: optional,
 	};
 
 	return toJSON( descriptor );
 }
 
+// Interface versions
+export function method( optional:boolean, name:string ):string;
+export function method( optional:boolean, name:string, description:string ):string;
+
+// Class versions
 export function method( access:string, name:string ):string;
 export function method( access:string, name:string, description:string ):string;
-export function method( access:string, name:string, description:string = null ):string {
-	let descriptor:SuiteDescriptor = {
+
+export function method( accessOrOptional:string | boolean, name:string, description:string = null ):string {
+	let access:string = null;
+	let optional:boolean = null;
+	if( Utils.isBoolean( accessOrOptional ) ) {
+		optional = <boolean> accessOrOptional;
+	} else {
+		access = <string> accessOrOptional;
+	}
+
+	let descriptor:MethodSuiteDescriptor = {
 		access: access,
 		suiteType: METHOD,
 		name: name,
 		description: description,
+		optional: optional,
 	};
 
 	return toJSON( descriptor );
@@ -335,13 +385,30 @@ export function hasSignature( genericsOrDescriptionOrArgumentsOrReturns:any = nu
 	return toJSON( descriptor );
 }
 
-export function hasProperty( access:string, name:string, type:string, description:string = null ):string {
+// Interface versions
+export function hasProperty( optional:boolean, name:string, type:string ):string;
+export function hasProperty( optional:boolean, name:string, type:string, description:string ):string;
+
+// Class versions
+export function hasProperty( access:string, name:string, type:string ):string;
+export function hasProperty( access:string, name:string, type:string, description:string ):string;
+
+export function hasProperty( accessOrOptional:string | boolean, name:string, type:string, description:string = null ):string {
+	let access:string = null;
+	let optional:boolean = null;
+	if( Utils.isBoolean( accessOrOptional ) ) {
+		optional = <boolean> accessOrOptional;
+	} else {
+		access = <string> accessOrOptional;
+	}
+
 	let descriptor:PropertyDescriptor = {
 		access: access,
 		specType: PROPERTY,
 		name: name,
 		type: type,
 		description: description,
+		optional: optional,
 	};
 
 	return toJSON( descriptor );
@@ -416,7 +483,7 @@ if( typeof XMLHttpRequest === "undefined" ) {
 
 		function stubRequest( url:string, data:string, method:string = "*" ):any {
 			let path:any = url;
-			if( isString( url ) ) {
+			if( Utils.isString( url ) ) {
 				let parsedURL:Url = URL.parse( url );
 				path = parsedURL.path;
 			}

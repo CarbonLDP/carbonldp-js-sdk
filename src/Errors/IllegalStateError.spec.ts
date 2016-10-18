@@ -11,10 +11,7 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasProperty,
-	hasInterface,
-	MethodArgument,
-	interfaze,
-	extendsClass
+	extendsClass,
 } from "./../test/JasmineExtender";
 
 describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
@@ -35,7 +32,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string", optional: true, default: ""}
+			{ name: "message", type: "string", optional: true, defaultValue: "" },
 		] ), ():void => {
 			let error:IllegalStateError = new IllegalStateError( "Message of the error" );
 
@@ -51,7 +48,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let error:IllegalStateError = new IllegalStateError( "Message of the error" );
 
@@ -78,4 +75,5 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 		} );
 
 	} );
+
 } );

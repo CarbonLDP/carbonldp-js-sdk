@@ -7,13 +7,15 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasSignature,
 	hasProperty,
+	hasDefaultExport, interfaze, extendsClass, OBLIGATORY,
 } from "./../test/JasmineExtender";
 import * as NS from "./../NS";
 import * as Resource from "./../Resource";
-import * as Token from "./Token";
 import * as Utils from "./../Utils";
+
+import * as Token from "./Token";
+import DefaultExport from "./Token";
 
 describe( module( "Carbon/Auth/Token" ), ():void => {
 
@@ -52,6 +54,37 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			"@id": NS.CS.Predicate.expirationTime,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
+
+	} );
+
+	describe( interfaze(
+		"Carbon.Auth.Token.Class",
+		"Interface that represents an authentication token for every context."
+	), ():void => {
+
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Auth.Credentials.Class" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"agent",
+			"Carbon.Auth.PersistedAgent.Class",
+			"Agent that has been requested the token, and which authentication the token represents."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"expirationTime",
+			"Date",
+			"The time when the token will expire."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"key",
+			"string",
+			"The value to provide as the authentication token in the headers of a a request."
+		), ():void => {} );
 
 	} );
 
@@ -184,6 +217,14 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			} );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Token.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

@@ -7,11 +7,12 @@ import {
 	isDefined,
 	hasConstructor,
 	hasProperty,
-
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import DefaultExport from "./UsernameAndPasswordCredentials";
 
 describe( module( "Carbon/Auth/UsernameAndPasswordCredentials" ), ():void => {
 
@@ -22,7 +23,9 @@ describe( module( "Carbon/Auth/UsernameAndPasswordCredentials" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.UsernameAndPasswordCredentials.Class",
-		"Wrapper to manage Authentication Credentials in form of Username/Password."
+		"Wrapper to manage Authentication Credentials in form of Username/Password.", [
+			"Carbon.Auth.Credentials.Class",
+		]
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -66,6 +69,11 @@ describe( module( "Carbon/Auth/UsernameAndPasswordCredentials" ), ():void => {
 			expect( token.password ).toBe( "myPassword" );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Auth.UsernameAndPasswordCredentials.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( UsernameAndPasswordCredentials.Class );
 	} );
 
 } );

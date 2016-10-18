@@ -1,10 +1,13 @@
 {{~new-line~}}
 {{#each properties~}}
 	```typescript {{new-line~}}
-	{{../access}}{{name}}:{{{type}}} {{new-line~}}
+	{{../access}}{{name}}{{#if optional}}?{{/if}}:{{{type}}} {{new-line~}}
 	```
 
 	{{#with description~}}
 		{{{trim this}}}
 	{{/with}}
+
+{{^if @last}}--{{/if}}
+
 {{/each}}

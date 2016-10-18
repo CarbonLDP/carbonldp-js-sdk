@@ -1,14 +1,12 @@
 import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";
-import * as RDFNode from "./RDFNode";
+import * as Node from "./Node";
 import * as Utils from "./../Utils";
 import * as URI from "./URI";
-import * as Value from "./Value";
-import * as Errors from "./../Errors";
 
 export interface Class {
 	"@id"?:string;
-	"@graph":RDFNode.Class[];
+	"@graph":Node.Class[];
 }
 
 export class Factory {
@@ -17,8 +15,8 @@ export class Factory {
 			&& Utils.isArray( object[ "@graph" ] );
 	}
 
-	static create( resources:RDFNode.Class[], uri?:string ):Class {
-		let document:any = uri ? RDFNode.Factory.create( uri ) : {};
+	static create( resources:Node.Class[], uri?:string ):Class {
+		let document:any = uri ? Node.Factory.create( uri ) : {};
 		document[ "@graph" ] = resources;
 
 		return document;
@@ -38,13 +36,13 @@ export class Util {
 		return [];
 	}
 
-	static getResources( objects:Object[] ):RDFNode.Class[];
-	static getResources( object:Object ):RDFNode.Class[];
-	static getResources( value:any ):RDFNode.Class[] {
-		let freeNodes:RDFNode.Class[] = RDFNode.Util.getFreeNodes( value );
+	static getResources( objects:Object[] ):Node.Class[];
+	static getResources( object:Object ):Node.Class[];
+	static getResources( value:any ):Node.Class[] {
+		let freeNodes:Node.Class[] = Node.Util.getFreeNodes( value );
 		let documents:Class[] = Util.getDocuments( value );
 
-		let resources:RDFNode.Class[] = [].concat( freeNodes );
+		let resources:Node.Class[] = [].concat( freeNodes );
 
 		for( let document of documents ) {
 			resources = resources.concat( document[ "@graph" ] );
@@ -53,14 +51,14 @@ export class Util {
 		return resources;
 	}
 
-	static getDocumentResources( document:RDFNode.Class[] ):RDFNode.Class[];
-	static getDocumentResources( document:Class ):RDFNode.Class[];
-	static getDocumentResources( document:any ):RDFNode.Class[] {
-		let resources:RDFNode.Class[] = Util.getResources( document );
-		let documentResources:RDFNode.Class[] = [];
+	static getDocumentResources( document:Node.Class[] ):Node.Class[];
+	static getDocumentResources( document:Class ):Node.Class[];
+	static getDocumentResources( document:any ):Node.Class[] {
+		let resources:Node.Class[] = Util.getResources( document );
+		let documentResources:Node.Class[] = [];
 
 		for( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:RDFNode.Class = resources[ i ];
+			let resource:Node.Class = resources[ i ];
 			let uri:string = resource[ "@id" ];
 			if( ! uri ) continue;
 
@@ -70,12 +68,12 @@ export class Util {
 		return documentResources;
 	}
 
-	static getFragmentResources( document:RDFNode.Class[], documentResource?:RDFNode.Class ):RDFNode.Class[];
-	static getFragmentResources( document:Class, documentResource?:RDFNode.Class ):RDFNode.Class[];
-	static getFragmentResources( document:RDFNode.Class[], documentResourceURI?:string ):RDFNode.Class[];
-	static getFragmentResources( document:Class, documentResourceURI?:string ):RDFNode.Class[];
-	static getFragmentResources( document:any, documentResource?:any ):RDFNode.Class[] {
-		let resources:RDFNode.Class[] = Util.getResources( document );
+	static getFragmentResources( document:Node.Class[], documentResource?:Node.Class ):Node.Class[];
+	static getFragmentResources( document:Class, documentResource?:Node.Class ):Node.Class[];
+	static getFragmentResources( document:Node.Class[], documentResourceURI?:string ):Node.Class[];
+	static getFragmentResources( document:Class, documentResourceURI?:string ):Node.Class[];
+	static getFragmentResources( document:any, documentResource?:any ):Node.Class[] {
+		let resources:Node.Class[] = Util.getResources( document );
 
 		let documentURIToMatch:string = null;
 		if( documentResource ) {
@@ -84,10 +82,10 @@ export class Util {
 			} else documentURIToMatch = documentResource[ "@id" ];
 		}
 
-		let fragmentResources:RDFNode.Class[] = [];
+		let fragmentResources:Node.Class[] = [];
 
 		for( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:RDFNode.Class = resources[ i ];
+			let resource:Node.Class = resources[ i ];
 			let uri:string = resource[ "@id" ];
 
 			if( ! uri ) continue;
@@ -104,12 +102,12 @@ export class Util {
 		return fragmentResources;
 	}
 
-	static getBNodeResources( document:Class ):RDFNode.Class[] {
-		let resources:RDFNode.Class[] = Util.getResources( document );
+	static getBNodeResources( document:Class ):Node.Class[] {
+		let resources:Node.Class[] = Util.getResources( document );
 
-		let bnodes:RDFNode.Class[] = [];
+		let bnodes:Node.Class[] = [];
 		for( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:RDFNode.Class = resources[ i ];
+			let resource:Node.Class = resources[ i ];
 			if( ! ( "@id" in resource ) || URI.Util.isBNodeID( resource[ "@id" ] ) ) bnodes.push( resource );
 		}
 

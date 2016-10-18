@@ -36,7 +36,7 @@ describe( module( "Carbon/App/Agents" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.App.Context.Class", description: "The application context where to manage its Agents."},
+			{ name: "context", type: "Carbon.App.Context.Class", description: "The application context where to manage its Agents." },
 		] ), ():void => {
 			let app:PersistedApp = <any> {
 				rootContainer: {
@@ -79,10 +79,10 @@ describe( module( "Carbon/App/Agents" ), ():void => {
 			INSTANCE,
 			"get",
 			"Retrieves the application agent specified from the current application context.", [
-				{name: "agentURI", type: "string", description: "The URI of the application agent to retrieve."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "agentURI", type: "string", description: "The URI of the application agent to retrieve." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 			],
-			{type: "Promise<[ Carbon.App.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.App.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
 		), () => {
 			let app:PersistedApp = <any> {
 				rootContainer: {

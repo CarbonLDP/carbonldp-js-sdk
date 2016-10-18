@@ -1,11 +1,11 @@
-import AbstractContext from "./AbstractContext";
+import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as APIDescription from "./APIDescription";
 import * as App from "./App";
 import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
-import Documents from "./Documents";
+import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
@@ -28,7 +28,7 @@ import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
-class Carbon extends AbstractContext {
+class Carbon extends AbstractContext.Class {
 
 	/* tslint:disable: variable-name */
 	static AccessPoint:typeof AccessPoint = AccessPoint;

@@ -1,25 +1,25 @@
 import * as HTTP from "./../HTTP";
-import * as RDFNode from "./RDFNode";
+import * as Node from "./Node";
 export interface Class {
     "@id"?: string;
-    "@graph": RDFNode.Class[];
+    "@graph": Node.Class[];
 }
 export declare class Factory {
     static is(object: Object): boolean;
-    static create(resources: RDFNode.Class[], uri?: string): Class;
+    static create(resources: Node.Class[], uri?: string): Class;
 }
 export declare class Util {
     static getDocuments(objects: Object[]): Class[];
     static getDocuments(object: Object): Class[];
-    static getResources(objects: Object[]): RDFNode.Class[];
-    static getResources(object: Object): RDFNode.Class[];
-    static getDocumentResources(document: RDFNode.Class[]): RDFNode.Class[];
-    static getDocumentResources(document: Class): RDFNode.Class[];
-    static getFragmentResources(document: RDFNode.Class[], documentResource?: RDFNode.Class): RDFNode.Class[];
-    static getFragmentResources(document: Class, documentResource?: RDFNode.Class): RDFNode.Class[];
-    static getFragmentResources(document: RDFNode.Class[], documentResourceURI?: string): RDFNode.Class[];
-    static getFragmentResources(document: Class, documentResourceURI?: string): RDFNode.Class[];
-    static getBNodeResources(document: Class): RDFNode.Class[];
+    static getResources(objects: Object[]): Node.Class[];
+    static getResources(object: Object): Node.Class[];
+    static getDocumentResources(document: Node.Class[]): Node.Class[];
+    static getDocumentResources(document: Class): Node.Class[];
+    static getFragmentResources(document: Node.Class[], documentResource?: Node.Class): Node.Class[];
+    static getFragmentResources(document: Class, documentResource?: Node.Class): Node.Class[];
+    static getFragmentResources(document: Node.Class[], documentResourceURI?: string): Node.Class[];
+    static getFragmentResources(document: Class, documentResourceURI?: string): Node.Class[];
+    static getBNodeResources(document: Class): Node.Class[];
 }
 export declare class Parser implements HTTP.Parser.Class<Class[]> {
     parse(input: string): Promise<any>;

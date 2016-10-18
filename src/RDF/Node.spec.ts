@@ -1,27 +1,55 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import AbstractContext from "./../AbstractContext";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
-import * as RDFDocument from "./Document";
+import * as Document from "./Document";
 import * as RDFList from "./List";
 import * as Utils from "./../Utils";
 import * as XSD from "./../NS/XSD";
 
-import * as RDFNode from "./RDFNode";
+import * as RDFNode from "./Node";
+import DefaultExport from "./Node";
 
-describe( module( "Carbon/RDF/RDFNode" ), ():void => {
+describe( module( "Carbon/RDF/Node" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RDFNode ).toBeDefined();
 		expect( Utils.isObject( RDFNode ) ).toBe( true );
+	} );
+
+	describe( interfaze(
+		"Carbon.RDF.Node.Class",
+		"Interface that represents an `rdf:Node`."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"@id",
+			"string",
+			"The ID URI of the current node."
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.RDF.Node.Class" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:RDFNode.Class;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( clazz(
@@ -38,44 +66,44 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.RDF.Node.Class` object.", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFNode.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Factory.is ) ).toBe( true );
 
-			expect( RDFNode.Factory.is( {"@id": "http://example.com/resource/"} ) ).toBe( true );
-			expect( RDFNode.Factory.is( {"@id": "http://example.com/resource/", "@type": "@id"} ) ).toBe( true );
-			expect( RDFNode.Factory.is( {"@id": "http://example.com/resource/", "something": "else"} ) ).toBe( true );
+			expect( RDFNode.Factory.is( { "@id": "http://example.com/resource/" } ) ).toBe( true );
+			expect( RDFNode.Factory.is( { "@id": "http://example.com/resource/", "@type": "@id" } ) ).toBe( true );
+			expect( RDFNode.Factory.is( { "@id": "http://example.com/resource/", "something": "else" } ) ).toBe( true );
 
-			expect( RDFNode.Factory.is( {"@id": [ "something", "else" ]} ) ).toBe( false );
-			expect( RDFNode.Factory.is( {"id": "http://example.com/resource/"} ) ).toBe( false );
-			expect( RDFNode.Factory.is( {"@type": "http://example.com/types/my-type/"} ) ).toBe( false );
+			expect( RDFNode.Factory.is( { "@id": [ "something", "else" ] } ) ).toBe( false );
+			expect( RDFNode.Factory.is( { "id": "http://example.com/resource/" } ) ).toBe( false );
+			expect( RDFNode.Factory.is( { "@type": "http://example.com/types/my-type/" } ) ).toBe( false );
 			expect( RDFNode.Factory.is( {} ) ).toBe( false );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a `Carbon.RDF.RDFNode.Class` object with the URI provided.", [
-				{name: "uri", type: "string"},
+			"Creates a `Carbon.RDF.Node.Class` object with the URI provided.", [
+				{ name: "uri", type: "string" },
 			],
-			{type: "Carbon.RDF.RDFNode.Class"}
+			{ type: "Carbon.RDF.Node.Class" }
 		), ():void => {
 			expect( RDFNode.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Factory.create ) ).toBe( true );
 
-			expect( RDFNode.Factory.create( "http://example.com/resource/" ) ).toEqual( {"@id": "http://example.com/resource/"} );
+			expect( RDFNode.Factory.create( "http://example.com/resource/" ) ).toEqual( { "@id": "http://example.com/resource/" } );
 			// Does not verify if it is an URI
-			expect( RDFNode.Factory.create( "some thing that is not an URI, but works" ) ).toEqual( {"@id": "some thing that is not an URI, but works"} );
+			expect( RDFNode.Factory.create( "some thing that is not an URI, but works" ) ).toEqual( { "@id": "some thing that is not an URI, but works" } );
 		} );
 
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.RDFNode.Util",
-		"Class with useful functions to manage `Carbon.RDF.RDFNode.Class` objects."
+		"Carbon.RDF.Node.Util",
+		"Class with useful functions to manage `Carbon.RDF.Node.Class` objects."
 	), ():void => {
 		let expandedObject:any;
 		let documentResource:any;
@@ -138,9 +166,9 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 							"@language": "ja",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "_:1"},
-							{"@id": "http://example.com/resource/#1"},
-							{"@id": "http://example.com/external-resource/"},
+							{ "@id": "_:1" },
+							{ "@id": "http://example.com/resource/#1" },
+							{ "@id": "http://example.com/external-resource/" },
 						],
 						"http://example.com/ns#empty-property": [ {} ],
 					},
@@ -150,8 +178,8 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 							"@value": "Fragment 1",
 						} ],
 						"http://example.com/ns#pointerSet": [
-							{"@id": "http://example.com/resource/"},
-							{"@id": "http://example.com/resource/#1"},
+							{ "@id": "http://example.com/resource/" },
+							{ "@id": "http://example.com/resource/#1" },
 						],
 					},
 					{
@@ -170,7 +198,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			}
 			context = new MockedContext();
 
-			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
+			documentResource = Document.Util.getDocumentResources( expandedObject )[ 0 ];
 			pointerLibrary = PersistedDocument.Factory.create( expandedObject[ "@id" ], context.documents );
 		} );
 
@@ -183,17 +211,17 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			STATIC,
 			"areEqual",
 			"Returns true if the objects represent the same resource.", [
-				{name: "node1", type: "Carbon.RDF.RDFDocument.Class"},
-				{name: "node2", type: "Carbon.RDF.RDFDocument.Class"},
+				{ name: "node1", type: "Carbon.RDF.Document.Class" },
+				{ name: "node2", type: "Carbon.RDF.Document.Class" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFNode.Util.areEqual ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.areEqual ) ).toBe( true );
 
-			let node1:RDFNode.Class = {"@id": "http://example.com/resouce/1-one/"};
-			let node1Copy:RDFNode.Class = {"@id": "http://example.com/resouce/1-one/"};
-			let node2:RDFNode.Class = {"@id": "http://example.com/resouce/2-two/"};
+			let node1:RDFNode.Class = { "@id": "http://example.com/resouce/1-one/" };
+			let node1Copy:RDFNode.Class = { "@id": "http://example.com/resouce/1-one/" };
+			let node2:RDFNode.Class = { "@id": "http://example.com/resouce/2-two/" };
 			expect( RDFNode.Util.areEqual( node1, node1 ) ).toBe( true );
 			expect( RDFNode.Util.areEqual( node1, node1Copy ) ).toBe( true );
 			expect( RDFNode.Util.areEqual( node1Copy, node1 ) ).toBe( true );
@@ -204,11 +232,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasType",
-			"Returns true if the RDFNode provided has the specified type.", [
-				{name: "object", type: "Object", description: "The RDFNode to evaluate."},
-				{name: "type", type: "string", description: "The type to look for it existence."},
+			"Returns true if the Node provided has the specified type.", [
+				{ name: "object", type: "Object", description: "The Node to evaluate." },
+				{ name: "type", type: "string", description: "The type to look for it existence." },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RDFNode.Util.hasType ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.hasType ) ).toBe( true );
@@ -246,10 +274,10 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getTypes",
-			"Returns an array with the types of the RDFNode provided.", [
-				{name: "object", type: "Object", description: "The RDFNode to evaluate."},
+			"Returns an array with the types of the Node provided.", [
+				{ name: "object", type: "Object", description: "The Node to evaluate." },
 			],
-			{type: "string[]"}
+			{ type: "string[]" }
 		), ():void => {
 			expect( RDFNode.Util.hasType ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.hasType ) ).toBe( true );
@@ -282,12 +310,12 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getPropertyURI",
-			"Returns the URI from a property resource in the RDFNode object.\n" +
+			"Returns the URI from a property resource in the Node object.\n" +
 			"Returns `null` if the property doesn't exists or the URI is not found.", [
-				{name: "node", type: "Carbon.RDF.RDFNode.Class"},
-				{name: "predicate", type: "string"},
+				{ name: "node", type: "Carbon.RDF.Node.Class" },
+				{ name: "predicate", type: "string" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyURI ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyURI ) ).toBe( true );
@@ -326,10 +354,10 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"getFreeNodes",
-			"Returns an array with the nodes that are neither a RDFDocument nor are contained inside a one.", [
-				{name: "object", type: "T extends Object", description: "The object to evaluate for its free nodes."},
+			"Returns an array with the nodes that are neither a Document nor are contained inside a one.", [
+				{ name: "object", type: "T extends Object", description: "The object to evaluate for its free nodes." },
 			],
-			{type: "Carbon.RDF.Node.Class[]"}
+			{ type: "Carbon.RDF.Node.Class[]" }
 		), ():void => {
 			expect( RDFNode.Util.getFreeNodes ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getFreeNodes ) ).toBe( true );
@@ -376,7 +404,7 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 					"@graph": [ {} ],
 				},
 			];
-			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [ {"@id": "http://example.com/free-node-1/"}, {"@id": "http://example.com/free-node-2/"} ] );
+			expect( RDFNode.Util.getFreeNodes( object ) ).toEqual( [ { "@id": "http://example.com/free-node-1/" }, { "@id": "http://example.com/free-node-2/" } ] );
 		} );
 
 		it( hasMethod(
@@ -384,11 +412,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getProperty",
 			"Returns the property searched, parsed in accordance to the RDF object it is.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getProperty ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getProperty ) ).toBe( true );
@@ -433,11 +461,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyPointer",
 			"Returns the property searched as a Pointer.\n" +
 			"Returns null if the property is not found or cannot be parsed as a Pointer.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyPointer ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyPointer ) ).toBe( true );
@@ -465,11 +493,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyLiteral",
 			"Returns the property searched as a javascript variable. The property must be an RDF Literal.\n" +
 			"Returns null if the property is not found, the type provided not match with the type of the Literal, or cannot be parsed from a Literal.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "literalType", type: "string"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "literalType", type: "string" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyLiteral ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLiteral ) ).toBe( true );
@@ -499,11 +527,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyList",
 			"Returns the property searched as an Array with every element parsed to its respective type of element.\n" +
 			"Returns null if the property is not found or cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyList ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyList ) ).toBe( true );
@@ -527,11 +555,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyPointerList",
 			"Returns the property list searched as an Array of Pointers. It will be filtered no pointer values.\n" +
 			"Returns null if the property is not found or is not a List.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyPointerList ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyPointerList ) ).toBe( true );
@@ -555,11 +583,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyLiteralList",
 			"Returns the property list searched as an Array of parsed Literals. It will be filtered no Literal values with the type specified.\n" +
 			"Returns null if the property is not found or is not a List.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyLiteralList ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLiteralList ) ).toBe( true );
@@ -582,11 +610,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getProperties",
 			"Returns the property searched as an Array with the parsed Literal, Pointer or List.\n" +
 			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getProperties ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getProperties ) ).toBe( true );
@@ -648,11 +676,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyPointers",
 			"Returns the property searched as an Array with the parsed Pointer.\n" +
 			"Returns an empty array if the property is not found, or the property cannot be parsed as a pointer.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyPointers ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyPointers ) ).toBe( true );
@@ -689,10 +717,10 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyURIs",
 			"Returns the URIs of the property searched.\n" +
 			"Returns null if the property is not found or an empty array if no URI was found.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyURIs ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyURIs ) ).toBe( true );
@@ -734,11 +762,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyLiterals",
 			"Returns the property searched as an Array with the parsed Literal.\n" +
 			"Returns null if the property is not found, or an empty array if it cannot be parsed.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "literalType", type: "string"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "literalType", type: "string" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyLiterals ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLiterals ) ).toBe( true );
@@ -792,11 +820,11 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getPropertyLanguageMap",
 			"Returns an object associating the language with the parsed string literal.\n" +
 			"Returns null if the property is not found, or an empty object if it is not a property with language.", [
-				{name: "expandedObject", type: "any"},
-				{name: "propertyURI", type: "string"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "expandedObject", type: "any" },
+				{ name: "propertyURI", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
-			{type: "any"}
+			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyLanguageMap ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLanguageMap ) ).toBe( true );
@@ -827,9 +855,9 @@ describe( module( "Carbon/RDF/RDFNode" ), ():void => {
 			"getList",
 			"Returns the List object from the provided property of an expanded JSON-LD object.\n" +
 			"Returns null if no List object is found.", [
-				{name: "propertyValues", type: "Array<any>"},
+				{ name: "propertyValues", type: "Array<any>" },
 			],
-			{type: "Carbon.RDF.List.Class"}
+			{ type: "Carbon.RDF.List.Class" }
 		), ():void => {
 			expect( RDFNode.Util.getList ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getList ) ).toBe( true );

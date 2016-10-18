@@ -227,4 +227,4 @@ var Util = (function () {
 }());
 exports.Util = Util;
 
-//# sourceMappingURL=RDFNode.js.map
+//# sourceMappingURL=Node.js.map
