@@ -10,52 +10,83 @@
 			margin-top: 5em;
 		}
 
-		.symbol {
-			border: 0 !important;
-			padding-right: 0 !important;
-			padding-left: 0 !important;
-			margin-left: -1em !important;
-			left: calc(-1rem - 0.75em) !important;
+		.doc-header {
+
 		}
 
-		.symbol::after {
-			border: 0 !important;
+		.doc-header.ui.header:not(.doc-header_no-link):not(.doc-header__main-section) {
+			/*display: inline-block;*/
+			/*padding-left: 1.75rem;*/
 		}
 
-		.symbol__anchor {
-			text-decoration: none;
-			opacity: 0.20;
+		.doc-header.ui.header:not(.doc-header__main-section) {
+			line-height: 2em;
 		}
 
-		.symbol__anchor .icon {
-			margin-right: 0 !important;
+		/*.doc-header.doc-header__main-section > .doc-header__main {*/
+		/*margin-left: -0.75rem;*/
+		/*}*/
+
+		.doc-header .doc-header__link {
+			color: inherit;
+			position: relative;
+			display: inline-block;
 		}
 
-		.symbol__anchor:hover {
-			opacity: 1;
+		.doc-header .doc-header__main.code-label {
+			padding: .5833em .833em;
+		}
+
+		.doc-header .doc-header__secondary {
+			opacity: 0.65;
+		}
+
+		.doc-header .doc-header__symbol.symbol.label {
+			background-color: transparent;
+			position: absolute;
+			border: 0;
+			padding: 0;
+			margin: 0;
+			top: 50%;
+		}
+
+		.doc-section .basic.ui.segment:not(:first-child):last-child {
+			padding-bottom: 0;
+		}
+
+		.doc-section .basic.ui.segment:first-child {
+			padding-bottom: 1em !important;
+		}
+
+		.doc-section__content .doc-header .doc-header__symbol.symbol.label {
+			/*padding-top: 0.75em;*/
+		}
+
+		.symbol .symbol__anchor {
+			opacity: 0;
+			padding-right: 1em !important;
+			position: relative;
+			left: -1.5em;
+			top: -0.5em;
+		}
+
+		.doc-header__link:hover .symbol > .symbol__anchor {
+			opacity: 0.60;
+		}
+
+		.symbol__anchor i.icon {
+			margin-right: 0;
 		}
 
 		.doc-object__header {
 		}
 
-		.doc-object__header:not(.doc-object__header-section).doc-header .doc-header__label {
-			margin: 0;
-			padding-left: 0;
+		a.doc-header__link.doc-header__main {
+			color: #FFFFFF;
 		}
 
-		.doc-object__header-section .symbol {
-			margin-left: 0 !important;
-		}
-
-		.doc-header {
-
-		}
-
-		.doc-header__label {
-		}
-
-		.doc-label {
-			display: inline-block;
+		a.doc-header__link.doc-header__main:hover {
+			text-decoration: underline;
 		}
 
 		code, .code-label {
@@ -65,22 +96,27 @@
 			padding: .25em .50em;
 		}
 
-		.doc-label > .doc-label__main {
-			padding: .5833em .833em;
-		}
-
-		.doc-label > .doc-label__secondary {
-			opacity: 0.60;
-		}
-
 		.doc-content {
+		}
+
+		.doc-content.basic.segment, .doc-content.vertical.segment {
+			padding-left: 2rem;
 		}
 
 		.doc-content__description, .doc-description > p {
 			font-size: 15px;
 		}
 
-		.elements-list {
+		.doc-tags {
+		}
+
+		.doc-tags.list {
+			margin-top: 0;
+			padding-left: 2em;
+		}
+
+		.elements-list.ui.list {
+			/*padding-left: 2em;*/
 		}
 
 		.elements-list .item:before {
@@ -115,189 +151,186 @@
 			text-align: justify;
 		}
 
+		td.optional-label > .ui.horizontal.ribbon.label {
+			left: calc(-1rem - 1.2em);
+		}
+
+		td.optional-label > code {
+			left: -1.5em;
+			position: relative;
+		}
+
+		@media only screen and (max-width: 767px) {
+			td.optional-label > .ui.horizontal.ribbon.label {
+				left: calc(-1rem - 1.0em);
+			}
+		}
+
+		.ui.list .list > .item > i.icon, .ui.list > .item > i.icon {
+			vertical-align: middle;
+		}
+
 	</style>
 </head>
 <body>
+
+	<!--div class="ui left fixed"></div-->
 
 	<div class="ui main container">
 		<h1 class="ui header">Carbon LDP JavaScript SDK API Reference</h1>
 		<div class="ui divider"></div>
 
-		{{>header level=2 path="Classes and Interfaces" name="Classes and Interfaces"}}
-		<div class="ui bulleted list elements-list elements-list_single">
-			{{#toc-tree modules}}
-				<div class="item">
-					<span class="ui {{#is type "I"}}orange{{else}}blue{{/is}} label icon elements-list__item-type">{{type}}</span>
-					<a class="content" href="#{{sanitize path}}">{{path}}</a>
-				</div>
-			{{/toc-tree}}
+		<div class="ui basic segment doc-section__content">
+			{{>header level=2 name="Classes and Interfaces"}}
+			<div class="ui list elements-list elements-list_single">
+				{{#toc-tree modules}}
+					<div class="item">
+						<span class="ui {{#is type "I"}}orange{{else}}blue{{/is}} label icon elements-list__item-type">{{type}}</span>
+						<a class="content" href="#{{toURL path}}">{{path}}</a>
+					</div>
+				{{/toc-tree}}
+			</div>
 		</div>
-		<br>
 
 
 		{{#each modules}}
-			<div class="ui basic grey segment doc-module">
+			{{br 3}}
+			<div class="ui vertical segment doc-module doc-section">
 				{{>header path=this.path name=this.path isModule=true}}
 
-				{{#with description}}
-					<div class="doc-content doc-module__content">
-						<div class="doc-content__description doc-description">
+				{{#if default-export}}
+					{{>section-tags type="Default Export" tag=default-export}}
+					<!--<div class="doc-module__default-exports">
+						<strong>Default Export</strong>:
+						<a href="#{{toURL name}}">{{name}}</a>
+					</div>-->
+				{{/if}}
+
+				<div class="ui basic segment doc-content doc-section__content">
+					{{#with description}}
+						<div class="doc-description">
 							{{>text-markdown element=this}}
 						</div>
-					</div>
-				{{/with}}
+						{{br 1}}
+					{{/with}}
 
-				{{#with default-export}}
-					<div class="doc-module__default-exports">
-						<strong>Default Export</strong>:
-						<a href="#{{sanitize name}}">{{name}}</a>
-					</div>
-				{{/with}}
-
-				{{#or this.interfaces this.classes}}
-					{{>header level=3 path=(concat path "--Classes and Interfaces") name="Classes and Interfaces of the Module" }}
-					<div class="ui bulleted list elements-list">
-						{{#combineElements this}}
-							<div class="item">
-								<span class="ui {{#if isInterface}}orange{{else}}blue{{/if}} label icon elements-list__item-type">{{#if isClass}}C{{else}}I{{/if}}</span>
-								<div class="content">
-									<a class="header" href="#{{sanitize element.path}}">{{element.path}}</a>
-									{{#with element.description}}
-										<div class="description">{{>text-markdown element=this noParagraph=true}}</div>{{/with}}
+					{{#or this.interfaces this.classes}}
+						{{>header level=2 path=(concat path "--Classes and Interfaces") name="Classes and Interfaces in the Module" }}
+						<div class="ui list elements-list">
+							{{#combineElements this}}
+								<div class="item">
+									<span class="ui {{#if isInterface}}orange{{else}}blue{{/if}} label icon elements-list__item-type">{{#if isClass}}C{{else}}I{{/if}}</span>
+									<div class="content">
+										<a class="header" href="#{{toURL element.path}}">{{element.path}}</a>
+										{{#with element.description}}
+											<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
+										{{/with}}
+									</div>
 								</div>
-							</div>
-						{{/combineElements}}
-					</div>
-				{{/or}}
+							{{/combineElements}}
+						</div>
+						<br>
+					{{/or}}
 
-				{{#if reexports~}}
-					{{> reexports}}
-				{{/if}}
+					{{#if reexports}}
+						{{> reexports}}
+					{{/if}}
 
-				{{#if enums~}}
-					{{#each enums}}
-						{{>enum this}}
-					{{/each}}
-				{{/if}}
+					{{#if enums}}
+						{{#each enums}}
+							{{>enum this}}
+						{{/each}}
+					{{/if}}
 
-				{{#if properties}}
-					{{>header level=3 path=(concat path "--Properties") name="Properties" }}
+					{{#with properties}}
+						{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
 
-					{{>properties properties=properties.static access="#"}}
+						<div class="ui basic segment doc-content">
+							{{>properties properties=static access="#" path=../path}}
 
-					{{>properties properties=properties.instance access="."}}
-				{{/if}}
+							{{>properties properties=instance access="." path=../path}}
+						</div>
+					{{/with}}
 
-				{{#if methods}}
-					{{>header level=3 path=(concat path "--Methods") name="Methods" }}
+					{{#with methods}}
+						{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
 
-					{{>methods methods=methods.static access="#" }}
+						<div class="ui basic segment doc-content">
+							{{>methods methods=static access="#" path=../path}}
 
-					{{>methods methods=methods.instance access="." }}
-				{{/if}}
+							{{>methods methods=instance access="." path=../path}}
+						</div>
+					{{/with}}
+				</div>
 
 			</div>
 
 			{{#combineElements this}}
-				<div class="ui basic {{#if isClass}}blue{{else}}orange{{/if}} segment doc-object">
+				{{br 3}}
+				<div class="ui vertical segment doc-object doc-section">
 
 					{{>header path=element.path name=element.path}}
 
-					{{#with description}}
-						<div class="doc-content doc-object__content">
-							<div class="doc-content__description doc-description">
-								{{>text-markdown element=this}}
-							</div>
-						</div>
-					{{/with}}
-
 					{{#with element}}
-						{{#if interfces}}
-							<div class="ui list">
-								<div class="item">
-									<i class="icon"></i>
-									<div class="content">
-										<span class="header">Implements</span>
-										{{#each interfces}}
-											<div class="list">
-												<div class="item">
-													<i class="icon"></i>
-													<div class="content">
-														<span class="description">
-															{{>text-markdown element=this noParagraph=true}}
-														</span>
-													</div>
-												</div>
-											</div>
-										{{/each}}
-									</div>
-								</div>
-							</div>
+						{{#if interfaces}}
+							{{>section-tags type="Implements" tags=interfaces}}
 						{{/if}}
 
 						{{#if super-classes}}
-							<div class="ui list">
-								<div class="item">
-									<i class="icon"></i>
-									<div class="content">
-										<span class="header">Extends</span>
-										{{#each super-classes}}
-											<div class="list">
-												<div class="item">
-													<i class="icon"></i>
-													<div class="content">
-														<span class="description">
-															{{>text-markdown element=name noParagraph=true}}
-														</span>
-													</div>
-												</div>
-											</div>
-										{{/each}}
-									</div>
+							{{>section-tags type="Extends" tags=super-classes}}
+						{{/if}}
+
+						<div class="ui basic segment doc-content doc-section__content">
+							{{#with description}}
+								<div class="doc-description">
+									{{>text-markdown element=this}}
 								</div>
-							</div>
-						{{/if}}
+							{{/with}}
+							{{br 1}}
 
-						{{#if reexports~}}
-							{{> reexports}}
-						{{/if}}
-
-						{{#with constructors~}}
-							{{>header level=3 path=(concat ../path "--Constructor") name="Constructor" }}
-
-							{{>signatures name=../name }}
-						{{/with}}
-
-						{{#if properties}}
-							{{>header level=3 path=(concat path "--Properties") name="Properties" }}
-
-							{{#if ../isClass}}
-								{{>properties properties=properties.static access="#"}}
-
-								{{>properties properties=properties.instance access="."}}
-							{{else}}
-								{{>properties properties=properties access="."}}
+							{{#if reexports~}}
+								{{> reexports}}
 							{{/if}}
-						{{/if}}
 
-						{{#if methods}}
-							{{>header level=3 path=(concat path "--Methods") name="Methods" }}
-							{{#if ../isClass}}
-								{{>methods methods=methods.static access="#"}}
+							{{#with constructors~}}
+								{{>header level=2 path=(concat ../path "--Constructor") name="Constructor" }}
 
-								{{>methods methods=methods.instance access="."}}
-							{{else}}
-								{{>methods methods=methods access="." }}
-							{{/if}}
-						{{/if}}
+								{{>signatures name=../name }}
+							{{/with}}
 
+							{{#with properties}}
+								{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
+
+								<div class="ui basic segment doc-content">
+									{{#if ../../isClass}}
+										{{>properties properties=static access="#" path=../path}}
+
+										{{>properties properties=instance access="." path=../path}}
+									{{else}}
+										{{>properties properties=this access="." path=../path}}
+									{{/if}}
+								</div>
+							{{/with}}
+
+							{{#with methods}}
+								{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
+
+								<div class="ui basic segment doc-content">
+									{{#if ../../isClass}}
+										{{>methods methods=static access="#" path=../path}}
+
+										{{>methods methods=instance access="." path=../path}}
+									{{else}}
+										{{>methods methods=this access="." path=../path}}
+									{{/if}}
+								</div>
+							{{/with}}
+						</div>
 					{{/with}}
-
 				</div>
 			{{/combineElements}}
 
 		{{!--#each classes}}
-
 			{{#with decorated-object~}}
 				#### <a name="{{sanitize ../path}}-Decorated-Object"/>Decorated Object
 				{{#if type~}}

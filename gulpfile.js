@@ -56,6 +56,7 @@ gulp.task( "build", ( done ) => {
 		"version",
 		"clean:dist",
 		[ "compile:typescript", "compile:documentation", "bundle:sfx", "prepare:npm-package" ],
+		"compile:web",
 		"finish",
 		done
 	);

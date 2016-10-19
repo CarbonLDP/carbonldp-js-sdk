@@ -11,7 +11,7 @@ import {
 	hasProperty,
 	hasMethod,
 	hasSignature,
-	hasDefaultExport
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -38,7 +38,7 @@ describe( module(
 		} );
 
 		it( hasConstructor( [
-			{name: "value", type: "string"}
+			{ name: "value", type: "string" },
 		] ), ():void => {
 			let value:Header.Value = new Header.Value( "a value" );
 
@@ -49,7 +49,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let value:Header.Value = new Header.Value( "a value" );
 
@@ -70,7 +70,7 @@ describe( module(
 		let valuesArray:Header.Value[] = [
 			new Header.Value( "a_value" ),
 			new Header.Value( "another_value" ),
-			new Header.Value( "last_value" )
+			new Header.Value( "last_value" ),
 		];
 		let valuesString:string = "a_value, another_value, last_value";
 
@@ -82,7 +82,7 @@ describe( module(
 		describe( constructor(), ():void => {
 
 			it( hasSignature( [
-				{name: "values", type: "Array <Carbon.HTTP.Header.Value>"}
+				{ name: "values", type: "Array<Carbon.HTTP.Header.Value>" },
 			] ), ():void => {
 				let header:Header.Class = new Header.Class( valuesArray );
 
@@ -91,7 +91,7 @@ describe( module(
 			} );
 
 			it( hasSignature( [
-				{name: "value", type: "string"}
+				{ name: "value", type: "string" },
 			] ), ():void => {
 				let header:Header.Class = new Header.Class( valuesString );
 
@@ -104,7 +104,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			"string"
+			{ type: "string" }
 		), ():void => {
 			let header:Header.Class = new Header.Class( valuesArray );
 
@@ -138,7 +138,7 @@ describe( module(
 		it( hasProperty(
 			INSTANCE,
 			"values",
-			"Array <Carbon.HTTP.Header.Value>",
+			"Array<Carbon.HTTP.Header.Value>",
 			"Array that contains each value of the header."
 		), ():void => {
 			let header:Header.Class = new Header.Class( valuesArray );
@@ -165,14 +165,14 @@ describe( module(
 			STATIC,
 			"parseHeaders",
 			"Returns a Map object which relates all header names with a `Carbon.HTTP.Header.Class` object containing their values.", [
-				{name: "headersString", type: "string"},
+				{ name: "headersString", type: "string" },
 			],
-			{type: "Map <string, Carbon.HTTP.Header.Class>"}
+			{ type: "Map <string, Carbon.HTTP.Header.Class>" }
 		), ():void => {
 			expect( Header.Util.parseHeaders ).toBeDefined();
 			expect( Utils.isFunction( Header.Util.parseHeaders ) ).toBe( true );
 
-			let headersString = `
+			let headersString:string = `
 				Host: http://example.com
 				User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)
 				Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8

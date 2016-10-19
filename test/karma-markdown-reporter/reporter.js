@@ -18,6 +18,8 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
+	const classRegex = /Carbon\.[.#A-z()]*/gm;
+
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
 		isHTML = ! ! isHTML;
@@ -26,12 +28,12 @@ swag.registerHelpers( Handlebars );
 		if( noParagraph )
 			str = str.replace( /<p>/gm, "" ).replace( /<\/p>/gm, "" );
 
-		var uris = str.match( /Carbon\.[.A-z]*/gm );
+		var uris = str.match( classRegex );
 		if( uris !== null )
-			uris = uris.map( uri => uri.replace( /\./g, "-" ).replace( /\(\)/, "" ) );
+			uris = uris.map( uri => uri.replace( /\./g, "-" ).replace( /#/g, "+" ).replace( /\(\)/, "" ) );
 
 		var index = 0;
-		return str.replace( /Carbon\.[.A-z]*/gm, ( matched ) => {
+		return str.replace( classRegex, ( matched ) => {
 			if( isHTML )
 				return `<a href="#${ uris[ index ++ ] }">${ matched }</a>`;
 			return `[${ matched }](#${ uris[ index ++ ] })`;
@@ -108,6 +110,12 @@ swag.registerHelpers( Handlebars );
 			return response1;
 		return response2;
 	} );
+
+	Handlebars.registerHelper( "toURL", function( str ) {
+		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
+		return str.replace( /\./g, "-" ).replace( /\//g, "-" ).replace( /#/g, "+" ).replace( /\(\)/, "" );
+	} );
+
 })();
 
 var MarkdownReporter = (() => {
@@ -333,16 +341,16 @@ var MarkdownReporter = (() => {
 			sortObjectProperty( container, "reexports" );
 			sortObjectProperty( container, "enums" );
 
-			if( container[ "access" ] !== null ) {
-				sortObjectProperty( container, "methods", "instance" );
-				sortObjectProperty( container, "methods", "static" );
-				sortObjectProperty( container, "properties", "instance" );
-				sortObjectProperty( container, "properties", "static" );
-
-			} else {
+			let isClass;
+			isClass = sortObjectProperty( container, "methods", "instance" );
+			isClass = isClass || sortObjectProperty( container, "methods", "static" );
+			if( ! isClass )
 				sortObjectProperty( container, "methods" );
+
+			isClass = sortObjectProperty( container, "properties", "instance" );
+			isClass = isClass || sortObjectProperty( container, "properties", "static" );
+			if( ! isClass )
 				sortObjectProperty( container, "properties" );
-			}
 		}
 	}
 

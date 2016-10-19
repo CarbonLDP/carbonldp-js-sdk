@@ -14,7 +14,7 @@ import * as JSONLDParser from "./Parser";
 import DefaultExport from "./Parser";
 
 describe( module(
-	"Carbon/HTTP/JSONLDParser"
+	"Carbon/JSONLD/Parser"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -23,7 +23,7 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.JSONLDParser.Class",
+		"Carbon.JSONLD.Parser.Class",
 		"Class to parse strings to valid JSONLD objects.", [
 			"Carbon.HTTP.Parser.Class<Object[]>",
 		]
@@ -49,7 +49,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the string provided using the `Carbon.JSONLD.Process.Class.expand()` method.", [
+			"Parse the string provided using the `Carbon.JSONLD.Processor.Class#expand()` method.", [
 				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
 			{ type: "Promise<Object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }
@@ -190,7 +190,7 @@ describe( module(
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.HTTP.JSONLDParser.Class"
+		"Carbon.JSONLD.Parser.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( JSONLDParser.Class );

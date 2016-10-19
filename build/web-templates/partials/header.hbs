@@ -1,12 +1,28 @@
-<div class="ui header doc-module__header{{#if secondary}} doc-object__header-section{{/if}} doc-header" id="{{sanitize path}}">
-	<div class="ui basic ribbon label symbol">
-		<a class="symbol__anchor" href="#{{sanitize path}}"><i class="large grey linkify icon"></i></a>
+{{#if level}}
+
+	<h{{level}} class="ui header {{^if path}}doc-header_no-link{{/if}}doc-header" {{#if path}}id="{{toURL path}}"{{/if}}>
+
+
+		{{#if path}}
+		<a class="doc-header__link" href="#{{toURL path}}">
+			<div class="ui basic label doc-header__symbol symbol">
+				<i class="symbol__anchor large grey linkify icon"></i>
+			</div>
+		{{/if}}
+		<span class="doc-header__main {{#if secondary}}code-label{{/if}}">{{name}}</span>
+		{{#if path}}
+		</a>
+		{{/if}}
+		{{#if secondary}}<span class="doc-header__secondary"> : {{>text-markdown element=secondary noParagraph=true}}</span>{{/if}}
+	</h{{level}}>
+
+{{else}}
+
+	<div class="ui basic inverted {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} segment">
+		<h1 class="ui header {{#if isModule}}doc-header__main-section {{/if}}{{#or isClass isInterface}}doc-header__main-section {{/or}}doc-header" id="{{toURL path}}">
+			<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} horizontal basic label doc-header__label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}</span>
+			<a class="doc-header__link doc-header__main" href="#{{toURL path}}">{{name}}</a>
+		</h1>
 	</div>
-	<h{{#if level}}{{level}}{{else}}1{{/if}} class="doc-header__label doc-label">
-		<span class="{{#if secondary}}doc-label__main code-label{{/if}}">{{name}}</span>
-		{{#if secondary}}<span class="doc-label__secondary"> : {{>text-markdown element=secondary noParagraph=true}}</span>{{/if}}
-	</h{{#if level}}{{level}}{{else}}1{{/if}}>
-	{{#unless level}}
-		<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} horizontal basic label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}</span>
-	{{/unless}}
-</div>
+
+{{/if}}
