@@ -328,49 +328,6 @@ Resolve the URI provided in the scope of the CarbonLDP Platform.
 
 
 
-## <a name="Module-Carbon-App-PersistedAgent"/>Module Carbon.App.PersistedAgent
-
-
-**Default export:** [Carbon.App.PersistedAgent.Class](#Carbon-App-PersistedAgent-Class)
-
-
-
-
-
-### <a name="Carbon-App-PersistedAgent-Class"/>Interface Carbon.App.PersistedAgent.Class
-
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedAgent-Class&quot;&gt;Carbon.Auth.PersistedAgent.Class&lt;/a&gt;
-
-> Specific interface that represents the persisted agents from an application.
-
-
-
-## <a name="Module-Carbon-Platform-PersistedAgent"/>Module Carbon.Platform.PersistedAgent
-
-
-**Default export:** [Carbon.Platform.PersistedAgent.Class](#Carbon-Platform-PersistedAgent-Class)
-
-
-
-
-
-### <a name="Carbon-Platform-PersistedAgent-Class"/>Interface Carbon.Platform.PersistedAgent.Class
-
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedAgent-Class&quot;&gt;Carbon.Auth.PersistedAgent.Class&lt;/a&gt;
-
-> Interface that specify an persisted agent in platform context i.e. Carbon context.
-
-#### <a name="Carbon-Platform-PersistedAgent-Class-Properties"/>Properties
-```typescript 
-platformRoles?:Carbon.Pointer.Class[] 
-```
-
-A array of pointer that contains the specific platform roles the current agent have.
-
-
-
-
-
 ## <a name="Module-Carbon-APIDescription"/>Module Carbon/APIDescription
 
 
@@ -524,7 +481,7 @@ The string URI or pointer URI that represents the inverted relation that the acc
 
 ### <a name="Carbon-AccessPoint-DocumentClass"/>Interface Carbon.AccessPoint.DocumentClass
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-LDP-DirectContainer-Class&quot;&gt;Carbon.LDP.DirectContainer.Class&lt;/a&gt;
+**Extends:** [Carbon.LDP.DirectContainer.Class](#Carbon-LDP-DirectContainer-Class)
 
 > Interface that represents the document of an in-memory access point.
 
@@ -885,6 +842,23 @@ Resolve the URI provided in the scope of the application.
 
 
 
+## <a name="Module-Carbon-App-PersistedAgent"/>Module Carbon/App/PersistedAgent
+
+
+**Default export:** [Carbon.App.PersistedAgent.Class](#Carbon-App-PersistedAgent-Class)
+
+
+
+
+
+### <a name="Carbon-App-PersistedAgent-Class"/>Interface Carbon.App.PersistedAgent.Class
+
+**Extends:** [Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
+
+> Specific interface that represents the persisted agents from an application.
+
+
+
 ## <a name="Module-Carbon-App-PersistedRole"/>Module Carbon/App/PersistedRole
 
 
@@ -896,7 +870,7 @@ Resolve the URI provided in the scope of the application.
 
 ### <a name="Carbon-App-PersistedRole-Class"/>Interface Carbon.App.PersistedRole.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedRole-Class&quot;&gt;Carbon.Auth.PersistedRole.Class&lt;/a&gt;
+**Extends:** [Carbon.Auth.PersistedRole.Class](#Carbon-Auth-PersistedRole-Class)
 
 > Specific interface that represents a persisted role of an application.
 
@@ -1182,7 +1156,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-App-Role-Class"/>Interface Carbon.App.Role.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-Role-Class&quot;&gt;Carbon.Auth.Role.Class&lt;/a&gt;
+**Extends:** [Carbon.Auth.Role.Class](#Carbon-Auth-Role-Class)
 
 > Specific interface that represents an in memory role for an application.
 
@@ -1477,7 +1451,7 @@ Returns true if the user is authenticated.
 
 ### <a name="Carbon-Auth-PersistedACE-Class"/>Interface Carbon.Auth.PersistedACE.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-ACE-Class&quot;&gt;Carbon.Auth.ACE.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;
+**Extends:** [Carbon.Auth.ACE.Class](#Carbon-Auth-ACE-Class), [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
 
 > Interface that represents a persisted Access Control Entry (ACE) of a persisted Access Control List (ACL).
 
@@ -1519,7 +1493,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-ACL-Class"/>Interface Carbon.Auth.ACL.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
+**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
 
 > Interface that represents an in-memory Access Control List (ACL).
 
@@ -2148,7 +2122,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Agent-Class"/>Interface Carbon.Auth.Agent.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
+**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
 
 > Interface that represents an in-memory Agent of any Context.
 
@@ -2451,7 +2425,7 @@ Returns if its authenticated by checking the stored credentials within.
 
 ### <a name="Carbon-Auth-BasicAuthenticator-Class"/>Class Carbon.Auth.BasicAuthenticator.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-Authenticator-Class&quot;&gt;Carbon.Auth.Authenticator.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-Auth-UsernameAndPasswordToken-Class&quot;&gt;Carbon.Auth.UsernameAndPasswordToken.Class&lt;/a&gt;&gt;
+**Implements:** [Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)&lt;[Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)&gt;
 
 > Authenticates requests using HTTP Basic Authentication.
 
@@ -2544,7 +2518,7 @@ Returns true if the instance contains stored credentials.
 
 ### <a name="Carbon-Auth-PersistedACL-Class"/>Interface Carbon.Auth.PersistedACL.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedDocument-Class&quot;&gt;Carbon.PersistedDocument.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedDocument.Class](#Carbon-PersistedDocument-Class)
 
 > Interface that represents a persisted Access Control List (ACL).
 
@@ -2890,7 +2864,7 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 
 ### <a name="Carbon-Auth-PersistedAgent-Class"/>Interface Carbon.Auth.PersistedAgent.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedProtectedDocument-Class&quot;&gt;Carbon.PersistedProtectedDocument.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
 
 > Interface that represents the base of a persisted Agent in any context.
 
@@ -3041,7 +3015,7 @@ Activate the account of the agent.
 
 ### <a name="Carbon-App-PersistedRole-Class"/>Interface Carbon.App.PersistedRole.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Auth-PersistedRole-Class&quot;&gt;Carbon.Auth.PersistedRole.Class&lt;/a&gt;
+**Extends:** [Carbon.Auth.PersistedRole.Class](#Carbon-Auth-PersistedRole-Class)
 
 > Specific interface that represents a persisted role of an application.
 
@@ -3406,7 +3380,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Role-Class"/>Interface Carbon.Auth.Role.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
+**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
 
 > Specific interface that represents the base of an in-memory role for any context.
 
@@ -3699,7 +3673,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Ticket-Class"/>Interface Carbon.Auth.Ticket.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
+**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
 
 > Interface that represents an authentication ticket.
 
@@ -3783,7 +3757,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-Auth-Token-Class"/>Interface Carbon.Auth.Token.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Auth-Credentials-Class&quot;&gt;Carbon.Auth.Credentials.Class&lt;/a&gt;
+**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class), [Carbon.Auth.Credentials.Class](#Carbon-Auth-Credentials-Class)
 
 > Interface that represents an authentication token for every context.
 
@@ -3888,7 +3862,7 @@ Returns true if the object provided is considered a `Carbon.Auth.Token.Class` ob
 
 ### <a name="Carbon-Auth-TokenAuthenticator-Class"/>Class Carbon.Auth.TokenAuthenticator.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-Authenticator-Class&quot;&gt;Carbon.Auth.Authenticator.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-Auth-UsernameAndPasswordToken-Class&quot;&gt;Carbon.Auth.UsernameAndPasswordToken.Class&lt;/a&gt;&gt;
+**Implements:** [Carbon.Auth.Authenticator.Class](#Carbon-Auth-Authenticator-Class)&lt;[Carbon.Auth.UsernameAndPasswordToken.Class](#Carbon-Auth-UsernameAndPasswordToken-Class)&gt;
 
 > Authenticates requests using JSON Web Token (JWT) Authentication.
 
@@ -3981,7 +3955,7 @@ Returns true if the instance contains stored credentials.
 
 ### <a name="Carbon-Auth-UsernameAndPasswordCredentials-Class"/>Class Carbon.Auth.UsernameAndPasswordCredentials.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-Credentials-Class&quot;&gt;Carbon.Auth.Credentials.Class&lt;/a&gt;
+**Implements:** [Carbon.Auth.Credentials.Class](#Carbon-Auth-Credentials-Class)
 
 > Wrapper to manage Authentication Credentials in form of Username/Password.
 
@@ -4028,7 +4002,7 @@ username:string
 
 ### <a name="Carbon-Auth-UsernameAndPasswordToken-Class"/>Class Carbon.Auth.UsernameAndPasswordToken.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-Auth-AuthenticationToken-Class&quot;&gt;Carbon.Auth.AuthenticationToken.Class&lt;/a&gt;
+**Implements:** [Carbon.Auth.AuthenticationToken.Class](#Carbon-Auth-AuthenticationToken-Class)
 
 > Wrapper to manage an Authentication Token in form of Username/Password.
 
@@ -5046,7 +5020,7 @@ Returns a JSON string from the Document using the default ObjectSchema.
 
 ### <a name="Carbon-Documents-Class"/>Class Carbon.Documents.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-Pointer-Library&quot;&gt;Carbon.Pointer.Library&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Pointer-Validator&quot;&gt;Carbon.Pointer.Validator&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-ObjectSchema-Resolver&quot;&gt;Carbon.ObjectSchema.Resolver&lt;/a&gt;
+**Implements:** [Carbon.Pointer.Library](#Carbon-Pointer-Library), [Carbon.Pointer.Validator](#Carbon-Pointer-Validator), [Carbon.ObjectSchema.Resolver](#Carbon-ObjectSchema-Resolver)
 
 > Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.
 
@@ -6077,7 +6051,7 @@ Returns true if the object provided has the properties and methods of a `Class.F
 
 ### <a name="Carbon-FreeResources-Class"/>Interface Carbon.FreeResources.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Pointer-Library&quot;&gt;Carbon.Pointer.Library&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Pointer-Validator&quot;&gt;Carbon.Pointer.Validator&lt;/a&gt;
+**Extends:** [Carbon.Pointer.Library](#Carbon-Pointer-Library), [Carbon.Pointer.Validator](#Carbon-Pointer-Validator)
 
 > Interface that represents a set of free resources.
 
@@ -7949,7 +7923,7 @@ toString():string
 
 ### <a name="Carbon-HTTP-JSONParser-Class"/>Class Carbon.HTTP.JSONParser.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;Object&gt;
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;Object&gt;
 
 > Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.
 
@@ -8616,7 +8590,7 @@ Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if
 
 ### <a name="Carbon-HTTP-StringParser-Class"/>Class Carbon.HTTP.StringParser.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;string&gt;
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;string&gt;
 
 > Parses a `Carbon.HTTP.Response.Class` and returns a string.
 
@@ -8739,7 +8713,7 @@ Creates a expanded JSON-LD object from the compacted object in accordance to the
 
 ### <a name="Carbon-JSONLD-Parser-Class"/>Class Carbon.JSONLD.Parser.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;Object[]&gt;
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;Object[]&gt;
 
 > Class to parse strings to valid JSONLD objects.
 
@@ -8845,7 +8819,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-AddMemberAction-Class"/>Interface Carbon.LDP.AddMemberAction.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
+**Extends:** [Carbon.Fragment.Class](#Carbon-Fragment-Class)
 
 > Interface that represents an object to be sent in a request that add members to a container.
 
@@ -8920,7 +8894,7 @@ static RDF_CLASS:string
 
 ### <a name="Carbon-LDP-DirectContainer-Class"/>Interface Carbon.LDP.DirectContainer.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
+**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
 
 > Interface that represents an `ldp:DirectContainer`.
 
@@ -9035,7 +9009,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-Error-Class"/>Interface Carbon.LDP.Error.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
+**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
 
 > Interface that represents an error occurred in the server.
 
@@ -9085,7 +9059,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-ErrorResponse-Class"/>Interface Carbon.LDP.ErrorResponse.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
+**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
 
 > Interface that its used to represents part of an error (or multiple of them) thrown by the server.
 
@@ -9118,7 +9092,7 @@ The HTTP status code that represents all the errors occurred.
 
 ### <a name="Carbon-LDP-ErrorResponse-Parser"/>Class Carbon.LDP.ErrorResponse.Parser
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-LDP-ErrorResponse-Class&quot;&gt;Carbon.LDP.ErrorResponse.Class&lt;/a&gt;&gt;
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;[Carbon.LDP.ErrorResponse.Class](#Carbon-LDP-ErrorResponse-Class)&gt;
 
 > Parser class for `Carbon.LDP.ErrorResponse.Class` objects.
 
@@ -9190,7 +9164,7 @@ static RDF_CLASS:string
 
 ### <a name="Carbon-LDP-IndirectContainer-Class"/>Interface Carbon.LDP.IndirectContainer.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-DirectContainer-Class&quot;&gt;Carbon.DirectContainer.Class&lt;/a&gt;
+**Extends:** [Carbon.DirectContainer.Class](#Carbon-DirectContainer-Class)
 
 > Interface that represents an `ldp:IndirectContainer`.
 
@@ -9242,7 +9216,7 @@ Returns true if the object provided has the properties of a `Carbon.LDP.Indirect
 
 ### <a name="Carbon-PersistedBlankNode-Class"/>Interface Carbon.PersistedBlankNode.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -9284,7 +9258,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-RemoveMemberAction-Class"/>Interface Carbon.LDP.RemoveMemberAction.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
+**Extends:** [Carbon.Fragment.Class](#Carbon-Fragment-Class)
 
 > Interface that represents an object to be sent in a request that removes specific members to a container.
 
@@ -9366,7 +9340,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-ResourceMetadata-Class"/>Interface Carbon.LDP.ResourceMetadata.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-LDP-VolatileResource-Class&quot;&gt;Carbon.LDP.VolatileResource.Class&lt;/a&gt;
+**Extends:** [Carbon.LDP.VolatileResource.Class](#Carbon-LDP-VolatileResource-Class)
 
 > Interface that represents a free node resource that contains dynamic information about an specific resource.
 
@@ -9470,7 +9444,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-LDP-ResponseMetadata-Class"/>Interface Carbon.LDP.ResponseMetadata.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-LDP-VolatileResource-Class&quot;&gt;Carbon.LDP.VolatileResource.Class&lt;/a&gt;
+**Extends:** [Carbon.LDP.VolatileResource.Class](#Carbon-LDP-VolatileResource-Class)
 
 > Interface that represents the main resource of a set of metadata resources, which references everyone resource related to an specific dynamic response of tha server.
 
@@ -9559,7 +9533,7 @@ static RDF_CLASS:string
 
 ### <a name="Carbon-LDP-VolatileResource-Class"/>Interface Carbon.LDP.VolatileResource.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
+**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
 
 > Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form.
 
@@ -11063,7 +11037,7 @@ static unsignedShort:string
 
 ### <a name="Carbon-NamedFragment-Class"/>Interface Carbon.NamedFragment.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
+**Extends:** [Carbon.Fragment.Class](#Carbon-Fragment-Class)
 
 > Interface that represents a named fragment from a Carbon LDP document.
 
@@ -11467,7 +11441,7 @@ Resolves a prefixed URI, or relative URI with the vocab in the schema provided.
 
 ### <a name="Carbon-PersistedAccessPoint-Class"/>Interface Carbon.PersistedAccessPoint.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-AccessPoint-Class&quot;&gt;Carbon.AccessPoint.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-PersistedProtectedDocument-Class&quot;&gt;Carbon.PersistedProtectedDocument.Class&lt;/a&gt;
+**Extends:** [Carbon.AccessPoint.Class](#Carbon-AccessPoint-Class), [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
 
 > Interface that represents a persisted Carbon LDP AccessPoint.
 
@@ -11517,7 +11491,7 @@ The membership resource the access point belongs to.
 
 ### <a name="Carbon-PersistedApp-Class"/>Interface Carbon.PersistedApp.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedProtectedDocument-Class&quot;&gt;Carbon.PersistedProtectedDocument.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedProtectedDocument.Class](#Carbon-PersistedProtectedDocument-Class)
 
 > Interface that represents a persisted Carbon LDP Application.
 
@@ -11607,7 +11581,7 @@ Returns true if the object provided is considered a `Carbon.PersistedApp.Class` 
 
 ### <a name="Carbon-PersistedDocument-Class"/>Interface Carbon.PersistedDocument.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedResource-Class&quot;&gt;Carbon.PersistedResource.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedResource.Class](#Carbon-PersistedResource-Class), [Carbon.Document.Class](#Carbon-Document-Class)
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -13007,7 +12981,7 @@ Upload a File to the server as a child of the current document. This signature o
 
 ### <a name="Carbon-PersistedFragment-Class"/>Interface Carbon.PersistedFragment.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedResource-Class&quot;&gt;Carbon.PersistedResource.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-Fragment-Class&quot;&gt;Carbon.Fragment.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedResource.Class](#Carbon-PersistedResource-Class), [Carbon.Fragment.Class](#Carbon-Fragment-Class)
 
 > Interface that represents a persisted fragment of a persisted document.
 
@@ -13109,7 +13083,7 @@ Remove the type specified from the PersistedFragment. Relative and prefixed type
 
 ### <a name="Carbon-PersistedNamedFragment-Class"/>Interface Carbon.PersistedNamedFragment.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;, &lt;a href&#x3D;&quot;#Carbon-NamedFragment-Class&quot;&gt;Carbon.NamedFragment.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class), [Carbon.NamedFragment.Class](#Carbon-NamedFragment-Class)
 
 > Interface that represents a persisted named fragment of a persisted document.
 
@@ -13162,7 +13136,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 
 ### <a name="Carbon-PersistedProtectedDocument-Class"/>Interface Carbon.PersistedProtectedDocument.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedDocument-Class&quot;&gt;Carbon.PersistedDocument.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedDocument.Class](#Carbon-PersistedDocument-Class)
 
 > Interface that represents a persisted protected document.
 
@@ -13510,6 +13484,32 @@ Instance of `Carbon.Platform.Roles.Class`, for managing the roles of the current
 
 
 
+## <a name="Module-Carbon-Platform-PersistedAgent"/>Module Carbon/Platform/PersistedAgent
+
+
+**Default export:** [Carbon.Platform.PersistedAgent.Class](#Carbon-Platform-PersistedAgent-Class)
+
+
+
+
+
+### <a name="Carbon-Platform-PersistedAgent-Class"/>Interface Carbon.Platform.PersistedAgent.Class
+
+**Extends:** [Carbon.Auth.PersistedAgent.Class](#Carbon-Auth-PersistedAgent-Class)
+
+> Interface that specify an persisted agent in platform context i.e. Carbon context.
+
+#### <a name="Carbon-Platform-PersistedAgent-Class-Properties"/>Properties
+```typescript 
+platformRoles?:Carbon.Pointer.Class[] 
+```
+
+A array of pointer that contains the specific platform roles the current agent have.
+
+
+
+
+
 ## <a name="Module-Carbon-Pointer"/>Module Carbon/Pointer
 
 
@@ -13842,7 +13842,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-ProtectedDocument-Class"/>Interface Carbon.ProtectedDocument.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Document-Class&quot;&gt;Carbon.Document.Class&lt;/a&gt;
+**Extends:** [Carbon.Document.Class](#Carbon-Document-Class)
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -14277,7 +14277,7 @@ Returns `null` if the Literal can't be parsed.
 
 ### <a name="Carbon-RDF-Literal-Serializer-Class"/>Interface Carbon.RDF.Literal.Serializer.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Resource-Class&quot;&gt;Carbon.Resource.Class&lt;/a&gt;
+**Extends:** [Carbon.Resource.Class](#Carbon-Resource-Class)
 
 > Interface that serializer classes must implement.
 
@@ -15376,7 +15376,7 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 ### <a name="Carbon-RDFRepresentation-Class"/>Interface Carbon.RDFRepresentation.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-PersistedFragment-Class&quot;&gt;Carbon.PersistedFragment.Class&lt;/a&gt;
+**Extends:** [Carbon.PersistedFragment.Class](#Carbon-PersistedFragment-Class)
 
 > Interface that represents a persisted NonRDFDocument.
 
@@ -15450,7 +15450,7 @@ Returns true if the object provided is considered a `Carbon.RDFRepresentation.Cl
 
 ### <a name="Carbon-Resource-Class"/>Interface Carbon.Resource.Class
 
-**Extends:** &lt;a href&#x3D;&quot;#Carbon-Pointer-Class&quot;&gt;Carbon.Pointer.Class&lt;/a&gt;
+**Extends:** [Carbon.Pointer.Class](#Carbon-Pointer-Class)
 
 > Interface that represents a persisted blank node of a persisted document.
 
@@ -15788,7 +15788,7 @@ Instance of `Carbon.SDKContext.Class` that is used as the root parent in every c
 
 ### <a name="Carbon-SDKContext-Class"/>Class Carbon.SDKContext.Class
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-Context-Class&quot;&gt;Carbon.Context.Class&lt;/a&gt;
+**Implements:** [Carbon.Context.Class](#Carbon-Context-Class)
 
 > Base class of every Context in the SDK.
 
@@ -16178,7 +16178,7 @@ static URI:string
 
 ### <a name="Carbon-SPARQL-RawResultsParser"/>Class Carbon.SPARQL.RawResultsParser
 
-**Implements:** &lt;a href&#x3D;&quot;#Carbon-HTTP-Parser-Class&quot;&gt;Carbon.HTTP.Parser.Class&lt;/a&gt;&lt;&lt;a href&#x3D;&quot;#Carbon-SPARQL-RawResults-Class&quot;&gt;Carbon.SPARQL.RawResults.Class&lt;/a&gt;&gt;
+**Implements:** [Carbon.HTTP.Parser.Class](#Carbon-HTTP-Parser-Class)&lt;[Carbon.SPARQL.RawResults.Class](#Carbon-SPARQL-RawResults-Class)&gt;
 
 > Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.
 

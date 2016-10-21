@@ -20,10 +20,19 @@ swag.registerHelpers( Handlebars );
 
 	const classRegex = /Carbon\.[.#A-z()]*/gm;
 
-	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph ) {
+	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
-		isHTML = ! ! isHTML;
+		if( ! options ) {
+			options = noParagraph;
+			noParagraph = void 0;
+		}
 		noParagraph = ! ! noParagraph;
+
+		if( ! options ) {
+			options = isHTML;
+			isHTML = void 0;
+		}
+		isHTML = ! ! isHTML;
 
 		if( noParagraph )
 			str = str.replace( /<p>/gm, "" ).replace( /<\/p>/gm, "" );
