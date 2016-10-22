@@ -6,8 +6,28 @@
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/darcula.min.css">
 	<style>
-		.main.container {
-			margin-top: 5em;
+		.doc-menu {
+			background-color: #363F48 !important;
+		}
+
+		.doc-menu .item {
+			word-wrap: break-word;
+		}
+
+		.doc-menu .doc-logo {
+			width: 50%;
+		}
+
+		.doc-menu .doc-logo ~ strong {
+			font-size: 1.5rem;
+			position: relative;
+			top: 5px;
+		}
+
+		.doc-main.segment {
+			margin: 0;
+			padding: 4rem 4rem !important;
+			background-color: #FFFFFF !important;
 		}
 
 		.doc-header {
@@ -166,17 +186,69 @@
 			}
 		}
 
+		.ui.menu.doc-menu-top {
+			display: none;
+		}
+
+		/*.ui.visible.left.sidebar.uncover.doc-menu ~ .pusher {
+			width: calc(100% - 260px);
+		}*/
+
+		.doc-main.pusher.ui.padded.basic.segment {
+			width: calc(100% - 350px);
+			/*left: 350px;*/
+		}
+
+		.doc-menu-static {
+			width: 350px !important;
+			height: 100% !important;
+			max-height: 100%;
+			overflow-y: auto !important;
+		}
+
+		@media only screen and (max-width: 933px) {
+			.ui.menu.doc-menu-top {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+			}
+
+			.doc-main.pusher.ui.padded.basic.segment {
+				width: unset;
+				padding-top: 7rem !important;
+				/*left: 0;*/
+			}
+		}
+
 		.ui.list .list > .item > i.icon, .ui.list > .item > i.icon {
 			vertical-align: middle;
 		}
-
 	</style>
 </head>
-<body>
+<body class="pusheable">
+	<div class="ui inverted top fixed menu doc-menu doc-menu-top">
+		<a class="doc-menu__launch-item item"><i class="large content icon"></i></a>
+	</div>
 
-	<!--div class="ui left fixed"></div-->
+	<div class="ui inverted left vertical visible menu wide sidebar doc-menu doc-menu-sidebar">
+		<div class="item">
+			<a class="ui doc-logo icon image" href="https://carbonldp.com"><img src="img/carbon-ldp-logo.png"></a>
+			<strong> - JS SDK Docs</strong>
+		</div>
+		{{#each modules}}
+			<div class="orange item">
+				<a class="header" href="#Module-{{toURL path}}">{{path}}</a>
+				<div class="menu">
+					{{#combineElements this}}
+						<a class="item" href="#{{toURL element.path}}">{{element.path}}</a>
+					{{/combineElements}}
+				</div>
+			</div>
+		{{/each}}
+	</div>
 
-	<div class="ui main container">
+	<div class="pusher ui padded basic doc-main segment">
 		<h1 class="ui header">Carbon LDP JavaScript SDK API Reference</h1>
 		<div class="ui divider"></div>
 
@@ -364,6 +436,70 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/languages/typescript.min.js"></script>
-	<script>hljs.initHighlightingOnLoad();</script>
+	<script>
+		(function() {
+
+			// Sidebar
+			var jqWindow = $( window );
+			var sidebarMenu = $( ".doc-menu-sidebar" )
+				.sidebar( "setting", "transition", "overlay" )
+				.sidebar( "attach events", ".doc-menu__launch-item" );
+
+			jqWindow.resize( onWindowResize );
+			function onWindowResize() {
+				if( jqWindow.width() <= 933 ) {
+					sidebarMenu.sidebar( {
+						closable: true,
+						dimPage: true,
+					} );
+					sidebarMenu.sidebar( "hide" );
+				} else {
+					sidebarMenu.sidebar( {
+						closable: false,
+						dimPage: false,
+					} );
+					sidebarMenu.sidebar( "show" );
+				}
+			}
+			onWindowResize();
+
+			// Menu
+			var $menuItem = $( ".doc-menu.vertical.menu a.item" );
+			var $menuSection = $( ".doc-menu.vertical.menu a.header" );
+
+			var handler = {
+				sectionObject: function() {
+					var $item = $( this )
+							.closest( ".orange.item" )
+							.addClass( "active" )
+						;
+					$( this )
+						.addClass( "active" )
+						.closest( ".ui.menu" )
+						.find( ".item.active" )
+						.not( $( this ) )
+						.not( $item )
+						.removeClass( "active" )
+					;
+				},
+				sectionModule: function() {
+					var $item = $( this )
+							.closest( ".orange.item" )
+							.addClass( "active" )
+						;
+					$item
+						.closest( ".ui.menu" )
+						.find( ".item.active" )
+						.not( $item )
+						.removeClass( "active" )
+					;
+				},
+			};
+
+			$menuItem.on( "click", handler.sectionObject );
+			$menuSection.on( "click", handler.sectionModule );
+
+		})();
+	</script>
 </body>
 </html>

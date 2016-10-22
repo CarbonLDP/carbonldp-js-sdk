@@ -19,9 +19,9 @@
 {{else}}
 
 	<div class="ui basic inverted {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} segment">
-		<h1 class="ui header {{#if isModule}}doc-header__main-section {{/if}}{{#or isClass isInterface}}doc-header__main-section {{/or}}doc-header" id="{{toURL path}}">
+		<h1 class="ui header {{#if isModule}}doc-header__main-section {{/if}}{{#or isClass isInterface}}doc-header__main-section {{/or}}doc-header" id="{{#if isModule}}Module-{{/if}}{{toURL path}}">
 			<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} horizontal basic label doc-header__label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}</span>
-			<a class="doc-header__link doc-header__main" href="#{{toURL path}}">{{name}}</a>
+			<a class="doc-header__link doc-header__main" href="#{{#if isModule}}Module-{{/if}}{{toURL path}}">{{name}}</a>
 		</h1>
 	</div>
 

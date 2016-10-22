@@ -6,8 +6,28 @@
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/darcula.min.css">
 	<style>
-		.main.container {
-			margin-top: 5em;
+		.doc-menu {
+			background-color: #363F48 !important;
+		}
+
+		.doc-menu .item {
+			word-wrap: break-word;
+		}
+
+		.doc-menu .doc-logo {
+			width: 50%;
+		}
+
+		.doc-menu .doc-logo ~ strong {
+			font-size: 1.5rem;
+			position: relative;
+			top: 5px;
+		}
+
+		.doc-main.segment {
+			margin: 0;
+			padding: 4rem 4rem !important;
+			background-color: #FFFFFF !important;
 		}
 
 		.doc-header {
@@ -166,17 +186,956 @@
 			}
 		}
 
+		.ui.menu.doc-menu-top {
+			display: none;
+		}
+
+		/*.ui.visible.left.sidebar.uncover.doc-menu ~ .pusher {
+			width: calc(100% - 260px);
+		}*/
+
+		.doc-main.pusher.ui.padded.basic.segment {
+			width: calc(100% - 350px);
+			/*left: 350px;*/
+		}
+
+		.doc-menu-static {
+			width: 350px !important;
+			height: 100% !important;
+			max-height: 100%;
+			overflow-y: auto !important;
+		}
+
+		@media only screen and (max-width: 933px) {
+			.ui.menu.doc-menu-top {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+			}
+
+			.doc-main.pusher.ui.padded.basic.segment {
+				width: unset;
+				padding-top: 7rem !important;
+				/*left: 0;*/
+			}
+		}
+
 		.ui.list .list > .item > i.icon, .ui.list > .item > i.icon {
 			vertical-align: middle;
 		}
-
 	</style>
 </head>
-<body>
+<body class="pusheable">
+	<div class="ui inverted top fixed menu doc-menu doc-menu-top">
+		<a class="doc-menu__launch-item item"><i class="large content icon"></i></a>
+	</div>
 
-	<!--div class="ui left fixed"></div-->
+	<div class="ui inverted left vertical visible menu wide sidebar doc-menu doc-menu-sidebar">
+		<div class="item">
+			<a class="ui doc-logo icon image" href="https://carbonldp.com"><img src="img/carbon-ldp-logo.png"></a>
+			<strong> - JS SDK Docs</strong>
+		</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon">Carbon</a>
+				<div class="menu">
+						<a class="item" href="#Carbon">Carbon</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-APIDescription">Carbon/APIDescription</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-APIDescription-Class">Carbon.APIDescription.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-AbstractContext">Carbon/AbstractContext</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-AbstractContext-Class">Carbon.AbstractContext.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-AccessPoint">Carbon/AccessPoint</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-AccessPoint-Class">Carbon.AccessPoint.Class</a>
+						<a class="item" href="#Carbon-AccessPoint-DocumentClass">Carbon.AccessPoint.DocumentClass</a>
+						<a class="item" href="#Carbon-AccessPoint-Factory">Carbon.AccessPoint.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App">Carbon/App</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-Class">Carbon.App.Class</a>
+						<a class="item" href="#Carbon-App-Factory">Carbon.App.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App-Agents">Carbon/App/Agents</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-Agents-Class">Carbon.App.Agents.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App-Auth">Carbon/App/Auth</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-Auth-Class">Carbon.App.Auth.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App-Context">Carbon/App/Context</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-Context">Carbon.App.Context</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App-PersistedAgent">Carbon/App/PersistedAgent</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App-PersistedRole">Carbon/App/PersistedRole</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-PersistedRole-Class">Carbon.App.PersistedRole.Class</a>
+						<a class="item" href="#Carbon-App-PersistedRole-Factory">Carbon.App.PersistedRole.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-App-Roles">Carbon/App/Roles</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-Roles-Class">Carbon.App.Roles.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Apps">Carbon/Apps</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Apps-Class">Carbon.Apps.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Apps-Role">Carbon/Apps/Role</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-Role-Class">Carbon.App.Role.Class</a>
+						<a class="item" href="#Carbon-App-Role-Factory">Carbon.App.Role.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth">Carbon/Auth</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Class">Carbon.Auth.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-ACE">Carbon/Auth/ACE</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-PersistedACE-Class">Carbon.Auth.PersistedACE.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-ACL">Carbon/Auth/ACL</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-ACL-Class">Carbon.Auth.ACL.Class</a>
+						<a class="item" href="#Carbon-Auth-ACL-Factory">Carbon.Auth.ACL.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Agent">Carbon/Auth/Agent</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Agent-Class">Carbon.Auth.Agent.Class</a>
+						<a class="item" href="#Carbon-Auth-Agent-Factory">Carbon.Auth.Agent.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Agents">Carbon/Auth/Agents</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Agents-Class">Carbon.Auth.Agents.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-AuthenticationToken">Carbon/Auth/AuthenticationToken</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-AuthenticationToken-Class">Carbon.Auth.AuthenticationToken.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Authenticator">Carbon/Auth/Authenticator</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Authenticator-Class">Carbon.Auth.Authenticator.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-BasicAuthenticator">Carbon/Auth/BasicAuthenticator</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-BasicAuthenticator-Class">Carbon.Auth.BasicAuthenticator.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Credentials">Carbon/Auth/Credentials</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Credentials-Class">Carbon.Auth.Credentials.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-PersistedACL">Carbon/Auth/PersistedACL</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-PersistedACL-Class">Carbon.Auth.PersistedACL.Class</a>
+						<a class="item" href="#Carbon-Auth-PersistedACL-Factory">Carbon.Auth.PersistedACL.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-PersistedAgent">Carbon/Auth/PersistedAgent</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
+						<a class="item" href="#Carbon-Auth-PersistedAgent-Factory">Carbon.Auth.PersistedAgent.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-PersistedRole">Carbon/Auth/PersistedRole</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-App-PersistedRole-Class">Carbon.App.PersistedRole.Class</a>
+						<a class="item" href="#Carbon-Auth-PersistedRole-Factory">Carbon.Auth.PersistedRole.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Role">Carbon/Auth/Role</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Role-Class">Carbon.Auth.Role.Class</a>
+						<a class="item" href="#Carbon-Auth-Role-Factory">Carbon.Auth.Role.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Roles">Carbon/Auth/Roles</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Roles-Class">Carbon.Auth.Roles.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Ticket">Carbon/Auth/Ticket</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Ticket-Class">Carbon.Auth.Ticket.Class</a>
+						<a class="item" href="#Carbon-Auth-Ticket-Factory">Carbon.Auth.Ticket.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-Token">Carbon/Auth/Token</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-Token-Class">Carbon.Auth.Token.Class</a>
+						<a class="item" href="#Carbon-Auth-Token-Factory">Carbon.Auth.Token.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-TokenAuthenticator">Carbon/Auth/TokenAuthenticator</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-TokenAuthenticator-Class">Carbon.Auth.TokenAuthenticator.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-UsernameAndPasswordCredentials">Carbon/Auth/UsernameAndPasswordCredentials</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-UsernameAndPasswordCredentials-Class">Carbon.Auth.UsernameAndPasswordCredentials.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Auth-UsernameAndPasswordToken">Carbon/Auth/UsernameAndPasswordToken</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-UsernameAndPasswordToken-Class">Carbon.Auth.UsernameAndPasswordToken.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-BlankNode">Carbon/BlankNode</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-BlankNode-Class">Carbon.BlankNode.Class</a>
+						<a class="item" href="#Carbon-BlankNode-Factory">Carbon.BlankNode.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Context">Carbon/Context</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Context-Class">Carbon.Context.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Document">Carbon/Document</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Document-Class">Carbon.Document.Class</a>
+						<a class="item" href="#Carbon-Document-Factory">Carbon.Document.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Documents">Carbon/Documents</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Documents-Class">Carbon.Documents.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors">Carbon/Errors</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-AbstractError">Carbon/Errors/AbstractError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-AbstractError">Carbon.Errors.AbstractError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-IDAlreadyInUseError">Carbon/Errors/IDAlreadyInUseError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-IDAlreadyInUseError">Carbon.Errors.IDAlreadyInUseError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-IllegalActionError">Carbon/Errors/IllegalActionError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-IllegalActionError">Carbon.Errors.IllegalActionError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-IllegalArgumentError">Carbon/Errors/IllegalArgumentError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-IllegalArgumentError">Carbon.Errors.IllegalArgumentError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-IllegalStateError">Carbon/Errors/IllegalStateError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-IllegalStateError">Carbon.Errors.IllegalStateError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-InvalidJSONLDSyntaxError">Carbon/Errors/InvalidJSONLDSyntaxError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-InvalidJSONLDSyntaxError">Carbon.Errors.InvalidJSONLDSyntaxError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Errors-NotImplementedError">Carbon/Errors/NotImplementedError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Errors-NotImplementedError">Carbon.Errors.NotImplementedError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Fragment">Carbon/Fragment</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Fragment-Class">Carbon.Fragment.Class</a>
+						<a class="item" href="#Carbon-Fragment-Factory">Carbon.Fragment.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-FreeResources">Carbon/FreeResources</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-FreeResources-Class">Carbon.FreeResources.Class</a>
+						<a class="item" href="#Carbon-FreeResources-Factory">Carbon.FreeResources.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP">Carbon/HTTP</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors">Carbon/HTTP/Errors</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-HTTPError">Carbon/HTTP/Errors/HTTPError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-HTTPError">Carbon.HTTP.Errors.HTTPError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-UnknownError">Carbon/HTTP/Errors/UnknownError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-UnknownError">Carbon.HTTP.Errors.UnknownError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-BadRequestError">Carbon/HTTP/Errors/client/BadRequestError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-BadRequestError">Carbon.HTTP.Errors.BadRequestError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-ConflictError">Carbon/HTTP/Errors/client/ConflictError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-ConflictError">Carbon.HTTP.Errors.ConflictError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-ForbiddenError">Carbon/HTTP/Errors/client/ForbiddenError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-ForbiddenError">Carbon.HTTP.Errors.ForbiddenError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-MethodNotAllowedError">Carbon/HTTP/Errors/client/MethodNotAllowedError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-MethodNotAllowedError">Carbon.HTTP.Errors.MethodNotAllowedError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-NotAcceptableError">Carbon/HTTP/Errors/client/NotAcceptableError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-NotAcceptableError">Carbon.HTTP.Errors.NotAcceptableError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-NotFoundError">Carbon/HTTP/Errors/client/NotFoundError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-NotFoundError">Carbon.HTTP.Errors.NotFoundError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-PreconditionFailedError">Carbon/HTTP/Errors/client/PreconditionFailedError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-PreconditionFailedError">Carbon.HTTP.Errors.PreconditionFailedError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-PreconditionRequiredError">Carbon/HTTP/Errors/client/PreconditionRequiredError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-PreconditionRequiredError">Carbon.HTTP.Errors.PreconditionRequiredError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestEntityTooLargeError">Carbon/HTTP/Errors/client/RequestEntityTooLargeError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-RequestEntityTooLargeError">Carbon.HTTP.Errors.RequestEntityTooLargeError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError">Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestURITooLongError">Carbon/HTTP/Errors/client/RequestURITooLongError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-RequestURITooLongError">Carbon.HTTP.Errors.RequestURITooLongError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-TooManyRequestsError">Carbon/HTTP/Errors/client/TooManyRequestsError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-TooManyRequestsError">Carbon.HTTP.Errors.TooManyRequestsError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-UnauthorizedError">Carbon/HTTP/Errors/client/UnauthorizedError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-UnauthorizedError">Carbon.HTTP.Errors.UnauthorizedError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">Carbon/HTTP/Errors/client/UnsupportedMediaTypeError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-UnsupportedMediaTypeError">Carbon.HTTP.Errors.UnsupportedMediaTypeError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-BadGatewayError">Carbon/HTTP/Errors/server/BadGatewayError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-BadGatewayError">Carbon.HTTP.Errors.BadGatewayError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-BadResponseError">Carbon/HTTP/Errors/server/BadResponseError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-BadResponseError">Carbon.HTTP.Errors.BadResponseError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-GatewayTimeoutError">Carbon/HTTP/Errors/server/GatewayTimeoutError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-GatewayTimeoutError">Carbon.HTTP.Errors.GatewayTimeoutError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-HTTPVersionNotSupportedError">Carbon.HTTP.Errors.HTTPVersionNotSupportedError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-InternalServerErrorError">Carbon/HTTP/Errors/server/InternalServerErrorError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-InternalServerErrorError">Carbon.HTTP.Errors.InternalServerErrorError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-NotImplementedError">Carbon/HTTP/Errors/server/NotImplementedError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-NotImplementedError">Carbon.HTTP.Errors.NotImplementedError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Errors-server-ServiceUnavailableError">Carbon/HTTP/Errors/server/ServiceUnavailableError</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Errors-ServiceUnavailableError">Carbon.HTTP.Errors.ServiceUnavailableError</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Header">Carbon/HTTP/Header</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Header-Class">Carbon.HTTP.Header.Class</a>
+						<a class="item" href="#Carbon-HTTP-Header-Util">Carbon.HTTP.Header.Util</a>
+						<a class="item" href="#Carbon-HTTP-Header-Value">Carbon.HTTP.Header.Value</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-JSONParser">Carbon/HTTP/JSONParser</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-JSONParser-Class">Carbon.HTTP.JSONParser.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Method">Carbon/HTTP/Method</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Parser">Carbon/HTTP/Parser</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Auth-ACE-Class">Carbon.Auth.ACE.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Request">Carbon/HTTP/Request</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Request-ContainerRetrievalPreferences">Carbon.HTTP.Request.ContainerRetrievalPreferences</a>
+						<a class="item" href="#Carbon-HTTP-Request-Options">Carbon.HTTP.Request.Options</a>
+						<a class="item" href="#Carbon-HTTP-Request-Service">Carbon.HTTP.Request.Service</a>
+						<a class="item" href="#Carbon-HTTP-Request-Util">Carbon.HTTP.Request.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-Response">Carbon/HTTP/Response</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-Response-Class">Carbon.HTTP.Response.Class</a>
+						<a class="item" href="#Carbon-HTTP-Response-Util">Carbon.HTTP.Response.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-StatusCode">Carbon/HTTP/StatusCode</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-HTTP-StringParser">Carbon/HTTP/StringParser</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-HTTP-StringParser-Class">Carbon.HTTP.StringParser.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-JSONLD">Carbon/JSONLD</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-JSONLD-Converter">Carbon/JSONLD/Converter</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-JSONLD-Converter-Class">Carbon.JSONLD.Converter.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-JSONLD-Parser">Carbon/JSONLD/Parser</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-JSONLD-Parser-Class">Carbon.JSONLD.Parser.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-JSONLD-Processor">Carbon/JSONLD/Processor</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-JSONLD-Processor-Class">Carbon.JSONLD.Processor.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP">Carbon/LDP</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-AddMemberAction">Carbon/LDP/AddMemberAction</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-AddMemberAction-Class">Carbon.LDP.AddMemberAction.Class</a>
+						<a class="item" href="#Carbon-LDP-AddMemberAction-Factory">Carbon.LDP.AddMemberAction.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-DirectContainer">Carbon/LDP/DirectContainer</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-DirectContainer-Factory">Carbon.DirectContainer.Factory</a>
+						<a class="item" href="#Carbon-LDP-DirectContainer-Class">Carbon.LDP.DirectContainer.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-Error">Carbon/LDP/Error</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-Error-Class">Carbon.LDP.Error.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-ErrorResponse">Carbon/LDP/ErrorResponse</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-ErrorResponse-Class">Carbon.LDP.ErrorResponse.Class</a>
+						<a class="item" href="#Carbon-LDP-ErrorResponse-Parser">Carbon.LDP.ErrorResponse.Parser</a>
+						<a class="item" href="#Carbon-LDP-ErrorResponse-Util">Carbon.LDP.ErrorResponse.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-IndirectContainer">Carbon/LDP/IndirectContainer</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-IndirectContainer-Factory">Carbon.IndirectContainer.Factory</a>
+						<a class="item" href="#Carbon-LDP-IndirectContainer-Class">Carbon.LDP.IndirectContainer.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-PersistedBlankNode">Carbon/LDP/PersistedBlankNode</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedBlankNode-Class">Carbon.PersistedBlankNode.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-RemoveMemberAction">Carbon/LDP/RemoveMemberAction</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-RemoveMemberAction-Class">Carbon.LDP.RemoveMemberAction.Class</a>
+						<a class="item" href="#Carbon-LDP-RemoveMemberAction-Factory">Carbon.LDP.RemoveMemberAction.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-ResourceMetadata">Carbon/LDP/ResourceMetadata</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-ResourceMetadata-Class">Carbon.LDP.ResourceMetadata.Class</a>
+						<a class="item" href="#Carbon-LDP-ResourceMetadata-Factory">Carbon.LDP.ResourceMetadata.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-ResponseMetadata">Carbon/LDP/ResponseMetadata</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-ResponseMetadata-Class">Carbon.LDP.ResponseMetadata.Class</a>
+						<a class="item" href="#Carbon-LDP-ResponseMetadata-Factory">Carbon.LDP.ResponseMetadata.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-LDP-VolatileResource">Carbon/LDP/VolatileResource</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-LDP-VolatileResource-Class">Carbon.LDP.VolatileResource.Class</a>
+						<a class="item" href="#Carbon-LDP-VolatileResource-Factory">Carbon.LDP.VolatileResource.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS">Carbon/NS</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-C">Carbon/NS/C</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-C-Class">Carbon.NS.C.Class</a>
+						<a class="item" href="#Carbon-NS-C-Predicate">Carbon.NS.C.Predicate</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-CP">Carbon/NS/CP</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-CP-Predicate">Carbon.NS.CP.Predicate</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-CS">Carbon/NS/CS</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-CS-Class">Carbon.NS.CS.Class</a>
+						<a class="item" href="#Carbon-NS-CS-Predicate">Carbon.NS.CS.Predicate</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-LDP">Carbon/NS/LDP</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-LDP-Class">Carbon.NS.LDP.Class</a>
+						<a class="item" href="#Carbon-NS-LDP-Predicate">Carbon.NS.LDP.Predicate</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-RDF">Carbon/NS/RDF</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-RDF-Predicate">Carbon.NS.RDF.Predicate</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-VCARD">Carbon/NS/VCARD</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-VCARD-Predicate">Carbon.NS.VCARD.Predicate</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NS-XSD">Carbon/NS/XSD</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NS-XSD-DataType">Carbon.NS.XSD.DataType</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-NamedFragment">Carbon/NamedFragment</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-NamedFragment-Class">Carbon.NamedFragment.Class</a>
+						<a class="item" href="#Carbon-NamedFragment-Factory">Carbon.NamedFragment.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-ObjectSchema">Carbon/ObjectSchema</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-ObjectSchema-Class">Carbon.ObjectSchema.Class</a>
+						<a class="item" href="#Carbon-ObjectSchema-DigestedObjectSchema">Carbon.ObjectSchema.DigestedObjectSchema</a>
+						<a class="item" href="#Carbon-ObjectSchema-DigestedPropertyDefinition">Carbon.ObjectSchema.DigestedPropertyDefinition</a>
+						<a class="item" href="#Carbon-ObjectSchema-Digester">Carbon.ObjectSchema.Digester</a>
+						<a class="item" href="#Carbon-ObjectSchema-PropertyDefinition">Carbon.ObjectSchema.PropertyDefinition</a>
+						<a class="item" href="#Carbon-ObjectSchema-Utils">Carbon.ObjectSchema.Utils</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedAccessPoint">Carbon/PersistedAccessPoint</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedAccessPoint-Class">Carbon.PersistedAccessPoint.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedApp">Carbon/PersistedApp</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedApp-Class">Carbon.PersistedApp.Class</a>
+						<a class="item" href="#Carbon-PersistedApp-Factory">Carbon.PersistedApp.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedDocument">Carbon/PersistedDocument</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedDocument-Class">Carbon.PersistedDocument.Class</a>
+						<a class="item" href="#Carbon-PersistedDocument-Factory">Carbon.PersistedDocument.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedFragment">Carbon/PersistedFragment</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedFragment-Class">Carbon.PersistedFragment.Class</a>
+						<a class="item" href="#Carbon-PersistedFragment-Factory">Carbon.PersistedFragment.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedNamedFragment">Carbon/PersistedNamedFragment</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedNamedFragment-Class">Carbon.PersistedNamedFragment.Class</a>
+						<a class="item" href="#Carbon-PersistedNamedFragment-Factory">Carbon.PersistedNamedFragment.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedProtectedDocument">Carbon/PersistedProtectedDocument</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedProtectedDocument-Class">Carbon.PersistedProtectedDocument.Class</a>
+						<a class="item" href="#Carbon-PersistedProtectedDocument-Factory">Carbon.PersistedProtectedDocument.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-PersistedResource">Carbon/PersistedResource</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-PersistedResource-Class">Carbon.PersistedResource.Class</a>
+						<a class="item" href="#Carbon-PersistedResource-Factory">Carbon.PersistedResource.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Platform">Carbon/Platform</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Platform-Agents">Carbon/Platform/Agents</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Platform-Agents-Class">Carbon.Platform.Agents.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Platform-Auth">Carbon/Platform/Auth</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Platform-Auth-Class">Carbon.Platform.Auth.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Platform-PersistedAgent">Carbon/Platform/PersistedAgent</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Pointer">Carbon/Pointer</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Pointer-Class">Carbon.Pointer.Class</a>
+						<a class="item" href="#Carbon-Pointer-Factory">Carbon.Pointer.Factory</a>
+						<a class="item" href="#Carbon-Pointer-Library">Carbon.Pointer.Library</a>
+						<a class="item" href="#Carbon-Pointer-Util">Carbon.Pointer.Util</a>
+						<a class="item" href="#Carbon-Pointer-Validator">Carbon.Pointer.Validator</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-ProtectedDocument">Carbon/ProtectedDocument</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-ProtectedDocument-Class">Carbon.ProtectedDocument.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF">Carbon/RDF</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Document">Carbon/RDF/Document</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-Document-Class">Carbon.RDF.Document.Class</a>
+						<a class="item" href="#Carbon-RDF-Document-Factory">Carbon.RDF.Document.Factory</a>
+						<a class="item" href="#Carbon-RDF-Document-Parser">Carbon.RDF.Document.Parser</a>
+						<a class="item" href="#Carbon-RDF-Document-Util">Carbon.RDF.Document.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-List">Carbon/RDF/List</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-List-Class">Carbon.RDF.List.Class</a>
+						<a class="item" href="#Carbon-RDF-List-Factory">Carbon.RDF.List.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Literal">Carbon/RDF/Literal</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-Literal-Class">Carbon.RDF.Literal.Class</a>
+						<a class="item" href="#Carbon-RDF-Literal-Factory">Carbon.RDF.Literal.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Literal-Serializer">Carbon/RDF/Literal/Serializer</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-Literal-Serializer-Class">Carbon.RDF.Literal.Serializer.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Literal-Serializers">Carbon/RDF/Literal/Serializers</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Literal-Serializers-XSD">Carbon/RDF/Literal/Serializers/XSD</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer">Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-DateSerializer">Carbon.RDF.Literal.Serializes.XSD.DateSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer">Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-FloatSerializer">Carbon.RDF.Literal.Serializes.XSD.FloatSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer">Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-StringSerializer">Carbon.RDF.Literal.Serializes.XSD.StringSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer">Carbon.RDF.Literal.Serializes.XSD.TimeSerializer</a>
+						<a class="item" href="#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer">Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Node">Carbon/RDF/Node</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-Node-Class">Carbon.RDF.Node.Class</a>
+						<a class="item" href="#Carbon-RDF-Node-Factory">Carbon.RDF.Node.Factory</a>
+						<a class="item" href="#Carbon-RDF-Node-Util">Carbon.RDF.Node.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-URI">Carbon/RDF/URI</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-URI-Class">Carbon.RDF.URI.Class</a>
+						<a class="item" href="#Carbon-RDF-URI-Util">Carbon.RDF.URI.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDF-Value">Carbon/RDF/Value</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDF-Value-Class">Carbon.RDF.Value.Class</a>
+						<a class="item" href="#Carbon-RDF-Value-Util">Carbon.RDF.Value.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RDFRepresentation">Carbon/RDFRepresentation</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RDFRepresentation-Class">Carbon.RDFRepresentation.Class</a>
+						<a class="item" href="#Carbon-RDFRepresentation-Factory">Carbon.RDFRepresentation.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Resource">Carbon/Resource</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Resource-Class">Carbon.Resource.Class</a>
+						<a class="item" href="#Carbon-Resource-Factory">Carbon.Resource.Factory</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-RetrievalPreferences">Carbon/RetrievalPreferences</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-RetrievalPreferences-Class">Carbon.RetrievalPreferences.Class</a>
+						<a class="item" href="#Carbon-RetrievalPreferences-Factory">Carbon.RetrievalPreferences.Factory</a>
+						<a class="item" href="#Carbon-RetrievalPreferences-OrderByProperty">Carbon.RetrievalPreferences.OrderByProperty</a>
+						<a class="item" href="#Carbon-RetrievalPreferences-Util">Carbon.RetrievalPreferences.Util</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-SDKContext">Carbon/SDKContext</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-SDKContext-Class">Carbon.SDKContext.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-SPARQL">Carbon/SPARQL</a>
+				<div class="menu">
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-SPARQL-RawResults">Carbon/SPARQL/RawResults</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-SPARQL-RawResults-BindingObject">Carbon.SPARQL.RawResults.BindingObject</a>
+						<a class="item" href="#Carbon-SPARQL-RawResults-BindingProperty">Carbon.SPARQL.RawResults.BindingProperty</a>
+						<a class="item" href="#Carbon-SPARQL-RawResults-Class">Carbon.SPARQL.RawResults.Class</a>
+						<a class="item" href="#Carbon-SPARQL-RawResults-Factory">Carbon.SPARQL.RawResults.Factory</a>
+						<a class="item" href="#Carbon-SPARQL-RawResults-ValueTypes">Carbon.SPARQL.RawResults.ValueTypes</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-SPARQL-RawResultsParser">Carbon/SPARQL/RawResultsParser</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-SPARQL-RawResultsParser">Carbon.SPARQL.RawResultsParser</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-SPARQL-SELECTResults">Carbon/SPARQL/SELECTResults</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-SPARQL-SELECTResults-BindingObject">Carbon.SPARQL.SELECTResults.BindingObject</a>
+						<a class="item" href="#Carbon-SPARQL-SELECTResults-Class">Carbon.SPARQL.SELECTResults.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-SPARQL-Service">Carbon/SPARQL/Service</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-SPARQL-Service-Class">Carbon.SPARQL.Service.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Settings">Carbon/Settings</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Settings-Class">Carbon.Settings.Class</a>
+				</div>
+			</div>
+			<div class="orange item">
+				<a class="header" href="#Module-Carbon-Utils">Carbon/Utils</a>
+				<div class="menu">
+						<a class="item" href="#Carbon-Utils-A">Carbon.Utils.A</a>
+						<a class="item" href="#Carbon-Utils-M">Carbon.Utils.M</a>
+						<a class="item" href="#Carbon-Utils-O">Carbon.Utils.O</a>
+						<a class="item" href="#Carbon-Utils-S">Carbon.Utils.S</a>
+						<a class="item" href="#Carbon-Utils-UUID">Carbon.Utils.UUID</a>
+				</div>
+			</div>
+	</div>
 
-	<div class="ui main container">
+	<div class="pusher ui padded basic doc-main segment">
 		<h1 class="ui header">Carbon LDP JavaScript SDK API Reference</h1>
 		<div class="ui divider"></div>
 
@@ -1026,9 +1985,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon">Carbon</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon">Carbon</a>
 						</h1>
 					</div>
 				
@@ -1647,256 +2606,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-PersistedAgent">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-APIDescription">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App-PersistedAgent">Carbon.App.PersistedAgent</a>
-						</h1>
-					</div>
-				
-
-					<div class="ui list doc-tags">
-						<div class="item">
-							<div class="content">
-								<span class="header">Default Export:</span>
-							</div>
-							<div class="ui bulleted list">
-									<div class="item">
-											<a href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
-										
-									</div>
-							</div>
-						</div>
-					</div>					<!--<div class="doc-module__default-exports">
-						<strong>Default Export</strong>:
-						<a href="#Carbon-App-PersistedAgent">Carbon.App.PersistedAgent</a>
-					</div>-->
-
-				<div class="ui basic segment doc-content doc-section__content">
-
-						
-							<h2 class="ui header doc-header" id="Carbon-App-PersistedAgent--Classes and Interfaces">
-						
-						
-								<a class="doc-header__link" href="#Carbon-App-PersistedAgent--Classes and Interfaces">
-									<div class="ui basic label doc-header__symbol symbol">
-										<i class="symbol__anchor large grey linkify icon"></i>
-									</div>
-								<span class="doc-header__main ">Classes and Interfaces in the Module</span>
-								</a>
-								
-							</h2>
-						
-						<div class="ui list elements-list">
-								<div class="item">
-									<span class="ui orange label icon elements-list__item-type">I</span>
-									<div class="content">
-										<a class="header" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
-											<div class="description">	Specific interface that represents the persisted agents from an application.
-
-</div>
-									</div>
-								</div>
-						</div>
-						<br>
-
-
-
-
-				</div>
-
-			</div>
-
-				<br><br><br>
-				<div class="ui vertical segment doc-object doc-section">
-
-					
-						<div class="ui basic inverted orange segment">
-							<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-PersistedAgent-Class">
-								<span class="ui large orange horizontal basic label doc-header__label">Interface</span>
-								<a class="doc-header__link doc-header__main" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
-							</h1>
-						</div>
-					
-
-
-							<div class="ui list doc-tags">
-								<div class="item">
-									<div class="content">
-										<span class="header">Extends:</span>
-									</div>
-									<div class="ui bulleted list">
-											<div class="item">
-													<a href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
-												
-											</div>
-									</div>
-								</div>
-							</div>
-						<div class="ui basic segment doc-content doc-section__content">
-								<div class="doc-description">
-										<p>Specific interface that represents the persisted agents from an application.</p>
-									
-								</div>
-							<br>
-
-
-
-
-						</div>
-				</div>
-
-
-			<br><br><br>
-			<div class="ui vertical segment doc-module doc-section">
-				
-					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Platform-PersistedAgent">
-							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Platform-PersistedAgent">Carbon.Platform.PersistedAgent</a>
-						</h1>
-					</div>
-				
-
-					<div class="ui list doc-tags">
-						<div class="item">
-							<div class="content">
-								<span class="header">Default Export:</span>
-							</div>
-							<div class="ui bulleted list">
-									<div class="item">
-											<a href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
-										
-									</div>
-							</div>
-						</div>
-					</div>					<!--<div class="doc-module__default-exports">
-						<strong>Default Export</strong>:
-						<a href="#Carbon-Platform-PersistedAgent">Carbon.Platform.PersistedAgent</a>
-					</div>-->
-
-				<div class="ui basic segment doc-content doc-section__content">
-
-						
-							<h2 class="ui header doc-header" id="Carbon-Platform-PersistedAgent--Classes and Interfaces">
-						
-						
-								<a class="doc-header__link" href="#Carbon-Platform-PersistedAgent--Classes and Interfaces">
-									<div class="ui basic label doc-header__symbol symbol">
-										<i class="symbol__anchor large grey linkify icon"></i>
-									</div>
-								<span class="doc-header__main ">Classes and Interfaces in the Module</span>
-								</a>
-								
-							</h2>
-						
-						<div class="ui list elements-list">
-								<div class="item">
-									<span class="ui orange label icon elements-list__item-type">I</span>
-									<div class="content">
-										<a class="header" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
-											<div class="description">	Interface that specify an persisted agent in platform context i.e. Carbon context.
-
-</div>
-									</div>
-								</div>
-						</div>
-						<br>
-
-
-
-
-				</div>
-
-			</div>
-
-				<br><br><br>
-				<div class="ui vertical segment doc-object doc-section">
-
-					
-						<div class="ui basic inverted orange segment">
-							<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Platform-PersistedAgent-Class">
-								<span class="ui large orange horizontal basic label doc-header__label">Interface</span>
-								<a class="doc-header__link doc-header__main" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
-							</h1>
-						</div>
-					
-
-
-							<div class="ui list doc-tags">
-								<div class="item">
-									<div class="content">
-										<span class="header">Extends:</span>
-									</div>
-									<div class="ui bulleted list">
-											<div class="item">
-													<a href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
-												
-											</div>
-									</div>
-								</div>
-							</div>
-						<div class="ui basic segment doc-content doc-section__content">
-								<div class="doc-description">
-										<p>Interface that specify an persisted agent in platform context i.e. Carbon context.</p>
-									
-								</div>
-							<br>
-
-
-
-								
-									<h2 class="ui header doc-header" id="Carbon-Platform-PersistedAgent-Class--Properties">
-								
-								
-										<a class="doc-header__link" href="#Carbon-Platform-PersistedAgent-Class--Properties">
-											<div class="ui basic label doc-header__symbol symbol">
-												<i class="symbol__anchor large grey linkify icon"></i>
-											</div>
-										<span class="doc-header__main ">Properties</span>
-										</a>
-										
-									</h2>
-								
-
-								<div class="ui basic segment doc-content">
-											
-												<h4 class="ui header doc-header" id="Carbon-Platform-PersistedAgent-Class-platformRoles">
-											
-											
-													<a class="doc-header__link" href="#Carbon-Platform-PersistedAgent-Class-platformRoles">
-														<div class="ui basic label doc-header__symbol symbol">
-															<i class="symbol__anchor large grey linkify icon"></i>
-														</div>
-													<span class="doc-header__main code-label">.platformRoles</span>
-													</a>
-													<span class="doc-header__secondary"> : 	<a href="#Carbon-Pointer-Class[]">Carbon.Pointer.Class[]</a>
-											
-											</span>
-												</h4>
-											
-										
-											<!--pre><code class="typescript">platformRoles?:Carbon.Pointer.Class[]</code></pre-->
-										
-											<div class="ui vertical segment doc-content doc-object-element__content">
-													<div class="doc-description">
-															<p>A array of pointer that contains the specific platform roles the current agent have.</p>
-														
-													</div>
-												<br>
-											</div>
-								</div>
-
-						</div>
-				</div>
-
-
-			<br><br><br>
-			<div class="ui vertical segment doc-module doc-section">
-				
-					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-APIDescription">
-							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-APIDescription">Carbon/APIDescription</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-APIDescription">Carbon/APIDescription</a>
 						</h1>
 					</div>
 				
@@ -2110,9 +2822,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-AbstractContext">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-AbstractContext">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-AbstractContext">Carbon/AbstractContext</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-AbstractContext">Carbon/AbstractContext</a>
 						</h1>
 					</div>
 				
@@ -2355,9 +3067,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-AccessPoint">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-AccessPoint">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-AccessPoint">Carbon/AccessPoint</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-AccessPoint">Carbon/AccessPoint</a>
 						</h1>
 					</div>
 				
@@ -2967,9 +3679,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App">Carbon/App</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App">Carbon/App</a>
 						</h1>
 					</div>
 				
@@ -3590,9 +4302,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-Agents">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App-Agents">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App-Agents">Carbon/App/Agents</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App-Agents">Carbon/App/Agents</a>
 						</h1>
 					</div>
 				
@@ -3839,9 +4551,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-Auth">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App-Auth">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App-Auth">Carbon/App/Auth</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App-Auth">Carbon/App/Auth</a>
 						</h1>
 					</div>
 				
@@ -4024,9 +4736,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-Context">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App-Context">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App-Context">Carbon/App/Context</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App-Context">Carbon/App/Context</a>
 						</h1>
 					</div>
 				
@@ -4334,9 +5046,112 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-PersistedRole">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App-PersistedAgent">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App-PersistedRole">Carbon/App/PersistedRole</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App-PersistedAgent">Carbon/App/PersistedAgent</a>
+						</h1>
+					</div>
+				
+
+					<div class="ui list doc-tags">
+						<div class="item">
+							<div class="content">
+								<span class="header">Default Export:</span>
+							</div>
+							<div class="ui bulleted list">
+									<div class="item">
+											<a href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
+										
+									</div>
+							</div>
+						</div>
+					</div>					<!--<div class="doc-module__default-exports">
+						<strong>Default Export</strong>:
+						<a href="#PersistedAgent">PersistedAgent</a>
+					</div>-->
+
+				<div class="ui basic segment doc-content doc-section__content">
+
+						
+							<h2 class="ui header doc-header" id="Carbon-App-PersistedAgent--Classes and Interfaces">
+						
+						
+								<a class="doc-header__link" href="#Carbon-App-PersistedAgent--Classes and Interfaces">
+									<div class="ui basic label doc-header__symbol symbol">
+										<i class="symbol__anchor large grey linkify icon"></i>
+									</div>
+								<span class="doc-header__main ">Classes and Interfaces in the Module</span>
+								</a>
+								
+							</h2>
+						
+						<div class="ui list elements-list">
+								<div class="item">
+									<span class="ui orange label icon elements-list__item-type">I</span>
+									<div class="content">
+										<a class="header" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
+											<div class="description">	Specific interface that represents the persisted agents from an application.
+
+</div>
+									</div>
+								</div>
+						</div>
+						<br>
+
+
+
+
+				</div>
+
+			</div>
+
+				<br><br><br>
+				<div class="ui vertical segment doc-object doc-section">
+
+					
+						<div class="ui basic inverted orange segment">
+							<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-PersistedAgent-Class">
+								<span class="ui large orange horizontal basic label doc-header__label">Interface</span>
+								<a class="doc-header__link doc-header__main" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
+							</h1>
+						</div>
+					
+
+
+							<div class="ui list doc-tags">
+								<div class="item">
+									<div class="content">
+										<span class="header">Extends:</span>
+									</div>
+									<div class="ui bulleted list">
+											<div class="item">
+													<a href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
+												
+											</div>
+									</div>
+								</div>
+							</div>
+						<div class="ui basic segment doc-content doc-section__content">
+								<div class="doc-description">
+										<p>Specific interface that represents the persisted agents from an application.</p>
+									
+								</div>
+							<br>
+
+
+
+
+						</div>
+				</div>
+
+
+			<br><br><br>
+			<div class="ui vertical segment doc-module doc-section">
+				
+					<div class="ui basic inverted grey segment">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App-PersistedRole">
+							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App-PersistedRole">Carbon/App/PersistedRole</a>
 						</h1>
 					</div>
 				
@@ -4757,9 +5572,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-App-Roles">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-App-Roles">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-App-Roles">Carbon/App/Roles</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-App-Roles">Carbon/App/Roles</a>
 						</h1>
 					</div>
 				
@@ -5188,9 +6003,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Apps">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Apps">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Apps">Carbon/Apps</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Apps">Carbon/Apps</a>
 						</h1>
 					</div>
 				
@@ -5638,9 +6453,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Apps-Role">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Apps-Role">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Apps-Role">Carbon/Apps/Role</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Apps-Role">Carbon/Apps/Role</a>
 						</h1>
 					</div>
 				
@@ -6102,9 +6917,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth">Carbon/Auth</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth">Carbon/Auth</a>
 						</h1>
 					</div>
 				
@@ -7148,9 +7963,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-ACE">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-ACE">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-ACE">Carbon/Auth/ACE</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-ACE">Carbon/Auth/ACE</a>
 						</h1>
 					</div>
 				
@@ -7296,9 +8111,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-ACL">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-ACL">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-ACL">Carbon/Auth/ACL</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-ACL">Carbon/Auth/ACL</a>
 						</h1>
 					</div>
 				
@@ -9265,9 +10080,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Agent">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Agent">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Agent">Carbon/Auth/Agent</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Agent">Carbon/Auth/Agent</a>
 						</h1>
 					</div>
 				
@@ -9890,9 +10705,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Agents">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Agents">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Agents">Carbon/Auth/Agents</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Agents">Carbon/Auth/Agents</a>
 						</h1>
 					</div>
 				
@@ -10424,9 +11239,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-AuthenticationToken">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-AuthenticationToken">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-AuthenticationToken">Carbon/Auth/AuthenticationToken</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-AuthenticationToken">Carbon/Auth/AuthenticationToken</a>
 						</h1>
 					</div>
 				
@@ -10515,9 +11330,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Authenticator">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Authenticator">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Authenticator">Carbon/Auth/Authenticator</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Authenticator">Carbon/Auth/Authenticator</a>
 						</h1>
 					</div>
 				
@@ -10810,9 +11625,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-BasicAuthenticator">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-BasicAuthenticator">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-BasicAuthenticator">Carbon/Auth/BasicAuthenticator</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-BasicAuthenticator">Carbon/Auth/BasicAuthenticator</a>
 						</h1>
 					</div>
 				
@@ -11141,9 +11956,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Credentials">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Credentials">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Credentials">Carbon/Auth/Credentials</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Credentials">Carbon/Auth/Credentials</a>
 						</h1>
 					</div>
 				
@@ -11232,9 +12047,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-PersistedACL">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-PersistedACL">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-PersistedACL">Carbon/Auth/PersistedACL</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-PersistedACL">Carbon/Auth/PersistedACL</a>
 						</h1>
 					</div>
 				
@@ -13142,9 +13957,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-PersistedAgent">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-PersistedAgent">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-PersistedAgent">Carbon/Auth/PersistedAgent</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-PersistedAgent">Carbon/Auth/PersistedAgent</a>
 						</h1>
 					</div>
 				
@@ -13674,9 +14489,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-PersistedRole">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-PersistedRole">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-PersistedRole">Carbon/Auth/PersistedRole</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-PersistedRole">Carbon/Auth/PersistedRole</a>
 						</h1>
 					</div>
 				
@@ -14724,9 +15539,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Role">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Role">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Role">Carbon/Auth/Role</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Role">Carbon/Auth/Role</a>
 						</h1>
 					</div>
 				
@@ -15196,9 +16011,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Roles">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Roles">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Roles">Carbon/Auth/Roles</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Roles">Carbon/Auth/Roles</a>
 						</h1>
 					</div>
 				
@@ -16202,9 +17017,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Ticket">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Ticket">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Ticket">Carbon/Auth/Ticket</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Ticket">Carbon/Auth/Ticket</a>
 						</h1>
 					</div>
 				
@@ -16568,9 +17383,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-Token">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-Token">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-Token">Carbon/Auth/Token</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-Token">Carbon/Auth/Token</a>
 						</h1>
 					</div>
 				
@@ -17092,9 +17907,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-TokenAuthenticator">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-TokenAuthenticator">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-TokenAuthenticator">Carbon/Auth/TokenAuthenticator</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-TokenAuthenticator">Carbon/Auth/TokenAuthenticator</a>
 						</h1>
 					</div>
 				
@@ -17493,9 +18308,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-UsernameAndPasswordCredentials">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-UsernameAndPasswordCredentials">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-UsernameAndPasswordCredentials">Carbon/Auth/UsernameAndPasswordCredentials</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-UsernameAndPasswordCredentials">Carbon/Auth/UsernameAndPasswordCredentials</a>
 						</h1>
 					</div>
 				
@@ -17719,9 +18534,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Auth-UsernameAndPasswordToken">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Auth-UsernameAndPasswordToken">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Auth-UsernameAndPasswordToken">Carbon/Auth/UsernameAndPasswordToken</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Auth-UsernameAndPasswordToken">Carbon/Auth/UsernameAndPasswordToken</a>
 						</h1>
 					</div>
 				
@@ -17945,9 +18760,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-BlankNode">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-BlankNode">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-BlankNode">Carbon/BlankNode</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-BlankNode">Carbon/BlankNode</a>
 						</h1>
 					</div>
 				
@@ -18396,9 +19211,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Context">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Context">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Context">Carbon/Context</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Context">Carbon/Context</a>
 						</h1>
 					</div>
 				
@@ -19253,9 +20068,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Document">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Document">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Document">Carbon/Document</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Document">Carbon/Document</a>
 						</h1>
 					</div>
 				
@@ -20941,9 +21756,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Documents">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Documents">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Documents">Carbon/Documents</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Documents">Carbon/Documents</a>
 						</h1>
 					</div>
 				
@@ -24576,9 +25391,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors">Carbon/Errors</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors">Carbon/Errors</a>
 						</h1>
 					</div>
 				
@@ -24669,9 +25484,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-AbstractError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-AbstractError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-AbstractError">Carbon/Errors/AbstractError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-AbstractError">Carbon/Errors/AbstractError</a>
 						</h1>
 					</div>
 				
@@ -24903,9 +25718,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-IDAlreadyInUseError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-IDAlreadyInUseError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-IDAlreadyInUseError">Carbon/Errors/IDAlreadyInUseError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-IDAlreadyInUseError">Carbon/Errors/IDAlreadyInUseError</a>
 						</h1>
 					</div>
 				
@@ -25028,9 +25843,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-IllegalActionError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-IllegalActionError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-IllegalActionError">Carbon/Errors/IllegalActionError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-IllegalActionError">Carbon/Errors/IllegalActionError</a>
 						</h1>
 					</div>
 				
@@ -25153,9 +25968,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-IllegalArgumentError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-IllegalArgumentError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-IllegalArgumentError">Carbon/Errors/IllegalArgumentError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-IllegalArgumentError">Carbon/Errors/IllegalArgumentError</a>
 						</h1>
 					</div>
 				
@@ -25278,9 +26093,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-IllegalStateError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-IllegalStateError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-IllegalStateError">Carbon/Errors/IllegalStateError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-IllegalStateError">Carbon/Errors/IllegalStateError</a>
 						</h1>
 					</div>
 				
@@ -25498,9 +26313,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-InvalidJSONLDSyntaxError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-InvalidJSONLDSyntaxError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-InvalidJSONLDSyntaxError">Carbon/Errors/InvalidJSONLDSyntaxError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-InvalidJSONLDSyntaxError">Carbon/Errors/InvalidJSONLDSyntaxError</a>
 						</h1>
 					</div>
 				
@@ -25623,9 +26438,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Errors-NotImplementedError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Errors-NotImplementedError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Errors-NotImplementedError">Carbon/Errors/NotImplementedError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Errors-NotImplementedError">Carbon/Errors/NotImplementedError</a>
 						</h1>
 					</div>
 				
@@ -25843,9 +26658,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Fragment">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Fragment">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Fragment">Carbon/Fragment</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Fragment">Carbon/Fragment</a>
 						</h1>
 					</div>
 				
@@ -26358,9 +27173,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-FreeResources">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-FreeResources">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-FreeResources">Carbon/FreeResources</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-FreeResources">Carbon/FreeResources</a>
 						</h1>
 					</div>
 				
@@ -27244,9 +28059,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP">Carbon/HTTP</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP">Carbon/HTTP</a>
 						</h1>
 					</div>
 				
@@ -27364,9 +28179,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors">Carbon/HTTP/Errors</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors">Carbon/HTTP/Errors</a>
 						</h1>
 					</div>
 				
@@ -27702,9 +28517,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-HTTPError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-HTTPError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-HTTPError">Carbon/HTTP/Errors/HTTPError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-HTTPError">Carbon/HTTP/Errors/HTTPError</a>
 						</h1>
 					</div>
 				
@@ -28020,9 +28835,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-UnknownError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-UnknownError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-UnknownError">Carbon/HTTP/Errors/UnknownError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-UnknownError">Carbon/HTTP/Errors/UnknownError</a>
 						</h1>
 					</div>
 				
@@ -28275,9 +29090,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-BadRequestError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-BadRequestError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-BadRequestError">Carbon/HTTP/Errors/client/BadRequestError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-BadRequestError">Carbon/HTTP/Errors/client/BadRequestError</a>
 						</h1>
 					</div>
 				
@@ -28530,9 +29345,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-ConflictError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-ConflictError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-ConflictError">Carbon/HTTP/Errors/client/ConflictError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-ConflictError">Carbon/HTTP/Errors/client/ConflictError</a>
 						</h1>
 					</div>
 				
@@ -28785,9 +29600,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-ForbiddenError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-ForbiddenError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-ForbiddenError">Carbon/HTTP/Errors/client/ForbiddenError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-ForbiddenError">Carbon/HTTP/Errors/client/ForbiddenError</a>
 						</h1>
 					</div>
 				
@@ -29040,9 +29855,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-MethodNotAllowedError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-MethodNotAllowedError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-MethodNotAllowedError">Carbon/HTTP/Errors/client/MethodNotAllowedError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-MethodNotAllowedError">Carbon/HTTP/Errors/client/MethodNotAllowedError</a>
 						</h1>
 					</div>
 				
@@ -29295,9 +30110,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-NotAcceptableError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-NotAcceptableError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-NotAcceptableError">Carbon/HTTP/Errors/client/NotAcceptableError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-NotAcceptableError">Carbon/HTTP/Errors/client/NotAcceptableError</a>
 						</h1>
 					</div>
 				
@@ -29550,9 +30365,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-NotFoundError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-NotFoundError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-NotFoundError">Carbon/HTTP/Errors/client/NotFoundError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-NotFoundError">Carbon/HTTP/Errors/client/NotFoundError</a>
 						</h1>
 					</div>
 				
@@ -29805,9 +30620,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-PreconditionFailedError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-PreconditionFailedError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-PreconditionFailedError">Carbon/HTTP/Errors/client/PreconditionFailedError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-PreconditionFailedError">Carbon/HTTP/Errors/client/PreconditionFailedError</a>
 						</h1>
 					</div>
 				
@@ -30060,9 +30875,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-PreconditionRequiredError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-PreconditionRequiredError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-PreconditionRequiredError">Carbon/HTTP/Errors/client/PreconditionRequiredError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-PreconditionRequiredError">Carbon/HTTP/Errors/client/PreconditionRequiredError</a>
 						</h1>
 					</div>
 				
@@ -30315,9 +31130,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-RequestEntityTooLargeError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-RequestEntityTooLargeError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-RequestEntityTooLargeError">Carbon/HTTP/Errors/client/RequestEntityTooLargeError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-RequestEntityTooLargeError">Carbon/HTTP/Errors/client/RequestEntityTooLargeError</a>
 						</h1>
 					</div>
 				
@@ -30570,9 +31385,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError</a>
 						</h1>
 					</div>
 				
@@ -30825,9 +31640,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-RequestURITooLongError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-RequestURITooLongError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-RequestURITooLongError">Carbon/HTTP/Errors/client/RequestURITooLongError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-RequestURITooLongError">Carbon/HTTP/Errors/client/RequestURITooLongError</a>
 						</h1>
 					</div>
 				
@@ -31080,9 +31895,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-TooManyRequestsError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-TooManyRequestsError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-TooManyRequestsError">Carbon/HTTP/Errors/client/TooManyRequestsError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-TooManyRequestsError">Carbon/HTTP/Errors/client/TooManyRequestsError</a>
 						</h1>
 					</div>
 				
@@ -31335,9 +32150,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-UnauthorizedError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-UnauthorizedError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-UnauthorizedError">Carbon/HTTP/Errors/client/UnauthorizedError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-UnauthorizedError">Carbon/HTTP/Errors/client/UnauthorizedError</a>
 						</h1>
 					</div>
 				
@@ -31590,9 +32405,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">Carbon/HTTP/Errors/client/UnsupportedMediaTypeError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">Carbon/HTTP/Errors/client/UnsupportedMediaTypeError</a>
 						</h1>
 					</div>
 				
@@ -31845,9 +32660,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-BadGatewayError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-BadGatewayError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-BadGatewayError">Carbon/HTTP/Errors/server/BadGatewayError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-BadGatewayError">Carbon/HTTP/Errors/server/BadGatewayError</a>
 						</h1>
 					</div>
 				
@@ -32100,9 +32915,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-BadResponseError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-BadResponseError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-BadResponseError">Carbon/HTTP/Errors/server/BadResponseError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-BadResponseError">Carbon/HTTP/Errors/server/BadResponseError</a>
 						</h1>
 					</div>
 				
@@ -32355,9 +33170,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-GatewayTimeoutError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-GatewayTimeoutError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-GatewayTimeoutError">Carbon/HTTP/Errors/server/GatewayTimeoutError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-GatewayTimeoutError">Carbon/HTTP/Errors/server/GatewayTimeoutError</a>
 						</h1>
 					</div>
 				
@@ -32610,9 +33425,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError</a>
 						</h1>
 					</div>
 				
@@ -32865,9 +33680,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-InternalServerErrorError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-InternalServerErrorError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-InternalServerErrorError">Carbon/HTTP/Errors/server/InternalServerErrorError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-InternalServerErrorError">Carbon/HTTP/Errors/server/InternalServerErrorError</a>
 						</h1>
 					</div>
 				
@@ -33120,9 +33935,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-NotImplementedError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-NotImplementedError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-NotImplementedError">Carbon/HTTP/Errors/server/NotImplementedError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-NotImplementedError">Carbon/HTTP/Errors/server/NotImplementedError</a>
 						</h1>
 					</div>
 				
@@ -33375,9 +34190,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Errors-server-ServiceUnavailableError">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Errors-server-ServiceUnavailableError">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Errors-server-ServiceUnavailableError">Carbon/HTTP/Errors/server/ServiceUnavailableError</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Errors-server-ServiceUnavailableError">Carbon/HTTP/Errors/server/ServiceUnavailableError</a>
 						</h1>
 					</div>
 				
@@ -33630,9 +34445,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Header">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Header">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Header">Carbon/HTTP/Header</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Header">Carbon/HTTP/Header</a>
 						</h1>
 					</div>
 				
@@ -34135,9 +34950,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-JSONParser">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-JSONParser">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-JSONParser">Carbon/HTTP/JSONParser</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-JSONParser">Carbon/HTTP/JSONParser</a>
 						</h1>
 					</div>
 				
@@ -34311,9 +35126,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Method">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Method">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Method">Carbon/HTTP/Method</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Method">Carbon/HTTP/Method</a>
 						</h1>
 					</div>
 				
@@ -34428,9 +35243,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Parser">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Parser">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Parser">Carbon/HTTP/Parser</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Parser">Carbon/HTTP/Parser</a>
 						</h1>
 					</div>
 				
@@ -34596,9 +35411,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Request">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Request">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Request">Carbon/HTTP/Request</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Request">Carbon/HTTP/Request</a>
 						</h1>
 					</div>
 				
@@ -36687,9 +37502,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-Response">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-Response">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-Response">Carbon/HTTP/Response</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-Response">Carbon/HTTP/Response</a>
 						</h1>
 					</div>
 				
@@ -37206,9 +38021,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-StatusCode">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-StatusCode">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-StatusCode">Carbon/HTTP/StatusCode</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-StatusCode">Carbon/HTTP/StatusCode</a>
 						</h1>
 					</div>
 				
@@ -37611,9 +38426,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-HTTP-StringParser">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-HTTP-StringParser">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-HTTP-StringParser">Carbon/HTTP/StringParser</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-HTTP-StringParser">Carbon/HTTP/StringParser</a>
 						</h1>
 					</div>
 				
@@ -37790,9 +38605,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-JSONLD">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-JSONLD">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-JSONLD">Carbon/JSONLD</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-JSONLD">Carbon/JSONLD</a>
 						</h1>
 					</div>
 				
@@ -37856,9 +38671,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-JSONLD-Converter">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-JSONLD-Converter">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-JSONLD-Converter">Carbon/JSONLD/Converter</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-JSONLD-Converter">Carbon/JSONLD/Converter</a>
 						</h1>
 					</div>
 				
@@ -38244,9 +39059,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-JSONLD-Parser">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-JSONLD-Parser">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-JSONLD-Parser">Carbon/JSONLD/Parser</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-JSONLD-Parser">Carbon/JSONLD/Parser</a>
 						</h1>
 					</div>
 				
@@ -38425,9 +39240,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-JSONLD-Processor">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-JSONLD-Processor">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-JSONLD-Processor">Carbon/JSONLD/Processor</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-JSONLD-Processor">Carbon/JSONLD/Processor</a>
 						</h1>
 					</div>
 				
@@ -38594,9 +39409,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP">Carbon/LDP</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP">Carbon/LDP</a>
 						</h1>
 					</div>
 				
@@ -38705,9 +39520,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-AddMemberAction">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-AddMemberAction">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-AddMemberAction">Carbon/LDP/AddMemberAction</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-AddMemberAction">Carbon/LDP/AddMemberAction</a>
 						</h1>
 					</div>
 				
@@ -39080,9 +39895,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-DirectContainer">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-DirectContainer">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-DirectContainer">Carbon/LDP/DirectContainer</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-DirectContainer">Carbon/LDP/DirectContainer</a>
 						</h1>
 					</div>
 				
@@ -39624,9 +40439,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-Error">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-Error">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-Error">Carbon/LDP/Error</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-Error">Carbon/LDP/Error</a>
 						</h1>
 					</div>
 				
@@ -39852,9 +40667,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-ErrorResponse">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-ErrorResponse">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-ErrorResponse">Carbon/LDP/ErrorResponse</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-ErrorResponse">Carbon/LDP/ErrorResponse</a>
 						</h1>
 					</div>
 				
@@ -40361,9 +41176,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-IndirectContainer">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-IndirectContainer">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-IndirectContainer">Carbon/LDP/IndirectContainer</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-IndirectContainer">Carbon/LDP/IndirectContainer</a>
 						</h1>
 					</div>
 				
@@ -40654,9 +41469,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-PersistedBlankNode">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-PersistedBlankNode">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-PersistedBlankNode">Carbon/LDP/PersistedBlankNode</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-PersistedBlankNode">Carbon/LDP/PersistedBlankNode</a>
 						</h1>
 					</div>
 				
@@ -40798,9 +41613,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-RemoveMemberAction">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-RemoveMemberAction">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-RemoveMemberAction">Carbon/LDP/RemoveMemberAction</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-RemoveMemberAction">Carbon/LDP/RemoveMemberAction</a>
 						</h1>
 					</div>
 				
@@ -41173,9 +41988,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-ResourceMetadata">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-ResourceMetadata">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-ResourceMetadata">Carbon/LDP/ResourceMetadata</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-ResourceMetadata">Carbon/LDP/ResourceMetadata</a>
 						</h1>
 					</div>
 				
@@ -41636,9 +42451,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-ResponseMetadata">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-ResponseMetadata">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-ResponseMetadata">Carbon/LDP/ResponseMetadata</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-ResponseMetadata">Carbon/LDP/ResponseMetadata</a>
 						</h1>
 					</div>
 				
@@ -42074,9 +42889,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-LDP-VolatileResource">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-LDP-VolatileResource">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-LDP-VolatileResource">Carbon/LDP/VolatileResource</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-LDP-VolatileResource">Carbon/LDP/VolatileResource</a>
 						</h1>
 					</div>
 				
@@ -42389,9 +43204,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS">Carbon/NS</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS">Carbon/NS</a>
 						</h1>
 					</div>
 				
@@ -42491,9 +43306,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-C">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-C">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-C">Carbon/NS/C</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-C">Carbon/NS/C</a>
 						</h1>
 					</div>
 				
@@ -43471,9 +44286,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-CP">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-CP">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-CP">Carbon/NS/CP</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-CP">Carbon/NS/CP</a>
 						</h1>
 					</div>
 				
@@ -43664,9 +44479,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-CS">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-CS">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-CS">Carbon/NS/CS</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-CS">Carbon/NS/CS</a>
 						</h1>
 					</div>
 				
@@ -44770,9 +45585,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-LDP">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-LDP">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-LDP">Carbon/NS/LDP</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-LDP">Carbon/NS/LDP</a>
 						</h1>
 					</div>
 				
@@ -45519,9 +46334,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-RDF">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-RDF">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-RDF">Carbon/NS/RDF</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-RDF">Carbon/NS/RDF</a>
 						</h1>
 					</div>
 				
@@ -45670,9 +46485,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-VCARD">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-VCARD">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-VCARD">Carbon/NS/VCARD</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-VCARD">Carbon/NS/VCARD</a>
 						</h1>
 					</div>
 				
@@ -45821,9 +46636,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NS-XSD">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NS-XSD">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NS-XSD">Carbon/NS/XSD</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NS-XSD">Carbon/NS/XSD</a>
 						</h1>
 					</div>
 				
@@ -47127,9 +47942,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-NamedFragment">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-NamedFragment">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-NamedFragment">Carbon/NamedFragment</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-NamedFragment">Carbon/NamedFragment</a>
 						</h1>
 					</div>
 				
@@ -47552,9 +48367,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-ObjectSchema">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-ObjectSchema">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-ObjectSchema">Carbon/ObjectSchema</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-ObjectSchema">Carbon/ObjectSchema</a>
 						</h1>
 					</div>
 				
@@ -48787,9 +49602,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedAccessPoint">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedAccessPoint">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedAccessPoint">Carbon/PersistedAccessPoint</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedAccessPoint">Carbon/PersistedAccessPoint</a>
 						</h1>
 					</div>
 				
@@ -49010,9 +49825,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedApp">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedApp">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedApp">Carbon/PersistedApp</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedApp">Carbon/PersistedApp</a>
 						</h1>
 					</div>
 				
@@ -49399,9 +50214,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedDocument">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedDocument">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedDocument">Carbon/PersistedDocument</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedDocument">Carbon/PersistedDocument</a>
 						</h1>
 					</div>
 				
@@ -52745,9 +53560,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedFragment">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedFragment">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedFragment">Carbon/PersistedFragment</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedFragment">Carbon/PersistedFragment</a>
 						</h1>
 					</div>
 				
@@ -53022,9 +53837,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedNamedFragment">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedNamedFragment">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedNamedFragment">Carbon/PersistedNamedFragment</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedNamedFragment">Carbon/PersistedNamedFragment</a>
 						</h1>
 					</div>
 				
@@ -53299,9 +54114,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedProtectedDocument">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedProtectedDocument">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedProtectedDocument">Carbon/PersistedProtectedDocument</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedProtectedDocument">Carbon/PersistedProtectedDocument</a>
 						</h1>
 					</div>
 				
@@ -53755,9 +54570,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-PersistedResource">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-PersistedResource">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-PersistedResource">Carbon/PersistedResource</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-PersistedResource">Carbon/PersistedResource</a>
 						</h1>
 					</div>
 				
@@ -54190,9 +55005,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Platform">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Platform">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Platform">Carbon/Platform</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Platform">Carbon/Platform</a>
 						</h1>
 					</div>
 				
@@ -54256,9 +55071,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Platform-Agents">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Platform-Agents">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Platform-Agents">Carbon/Platform/Agents</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Platform-Agents">Carbon/Platform/Agents</a>
 						</h1>
 					</div>
 				
@@ -54503,9 +55318,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Platform-Auth">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Platform-Auth">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Platform-Auth">Carbon/Platform/Auth</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Platform-Auth">Carbon/Platform/Auth</a>
 						</h1>
 					</div>
 				
@@ -54686,9 +55501,153 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Pointer">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Platform-PersistedAgent">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Pointer">Carbon/Pointer</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Platform-PersistedAgent">Carbon/Platform/PersistedAgent</a>
+						</h1>
+					</div>
+				
+
+					<div class="ui list doc-tags">
+						<div class="item">
+							<div class="content">
+								<span class="header">Default Export:</span>
+							</div>
+							<div class="ui bulleted list">
+									<div class="item">
+											<a href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
+										
+									</div>
+							</div>
+						</div>
+					</div>					<!--<div class="doc-module__default-exports">
+						<strong>Default Export</strong>:
+						<a href="#PersistedAgent">PersistedAgent</a>
+					</div>-->
+
+				<div class="ui basic segment doc-content doc-section__content">
+
+						
+							<h2 class="ui header doc-header" id="Carbon-Platform-PersistedAgent--Classes and Interfaces">
+						
+						
+								<a class="doc-header__link" href="#Carbon-Platform-PersistedAgent--Classes and Interfaces">
+									<div class="ui basic label doc-header__symbol symbol">
+										<i class="symbol__anchor large grey linkify icon"></i>
+									</div>
+								<span class="doc-header__main ">Classes and Interfaces in the Module</span>
+								</a>
+								
+							</h2>
+						
+						<div class="ui list elements-list">
+								<div class="item">
+									<span class="ui orange label icon elements-list__item-type">I</span>
+									<div class="content">
+										<a class="header" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
+											<div class="description">	Interface that specify an persisted agent in platform context i.e. Carbon context.
+
+</div>
+									</div>
+								</div>
+						</div>
+						<br>
+
+
+
+
+				</div>
+
+			</div>
+
+				<br><br><br>
+				<div class="ui vertical segment doc-object doc-section">
+
+					
+						<div class="ui basic inverted orange segment">
+							<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Platform-PersistedAgent-Class">
+								<span class="ui large orange horizontal basic label doc-header__label">Interface</span>
+								<a class="doc-header__link doc-header__main" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
+							</h1>
+						</div>
+					
+
+
+							<div class="ui list doc-tags">
+								<div class="item">
+									<div class="content">
+										<span class="header">Extends:</span>
+									</div>
+									<div class="ui bulleted list">
+											<div class="item">
+													<a href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
+												
+											</div>
+									</div>
+								</div>
+							</div>
+						<div class="ui basic segment doc-content doc-section__content">
+								<div class="doc-description">
+										<p>Interface that specify an persisted agent in platform context i.e. Carbon context.</p>
+									
+								</div>
+							<br>
+
+
+
+								
+									<h2 class="ui header doc-header" id="Carbon-Platform-PersistedAgent-Class--Properties">
+								
+								
+										<a class="doc-header__link" href="#Carbon-Platform-PersistedAgent-Class--Properties">
+											<div class="ui basic label doc-header__symbol symbol">
+												<i class="symbol__anchor large grey linkify icon"></i>
+											</div>
+										<span class="doc-header__main ">Properties</span>
+										</a>
+										
+									</h2>
+								
+
+								<div class="ui basic segment doc-content">
+											
+												<h4 class="ui header doc-header" id="Carbon-Platform-PersistedAgent-Class-platformRoles">
+											
+											
+													<a class="doc-header__link" href="#Carbon-Platform-PersistedAgent-Class-platformRoles">
+														<div class="ui basic label doc-header__symbol symbol">
+															<i class="symbol__anchor large grey linkify icon"></i>
+														</div>
+													<span class="doc-header__main code-label">.platformRoles</span>
+													</a>
+													<span class="doc-header__secondary"> : 	<a href="#Carbon-Pointer-Class[]">Carbon.Pointer.Class[]</a>
+											
+											</span>
+												</h4>
+											
+										
+											<!--pre><code class="typescript">platformRoles?:Carbon.Pointer.Class[]</code></pre-->
+										
+											<div class="ui vertical segment doc-content doc-object-element__content">
+													<div class="doc-description">
+															<p>A array of pointer that contains the specific platform roles the current agent have.</p>
+														
+													</div>
+												<br>
+											</div>
+								</div>
+
+						</div>
+				</div>
+
+
+			<br><br><br>
+			<div class="ui vertical segment doc-module doc-section">
+				
+					<div class="ui basic inverted grey segment">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Pointer">
+							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Pointer">Carbon/Pointer</a>
 						</h1>
 					</div>
 				
@@ -55805,9 +56764,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-ProtectedDocument">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-ProtectedDocument">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-ProtectedDocument">Carbon/ProtectedDocument</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-ProtectedDocument">Carbon/ProtectedDocument</a>
 						</h1>
 					</div>
 				
@@ -55967,9 +56926,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF">Carbon/RDF</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF">Carbon/RDF</a>
 						</h1>
 					</div>
 				
@@ -56060,9 +57019,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Document">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Document">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Document">Carbon/RDF/Document</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Document">Carbon/RDF/Document</a>
 						</h1>
 					</div>
 				
@@ -57161,9 +58120,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-List">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-List">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-List">Carbon/RDF/List</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-List">Carbon/RDF/List</a>
 						</h1>
 					</div>
 				
@@ -57404,9 +58363,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Literal">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Literal">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Literal">Carbon/RDF/Literal</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Literal">Carbon/RDF/Literal</a>
 						</h1>
 					</div>
 				
@@ -57871,9 +58830,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Literal-Serializer">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Literal-Serializer">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Literal-Serializer">Carbon/RDF/Literal/Serializer</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Literal-Serializer">Carbon/RDF/Literal/Serializer</a>
 						</h1>
 					</div>
 				
@@ -58051,9 +59010,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Literal-Serializers">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Literal-Serializers">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Literal-Serializers">Carbon/RDF/Literal/Serializers</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Literal-Serializers">Carbon/RDF/Literal/Serializers</a>
 						</h1>
 					</div>
 				
@@ -58099,9 +59058,9 @@
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Literal-Serializers-XSD">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Literal-Serializers-XSD">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Literal-Serializers-XSD">Carbon/RDF/Literal/Serializers/XSD</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Literal-Serializers-XSD">Carbon/RDF/Literal/Serializers/XSD</a>
 						</h1>
 					</div>
 				
@@ -59260,9 +60219,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Node">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Node">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Node">Carbon/RDF/Node</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Node">Carbon/RDF/Node</a>
 						</h1>
 					</div>
 				
@@ -60974,9 +61933,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-URI">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-URI">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-URI">Carbon/RDF/URI</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-URI">Carbon/RDF/URI</a>
 						</h1>
 					</div>
 				
@@ -62436,9 +63395,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDF-Value">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDF-Value">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDF-Value">Carbon/RDF/Value</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDF-Value">Carbon/RDF/Value</a>
 						</h1>
 					</div>
 				
@@ -62744,9 +63703,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RDFRepresentation">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RDFRepresentation">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RDFRepresentation">Carbon/RDFRepresentation</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RDFRepresentation">Carbon/RDFRepresentation</a>
 						</h1>
 					</div>
 				
@@ -63142,9 +64101,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Resource">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Resource">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Resource">Carbon/Resource</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Resource">Carbon/Resource</a>
 						</h1>
 					</div>
 				
@@ -63874,9 +64833,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-RetrievalPreferences">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-RetrievalPreferences">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-RetrievalPreferences">Carbon/RetrievalPreferences</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-RetrievalPreferences">Carbon/RetrievalPreferences</a>
 						</h1>
 					</div>
 				
@@ -64408,9 +65367,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-SDKContext">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-SDKContext">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-SDKContext">Carbon/SDKContext</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-SDKContext">Carbon/SDKContext</a>
 						</h1>
 					</div>
 				
@@ -65344,9 +66303,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-SPARQL">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-SPARQL">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-SPARQL">Carbon/SPARQL</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-SPARQL">Carbon/SPARQL</a>
 						</h1>
 					</div>
 				
@@ -65419,9 +66378,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-SPARQL-RawResults">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-SPARQL-RawResults">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-SPARQL-RawResults">Carbon/SPARQL/RawResults</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-SPARQL-RawResults">Carbon/SPARQL/RawResults</a>
 						</h1>
 					</div>
 				
@@ -66113,9 +67072,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-SPARQL-RawResultsParser">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-SPARQL-RawResultsParser">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-SPARQL-RawResultsParser">Carbon/SPARQL/RawResultsParser</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-SPARQL-RawResultsParser">Carbon/SPARQL/RawResultsParser</a>
 						</h1>
 					</div>
 				
@@ -66292,9 +67251,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-SPARQL-SELECTResults">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-SPARQL-SELECTResults">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-SPARQL-SELECTResults">Carbon/SPARQL/SELECTResults</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-SPARQL-SELECTResults">Carbon/SPARQL/SELECTResults</a>
 						</h1>
 					</div>
 				
@@ -66525,9 +67484,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-SPARQL-Service">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-SPARQL-Service">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-SPARQL-Service">Carbon/SPARQL/Service</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-SPARQL-Service">Carbon/SPARQL/Service</a>
 						</h1>
 					</div>
 				
@@ -67256,9 +68215,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Settings">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Settings">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Settings">Carbon/Settings</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Settings">Carbon/Settings</a>
 						</h1>
 					</div>
 				
@@ -67563,9 +68522,9 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			<div class="ui vertical segment doc-module doc-section">
 				
 					<div class="ui basic inverted grey segment">
-						<h1 class="ui header doc-header__main-section doc-header" id="Carbon-Utils">
+						<h1 class="ui header doc-header__main-section doc-header" id="Module-Carbon-Utils">
 							<span class="ui large grey horizontal basic label doc-header__label">Module</span>
-							<a class="doc-header__link doc-header__main" href="#Carbon-Utils">Carbon/Utils</a>
+							<a class="doc-header__link doc-header__main" href="#Module-Carbon-Utils">Carbon/Utils</a>
 						</h1>
 					</div>
 				
@@ -70078,6 +71037,70 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/languages/typescript.min.js"></script>
-	<script>hljs.initHighlightingOnLoad();</script>
+	<script>
+		(function() {
+
+			// Sidebar
+			var jqWindow = $( window );
+			var sidebarMenu = $( ".doc-menu-sidebar" )
+				.sidebar( "setting", "transition", "overlay" )
+				.sidebar( "attach events", ".doc-menu__launch-item" );
+
+			jqWindow.resize( onWindowResize );
+			function onWindowResize() {
+				if( jqWindow.width() <= 933 ) {
+					sidebarMenu.sidebar( {
+						closable: true,
+						dimPage: true,
+					} );
+					sidebarMenu.sidebar( "hide" );
+				} else {
+					sidebarMenu.sidebar( {
+						closable: false,
+						dimPage: false,
+					} );
+					sidebarMenu.sidebar( "show" );
+				}
+			}
+			onWindowResize();
+
+			// Menu
+			var $menuItem = $( ".doc-menu.vertical.menu a.item" );
+			var $menuSection = $( ".doc-menu.vertical.menu a.header" );
+
+			var handler = {
+				sectionObject: function() {
+					var $item = $( this )
+							.closest( ".orange.item" )
+							.addClass( "active" )
+						;
+					$( this )
+						.addClass( "active" )
+						.closest( ".ui.menu" )
+						.find( ".item.active" )
+						.not( $( this ) )
+						.not( $item )
+						.removeClass( "active" )
+					;
+				},
+				sectionModule: function() {
+					var $item = $( this )
+							.closest( ".orange.item" )
+							.addClass( "active" )
+						;
+					$item
+						.closest( ".ui.menu" )
+						.find( ".item.active" )
+						.not( $item )
+						.removeClass( "active" )
+					;
+				},
+			};
+
+			$menuItem.on( "click", handler.sectionObject );
+			$menuSection.on( "click", handler.sectionModule );
+
+		})();
+	</script>
 </body>
 </html>
