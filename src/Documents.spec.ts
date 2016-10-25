@@ -25,13 +25,16 @@ import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedBlankNode from "./PersistedBlankNode";
+import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
+import { create } from "domain";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -988,6 +991,888 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		describe( method(
 			INSTANCE,
+			"createChildren"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				expect( documents.createChildren ).toBeDefined();
+				expect( Utils.isFunction( documents.createChildren ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple JavaScript objects as children of the parent document.", [
+					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
+					{ name: "childrenObjects", type: "T[]", description: "An array with the object to be converted and persisted as new children of the parent document." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+				let finishPromises:Promise<void>[] = [];
+
+				// No request options
+				(() => {
+					let promises:Promise<any>[] = [];
+
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents = context.documents;
+
+					let objectSchema:ObjectSchema.Class = {
+						"ex": "http://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"index": {
+							"@id": "ex:index",
+							"@type": "xsd:integer",
+						},
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					};
+
+					function createObjects( total:number ):Object[] {
+						let objects:Object[] = [];
+						for( let index:number = 0; index < total; ++ index ) {
+							objects.push( {
+								index: index,
+								string: "A String",
+								date: new Date(),
+								pointerList: [
+									{
+										slug: "Fragment_1",
+										string: "The Named Fragment",
+									},
+									{
+										id: "_:Fragment_2",
+										string: "The Blank Node",
+									},
+								],
+								pointer: {
+									id: "#Fragment_1",
+									string: "The real Named Fragment",
+								},
+							} );
+						}
+						return objects;
+					}
+
+					context.extendObjectSchema( objectSchema );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/without-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/without-options/new-resource/",
+						},
+					} );
+
+					jasmine.Ajax.stubRequest( "http://example.com/no-callable-parent-resource/without-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/without-options/new-resource/",
+						},
+					} );
+
+					let spy:any = {
+						success: ():void => {},
+						fail: ():void => {},
+					};
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
+
+					// Normal behaviour
+					(() => {
+						let childrenObjects:Object[] = createObjects( 3 );
+						promises.push( documents.createChildren( "http://example.com/parent-resource/without-options/", childrenObjects ).then( ( [ persistedDocuments, responses ]:[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+							expect( responses ).toEqual( jasmine.any( Array ) );
+							expect( responses.length ).toBe( 3 );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+
+							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
+							expect( persistedDocuments.length ).toBe( 3 );
+							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
+								expect( document ).toBe( childrenObjects[ index ] );
+								expect( (<any> document).index ).toBe( index );
+								expect( document.id ).toBe( "http://example.com/parent-resource/without-options/new-resource/" );
+								expect( document.isResolved() ).toBe( false );
+								expect( documents.hasPointer( "parent-resource/without-options/new-resource/" ) ).toBe( true );
+							} );
+
+							spy.success();
+						} ) );
+
+						// Documents currently been persisted
+						promises.push( documents.createChildren( "http://example.com/parent-resource/without-options/", childrenObjects ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					// Some documents already been persisted
+					// Throw error, but the un-persisted ones will pass.
+					(() => {
+						let childrenObjects:Object[] = createObjects( 2 ).map( ( object:Object, index:number ) => {
+							if( index >= 1 ) {
+								return PersistedDocument.Factory.decorate( object, documents );
+							}
+							return object;
+						} );
+						promises.push( documents.createChildren( "http://example.com/no-callable-parent-resource/without-options/", childrenObjects ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					finishPromises.push( Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+						expect( jasmine.Ajax.requests.filter( /\/parent-resource\/without-options/ ).length ).toBe( 3 );
+						expect( jasmine.Ajax.requests.filter( /\/no-callable-parent-resource\/without-options/ ).length ).toBe( 1 );
+
+						expect( spyFail ).toHaveBeenCalledTimes( 2 );
+					} ) );
+				})();
+
+				// With request options
+				(() => {
+					let promises:Promise<any>[] = [];
+
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents = context.documents;
+
+					let objectSchema:ObjectSchema.Class = {
+						"ex": "http://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"index": {
+							"@id": "ex:index",
+							"@type": "xsd:integer",
+						},
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					};
+
+					function createObjects( total:number ):Object[] {
+						let objects:Object[] = [];
+						for( let index:number = 0; index < total; ++ index ) {
+							objects.push( {
+								index: index,
+								string: "A String",
+								date: new Date(),
+								pointerList: [
+									{
+										slug: "Fragment_1",
+										string: "The Named Fragment",
+									},
+									{
+										id: "_:Fragment_2",
+										string: "The Blank Node",
+									},
+								],
+								pointer: {
+									id: "#Fragment_1",
+									string: "The real Named Fragment",
+								},
+							} );
+						}
+						return objects;
+					}
+
+					context.extendObjectSchema( objectSchema );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/with-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/with-options/new-resource/",
+						},
+					} );
+
+					jasmine.Ajax.stubRequest( "http://example.com/no-callable-parent-resource/with-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/with-options/new-resource/",
+						},
+					} );
+
+					let spy:any = {
+						success: ():void => {},
+						fail: ():void => {},
+					};
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
+
+					// Normal behaviour
+					(() => {
+						let childrenObjects:Object[] = createObjects( 3 );
+						let headers:Map<string, HTTP.Header.Class> = new Map();
+						let requestOptions:HTTP.Request.Options = {
+							timeout: 50550,
+							headers: headers,
+						};
+						promises.push( documents.createChildren( "http://example.com/parent-resource/with-options/", childrenObjects, requestOptions ).then( ( [ persistedDocuments, responses ]:[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+							expect( responses ).toEqual( jasmine.any( Array ) );
+							expect( responses.length ).toBe( 3 );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+
+							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
+							expect( persistedDocuments.length ).toBe( 3 );
+							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
+								expect( document ).toBe( childrenObjects[ index ] );
+								expect( (<any> document).index ).toBe( index );
+								expect( document.id ).toBe( "http://example.com/parent-resource/with-options/new-resource/" );
+								expect( document.isResolved() ).toBe( false );
+								expect( documents.hasPointer( "parent-resource/with-options/new-resource/" ) ).toBe( true );
+							} );
+
+							// Should not be altered
+							expect( requestOptions ).toEqual( { timeout: 50550, headers: headers } );
+							expect( headers.size ).toBe( 0 );
+
+							spy.success();
+						} ) );
+
+						// Documents currently been persisted
+						promises.push( documents.createChildren( "http://example.com/parent-resource/with-options/", childrenObjects, requestOptions ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					// Some documents already been persisted
+					// Throw error, but the un-persisted ones will pass.
+					(() => {
+						let childrenObjects:Object[] = createObjects( 2 ).map( ( object:Object, index:number ) => {
+							if( index >= 1 ) {
+								return PersistedDocument.Factory.decorate( object, documents );
+							}
+							return object;
+						} );
+						let requestOptions:HTTP.Request.Options = {
+							timeout: 50550,
+						};
+						promises.push( documents.createChildren( "http://example.com/no-callable-parent-resource/with-options/", childrenObjects, requestOptions ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					finishPromises.push( Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+						expect( jasmine.Ajax.requests.filter( /\/parent-resource\/with-options/ ).length ).toBe( 3 );
+						expect( jasmine.Ajax.requests.filter( /\/no-callable-parent-resource\/with-options/ ).length ).toBe( 1 );
+
+						expect( spyFail ).toHaveBeenCalledTimes( 2 );
+					} ) );
+				})();
+
+				Promise.all( finishPromises ).then( done ).catch( done.fail );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple JavaScript objects as children of the parent document.", [
+					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
+					{ name: "childrenObjects", type: "T[]", description: "An array with the object to be converted and persisted as new children of the parent document." },
+					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+				let finishPromises:Promise<void>[] = [];
+
+				// With slugs but no request options
+				(() => {
+					let promises:Promise<any>[] = [];
+
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents = context.documents;
+
+					let objectSchema:ObjectSchema.Class = {
+						"ex": "http://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"index": {
+							"@id": "ex:index",
+							"@type": "xsd:integer",
+						},
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					};
+
+					function createObjects( total:number ):Object[] {
+						let objects:Object[] = [];
+						for( let index:number = 0; index < total; ++ index ) {
+							objects.push( {
+								index: index,
+								string: "A String",
+								date: new Date(),
+								pointerList: [
+									{
+										slug: "Fragment_1",
+										string: "The Named Fragment",
+									},
+									{
+										id: "_:Fragment_2",
+										string: "The Blank Node",
+									},
+								],
+								pointer: {
+									id: "#Fragment_1",
+									string: "The real Named Fragment",
+								},
+							} );
+						}
+						return objects;
+					}
+
+					context.extendObjectSchema( objectSchema );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/without-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/without-options/new-resource/",
+						},
+					} );
+
+					jasmine.Ajax.stubRequest( "http://example.com/no-callable-parent-resource/without-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/without-options/new-resource/",
+						},
+					} );
+
+					let spy:any = {
+						success: ():void => {},
+						fail: ():void => {},
+					};
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
+
+					// Normal behaviour
+					(() => {
+						let slugs:string[] = [ "first", "second", "third" ];
+						let childrenObjects:Object[] = createObjects( 3 );
+						promises.push( documents.createChildren( "http://example.com/parent-resource/without-options/", childrenObjects, slugs ).then( ( [ persistedDocuments, responses ]:[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+							expect( responses ).toEqual( jasmine.any( Array ) );
+							expect( responses.length ).toBe( 3 );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+
+							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
+							expect( persistedDocuments.length ).toBe( 3 );
+							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
+								expect( document ).toBe( childrenObjects[ index ] );
+								expect( (<any> document).index ).toBe( index );
+								expect( document.id ).toBe( "http://example.com/parent-resource/without-options/new-resource/" );
+								expect( document.isResolved() ).toBe( false );
+								expect( documents.hasPointer( "parent-resource/without-options/new-resource/" ) ).toBe( true );
+							} );
+
+							spy.success();
+						} ) );
+
+						// Documents currently been persisted
+						promises.push( documents.createChildren( "http://example.com/parent-resource/without-options/", childrenObjects, slugs ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					// Some documents already been persisted
+					// Throw error, but the un-persisted ones will pass.
+					(() => {
+						let slugs:string[] = [ "first", "second", "third" ];
+						let childrenObjects:Object[] = createObjects( 2 ).map( ( object:Object, index:number ) => {
+							if( index >= 1 ) {
+								return PersistedDocument.Factory.decorate( object, documents );
+							}
+							return object;
+						} );
+						promises.push( documents.createChildren( "http://example.com/no-callable-parent-resource/without-options/", childrenObjects, slugs ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					finishPromises.push( Promise.all( promises ).then( ():void => {
+						let requests:JasmineAjaxRequest[];
+						let slugs:string[];
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+						requests = jasmine.Ajax.requests.filter( /\/parent-resource\/without-options/ );
+						expect( requests.length ).toBe( 3 );
+						slugs = [ "first", "second", "third" ];
+						requests.forEach( ( request, index:number ) => {
+							expect( request.requestHeaders[ "slug" ] ).toBe( slugs[ index ] );
+						} );
+
+						slugs = [ "first" ];
+						requests = jasmine.Ajax.requests.filter( /\/no-callable-parent-resource\/without-options/ );
+						expect( requests.length ).toBe( 1 );
+						requests.forEach( ( request, index:number ) => {
+							expect( request.requestHeaders[ "slug" ] ).toBe( slugs[ index ] );
+						} );
+
+						expect( spyFail ).toHaveBeenCalledTimes( 2 );
+					} ) );
+				})();
+
+				// With null and undefined slugs
+				(() => {
+					let promises:Promise<any>[] = [];
+
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents = context.documents;
+
+					let objectSchema:ObjectSchema.Class = {
+						"ex": "http://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"index": {
+							"@id": "ex:index",
+							"@type": "xsd:integer",
+						},
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					};
+
+					function createObjects( total:number ):Object[] {
+						let objects:Object[] = [];
+						for( let index:number = 0; index < total; ++ index ) {
+							objects.push( {
+								index: index,
+								string: "A String",
+								date: new Date(),
+								pointerList: [
+									{
+										slug: "Fragment_1",
+										string: "The Named Fragment",
+									},
+									{
+										id: "_:Fragment_2",
+										string: "The Blank Node",
+									},
+								],
+								pointer: {
+									id: "#Fragment_1",
+									string: "The real Named Fragment",
+								},
+							} );
+						}
+						return objects;
+					}
+
+					context.extendObjectSchema( objectSchema );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/null-slugs/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/null-slugs/new-resource/",
+						},
+					} );
+
+					let spy:any = {
+						success: ():void => {},
+						fail: ():void => {},
+					};
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
+
+					// Normal behaviour
+					(() => {
+						let slugs:string[] = [ "first", null, "third", void 0, "", "sixth", "seventh" ];
+						let childrenObjects:Object[] = createObjects( 6 );
+						promises.push( documents.createChildren( "http://example.com/parent-resource/null-slugs/", childrenObjects, slugs ).then( ( [ persistedDocuments, responses ]:[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+							expect( responses ).toEqual( jasmine.any( Array ) );
+							expect( responses.length ).toBe( 6 );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+
+							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
+							expect( persistedDocuments.length ).toBe( 6 );
+							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
+								expect( document ).toBe( childrenObjects[ index ] );
+								expect( (<any> document).index ).toBe( index );
+								expect( document.id ).toBe( "http://example.com/parent-resource/null-slugs/new-resource/" );
+								expect( document.isResolved() ).toBe( false );
+								expect( documents.hasPointer( "parent-resource/null-slugs/new-resource/" ) ).toBe( true );
+							} );
+
+							spy.success();
+						} ) );
+					})();
+
+					finishPromises.push( Promise.all( promises ).then( ():void => {
+						let requests:JasmineAjaxRequest[];
+						let slugs:string[];
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+						requests = jasmine.Ajax.requests.filter( /\/parent-resource\/null-slugs/ );
+						expect( requests.length ).toBe( 6 );
+						slugs = [ "first", null, "third", null, null, "sixth" ];
+						requests.forEach( ( request, index:number ) => {
+							if( slugs[ index ] !== null ) {
+								expect( request.requestHeaders[ "slug" ] ).toBe( slugs[ index ] );
+							} else {
+								expect( request.requestHeaders[ "slug" ] ).toBeUndefined();
+							}
+						} );
+
+						expect( spyFail ).toHaveBeenCalledTimes( 0 );
+					} ) );
+				})();
+
+				// With slugs and request options
+				(() => {
+					let promises:Promise<any>[] = [];
+
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents = context.documents;
+
+					let objectSchema:ObjectSchema.Class = {
+						"ex": "http://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"index": {
+							"@id": "ex:index",
+							"@type": "xsd:integer",
+						},
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					};
+
+					function createObjects( total:number ):Object[] {
+						let objects:Object[] = [];
+						for( let index:number = 0; index < total; ++ index ) {
+							objects.push( {
+								index: index,
+								string: "A String",
+								date: new Date(),
+								pointerList: [
+									{
+										slug: "Fragment_1",
+										string: "The Named Fragment",
+									},
+									{
+										id: "_:Fragment_2",
+										string: "The Blank Node",
+									},
+								],
+								pointer: {
+									id: "#Fragment_1",
+									string: "The real Named Fragment",
+								},
+							} );
+						}
+						return objects;
+					}
+
+					context.extendObjectSchema( objectSchema );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/with-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/with-options/new-resource/",
+						},
+					} );
+
+					jasmine.Ajax.stubRequest( "http://example.com/no-callable-parent-resource/with-options/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/with-options/new-resource/",
+						},
+					} );
+
+					let spy:any = {
+						success: ():void => {},
+						fail: ():void => {},
+					};
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
+
+					// Normal behaviour
+					(() => {
+						let slugs:string[] = [ "first", void 0, "third" ];
+						let childrenObjects:Object[] = createObjects( 3 );
+						let headers:Map<string, HTTP.Header.Class> = new Map();
+						let requestOptions:HTTP.Request.Options = {
+							timeout: 50550,
+							headers: headers,
+						};
+						promises.push( documents.createChildren( "http://example.com/parent-resource/with-options/", childrenObjects, slugs, requestOptions ).then( ( [ persistedDocuments, responses ]:[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+							expect( responses ).toEqual( jasmine.any( Array ) );
+							expect( responses.length ).toBe( 3 );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+
+							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
+							expect( persistedDocuments.length ).toBe( 3 );
+							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
+								expect( document ).toBe( childrenObjects[ index ] );
+								expect( (<any> document).index ).toBe( index );
+								expect( document.id ).toBe( "http://example.com/parent-resource/with-options/new-resource/" );
+								expect( document.isResolved() ).toBe( false );
+								expect( documents.hasPointer( "parent-resource/with-options/new-resource/" ) ).toBe( true );
+							} );
+
+							// Should not be altered
+							expect( requestOptions ).toEqual( { timeout: 50550, headers: headers } );
+							expect( headers.size ).toBe( 0 );
+
+							spy.success();
+						} ) );
+
+						// Documents currently been persisted
+						promises.push( documents.createChildren( "http://example.com/parent-resource/with-options/", childrenObjects, slugs, requestOptions ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					// Some documents already been persisted
+					// Throw error, but the un-persisted ones will pass.
+					(() => {
+						let slugs:string[] = [ "first", "second", "third" ];
+						let childrenObjects:Object[] = createObjects( 2 ).map( ( object:Object, index:number ) => {
+							if( index >= 1 ) {
+								return PersistedDocument.Factory.decorate( object, documents );
+							}
+							return object;
+						} );
+						let requestOptions:HTTP.Request.Options = {
+							timeout: 50550,
+						};
+						promises.push( documents.createChildren( "http://example.com/no-callable-parent-resource/with-options/", childrenObjects, slugs, requestOptions ).catch( error => {
+							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+
+							spy.fail();
+						} ) );
+					})();
+
+					finishPromises.push( Promise.all( promises ).then( ():void => {
+						let requests:JasmineAjaxRequest[];
+						let slugs:string[];
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+						requests = jasmine.Ajax.requests.filter( /\/parent-resource\/with-options/ );
+						expect( requests.length ).toBe( 3 );
+						slugs = [ "first", null, "third" ];
+						requests.forEach( ( request, index:number ) => {
+							if( slugs[ index ] !== null ) {
+								expect( request.requestHeaders[ "slug" ] ).toBe( slugs[ index ] );
+							} else {
+								expect( request.requestHeaders[ "slug" ] ).toBeUndefined();
+							}
+						} );
+
+						slugs = [ "first" ];
+						requests = jasmine.Ajax.requests.filter( /\/no-callable-parent-resource\/with-options/ );
+						expect( requests.length ).toBe( 1 );
+						requests.forEach( ( request, index:number ) => {
+							expect( request.requestHeaders[ "slug" ] ).toBe( slugs[ index ] );
+						} );
+
+						expect( spyFail ).toHaveBeenCalledTimes( 2 );
+					} ) );
+				})();
+
+				Promise.all( finishPromises ).then( done ).catch( done.fail );
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
 			"createChildAndRetrieve"
 		), ():void => {
 
@@ -1083,6 +1968,156 @@ describe( module( "Carbon/Documents" ), ():void => {
 					done();
 				} ).catch( done.fail );
 
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildrenAndRetrieve"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				expect( documents.createChildrenAndRetrieve ).toBeDefined();
+				expect( Utils.isFunction( documents.createChildrenAndRetrieve ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple JavaScript objects as children of the parent document and retrieves tha updated data from the server.", [
+					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
+					{ name: "childrenObjects", type: "T[]", description: "An array with the object to be converted and persisted as new children of the parent document." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let mockCreateResponse:any[] = [ { index: 0, val: "Create response" }, { index: 1, val: "Create response" } ];
+				let mockRetrieveResponse:any[] = [ { index: 0, val: "Resolve response" }, { index: 1, val: "Resolve response" } ];
+				let options:HTTP.Request.Options = { timeout: 50550 };
+
+				let childrenObjects:Object[] = [ { index: 0, property: "My property" }, { index: 1, property: "My property" } ];
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callFake( ():Promise<[  PersistedProtectedDocument.Class[], HTTP.Response.Class[] ]> => {
+					let childrenDocuments:PersistedDocument.Class[] = childrenObjects.map( ( childObject:any ) => {
+						let document:Document.Class = Document.Factory.createFrom( childObject );
+						document.id = `http://example.com/parent-resource/new-child/${ childObject.index }/`;
+						(<any> documents).createPointerFrom( document, document.id );
+						return PersistedDocument.Factory.decorate( document, documents );
+					} );
+					return Promise.resolve<any>( [ childrenDocuments, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( ( documentURI:string ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]> => {
+					let childObject:any = childrenObjects.find( ( object:any ) => object.id === documentURI );
+					childObject._resolved = true;
+					return Promise.resolve<any>( [ childObject, mockRetrieveResponse[ childObject.index ] ] );
+				} );
+
+				documents.createChildrenAndRetrieve( "http://example.com/parent-resource/", childrenObjects, options ).then( ( [ persistedDocuments, [ createResponses, retrieveResponses ] ]:[ PersistedDocument.Class[], [ HTTP.Response.Class[], HTTP.Response.Class[] ] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledTimes( 1 );
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childrenObjects, options, undefined );
+
+					expect( spyRetrieve ).toHaveBeenCalledTimes( 2 );
+					childrenObjects.forEach( ( childObject:any ) => {
+						expect( spyRetrieve ).toHaveBeenCalledWith( `http://example.com/parent-resource/new-child/${ childObject.index }/` );
+					} );
+
+					expect( persistedDocuments.length ).toBe( 2 );
+					expect( createResponses.length ).toBe( 2 );
+					expect( retrieveResponses.length ).toBe( 2 );
+					for( let index:number = 0; index < 2; ++ index ) {
+						expect( persistedDocuments ).toContain( childrenObjects[ index ] );
+						expect( createResponses ).toContain( mockCreateResponse[ index ] );
+						expect( retrieveResponses ).toContain( mockRetrieveResponse[ index ] );
+					}
+
+					done();
+				} ).catch( done.fail );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple JavaScript objects as children of the parent document and retrieves tha updated data from the server.", [
+					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
+					{ name: "childrenObjects", type: "T[]", description: "An array with the object to be converted and persisted as new children of the parent document." },
+					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				let mockCreateResponse:any[] = [ { index: 0, val: "Create response" }, { index: 1, val: "Create response" } ];
+				let mockRetrieveResponse:any[] = [ { index: 0, val: "Resolve response" }, { index: 1, val: "Resolve response" } ];
+
+				let options:HTTP.Request.Options = { timeout: 50550 };
+				let slugs:string[] = [ "first", "second", "third" ];
+				let childrenObjects:Object[] = [ { index: 0, property: "My property" }, { index: 1, property: "My property" } ];
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callFake( ( parentURI:string, objects:Object[], createSlugs:string[], requestOptions:HTTP.Request.Options ):Promise<[  PersistedProtectedDocument.Class[], HTTP.Response.Class[] ]> => {
+					expect( parentURI ).toBe( "http://example.com/parent-resource/" );
+					expect( objects ).toBe( childrenObjects );
+					expect( createSlugs ).toBe( slugs );
+					expect( requestOptions ).toBe( options );
+
+					let childrenDocuments:PersistedDocument.Class[] = childrenObjects.map( ( childObject:any ) => {
+						let document:Document.Class = Document.Factory.createFrom( childObject );
+						document.id = `http://example.com/parent-resource/new-child/${ childObject.index }/`;
+						(<any> documents).createPointerFrom( document, document.id );
+						return PersistedDocument.Factory.decorate( document, documents );
+					} );
+					return Promise.resolve<any>( [ childrenDocuments, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( ( documentURI:string ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]> => {
+					let childObject:any = childrenObjects.find( ( object:any ) => object.id === documentURI );
+					childObject._resolved = true;
+					return Promise.resolve<any>( [ childObject, mockRetrieveResponse[ childObject.index ] ] );
+				} );
+
+				documents.createChildrenAndRetrieve( "http://example.com/parent-resource/", childrenObjects, slugs, options ).then( ( [ persistedDocuments, [ createResponses, retrieveResponses ] ]:[ PersistedDocument.Class[], [ HTTP.Response.Class[], HTTP.Response.Class[] ] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledTimes( 1 );
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childrenObjects, slugs, options );
+
+					expect( spyRetrieve ).toHaveBeenCalledTimes( 2 );
+					childrenObjects.forEach( ( childObject:any ) => {
+						expect( spyRetrieve ).toHaveBeenCalledWith( `http://example.com/parent-resource/new-child/${ childObject.index }/` );
+					} );
+
+					expect( persistedDocuments.length ).toBe( 2 );
+					expect( createResponses.length ).toBe( 2 );
+					expect( retrieveResponses.length ).toBe( 2 );
+					for( let index:number = 0; index < 2; ++ index ) {
+						expect( persistedDocuments ).toContain( childrenObjects[ index ] );
+						expect( createResponses ).toContain( mockCreateResponse[ index ] );
+						expect( retrieveResponses ).toContain( mockRetrieveResponse[ index ] );
+					}
+
+					done();
+				} ).catch( done.fail );
 			} );
 
 		} );
@@ -1798,6 +2833,293 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( spyFail ).toHaveBeenCalledTimes( 4 );
 					done();
 				}, done.fail );
+			} );
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createAccessPoints"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				expect( documents.createAccessPoints ).toBeDefined();
+				expect( Utils.isFunction( documents.createAccessPoints ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple access points objects for the specified document.", [
+					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
+					{ name: "accessPoints", type: "T & Carbon.AccessPoint.Class", description: "Array with the access points to persist." },
+					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				function createAccessPoint( total:number ):AccessPoint.Class[] {
+					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					for( let index:number = 0; index < total; ++ index ) {
+						accessPoints.push( {
+							index: index,
+							hasMemberRelation: "http://example.com/myNamespace#some-relation",
+							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
+						} );
+					}
+					return accessPoints;
+				}
+
+				class MockResponse extends HTTP.Response.Class {
+					constructor() {
+						super( <any>{}, "", <any>{} );
+					}
+				}
+				let promise:Promise<any> = Promise.resolve();
+				let checkRequestState:( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => void = <any>( () => {} );
+
+				let slugs:string[];
+				let accessPoints:AccessPoint.Class[];
+				let requestOptions:HTTP.Request.Options;
+
+				let createSpy:jasmine.Spy = spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+					expect( documentURI ).toBe( "http://example.com/parent-resource/" );
+					checkRequestState( accessPoint, slug, options );
+
+					if( ! options.headers ) options.headers = new Map();
+					options.headers.set( "A header", <any>{} );
+					let mockResponse:HTTP.Response.Class = new MockResponse();
+					return Promise.resolve( [ accessPoint, mockResponse ] );
+				} );
+
+				// Execute tests in sequential order
+				promise = promise.then( () => {
+					// Normal behavior
+					let headers:Map<string, HTTP.Header.Class> = new Map();
+					requestOptions = {
+						timeout: 50550,
+						headers: headers,
+					};
+					slugs = [ "first", "second", "third" ];
+					accessPoints = createAccessPoint( 3 );
+					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+						let index:number = (<any> accessPoint).index;
+						expect( slug ).toBe( slugs[ index ] );
+						expect( options ).not.toBe( requestOptions );
+						expect( options ).toEqual( {
+							timeout: 50550,
+							headers: headers,
+						} );
+						expect( options.headers.size ).toBe( 0 );
+					};
+
+					return documents.createAccessPoints( "http://example.com/parent-resource/", accessPoints, slugs, requestOptions )
+						.then( ( [ persistedAccessPoints, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ) => {
+							expect( persistedAccessPoints.length ).toBe( 3 );
+							expect( responses.length ).toBe( 3 );
+
+							persistedAccessPoints.forEach( persistedAccessPoint => {
+								expect( accessPoints ).toContain( persistedAccessPoint );
+							} );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+						} );
+				} ).then( () => {
+					// Without request options
+					slugs = [ "first", "second", "third" ];
+					accessPoints = createAccessPoint( 3 );
+					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+						let index:number = (<any> accessPoint).index;
+						expect( slug ).toBe( slugs[ index ] );
+						expect( options ).toEqual( {} );
+					};
+
+					return documents.createAccessPoints( "http://example.com/parent-resource/", accessPoints, slugs )
+						.then( ( [ persistedAccessPoints, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ) => {
+							expect( persistedAccessPoints.length ).toBe( 3 );
+							expect( responses.length ).toBe( 3 );
+
+							persistedAccessPoints.forEach( persistedAccessPoint => {
+								expect( accessPoints ).toContain( persistedAccessPoint );
+							} );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+						} );
+				} ).then( () => {
+					// Test values of the slugs
+					slugs = [ "first", void 0, null, "fourth", "" ];
+					accessPoints = createAccessPoint( 5 );
+					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+						let index:number = (<any> accessPoint).index;
+						if( ! ! slugs[ index ] ) {
+							expect( slug ).toBe( slugs[ index ] );
+						} else {
+							expect( slug ).toBeNull();
+						}
+						expect( options ).toEqual( {} );
+					};
+
+					return documents.createAccessPoints( "http://example.com/parent-resource/", accessPoints, slugs )
+						.then( ( [ persistedAccessPoints, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ) => {
+							expect( persistedAccessPoints.length ).toBe( 5 );
+							expect( responses.length ).toBe( 5 );
+
+							persistedAccessPoints.forEach( persistedAccessPoint => {
+								expect( accessPoints ).toContain( persistedAccessPoint );
+							} );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+						} );
+				} ).then( () => {
+					// Without slugs
+					accessPoints = createAccessPoint( 3 );
+					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+						expect( slug ).toBeNull();
+						expect( options ).toEqual( {} );
+					};
+
+					return documents.createAccessPoints( "http://example.com/parent-resource/", accessPoints )
+						.then( ( [ persistedAccessPoints, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ) => {
+							expect( persistedAccessPoints.length ).toBe( 3 );
+							expect( responses.length ).toBe( 3 );
+
+							persistedAccessPoints.forEach( persistedAccessPoint => {
+								expect( accessPoints ).toContain( persistedAccessPoint );
+							} );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+						} );
+				} );
+
+				promise.then( done, done.fail );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple access points objects for the specified document.", [
+					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
+					{ name: "accessPoints", type: "T & Carbon.AccessPoint.Class", description: "Array with the access points to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+				class MockedContext extends AbstractContext {
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents = context.documents;
+
+				function createAccessPoint( total:number ):AccessPoint.Class[] {
+					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					for( let index:number = 0; index < total; ++ index ) {
+						accessPoints.push( {
+							index: index,
+							hasMemberRelation: "http://example.com/myNamespace#some-relation",
+							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
+						} );
+					}
+					return accessPoints;
+				}
+
+				class MockResponse extends HTTP.Response.Class {
+					constructor() {
+						super( <any>{}, "", <any>{} );
+					}
+				}
+				let promise:Promise<any> = Promise.resolve();
+				let checkRequestState:( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => void = <any>( () => {} );
+
+				let accessPoints:AccessPoint.Class[];
+				let requestOptions:HTTP.Request.Options;
+
+				let createSpy:jasmine.Spy = spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+					expect( documentURI ).toBe( "http://example.com/parent-resource/" );
+					checkRequestState( accessPoint, slug, options );
+
+					if( ! options.headers ) options.headers = new Map();
+					options.headers.set( "A header", <any>{} );
+					let mockResponse:HTTP.Response.Class = new MockResponse();
+					return Promise.resolve( [ accessPoint, mockResponse ] );
+				} );
+
+				// Execute tests in sequential order
+				promise = promise.then( () => {
+					// Normal behavior
+					let headers:Map<string, HTTP.Header.Class> = new Map();
+					requestOptions = {
+						timeout: 50550,
+						headers: headers,
+					};
+					accessPoints = createAccessPoint( 3 );
+					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+						expect( slug ).toBeNull();
+						expect( options ).not.toBe( requestOptions );
+						expect( options ).toEqual( {
+							timeout: 50550,
+							headers: headers,
+						} );
+						expect( options.headers.size ).toBe( 0 );
+					};
+
+					return documents.createAccessPoints( "http://example.com/parent-resource/", accessPoints, requestOptions )
+						.then( ( [ persistedAccessPoints, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ) => {
+							expect( persistedAccessPoints.length ).toBe( 3 );
+							expect( responses.length ).toBe( 3 );
+
+							persistedAccessPoints.forEach( persistedAccessPoint => {
+								expect( accessPoints ).toContain( persistedAccessPoint );
+							} );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+						} );
+				} ).then( () => {
+					// Without request options
+					accessPoints = createAccessPoint( 3 );
+					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+						let index:number = (<any> accessPoint).index;
+						expect( slug ).toBeNull();
+						expect( options ).toEqual( {} );
+					};
+
+					return documents.createAccessPoints( "http://example.com/parent-resource/", accessPoints )
+						.then( ( [ persistedAccessPoints, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ) => {
+							expect( persistedAccessPoints.length ).toBe( 3 );
+							expect( responses.length ).toBe( 3 );
+
+							persistedAccessPoints.forEach( persistedAccessPoint => {
+								expect( accessPoints ).toContain( persistedAccessPoint );
+							} );
+							responses.forEach( response => {
+								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							} );
+						} );
+				} );
+
+				promise.then( done, done.fail );
 			} );
 		} );
 

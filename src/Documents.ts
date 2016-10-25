@@ -197,6 +197,27 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.persistDocument<T & Document.Class, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
+	createChildren<T>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T>( parentURI:string, childrenObjects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]> {
+		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
+		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
+
+		return Promise.all<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>( childrenObjects.map( ( childObject:T, index:number ) => {
+			let slug:string = (slugs !== null && index < slugs.length && ! ! slugs[ index ]) ? slugs[ index ] : null;
+
+			let options:HTTP.Request.Options = Object.assign( {}, requestOptions );
+			if( requestOptions.headers ) options.headers = Utils.M.extend( new Map(), requestOptions.headers );
+			return this.createChild<T>( parentURI, childObject, slug, options );
+
+		} ) ).then( ( requestResponses:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ][] ) => {
+			let persistedDocuments:(T & PersistedProtectedDocument.Class)[] = requestResponses.map( response => response[ 0 ] );
+			let responses:HTTP.Response.Class[] = requestResponses.map( response => response[ 1 ] );
+
+			return [ persistedDocuments, responses ];
+		} );
+	}
+
 	createChildAndRetrieve<T>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve<T>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve<T>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
@@ -204,8 +225,20 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then( ( [ document, response ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			createResponse = response;
 			return this.get<T>( document.id );
-		} ).then( ( [ persistedDocument, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+		} ).then( ( [ persistedDocument, response ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			return [ persistedDocument, [ createResponse, response ] ];
+		} );
+	}
+
+	createChildrenAndRetrieve<T>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[] ] ]>;
+	createChildrenAndRetrieve<T>( parentURI:string, childrenObjects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[] ] ]>;
+	createChildrenAndRetrieve<T>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[] ] ]> {
+		let createResponses:HTTP.Response.Class[];
+		return this.createChildren( parentURI, childrenObjects, slugsOrRequestOptions, requestOptions ).then( ( [ documents, responses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
+			createResponses = responses;
+			return Pointer.Util.resolveAll<T>( documents );
+		} ).then( ( [ persistedDocuments, responses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
+			return [ persistedDocuments, [ createResponses, responses ] ];
 		} );
 	}
 
@@ -287,6 +320,28 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 		return this.persistDocument<T & AccessPoint.DocumentClass, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
+	}
+
+
+	createAccessPoints<T>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
+	createAccessPoints<T>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
+	createAccessPoints<T>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], slugsOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]> {
+		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
+		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
+
+		return Promise.all<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>( accessPoints.map( ( accessPoint:T & AccessPoint.Class, index:number ) => {
+			let slug:string = (slugs !== null && index < slugs.length && ! ! slugs[ index ]) ? slugs[ index ] : null;
+
+			let options:HTTP.Request.Options = Object.assign( {}, requestOptions );
+			if( requestOptions.headers ) options.headers = Utils.M.extend( new Map(), requestOptions.headers );
+			return this.createAccessPoint<T>( documentURI, accessPoint, slug, options );
+
+		} ) ).then( ( requestResponses:[ T & PersistedAccessPoint.Class, HTTP.Response.Class ][] ) => {
+			let persistedAccessPoints:(T & PersistedAccessPoint.Class)[] = requestResponses.map( response => response[ 0 ] );
+			let responses:HTTP.Response.Class[] = requestResponses.map( response => response[ 1 ] );
+
+			return [ persistedAccessPoints, responses ];
+		} );
 	}
 
 	upload( parentURI:string, data:Buffer, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
@@ -875,11 +930,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return uri;
 	}
 
-	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel:string ):void {
+	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel:string ):HTTP.Request.Options {
 		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
+
+		return requestOptions;
 	}
 
 	private getMembershipResource( documentResource:RDF.Node.Class, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Node.Class {
