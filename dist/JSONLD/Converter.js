@@ -31,6 +31,27 @@ var Class = (function () {
         literalSerializers.set(NS.XSD.DataType.string, RDF.Literal.Serializers.XSD.stringSerializer);
         return literalSerializers;
     };
+    Class.getPropertyURI = function (propertyName, definition, vocab) {
+        var uri;
+        var relativeName = null;
+        if (definition.uri !== null) {
+            uri = definition.uri.toString();
+            if (RDF.URI.Util.isRelative(uri))
+                relativeName = uri;
+        }
+        else {
+            relativeName = propertyName;
+        }
+        if (relativeName !== null) {
+            if (vocab !== null) {
+                uri = vocab + relativeName;
+            }
+            else {
+                throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper absolute @id for the property '" + propertyName + "'");
+            }
+        }
+        return uri;
+    };
     Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary) {
         if (pointerLibrary === void 0) { pointerLibrary = null; }
         var targetObjectOrObjects = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
@@ -66,16 +87,7 @@ var Class = (function () {
             var expandedPropertyName = null;
             if (digestedSchema.properties.has(propertyName)) {
                 var definition = Utils.O.clone(digestedSchema.properties.get(propertyName), { objects: true });
-                if (definition.uri !== null) {
-                    expandedPropertyName = definition.uri.toString();
-                }
-                else if (digestedSchema.vocab !== null) {
-                    expandedPropertyName = digestedSchema.vocab + propertyName;
-                    definition.uri = new RDF.URI.Class(expandedPropertyName);
-                }
-                else {
-                    throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
-                }
+                expandedPropertyName = Class.getPropertyURI(propertyName, definition, digestedSchema.vocab);
                 expandedValue = _this.expandProperty(value, definition, generalSchema, digestedSchema);
             }
             else if (RDF.URI.Util.isAbsolute(propertyName) || digestedSchema.vocab !== null) {
@@ -381,16 +393,7 @@ var Class = (function () {
     Class.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            var uri;
-            if (definition.uri !== null) {
-                uri = definition.uri.toString();
-            }
-            else if (digestedSchema.vocab !== null) {
-                uri = digestedSchema.vocab + propertyName;
-            }
-            else {
-                throw new Errors.InvalidJSONLDSyntaxError("The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '" + propertyName + "'");
-            }
+            var uri = Class.getPropertyURI(propertyName, definition, digestedSchema.vocab);
             map.set(uri, propertyName);
         });
         return map;
