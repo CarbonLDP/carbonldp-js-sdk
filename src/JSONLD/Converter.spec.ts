@@ -13,7 +13,6 @@ import {
 } from "./../test/JasmineExtender";
 
 import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
@@ -135,6 +134,9 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					"http://example.com/my-vocabulary#elementWithoutID": [
 						{ "@value": "One element in a set" },
 					],
+					"http://example.com/my-vocabulary#relative-at-id": [
+						{ "@value": "Property without an absolute @id" },
+					],
 				};
 
 				let generalSchema:ObjectSchema.Class = {
@@ -178,6 +180,10 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					},
 					"elementWithoutID": {
 						"@type": "xsd:string",
+						"@container": "@set",
+					},
+					"relative@id": {
+						"@id": "relative-at-id",
 						"@container": "@set",
 					},
 				};
@@ -250,6 +256,11 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( Utils.isArray( compactedObject.elementWithoutID ) ).toBe( true );
 				expect( compactedObject.elementWithoutID.length ).toBe( 1 );
 				expect( compactedObject.elementWithoutID[ 0 ] ).toBe( "One element in a set" );
+
+				expect( Utils.hasProperty( compactedObject, "relative@id" ) ).toBe( true );
+				expect( Utils.isArray( compactedObject[ "relative@id" ] ) ).toBe( true );
+				expect( compactedObject[ "relative@id" ].length ).toBe( 1 );
+				expect( compactedObject[ "relative@id" ][ 0 ] ).toBe( "Property without an absolute @id" );
 			} );
 		} );
 
@@ -345,6 +356,10 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 						"@type": "xsd:string",
 						"@container": "@set",
 					},
+					"relative@id": {
+						"@id": "relative-at-id",
+						"@container": "@set",
+					},
 				} ];
 
 				let compactedObject:any = {
@@ -393,6 +408,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					"vocabPointer": "to-pointer",
 					"relativePointer": Pointer.Factory.create( "relative-pointer/" ),
 					"elementWithoutID": "This element will be converted into a set",
+					"relative@id": [ "Property with a relative @id" ],
 				};
 
 				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
@@ -569,6 +585,14 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "This element will be converted into a set" );
 
+				expect( expandedObject[ "http://example.com/my-vocabulary#relative-at-id" ] ).toBeDefined();
+				property = expandedObject[ "http://example.com/my-vocabulary#relative-at-id" ];
+				expect( property ).toEqual( jasmine.any( Array ) );
+				expect( property.length ).toBe( 1 );
+				literal = <RDF.Literal.Class> property[ 0 ];
+				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.DataType.string ) ).toBe( true );
+				expect( literal[ "@value" ] ).toBe( "Property with a relative @id" );
 			} );
 
 		} );
