@@ -1,3 +1,19 @@
+# 0.40.0 (2016/10/27)
+
+- Completed #99 - Properties declared in the schema can be declared with a relative `@id` that will be resolved when needed with the default vocabulary of the current context
+- Completed #91 - Add methods to persist multiple children and access points
+    - Added `context.documents.createChildren()` and `context.documents.createChildrenAndRetrieve()`
+    - Added `persistedDocument.createChildren()` and `persistedDocument.createChildrenAndRetrieve()`
+- Completed #89 - Add missing interfaces' documentation
+- Resolved #94 - Change the documentation TOC to display only the classes and interfaces
+- Fixed #96 - Error due to a circular reference between fragments of a document
+- Fixed #90 - Change the form some generics were used
+- Fixed some errors in the documentation
+- Updated typescript to ^2.0.6
+
+#### Breaking Changes
+- Renamed `Carbon.RDF.RDFNode` to `Carbon.RDF.Node`
+
 # 0.39.0 (October 12, 2016)
 
 - Completed [LDP-818](https://jira.base22.com/browse/LDP-818) - Specify `@type` with relative URIs
