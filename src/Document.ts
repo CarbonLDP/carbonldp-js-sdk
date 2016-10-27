@@ -177,7 +177,7 @@ function createFragment<T extends Object>( slugOrObject?:any, slug?:string ):T &
 		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	let fragment: T & BlankNode.Class = BlankNode.Factory.createFrom<T>( object, slug, document );
+	let fragment:T & BlankNode.Class = BlankNode.Factory.createFrom<T>( object, slug, document );
 	document._fragmentsIndex.set( fragment.id, fragment );
 
 	convertNestedObjects( document, fragment );
@@ -414,7 +414,7 @@ export class Factory {
 	}
 }
 
-function convertNestedObjects( parent:Class, actual:any, fragmentsTracker?:Set<string> ):void {
+function convertNestedObjects( parent:Class, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
 	let next:any;
 	let idOrSlug:string;
 	let fragment:Fragment.Class;
@@ -430,8 +430,8 @@ function convertNestedObjects( parent:Class, actual:any, fragmentsTracker?:Set<s
 
 		if( ! Utils.isPlainObject( next ) ) continue;
 		if( Pointer.Factory.is( next ) ) {
-			if( parent.hasFragment( next.id ) ) {
-				if( fragmentsTracker ) fragmentsTracker.add( next.id );
+			if( parent.hasFragment( next.id ) && ! fragmentsTracker.has( next.id ) ) {
+				fragmentsTracker.add( next.id );
 				convertNestedObjects( parent, next, fragmentsTracker );
 			}
 			continue;

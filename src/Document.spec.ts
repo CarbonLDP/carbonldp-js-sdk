@@ -981,6 +981,13 @@ describe( module( "Carbon/Document" ), ():void => {
 				delete document[ "object" ];
 				document._normalize();
 				expect( document.hasFragment( fragment.id ) ).toBe( false );
+
+				fragment = document.createFragment( { string: "Cyclical Fragment" } );
+				fragment[ "cycle" ] = fragment;
+				document[ "cyclical-fragment" ] = fragment;
+				document._normalize();
+				expect( document[ "cyclical-fragment" ] ).toBeDefined();
+				expect( document.hasFragment( fragment.id ) ).toBe( true );
 			} );
 
 			it( hasMethod(
