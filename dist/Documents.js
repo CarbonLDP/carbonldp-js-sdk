@@ -168,6 +168,23 @@ var Class = (function () {
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
         return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
+    Class.prototype.createChildren = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : null;
+        requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
+        return Promise.all(childrenObjects.map(function (childObject, index) {
+            var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
+            var options = Object.assign({}, requestOptions);
+            if (requestOptions.headers)
+                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
+            return _this.createChild(parentURI, childObject, slug, options);
+        })).then(function (requestResponses) {
+            var persistedDocuments = requestResponses.map(function (response) { return response[0]; });
+            var responses = requestResponses.map(function (response) { return response[1]; });
+            return [persistedDocuments, responses];
+        });
+    };
     Class.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
         var createResponse;
@@ -178,6 +195,17 @@ var Class = (function () {
         }).then(function (_a) {
             var persistedDocument = _a[0], response = _a[1];
             return [persistedDocument, [createResponse, response]];
+        });
+    };
+    Class.prototype.createChildrenAndRetrieve = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
+        var createResponses;
+        return this.createChildren(parentURI, childrenObjects, slugsOrRequestOptions, requestOptions).then(function (_a) {
+            var documents = _a[0], responses = _a[1];
+            createResponses = responses;
+            return Pointer.Util.resolveAll(documents);
+        }).then(function (_a) {
+            var persistedDocuments = _a[0], responses = _a[1];
+            return [persistedDocuments, [createResponses, responses]];
         });
     };
     Class.prototype.listChildren = function (parentURI, requestOptions) {
@@ -250,6 +278,23 @@ var Class = (function () {
             return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
         return this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
+    };
+    Class.prototype.createAccessPoints = function (documentURI, accessPoints, slugsOrRequestOptions, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : null;
+        requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
+        return Promise.all(accessPoints.map(function (accessPoint, index) {
+            var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
+            var options = Object.assign({}, requestOptions);
+            if (requestOptions.headers)
+                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
+            return _this.createAccessPoint(documentURI, accessPoint, slug, options);
+        })).then(function (requestResponses) {
+            var persistedAccessPoints = requestResponses.map(function (response) { return response[0]; });
+            var responses = requestResponses.map(function (response) { return response[1]; });
+            return [persistedAccessPoints, responses];
+        });
     };
     Class.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -767,6 +812,7 @@ var Class = (function () {
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
+        return requestOptions;
     };
     Class.prototype.getMembershipResource = function (documentResource, rdfDocuments, response) {
         var membershipResource;

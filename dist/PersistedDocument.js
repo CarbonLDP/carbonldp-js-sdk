@@ -116,6 +116,9 @@ function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, request
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
     return this._documents.createChild(this.id, object, slug, requestOptions);
 }
+function createChildren(objects, slugsOrRequestOptions, requestOptions) {
+    return this._documents.createChildren(this.id, objects, slugsOrRequestOptions, requestOptions);
+}
 function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     requestOptions = HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
@@ -123,8 +126,14 @@ function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptio
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
     return this._documents.createChildAndRetrieve(this.id, object, slug, requestOptions);
 }
+function createChildrenAndRetrieve(objects, slugsOrRequestOptions, requestOptions) {
+    return this._documents.createChildrenAndRetrieve(this.id, objects, slugsOrRequestOptions, requestOptions);
+}
 function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoint(this.id, accessPoint, slugOrRequestOptions, requestOptions);
+}
+function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
+    return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
 function listChildren() {
     return this._documents.listChildren(this.id);
@@ -200,8 +209,11 @@ var Factory = (function () {
             && Utils.hasFunction(object, "addMember")
             && Utils.hasFunction(object, "addMembers")
             && Utils.hasFunction(object, "createAccessPoint")
+            && Utils.hasFunction(object, "createAccessPoints")
             && Utils.hasFunction(object, "createChild")
+            && Utils.hasFunction(object, "createChildren")
             && Utils.hasFunction(object, "createChildAndRetrieve")
+            && Utils.hasFunction(object, "createChildrenAndRetrieve")
             && Utils.hasFunction(object, "getChildren")
             && Utils.hasFunction(object, "getMembers")
             && Utils.hasFunction(object, "listChildren")
@@ -382,17 +394,35 @@ var Factory = (function () {
                 configurable: true,
                 value: createChild,
             },
+            "createChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createChildren,
+            },
             "createChildAndRetrieve": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: createChildAndRetrieve,
             },
+            "createChildrenAndRetrieve": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createChildrenAndRetrieve,
+            },
             "createAccessPoint": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: createAccessPoint,
+            },
+            "createAccessPoints": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: createAccessPoints,
             },
             "listChildren": {
                 writable: false,

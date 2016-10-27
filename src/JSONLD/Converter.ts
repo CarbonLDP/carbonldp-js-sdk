@@ -30,10 +30,31 @@ export class Class {
 		return literalSerializers;
 	}
 
+	private static getPropertyURI( propertyName:string, definition:ObjectSchema.DigestedPropertyDefinition, vocab:string ):string {
+		let uri:string;
+		let relativeName:string = null;
+
+		if( definition.uri !== null ) {
+			uri = definition.uri.toString();
+			if( RDF.URI.Util.isRelative( uri ) ) relativeName = uri;
+		} else {
+			relativeName = propertyName;
+		}
+
+		if( relativeName !== null ) {
+			if( vocab !== null ) {
+				uri = vocab + relativeName;
+			} else {
+				throw new Errors.InvalidJSONLDSyntaxError( `The context doesn't have a default vocabulary and the object schema does not define a proper absolute @id for the property '${ propertyName }'` );
+			}
+		}
+
+		return uri;
+	}
+
 	constructor( literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
 		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
-
 
 	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object[];
 	compact( expandedObject:Object, targetObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object;
@@ -78,15 +99,7 @@ export class Class {
 			let expandedPropertyName:string = null;
 			if( digestedSchema.properties.has( propertyName ) ) {
 				let definition:ObjectSchema.DigestedPropertyDefinition = Utils.O.clone( digestedSchema.properties.get( propertyName ), { objects: true } );
-				if( definition.uri !== null ) {
-					expandedPropertyName = definition.uri.toString();
-				} else if( digestedSchema.vocab !== null ) {
-					expandedPropertyName = digestedSchema.vocab + propertyName;
-					definition.uri = new RDF.URI.Class( expandedPropertyName );
-				} else {
-					throw new Errors.InvalidJSONLDSyntaxError( `The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '${ propertyName }'` );
-				}
-
+				expandedPropertyName = Class.getPropertyURI( propertyName, definition, digestedSchema.vocab );
 				expandedValue = this.expandProperty( value, definition, generalSchema, digestedSchema );
 
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) || digestedSchema.vocab !== null ) {
@@ -427,15 +440,7 @@ export class Class {
 	private getPropertyURINameMap( digestedSchema:ObjectSchema.DigestedObjectSchema ):Map<string, string> {
 		let map:Map<string, string> = new Map<string, string>();
 		digestedSchema.properties.forEach( ( definition:ObjectSchema.DigestedPropertyDefinition, propertyName:string ):void => {
-			let uri:string;
-			if( definition.uri !== null ) {
-				uri = definition.uri.toString();
-			} else if( digestedSchema.vocab !== null ) {
-				uri = digestedSchema.vocab + propertyName;
-			} else {
-				throw new Errors.InvalidJSONLDSyntaxError( `The context doesn't have a default vocabulary and the object schema does not define a proper @id for the property '${ propertyName }'` );
-			}
-
+			let uri:string = Class.getPropertyURI( propertyName, definition, digestedSchema.vocab );
 			map.set( uri, propertyName );
 		} );
 		return map;

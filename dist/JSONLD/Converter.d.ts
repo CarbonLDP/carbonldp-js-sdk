@@ -5,6 +5,7 @@ export declare class Class {
     private _literalSerializers;
     literalSerializers: Map<string, RDF.Literal.Serializer>;
     private static getDefaultSerializers();
+    private static getPropertyURI(propertyName, definition, vocab);
     constructor(literalSerializers?: Map<string, RDF.Literal.Serializer>);
     compact(expandedObjects: Object[], targetObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
     compact(expandedObject: Object, targetObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
