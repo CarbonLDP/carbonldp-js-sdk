@@ -1,6 +1,8 @@
 SystemJS.config({
   baseURL: "/base",
   paths: {
+    "npm:": "test/jspm_packages/npm/",
+    "github:": "test/jspm_packages/github/",
     "carbonldp/": "dist/"
   },
   packages: {

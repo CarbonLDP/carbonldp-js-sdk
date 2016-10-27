@@ -1,11 +1,13 @@
 SystemJS.config({
-  paths: {
-    "npm:": "test/jspm_packages/npm/",
-    "github:": "test/jspm_packages/github/"
+  nodeConfig: {
+    "paths": {
+      "npm:": "test/jspm_packages/npm/",
+      "github:": "test/jspm_packages/github/"
+    }
   },
   devConfig: {
     "map": {
-      "os": "github:jspm/nodelibs-os@0.2.0-alpha",
+      "os": "npm:jspm-nodelibs-os@0.2.0",
       "plugin-typescript": "github:frankwallis/plugin-typescript@4.0.9",
       "jsonld": "npm:jsonld@0.4.11"
     },
@@ -13,11 +15,6 @@ SystemJS.config({
       "github:frankwallis/plugin-typescript@4.0.9": {
         "map": {
           "typescript": "npm:typescript@1.8.10"
-        }
-      },
-      "github:jspm/nodelibs-os@0.2.0-alpha": {
-        "map": {
-          "os-browserify": "npm:os-browserify@0.2.1"
         }
       },
       "npm:jsonld@0.4.11": {
@@ -30,6 +27,11 @@ SystemJS.config({
           "request": "@empty",
           "xmldom": "npm:xmldom@0.1.19"
         }
+      },
+      "npm:jspm-nodelibs-os@0.2.0": {
+        "map": {
+          "os-browserify": "npm:os-browserify@0.2.1"
+        }
       }
     }
   },
@@ -37,22 +39,6 @@ SystemJS.config({
   packages: {
     "src": {
       "defaultExtension": "ts"
-    },
-    "github:jspm/nodelibs-punycode@0.2.0-alpha": {
-      "map": {
-        "punycode-browserify": "npm:punycode@1.3.2"
-      }
-    },
-    "github:jspm/nodelibs-zlib@0.2.0-alpha": {
-      "map": {
-        "zlib-browserify": "npm:browserify-zlib@0.1.4"
-      }
-    },
-    "npm:browserify-zlib@0.1.4": {
-      "map": {
-        "pako": "npm:pako@0.2.8",
-        "readable-stream": "npm:readable-stream@2.1.2"
-      }
     },
     "npm:ecc-jsbn@0.1.1": {
       "map": {
@@ -66,19 +52,19 @@ SystemJS.config({
     }
   },
   map: {
-    "dgram": "github:jspm/nodelibs-dgram@0.2.0-alpha",
-    "dns": "github:jspm/nodelibs-dns@0.2.0-alpha",
+    "dgram": "npm:jspm-nodelibs-dgram@0.2.0",
+    "dns": "npm:jspm-nodelibs-dns@0.2.0",
     "ecc-jsbn": "npm:ecc-jsbn@0.1.1",
-    "https": "github:jspm/nodelibs-https@0.2.0-alpha",
+    "https": "npm:jspm-nodelibs-https@0.2.0",
     "jodid25519": "npm:jodid25519@1.0.2",
     "jsbn": "npm:jsbn@0.1.0",
-    "net": "github:jspm/nodelibs-net@0.2.0-alpha",
-    "punycode": "github:jspm/nodelibs-punycode@0.2.0-alpha",
-    "querystring": "github:jspm/nodelibs-querystring@0.2.0-alpha",
-    "tls": "github:jspm/nodelibs-tls@0.2.0-alpha",
-    "tty": "github:jspm/nodelibs-tty@0.2.0-alpha",
+    "net": "npm:jspm-nodelibs-net@0.2.0",
+    "punycode": "npm:jspm-nodelibs-punycode@0.2.0",
+    "querystring": "npm:jspm-nodelibs-querystring@0.2.0",
+    "tls": "npm:jspm-nodelibs-tls@0.2.0",
+    "tty": "npm:jspm-nodelibs-tty@0.2.0",
     "tweetnacl": "npm:tweetnacl@0.13.3",
-    "zlib": "github:jspm/nodelibs-zlib@0.2.0-alpha"
+    "zlib": "npm:jspm-nodelibs-zlib@0.2.0"
   }
 });
 
@@ -89,53 +75,23 @@ SystemJS.config({
     "npm:*.json"
   ],
   map: {
-    "assert": "github:jspm/nodelibs-assert@0.2.0-alpha",
-    "buffer": "github:jspm/nodelibs-buffer@0.2.0-alpha",
-    "child_process": "github:jspm/nodelibs-child_process@0.2.0-alpha",
-    "constants": "github:jspm/nodelibs-constants@0.2.0-alpha",
-    "crypto": "github:jspm/nodelibs-crypto@0.2.0-alpha",
-    "events": "github:jspm/nodelibs-events@0.2.0-alpha",
-    "fs": "github:jspm/nodelibs-fs@0.2.0-alpha",
-    "http": "github:jspm/nodelibs-http@0.2.0-alpha",
-    "path": "github:jspm/nodelibs-path@0.2.0-alpha",
-    "process": "github:jspm/nodelibs-process@0.2.0-alpha",
-    "stream": "github:jspm/nodelibs-stream@0.2.0-alpha",
-    "string_decoder": "github:jspm/nodelibs-string_decoder@0.2.0-alpha",
-    "url": "github:jspm/nodelibs-url@0.2.0-alpha",
-    "util": "github:jspm/nodelibs-util@0.2.0-alpha",
-    "vm": "github:jspm/nodelibs-vm@0.2.0-alpha"
+    "assert": "npm:jspm-nodelibs-assert@0.2.0",
+    "buffer": "npm:jspm-nodelibs-buffer@0.2.0",
+    "child_process": "npm:jspm-nodelibs-child_process@0.2.0",
+    "constants": "npm:jspm-nodelibs-constants@0.2.0",
+    "crypto": "npm:jspm-nodelibs-crypto@0.2.0",
+    "events": "npm:jspm-nodelibs-events@0.2.0",
+    "fs": "npm:jspm-nodelibs-fs@0.2.0",
+    "http": "npm:jspm-nodelibs-http@0.2.0",
+    "path": "npm:jspm-nodelibs-path@0.2.0",
+    "process": "npm:jspm-nodelibs-process@0.2.0",
+    "stream": "npm:jspm-nodelibs-stream@0.2.0",
+    "string_decoder": "npm:jspm-nodelibs-string_decoder@0.2.0",
+    "url": "npm:jspm-nodelibs-url@0.2.0",
+    "util": "npm:jspm-nodelibs-util@0.2.0",
+    "vm": "npm:jspm-nodelibs-vm@0.2.0"
   },
   packages: {
-    "github:jspm/nodelibs-buffer@0.2.0-alpha": {
-      "map": {
-        "buffer-browserify": "npm:buffer@4.6.0"
-      }
-    },
-    "github:jspm/nodelibs-crypto@0.2.0-alpha": {
-      "map": {
-        "crypto-browserify": "npm:crypto-browserify@3.11.0"
-      }
-    },
-    "github:jspm/nodelibs-http@0.2.0-alpha": {
-      "map": {
-        "http-browserify": "npm:stream-http@2.3.0"
-      }
-    },
-    "github:jspm/nodelibs-stream@0.2.0-alpha": {
-      "map": {
-        "stream-browserify": "npm:stream-browserify@2.0.1"
-      }
-    },
-    "github:jspm/nodelibs-string_decoder@0.2.0-alpha": {
-      "map": {
-        "string_decoder-browserify": "npm:string_decoder@0.10.31"
-      }
-    },
-    "github:jspm/nodelibs-url@0.2.0-alpha": {
-      "map": {
-        "url-browserify": "npm:url@0.11.0"
-      }
-    },
     "npm:asn1.js@4.6.0": {
       "map": {
         "bn.js": "npm:bn.js@4.11.3",
@@ -333,6 +289,36 @@ SystemJS.config({
       "map": {
         "punycode": "npm:punycode@1.3.2",
         "querystring": "npm:querystring@0.2.0"
+      }
+    },
+    "npm:jspm-nodelibs-crypto@0.2.0": {
+      "map": {
+        "crypto-browserify": "npm:crypto-browserify@3.11.0"
+      }
+    },
+    "npm:jspm-nodelibs-buffer@0.2.0": {
+      "map": {
+        "buffer-browserify": "npm:buffer@4.6.0"
+      }
+    },
+    "npm:jspm-nodelibs-http@0.2.0": {
+      "map": {
+        "http-browserify": "npm:stream-http@2.3.0"
+      }
+    },
+    "npm:jspm-nodelibs-stream@0.2.0": {
+      "map": {
+        "stream-browserify": "npm:stream-browserify@2.0.1"
+      }
+    },
+    "npm:jspm-nodelibs-string_decoder@0.2.0": {
+      "map": {
+        "string_decoder-browserify": "npm:string_decoder@0.10.31"
+      }
+    },
+    "npm:jspm-nodelibs-url@0.2.0": {
+      "map": {
+        "url-browserify": "npm:url@0.11.0"
       }
     }
   }

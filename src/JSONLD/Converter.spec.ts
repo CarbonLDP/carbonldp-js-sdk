@@ -13,7 +13,6 @@ import {
 } from "./../test/JasmineExtender";
 
 import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
@@ -23,7 +22,7 @@ import * as Utils from "./../Utils";
 import * as JSONLDConverter from "./Converter";
 import DefaultExport from "./Converter";
 
-fdescribe( module( "Carbon/JSONLD/Converter" ), ():void => {
+describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( JSONLDConverter ).toBeDefined();
