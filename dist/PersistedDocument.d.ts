@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";

@@ -1,6 +1,6 @@
 import HTTPError from "./../HTTPError";
 declare class UnsupportedMediaTypeError extends HTTPError {
-    static statusCode: number;
-    name: string;
+    static readonly statusCode: number;
+    readonly name: string;
 }
 export default UnsupportedMediaTypeError;

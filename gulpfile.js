@@ -111,7 +111,7 @@ gulp.task( "compile:typescript", () => {
 
 	let tsResults = gulp.src( config.source.typescript )
 		.pipe( sourcemaps.init() )
-		.pipe( ts( tsProject ) );
+		.pipe( tsProject() );
 
 	tsResults.dts
 		.pipe( gulp.dest( config.dist.tsOutput ) )
@@ -169,7 +169,13 @@ gulp.task( "prepare:npm-package|copy:package-json", () => {
 	;
 } );
 
-gulp.task( "test", [ "test:browser", "test:node" ] );
+gulp.task( "test", ( done ) => {
+	runSequence(
+		[ "test:browser", "test:node" ],
+		"finish",
+		done
+	);
+} );
 
 gulp.task( "test:browser", ( done ) => {
 	new karma.Server( {
@@ -197,7 +203,7 @@ gulp.task( "test:node", ( done ) => {
 gulp.task( "test:node|compile", [ "clean:temp" ], () => {
 	let tsProject = ts.createProject( "tsconfig.json" );
 	let tsResults = gulp.src( config.source.all )
-		.pipe( ts( tsProject ) );
+		.pipe( tsProject() );
 
 	return tsResults.js
 		.pipe( gulp.dest( config.dist.temp ) );

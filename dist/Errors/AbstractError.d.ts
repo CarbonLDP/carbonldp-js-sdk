@@ -1,6 +1,7 @@
+/// <reference types="node" />
 declare abstract class AbstractError extends Error {
     message: string;
-    name: string;
+    readonly name: string;
     constructor(message: string);
     toString(): string;
 }

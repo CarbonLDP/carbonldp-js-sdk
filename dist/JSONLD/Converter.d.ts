@@ -3,7 +3,7 @@ import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
 export declare class Class {
     private _literalSerializers;
-    literalSerializers: Map<string, RDF.Literal.Serializer>;
+    readonly literalSerializers: Map<string, RDF.Literal.Serializer>;
     private static getDefaultSerializers();
     private static getPropertyURI(propertyName, definition, vocab);
     constructor(literalSerializers?: Map<string, RDF.Literal.Serializer>);

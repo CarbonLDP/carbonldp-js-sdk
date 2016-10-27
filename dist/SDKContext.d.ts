@@ -5,7 +5,7 @@ import * as ObjectSchema from "./ObjectSchema";
 export declare class Class implements Context {
     auth: Auth.Class;
     documents: Documents;
-    parentContext: Context;
+    readonly parentContext: Context;
     protected settings: Map<string, any>;
     protected generalObjectSchema: ObjectSchema.DigestedObjectSchema;
     protected typeObjectSchemaMap: Map<string, ObjectSchema.DigestedObjectSchema>;

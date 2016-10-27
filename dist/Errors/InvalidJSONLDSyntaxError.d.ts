@@ -1,5 +1,5 @@
 import AbstractError from "./AbstractError";
 declare class InvalidJSONLDSyntaxError extends AbstractError {
-    name: string;
+    readonly name: string;
 }
 export default InvalidJSONLDSyntaxError;

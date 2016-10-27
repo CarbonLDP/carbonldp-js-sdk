@@ -55,9 +55,9 @@ declare class Carbon extends AbstractContext.Class {
     static Settings: typeof Settings;
     static SPARQL: typeof SPARQL;
     static Utils: typeof Utils;
-    static version: string;
+    static readonly version: string;
     apps: Apps.Class;
-    version: string;
+    readonly version: string;
     constructor(settings?: Settings.Class);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;

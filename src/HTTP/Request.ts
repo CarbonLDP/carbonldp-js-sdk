@@ -8,8 +8,8 @@ import HTTPError from "./Errors/HTTPError";
 
 import * as Utils from "./../Utils";
 
-import {RequestOptions, ClientRequest, IncomingMessage} from "http";
-import {Url} from "url";
+import { RequestOptions, ClientRequest, IncomingMessage } from "http";
+import { Url } from "url";
 
 export interface Options {
 	headers?:Map<string, Header.Class>;
@@ -33,7 +33,7 @@ interface Resolve {
 function forEachHeaders( headers:Map<string, Header.Class>, setHeader:( name:string, value:string ) => any ):void {
 	let namesIterator:Iterator<string> = headers.keys();
 	let next:IteratorResult<string> = namesIterator.next();
-	while( ! next.done ) {
+	while ( ! next.done ) {
 		let name:string = next.value;
 		let value:Header.Class = headers.get( name );
 		setHeader( name, value.toString() );
@@ -98,9 +98,9 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 		function returnResponse( request:ClientRequest, res:IncomingMessage ):void {
 			let rawData:Buffer[] = [];
 
-			res.on( "data", ( chunk ) => {
+			res.on( "data", ( chunk:string | Buffer ):void => {
+				if( typeof chunk === "string" ) chunk = Buffer.from( <any>chunk, "utf-8" );
 				rawData.push( chunk );
-
 			} ).on( "end", () => {
 				let data:string = Buffer.concat( rawData ).toString( "utf8" );
 				let response:Response = new Response( request, data, res );
@@ -110,6 +110,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 		}
 
 		let numberOfRedirects:number = 0;
+
 		function sendRequest( _url:string ):void {
 			let parsedURL:Url = URL.parse( _url );
 			let HTTP:any = parsedURL.protocol === "http:" ? require( "http" ) : require( "https" );
@@ -130,7 +131,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 			if( options.timeout ) request.setTimeout( options.timeout );
 			request.on( "response", ( res:IncomingMessage ) => {
 				if( res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers ) {
-					if( ++numberOfRedirects < 10 ) return sendRequest( URL.resolve( _url, res.headers.location ) );
+					if( ++ numberOfRedirects < 10 ) return sendRequest( URL.resolve( _url, res.headers.location ) );
 				}
 
 				returnResponse( request, res );
@@ -142,6 +143,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 			} );
 			request.end( body );
 		}
+
 		sendRequest( url );
 
 	} );
@@ -293,7 +295,7 @@ export class Util {
 		let representation:string = returnRepresentation ? "return=representation; " : "";
 
 		let keys:string[] = [ "include", "omit" ];
-		for( let key of keys ) {
+		for ( let key of keys ) {
 			if( key in preferences && preferences[ key ].length > 0 ) {
 				prefer.values.push( new Header.Value( `${ representation }${ key }="${ preferences[ key ].join( " " ) }"` ) );
 			}

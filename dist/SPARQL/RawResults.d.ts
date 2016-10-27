@@ -1,7 +1,7 @@
 export declare class ValueTypes {
-    static URI: string;
-    static LITERAL: string;
-    static BNODE: string;
+    static readonly URI: string;
+    static readonly LITERAL: string;
+    static readonly BNODE: string;
 }
 export interface BindingObject {
     [name: string]: BindingProperty;

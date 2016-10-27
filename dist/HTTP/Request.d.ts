@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";

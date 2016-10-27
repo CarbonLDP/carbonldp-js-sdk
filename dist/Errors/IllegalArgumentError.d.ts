@@ -1,5 +1,5 @@
 import AbstractError from "./AbstractError";
 declare class IllegalArgumentError extends AbstractError {
-    name: string;
+    readonly name: string;
 }
 export default IllegalArgumentError;

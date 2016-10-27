@@ -458,7 +458,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 
 			function jsonldExpand( object:Object ):Promise<Object> {
 				return new Promise<Object>( ( resolve:Function, reject:Function ) => {
-					jsonld.expand( object, ( error, expanded ) => {
+					jsonld.expand( <any>object, ( error, expanded ) => {
 						if( error ) {
 							reject( error );
 						} else {
@@ -690,7 +690,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 			];
 
 			let promises:Promise<void>[] = [];
-			for( let object of objects ) {
+			for ( let object of objects ) {
 				promises.push( evaluateExpand( object ) );
 			}
 

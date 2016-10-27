@@ -3,8 +3,8 @@ import * as Pointer from "./../../Pointer";
 import * as LDP from "./../../LDP";
 import Response from "./../Response";
 declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
-    static statusCode: number;
-    name: string;
+    static readonly statusCode: number;
+    readonly name: string;
     _id: string;
     _resolved: boolean;
     id: string;
