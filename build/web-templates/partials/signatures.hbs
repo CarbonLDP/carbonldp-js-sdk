@@ -14,7 +14,7 @@
 		{{/if}}
 
 		{{#if arguments~}}
-			<table class="ui celled padded table">
+			<table class="ui celled padded tablet stackable table">
 				<thead>
 					<tr>
 						<th class="single line">Param</th>
@@ -27,13 +27,13 @@
 					{{#each arguments~}}
 						<tr>
 							<td class="single line{{#if optional}} optional-label{{/if}}">
-								{{#if optional}}<label class="ui blue ribbon horizontal label">Optional</label>{{/if}}
+								{{#if optional}}<label class="ui blue right ribbon horizontal label">Optional</label>{{/if}}
 								<code>{{name}}</code>
 							</td>
-							<td class="single line">
+							<td class="">
 								{{>text-markdown element=type enclose="code" noParagraph=true}}
 							</td>
-							<td class="single line">
+							<td class="">
 								{{>text-markdown element=defaultValue enclose="code" noParagraph=true}}
 							</td>
 							<td class="justified">

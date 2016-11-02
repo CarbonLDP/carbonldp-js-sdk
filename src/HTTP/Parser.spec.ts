@@ -21,8 +21,8 @@ describe( module( "Carbon/HTTP/Parser" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.ACE.Class",
-		"Interface that represents an Access Control Entry (ACE) of an Access Control List (ACL)."
+		"Carbon.HTTP.Parser.Class",
+		"Interface that represents a what a parser must contains to be used when converting the response of a request."
 	), ():void => {
 
 		it( hasMethod(
@@ -37,7 +37,7 @@ describe( module( "Carbon/HTTP/Parser" ), ():void => {
 	} );
 
 
-	it( hasDefaultExport( "Carbon.Auth.ACE.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.HTTP.Parser.Class" ), ():void => {
 		let defaultExport:DefaultExport<any> = <any> {};
 		let defaultTarget:Parser.Class<any>;
 

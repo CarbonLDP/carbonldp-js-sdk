@@ -2,26 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=0.8">
 	<title>Carbon LDP JavaScript SDK - Docs</title>
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/darcula.min.css">
 	<style>
-		.doc-menu {
+		.ui.menu.inverted.doc-menu {
 			background-color: #363F48 !important;
 		}
 
-		.doc-menu .item {
-			word-wrap: break-word;
-		}
-
 		.doc-menu .doc-logo {
-			width: 50%;
 		}
 
 		.doc-menu .doc-logo ~ strong {
 			font-size: 1.5rem;
-			position: relative;
-			top: 5px;
 		}
 
 		.doc-main.segment {
@@ -31,21 +25,27 @@
 		}
 
 		.doc-header {
-
 		}
 
-		.doc-header.ui.header:not(.doc-header_no-link):not(.doc-header__main-section) {
-			/*display: inline-block;*/
-			/*padding-left: 1.75rem;*/
+		.doc-header.ui.header.doc-header_main {
+			display: flex;
+			flex-wrap: wrap;
 		}
 
-		.doc-header.ui.header:not(.doc-header__main-section) {
+		.doc-header.ui.header.doc-header_main a, code, code > a, .doc-menu .item, .doc-header a, .ui.table tr > td.optional-label > code {
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+			-ms-word-break: break-all;
+			word-break: break-word;
+		}
+
+		.doc-header.ui.header .doc-header__label {
+			margin-left: auto;
+		}
+
+		.doc-header.ui.header:not(.doc-header_main) {
 			line-height: 2em;
 		}
-
-		/*.doc-header.doc-header__main-section > .doc-header__main {*/
-		/*margin-left: -0.75rem;*/
-		/*}*/
 
 		.doc-header .doc-header__link {
 			color: inherit;
@@ -76,10 +76,6 @@
 
 		.doc-section .basic.ui.segment:first-child {
 			padding-bottom: 1em !important;
-		}
-
-		.doc-section__content .doc-header .doc-header__symbol.symbol.label {
-			/*padding-top: 0.75em;*/
 		}
 
 		.symbol .symbol__anchor {
@@ -136,7 +132,6 @@
 		}
 
 		.elements-list.ui.list {
-			/*padding-left: 2em;*/
 		}
 
 		.elements-list .item:before {
@@ -171,265 +166,353 @@
 			text-align: justify;
 		}
 
-		td.optional-label > .ui.horizontal.ribbon.label {
-			left: calc(-1rem - 1.2em);
-		}
-
-		td.optional-label > code {
-			left: -1.5em;
+		.ui.table tr>td.optional-label {
+			padding-top: 2em;
 			position: relative;
 		}
 
-		@media only screen and (max-width: 767px) {
-			td.optional-label > .ui.horizontal.ribbon.label {
-				left: calc(-1rem - 1.0em);
-			}
+		td.optional-label > .ui.horizontal.ribbon.label {
+			position: absolute;
+			left: 100%;
+			top: 0;
+			border-top-left-radius: 0;
 		}
 
-		.ui.menu.doc-menu-top {
+		td.optional-label > .ui.horizontal.ribbon.label:after {
 			display: none;
 		}
 
-		/*.ui.visible.left.sidebar.uncover.doc-menu ~ .pusher {
-			width: calc(100% - 260px);
-		}*/
-
-		.doc-main.pusher.ui.padded.basic.segment {
+		.ui.visible.left.sidebar.doc-menu:not(.overlay) ~ .pusher > .doc-main {
 			width: calc(100% - 350px);
-			/*left: 350px;*/
 		}
 
-		.doc-menu-static {
-			width: 350px !important;
-			height: 100% !important;
-			max-height: 100%;
-			overflow-y: auto !important;
+		@media only screen and (max-width: 991px) {
+
+			.ui.table tr>td.optional-label {
+				padding-top: 1em !important;
+			}
+			.ui.table tr>td > code {
+				line-height: 2em;
+			}
+
+			td.optional-label > .ui.horizontal.ribbon.label{
+				top: -1.167em;
+			}
+
 		}
 
 		@media only screen and (max-width: 933px) {
-			.ui.menu.doc-menu-top {
-				display: -webkit-box;
-				display: -webkit-flex;
-				display: -ms-flexbox;
-				display: flex;
-			}
 
 			.doc-main.pusher.ui.padded.basic.segment {
 				width: unset;
 				padding-top: 7rem !important;
 				/*left: 0;*/
 			}
+
+			.ui.sidebar.menu.doc-menu-sidebar {
+				z-index: 1001;
+			}
+
+			.ui.visible.wide.left.sidebar.doc-menu-sidebar ~ .ui.menu.doc-menu-location {
+				-webkit-transform: translate3d(350px, 0, 0) !important;
+				transform: translate3d(350px, 0, 0) !important;
+			}
+
 		}
 
 		.ui.list .list > .item > i.icon, .ui.list > .item > i.icon {
 			vertical-align: middle;
 		}
+
+		.doc-page-content {
+			position: relative;
+			top: 130px;
+			min-height: calc(100% - 130px) !important;
+		}
+
+		.ui.menu.doc-menu-top {
+			border-bottom: 1px solid rgba(255, 255, 255, .08);
+		}
+
+		.ui.sidebar.menu.doc-menu-sidebar {
+			top: 75px;
+			height: calc(100% - 75px) !important;
+			border-top: 1px solid rgba(255, 255, 255, .08);
+		}
+
+		.doc-menu-sidebar .menu {
+			padding-left: 1em;
+		}
+
+		.ui.sidebar.menu.doc-menu.doc-menu-sidebar > .item {
+			border-top: 1px solid;
+			border-color: transparent;
+		}
+
+		.ui.sidebar.menu.doc-menu.doc-menu-sidebar > .item.active {
+			border-color: #F2711C;
+		}
+
+		.ui.sidebar.menu.doc-menu.doc-menu-sidebar .menu a.item.active {
+			/*color: #F2711C !important;*/
+		}
+
+		.ui.menu.doc-menu-location {
+			position: fixed;
+			top: 75px;
+			height: 61px;
+			box-shadow: none;
+			border: 1px solid rgba(34, 36, 38, .15);
+		}
+
+		.doc-menu-location > .doc-menu-location__item:not(:last-child)::after {
+			position: absolute;
+			z-index: 2;
+			content: '';
+			top: 50%;
+			right: 0;
+			border: solid;
+			background-color: #FFF;
+			width: 1.14285714em;
+			height: 1.14285714em;
+			border-color: rgba(34, 36, 38, .15);
+			border-width: 0 1px 1px 0;
+			-webkit-transition: background-color .1s ease, opacity .1s ease, color .1s ease, box-shadow .1s ease;
+			transition: background-color .1s ease, opacity .1s ease, color .1s ease, box-shadow .1s ease;
+			-webkit-transform: translateY(-50%) translateX(50%) rotate(-45deg);
+			-ms-transform: translateY(-50%) translateX(50%) rotate(-45deg);
+			transform: translateY(-50%) translateX(50%) rotate(-45deg);
+		}
+
+		.doc-menu-location > .doc-menu-location__item:not(:last-child):hover::after, .doc-menu-location > .doc-menu-location__item:not(:last-child):active::after, .doc-menu-location > .doc-menu-location__item:not(:last-child).active::after {
+			background-color: #f7f7f7;
+		}
+
+		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_module.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
+			background-color: #e5e5e5;
+		}
+		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_interface.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
+			/*background-color: #fdf0e8;*/
+			background-color: #fbd4ba;
+		}
+		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_class.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
+			/*background-color: #e8f2fa;*/
+			background-color: #bcdaf0;
+		}
 	</style>
 </head>
-<body class="pusheable">
+<body class="pushable">
 	<div class="ui inverted top fixed menu doc-menu doc-menu-top">
-		<a class="doc-menu__launch-item item"><i class="large content icon"></i></a>
+		<a class="item" href="https://carbonldp.com">
+			<img class="ui small image doc-logo" src="img/carbon-ldp-logo.png">
+		</a>
 	</div>
 
 	<div class="ui inverted left vertical visible menu wide sidebar doc-menu doc-menu-sidebar">
 		<div class="item">
-			<a class="ui doc-logo icon image" href="https://carbonldp.com"><img src="img/carbon-ldp-logo.png"></a>
-			<strong> - JS SDK Docs</strong>
+			<div class="ui icon input">
+				<input type="text" placeholder="Search...">
+				<i class="search icon"></i>
+			</div>
 		</div>
 		{{#each modules}}
-			<div class="orange item">
+			<div class="item">
 				<a class="header" href="#Module-{{toURL path}}">{{path}}</a>
 				<div class="menu">
 					{{#combineElements this}}
-						<a class="item" href="#{{toURL element.path}}">{{element.path}}</a>
+						<a class="item{{#if isClass}} item-class{{else}} item-interface{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
 					{{/combineElements}}
 				</div>
 			</div>
 		{{/each}}
 	</div>
 
-	<div class="pusher ui padded basic doc-main segment">
-		<h1 class="ui header">Carbon LDP JavaScript SDK API Reference</h1>
-		<div class="ui divider"></div>
+	<div class="ui top fixed menu doc-menu doc-menu-location">
+		<a class="doc-menu__launch-item item"><i class="large content icon"></i>Menu</a>
+		<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
+		<!--<a class="active item doc-menu-location__item">Index</a>-->
+	</div>
 
-		<div class="ui basic segment doc-section__content">
-			{{>header level=2 name="Classes and Interfaces"}}
-			<div class="ui list elements-list elements-list_single">
-				{{#toc-tree modules}}
-					<div class="item">
-						<span class="ui {{#is type "I"}}orange{{else}}blue{{/is}} label icon elements-list__item-type">{{type}}</span>
-						<a class="content" href="#{{toURL path}}">{{path}}</a>
-					</div>
-				{{/toc-tree}}
+	<div class="doc-page-content pusher">
+		<div class="ui padded basic doc-main segment">
+			<h1 class="ui header">Carbon LDP JavaScript SDK API Reference</h1>
+			<div class="ui divider"></div>
+
+			<div class="ui basic segment doc-section__content">
+				{{>header level=2 name="Classes and Interfaces"}}
+				<div class="ui list elements-list elements-list_single">
+					{{#toc-tree modules}}
+						<div class="item">
+							<span class="ui {{#is type "I"}}orange{{else}}blue{{/is}} label icon elements-list__item-type">{{type}}</span>
+							<a class="content" href="#{{toURL path}}">{{path}}</a>
+						</div>
+					{{/toc-tree}}
+				</div>
 			</div>
-		</div>
 
 
-		{{#each modules}}
-			{{br 3}}
-			<div class="ui vertical segment doc-module doc-section">
-				{{>header path=this.path name=this.path isModule=true}}
+			{{#each modules}}
+				{{br 3}}
+				<div class="ui vertical segment doc-module doc-section">
+					{{>header path=this.path name=this.path isModule=true}}
 
-				{{#if default-export}}
-					{{>section-tags type="Default Export" tag=default-export}}
-					<!--<div class="doc-module__default-exports">
-						<strong>Default Export</strong>:
-						<a href="#{{toURL name}}">{{name}}</a>
-					</div>-->
-				{{/if}}
+					{{#if default-export}}
+						{{>section-tags type="Default Export" tag=default-export}}
+					{{/if}}
 
-				<div class="ui basic segment doc-content doc-section__content">
-					{{#with description}}
-						<div class="doc-description">
-							{{>text-markdown element=this}}
-						</div>
-						{{br 1}}
-					{{/with}}
+					<div class="ui basic segment doc-content doc-section__content">
+						{{#with description}}
+							<div class="doc-description">
+								{{>text-markdown element=this}}
+							</div>
+							{{br 1}}
+						{{/with}}
 
-					{{#or this.interfaces this.classes}}
-						{{>header level=2 path=(concat path "--Classes and Interfaces") name="Classes and Interfaces in the Module" }}
-						<div class="ui list elements-list">
-							{{#combineElements this}}
-								<div class="item">
-									<span class="ui {{#if isInterface}}orange{{else}}blue{{/if}} label icon elements-list__item-type">{{#if isClass}}C{{else}}I{{/if}}</span>
-									<div class="content">
-										<a class="header" href="#{{toURL element.path}}">{{element.path}}</a>
-										{{#with element.description}}
-											<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
-										{{/with}}
+						{{#or this.interfaces this.classes}}
+							{{>header level=2 path=(concat path "--Classes and Interfaces") name="Classes and Interfaces in the Module" }}
+							<div class="ui list elements-list">
+								{{#combineElements this}}
+									<div class="item">
+										<span class="ui {{#if isInterface}}orange{{else}}blue{{/if}} label icon elements-list__item-type">{{#if isClass}}C{{else}}I{{/if}}</span>
+										<div class="content">
+											<a class="header" href="#{{toURL element.path}}">{{element.path}}</a>
+											{{#with element.description}}
+												<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
+											{{/with}}
+										</div>
 									</div>
-								</div>
-							{{/combineElements}}
-						</div>
-						<br>
-					{{/or}}
+								{{/combineElements}}
+							</div>
+							<br>
+						{{/or}}
 
-					{{#if reexports}}
-						{{> reexports}}
-					{{/if}}
+						{{#if reexports}}
+							{{> reexports}}
+						{{/if}}
 
-					{{#if enums}}
-						{{#each enums}}
-							{{>enum this}}
-						{{/each}}
-					{{/if}}
+						{{#if enums}}
+							{{#each enums}}
+								{{>enum this}}
+							{{/each}}
+						{{/if}}
 
-					{{#with properties}}
-						{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
+						{{#with properties}}
+							{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
 
-						<div class="ui basic segment doc-content">
-							{{>properties properties=static access="#" path=../path}}
+							<div class="ui basic segment doc-content">
+								{{>properties properties=static access="#" path=../path}}
 
-							{{>properties properties=instance access="." path=../path}}
-						</div>
-					{{/with}}
+								{{>properties properties=instance access="." path=../path}}
+							</div>
+						{{/with}}
 
-					{{#with methods}}
-						{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
+						{{#with methods}}
+							{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
 
-						<div class="ui basic segment doc-content">
-							{{>methods methods=static access="#" path=../path}}
+							<div class="ui basic segment doc-content">
+								{{>methods methods=static access="#" path=../path}}
 
-							{{>methods methods=instance access="." path=../path}}
-						</div>
-					{{/with}}
+								{{>methods methods=instance access="." path=../path}}
+							</div>
+						{{/with}}
+					</div>
+
 				</div>
 
-			</div>
+				{{#combineElements this}}
+					{{br 3}}
+					<div class="ui vertical segment doc-object doc-section">
 
-			{{#combineElements this}}
-				{{br 3}}
-				<div class="ui vertical segment doc-object doc-section">
+						{{>header path=element.path name=element.path}}
 
-					{{>header path=element.path name=element.path}}
-
-					{{#with element}}
-						{{#if interfaces}}
-							{{>section-tags type="Implements" tags=interfaces}}
-						{{/if}}
-
-						{{#if super-classes}}
-							{{>section-tags type="Extends" tags=super-classes}}
-						{{/if}}
-
-						<div class="ui basic segment doc-content doc-section__content">
-							{{#with description}}
-								<div class="doc-description">
-									{{>text-markdown element=this}}
-								</div>
-							{{/with}}
-							{{br 1}}
-
-							{{#if reexports~}}
-								{{> reexports}}
+						{{#with element}}
+							{{#if interfaces}}
+								{{>section-tags type="Implements" tags=interfaces}}
 							{{/if}}
 
-							{{#with constructors~}}
-								{{>header level=2 path=(concat ../path "--Constructor") name="Constructor" }}
+							{{#if super-classes}}
+								{{>section-tags type="Extends" tags=super-classes}}
+							{{/if}}
 
-								{{>signatures name=../name }}
-							{{/with}}
+							<div class="ui basic segment doc-content doc-section__content">
+								{{#with description}}
+									<div class="doc-description">
+										{{>text-markdown element=this}}
+									</div>
+								{{/with}}
+								{{br 1}}
 
-							{{#with properties}}
-								{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
+								{{#if reexports~}}
+									{{> reexports}}
+								{{/if}}
 
-								<div class="ui basic segment doc-content">
-									{{#if ../../isClass}}
-										{{>properties properties=static access="#" path=../path}}
+								{{#with constructors~}}
+									{{>header level=2 path=(concat ../path "--Constructor") name="Constructor" }}
 
-										{{>properties properties=instance access="." path=../path}}
-									{{else}}
-										{{>properties properties=this access="." path=../path}}
-									{{/if}}
-								</div>
-							{{/with}}
+									{{>signatures name=../name }}
+								{{/with}}
 
-							{{#with methods}}
-								{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
+								{{#with properties}}
+									{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
 
-								<div class="ui basic segment doc-content">
-									{{#if ../../isClass}}
-										{{>methods methods=static access="#" path=../path}}
+									<div class="ui basic segment doc-content">
+										{{#if ../../isClass}}
+											{{>properties properties=static access="#" path=../path}}
 
-										{{>methods methods=instance access="." path=../path}}
-									{{else}}
-										{{>methods methods=this access="." path=../path}}
-									{{/if}}
-								</div>
-							{{/with}}
-						</div>
+											{{>properties properties=instance access="." path=../path}}
+										{{else}}
+											{{>properties properties=this access="." path=../path}}
+										{{/if}}
+									</div>
+								{{/with}}
+
+								{{#with methods}}
+									{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
+
+									<div class="ui basic segment doc-content">
+										{{#if ../../isClass}}
+											{{>methods methods=static access="#" path=../path}}
+
+											{{>methods methods=instance access="." path=../path}}
+										{{else}}
+											{{>methods methods=this access="." path=../path}}
+										{{/if}}
+									</div>
+								{{/with}}
+							</div>
+						{{/with}}
+					</div>
+				{{/combineElements}}
+
+			{{!--#each classes}}
+				{{#with decorated-object~}}
+					#### <a name="{{sanitize ../path}}-Decorated-Object"/>Decorated Object
+					{{#if type~}}
+						**Interfaces:** {{#each type}}[{{this}}](#{{sanitize this}}){{^if @last}}, {{/if}}{{/each}}
+					{{/if}}
+
+					{{#with description~}}
+						> {{{trim this}}}
 					{{/with}}
-				</div>
-			{{/combineElements}}
 
-		{{!--#each classes}}
-			{{#with decorated-object~}}
-				#### <a name="{{sanitize ../path}}-Decorated-Object"/>Decorated Object
-				{{#if type~}}
-					**Interfaces:** {{#each type}}[{{this}}](#{{sanitize this}}){{^if @last}}, {{/if}}{{/each}}
-				{{/if}}
+					{{#if properties ~}}
+						##### <a name="{{sanitize ../path}}-Decorated-Object-Properties"/>Properties
 
-				{{#with description~}}
-					> {{{trim this}}}
+						{{~>properties properties=properties.instance access=""}}
+					{{/if}}
+
+					{{#if methods~}}
+						##### <a name="{{sanitize ../path}}-Decorated-Object-Methods"/>Methods
+
+						{{~>methods methods=methods.instance access=""}}
+					{{/if}}
 				{{/with}}
+			{{/each--}}
 
-				{{#if properties ~}}
-					##### <a name="{{sanitize ../path}}-Decorated-Object-Properties"/>Properties
+			{{/each}}
+			<br><br>
 
-					{{~>properties properties=properties.instance access=""}}
-				{{/if}}
-
-				{{#if methods~}}
-					##### <a name="{{sanitize ../path}}-Decorated-Object-Methods"/>Methods
-
-					{{~>methods methods=methods.instance access=""}}
-				{{/if}}
-			{{/with}}
-		{{/each--}}
-
-		{{/each}}
-		<br><br>
-
+		</div>
 	</div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -437,68 +520,126 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/languages/typescript.min.js"></script>
 	<script>
+		hljs.initHighlightingOnLoad();
+
 		(function() {
-
-			// Sidebar
 			var jqWindow = $( window );
-			var sidebarMenu = $( ".doc-menu-sidebar" )
-				.sidebar( "setting", "transition", "overlay" )
-				.sidebar( "attach events", ".doc-menu__launch-item" );
+			var sidebarMenu = $( ".doc-menu-sidebar" );
 
-			jqWindow.resize( onWindowResize );
-			function onWindowResize() {
+			// Sidebar menu closeable
+			$( ".doc-menu__launch-item" ).click( function() {
+				applyToSidebar( "toggle" );
+			} );
+
+			jqWindow.resize( function() {
+				applyToSidebar();
+			} );
+
+			function applyToSidebar( action ) {
 				if( jqWindow.width() <= 933 ) {
-					sidebarMenu.sidebar( {
-						closable: true,
-						dimPage: true,
-					} );
-					sidebarMenu.sidebar( "hide" );
+					sidebarMenu
+						.sidebar( {
+							transition: "overlay",
+							mobileTransition: "overlay",
+							closable: true,
+							dimPage: true,
+						} );
+					action = action || "hide";
 				} else {
-					sidebarMenu.sidebar( {
-						closable: false,
-						dimPage: false,
-					} );
-					sidebarMenu.sidebar( "show" );
+					if( $( ".doc-page-content.dimmed" ).length ) {
+						sidebarMenu.sidebar( "hide" );
+					}
+					sidebarMenu
+						.sidebar( {
+							transition: "uncover",
+							mobileTransition: "uncover",
+							closable: false,
+							dimPage: false,
+						} );
+					action = action || "show";
+				}
+				sidebarMenu
+					.sidebar( action );
+			}
+
+			applyToSidebar();
+
+			// Section in sidebar menu, location and URL
+			$( window ).on( "hashchange", function() {
+				scrollToHash();
+				setActiveSection();
+			} );
+
+			var $locationMenu = $( ".doc-menu-location" );
+			var $moduleLocation = $( `<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>` ).click( scrollToHash );
+			var $objectLocation = $( `<a class="item doc-menu-location__item dynamic-location"></a>` ).click( scrollToHash );
+
+			function scrollToHash() {
+				if( ! window.location.hash ) return;
+				var $sectionItem = $( "#SDKDocs-" + window.location.hash.slice( 1 ).replace( /([+@.])/g, "\\$1" ) );
+				if( $sectionItem.length ) {
+					$( "html, body" ).animate( {
+						scrollTop: $sectionItem.offset().top - 170
+					}, 500 );
 				}
 			}
-			onWindowResize();
 
-			// Menu
-			var $menuItem = $( ".doc-menu.vertical.menu a.item" );
-			var $menuSection = $( ".doc-menu.vertical.menu a.header" );
+			function setActiveSection() {
+				if( ! window.location.hash ) return;
+				var hash = window.location.hash;
 
-			var handler = {
-				sectionObject: function() {
-					var $item = $( this )
-							.closest( ".orange.item" )
-							.addClass( "active" )
-						;
-					$( this )
-						.addClass( "active" )
-						.closest( ".ui.menu" )
-						.find( ".item.active" )
-						.not( $( this ) )
-						.not( $item )
-						.removeClass( "active" )
-					;
-				},
-				sectionModule: function() {
-					var $item = $( this )
-							.closest( ".orange.item" )
-							.addClass( "active" )
-						;
-					$item
-						.closest( ".ui.menu" )
-						.find( ".item.active" )
-						.not( $item )
-						.removeClass( "active" )
-					;
-				},
-			};
+				var $sidebarItem = $( `.doc-menu-sidebar *[href="${ hash }"]` );
 
-			$menuItem.on( "click", handler.sectionObject );
-			$menuSection.on( "click", handler.sectionModule );
+				if( ! $sidebarItem.length ) {
+					var lastIndex = hash.lastIndexOf( "--" );
+					if ( lastIndex === -1 ) lastIndex = hash.lastIndexOf( "+" );
+					if ( lastIndex === -1 ) lastIndex = hash.lastIndexOf( "-" );
+					$sidebarItem = $( `.doc-menu-sidebar *[href="${ hash.slice( 0, lastIndex ) }"]` );
+				}
 
+				if( ! $sidebarItem.length ) return;
+
+				$sidebarItem
+					.parents( ".doc-menu-sidebar" )
+					.find( ".item.active" )
+					.removeClass( "active" );
+
+				var module = $sidebarItem
+					.parents( ".item" )
+					.addClass( "active" )
+					.children( ".header" );
+
+				$moduleLocation.html( module.html() );
+				$moduleLocation.attr( "href", module.attr( "href" ) );
+				$locationMenu
+					.find( ".dynamic-location" )
+					.removeClass( "active" )
+					.detach();
+				$locationMenu
+					.append( $moduleLocation );
+
+				if( $sidebarItem.hasClass( "item" ) ) {
+					var object = $sidebarItem
+						.addClass( "active" );
+
+					$objectLocation.removeClass( "dynamic-location_class" ).removeClass( "dynamic-location_interface" );
+					$objectLocation.html( object.html() );
+					$objectLocation.attr( "href", object.attr( "href" ) );
+					$locationMenu
+						.append( $objectLocation );
+
+					if( $sidebarItem.hasClass( "item-class" ) ) $objectLocation.addClass( "dynamic-location_class" );
+					if( $sidebarItem.hasClass( "item-interface" ) ) $objectLocation.addClass( "dynamic-location_interface" );
+				}
+
+				$locationMenu
+					.find( ".dynamic-location" )
+					.last()
+					.addClass( "active" );
+			}
+
+			scrollToHash();
+			setActiveSection();
 		})();
 	</script>
 </body>

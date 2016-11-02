@@ -78,7 +78,7 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			expect( roles instanceof Roles.Class ).toBe( true );
 		} );
 
-		it( extendsClass( "Carbon.Auth.Roles" ), ():void => {
+		it( extendsClass( "Carbon.Auth.Roles.Class" ), ():void => {
 			expect( roles instanceof AuthRoles.Class );
 		} );
 

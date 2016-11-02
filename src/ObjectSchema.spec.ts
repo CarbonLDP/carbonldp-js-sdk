@@ -117,6 +117,29 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
+	describe( interfaze(
+		"Carbon.ObjectSchema.Resolver",
+		"Interface that defines the methods needed for an element that can provide object schemas."
+	), ():void => {
+
+		it( hasMethod(
+			OPTIONAL,
+			"getGeneralSchema",
+			"Returns the general object schema that applies to all the objects.",
+			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OPTIONAL,
+			"getSchemaFor",
+			"Returns the specific object schema that applies to the object provided.", [
+				{ name: "object", type: "Object", description: "The object to look for its schema." }
+			],
+			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+		), ():void => {} );
+
+	} );
+
 	it( hasDefaultExport( "Carbon.ObjectSchema.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:ObjectSchema.Class;
