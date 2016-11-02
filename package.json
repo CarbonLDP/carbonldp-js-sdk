@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
@@ -18,6 +18,9 @@
     "file-type": "^3.8.0"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.5.36",
+    "@types/jasmine-ajax": "^3.1.31",
+    "@types/node": "^6.0.46",
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
     "gulp": "^3.9.1",
@@ -26,7 +29,7 @@
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^5.0.0",
-    "gulp-typescript": "^2.13.4",
+    "gulp-typescript": "^3.1.0",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.3.4",
@@ -45,7 +48,7 @@
     "systemjs": "^0.19.27",
     "systemjs-builder": "^0.15.16",
     "tslint": "^3.10.2",
-    "typescript": "^1.8.10",
+    "typescript": "^2.0.6",
     "typings": "^1.0.4"
   },
   "jspm": {
@@ -55,11 +58,12 @@
       "lib": "dist",
       "packages": "test/jspm_packages"
     },
-    "dependencies": {},
+    "dependencies": {
+      "plugin-typescript": "github:frankwallis/plugin-typescript@^5.2.7",
+      "typescript": "npm:typescript@^2.0.6"
+    },
     "devDependencies": {
-      "jsonld": "npm:jsonld@^0.4.11",
-      "os": "npm:jspm-nodelibs-os@^0.2.0",
-      "plugin-typescript": "github:frankwallis/plugin-typescript@^4.0.9"
+      "jsonld": "npm:jsonld@^0.4.11"
     },
     "peerDependencies": {
       "assert": "npm:jspm-nodelibs-assert@^0.2.0",
@@ -70,6 +74,8 @@
       "events": "npm:jspm-nodelibs-events@^0.2.0",
       "fs": "npm:jspm-nodelibs-fs@^0.2.0",
       "http": "npm:jspm-nodelibs-http@^0.2.0",
+      "net": "npm:jspm-nodelibs-net@^0.2.0",
+      "os": "npm:jspm-nodelibs-os@^0.2.0",
       "path": "npm:jspm-nodelibs-path@^0.2.0",
       "process": "npm:jspm-nodelibs-process@^0.2.0",
       "stream": "npm:jspm-nodelibs-stream@^0.2.0",
@@ -79,12 +85,12 @@
       "vm": "npm:jspm-nodelibs-vm@^0.2.0"
     },
     "overrides": {
-      "npm:inherits@2.0.1": {
+      "npm:inherits@2.0.3": {
         "ignore": [
           "test.js"
         ]
       },
-      "npm:typescript@1.8.10": {
+      "npm:typescript@2.0.6": {
         "browser": {},
         "map": {
           "buffer": "@empty",

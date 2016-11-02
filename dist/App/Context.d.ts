@@ -4,7 +4,7 @@ import Context from "./../Context";
 import PersistedApp from "./../PersistedApp";
 export declare class Class extends AbstractContext {
     auth: Auth;
-    app: PersistedApp;
+    readonly app: PersistedApp;
     private _app;
     private base;
     constructor(parentContext: Context, app: PersistedApp);

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
@@ -14,9 +15,9 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
-    jsonldConverter: JSONLD.Converter.Class;
+    readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
-    documentDecorators: Map<string, {
+    readonly documentDecorators: Map<string, {
         decorator: Function;
         parameters?: any[];
     }>;

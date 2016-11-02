@@ -31,7 +31,7 @@ export declare class Class {
     private method;
     private authenticators;
     private authenticator;
-    authenticatedAgent: PersistedAgent.Class;
+    readonly authenticatedAgent: PersistedAgent.Class;
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<Token.Class>;

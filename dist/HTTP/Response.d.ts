@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import * as Header from "./Header";
 import { ClientRequest, IncomingMessage } from "http";
 export declare class Class {

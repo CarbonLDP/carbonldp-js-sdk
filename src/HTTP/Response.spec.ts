@@ -14,7 +14,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Header from "./Header";
-import {ClientRequest, IncomingMessage} from "http";
+import { ClientRequest, IncomingMessage } from "http";
 
 import * as Response from "./Response";
 import DefaultExport from "./Response";
@@ -62,7 +62,7 @@ describe( module(
 
 			it( hasSignature(
 				"Signature that only works in a web browser.", [
-					{name: "request", type: "XMLHttpRequest"}
+					{ name: "request", type: "XMLHttpRequest" }
 				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
@@ -76,9 +76,9 @@ describe( module(
 
 			it( hasSignature(
 				"Signature that only works in Node.js.", [
-					{name: "request", type: "ClientRequest"},
-					{name: "data", type: "string"},
-					{name: "response", type: "IncomingMessage"}
+					{ name: "request", type: "ClientRequest" },
+					{ name: "data", type: "string" },
+					{ name: "response", type: "IncomingMessage" }
 				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
@@ -141,7 +141,7 @@ describe( module(
 
 				let objectKeys:Array<string> = Object.keys( rawResponse.responseHeaders );
 				expect( response.headers.size ).toBe( objectKeys.length );
-				for( let header of objectKeys ) {
+				for ( let header of objectKeys ) {
 					expect( response.getHeader( header ) ).toEqual( new Header.Class( rawResponse.responseHeaders[ header ] ) );
 				}
 
@@ -176,9 +176,9 @@ describe( module(
 			INSTANCE,
 			"getHeader",
 			"Return the Header object referred by the name specified.", [
-				{name: "name", type: "string"}
+				{ name: "name", type: "string" }
 			],
-			{type: "Carbon.HTTP.Header.Class"}
+			{ type: "Carbon.HTTP.Header.Class" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 
 			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
@@ -220,9 +220,9 @@ describe( module(
 			STATIC,
 			"getETag",
 			"Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists.", [
-				{name: "response", type: "Carbon.HTTP.Response.Class"}
+				{ name: "response", type: "Carbon.HTTP.Response.Class" }
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( Response.Util.getETag ).toBeDefined();
 			expect( Utils.isFunction( Response.Util.getETag ) ).toBe( true );
@@ -266,7 +266,8 @@ describe( module(
 				}, ( res:IncomingMessage ) => {
 					let data:string = "";
 					res.setEncoding( "utf8" );
-					res.on( "data", ( chunk ) => {
+					res.on( "data", ( chunk:string | Buffer ) => {
+						if( Buffer.isBuffer( chunk ) ) chunk = chunk.toString( "utf8" );
 						data = chunk;
 					} );
 					res.on( "end", () => {

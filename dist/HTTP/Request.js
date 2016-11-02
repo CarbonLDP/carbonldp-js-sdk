@@ -65,6 +65,8 @@ function sendWithNode(method, url, body, options) {
         function returnResponse(request, res) {
             var rawData = [];
             res.on("data", function (chunk) {
+                if (typeof chunk === "string")
+                    chunk = Buffer.from(chunk, "utf-8");
                 rawData.push(chunk);
             }).on("end", function () {
                 var data = Buffer.concat(rawData).toString("utf8");
