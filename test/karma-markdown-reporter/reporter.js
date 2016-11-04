@@ -97,7 +97,7 @@ swag.registerHelpers( Handlebars );
 
 		var ret = "";
 		for( var j = 0, length = elements.length; j < length; j ++ ) {
-			ret = ret + options.fn( elements[ j ] );
+			ret = ret + options.fn( Object.assign( { "first": j === 0, "last": j === length - 1 }, elements[ j ] ) );
 		}
 
 		return ret;

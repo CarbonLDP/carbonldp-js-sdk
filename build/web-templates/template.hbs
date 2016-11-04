@@ -166,7 +166,7 @@
 			text-align: justify;
 		}
 
-		.ui.table tr>td.optional-label {
+		.ui.table tr > td.optional-label {
 			padding-top: 2em;
 			position: relative;
 		}
@@ -182,20 +182,25 @@
 			display: none;
 		}
 
-		.ui.visible.left.sidebar.doc-menu:not(.overlay) ~ .pusher > .doc-main {
+		.ui.visible.left.sidebar.doc-menu-sidebar:not(.overlay) ~ .pusher > .doc-main, .ui.visible.left.sidebar.doc-menu-sidebar ~ .doc-menu-location {
 			width: calc(100% - 350px);
+		}
+
+		.ui.visible.left.sidebar.doc-menu-sidebar ~ .doc-menu-location > .doc-menu-location__launch-item {
+			display: none;
 		}
 
 		@media only screen and (max-width: 991px) {
 
-			.ui.table tr>td.optional-label {
+			.ui.table tr > td.optional-label {
 				padding-top: 1em !important;
 			}
-			.ui.table tr>td > code {
+
+			.ui.table tr > td > code {
 				line-height: 2em;
 			}
 
-			td.optional-label > .ui.horizontal.ribbon.label{
+			td.optional-label > .ui.horizontal.ribbon.label {
 				top: -1.167em;
 			}
 
@@ -209,7 +214,7 @@
 				/*left: 0;*/
 			}
 
-			.ui.sidebar.menu.doc-menu-sidebar {
+			.ui.sidebar.doc-menu-sidebar {
 				z-index: 1001;
 			}
 
@@ -230,42 +235,55 @@
 			min-height: calc(100% - 130px) !important;
 		}
 
-		.ui.menu.doc-menu-top {
+		.ui.menu.doc-menu-top, .ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu.top {
 			border-bottom: 1px solid rgba(255, 255, 255, .08);
+			z-index: 1005;
 		}
 
-		.ui.sidebar.menu.doc-menu-sidebar {
+		.ui.sidebar.doc-menu-sidebar {
 			top: 75px;
 			height: calc(100% - 75px) !important;
 			border-top: 1px solid rgba(255, 255, 255, .08);
+			overflow-y: hidden;
 		}
 
-		.doc-menu-sidebar .menu {
+		.ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu {
+			width: 100%;
+			overflow-y: auto;
+		}
+
+		.ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu.bottom {
+			position: relative;
+			top: 63px;
+			height: calc( 100% - 63px );
+		}
+
+		.ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu .menu {
 			padding-left: 1em;
 		}
 
-		.ui.sidebar.menu.doc-menu.doc-menu-sidebar > .item {
+		.ui.sidebar.doc-menu-sidebar > .bottom.menu.doc-menu > .item {
 			border-top: 1px solid;
 			border-color: transparent;
 		}
 
-		.ui.sidebar.menu.doc-menu.doc-menu-sidebar > .item.active {
+		.ui.sidebar.doc-menu-sidebar > .bottom.menu.doc-menu > .item.active {
 			border-color: #F2711C;
-		}
-
-		.ui.sidebar.menu.doc-menu.doc-menu-sidebar .menu a.item.active {
-			/*color: #F2711C !important;*/
 		}
 
 		.ui.menu.doc-menu-location {
 			position: fixed;
 			top: 75px;
-			height: 61px;
+			height: 64px;
 			box-shadow: none;
 			border: 1px solid rgba(34, 36, 38, .15);
 		}
 
-		.doc-menu-location > .doc-menu-location__item:not(:last-child)::after {
+		.ui.menu.doc-menu-location > .left.menu {
+			overflow-x: auto;
+		}
+
+		.doc-menu-location .doc-menu-location__item:not(:last-child)::after {
 			position: absolute;
 			z-index: 2;
 			content: '';
@@ -284,20 +302,26 @@
 			transform: translateY(-50%) translateX(50%) rotate(-45deg);
 		}
 
-		.doc-menu-location > .doc-menu-location__item:not(:last-child):hover::after, .doc-menu-location > .doc-menu-location__item:not(:last-child):active::after, .doc-menu-location > .doc-menu-location__item:not(:last-child).active::after {
+		.doc-menu-location .doc-menu-location__item:not(:last-child):hover::after, .doc-menu-location .doc-menu-location__item:not(:last-child):active::after, .doc-menu-location .doc-menu-location__item:not(:last-child).active::after {
 			background-color: #f7f7f7;
 		}
 
-		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_module.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
+		.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
 			background-color: #e5e5e5;
 		}
-		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_interface.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
+
+		.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
 			/*background-color: #fdf0e8;*/
 			background-color: #fbd4ba;
 		}
-		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_class.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
+
+		.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
 			/*background-color: #e8f2fa;*/
 			background-color: #bcdaf0;
+		}
+
+		.doc-search {
+			z-index: 1005;
 		}
 	</style>
 </head>
@@ -306,31 +330,51 @@
 		<a class="item" href="https://carbonldp.com">
 			<img class="ui small image doc-logo" src="img/carbon-ldp-logo.png">
 		</a>
-	</div>
-
-	<div class="ui inverted left vertical visible menu wide sidebar doc-menu doc-menu-sidebar">
-		<div class="item">
+		<div class="ui right aligned search item doc-search">
 			<div class="ui icon input">
-				<input type="text" placeholder="Search...">
+				<input class="prompt" type="text" placeholder="Search...">
 				<i class="search icon"></i>
 			</div>
+			<div class="results"></div>
 		</div>
-		{{#each modules}}
-			<div class="item">
-				<a class="header" href="#Module-{{toURL path}}">{{path}}</a>
-				<div class="menu">
-					{{#combineElements this}}
-						<a class="item{{#if isClass}} item-class{{else}} item-interface{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
-					{{/combineElements}}
-				</div>
+	</div>
+
+	<div class="ui inverted left vertical visible wide sidebar doc-menu-sidebar">
+		<div class="ui top fixed inverted vertical menu doc-menu">
+			<div class="ui item right aligned container">
+				<button class="ui inverted icon button js-sidebar-toggler">
+					<i class="sidebar icon"></i>
+				</button>
 			</div>
-		{{/each}}
+		</div>
+		<div class="ui bottom fixed inverted vertical menu doc-menu">
+			{{#each modules}}
+				<div class="item">
+					<a class="header" href="#Module-{{toURL path}}">{{path}}</a>
+					<div class="menu">
+						{{#combineElements this}}
+							<a class="item{{#if isClass}} item-class{{else}} item-interface{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
+						{{/combineElements}}
+					</div>
+				</div>
+			{{/each}}
+		</div>
 	</div>
 
 	<div class="ui top fixed menu doc-menu doc-menu-location">
-		<a class="doc-menu__launch-item item"><i class="large content icon"></i>Menu</a>
-		<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
-		<!--<a class="active item doc-menu-location__item">Index</a>-->
+		<a class="item doc-menu-location__launch-item js-sidebar-toggler"><i class="large content icon"></i>Menu</a>
+		<div class="left menu">
+			<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
+		</div>
+		<div class="right menu">
+			<!--<div class="ui right aligned search item doc-search">
+				<div class="ui icon input">
+					<input class="prompt" type="text" placeholder="Search...">
+					<i class="search icon"></i>
+				</div>
+				<div class="results"></div>
+			</div>-->
+		</div>
 	</div>
 
 	<div class="doc-page-content pusher">
@@ -527,13 +571,19 @@
 			var sidebarMenu = $( ".doc-menu-sidebar" );
 
 			// Sidebar menu closeable
-			$( ".doc-menu__launch-item" ).click( function() {
+			$( ".js-sidebar-toggler" ).click( function() {
 				applyToSidebar( "toggle" );
 			} );
 
 			jqWindow.resize( function() {
 				applyToSidebar();
 			} );
+
+			sidebarMenu
+				.find( ".item" )
+				.click( function() {
+					applyToSidebar();
+				} );
 
 			function applyToSidebar( action ) {
 				if( jqWindow.width() <= 933 ) {
@@ -570,7 +620,7 @@
 				setActiveSection();
 			} );
 
-			var $locationMenu = $( ".doc-menu-location" );
+			var $locationMenu = $( ".doc-menu-location > .left.menu" );
 			var $moduleLocation = $( `<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>` ).click( scrollToHash );
 			var $objectLocation = $( `<a class="item doc-menu-location__item dynamic-location"></a>` ).click( scrollToHash );
 
@@ -584,23 +634,28 @@
 				}
 			}
 
-			function setActiveSection() {
+			function getSidebarItem() {
 				if( ! window.location.hash ) return;
-				var hash = window.location.hash;
 
+				var hash = window.location.hash;
 				var $sidebarItem = $( `.doc-menu-sidebar *[href="${ hash }"]` );
 
 				if( ! $sidebarItem.length ) {
 					var lastIndex = hash.lastIndexOf( "--" );
-					if ( lastIndex === -1 ) lastIndex = hash.lastIndexOf( "+" );
-					if ( lastIndex === -1 ) lastIndex = hash.lastIndexOf( "-" );
+					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "+" );
+					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "-" );
 					$sidebarItem = $( `.doc-menu-sidebar *[href="${ hash.slice( 0, lastIndex ) }"]` );
 				}
 
-				if( ! $sidebarItem.length ) return;
+				if( ! $sidebarItem.length ) return null;
+				return $sidebarItem;
+			}
 
-				$sidebarItem
-					.parents( ".doc-menu-sidebar" )
+			function setActiveSection() {
+				var $sidebarItem = getSidebarItem( window.location.hash );
+				if( $sidebarItem === null ) return;
+
+				$( ".doc-menu-sidebar" )
 					.find( ".item.active" )
 					.removeClass( "active" );
 
@@ -640,6 +695,36 @@
 
 			scrollToHash();
 			setActiveSection();
+
+			// Search box
+			var content = [
+				{{#each modules}}
+					{{#combineElements this}}
+						{
+							"title": "{{element.path}}",
+							"type": "{{#if isClass}}class{{else}}interface{{/if}}",
+							"hash": "#{{toURL element.path}}"
+						},
+					{{/combineElements}}
+				{{/each}}
+			];
+
+			$( ".ui.search.doc-search" )
+				.search( {
+					source: content,
+					searchFields: [
+						"title"
+					],
+					selectFirstResult: true,
+					searchFullText: false,
+					regExp: {
+						escape: /[\-\[\]\/{}()*+?.\\\^$|]/g,
+						beginsWith: '(.*)'
+					},
+					onSelect: function( result ) {
+						window.location.hash = result.hash;
+					}
+				} );
 		})();
 	</script>
 </body>

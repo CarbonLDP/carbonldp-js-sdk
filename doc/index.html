@@ -166,7 +166,7 @@
 			text-align: justify;
 		}
 
-		.ui.table tr>td.optional-label {
+		.ui.table tr > td.optional-label {
 			padding-top: 2em;
 			position: relative;
 		}
@@ -182,20 +182,25 @@
 			display: none;
 		}
 
-		.ui.visible.left.sidebar.doc-menu:not(.overlay) ~ .pusher > .doc-main {
+		.ui.visible.left.sidebar.doc-menu-sidebar:not(.overlay) ~ .pusher > .doc-main, .ui.visible.left.sidebar.doc-menu-sidebar ~ .doc-menu-location {
 			width: calc(100% - 350px);
+		}
+
+		.ui.visible.left.sidebar.doc-menu-sidebar ~ .doc-menu-location > .doc-menu-location__launch-item {
+			display: none;
 		}
 
 		@media only screen and (max-width: 991px) {
 
-			.ui.table tr>td.optional-label {
+			.ui.table tr > td.optional-label {
 				padding-top: 1em !important;
 			}
-			.ui.table tr>td > code {
+
+			.ui.table tr > td > code {
 				line-height: 2em;
 			}
 
-			td.optional-label > .ui.horizontal.ribbon.label{
+			td.optional-label > .ui.horizontal.ribbon.label {
 				top: -1.167em;
 			}
 
@@ -209,7 +214,7 @@
 				/*left: 0;*/
 			}
 
-			.ui.sidebar.menu.doc-menu-sidebar {
+			.ui.sidebar.doc-menu-sidebar {
 				z-index: 1001;
 			}
 
@@ -230,42 +235,55 @@
 			min-height: calc(100% - 130px) !important;
 		}
 
-		.ui.menu.doc-menu-top {
+		.ui.menu.doc-menu-top, .ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu.top {
 			border-bottom: 1px solid rgba(255, 255, 255, .08);
+			z-index: 1005;
 		}
 
-		.ui.sidebar.menu.doc-menu-sidebar {
+		.ui.sidebar.doc-menu-sidebar {
 			top: 75px;
 			height: calc(100% - 75px) !important;
 			border-top: 1px solid rgba(255, 255, 255, .08);
+			overflow-y: hidden;
 		}
 
-		.doc-menu-sidebar .menu {
+		.ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu {
+			width: 100%;
+			overflow-y: auto;
+		}
+
+		.ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu.bottom {
+			position: relative;
+			top: 63px;
+			height: calc( 100% - 63px );
+		}
+
+		.ui.sidebar.doc-menu-sidebar.doc-menu-sidebar > .menu.doc-menu .menu {
 			padding-left: 1em;
 		}
 
-		.ui.sidebar.menu.doc-menu.doc-menu-sidebar > .item {
+		.ui.sidebar.doc-menu-sidebar > .bottom.menu.doc-menu > .item {
 			border-top: 1px solid;
 			border-color: transparent;
 		}
 
-		.ui.sidebar.menu.doc-menu.doc-menu-sidebar > .item.active {
+		.ui.sidebar.doc-menu-sidebar > .bottom.menu.doc-menu > .item.active {
 			border-color: #F2711C;
-		}
-
-		.ui.sidebar.menu.doc-menu.doc-menu-sidebar .menu a.item.active {
-			/*color: #F2711C !important;*/
 		}
 
 		.ui.menu.doc-menu-location {
 			position: fixed;
 			top: 75px;
-			height: 61px;
+			height: 64px;
 			box-shadow: none;
 			border: 1px solid rgba(34, 36, 38, .15);
 		}
 
-		.doc-menu-location > .doc-menu-location__item:not(:last-child)::after {
+		.ui.menu.doc-menu-location > .left.menu {
+			overflow-x: auto;
+		}
+
+		.doc-menu-location .doc-menu-location__item:not(:last-child)::after {
 			position: absolute;
 			z-index: 2;
 			content: '';
@@ -284,20 +302,26 @@
 			transform: translateY(-50%) translateX(50%) rotate(-45deg);
 		}
 
-		.doc-menu-location > .doc-menu-location__item:not(:last-child):hover::after, .doc-menu-location > .doc-menu-location__item:not(:last-child):active::after, .doc-menu-location > .doc-menu-location__item:not(:last-child).active::after {
+		.doc-menu-location .doc-menu-location__item:not(:last-child):hover::after, .doc-menu-location .doc-menu-location__item:not(:last-child):active::after, .doc-menu-location .doc-menu-location__item:not(:last-child).active::after {
 			background-color: #f7f7f7;
 		}
 
-		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_module.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
+		.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
 			background-color: #e5e5e5;
 		}
-		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_interface.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
+
+		.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
 			/*background-color: #fdf0e8;*/
 			background-color: #fbd4ba;
 		}
-		.doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_class.active, .doc-menu-location > .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
+
+		.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
 			/*background-color: #e8f2fa;*/
 			background-color: #bcdaf0;
+		}
+
+		.doc-search {
+			z-index: 1005;
 		}
 	</style>
 </head>
@@ -306,919 +330,939 @@
 		<a class="item" href="https://carbonldp.com">
 			<img class="ui small image doc-logo" src="img/carbon-ldp-logo.png">
 		</a>
-	</div>
-
-	<div class="ui inverted left vertical visible menu wide sidebar doc-menu doc-menu-sidebar">
-		<div class="item">
+		<div class="ui right aligned search item doc-search">
 			<div class="ui icon input">
-				<input type="text" placeholder="Search...">
+				<input class="prompt" type="text" placeholder="Search...">
 				<i class="search icon"></i>
 			</div>
+			<div class="results"></div>
 		</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon">Carbon</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon">Carbon</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-APIDescription">Carbon/APIDescription</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-APIDescription-Class">Carbon.APIDescription.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-AbstractContext">Carbon/AbstractContext</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-AbstractContext-Class">Carbon.AbstractContext.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-AccessPoint">Carbon/AccessPoint</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-AccessPoint-Class">Carbon.AccessPoint.Class</a>
-						<a class="item item-interface" href="#Carbon-AccessPoint-DocumentClass">Carbon.AccessPoint.DocumentClass</a>
-						<a class="item item-class" href="#Carbon-AccessPoint-Factory">Carbon.AccessPoint.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App">Carbon/App</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-App-Class">Carbon.App.Class</a>
-						<a class="item item-class" href="#Carbon-App-Factory">Carbon.App.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App-Agents">Carbon/App/Agents</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-App-Agents-Class">Carbon.App.Agents.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App-Auth">Carbon/App/Auth</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-App-Auth-Class">Carbon.App.Auth.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App-Context">Carbon/App/Context</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-App-Context">Carbon.App.Context</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App-PersistedAgent">Carbon/App/PersistedAgent</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App-PersistedRole">Carbon/App/PersistedRole</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-App-PersistedRole-Class">Carbon.App.PersistedRole.Class</a>
-						<a class="item item-class" href="#Carbon-App-PersistedRole-Factory">Carbon.App.PersistedRole.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-App-Roles">Carbon/App/Roles</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-App-Roles-Class">Carbon.App.Roles.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Apps">Carbon/Apps</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Apps-Class">Carbon.Apps.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Apps-Role">Carbon/Apps/Role</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-App-Role-Class">Carbon.App.Role.Class</a>
-						<a class="item item-class" href="#Carbon-App-Role-Factory">Carbon.App.Role.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth">Carbon/Auth</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-Class">Carbon.Auth.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-ACE">Carbon/Auth/ACE</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-PersistedACE-Class">Carbon.Auth.PersistedACE.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-ACL">Carbon/Auth/ACL</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-ACL-Class">Carbon.Auth.ACL.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-ACL-Factory">Carbon.Auth.ACL.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Agent">Carbon/Auth/Agent</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-Agent-Class">Carbon.Auth.Agent.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-Agent-Factory">Carbon.Auth.Agent.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Agents">Carbon/Auth/Agents</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-Agents-Class">Carbon.Auth.Agents.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-AuthenticationToken">Carbon/Auth/AuthenticationToken</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-AuthenticationToken-Class">Carbon.Auth.AuthenticationToken.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Authenticator">Carbon/Auth/Authenticator</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-Authenticator-Class">Carbon.Auth.Authenticator.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-BasicAuthenticator">Carbon/Auth/BasicAuthenticator</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-BasicAuthenticator-Class">Carbon.Auth.BasicAuthenticator.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Credentials">Carbon/Auth/Credentials</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-Credentials-Class">Carbon.Auth.Credentials.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-PersistedACL">Carbon/Auth/PersistedACL</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-PersistedACL-Class">Carbon.Auth.PersistedACL.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-PersistedACL-Factory">Carbon.Auth.PersistedACL.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-PersistedAgent">Carbon/Auth/PersistedAgent</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-PersistedAgent-Factory">Carbon.Auth.PersistedAgent.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-PersistedRole">Carbon/Auth/PersistedRole</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-App-PersistedRole-Class">Carbon.App.PersistedRole.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-PersistedRole-Factory">Carbon.Auth.PersistedRole.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Role">Carbon/Auth/Role</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-Role-Class">Carbon.Auth.Role.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-Role-Factory">Carbon.Auth.Role.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Roles">Carbon/Auth/Roles</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-Roles-Class">Carbon.Auth.Roles.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Ticket">Carbon/Auth/Ticket</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-Ticket-Class">Carbon.Auth.Ticket.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-Ticket-Factory">Carbon.Auth.Ticket.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-Token">Carbon/Auth/Token</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Auth-Token-Class">Carbon.Auth.Token.Class</a>
-						<a class="item item-class" href="#Carbon-Auth-Token-Factory">Carbon.Auth.Token.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-TokenAuthenticator">Carbon/Auth/TokenAuthenticator</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-TokenAuthenticator-Class">Carbon.Auth.TokenAuthenticator.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-UsernameAndPasswordCredentials">Carbon/Auth/UsernameAndPasswordCredentials</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-UsernameAndPasswordCredentials-Class">Carbon.Auth.UsernameAndPasswordCredentials.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Auth-UsernameAndPasswordToken">Carbon/Auth/UsernameAndPasswordToken</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Auth-UsernameAndPasswordToken-Class">Carbon.Auth.UsernameAndPasswordToken.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-BlankNode">Carbon/BlankNode</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-BlankNode-Class">Carbon.BlankNode.Class</a>
-						<a class="item item-class" href="#Carbon-BlankNode-Factory">Carbon.BlankNode.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Context">Carbon/Context</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Context-Class">Carbon.Context.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Document">Carbon/Document</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Document-Class">Carbon.Document.Class</a>
-						<a class="item item-class" href="#Carbon-Document-Factory">Carbon.Document.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Documents">Carbon/Documents</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Documents-Class">Carbon.Documents.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors">Carbon/Errors</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-AbstractError">Carbon/Errors/AbstractError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-AbstractError">Carbon.Errors.AbstractError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-IDAlreadyInUseError">Carbon/Errors/IDAlreadyInUseError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-IDAlreadyInUseError">Carbon.Errors.IDAlreadyInUseError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-IllegalActionError">Carbon/Errors/IllegalActionError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-IllegalActionError">Carbon.Errors.IllegalActionError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-IllegalArgumentError">Carbon/Errors/IllegalArgumentError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-IllegalArgumentError">Carbon.Errors.IllegalArgumentError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-IllegalStateError">Carbon/Errors/IllegalStateError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-IllegalStateError">Carbon.Errors.IllegalStateError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-InvalidJSONLDSyntaxError">Carbon/Errors/InvalidJSONLDSyntaxError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-InvalidJSONLDSyntaxError">Carbon.Errors.InvalidJSONLDSyntaxError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Errors-NotImplementedError">Carbon/Errors/NotImplementedError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Errors-NotImplementedError">Carbon.Errors.NotImplementedError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Fragment">Carbon/Fragment</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Fragment-Class">Carbon.Fragment.Class</a>
-						<a class="item item-class" href="#Carbon-Fragment-Factory">Carbon.Fragment.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-FreeResources">Carbon/FreeResources</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-FreeResources-Class">Carbon.FreeResources.Class</a>
-						<a class="item item-class" href="#Carbon-FreeResources-Factory">Carbon.FreeResources.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP">Carbon/HTTP</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors">Carbon/HTTP/Errors</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-HTTPError">Carbon/HTTP/Errors/HTTPError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-HTTPError">Carbon.HTTP.Errors.HTTPError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-UnknownError">Carbon/HTTP/Errors/UnknownError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-UnknownError">Carbon.HTTP.Errors.UnknownError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-BadRequestError">Carbon/HTTP/Errors/client/BadRequestError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-BadRequestError">Carbon.HTTP.Errors.BadRequestError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-ConflictError">Carbon/HTTP/Errors/client/ConflictError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-ConflictError">Carbon.HTTP.Errors.ConflictError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-ForbiddenError">Carbon/HTTP/Errors/client/ForbiddenError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-ForbiddenError">Carbon.HTTP.Errors.ForbiddenError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-MethodNotAllowedError">Carbon/HTTP/Errors/client/MethodNotAllowedError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-MethodNotAllowedError">Carbon.HTTP.Errors.MethodNotAllowedError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-NotAcceptableError">Carbon/HTTP/Errors/client/NotAcceptableError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-NotAcceptableError">Carbon.HTTP.Errors.NotAcceptableError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-NotFoundError">Carbon/HTTP/Errors/client/NotFoundError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-NotFoundError">Carbon.HTTP.Errors.NotFoundError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-PreconditionFailedError">Carbon/HTTP/Errors/client/PreconditionFailedError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-PreconditionFailedError">Carbon.HTTP.Errors.PreconditionFailedError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-PreconditionRequiredError">Carbon/HTTP/Errors/client/PreconditionRequiredError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-PreconditionRequiredError">Carbon.HTTP.Errors.PreconditionRequiredError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestEntityTooLargeError">Carbon/HTTP/Errors/client/RequestEntityTooLargeError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-RequestEntityTooLargeError">Carbon.HTTP.Errors.RequestEntityTooLargeError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError">Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestURITooLongError">Carbon/HTTP/Errors/client/RequestURITooLongError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-RequestURITooLongError">Carbon.HTTP.Errors.RequestURITooLongError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-TooManyRequestsError">Carbon/HTTP/Errors/client/TooManyRequestsError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-TooManyRequestsError">Carbon.HTTP.Errors.TooManyRequestsError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-UnauthorizedError">Carbon/HTTP/Errors/client/UnauthorizedError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-UnauthorizedError">Carbon.HTTP.Errors.UnauthorizedError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">Carbon/HTTP/Errors/client/UnsupportedMediaTypeError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-UnsupportedMediaTypeError">Carbon.HTTP.Errors.UnsupportedMediaTypeError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-BadGatewayError">Carbon/HTTP/Errors/server/BadGatewayError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-BadGatewayError">Carbon.HTTP.Errors.BadGatewayError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-BadResponseError">Carbon/HTTP/Errors/server/BadResponseError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-BadResponseError">Carbon.HTTP.Errors.BadResponseError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-GatewayTimeoutError">Carbon/HTTP/Errors/server/GatewayTimeoutError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-GatewayTimeoutError">Carbon.HTTP.Errors.GatewayTimeoutError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-HTTPVersionNotSupportedError">Carbon.HTTP.Errors.HTTPVersionNotSupportedError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-InternalServerErrorError">Carbon/HTTP/Errors/server/InternalServerErrorError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-InternalServerErrorError">Carbon.HTTP.Errors.InternalServerErrorError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-NotImplementedError">Carbon/HTTP/Errors/server/NotImplementedError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-NotImplementedError">Carbon.HTTP.Errors.NotImplementedError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Errors-server-ServiceUnavailableError">Carbon/HTTP/Errors/server/ServiceUnavailableError</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Errors-ServiceUnavailableError">Carbon.HTTP.Errors.ServiceUnavailableError</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Header">Carbon/HTTP/Header</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Header-Class">Carbon.HTTP.Header.Class</a>
-						<a class="item item-class" href="#Carbon-HTTP-Header-Util">Carbon.HTTP.Header.Util</a>
-						<a class="item item-class" href="#Carbon-HTTP-Header-Value">Carbon.HTTP.Header.Value</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-JSONParser">Carbon/HTTP/JSONParser</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-JSONParser-Class">Carbon.HTTP.JSONParser.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Method">Carbon/HTTP/Method</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Parser">Carbon/HTTP/Parser</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-HTTP-Parser-Class">Carbon.HTTP.Parser.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Request">Carbon/HTTP/Request</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-HTTP-Request-ContainerRetrievalPreferences">Carbon.HTTP.Request.ContainerRetrievalPreferences</a>
-						<a class="item item-interface" href="#Carbon-HTTP-Request-Options">Carbon.HTTP.Request.Options</a>
-						<a class="item item-class" href="#Carbon-HTTP-Request-Service">Carbon.HTTP.Request.Service</a>
-						<a class="item item-class" href="#Carbon-HTTP-Request-Util">Carbon.HTTP.Request.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-Response">Carbon/HTTP/Response</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-Response-Class">Carbon.HTTP.Response.Class</a>
-						<a class="item item-class" href="#Carbon-HTTP-Response-Util">Carbon.HTTP.Response.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-StatusCode">Carbon/HTTP/StatusCode</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-HTTP-StringParser">Carbon/HTTP/StringParser</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-HTTP-StringParser-Class">Carbon.HTTP.StringParser.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-JSONLD">Carbon/JSONLD</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-JSONLD-Converter">Carbon/JSONLD/Converter</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-JSONLD-Converter-Class">Carbon.JSONLD.Converter.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-JSONLD-Parser">Carbon/JSONLD/Parser</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-JSONLD-Parser-Class">Carbon.JSONLD.Parser.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-JSONLD-Processor">Carbon/JSONLD/Processor</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-JSONLD-Processor-Class">Carbon.JSONLD.Processor.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP">Carbon/LDP</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-AddMemberAction">Carbon/LDP/AddMemberAction</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-AddMemberAction-Class">Carbon.LDP.AddMemberAction.Class</a>
-						<a class="item item-class" href="#Carbon-LDP-AddMemberAction-Factory">Carbon.LDP.AddMemberAction.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-DirectContainer">Carbon/LDP/DirectContainer</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-DirectContainer-Factory">Carbon.DirectContainer.Factory</a>
-						<a class="item item-interface" href="#Carbon-LDP-DirectContainer-Class">Carbon.LDP.DirectContainer.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-Error">Carbon/LDP/Error</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-Error-Class">Carbon.LDP.Error.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-ErrorResponse">Carbon/LDP/ErrorResponse</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-ErrorResponse-Class">Carbon.LDP.ErrorResponse.Class</a>
-						<a class="item item-class" href="#Carbon-LDP-ErrorResponse-Parser">Carbon.LDP.ErrorResponse.Parser</a>
-						<a class="item item-class" href="#Carbon-LDP-ErrorResponse-Util">Carbon.LDP.ErrorResponse.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-IndirectContainer">Carbon/LDP/IndirectContainer</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-IndirectContainer-Factory">Carbon.IndirectContainer.Factory</a>
-						<a class="item item-interface" href="#Carbon-LDP-IndirectContainer-Class">Carbon.LDP.IndirectContainer.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-PersistedBlankNode">Carbon/LDP/PersistedBlankNode</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedBlankNode-Class">Carbon.PersistedBlankNode.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-RemoveMemberAction">Carbon/LDP/RemoveMemberAction</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-RemoveMemberAction-Class">Carbon.LDP.RemoveMemberAction.Class</a>
-						<a class="item item-class" href="#Carbon-LDP-RemoveMemberAction-Factory">Carbon.LDP.RemoveMemberAction.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-ResourceMetadata">Carbon/LDP/ResourceMetadata</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-ResourceMetadata-Class">Carbon.LDP.ResourceMetadata.Class</a>
-						<a class="item item-class" href="#Carbon-LDP-ResourceMetadata-Factory">Carbon.LDP.ResourceMetadata.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-ResponseMetadata">Carbon/LDP/ResponseMetadata</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-ResponseMetadata-Class">Carbon.LDP.ResponseMetadata.Class</a>
-						<a class="item item-class" href="#Carbon-LDP-ResponseMetadata-Factory">Carbon.LDP.ResponseMetadata.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-LDP-VolatileResource">Carbon/LDP/VolatileResource</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-LDP-VolatileResource-Class">Carbon.LDP.VolatileResource.Class</a>
-						<a class="item item-class" href="#Carbon-LDP-VolatileResource-Factory">Carbon.LDP.VolatileResource.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS">Carbon/NS</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-C">Carbon/NS/C</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-C-Class">Carbon.NS.C.Class</a>
-						<a class="item item-class" href="#Carbon-NS-C-Predicate">Carbon.NS.C.Predicate</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-CP">Carbon/NS/CP</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-CP-Predicate">Carbon.NS.CP.Predicate</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-CS">Carbon/NS/CS</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-CS-Class">Carbon.NS.CS.Class</a>
-						<a class="item item-class" href="#Carbon-NS-CS-Predicate">Carbon.NS.CS.Predicate</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-LDP">Carbon/NS/LDP</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-LDP-Class">Carbon.NS.LDP.Class</a>
-						<a class="item item-class" href="#Carbon-NS-LDP-Predicate">Carbon.NS.LDP.Predicate</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-RDF">Carbon/NS/RDF</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-RDF-Predicate">Carbon.NS.RDF.Predicate</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-VCARD">Carbon/NS/VCARD</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-VCARD-Predicate">Carbon.NS.VCARD.Predicate</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NS-XSD">Carbon/NS/XSD</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-NS-XSD-DataType">Carbon.NS.XSD.DataType</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-NamedFragment">Carbon/NamedFragment</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-NamedFragment-Class">Carbon.NamedFragment.Class</a>
-						<a class="item item-class" href="#Carbon-NamedFragment-Factory">Carbon.NamedFragment.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-ObjectSchema">Carbon/ObjectSchema</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-ObjectSchema-Class">Carbon.ObjectSchema.Class</a>
-						<a class="item item-class" href="#Carbon-ObjectSchema-DigestedObjectSchema">Carbon.ObjectSchema.DigestedObjectSchema</a>
-						<a class="item item-class" href="#Carbon-ObjectSchema-DigestedPropertyDefinition">Carbon.ObjectSchema.DigestedPropertyDefinition</a>
-						<a class="item item-class" href="#Carbon-ObjectSchema-Digester">Carbon.ObjectSchema.Digester</a>
-						<a class="item item-interface" href="#Carbon-ObjectSchema-PropertyDefinition">Carbon.ObjectSchema.PropertyDefinition</a>
-						<a class="item item-interface" href="#Carbon-ObjectSchema-Resolver">Carbon.ObjectSchema.Resolver</a>
-						<a class="item item-class" href="#Carbon-ObjectSchema-Utils">Carbon.ObjectSchema.Utils</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedAccessPoint">Carbon/PersistedAccessPoint</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedAccessPoint-Class">Carbon.PersistedAccessPoint.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedApp">Carbon/PersistedApp</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedApp-Class">Carbon.PersistedApp.Class</a>
-						<a class="item item-class" href="#Carbon-PersistedApp-Factory">Carbon.PersistedApp.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedDocument">Carbon/PersistedDocument</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedDocument-Class">Carbon.PersistedDocument.Class</a>
-						<a class="item item-class" href="#Carbon-PersistedDocument-Factory">Carbon.PersistedDocument.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedFragment">Carbon/PersistedFragment</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedFragment-Class">Carbon.PersistedFragment.Class</a>
-						<a class="item item-class" href="#Carbon-PersistedFragment-Factory">Carbon.PersistedFragment.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedNamedFragment">Carbon/PersistedNamedFragment</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedNamedFragment-Class">Carbon.PersistedNamedFragment.Class</a>
-						<a class="item item-class" href="#Carbon-PersistedNamedFragment-Factory">Carbon.PersistedNamedFragment.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedProtectedDocument">Carbon/PersistedProtectedDocument</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedProtectedDocument-Class">Carbon.PersistedProtectedDocument.Class</a>
-						<a class="item item-class" href="#Carbon-PersistedProtectedDocument-Factory">Carbon.PersistedProtectedDocument.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-PersistedResource">Carbon/PersistedResource</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-PersistedResource-Class">Carbon.PersistedResource.Class</a>
-						<a class="item item-class" href="#Carbon-PersistedResource-Factory">Carbon.PersistedResource.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Platform">Carbon/Platform</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Platform-Agents">Carbon/Platform/Agents</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Platform-Agents-Class">Carbon.Platform.Agents.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Platform-Auth">Carbon/Platform/Auth</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Platform-Auth-Class">Carbon.Platform.Auth.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Platform-PersistedAgent">Carbon/Platform/PersistedAgent</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Pointer">Carbon/Pointer</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Pointer-Class">Carbon.Pointer.Class</a>
-						<a class="item item-class" href="#Carbon-Pointer-Factory">Carbon.Pointer.Factory</a>
-						<a class="item item-interface" href="#Carbon-Pointer-Library">Carbon.Pointer.Library</a>
-						<a class="item item-class" href="#Carbon-Pointer-Util">Carbon.Pointer.Util</a>
-						<a class="item item-interface" href="#Carbon-Pointer-Validator">Carbon.Pointer.Validator</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-ProtectedDocument">Carbon/ProtectedDocument</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-ProtectedDocument-Class">Carbon.ProtectedDocument.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF">Carbon/RDF</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Document">Carbon/RDF/Document</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDF-Document-Class">Carbon.RDF.Document.Class</a>
-						<a class="item item-class" href="#Carbon-RDF-Document-Factory">Carbon.RDF.Document.Factory</a>
-						<a class="item item-class" href="#Carbon-RDF-Document-Parser">Carbon.RDF.Document.Parser</a>
-						<a class="item item-class" href="#Carbon-RDF-Document-Util">Carbon.RDF.Document.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-List">Carbon/RDF/List</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDF-List-Class">Carbon.RDF.List.Class</a>
-						<a class="item item-class" href="#Carbon-RDF-List-Factory">Carbon.RDF.List.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Literal">Carbon/RDF/Literal</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDF-Literal-Class">Carbon.RDF.Literal.Class</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Factory">Carbon.RDF.Literal.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Literal-Serializer">Carbon/RDF/Literal/Serializer</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDF-Literal-Serializer-Class">Carbon.RDF.Literal.Serializer.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Literal-Serializers">Carbon/RDF/Literal/Serializers</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Literal-Serializers-XSD">Carbon/RDF/Literal/Serializers/XSD</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer">Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-DateSerializer">Carbon.RDF.Literal.Serializes.XSD.DateSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer">Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-FloatSerializer">Carbon.RDF.Literal.Serializes.XSD.FloatSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer">Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-StringSerializer">Carbon.RDF.Literal.Serializes.XSD.StringSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer">Carbon.RDF.Literal.Serializes.XSD.TimeSerializer</a>
-						<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer">Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Node">Carbon/RDF/Node</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDF-Node-Class">Carbon.RDF.Node.Class</a>
-						<a class="item item-class" href="#Carbon-RDF-Node-Factory">Carbon.RDF.Node.Factory</a>
-						<a class="item item-class" href="#Carbon-RDF-Node-Util">Carbon.RDF.Node.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-URI">Carbon/RDF/URI</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-RDF-URI-Class">Carbon.RDF.URI.Class</a>
-						<a class="item item-class" href="#Carbon-RDF-URI-Util">Carbon.RDF.URI.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDF-Value">Carbon/RDF/Value</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDF-Value-Class">Carbon.RDF.Value.Class</a>
-						<a class="item item-class" href="#Carbon-RDF-Value-Util">Carbon.RDF.Value.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RDFRepresentation">Carbon/RDFRepresentation</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RDFRepresentation-Class">Carbon.RDFRepresentation.Class</a>
-						<a class="item item-class" href="#Carbon-RDFRepresentation-Factory">Carbon.RDFRepresentation.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Resource">Carbon/Resource</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Resource-Class">Carbon.Resource.Class</a>
-						<a class="item item-class" href="#Carbon-Resource-Factory">Carbon.Resource.Factory</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-RetrievalPreferences">Carbon/RetrievalPreferences</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-RetrievalPreferences-Class">Carbon.RetrievalPreferences.Class</a>
-						<a class="item item-class" href="#Carbon-RetrievalPreferences-Factory">Carbon.RetrievalPreferences.Factory</a>
-						<a class="item item-interface" href="#Carbon-RetrievalPreferences-OrderByProperty">Carbon.RetrievalPreferences.OrderByProperty</a>
-						<a class="item item-class" href="#Carbon-RetrievalPreferences-Util">Carbon.RetrievalPreferences.Util</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-SDKContext">Carbon/SDKContext</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-SDKContext-Class">Carbon.SDKContext.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-SPARQL">Carbon/SPARQL</a>
-				<div class="menu">
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-SPARQL-RawResults">Carbon/SPARQL/RawResults</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-SPARQL-RawResults-BindingObject">Carbon.SPARQL.RawResults.BindingObject</a>
-						<a class="item item-interface" href="#Carbon-SPARQL-RawResults-BindingProperty">Carbon.SPARQL.RawResults.BindingProperty</a>
-						<a class="item item-interface" href="#Carbon-SPARQL-RawResults-Class">Carbon.SPARQL.RawResults.Class</a>
-						<a class="item item-class" href="#Carbon-SPARQL-RawResults-Factory">Carbon.SPARQL.RawResults.Factory</a>
-						<a class="item item-class" href="#Carbon-SPARQL-RawResults-ValueTypes">Carbon.SPARQL.RawResults.ValueTypes</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-SPARQL-RawResultsParser">Carbon/SPARQL/RawResultsParser</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-SPARQL-RawResultsParser">Carbon.SPARQL.RawResultsParser</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-SPARQL-SELECTResults">Carbon/SPARQL/SELECTResults</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-SPARQL-SELECTResults-BindingObject">Carbon.SPARQL.SELECTResults.BindingObject</a>
-						<a class="item item-interface" href="#Carbon-SPARQL-SELECTResults-Class">Carbon.SPARQL.SELECTResults.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-SPARQL-Service">Carbon/SPARQL/Service</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-SPARQL-Service-Class">Carbon.SPARQL.Service.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Settings">Carbon/Settings</a>
-				<div class="menu">
-						<a class="item item-interface" href="#Carbon-Settings-Class">Carbon.Settings.Class</a>
-				</div>
-			</div>
-			<div class="item">
-				<a class="header" href="#Module-Carbon-Utils">Carbon/Utils</a>
-				<div class="menu">
-						<a class="item item-class" href="#Carbon-Utils-A">Carbon.Utils.A</a>
-						<a class="item item-class" href="#Carbon-Utils-M">Carbon.Utils.M</a>
-						<a class="item item-class" href="#Carbon-Utils-O">Carbon.Utils.O</a>
-						<a class="item item-class" href="#Carbon-Utils-S">Carbon.Utils.S</a>
-						<a class="item item-class" href="#Carbon-Utils-UUID">Carbon.Utils.UUID</a>
-				</div>
-			</div>
+	</div>
+
+	<div class="ui inverted left vertical visible wide sidebar doc-menu-sidebar">
+		<div class="ui top fixed inverted vertical menu doc-menu">
+			<div class="ui item right aligned container">
+				<button class="ui inverted icon button js-sidebar-toggler">
+					<i class="sidebar icon"></i>
+				</button>
+			</div>
+		</div>
+		<div class="ui bottom fixed inverted vertical menu doc-menu">
+				<div class="item">
+					<a class="header" href="#Module-Carbon">Carbon</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon">Carbon</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-APIDescription">Carbon/APIDescription</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-APIDescription-Class">Carbon.APIDescription.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-AbstractContext">Carbon/AbstractContext</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-AbstractContext-Class">Carbon.AbstractContext.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-AccessPoint">Carbon/AccessPoint</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-AccessPoint-Class">Carbon.AccessPoint.Class</a>
+							<a class="item item-interface" href="#Carbon-AccessPoint-DocumentClass">Carbon.AccessPoint.DocumentClass</a>
+							<a class="item item-class" href="#Carbon-AccessPoint-Factory">Carbon.AccessPoint.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App">Carbon/App</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-App-Class">Carbon.App.Class</a>
+							<a class="item item-class" href="#Carbon-App-Factory">Carbon.App.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App-Agents">Carbon/App/Agents</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-App-Agents-Class">Carbon.App.Agents.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App-Auth">Carbon/App/Auth</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-App-Auth-Class">Carbon.App.Auth.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App-Context">Carbon/App/Context</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-App-Context">Carbon.App.Context</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App-PersistedAgent">Carbon/App/PersistedAgent</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-App-PersistedAgent-Class">Carbon.App.PersistedAgent.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App-PersistedRole">Carbon/App/PersistedRole</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-App-PersistedRole-Class">Carbon.App.PersistedRole.Class</a>
+							<a class="item item-class" href="#Carbon-App-PersistedRole-Factory">Carbon.App.PersistedRole.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-App-Roles">Carbon/App/Roles</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-App-Roles-Class">Carbon.App.Roles.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Apps">Carbon/Apps</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Apps-Class">Carbon.Apps.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Apps-Role">Carbon/Apps/Role</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-App-Role-Class">Carbon.App.Role.Class</a>
+							<a class="item item-class" href="#Carbon-App-Role-Factory">Carbon.App.Role.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth">Carbon/Auth</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-Class">Carbon.Auth.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-ACE">Carbon/Auth/ACE</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-PersistedACE-Class">Carbon.Auth.PersistedACE.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-ACL">Carbon/Auth/ACL</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-ACL-Class">Carbon.Auth.ACL.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-ACL-Factory">Carbon.Auth.ACL.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Agent">Carbon/Auth/Agent</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-Agent-Class">Carbon.Auth.Agent.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-Agent-Factory">Carbon.Auth.Agent.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Agents">Carbon/Auth/Agents</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-Agents-Class">Carbon.Auth.Agents.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-AuthenticationToken">Carbon/Auth/AuthenticationToken</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-AuthenticationToken-Class">Carbon.Auth.AuthenticationToken.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Authenticator">Carbon/Auth/Authenticator</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-Authenticator-Class">Carbon.Auth.Authenticator.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-BasicAuthenticator">Carbon/Auth/BasicAuthenticator</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-BasicAuthenticator-Class">Carbon.Auth.BasicAuthenticator.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Credentials">Carbon/Auth/Credentials</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-Credentials-Class">Carbon.Auth.Credentials.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-PersistedACL">Carbon/Auth/PersistedACL</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-PersistedACL-Class">Carbon.Auth.PersistedACL.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-PersistedACL-Factory">Carbon.Auth.PersistedACL.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-PersistedAgent">Carbon/Auth/PersistedAgent</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-PersistedAgent-Class">Carbon.Auth.PersistedAgent.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-PersistedAgent-Factory">Carbon.Auth.PersistedAgent.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-PersistedRole">Carbon/Auth/PersistedRole</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-App-PersistedRole-Class">Carbon.App.PersistedRole.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-PersistedRole-Factory">Carbon.Auth.PersistedRole.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Role">Carbon/Auth/Role</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-Role-Class">Carbon.Auth.Role.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-Role-Factory">Carbon.Auth.Role.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Roles">Carbon/Auth/Roles</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-Roles-Class">Carbon.Auth.Roles.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Ticket">Carbon/Auth/Ticket</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-Ticket-Class">Carbon.Auth.Ticket.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-Ticket-Factory">Carbon.Auth.Ticket.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-Token">Carbon/Auth/Token</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Auth-Token-Class">Carbon.Auth.Token.Class</a>
+							<a class="item item-class" href="#Carbon-Auth-Token-Factory">Carbon.Auth.Token.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-TokenAuthenticator">Carbon/Auth/TokenAuthenticator</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-TokenAuthenticator-Class">Carbon.Auth.TokenAuthenticator.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-UsernameAndPasswordCredentials">Carbon/Auth/UsernameAndPasswordCredentials</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-UsernameAndPasswordCredentials-Class">Carbon.Auth.UsernameAndPasswordCredentials.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Auth-UsernameAndPasswordToken">Carbon/Auth/UsernameAndPasswordToken</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Auth-UsernameAndPasswordToken-Class">Carbon.Auth.UsernameAndPasswordToken.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-BlankNode">Carbon/BlankNode</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-BlankNode-Class">Carbon.BlankNode.Class</a>
+							<a class="item item-class" href="#Carbon-BlankNode-Factory">Carbon.BlankNode.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Context">Carbon/Context</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Context-Class">Carbon.Context.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Document">Carbon/Document</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Document-Class">Carbon.Document.Class</a>
+							<a class="item item-class" href="#Carbon-Document-Factory">Carbon.Document.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Documents">Carbon/Documents</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Documents-Class">Carbon.Documents.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors">Carbon/Errors</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-AbstractError">Carbon/Errors/AbstractError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-AbstractError">Carbon.Errors.AbstractError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-IDAlreadyInUseError">Carbon/Errors/IDAlreadyInUseError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-IDAlreadyInUseError">Carbon.Errors.IDAlreadyInUseError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-IllegalActionError">Carbon/Errors/IllegalActionError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-IllegalActionError">Carbon.Errors.IllegalActionError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-IllegalArgumentError">Carbon/Errors/IllegalArgumentError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-IllegalArgumentError">Carbon.Errors.IllegalArgumentError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-IllegalStateError">Carbon/Errors/IllegalStateError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-IllegalStateError">Carbon.Errors.IllegalStateError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-InvalidJSONLDSyntaxError">Carbon/Errors/InvalidJSONLDSyntaxError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-InvalidJSONLDSyntaxError">Carbon.Errors.InvalidJSONLDSyntaxError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Errors-NotImplementedError">Carbon/Errors/NotImplementedError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Errors-NotImplementedError">Carbon.Errors.NotImplementedError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Fragment">Carbon/Fragment</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Fragment-Class">Carbon.Fragment.Class</a>
+							<a class="item item-class" href="#Carbon-Fragment-Factory">Carbon.Fragment.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-FreeResources">Carbon/FreeResources</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-FreeResources-Class">Carbon.FreeResources.Class</a>
+							<a class="item item-class" href="#Carbon-FreeResources-Factory">Carbon.FreeResources.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP">Carbon/HTTP</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors">Carbon/HTTP/Errors</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-HTTPError">Carbon/HTTP/Errors/HTTPError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-HTTPError">Carbon.HTTP.Errors.HTTPError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-UnknownError">Carbon/HTTP/Errors/UnknownError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-UnknownError">Carbon.HTTP.Errors.UnknownError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-BadRequestError">Carbon/HTTP/Errors/client/BadRequestError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-BadRequestError">Carbon.HTTP.Errors.BadRequestError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-ConflictError">Carbon/HTTP/Errors/client/ConflictError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-ConflictError">Carbon.HTTP.Errors.ConflictError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-ForbiddenError">Carbon/HTTP/Errors/client/ForbiddenError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-ForbiddenError">Carbon.HTTP.Errors.ForbiddenError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-MethodNotAllowedError">Carbon/HTTP/Errors/client/MethodNotAllowedError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-MethodNotAllowedError">Carbon.HTTP.Errors.MethodNotAllowedError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-NotAcceptableError">Carbon/HTTP/Errors/client/NotAcceptableError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-NotAcceptableError">Carbon.HTTP.Errors.NotAcceptableError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-NotFoundError">Carbon/HTTP/Errors/client/NotFoundError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-NotFoundError">Carbon.HTTP.Errors.NotFoundError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-PreconditionFailedError">Carbon/HTTP/Errors/client/PreconditionFailedError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-PreconditionFailedError">Carbon.HTTP.Errors.PreconditionFailedError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-PreconditionRequiredError">Carbon/HTTP/Errors/client/PreconditionRequiredError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-PreconditionRequiredError">Carbon.HTTP.Errors.PreconditionRequiredError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestEntityTooLargeError">Carbon/HTTP/Errors/client/RequestEntityTooLargeError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-RequestEntityTooLargeError">Carbon.HTTP.Errors.RequestEntityTooLargeError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestHeaderFieldsTooLargeError">Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError">Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-RequestURITooLongError">Carbon/HTTP/Errors/client/RequestURITooLongError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-RequestURITooLongError">Carbon.HTTP.Errors.RequestURITooLongError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-TooManyRequestsError">Carbon/HTTP/Errors/client/TooManyRequestsError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-TooManyRequestsError">Carbon.HTTP.Errors.TooManyRequestsError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-UnauthorizedError">Carbon/HTTP/Errors/client/UnauthorizedError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-UnauthorizedError">Carbon.HTTP.Errors.UnauthorizedError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-client-UnsupportedMediaTypeError">Carbon/HTTP/Errors/client/UnsupportedMediaTypeError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-UnsupportedMediaTypeError">Carbon.HTTP.Errors.UnsupportedMediaTypeError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-BadGatewayError">Carbon/HTTP/Errors/server/BadGatewayError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-BadGatewayError">Carbon.HTTP.Errors.BadGatewayError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-BadResponseError">Carbon/HTTP/Errors/server/BadResponseError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-BadResponseError">Carbon.HTTP.Errors.BadResponseError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-GatewayTimeoutError">Carbon/HTTP/Errors/server/GatewayTimeoutError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-GatewayTimeoutError">Carbon.HTTP.Errors.GatewayTimeoutError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-HTTPVersionNotSupportedError">Carbon/HTTP/Errors/server/HTTPVersionNotSupportedError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-HTTPVersionNotSupportedError">Carbon.HTTP.Errors.HTTPVersionNotSupportedError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-InternalServerErrorError">Carbon/HTTP/Errors/server/InternalServerErrorError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-InternalServerErrorError">Carbon.HTTP.Errors.InternalServerErrorError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-NotImplementedError">Carbon/HTTP/Errors/server/NotImplementedError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-NotImplementedError">Carbon.HTTP.Errors.NotImplementedError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Errors-server-ServiceUnavailableError">Carbon/HTTP/Errors/server/ServiceUnavailableError</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Errors-ServiceUnavailableError">Carbon.HTTP.Errors.ServiceUnavailableError</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Header">Carbon/HTTP/Header</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Header-Class">Carbon.HTTP.Header.Class</a>
+							<a class="item item-class" href="#Carbon-HTTP-Header-Util">Carbon.HTTP.Header.Util</a>
+							<a class="item item-class" href="#Carbon-HTTP-Header-Value">Carbon.HTTP.Header.Value</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-JSONParser">Carbon/HTTP/JSONParser</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-JSONParser-Class">Carbon.HTTP.JSONParser.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Method">Carbon/HTTP/Method</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Parser">Carbon/HTTP/Parser</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-HTTP-Parser-Class">Carbon.HTTP.Parser.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Request">Carbon/HTTP/Request</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-HTTP-Request-ContainerRetrievalPreferences">Carbon.HTTP.Request.ContainerRetrievalPreferences</a>
+							<a class="item item-interface" href="#Carbon-HTTP-Request-Options">Carbon.HTTP.Request.Options</a>
+							<a class="item item-class" href="#Carbon-HTTP-Request-Service">Carbon.HTTP.Request.Service</a>
+							<a class="item item-class" href="#Carbon-HTTP-Request-Util">Carbon.HTTP.Request.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-Response">Carbon/HTTP/Response</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-Response-Class">Carbon.HTTP.Response.Class</a>
+							<a class="item item-class" href="#Carbon-HTTP-Response-Util">Carbon.HTTP.Response.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-StatusCode">Carbon/HTTP/StatusCode</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-HTTP-StringParser">Carbon/HTTP/StringParser</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-HTTP-StringParser-Class">Carbon.HTTP.StringParser.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-JSONLD">Carbon/JSONLD</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-JSONLD-Converter">Carbon/JSONLD/Converter</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-JSONLD-Converter-Class">Carbon.JSONLD.Converter.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-JSONLD-Parser">Carbon/JSONLD/Parser</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-JSONLD-Parser-Class">Carbon.JSONLD.Parser.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-JSONLD-Processor">Carbon/JSONLD/Processor</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-JSONLD-Processor-Class">Carbon.JSONLD.Processor.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP">Carbon/LDP</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-AddMemberAction">Carbon/LDP/AddMemberAction</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-AddMemberAction-Class">Carbon.LDP.AddMemberAction.Class</a>
+							<a class="item item-class" href="#Carbon-LDP-AddMemberAction-Factory">Carbon.LDP.AddMemberAction.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-DirectContainer">Carbon/LDP/DirectContainer</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-DirectContainer-Factory">Carbon.DirectContainer.Factory</a>
+							<a class="item item-interface" href="#Carbon-LDP-DirectContainer-Class">Carbon.LDP.DirectContainer.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-Error">Carbon/LDP/Error</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-Error-Class">Carbon.LDP.Error.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-ErrorResponse">Carbon/LDP/ErrorResponse</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-ErrorResponse-Class">Carbon.LDP.ErrorResponse.Class</a>
+							<a class="item item-class" href="#Carbon-LDP-ErrorResponse-Parser">Carbon.LDP.ErrorResponse.Parser</a>
+							<a class="item item-class" href="#Carbon-LDP-ErrorResponse-Util">Carbon.LDP.ErrorResponse.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-IndirectContainer">Carbon/LDP/IndirectContainer</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-IndirectContainer-Factory">Carbon.IndirectContainer.Factory</a>
+							<a class="item item-interface" href="#Carbon-LDP-IndirectContainer-Class">Carbon.LDP.IndirectContainer.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-PersistedBlankNode">Carbon/LDP/PersistedBlankNode</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedBlankNode-Class">Carbon.PersistedBlankNode.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-RemoveMemberAction">Carbon/LDP/RemoveMemberAction</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-RemoveMemberAction-Class">Carbon.LDP.RemoveMemberAction.Class</a>
+							<a class="item item-class" href="#Carbon-LDP-RemoveMemberAction-Factory">Carbon.LDP.RemoveMemberAction.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-ResourceMetadata">Carbon/LDP/ResourceMetadata</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-ResourceMetadata-Class">Carbon.LDP.ResourceMetadata.Class</a>
+							<a class="item item-class" href="#Carbon-LDP-ResourceMetadata-Factory">Carbon.LDP.ResourceMetadata.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-ResponseMetadata">Carbon/LDP/ResponseMetadata</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-ResponseMetadata-Class">Carbon.LDP.ResponseMetadata.Class</a>
+							<a class="item item-class" href="#Carbon-LDP-ResponseMetadata-Factory">Carbon.LDP.ResponseMetadata.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-LDP-VolatileResource">Carbon/LDP/VolatileResource</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-LDP-VolatileResource-Class">Carbon.LDP.VolatileResource.Class</a>
+							<a class="item item-class" href="#Carbon-LDP-VolatileResource-Factory">Carbon.LDP.VolatileResource.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS">Carbon/NS</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-C">Carbon/NS/C</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-C-Class">Carbon.NS.C.Class</a>
+							<a class="item item-class" href="#Carbon-NS-C-Predicate">Carbon.NS.C.Predicate</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-CP">Carbon/NS/CP</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-CP-Predicate">Carbon.NS.CP.Predicate</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-CS">Carbon/NS/CS</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-CS-Class">Carbon.NS.CS.Class</a>
+							<a class="item item-class" href="#Carbon-NS-CS-Predicate">Carbon.NS.CS.Predicate</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-LDP">Carbon/NS/LDP</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-LDP-Class">Carbon.NS.LDP.Class</a>
+							<a class="item item-class" href="#Carbon-NS-LDP-Predicate">Carbon.NS.LDP.Predicate</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-RDF">Carbon/NS/RDF</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-RDF-Predicate">Carbon.NS.RDF.Predicate</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-VCARD">Carbon/NS/VCARD</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-VCARD-Predicate">Carbon.NS.VCARD.Predicate</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NS-XSD">Carbon/NS/XSD</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-NS-XSD-DataType">Carbon.NS.XSD.DataType</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-NamedFragment">Carbon/NamedFragment</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-NamedFragment-Class">Carbon.NamedFragment.Class</a>
+							<a class="item item-class" href="#Carbon-NamedFragment-Factory">Carbon.NamedFragment.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-ObjectSchema">Carbon/ObjectSchema</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-ObjectSchema-Class">Carbon.ObjectSchema.Class</a>
+							<a class="item item-class" href="#Carbon-ObjectSchema-DigestedObjectSchema">Carbon.ObjectSchema.DigestedObjectSchema</a>
+							<a class="item item-class" href="#Carbon-ObjectSchema-DigestedPropertyDefinition">Carbon.ObjectSchema.DigestedPropertyDefinition</a>
+							<a class="item item-class" href="#Carbon-ObjectSchema-Digester">Carbon.ObjectSchema.Digester</a>
+							<a class="item item-interface" href="#Carbon-ObjectSchema-PropertyDefinition">Carbon.ObjectSchema.PropertyDefinition</a>
+							<a class="item item-interface" href="#Carbon-ObjectSchema-Resolver">Carbon.ObjectSchema.Resolver</a>
+							<a class="item item-class" href="#Carbon-ObjectSchema-Util">Carbon.ObjectSchema.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedAccessPoint">Carbon/PersistedAccessPoint</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedAccessPoint-Class">Carbon.PersistedAccessPoint.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedApp">Carbon/PersistedApp</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedApp-Class">Carbon.PersistedApp.Class</a>
+							<a class="item item-class" href="#Carbon-PersistedApp-Factory">Carbon.PersistedApp.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedDocument">Carbon/PersistedDocument</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedDocument-Class">Carbon.PersistedDocument.Class</a>
+							<a class="item item-class" href="#Carbon-PersistedDocument-Factory">Carbon.PersistedDocument.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedFragment">Carbon/PersistedFragment</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedFragment-Class">Carbon.PersistedFragment.Class</a>
+							<a class="item item-class" href="#Carbon-PersistedFragment-Factory">Carbon.PersistedFragment.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedNamedFragment">Carbon/PersistedNamedFragment</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedNamedFragment-Class">Carbon.PersistedNamedFragment.Class</a>
+							<a class="item item-class" href="#Carbon-PersistedNamedFragment-Factory">Carbon.PersistedNamedFragment.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedProtectedDocument">Carbon/PersistedProtectedDocument</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedProtectedDocument-Class">Carbon.PersistedProtectedDocument.Class</a>
+							<a class="item item-class" href="#Carbon-PersistedProtectedDocument-Factory">Carbon.PersistedProtectedDocument.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-PersistedResource">Carbon/PersistedResource</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-PersistedResource-Class">Carbon.PersistedResource.Class</a>
+							<a class="item item-class" href="#Carbon-PersistedResource-Factory">Carbon.PersistedResource.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Platform">Carbon/Platform</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Platform-Agents">Carbon/Platform/Agents</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Platform-Agents-Class">Carbon.Platform.Agents.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Platform-Auth">Carbon/Platform/Auth</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Platform-Auth-Class">Carbon.Platform.Auth.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Platform-PersistedAgent">Carbon/Platform/PersistedAgent</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Platform-PersistedAgent-Class">Carbon.Platform.PersistedAgent.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Pointer">Carbon/Pointer</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Pointer-Class">Carbon.Pointer.Class</a>
+							<a class="item item-class" href="#Carbon-Pointer-Factory">Carbon.Pointer.Factory</a>
+							<a class="item item-interface" href="#Carbon-Pointer-Library">Carbon.Pointer.Library</a>
+							<a class="item item-class" href="#Carbon-Pointer-Util">Carbon.Pointer.Util</a>
+							<a class="item item-interface" href="#Carbon-Pointer-Validator">Carbon.Pointer.Validator</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-ProtectedDocument">Carbon/ProtectedDocument</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-ProtectedDocument-Class">Carbon.ProtectedDocument.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF">Carbon/RDF</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Document">Carbon/RDF/Document</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDF-Document-Class">Carbon.RDF.Document.Class</a>
+							<a class="item item-class" href="#Carbon-RDF-Document-Factory">Carbon.RDF.Document.Factory</a>
+							<a class="item item-class" href="#Carbon-RDF-Document-Parser">Carbon.RDF.Document.Parser</a>
+							<a class="item item-class" href="#Carbon-RDF-Document-Util">Carbon.RDF.Document.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-List">Carbon/RDF/List</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDF-List-Class">Carbon.RDF.List.Class</a>
+							<a class="item item-class" href="#Carbon-RDF-List-Factory">Carbon.RDF.List.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Literal">Carbon/RDF/Literal</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDF-Literal-Class">Carbon.RDF.Literal.Class</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Factory">Carbon.RDF.Literal.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Literal-Serializer">Carbon/RDF/Literal/Serializer</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDF-Literal-Serializer-Class">Carbon.RDF.Literal.Serializer.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Literal-Serializers">Carbon/RDF/Literal/Serializers</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Literal-Serializers-XSD">Carbon/RDF/Literal/Serializers/XSD</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer">Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-DateSerializer">Carbon.RDF.Literal.Serializes.XSD.DateSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer">Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-FloatSerializer">Carbon.RDF.Literal.Serializes.XSD.FloatSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer">Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-StringSerializer">Carbon.RDF.Literal.Serializes.XSD.StringSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer">Carbon.RDF.Literal.Serializes.XSD.TimeSerializer</a>
+							<a class="item item-class" href="#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer">Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Node">Carbon/RDF/Node</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDF-Node-Class">Carbon.RDF.Node.Class</a>
+							<a class="item item-class" href="#Carbon-RDF-Node-Factory">Carbon.RDF.Node.Factory</a>
+							<a class="item item-class" href="#Carbon-RDF-Node-Util">Carbon.RDF.Node.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-URI">Carbon/RDF/URI</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-RDF-URI-Class">Carbon.RDF.URI.Class</a>
+							<a class="item item-class" href="#Carbon-RDF-URI-Util">Carbon.RDF.URI.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDF-Value">Carbon/RDF/Value</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDF-Value-Class">Carbon.RDF.Value.Class</a>
+							<a class="item item-class" href="#Carbon-RDF-Value-Util">Carbon.RDF.Value.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RDFRepresentation">Carbon/RDFRepresentation</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RDFRepresentation-Class">Carbon.RDFRepresentation.Class</a>
+							<a class="item item-class" href="#Carbon-RDFRepresentation-Factory">Carbon.RDFRepresentation.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Resource">Carbon/Resource</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Resource-Class">Carbon.Resource.Class</a>
+							<a class="item item-class" href="#Carbon-Resource-Factory">Carbon.Resource.Factory</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-RetrievalPreferences">Carbon/RetrievalPreferences</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-RetrievalPreferences-Class">Carbon.RetrievalPreferences.Class</a>
+							<a class="item item-class" href="#Carbon-RetrievalPreferences-Factory">Carbon.RetrievalPreferences.Factory</a>
+							<a class="item item-interface" href="#Carbon-RetrievalPreferences-OrderByProperty">Carbon.RetrievalPreferences.OrderByProperty</a>
+							<a class="item item-class" href="#Carbon-RetrievalPreferences-Util">Carbon.RetrievalPreferences.Util</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-SDKContext">Carbon/SDKContext</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-SDKContext-Class">Carbon.SDKContext.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-SPARQL">Carbon/SPARQL</a>
+					<div class="menu">
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-SPARQL-RawResults">Carbon/SPARQL/RawResults</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-SPARQL-RawResults-BindingObject">Carbon.SPARQL.RawResults.BindingObject</a>
+							<a class="item item-interface" href="#Carbon-SPARQL-RawResults-BindingProperty">Carbon.SPARQL.RawResults.BindingProperty</a>
+							<a class="item item-interface" href="#Carbon-SPARQL-RawResults-Class">Carbon.SPARQL.RawResults.Class</a>
+							<a class="item item-class" href="#Carbon-SPARQL-RawResults-Factory">Carbon.SPARQL.RawResults.Factory</a>
+							<a class="item item-class" href="#Carbon-SPARQL-RawResults-ValueTypes">Carbon.SPARQL.RawResults.ValueTypes</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-SPARQL-RawResultsParser">Carbon/SPARQL/RawResultsParser</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-SPARQL-RawResultsParser">Carbon.SPARQL.RawResultsParser</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-SPARQL-SELECTResults">Carbon/SPARQL/SELECTResults</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-SPARQL-SELECTResults-BindingObject">Carbon.SPARQL.SELECTResults.BindingObject</a>
+							<a class="item item-interface" href="#Carbon-SPARQL-SELECTResults-Class">Carbon.SPARQL.SELECTResults.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-SPARQL-Service">Carbon/SPARQL/Service</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-SPARQL-Service-Class">Carbon.SPARQL.Service.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Settings">Carbon/Settings</a>
+					<div class="menu">
+							<a class="item item-interface" href="#Carbon-Settings-Class">Carbon.Settings.Class</a>
+					</div>
+				</div>
+				<div class="item">
+					<a class="header" href="#Module-Carbon-Utils">Carbon/Utils</a>
+					<div class="menu">
+							<a class="item item-class" href="#Carbon-Utils-A">Carbon.Utils.A</a>
+							<a class="item item-class" href="#Carbon-Utils-M">Carbon.Utils.M</a>
+							<a class="item item-class" href="#Carbon-Utils-O">Carbon.Utils.O</a>
+							<a class="item item-class" href="#Carbon-Utils-S">Carbon.Utils.S</a>
+							<a class="item item-class" href="#Carbon-Utils-UUID">Carbon.Utils.UUID</a>
+					</div>
+				</div>
+		</div>
 	</div>
 
 	<div class="ui top fixed menu doc-menu doc-menu-location">
-		<a class="doc-menu__launch-item item"><i class="large content icon"></i>Menu</a>
-		<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
-		<!--<a class="active item doc-menu-location__item">Index</a>-->
+		<a class="item doc-menu-location__launch-item js-sidebar-toggler"><i class="large content icon"></i>Menu</a>
+		<div class="left menu">
+			<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
+		</div>
+		<div class="right menu">
+			<!--<div class="ui right aligned search item doc-search">
+				<div class="ui icon input">
+					<input class="prompt" type="text" placeholder="Search...">
+					<i class="search icon"></i>
+				</div>
+				<div class="results"></div>
+			</div>-->
+		</div>
 	</div>
 
 	<div class="doc-page-content pusher">
@@ -1782,7 +1826,7 @@
 						</div>
 						<div class="item">
 							<span class="ui blue label icon elements-list__item-type">C</span>
-							<a class="content" href="#Carbon-ObjectSchema-Utils">Carbon.ObjectSchema.Utils</a>
+							<a class="content" href="#Carbon-ObjectSchema-Util">Carbon.ObjectSchema.Util</a>
 						</div>
 						<div class="item">
 							<span class="ui orange label icon elements-list__item-type">I</span>
@@ -49357,7 +49401,7 @@
 									<div class="item">
 										<span class="ui blue label icon elements-list__item-type">C</span>
 										<div class="content">
-											<a class="header" href="#Carbon-ObjectSchema-Utils">Carbon.ObjectSchema.Utils</a>
+											<a class="header" href="#Carbon-ObjectSchema-Util">Carbon.ObjectSchema.Util</a>
 												<div class="description">	Class with useful functions that use schemas.
 
 </div>
@@ -50531,8 +50575,8 @@
 
 						
 							<div class="ui basic inverted blue segment">
-								<h1 class="ui header doc-header doc-header_main" id="SDKDocs-Carbon-ObjectSchema-Utils">
-									<a class="doc-header__link doc-header__main" href="#Carbon-ObjectSchema-Utils">Carbon.ObjectSchema.Utils</a>
+								<h1 class="ui header doc-header doc-header_main" id="SDKDocs-Carbon-ObjectSchema-Util">
+									<a class="doc-header__link doc-header__main" href="#Carbon-ObjectSchema-Util">Carbon.ObjectSchema.Util</a>
 									<div class="doc-header__label">
 										<span class="ui large blue horizontal basic label">Class</span>
 									</div>
@@ -50553,10 +50597,10 @@
 
 
 									
-										<h2 class="ui header doc-header" id="SDKDocs-Carbon-ObjectSchema-Utils--Methods">
+										<h2 class="ui header doc-header" id="SDKDocs-Carbon-ObjectSchema-Util--Methods">
 									
 									
-											<a class="doc-header__link" href="#Carbon-ObjectSchema-Utils--Methods">
+											<a class="doc-header__link" href="#Carbon-ObjectSchema-Util--Methods">
 												<div class="ui basic label doc-header__symbol symbol">
 													<i class="symbol__anchor large grey linkify icon"></i>
 												</div>
@@ -50568,10 +50612,10 @@
 
 									<div class="ui basic segment doc-content">
 												
-													<h4 class="ui header doc-header" id="SDKDocs-Carbon-ObjectSchema-Utils+resolveURI">
+													<h4 class="ui header doc-header" id="SDKDocs-Carbon-ObjectSchema-Util+resolveURI">
 												
 												
-														<a class="doc-header__link" href="#Carbon-ObjectSchema-Utils+resolveURI">
+														<a class="doc-header__link" href="#Carbon-ObjectSchema-Util+resolveURI">
 															<div class="ui basic label doc-header__symbol symbol">
 																<i class="symbol__anchor large grey linkify icon"></i>
 															</div>
@@ -72650,13 +72694,19 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			var sidebarMenu = $( ".doc-menu-sidebar" );
 
 			// Sidebar menu closeable
-			$( ".doc-menu__launch-item" ).click( function() {
+			$( ".js-sidebar-toggler" ).click( function() {
 				applyToSidebar( "toggle" );
 			} );
 
 			jqWindow.resize( function() {
 				applyToSidebar();
 			} );
+
+			sidebarMenu
+				.find( ".item" )
+				.click( function() {
+					applyToSidebar();
+				} );
 
 			function applyToSidebar( action ) {
 				if( jqWindow.width() <= 933 ) {
@@ -72693,7 +72743,7 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 				setActiveSection();
 			} );
 
-			var $locationMenu = $( ".doc-menu-location" );
+			var $locationMenu = $( ".doc-menu-location > .left.menu" );
 			var $moduleLocation = $( `<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>` ).click( scrollToHash );
 			var $objectLocation = $( `<a class="item doc-menu-location__item dynamic-location"></a>` ).click( scrollToHash );
 
@@ -72707,23 +72757,28 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 				}
 			}
 
-			function setActiveSection() {
+			function getSidebarItem() {
 				if( ! window.location.hash ) return;
-				var hash = window.location.hash;
 
+				var hash = window.location.hash;
 				var $sidebarItem = $( `.doc-menu-sidebar *[href="${ hash }"]` );
 
 				if( ! $sidebarItem.length ) {
 					var lastIndex = hash.lastIndexOf( "--" );
-					if ( lastIndex === -1 ) lastIndex = hash.lastIndexOf( "+" );
-					if ( lastIndex === -1 ) lastIndex = hash.lastIndexOf( "-" );
+					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "+" );
+					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "-" );
 					$sidebarItem = $( `.doc-menu-sidebar *[href="${ hash.slice( 0, lastIndex ) }"]` );
 				}
 
-				if( ! $sidebarItem.length ) return;
+				if( ! $sidebarItem.length ) return null;
+				return $sidebarItem;
+			}
 
-				$sidebarItem
-					.parents( ".doc-menu-sidebar" )
+			function setActiveSection() {
+				var $sidebarItem = getSidebarItem( window.location.hash );
+				if( $sidebarItem === null ) return;
+
+				$( ".doc-menu-sidebar" )
 					.find( ".item.active" )
 					.removeClass( "active" );
 
@@ -72763,6 +72818,1067 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 
 			scrollToHash();
 			setActiveSection();
+
+			// Search box
+			var content = [
+						{
+							"title": "Carbon",
+							"type": "class",
+							"hash": "#Carbon"
+						},
+						{
+							"title": "Carbon.APIDescription.Class",
+							"type": "interface",
+							"hash": "#Carbon-APIDescription-Class"
+						},
+						{
+							"title": "Carbon.AbstractContext.Class",
+							"type": "class",
+							"hash": "#Carbon-AbstractContext-Class"
+						},
+						{
+							"title": "Carbon.AccessPoint.Class",
+							"type": "interface",
+							"hash": "#Carbon-AccessPoint-Class"
+						},
+						{
+							"title": "Carbon.AccessPoint.DocumentClass",
+							"type": "interface",
+							"hash": "#Carbon-AccessPoint-DocumentClass"
+						},
+						{
+							"title": "Carbon.AccessPoint.Factory",
+							"type": "class",
+							"hash": "#Carbon-AccessPoint-Factory"
+						},
+						{
+							"title": "Carbon.App.Class",
+							"type": "interface",
+							"hash": "#Carbon-App-Class"
+						},
+						{
+							"title": "Carbon.App.Factory",
+							"type": "class",
+							"hash": "#Carbon-App-Factory"
+						},
+						{
+							"title": "Carbon.App.Agents.Class",
+							"type": "class",
+							"hash": "#Carbon-App-Agents-Class"
+						},
+						{
+							"title": "Carbon.App.Auth.Class",
+							"type": "class",
+							"hash": "#Carbon-App-Auth-Class"
+						},
+						{
+							"title": "Carbon.App.Context",
+							"type": "class",
+							"hash": "#Carbon-App-Context"
+						},
+						{
+							"title": "Carbon.App.PersistedAgent.Class",
+							"type": "interface",
+							"hash": "#Carbon-App-PersistedAgent-Class"
+						},
+						{
+							"title": "Carbon.App.PersistedRole.Class",
+							"type": "interface",
+							"hash": "#Carbon-App-PersistedRole-Class"
+						},
+						{
+							"title": "Carbon.App.PersistedRole.Factory",
+							"type": "class",
+							"hash": "#Carbon-App-PersistedRole-Factory"
+						},
+						{
+							"title": "Carbon.App.Roles.Class",
+							"type": "class",
+							"hash": "#Carbon-App-Roles-Class"
+						},
+						{
+							"title": "Carbon.Apps.Class",
+							"type": "class",
+							"hash": "#Carbon-Apps-Class"
+						},
+						{
+							"title": "Carbon.App.Role.Class",
+							"type": "interface",
+							"hash": "#Carbon-App-Role-Class"
+						},
+						{
+							"title": "Carbon.App.Role.Factory",
+							"type": "class",
+							"hash": "#Carbon-App-Role-Factory"
+						},
+						{
+							"title": "Carbon.Auth.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-Class"
+						},
+						{
+							"title": "Carbon.Auth.PersistedACE.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-PersistedACE-Class"
+						},
+						{
+							"title": "Carbon.Auth.ACL.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-ACL-Class"
+						},
+						{
+							"title": "Carbon.Auth.ACL.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-ACL-Factory"
+						},
+						{
+							"title": "Carbon.Auth.Agent.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-Agent-Class"
+						},
+						{
+							"title": "Carbon.Auth.Agent.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-Agent-Factory"
+						},
+						{
+							"title": "Carbon.Auth.Agents.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-Agents-Class"
+						},
+						{
+							"title": "Carbon.Auth.AuthenticationToken.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-AuthenticationToken-Class"
+						},
+						{
+							"title": "Carbon.Auth.Authenticator.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-Authenticator-Class"
+						},
+						{
+							"title": "Carbon.Auth.BasicAuthenticator.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-BasicAuthenticator-Class"
+						},
+						{
+							"title": "Carbon.Auth.Credentials.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-Credentials-Class"
+						},
+						{
+							"title": "Carbon.Auth.PersistedACL.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-PersistedACL-Class"
+						},
+						{
+							"title": "Carbon.Auth.PersistedACL.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-PersistedACL-Factory"
+						},
+						{
+							"title": "Carbon.Auth.PersistedAgent.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-PersistedAgent-Class"
+						},
+						{
+							"title": "Carbon.Auth.PersistedAgent.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-PersistedAgent-Factory"
+						},
+						{
+							"title": "Carbon.App.PersistedRole.Class",
+							"type": "interface",
+							"hash": "#Carbon-App-PersistedRole-Class"
+						},
+						{
+							"title": "Carbon.Auth.PersistedRole.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-PersistedRole-Factory"
+						},
+						{
+							"title": "Carbon.Auth.Role.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-Role-Class"
+						},
+						{
+							"title": "Carbon.Auth.Role.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-Role-Factory"
+						},
+						{
+							"title": "Carbon.Auth.Roles.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-Roles-Class"
+						},
+						{
+							"title": "Carbon.Auth.Ticket.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-Ticket-Class"
+						},
+						{
+							"title": "Carbon.Auth.Ticket.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-Ticket-Factory"
+						},
+						{
+							"title": "Carbon.Auth.Token.Class",
+							"type": "interface",
+							"hash": "#Carbon-Auth-Token-Class"
+						},
+						{
+							"title": "Carbon.Auth.Token.Factory",
+							"type": "class",
+							"hash": "#Carbon-Auth-Token-Factory"
+						},
+						{
+							"title": "Carbon.Auth.TokenAuthenticator.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-TokenAuthenticator-Class"
+						},
+						{
+							"title": "Carbon.Auth.UsernameAndPasswordCredentials.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-UsernameAndPasswordCredentials-Class"
+						},
+						{
+							"title": "Carbon.Auth.UsernameAndPasswordToken.Class",
+							"type": "class",
+							"hash": "#Carbon-Auth-UsernameAndPasswordToken-Class"
+						},
+						{
+							"title": "Carbon.BlankNode.Class",
+							"type": "interface",
+							"hash": "#Carbon-BlankNode-Class"
+						},
+						{
+							"title": "Carbon.BlankNode.Factory",
+							"type": "class",
+							"hash": "#Carbon-BlankNode-Factory"
+						},
+						{
+							"title": "Carbon.Context.Class",
+							"type": "interface",
+							"hash": "#Carbon-Context-Class"
+						},
+						{
+							"title": "Carbon.Document.Class",
+							"type": "interface",
+							"hash": "#Carbon-Document-Class"
+						},
+						{
+							"title": "Carbon.Document.Factory",
+							"type": "class",
+							"hash": "#Carbon-Document-Factory"
+						},
+						{
+							"title": "Carbon.Documents.Class",
+							"type": "class",
+							"hash": "#Carbon-Documents-Class"
+						},
+						{
+							"title": "Carbon.Errors.AbstractError",
+							"type": "class",
+							"hash": "#Carbon-Errors-AbstractError"
+						},
+						{
+							"title": "Carbon.Errors.IDAlreadyInUseError",
+							"type": "class",
+							"hash": "#Carbon-Errors-IDAlreadyInUseError"
+						},
+						{
+							"title": "Carbon.Errors.IllegalActionError",
+							"type": "class",
+							"hash": "#Carbon-Errors-IllegalActionError"
+						},
+						{
+							"title": "Carbon.Errors.IllegalArgumentError",
+							"type": "class",
+							"hash": "#Carbon-Errors-IllegalArgumentError"
+						},
+						{
+							"title": "Carbon.Errors.IllegalStateError",
+							"type": "class",
+							"hash": "#Carbon-Errors-IllegalStateError"
+						},
+						{
+							"title": "Carbon.Errors.InvalidJSONLDSyntaxError",
+							"type": "class",
+							"hash": "#Carbon-Errors-InvalidJSONLDSyntaxError"
+						},
+						{
+							"title": "Carbon.Errors.NotImplementedError",
+							"type": "class",
+							"hash": "#Carbon-Errors-NotImplementedError"
+						},
+						{
+							"title": "Carbon.Fragment.Class",
+							"type": "interface",
+							"hash": "#Carbon-Fragment-Class"
+						},
+						{
+							"title": "Carbon.Fragment.Factory",
+							"type": "class",
+							"hash": "#Carbon-Fragment-Factory"
+						},
+						{
+							"title": "Carbon.FreeResources.Class",
+							"type": "interface",
+							"hash": "#Carbon-FreeResources-Class"
+						},
+						{
+							"title": "Carbon.FreeResources.Factory",
+							"type": "class",
+							"hash": "#Carbon-FreeResources-Factory"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.HTTPError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-HTTPError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.UnknownError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-UnknownError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.BadRequestError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-BadRequestError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.ConflictError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-ConflictError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.ForbiddenError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-ForbiddenError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.MethodNotAllowedError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-MethodNotAllowedError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.NotAcceptableError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-NotAcceptableError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.NotFoundError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-NotFoundError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.PreconditionFailedError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-PreconditionFailedError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.PreconditionRequiredError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-PreconditionRequiredError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.RequestEntityTooLargeError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-RequestEntityTooLargeError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-RequestHeaderFieldsTooLargeError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.RequestURITooLongError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-RequestURITooLongError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.TooManyRequestsError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-TooManyRequestsError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.UnauthorizedError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-UnauthorizedError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.UnsupportedMediaTypeError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-UnsupportedMediaTypeError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.BadGatewayError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-BadGatewayError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.BadResponseError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-BadResponseError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.GatewayTimeoutError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-GatewayTimeoutError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.HTTPVersionNotSupportedError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-HTTPVersionNotSupportedError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.InternalServerErrorError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-InternalServerErrorError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.NotImplementedError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-NotImplementedError"
+						},
+						{
+							"title": "Carbon.HTTP.Errors.ServiceUnavailableError",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Errors-ServiceUnavailableError"
+						},
+						{
+							"title": "Carbon.HTTP.Header.Class",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Header-Class"
+						},
+						{
+							"title": "Carbon.HTTP.Header.Util",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Header-Util"
+						},
+						{
+							"title": "Carbon.HTTP.Header.Value",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Header-Value"
+						},
+						{
+							"title": "Carbon.HTTP.JSONParser.Class",
+							"type": "class",
+							"hash": "#Carbon-HTTP-JSONParser-Class"
+						},
+						{
+							"title": "Carbon.HTTP.Parser.Class",
+							"type": "interface",
+							"hash": "#Carbon-HTTP-Parser-Class"
+						},
+						{
+							"title": "Carbon.HTTP.Request.ContainerRetrievalPreferences",
+							"type": "interface",
+							"hash": "#Carbon-HTTP-Request-ContainerRetrievalPreferences"
+						},
+						{
+							"title": "Carbon.HTTP.Request.Options",
+							"type": "interface",
+							"hash": "#Carbon-HTTP-Request-Options"
+						},
+						{
+							"title": "Carbon.HTTP.Request.Service",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Request-Service"
+						},
+						{
+							"title": "Carbon.HTTP.Request.Util",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Request-Util"
+						},
+						{
+							"title": "Carbon.HTTP.Response.Class",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Response-Class"
+						},
+						{
+							"title": "Carbon.HTTP.Response.Util",
+							"type": "class",
+							"hash": "#Carbon-HTTP-Response-Util"
+						},
+						{
+							"title": "Carbon.HTTP.StringParser.Class",
+							"type": "class",
+							"hash": "#Carbon-HTTP-StringParser-Class"
+						},
+						{
+							"title": "Carbon.JSONLD.Converter.Class",
+							"type": "class",
+							"hash": "#Carbon-JSONLD-Converter-Class"
+						},
+						{
+							"title": "Carbon.JSONLD.Parser.Class",
+							"type": "class",
+							"hash": "#Carbon-JSONLD-Parser-Class"
+						},
+						{
+							"title": "Carbon.JSONLD.Processor.Class",
+							"type": "class",
+							"hash": "#Carbon-JSONLD-Processor-Class"
+						},
+						{
+							"title": "Carbon.LDP.AddMemberAction.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-AddMemberAction-Class"
+						},
+						{
+							"title": "Carbon.LDP.AddMemberAction.Factory",
+							"type": "class",
+							"hash": "#Carbon-LDP-AddMemberAction-Factory"
+						},
+						{
+							"title": "Carbon.DirectContainer.Factory",
+							"type": "class",
+							"hash": "#Carbon-DirectContainer-Factory"
+						},
+						{
+							"title": "Carbon.LDP.DirectContainer.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-DirectContainer-Class"
+						},
+						{
+							"title": "Carbon.LDP.Error.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-Error-Class"
+						},
+						{
+							"title": "Carbon.LDP.ErrorResponse.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-ErrorResponse-Class"
+						},
+						{
+							"title": "Carbon.LDP.ErrorResponse.Parser",
+							"type": "class",
+							"hash": "#Carbon-LDP-ErrorResponse-Parser"
+						},
+						{
+							"title": "Carbon.LDP.ErrorResponse.Util",
+							"type": "class",
+							"hash": "#Carbon-LDP-ErrorResponse-Util"
+						},
+						{
+							"title": "Carbon.IndirectContainer.Factory",
+							"type": "class",
+							"hash": "#Carbon-IndirectContainer-Factory"
+						},
+						{
+							"title": "Carbon.LDP.IndirectContainer.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-IndirectContainer-Class"
+						},
+						{
+							"title": "Carbon.PersistedBlankNode.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedBlankNode-Class"
+						},
+						{
+							"title": "Carbon.LDP.RemoveMemberAction.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-RemoveMemberAction-Class"
+						},
+						{
+							"title": "Carbon.LDP.RemoveMemberAction.Factory",
+							"type": "class",
+							"hash": "#Carbon-LDP-RemoveMemberAction-Factory"
+						},
+						{
+							"title": "Carbon.LDP.ResourceMetadata.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-ResourceMetadata-Class"
+						},
+						{
+							"title": "Carbon.LDP.ResourceMetadata.Factory",
+							"type": "class",
+							"hash": "#Carbon-LDP-ResourceMetadata-Factory"
+						},
+						{
+							"title": "Carbon.LDP.ResponseMetadata.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-ResponseMetadata-Class"
+						},
+						{
+							"title": "Carbon.LDP.ResponseMetadata.Factory",
+							"type": "class",
+							"hash": "#Carbon-LDP-ResponseMetadata-Factory"
+						},
+						{
+							"title": "Carbon.LDP.VolatileResource.Class",
+							"type": "interface",
+							"hash": "#Carbon-LDP-VolatileResource-Class"
+						},
+						{
+							"title": "Carbon.LDP.VolatileResource.Factory",
+							"type": "class",
+							"hash": "#Carbon-LDP-VolatileResource-Factory"
+						},
+						{
+							"title": "Carbon.NS.C.Class",
+							"type": "class",
+							"hash": "#Carbon-NS-C-Class"
+						},
+						{
+							"title": "Carbon.NS.C.Predicate",
+							"type": "class",
+							"hash": "#Carbon-NS-C-Predicate"
+						},
+						{
+							"title": "Carbon.NS.CP.Predicate",
+							"type": "class",
+							"hash": "#Carbon-NS-CP-Predicate"
+						},
+						{
+							"title": "Carbon.NS.CS.Class",
+							"type": "class",
+							"hash": "#Carbon-NS-CS-Class"
+						},
+						{
+							"title": "Carbon.NS.CS.Predicate",
+							"type": "class",
+							"hash": "#Carbon-NS-CS-Predicate"
+						},
+						{
+							"title": "Carbon.NS.LDP.Class",
+							"type": "class",
+							"hash": "#Carbon-NS-LDP-Class"
+						},
+						{
+							"title": "Carbon.NS.LDP.Predicate",
+							"type": "class",
+							"hash": "#Carbon-NS-LDP-Predicate"
+						},
+						{
+							"title": "Carbon.NS.RDF.Predicate",
+							"type": "class",
+							"hash": "#Carbon-NS-RDF-Predicate"
+						},
+						{
+							"title": "Carbon.NS.VCARD.Predicate",
+							"type": "class",
+							"hash": "#Carbon-NS-VCARD-Predicate"
+						},
+						{
+							"title": "Carbon.NS.XSD.DataType",
+							"type": "class",
+							"hash": "#Carbon-NS-XSD-DataType"
+						},
+						{
+							"title": "Carbon.NamedFragment.Class",
+							"type": "interface",
+							"hash": "#Carbon-NamedFragment-Class"
+						},
+						{
+							"title": "Carbon.NamedFragment.Factory",
+							"type": "class",
+							"hash": "#Carbon-NamedFragment-Factory"
+						},
+						{
+							"title": "Carbon.ObjectSchema.Class",
+							"type": "interface",
+							"hash": "#Carbon-ObjectSchema-Class"
+						},
+						{
+							"title": "Carbon.ObjectSchema.DigestedObjectSchema",
+							"type": "class",
+							"hash": "#Carbon-ObjectSchema-DigestedObjectSchema"
+						},
+						{
+							"title": "Carbon.ObjectSchema.DigestedPropertyDefinition",
+							"type": "class",
+							"hash": "#Carbon-ObjectSchema-DigestedPropertyDefinition"
+						},
+						{
+							"title": "Carbon.ObjectSchema.Digester",
+							"type": "class",
+							"hash": "#Carbon-ObjectSchema-Digester"
+						},
+						{
+							"title": "Carbon.ObjectSchema.PropertyDefinition",
+							"type": "interface",
+							"hash": "#Carbon-ObjectSchema-PropertyDefinition"
+						},
+						{
+							"title": "Carbon.ObjectSchema.Resolver",
+							"type": "interface",
+							"hash": "#Carbon-ObjectSchema-Resolver"
+						},
+						{
+							"title": "Carbon.ObjectSchema.Util",
+							"type": "class",
+							"hash": "#Carbon-ObjectSchema-Util"
+						},
+						{
+							"title": "Carbon.PersistedAccessPoint.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedAccessPoint-Class"
+						},
+						{
+							"title": "Carbon.PersistedApp.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedApp-Class"
+						},
+						{
+							"title": "Carbon.PersistedApp.Factory",
+							"type": "class",
+							"hash": "#Carbon-PersistedApp-Factory"
+						},
+						{
+							"title": "Carbon.PersistedDocument.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedDocument-Class"
+						},
+						{
+							"title": "Carbon.PersistedDocument.Factory",
+							"type": "class",
+							"hash": "#Carbon-PersistedDocument-Factory"
+						},
+						{
+							"title": "Carbon.PersistedFragment.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedFragment-Class"
+						},
+						{
+							"title": "Carbon.PersistedFragment.Factory",
+							"type": "class",
+							"hash": "#Carbon-PersistedFragment-Factory"
+						},
+						{
+							"title": "Carbon.PersistedNamedFragment.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedNamedFragment-Class"
+						},
+						{
+							"title": "Carbon.PersistedNamedFragment.Factory",
+							"type": "class",
+							"hash": "#Carbon-PersistedNamedFragment-Factory"
+						},
+						{
+							"title": "Carbon.PersistedProtectedDocument.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedProtectedDocument-Class"
+						},
+						{
+							"title": "Carbon.PersistedProtectedDocument.Factory",
+							"type": "class",
+							"hash": "#Carbon-PersistedProtectedDocument-Factory"
+						},
+						{
+							"title": "Carbon.PersistedResource.Class",
+							"type": "interface",
+							"hash": "#Carbon-PersistedResource-Class"
+						},
+						{
+							"title": "Carbon.PersistedResource.Factory",
+							"type": "class",
+							"hash": "#Carbon-PersistedResource-Factory"
+						},
+						{
+							"title": "Carbon.Platform.Agents.Class",
+							"type": "class",
+							"hash": "#Carbon-Platform-Agents-Class"
+						},
+						{
+							"title": "Carbon.Platform.Auth.Class",
+							"type": "class",
+							"hash": "#Carbon-Platform-Auth-Class"
+						},
+						{
+							"title": "Carbon.Platform.PersistedAgent.Class",
+							"type": "interface",
+							"hash": "#Carbon-Platform-PersistedAgent-Class"
+						},
+						{
+							"title": "Carbon.Pointer.Class",
+							"type": "interface",
+							"hash": "#Carbon-Pointer-Class"
+						},
+						{
+							"title": "Carbon.Pointer.Factory",
+							"type": "class",
+							"hash": "#Carbon-Pointer-Factory"
+						},
+						{
+							"title": "Carbon.Pointer.Library",
+							"type": "interface",
+							"hash": "#Carbon-Pointer-Library"
+						},
+						{
+							"title": "Carbon.Pointer.Util",
+							"type": "class",
+							"hash": "#Carbon-Pointer-Util"
+						},
+						{
+							"title": "Carbon.Pointer.Validator",
+							"type": "interface",
+							"hash": "#Carbon-Pointer-Validator"
+						},
+						{
+							"title": "Carbon.ProtectedDocument.Class",
+							"type": "interface",
+							"hash": "#Carbon-ProtectedDocument-Class"
+						},
+						{
+							"title": "Carbon.RDF.Document.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDF-Document-Class"
+						},
+						{
+							"title": "Carbon.RDF.Document.Factory",
+							"type": "class",
+							"hash": "#Carbon-RDF-Document-Factory"
+						},
+						{
+							"title": "Carbon.RDF.Document.Parser",
+							"type": "class",
+							"hash": "#Carbon-RDF-Document-Parser"
+						},
+						{
+							"title": "Carbon.RDF.Document.Util",
+							"type": "class",
+							"hash": "#Carbon-RDF-Document-Util"
+						},
+						{
+							"title": "Carbon.RDF.List.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDF-List-Class"
+						},
+						{
+							"title": "Carbon.RDF.List.Factory",
+							"type": "class",
+							"hash": "#Carbon-RDF-List-Factory"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDF-Literal-Class"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Factory",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Factory"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializer.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDF-Literal-Serializer-Class"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-BooleanSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.DateSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-DateSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-DateTimeSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.FloatSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-FloatSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-IntegerSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.StringSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-StringSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.TimeSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-TimeSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer",
+							"type": "class",
+							"hash": "#Carbon-RDF-Literal-Serializes-XSD-UnsignedIntegerSerializer"
+						},
+						{
+							"title": "Carbon.RDF.Node.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDF-Node-Class"
+						},
+						{
+							"title": "Carbon.RDF.Node.Factory",
+							"type": "class",
+							"hash": "#Carbon-RDF-Node-Factory"
+						},
+						{
+							"title": "Carbon.RDF.Node.Util",
+							"type": "class",
+							"hash": "#Carbon-RDF-Node-Util"
+						},
+						{
+							"title": "Carbon.RDF.URI.Class",
+							"type": "class",
+							"hash": "#Carbon-RDF-URI-Class"
+						},
+						{
+							"title": "Carbon.RDF.URI.Util",
+							"type": "class",
+							"hash": "#Carbon-RDF-URI-Util"
+						},
+						{
+							"title": "Carbon.RDF.Value.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDF-Value-Class"
+						},
+						{
+							"title": "Carbon.RDF.Value.Util",
+							"type": "class",
+							"hash": "#Carbon-RDF-Value-Util"
+						},
+						{
+							"title": "Carbon.RDFRepresentation.Class",
+							"type": "interface",
+							"hash": "#Carbon-RDFRepresentation-Class"
+						},
+						{
+							"title": "Carbon.RDFRepresentation.Factory",
+							"type": "class",
+							"hash": "#Carbon-RDFRepresentation-Factory"
+						},
+						{
+							"title": "Carbon.Resource.Class",
+							"type": "interface",
+							"hash": "#Carbon-Resource-Class"
+						},
+						{
+							"title": "Carbon.Resource.Factory",
+							"type": "class",
+							"hash": "#Carbon-Resource-Factory"
+						},
+						{
+							"title": "Carbon.RetrievalPreferences.Class",
+							"type": "interface",
+							"hash": "#Carbon-RetrievalPreferences-Class"
+						},
+						{
+							"title": "Carbon.RetrievalPreferences.Factory",
+							"type": "class",
+							"hash": "#Carbon-RetrievalPreferences-Factory"
+						},
+						{
+							"title": "Carbon.RetrievalPreferences.OrderByProperty",
+							"type": "interface",
+							"hash": "#Carbon-RetrievalPreferences-OrderByProperty"
+						},
+						{
+							"title": "Carbon.RetrievalPreferences.Util",
+							"type": "class",
+							"hash": "#Carbon-RetrievalPreferences-Util"
+						},
+						{
+							"title": "Carbon.SDKContext.Class",
+							"type": "class",
+							"hash": "#Carbon-SDKContext-Class"
+						},
+						{
+							"title": "Carbon.SPARQL.RawResults.BindingObject",
+							"type": "interface",
+							"hash": "#Carbon-SPARQL-RawResults-BindingObject"
+						},
+						{
+							"title": "Carbon.SPARQL.RawResults.BindingProperty",
+							"type": "interface",
+							"hash": "#Carbon-SPARQL-RawResults-BindingProperty"
+						},
+						{
+							"title": "Carbon.SPARQL.RawResults.Class",
+							"type": "interface",
+							"hash": "#Carbon-SPARQL-RawResults-Class"
+						},
+						{
+							"title": "Carbon.SPARQL.RawResults.Factory",
+							"type": "class",
+							"hash": "#Carbon-SPARQL-RawResults-Factory"
+						},
+						{
+							"title": "Carbon.SPARQL.RawResults.ValueTypes",
+							"type": "class",
+							"hash": "#Carbon-SPARQL-RawResults-ValueTypes"
+						},
+						{
+							"title": "Carbon.SPARQL.RawResultsParser",
+							"type": "class",
+							"hash": "#Carbon-SPARQL-RawResultsParser"
+						},
+						{
+							"title": "Carbon.SPARQL.SELECTResults.BindingObject",
+							"type": "interface",
+							"hash": "#Carbon-SPARQL-SELECTResults-BindingObject"
+						},
+						{
+							"title": "Carbon.SPARQL.SELECTResults.Class",
+							"type": "interface",
+							"hash": "#Carbon-SPARQL-SELECTResults-Class"
+						},
+						{
+							"title": "Carbon.SPARQL.Service.Class",
+							"type": "class",
+							"hash": "#Carbon-SPARQL-Service-Class"
+						},
+						{
+							"title": "Carbon.Settings.Class",
+							"type": "interface",
+							"hash": "#Carbon-Settings-Class"
+						},
+						{
+							"title": "Carbon.Utils.A",
+							"type": "class",
+							"hash": "#Carbon-Utils-A"
+						},
+						{
+							"title": "Carbon.Utils.M",
+							"type": "class",
+							"hash": "#Carbon-Utils-M"
+						},
+						{
+							"title": "Carbon.Utils.O",
+							"type": "class",
+							"hash": "#Carbon-Utils-O"
+						},
+						{
+							"title": "Carbon.Utils.S",
+							"type": "class",
+							"hash": "#Carbon-Utils-S"
+						},
+						{
+							"title": "Carbon.Utils.UUID",
+							"type": "class",
+							"hash": "#Carbon-Utils-UUID"
+						},
+			];
+
+			$( ".ui.search.doc-search" )
+				.search( {
+					source: content,
+					searchFields: [
+						"title"
+					],
+					selectFirstResult: true,
+					searchFullText: false,
+					regExp: {
+						escape: /[\-\[\]\/{}()*+?.\\\^$|]/g,
+						beginsWith: '(.*)'
+					},
+					onSelect: function( result ) {
+						window.location.hash = result.hash;
+					}
+				} );
 		})();
 	</script>
 </body>

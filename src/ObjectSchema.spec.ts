@@ -546,7 +546,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.Utils", "Class with useful functions that use schemas." ), ():void => {
+	describe( clazz( "Carbon.ObjectSchema.Util", "Class with useful functions that use schemas." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.Util ).toBeDefined();

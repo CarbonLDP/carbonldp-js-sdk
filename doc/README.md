@@ -136,7 +136,7 @@
 - `[C]` [Carbon.ObjectSchema.Digester](#Carbon-ObjectSchema-Digester)
 - `[I]` [Carbon.ObjectSchema.PropertyDefinition](#Carbon-ObjectSchema-PropertyDefinition)
 - `[I]` [Carbon.ObjectSchema.Resolver](#Carbon-ObjectSchema-Resolver)
-- `[C]` [Carbon.ObjectSchema.Utils](#Carbon-ObjectSchema-Utils)
+- `[C]` [Carbon.ObjectSchema.Util](#Carbon-ObjectSchema-Util)
 - `[I]` [Carbon.PersistedAccessPoint.Class](#Carbon-PersistedAccessPoint-Class)
 - `[I]` [Carbon.PersistedApp.Class](#Carbon-PersistedApp-Class)
 - `[C]` [Carbon.PersistedApp.Factory](#Carbon-PersistedApp-Factory)
@@ -11523,7 +11523,7 @@ Processes several schemas to standardize and combine them before using them.
 
 
 
-### <a name="Carbon-ObjectSchema-Utils"/>Class Carbon.ObjectSchema.Utils
+### <a name="Carbon-ObjectSchema-Util"/>Class Carbon.ObjectSchema.Util
 
 
 > Class with useful functions that use schemas.
@@ -11531,7 +11531,7 @@ Processes several schemas to standardize and combine them before using them.
 
 
 
-#### <a name="Carbon-ObjectSchema-Utils-Methods"/>Methods
+#### <a name="Carbon-ObjectSchema-Util-Methods"/>Methods
 ##### resolveURI
 ```typescript 
 static resolveURI( uri:string,  schema:Carbon.ObjectSchema.DigestedObjectSchema ):string
