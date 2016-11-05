@@ -321,7 +321,7 @@
 		}
 
 		.doc-search {
-			z-index: 1005;
+			z-index: 1006;
 		}
 	</style>
 </head>
@@ -72744,8 +72744,8 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			} );
 
 			var $locationMenu = $( ".doc-menu-location > .left.menu" );
-			var $moduleLocation = $( `<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>` ).click( scrollToHash );
-			var $objectLocation = $( `<a class="item doc-menu-location__item dynamic-location"></a>` ).click( scrollToHash );
+			var $moduleLocation = $( '<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>' ).click( scrollToHash );
+			var $objectLocation = $( '<a class="item doc-menu-location__item dynamic-location"></a>' ).click( scrollToHash );
 
 			function scrollToHash() {
 				if( ! window.location.hash ) return;
@@ -72758,16 +72758,16 @@ Instead of instantiating this class, use the already exposed instance <code><a h
 			}
 
 			function getSidebarItem() {
-				if( ! window.location.hash ) return;
+				if( ! window.location.hash ) return null;
 
 				var hash = window.location.hash;
-				var $sidebarItem = $( `.doc-menu-sidebar *[href="${ hash }"]` );
+				var $sidebarItem = $( '.doc-menu-sidebar *[href="' +  hash + '"]' );
 
 				if( ! $sidebarItem.length ) {
 					var lastIndex = hash.lastIndexOf( "--" );
 					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "+" );
 					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "-" );
-					$sidebarItem = $( `.doc-menu-sidebar *[href="${ hash.slice( 0, lastIndex ) }"]` );
+					$sidebarItem = $( '.doc-menu-sidebar *[href="' + hash.slice( 0, lastIndex ) + '"]' );
 				}
 
 				if( ! $sidebarItem.length ) return null;
