@@ -15,7 +15,9 @@ import {
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
+import * as App from "./App";
 import * as Auth from "./Auth";
+import Carbon from "./Carbon";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -26,6 +28,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
+import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
@@ -34,7 +37,6 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
-import { create } from "domain";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -97,6 +99,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			expect( documents.jsonldConverter ).toBeDefined();
 			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"documentDecorators",
+			"Map<string, { decorator:( object:Object, ...parameters:any[] ) => Object, parameters?:any[] }>",
+			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.documentDecorators ).toBeDefined();
+			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
+
+			// Has default decorators
+			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Agent ) ).toBe( true );
+
+			// This is set at `Carbon.App.Context.Class`
+			expect( documents.documentDecorators.has( NS.CS.Class.AppRole ) ).toBe( false );
 		} );
 
 		describe( method(

@@ -32,8 +32,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
 
-	private _documentDecorators:Map<string, {decorator:Function, parameters?:any[]}>;
-	get documentDecorators():Map<string, {decorator:Function, parameters?:any[]}> { return this._documentDecorators; }
+	private _documentDecorators:Map<string, {decorator:( object:Object, ...parameters:any[] ) => Object, parameters?:any[]}>;
+	get documentDecorators():Map<string, {decorator:( object:Object, ...parameters:any[] ) => Object, parameters?:any[]}> { return this._documentDecorators; }
 
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
@@ -54,9 +54,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this._jsonldConverter = new JSONLD.Converter.Class();
 		}
 
-		let decorators:Map<string, {decorator:Function, parameters?:any[]}> = new Map();
+		let decorators:Map<string, {decorator:( object:Object, ...parameters:any[] ) => Object, parameters?:any[]}> = new Map();
 		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let parentDecorators:Map<string, {decorator:Function, parameters?:any[]}> = this.context.parentContext.documents.documentDecorators;
+			let parentDecorators:Map<string, {decorator:( object:Object, ...parameters:any[] ) => Object, parameters?:any[]}> = this.context.parentContext.documents.documentDecorators;
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.M.extend( decorators, parentDecorators );
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate } );
@@ -64,7 +64,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			decorators.set( Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate } );
 		}
 
-		decorators.set( AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [ ( this.context && this.context.auth ) ? this.context.auth.roles : null ] } );
 		this._documentDecorators = decorators;
 	}
 
@@ -1031,12 +1030,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private decoratePersistedDocument( persistedDocument:PersistedDocument.Class ):void {
-		let entries:Iterator<[ string, {decorator:Function, parameters?:any[]} ]> = this._documentDecorators.entries();
-		for( let [ type, options ] of Utils.A.from( entries ) ) {
+		this._documentDecorators.forEach( ( options:{ decorator:( object:Object, ...parameters:any[] ) => Object, parameters?:any[] }, type:string ) => {
 			if( persistedDocument.hasType( type ) ) {
 				options.decorator.apply( null, [ persistedDocument ].concat( options.parameters ) );
 			}
-		}
+		} );
 	}
 
 }

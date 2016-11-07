@@ -4,12 +4,10 @@ var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var AccessPoint = require("./AccessPoint");
-var AppRole = require("./App/Role");
 var Auth = require("./Auth");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLD = require("./JSONLD");
-var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
@@ -44,7 +42,6 @@ var Class = (function () {
             decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
             decorators.set(Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate });
         }
-        decorators.set(AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [(this.context && this.context.auth) ? this.context.auth.roles : null] });
         this._documentDecorators = decorators;
     }
     Object.defineProperty(Class.prototype, "jsonldConverter", {
@@ -896,13 +893,11 @@ var Class = (function () {
         });
     };
     Class.prototype.decoratePersistedDocument = function (persistedDocument) {
-        var entries = this._documentDecorators.entries();
-        for (var _i = 0, _a = Utils.A.from(entries); _i < _a.length; _i++) {
-            var _b = _a[_i], type = _b[0], options = _b[1];
+        this._documentDecorators.forEach(function (options, type) {
             if (persistedDocument.hasType(type)) {
                 options.decorator.apply(null, [persistedDocument].concat(options.parameters));
             }
-        }
+        });
     };
     Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;

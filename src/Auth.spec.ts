@@ -29,6 +29,7 @@ import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedAgent from "./Auth/PersistedAgent";
 import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedRole from "./Auth/PersistedRole";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
@@ -134,6 +135,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.PersistedAgent ).toBeDefined();
 		expect( Auth.PersistedAgent ).toBe( PersistedAgent );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PersistedRole",
+		"Carbon.Auth.PersistedRole"
+	), ():void => {
+		expect( Auth.PersistedRole ).toBeDefined();
+		expect( Auth.PersistedRole ).toBe( PersistedRole );
 	} );
 
 	it( reexports(

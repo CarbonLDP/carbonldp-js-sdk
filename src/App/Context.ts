@@ -1,8 +1,10 @@
 import AbstractContext from "./../AbstractContext";
 import Auth from "./Auth";
 import Context from "./../Context";
-import * as RDF from "./../RDF";
 import PersistedApp from "./../PersistedApp";
+import * as PersistedRole from "./PersistedRole";
+import * as RDF from "./../RDF";
+import * as Role from "./Role";
 
 export class Class extends AbstractContext {
 	public auth:Auth;
@@ -14,9 +16,11 @@ export class Class extends AbstractContext {
 
 	constructor( parentContext:Context, app:PersistedApp ) {
 		super( parentContext );
-		this.auth = new Auth( this );
-		this._app = app;
 
+		this.auth = new Auth( this );
+		this.documents.documentDecorators.set( Role.RDF_CLASS, { decorator: PersistedRole.Factory.decorate, parameters: [ this.auth.roles ] } );
+
+		this._app = app;
 		this.base = this.getBase( this.app );
 
 		// Reassign the rootContainer pointer because the previous one was created in the SDKContext and this one must be resolved by this context.

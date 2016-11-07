@@ -18,7 +18,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
     readonly documentDecorators: Map<string, {
-        decorator: Function;
+        decorator: (object: Object, ...parameters: any[]) => Object;
         parameters?: any[];
     }>;
     private context;
