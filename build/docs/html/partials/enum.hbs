@@ -1,0 +1,28 @@
+{{>header level=4 name=(concat "." name) secondary="enum"}}
+
+{{#if description~}}
+	<div class="doc-description">
+		{{>text-markdown element=description}}
+	</div>
+{{/if}}
+
+<table class="ui celled table">
+	<thead>
+		<tr>
+			<th>Enumeration</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#each enumerals~}}
+			<tr>
+				<td>
+					<code>{{../path}}.{{name}}</code>
+				</td>
+				<td class="justified">
+					{{>text-markdown element=description}}
+				</td>
+			</tr>
+		{{/each}}
+	</tbody>
+</table>

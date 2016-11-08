@@ -57,7 +57,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		} );
 
 		it( extendsClass(
-			"Carbon.AbstractContext"
+			"Carbon.AbstractContext.Class"
 		), ():void => {
 			expect( appContext instanceof AbstractContext );
 		} );

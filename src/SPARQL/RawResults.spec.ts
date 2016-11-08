@@ -26,7 +26,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.SPARQL.RawResults",
+		"Carbon.SPARQL.RawResults.ValueTypes",
 		"Class that specifies the result types of a SPARQL query."
 	), ():void => {
 

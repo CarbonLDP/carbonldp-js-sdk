@@ -77,7 +77,7 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isFunction( Carbon ) ).toBe( true );
 		} );
 
-		it( extendsClass( "Carbon.AbstractContext" ), ():void => {
+		it( extendsClass( "Carbon.AbstractContext.Class" ), ():void => {
 			expect( carbon instanceof AbstractContext.Class ).toBe( true );
 		} );
 

@@ -24,6 +24,7 @@
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
     "gulp": "^3.9.1",
+    "gulp-htmlmin": "^3.0.0",
     "gulp-jasmine": "^2.3.0",
     "gulp-json-editor": "^2.2.1",
     "gulp-replace": "^0.5.4",

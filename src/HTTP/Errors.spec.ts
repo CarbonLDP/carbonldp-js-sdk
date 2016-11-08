@@ -1,5 +1,4 @@
 import {
-	INSTANCE,
 	STATIC,
 
 	module,
@@ -259,7 +258,7 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"client",
-		"Array <Carbon.HTTP.Error.HTTPError>",
+		"Array<Carbon.HTTP.Errors.HTTPError>",
 		"Array that contains all the error classes that represents the errors induced by the client."
 	), ():void => {
 		expect( Errors.client ).toBeDefined();
@@ -285,7 +284,7 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"server",
-		"Array <Carbon.HTTP.Error.HTTPError>",
+		"Array<Carbon.HTTP.Errors.HTTPError>",
 		"Array that contains all the error classes that represents the errors caused by the server."
 	), ():void => {
 		expect( Errors.server ).toBeDefined();
@@ -304,7 +303,7 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"statusCodeMap",
-		"Map <number, Carbon.HTTP.Error.HTTPError>",
+		"Map<number, Carbon.HTTP.Error.HTTPError>",
 		"Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class."
 	), ():void => {
 		expect( Errors.statusCodeMap ).toBeDefined();

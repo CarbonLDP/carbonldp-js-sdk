@@ -43,7 +43,7 @@ describe( module(
 			"parse", [
 				{ name: "body", type: "string", description: "A JSON string to parse." },
 			],
-			{ type: "Promise <Object>" }
+			{ type: "Promise<Object>" }
 		), ( done ):void => {
 			let parser:JSONParser.Class = new JSONParser.Class();
 			let jsonString:string = `{
