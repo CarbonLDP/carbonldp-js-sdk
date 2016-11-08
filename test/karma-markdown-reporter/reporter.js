@@ -18,7 +18,7 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
-	const classRegex = /Carbon\.[.#A-z()]*/gm;
+	const classRegex = /Carbon\.[.#A-z0-9]*/gm;
 
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
@@ -121,7 +121,7 @@ swag.registerHelpers( Handlebars );
 	} );
 
 	Handlebars.registerHelper( "toURL", function( str ) {
-		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
+		if( typeof str !== "string" ) throw new Error( "toURL: An string was expected but received: " + str );
 		return str.replace( /\./g, "-" ).replace( /\//g, "-" ).replace( /#/g, "+" ).replace( /\(\)/, "" );
 	} );
 
