@@ -55,8 +55,8 @@ gulp.task( "build", ( done ) => {
 	runSequence(
 		"version",
 		"clean:dist",
-		[ "compile:typescript", "compile:documentation", "bundle:sfx", "prepare:npm-package" ],
-		"compile:web",
+		[ "compile:typescript", "compile:documentation", "bundle:sfx" ],
+		"prepare:npm-package",
 		"finish",
 		done
 	);
@@ -92,27 +92,29 @@ gulp.task( "clean:temp", () => {
 	del.sync( config.dist.temp );
 } );
 
-gulp.task( "compile:documentation", ( done ) => {
+gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
+
+gulp.task( "compile:documentation:html", ( done ) => {
 	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/doc-templates/template.hbs",
-			partials: "build/doc-templates/partials/*.hbs",
-			dest: "doc/README.md"
+			src: "build/documentation/html/template.hbs",
+			partials: "build/documentation/html/partials/*.hbs",
+			dest: "documentation/index.html"
 		},
 		singleRun: true
 	}, done ).start();
 } );
 
-gulp.task( "compile:web", ( done ) => {
+gulp.task( "compile:documentation:markdown", ( done ) => {
 	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/web-templates/template.hbs",
-			partials: "build/web-templates/partials/*.hbs",
-			dest: "doc/index.html"
+			src: "build/documentation/markdown/template.hbs",
+			partials: "build/documentation/markdown/partials/*.hbs",
+			dest: "documentation/README.md"
 		},
 		singleRun: true
 	}, done ).start();
@@ -150,17 +152,18 @@ gulp.task( "lint:typescript", () => {
 
 gulp.task( "prepare:npm-package", ( done ) => {
 	runSequence(
-		[ "prepare:npm-package|copy:docs", "prepare:npm-package|copy:package-json" ],
+		[ "prepare:npm-package|copy:documentation", "prepare:npm-package|copy:package-json" ],
 		done
 	);
 } );
 
-gulp.task( "prepare:npm-package|copy:docs", () => {
+gulp.task( "prepare:npm-package|copy:documentation", () => {
 	return gulp.src( [
 		"README.md",
 		"CHANGELOG.md",
 		"LICENSE",
-	] ).pipe( gulp.dest( config.dist.tsOutput ) );
+		"documentation/**/*"
+	], { base: "./" } ).pipe( gulp.dest( config.dist.tsOutput ) );
 } );
 
 gulp.task( "prepare:npm-package|copy:package-json", () => {
