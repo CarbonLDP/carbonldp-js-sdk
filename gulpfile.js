@@ -21,6 +21,8 @@ const jasmine = require( "gulp-jasmine" );
 
 const Builder = require( "jspm" ).Builder;
 
+const htmlMinifier = require( "gulp-htmlmin" );
+
 let config = {
 	source: {
 		typescript: [
@@ -95,16 +97,35 @@ gulp.task( "clean:temp", () => {
 gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
 
 gulp.task( "compile:documentation:html", ( done ) => {
+	runSequence(
+		"compile:documentation|compile",
+		"compile:documentation|minify",
+		done
+	);
+} );
+
+gulp.task( "compile:documentation|compile", ( done ) => {
 	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/documentation/html/template.hbs",
-			partials: "build/documentation/html/partials/*.hbs",
-			dest: "documentation/index.html"
+			src: "build/docs/html/template.hbs",
+			partials: "build/docs/html/partials/*.hbs",
+			dest: "docs/index.html"
 		},
 		singleRun: true
 	}, done ).start();
+} );
+
+gulp.task( "compile:documentation|minify", () => {
+	return gulp.src( "docs/index.html" )
+		.pipe( htmlMinifier( {
+			collapseWhitespace: true,
+			conservativeCollapse: true,
+			removeComments: true
+		} ) )
+		.pipe( gulp.dest( "docs" ) )
+		;
 } );
 
 gulp.task( "compile:documentation:markdown", ( done ) => {
@@ -112,9 +133,9 @@ gulp.task( "compile:documentation:markdown", ( done ) => {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/documentation/markdown/template.hbs",
-			partials: "build/documentation/markdown/partials/*.hbs",
-			dest: "documentation/README.md"
+			src: "build/docs/markdown/template.hbs",
+			partials: "build/docs/markdown/partials/*.hbs",
+			dest: "docs/README.md"
 		},
 		singleRun: true
 	}, done ).start();
