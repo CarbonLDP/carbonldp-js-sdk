@@ -403,18 +403,18 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-APIDescription-Class-Properties"/>Properties
 ```typescript 
-version:string 
-```
-
-The version of the Carbon LDP Platform configured.
-
---
-
-```typescript 
 buildDate:Date 
 ```
 
 The last time the platform was built.
+
+--
+
+```typescript 
+version:string 
+```
+
+The version of the Carbon LDP Platform configured.
 
 
 
@@ -505,18 +505,18 @@ The string URI or pointer URI that represents the member relation that the acces
 --
 
 ```typescript 
-isMemberOfRelation?:string | Carbon.Pointer.Class 
-```
-
-The string URI or pointer URI that represents the inverted relation that the access point will create.
-
---
-
-```typescript 
 insertedContentRelation?:string | Carbon.Pointer.Class 
 ```
 
 The string URI or pointer URI that represents the inserted content relation of the access point.
+
+--
+
+```typescript 
+isMemberOfRelation?:string | Carbon.Pointer.Class 
+```
+
+The string URI or pointer URI that represents the inverted relation that the access point will create.
 
 
 
@@ -538,18 +538,18 @@ Pointer that represents the member relation that the access point will manage.
 --
 
 ```typescript 
-isMemberOfRelation?:Carbon.Pointer.Class 
-```
-
-Pointer that represents the inverted relation that the access point will create.
-
---
-
-```typescript 
 insertedContentRelation?:Carbon.Pointer.Class 
 ```
 
 Pointer that represents the inserted content relation of the access point.
+
+--
+
+```typescript 
+isMemberOfRelation?:Carbon.Pointer.Class 
+```
+
+Pointer that represents the inverted relation that the access point will create.
 
 
 
@@ -638,10 +638,10 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-App-Class-Properties"/>Properties
 ```typescript 
-name:string 
+allowsOrigin?:(string | Carbon.Pointer.Class)[] 
 ```
 
-The name of the current application.
+An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at `Carbon.NS.CS.Class.AllOrigins` which translates to `https://carbonldp.com/ns/v1/security#AllOrigins`.
 
 --
 
@@ -654,10 +654,10 @@ A brief description of the current application.
 --
 
 ```typescript 
-allowsOrigin?:(string | Carbon.Pointer.Class)[] 
+name:string 
 ```
 
-An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at `Carbon.NS.CS.Class.AllOrigins` which translates to `https://carbonldp.com/ns/v1/security#AllOrigins`.
+The name of the current application.
 
 
 
@@ -910,18 +910,18 @@ _roles:Carbon.App.Roles.Class
 --
 
 ```typescript 
-parentRole?:Carbon.Pointer.Class 
-```
-
-Reference to the parent of the current role.
-
---
-
-```typescript 
 childRole?:Carbon.Pointer.Class[] 
 ```
 
 An array of pointer that references to all the children of the current role.
+
+--
+
+```typescript 
+parentRole?:Carbon.Pointer.Class 
+```
+
+Reference to the parent of the current role.
 
 
 
@@ -1284,7 +1284,7 @@ Returns true if the object provided is considered a `Carbon.App.Role.Class` obje
 
 ### <a name="Carbon-Auth-Enums"/>Enums
 
-#### <a name"Carbon-Auth-Method />Carbon.Auth.Method
+#### <a name"Method />Method
 > Enum with the methods of authentication supported by CarbonLDP.
 
 | Name | Description | 
@@ -1344,7 +1344,7 @@ In this class the property is set to `null`, and implementations of this class s
 
 ##### addAuthentication
 ```typescript 
-addAuthentication( options:Carbon.HTTP.Request.Options )
+addAuthentication( options:Carbon.HTTP.Request.Options ):void
 ```
 
 Adds the authentication header to a `Carbon.HTTP.Request.Options` object.
@@ -1412,7 +1412,7 @@ Authenticates the user with a `Carbon.Auth.Token.Class`, which contains a JSON W
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 Deletes the authentication of the current instance.
@@ -1564,18 +1564,58 @@ _parsePointer( element:string | Carbon.Pointer.Class ):Carbon.Pointer.Class
 
 --
 
-##### grants
+##### configureChildInheritance
 ```typescript 
-grants( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
-Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.
-Returns `null` if no configuration of the subject and permission exists in the ACL.
+Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
 
 *Parameters*
 
-- subject: The subject to look for its configuration.
-- permission: The permission to check if it has a granting configuration.
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
+```
+
+Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
 
 
 --
@@ -1592,6 +1632,58 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 - subject: The subject to look for its configuration.
 - permission: The permission to check if it has a granting configuration.
+
+
+--
+
+##### deny
+```typescript 
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
+```
+
+Grant the permission specified to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Grant several permissions to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
+```
+
+Grant the permission specified to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Grant several permissions to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
 
 
 --
@@ -1614,7 +1706,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### grant
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -1626,7 +1718,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -1638,7 +1730,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -1650,7 +1742,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -1664,117 +1756,25 @@ Grant several permissions to the every subject provided for the document related
 
 --
 
-##### deny
+##### grants
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grants( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
 ```
 
-Grant the permission specified to the subject provided for the document related to the ACL.
+Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.
+Returns `null` if no configuration of the subject and permission exists in the ACL.
 
 *Parameters*
 
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Grant the permission specified to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
-
-
---
-
-##### configureChildInheritance
-```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
+- subject: The subject to look for its configuration.
+- permission: The permission to check if it has a granting configuration.
 
 
 --
 
 ##### remove
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the document related to the ACL.
@@ -1785,7 +1785,7 @@ Remove the configuration of a permission from a subject for the document related
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the document related to the ACL.
@@ -1800,7 +1800,7 @@ Remove the configuration of several permissions from a subject for the document 
 
 ##### removeChildInheritance
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the children of the document related to the ACL.
@@ -1862,7 +1862,7 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 ##### <a name="Carbon-Auth-ACL-Factory-Decorated-Object-Methods"/>Methods
 ##### configureChildInheritance
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
@@ -1875,7 +1875,7 @@ Configures the permission specified to the subject provided either granting or d
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
@@ -1888,7 +1888,7 @@ Configure several permissions to the subject provided either granting or denying
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
@@ -1901,7 +1901,7 @@ Configure the permission specified to the every subject provided either granting
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
@@ -1934,7 +1934,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### deny
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -1946,7 +1946,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -1958,7 +1958,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -1970,7 +1970,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2002,7 +2002,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### grant
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -2014,7 +2014,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -2026,7 +2026,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -2038,7 +2038,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2070,7 +2070,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### remove
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the document related to the ACL.
@@ -2081,7 +2081,7 @@ Remove the configuration of a permission from a subject for the document related
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the document related to the ACL.
@@ -2096,7 +2096,7 @@ Remove the configuration of several permissions from a subject for the document 
 
 ##### removeChildInheritance
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the children of the document related to the ACL.
@@ -2107,7 +2107,7 @@ Remove the configuration of a permission from a subject for the children of the 
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the children of the document related to the ACL.
@@ -2154,18 +2154,18 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-Auth-Agent-Class-Properties"/>Properties
 ```typescript 
-name:string 
-```
-
-The name of the agent.
-
---
-
-```typescript 
 email:string 
 ```
 
 The email of the agent.
+
+--
+
+```typescript 
+name:string 
+```
+
+The name of the agent.
 
 --
 
@@ -2391,12 +2391,16 @@ Returns a Promise with a Pointer to the stored Agent, and the response of the re
 
 
 #### <a name="Carbon-Auth-Authenticator-Class-Methods"/>Methods
-##### isAuthenticated
+##### addAuthentication
 ```typescript 
-isAuthenticated():boolean
+addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Request.Options
 ```
 
-Returns if its authenticated by checking the stored credentials within.
+If the authenticator is authenticated, it adds an authentication header in the request options object provided.
+
+*Parameters*
+
+- requestOptions: The request options object where to add the authentication header.
 
 
 --
@@ -2417,7 +2421,7 @@ Performs an authentication and stores the credentials for future use.
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 Removes the stored credentials of any.
@@ -2425,16 +2429,12 @@ Removes the stored credentials of any.
 
 --
 
-##### addAuthentication
+##### isAuthenticated
 ```typescript 
-addAuthentication( requestOptions:Carbon.HTTP.Request.Options ):Carbon.HTTP.Request.Options
+isAuthenticated():boolean
 ```
 
-If the authenticator is authenticated, it adds an authentication header in the request options object provided.
-
-*Parameters*
-
-- requestOptions: The request options object where to add the authentication header.
+Returns if its authenticated by checking the stored credentials within.
 
 
 
@@ -2497,7 +2497,7 @@ Stores credentials to authenticate future requests.
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 Clears any saved credentials and restores the Authenticator to its initial state.
@@ -2589,18 +2589,58 @@ _parsePointer( element:string | Carbon.Pointer.Class ):Carbon.Pointer.Class
 
 --
 
-##### grants
+##### configureChildInheritance
 ```typescript 
-grants( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
-Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.
-Returns `null` if no configuration of the subject and permission exists in the ACL.
+Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
 
 *Parameters*
 
-- subject: The subject to look for its configuration.
-- permission: The permission to check if it has a granting configuration.
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
+```
+
+Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
+
+*Parameters*
+
+- granting: Boolean to indicate if the permission will be granted o denied.
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
 
 
 --
@@ -2617,6 +2657,58 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 - subject: The subject to look for its configuration.
 - permission: The permission to check if it has a granting configuration.
+
+
+--
+
+##### deny
+```typescript 
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
+```
+
+Grant the permission specified to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permission: The permission that will be granted to the subject specified.
+
+```typescript 
+deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Grant several permissions to the subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subject: The subject which will be assigned the permission specified.
+- subjectClass: The type of subject provided.
+- permissions: The permissions that will be granted to the subject specified.
+
+```typescript 
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
+```
+
+Grant the permission specified to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permission: The permission that will be granted to the every subject.
+
+```typescript 
+deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
+```
+
+Grant several permissions to the every subject provided for the document related to the ACL.
+
+*Parameters*
+
+- subjects: The subjects which will be assigned the every permissions specified.
+- subjectClass: The type of subjects provided.
+- permissions: The permissions that will be granted to the every subject.
 
 
 --
@@ -2639,7 +2731,7 @@ Returns `null` if no configuration of the subject and permission exists in the A
 
 ##### grant
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the subject provided for the document related to the ACL.
@@ -2651,7 +2743,7 @@ Grant the permission specified to the subject provided for the document related 
 - permission: The permission that will be granted to the subject specified.
 
 ```typescript 
-grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the subject provided for the document related to the ACL.
@@ -2663,7 +2755,7 @@ Grant several permissions to the subject provided for the document related to th
 - permissions: The permissions that will be granted to the subject specified.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Grant the permission specified to the every subject provided for the document related to the ACL.
@@ -2675,7 +2767,7 @@ Grant the permission specified to the every subject provided for the document re
 - permission: The permission that will be granted to the every subject.
 
 ```typescript 
-grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+grant( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Grant several permissions to the every subject provided for the document related to the ACL.
@@ -2689,117 +2781,25 @@ Grant several permissions to the every subject provided for the document related
 
 --
 
-##### deny
+##### grants
 ```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+grants( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):boolean
 ```
 
-Grant the permission specified to the subject provided for the document related to the ACL.
+Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.
+Returns `null` if no configuration of the subject and permission exists in the ACL.
 
 *Parameters*
 
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-deny( subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Grant the permission specified to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-deny( subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Grant several permissions to the every subject provided for the document related to the ACL.
-
-*Parameters*
-
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
-
-
---
-
-##### configureChildInheritance
-```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permission: The permission that will be granted to the subject specified.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subject:string | Carbon.Pointer.Class,  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subject: The subject which will be assigned the permission specified.
-- subjectClass: The type of subject provided.
-- permissions: The permissions that will be granted to the subject specified.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
-```
-
-Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permission: The permission that will be granted to the every subject.
-
-```typescript 
-configureChildInheritance( granting:boolean,  subjects:(string | Carbon.Pointer.Class)[],  subjectClass:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
-```
-
-Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.
-
-*Parameters*
-
-- granting: Boolean to indicate if the permission will be granted o denied.
-- subjects: The subjects which will be assigned the every permissions specified.
-- subjectClass: The type of subjects provided.
-- permissions: The permissions that will be granted to the every subject.
+- subject: The subject to look for its configuration.
+- permission: The permission to check if it has a granting configuration.
 
 
 --
 
 ##### remove
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+remove( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the document related to the ACL.
@@ -2810,7 +2810,7 @@ Remove the configuration of a permission from a subject for the document related
 - permission: The permission to remove from the subject configuration.
 
 ```typescript 
-remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] )
+remove( subject:string | Carbon.Pointer.Class,  permissions:(string | Carbon.Pointer.Class)[] ):void
 ```
 
 Remove the configuration of several permissions from a subject for the document related to the ACL.
@@ -2825,7 +2825,7 @@ Remove the configuration of several permissions from a subject for the document 
 
 ##### removeChildInheritance
 ```typescript 
-removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class )
+removeChildInheritance( subject:string | Carbon.Pointer.Class,  permission:string | Carbon.Pointer.Class ):void
 ```
 
 Remove the configuration of a permission from a subject for the children of the document related to the ACL.
@@ -2896,14 +2896,6 @@ Return true if the object provided has the properties and methods of a `Carbon.A
 
 #### <a name="Carbon-Auth-PersistedAgent-Class-Properties"/>Properties
 ```typescript 
-name:string 
-```
-
-The name of he current Agent.
-
---
-
-```typescript 
 email:string 
 ```
 
@@ -2916,6 +2908,14 @@ enabled:boolean
 ```
 
 Flag that indicates if the current agent has been activated o not.
+
+--
+
+```typescript 
+name:string 
+```
+
+The name of he current Agent.
 
 --
 
@@ -3049,37 +3049,23 @@ _roles:Carbon.Auth.Roles.Class
 --
 
 ```typescript 
-name?:string 
-```
-
-A name that describes the current role.
-
---
-
-```typescript 
 agents?:Carbon.Pointer.Class[] 
 ```
 
 An array of pointers that references to all the agents that have the current role.
 
+--
+
+```typescript 
+name?:string 
+```
+
+A name that describes the current role.
+
 
 
 
 #### <a name="Carbon-App-PersistedRole-Class-Methods"/>Methods
-##### listAgents
-```typescript 
-listAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Retrieves an array of unresolved pointers for all the agents of the role.
-
-*Parameters*
-
-- requestOptions
-
-
---
-
 ##### addAgent
 ```typescript 
 addAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
@@ -3105,36 +3091,6 @@ Makes a relation in the role towards the agents specified.
 *Parameters*
 
 - agents: An array with strings or Pointers that refers to the agents that wants to add to the role.
-- requestOptions
-
-
---
-
-##### removeAgent
-```typescript 
-removeAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Removes the relation in the role towards the agents specified.
-
-*Parameters*
-
-- agent: The agents that wants to be removed from the role.
-- requestOptions
-
-
---
-
-##### removeAgents
-```typescript 
-removeAgents( agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the relation in the role towards the agents specified.
-
-*Parameters*
-
-- agents: An array with strings or Pointers that refers to the agents that wants to be removed from the role.
 - requestOptions
 
 
@@ -3187,6 +3143,50 @@ Retrieves an array of resolved pointers for the agents of the role, in accordanc
 *Parameters*
 
 - retrievalPreferences: An object that specify the retrieval preferences for the request.
+- requestOptions
+
+
+--
+
+##### listAgents
+```typescript 
+listAgents( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved pointers for all the agents of the role.
+
+*Parameters*
+
+- requestOptions
+
+
+--
+
+##### removeAgent
+```typescript 
+removeAgent( agent:string | Carbon.Pointer.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Removes the relation in the role towards the agents specified.
+
+*Parameters*
+
+- agent: The agents that wants to be removed from the role.
+- requestOptions
+
+
+--
+
+##### removeAgents
+```typescript 
+removeAgents( agents:(string | Carbon.Pointer.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the relation in the role towards the agents specified.
+
+*Parameters*
+
+- agents: An array with strings or Pointers that refers to the agents that wants to be removed from the role.
 - requestOptions
 
 
@@ -3699,18 +3699,18 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-Auth-Ticket-Class-Properties"/>Properties
 ```typescript 
-forURI:Carbon.Pointer.Class 
-```
-
-Pointer that relates the document that the authentication ticket only works for.
-
---
-
-```typescript 
 expirationTime:Date 
 ```
 
 The time when the ticket will expire.
+
+--
+
+```typescript 
+forURI:Carbon.Pointer.Class 
+```
+
+Pointer that relates the document that the authentication ticket only works for.
 
 --
 
@@ -3826,20 +3826,6 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 
 #### <a name="Carbon-Auth-Token-Factory-Methods"/>Methods
-##### hasClassProperties
-```typescript 
-static hasClassProperties( object:Object ):boolean
-```
-
-Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.
-
-*Parameters*
-
-- object
-
-
---
-
 ##### is
 ```typescript 
 static is( value:any ):boolean
@@ -3850,6 +3836,20 @@ Returns true if the object provided is considered a `Carbon.Auth.Token.Class` ob
 *Parameters*
 
 - value
+
+
+--
+
+##### hasClassProperties
+```typescript 
+static hasClassProperties( object:Object ):boolean
+```
+
+Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.
+
+*Parameters*
+
+- object
 
 
 
@@ -3942,7 +3942,7 @@ Stores credentials to authenticate future requests.
 
 ##### clearAuthentication
 ```typescript 
-clearAuthentication()
+clearAuthentication():void
 ```
 
 
@@ -4187,76 +4187,23 @@ The parent context of the current context. It will be `null` when the context ha
 
 
 #### <a name="Carbon-Context-Class-Methods"/>Methods
-##### getBaseURI
+##### clearObjectSchema
 ```typescript 
-getBaseURI():string
+clearObjectSchema( type?:string ):void
 ```
 
-Returns the base URI of the current context.
-
-
---
-
-##### resolve
-```typescript 
-resolve( relativeURI:string ):string
-```
-
-Resolves the relative URI provided in accordance to the base URI of the context.
+Remove the schema of the type specified, or the general schema if no type is provided.
 
 *Parameters*
 
-- relativeURI: The relative URI to be resolved.
-
-
---
-
-##### hasSetting
-```typescript 
-hasSetting( name:string ):boolean
-```
-
-Returns if the context contains the provided setting.
-
-*Parameters*
-
-- name: Name of the setting to look for.
-
-
---
-
-##### getSetting
-```typescript 
-getSetting( name:string ):any
-```
-
-Returns the value of the setting looked for.
-
-*Parameters*
-
-- name: Name of the setting to look for.
-
-
---
-
-##### setSetting
-```typescript 
-setSetting( name:string,  value:any )
-```
-
-Set a setting in the current context.
-
-*Parameters*
-
-- name: Name of the setting to look for.
-- value: The value to store as the setting specified.
+- type: The URI of the type to remove its schema.
 
 
 --
 
 ##### deleteSetting
 ```typescript 
-deleteSetting( name:string )
+deleteSetting( name:string ):void
 ```
 
 Deletes the setting specified by the name provided from the current context.
@@ -4268,16 +4215,39 @@ Deletes the setting specified by the name provided from the current context.
 
 --
 
-##### hasObjectSchema
+##### extendObjectSchema
 ```typescript 
-hasObjectSchema( type:string ):boolean
+extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
-Returns true if there is an ObjectSchema for the specified type.
+Extends the schema for a specified type of Resource.
+If a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.
 
 *Parameters*
 
-- type: The URI of the type to look for its schema.
+- type: The URI of the type to extends its schema.
+- objectSchema: The new schema that will extends the previous one.
+
+```typescript 
+extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
+```
+
+Extends the general schema of the current context.
+If a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.
+
+*Parameters*
+
+- objectSchema: The new schema that will extends the previous one.
+
+
+--
+
+##### getBaseURI
+```typescript 
+getBaseURI():string
+```
+
+Returns the base URI of the current context.
 
 
 --
@@ -4296,43 +4266,73 @@ Returns the ObjectSchema for the specified type. If no type is specified, the ge
 
 --
 
-##### clearObjectSchema
+##### getSetting
 ```typescript 
-clearObjectSchema( type?:string )
+getSetting( name:string ):any
 ```
 
-Remove the schema of the type specified, or the general schema if no type is provided.
+Returns the value of the setting looked for.
 
 *Parameters*
 
-- type: The URI of the type to remove its schema.
+- name: Name of the setting to look for.
 
 
 --
 
-##### extendObjectSchema
+##### hasObjectSchema
 ```typescript 
-extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+hasObjectSchema( type:string ):boolean
 ```
 
-Extends the schema for a specified type of Resource.
-If a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.
+Returns true if there is an ObjectSchema for the specified type.
 
 *Parameters*
 
-- type: The URI of the type to extends its schema.
-- objectSchema: The new schema that will extends the previous one.
+- type: The URI of the type to look for its schema.
 
+
+--
+
+##### hasSetting
 ```typescript 
-extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+hasSetting( name:string ):boolean
 ```
 
-Extends the general schema of the current context.
-If a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.
+Returns if the context contains the provided setting.
 
 *Parameters*
 
-- objectSchema: The new schema that will extends the previous one.
+- name: Name of the setting to look for.
+
+
+--
+
+##### resolve
+```typescript 
+resolve( relativeURI:string ):string
+```
+
+Resolves the relative URI provided in accordance to the base URI of the context.
+
+*Parameters*
+
+- relativeURI: The relative URI to be resolved.
+
+
+--
+
+##### setSetting
+```typescript 
+setSetting( name:string,  value:any ):void
+```
+
+Set a setting in the current context.
+
+*Parameters*
+
+- name: Name of the setting to look for.
+- value: The value to store as the setting specified.
 
 
 
@@ -4370,18 +4370,18 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-Document-Class-Properties"/>Properties
 ```typescript 
-defaultInteractionModel?:Carbon.Pointer.Class 
+_fragmentsIndex:Map<string, Carbon.Fragment.Class> 
 ```
 
-A Pointer URI representing the default interaction model of the document when persisted.
+Map that stores the fragments (named fragments and blank nodes) of the Document.
 
 --
 
 ```typescript 
-isMemberOfRelation?:Carbon.Pointer.Class 
+defaultInteractionModel?:Carbon.Pointer.Class 
 ```
 
-A Pointer with the member of relation of the document.
+A Pointer URI representing the default interaction model of the document when persisted.
 
 --
 
@@ -4394,10 +4394,10 @@ A Pointer with the inverted relation the document will have.
 --
 
 ```typescript 
-_fragmentsIndex:Map<string, Carbon.Fragment.Class> 
+isMemberOfRelation?:Carbon.Pointer.Class 
 ```
 
-Map that stores the fragments (named fragments and blank nodes) of the Document.
+A Pointer with the member of relation of the document.
 
 
 
@@ -4405,7 +4405,7 @@ Map that stores the fragments (named fragments and blank nodes) of the Document.
 #### <a name="Carbon-Document-Class-Methods"/>Methods
 ##### _normalize
 ```typescript 
-_normalize()
+_normalize():void
 ```
 
 Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
@@ -4413,109 +4413,26 @@ Search over the document for normal objects to convert into fragments, and unuse
 
 --
 
-##### hasPointer
+##### _removeFragment
 ```typescript 
-hasPointer( id:string ):boolean
+_removeFragment( fragment:Carbon.Fragment.Class ):void
 ```
 
-Returns true if the Document has a pointer referenced by the URI provided.
+Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
 
 *Parameters*
 
-- id
+- fragment
 
-
---
-
-##### getPointer
 ```typescript 
-getPointer( id:string ):boolean
+_removeFragment( slug:string ):void
 ```
 
-Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.
-Returns `null` if the URI is outside the scope of the Document.
+Remove the fragment referenced by the Slug provided from the Document.
 
 *Parameters*
 
-- id
-
-
---
-
-##### hasFragment
-```typescript 
-hasFragment( id:string ):boolean
-```
-
-Returns true if the Document has the fragment referenced by the ID provided.
-
-*Parameters*
-
-- id
-
-
---
-
-##### getFragment
-```typescript 
-getFragment<T>( id:string ):T & Carbon.Fragment.Class
-```
-
-Returns the fragment referenced by the ID provided.
-Returns `null` if no fragment exists in the Document.
-
-*Parameters*
-
-- id
-
-
---
-
-##### getNamedFragment
-```typescript 
-getNamedFragment<T>( id:string ):T & Carbon.Fragment.Class
-```
-
-Returns the fragment referenced by the ID provided.
-Returns `null` if no fragment exists in the Document.
-
-*Parameters*
-
-- id
-
-
---
-
-##### getFragments
-```typescript 
-getFragments():Carbon.Fragment.Class[]
-```
-
-Returns an array with all the fragments in the Document.
-
-
---
-
-##### inScope
-```typescript 
-inScope( pointer:Carbon.Pointer.Class ):boolean
-```
-
-Returns true if the pointer provided is inside the scope of the Document.
-
-*Parameters*
-
-- pointer
-
-```typescript 
-inScope( id:string ):boolean
-```
-
-Returns true if the URI provided is inside the scope of the Document.
-
-*Parameters*
-
-- id
+- slug
 
 
 --
@@ -4590,33 +4507,116 @@ If the slug has the form of a BlankNode ID, an Error is thrown.
 
 --
 
-##### _removeFragment
+##### getFragment
 ```typescript 
-_removeFragment( fragment:Carbon.Fragment.Class )
+getFragment<T>( id:string ):T & Carbon.Fragment.Class
 ```
 
-Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
+Returns the fragment referenced by the ID provided.
+Returns `null` if no fragment exists in the Document.
 
 *Parameters*
 
-- fragment
+- id
 
+
+--
+
+##### getFragments
 ```typescript 
-_removeFragment( slug:string )
+getFragments():Carbon.Fragment.Class[]
 ```
 
-Remove the fragment referenced by the Slug provided from the Document.
+Returns an array with all the fragments in the Document.
+
+
+--
+
+##### getNamedFragment
+```typescript 
+getNamedFragment<T>( id:string ):T & Carbon.Fragment.Class
+```
+
+Returns the fragment referenced by the ID provided.
+Returns `null` if no fragment exists in the Document.
 
 *Parameters*
 
-- slug
+- id
+
+
+--
+
+##### getPointer
+```typescript 
+getPointer( id:string ):boolean
+```
+
+Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.
+Returns `null` if the URI is outside the scope of the Document.
+
+*Parameters*
+
+- id
+
+
+--
+
+##### hasFragment
+```typescript 
+hasFragment( id:string ):boolean
+```
+
+Returns true if the Document has the fragment referenced by the ID provided.
+
+*Parameters*
+
+- id
+
+
+--
+
+##### hasPointer
+```typescript 
+hasPointer( id:string ):boolean
+```
+
+Returns true if the Document has a pointer referenced by the URI provided.
+
+*Parameters*
+
+- id
+
+
+--
+
+##### inScope
+```typescript 
+inScope( pointer:Carbon.Pointer.Class ):boolean
+```
+
+Returns true if the pointer provided is inside the scope of the Document.
+
+*Parameters*
+
+- pointer
+
+```typescript 
+inScope( id:string ):boolean
+```
+
+Returns true if the URI provided is inside the scope of the Document.
+
+*Parameters*
+
+- id
 
 
 --
 
 ##### removeNamedFragment
 ```typescript 
-removeNamedFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class ):void
 ```
 
 Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
@@ -4626,7 +4626,7 @@ Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provide
 - fragment
 
 ```typescript 
-removeNamedFragment( slug:string )
+removeNamedFragment( slug:string ):void
 ```
 
 Remove the named fragment referenced by the Slug provided from the Document.
@@ -4765,7 +4765,7 @@ Map that stores the fragments (named fragments and blank nodes) of the Document.
 ##### <a name="Carbon-Document-Factory-Decorated-Object-Methods"/>Methods
 ##### _normalize
 ```typescript 
-_normalize()
+_normalize():void
 ```
 
 Search over the document for normal objects to convert into fragments, and unused fragments to eliminate.
@@ -4775,7 +4775,7 @@ Search over the document for normal objects to convert into fragments, and unuse
 
 ##### _removeFragment
 ```typescript 
-_removeFragment( fragment:Carbon.Fragment.Class )
+_removeFragment( fragment:Carbon.Fragment.Class ):void
 ```
 
 Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.
@@ -4785,7 +4785,7 @@ Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the 
 - fragment
 
 ```typescript 
-_removeFragment( slug:string )
+_removeFragment( slug:string ):void
 ```
 
 Remove the fragment referenced by the Slug provided from the Document.
@@ -4976,7 +4976,7 @@ Returns true if the URI provided is inside the scope of the Document.
 
 ##### removeNamedFragment
 ```typescript 
-removeNamedFragment( fragment:Carbon.NamedFragment.Class )
+removeNamedFragment( fragment:Carbon.NamedFragment.Class ):void
 ```
 
 Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.
@@ -4986,7 +4986,7 @@ Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provide
 - fragment
 
 ```typescript 
-removeNamedFragment( slug:string )
+removeNamedFragment( slug:string ):void
 ```
 
 Remove the named fragment referenced by the Slug provided from the Document.
@@ -6181,44 +6181,6 @@ Map<string, Carbon.Resource.Class>
 
 
 #### <a name="Carbon-FreeResources-Class-Methods"/>Methods
-##### hasResource
-```typescript 
-hasResource( id:string ):boolean
-```
-
-Returns true if a resource with the ID specified exists.
-
-*Parameters*
-
-- id: The ID of the resource to sought for.
-
-
---
-
-##### getResource
-```typescript 
-getResource( id:string ):Carbon.Resource.Class
-```
-
-Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.
-
-*Parameters*
-
-- id: The ID of the resource to sought for.
-
-
---
-
-##### getResources
-```typescript 
-getResources():Carbon.Resource.Class[]
-```
-
-Returns an array with all the resources inside the FreeResources object.
-
-
---
-
 ##### createResource
 ```typescript 
 createResource( id?:string ):Carbon.Resource.Class
@@ -6258,6 +6220,44 @@ Returns the pointer referred by the ID specified, or creates one if no pointer e
 *Parameters*
 
 - id: The ID of the pointer sought for or the one to create.
+
+
+--
+
+##### getResource
+```typescript 
+getResource( id:string ):Carbon.Resource.Class
+```
+
+Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.
+
+*Parameters*
+
+- id: The ID of the resource to sought for.
+
+
+--
+
+##### getResources
+```typescript 
+getResources():Carbon.Resource.Class[]
+```
+
+Returns an array with all the resources inside the FreeResources object.
+
+
+--
+
+##### hasResource
+```typescript 
+hasResource( id:string ):boolean
+```
+
+Returns true if a resource with the ID specified exists.
+
+*Parameters*
+
+- id: The ID of the resource to sought for.
 
 
 --
@@ -7920,7 +7920,7 @@ toString():string
 
 #### <a name="Carbon-HTTP-Header-Class-Constructor"/>Constructor
 ```typescript 
-Class( values:Array <Carbon.HTTP.Header.Value> )
+Class( values:Array <Carbon.HTTP.Header.Value> ):void
 ```
 
 
@@ -7929,7 +7929,7 @@ Class( values:Array <Carbon.HTTP.Header.Value> )
 - values
 
 ```typescript 
-Class( value:string )
+Class( value:string ):void
 ```
 
 
@@ -7953,7 +7953,7 @@ Array that contains each value of the header.
 
 ##### toString
 ```typescript 
-toString()
+toString():void
 ```
 
 string
@@ -8098,7 +8098,7 @@ parse( body:string ):Promise <Object>
 
 ### <a name="Carbon-HTTP-Method-Enums"/>Enums
 
-#### <a name"Carbon-HTTP-Method />Carbon.HTTP.Method
+#### <a name"Method />Method
 > Enum with the HTTP/1.1 methods.
 
 | Name | Description | 
@@ -8568,7 +8568,7 @@ Set a Slug header in an options object request.
 
 #### <a name="Carbon-HTTP-Response-Class-Constructor"/>Constructor
 ```typescript 
-Class( request:XMLHttpRequest )
+Class( request:XMLHttpRequest ):void
 ```
 
 Signature that only works in a web browser.
@@ -8578,7 +8578,7 @@ Signature that only works in a web browser.
 - request
 
 ```typescript 
-Class( request:ClientRequest,  data:string,  response:IncomingMessage )
+Class( request:ClientRequest,  data:string,  response:IncomingMessage ):void
 ```
 
 Signature that only works in Node.js.
@@ -8676,7 +8676,7 @@ Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if
 
 ### <a name="Carbon-HTTP-StatusCode-Enums"/>Enums
 
-#### <a name"Carbon-HTTP-Method />Carbon.HTTP.Method
+#### <a name"Method />Method
 > Enum with the HTTP/1.1 status codes.
 
 | Name | Description | 
@@ -11225,7 +11225,7 @@ Returns true if the object provided has the properties and methods of a `Carbon.
 
 ### <a name="Carbon-ObjectSchema-Enums"/>Enums
 
-#### <a name"Carbon-ObjectSchema-ContainerType />Carbon.ObjectSchema.ContainerType
+#### <a name"ContainerType />ContainerType
 > Enum for the types that a container can be.
 
 | Name | Description | 
@@ -11247,14 +11247,6 @@ Returns true if the object provided has the properties and methods of a `Carbon.
 ```
 
 An absolute URI that is used to resolve relative URIs. If it's set to `null`, will invalidate a previous `@base` value.
-
---
-
-```typescript 
-@vocab?:string 
-```
-
-An absolute URI that is used to as the common prefix for all the relative properties. If it's set to `null`, will invalidate a previous `@vocab` value.
 
 --
 
@@ -11283,6 +11275,14 @@ The default language of the string properties.
 --
 
 ```typescript 
+@vocab?:string 
+```
+
+An absolute URI that is used to as the common prefix for all the relative properties. If it's set to `null`, will invalidate a previous `@vocab` value.
+
+--
+
+```typescript 
 [ name:string ]:(string | Carbon.ObjectSchema.PropertyDefinition) 
 ```
 
@@ -11301,18 +11301,21 @@ This index can be interpreted in two forms:
 
 #### <a name="Carbon-ObjectSchema-PropertyDefinition-Properties"/>Properties
 ```typescript 
-@id?:string 
+@container?:string 
 ```
 
-The absolute URI of the property in the JSONLD which is mapped to the key name where this definition was referred.
+If the property is multiple it can be of tree types:
+- `@set`: An unsorted array of elements.
+- `@list`: An sorted array of elements
+- `@language`: An string property with multiple languages.
 
 --
 
 ```typescript 
-@type?:string 
+@id?:string 
 ```
 
-If the property is a literal, this specifies its XSD type.
+The absolute URI of the property in the JSONLD which is mapped to the key name where this definition was referred.
 
 --
 
@@ -11325,13 +11328,10 @@ The language of the property.
 --
 
 ```typescript 
-@container?:string 
+@type?:string 
 ```
 
-If the property is multiple it can be of tree types:
-- `@set`: An unsorted array of elements.
-- `@list`: An sorted array of elements
-- `@language`: An string property with multiple languages.
+If the property is a literal, this specifies its XSD type.
 
 
 
@@ -11555,18 +11555,18 @@ Resolves a prefixed URI, or relative URI with the vocab in the schema provided.
 
 #### <a name="Carbon-PersistedAccessPoint-Class-Properties"/>Properties
 ```typescript 
-membershipResource:Carbon.Pointer.Class 
-```
-
-The membership resource the access point belongs to.
-
---
-
-```typescript 
 hasMemberRelation:Carbon.Pointer.Class 
 ```
 
 The member relation of the access point manages.
+
+--
+
+```typescript 
+insertedContentRelation:Carbon.Pointer.Class 
+```
+
+The inserted content relation of the access point.
 
 --
 
@@ -11579,10 +11579,10 @@ The inverted relation of the access point.
 --
 
 ```typescript 
-insertedContentRelation:Carbon.Pointer.Class 
+membershipResource:Carbon.Pointer.Class 
 ```
 
-The inserted content relation of the access point.
+The membership resource the access point belongs to.
 
 
 
@@ -11605,10 +11605,10 @@ The inserted content relation of the access point.
 
 #### <a name="Carbon-PersistedApp-Class-Properties"/>Properties
 ```typescript 
-name:string 
+allowsOrigin?:(string | Carbon.Pointer.Class)[] 
 ```
 
-The name of the current application.
+An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at `Carbon.NS.CS.Class.AllOrigins` which translates to `https://carbonldp.com/ns/v1/security#AllOrigins`.
 
 --
 
@@ -11621,18 +11621,18 @@ A brief description of the current application.
 --
 
 ```typescript 
-rooContainer:Carbon.Pointer.Class 
+name:string 
 ```
 
-The reference to the root container where the current data of the application lives on.
+The name of the current application.
 
 --
 
 ```typescript 
-allowsOrigin?:(string | Carbon.Pointer.Class)[] 
+rooContainer:Carbon.Pointer.Class 
 ```
 
-An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at `Carbon.NS.CS.Class.AllOrigins` which translates to `https://carbonldp.com/ns/v1/security#AllOrigins`.
+The reference to the root container where the current data of the application lives on.
 
 
 
@@ -11695,62 +11695,6 @@ Returns true if the object provided is considered a `Carbon.PersistedApp.Class` 
 
 #### <a name="Carbon-PersistedDocument-Class-Properties"/>Properties
 ```typescript 
-created?:Date 
-```
-
-The time when the document was persisted.
-
---
-
-```typescript 
-modified?:Date 
-```
-
-The last time the document was saved.
-
---
-
-```typescript 
-defaultInteractionModel?:Carbon.Pointer.Class 
-```
-
-A Pointer representing the default interaction model of the document.
-
---
-
-```typescript 
-isMemberOfRelation?:Carbon.Pointer.Class 
-```
-
-A Pointer with the member of relation of the document.
-
---
-
-```typescript 
-hasMemberRelation?:Carbon.Pointer.Class 
-```
-
-A Pointer with the inverted relation the document.
-
---
-
-```typescript 
-accessPoints?:Carbon.Pointer.Class[] 
-```
-
-Array with the access points of the document.
-
---
-
-```typescript 
-contains?:Carbon.Pointer.Class 
-```
-
-Array with the children of the document.
-
---
-
-```typescript 
 _documents:Carbon.Documents.Class 
 ```
 
@@ -11780,13 +11724,69 @@ _savedFragments:Carbon.PersistedFragment.Class[]
 
 Array with a copy of every fragment that that is currently persisted in the server.
 
+--
+
+```typescript 
+accessPoints?:Carbon.Pointer.Class[] 
+```
+
+Array with the access points of the document.
+
+--
+
+```typescript 
+contains?:Carbon.Pointer.Class 
+```
+
+Array with the children of the document.
+
+--
+
+```typescript 
+created?:Date 
+```
+
+The time when the document was persisted.
+
+--
+
+```typescript 
+defaultInteractionModel?:Carbon.Pointer.Class 
+```
+
+A Pointer representing the default interaction model of the document.
+
+--
+
+```typescript 
+hasMemberRelation?:Carbon.Pointer.Class 
+```
+
+A Pointer with the inverted relation the document.
+
+--
+
+```typescript 
+isMemberOfRelation?:Carbon.Pointer.Class 
+```
+
+A Pointer with the member of relation of the document.
+
+--
+
+```typescript 
+modified?:Date 
+```
+
+The last time the document was saved.
+
 
 
 
 #### <a name="Carbon-PersistedDocument-Class-Methods"/>Methods
 ##### _syncSavedFragments
 ```typescript 
-_syncSavedFragments()
+_syncSavedFragments():void
 ```
 
 Set all the current fragments in the document as fragments that are saved in the server.
@@ -11794,52 +11794,26 @@ Set all the current fragments in the document as fragments that are saved in the
 
 --
 
-##### refresh
+##### addMember
 ```typescript 
-refresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>
+addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
 ```
 
-Sync the persisted document with the data in the server.
+Adds the specified resource Pointer as a member of the document.
 
+*Parameters*
 
---
+- member: Pointer object that references the resource to add as a member.
 
-##### save
 ```typescript 
-save<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
 ```
 
-Save the persisted document to the server.
+Adds the specified resource URI as a member of the document.
 
+*Parameters*
 
---
-
-##### saveAndRefresh
-```typescript 
-saveAndRefresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
-```
-
-Save and refresh the persisted document.
-
-
---
-
-##### delete
-```typescript 
-delete():Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the data in the server referred by the id of the persisted document.
-
-
---
-
-##### getDownloadURL
-```typescript 
-getDownloadURL():Promise<Carbon.HTTP.Response.Class>
-```
-
-Returns the URI of the current document with the properties necessarily for a single download request.
+- memberURI: URI of the resource to add as a member.
 
 
 --
@@ -11858,169 +11832,206 @@ Adds the specified resources as members of the document.
 
 --
 
-##### listChildren
+##### createAccessPoint
 ```typescript 
-listChildren():Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>
+createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
-Retrieves an array of unresolved persisted documents that refers to the children of the current document.
-
-
---
-
-##### getChildren
-```typescript 
-getChildren<T>( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>
-```
-
-Retrieves an array of resolved persisted documents that refers to the children of the current document, in accordance to the retrieval preferences specified.
+Create an AccessPoint for the document with the slug specified.
 
 *Parameters*
 
-- retrievalPreferences
+- accessPoint: AccessPoint Document to persist.
+- slug: Slug that will be used for the URI of the new access point.
+- requestOptions: Customisable options for the request.
 
-
---
-
-##### listMembers
 ```typescript 
-listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
 ```
 
-Retrieves an array of unresolved persisted documents that refers to the members of the current document.
+Create an AccessPoint for the document.
 
 *Parameters*
 
-- includeNonReadable: By default this option is set to `true`.
-
-
---
-
-##### removeMembers
-```typescript 
-removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resources URI or Pointers as members of the current document.
-
-*Parameters*
-
-- members: Array of URIs or Pointers to remove as members
-
-
---
-
-##### removeAllMembers
-```typescript 
-removeAllMembers():Promise<Carbon.HTTP.Response.Class>
-```
-
-Remove the specified resources URI or Pointers as members of the current document.
-
-
---
-
-##### executeRawASKQuery
-```typescript 
-executeRawASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Executes an ASK query in the document and returns a raw application/sparql-results+json object.
-
-*Parameters*
-
-- askQuery
+- accessPoint: AccessPoint Document to persist.
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### executeASKQuery
+##### createAccessPoints
 ```typescript 
-executeASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
+createAccessPoints<T>( accessPoints:(T & Carbon.AccessPoint.Class)[],  slugs:string[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>
 ```
 
-Executes an ASK query in the document and returns a boolean of the result.
+Create multiple access points for the current document with the slug specified.
 
 *Parameters*
 
-- askQuery
+- accessPoints: The access points to persist.
+- slugs: Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform.
+- requestOptions: Customisable options for the request.
+
+```typescript 
+createAccessPoints<T>( accessPoints:(T & Carbon.AccessPoint.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>
+```
+
+Create multiple access points for the current document.
+
+*Parameters*
+
+- accessPoints: The access points to persist.
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### executeRawSELECTQuery
+##### createChild
 ```typescript 
-executeRawSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
+createChild<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Executes a SELECT query in the document and returns a raw application/sparql-results+json object.
+Persists a document with the slug specified as a child of the current document.
 
 *Parameters*
 
-- selectQuery
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
+- slug: The slug that will be used in the child URI.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChild<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Persists a document as a child of the current document.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChild( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Creates an persists an empty child for the current document with the slug provided.
+
+*Parameters*
+
+- slug: The slug that will be used in the child URI.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChild( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Creates and persists an empty child fot he current document.
+
+*Parameters*
+
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### executeSELECTQuery
+##### createChildAndRetrieve
 ```typescript 
-executeSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>
+createChildAndRetrieve<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
 ```
 
-Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.
+Create a child for the document and retrieves the updated data from the server.
 
 *Parameters*
 
-- selectQuery
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- slug: The slug name for the children URI.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
+- slug: The slug name for the children URI.
+- requestOptions: Customizable options for the request.
+
+```typescript 
+createChildAndRetrieve( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
+```
+
+Create a child for the document and retrieves the updated data from the server.
+
+*Parameters*
+
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### executeRawCONSTRUCTQuery
+##### createChildren
 ```typescript 
-executeRawCONSTRUCTQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
+createChildren<T>( objects:T[],  slugs:string[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
 ```
 
-Executes a CONSTRUCT query in the document and returns a string with the resulting model.
+Persists multiple JavaScript objects as children of the current document.
 
 *Parameters*
 
-- constructQuery
-- requestOptions: Customizable options for the request.
+- objects: An array with the objects to be persisted as the new children.
+- slugs: Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform.
+- requestOptions: Customizable options for every the request.
+
+```typescript 
+createChildren<T>( objects:T[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
+```
+
+Persists multiple JavaScript objects as children of the current document.
+
+*Parameters*
+
+- objects: An array with the objects to be persisted as the new children.
+- requestOptions: Customizable options for every the request.
 
 
 --
 
-##### executeRawDESCRIBEQuery
+##### createChildrenAndRetrieve
 ```typescript 
-executeRawDESCRIBEQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
+createChildrenAndRetrieve<T>( objects:T[],  slugs:string[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
 ```
 
-Executes a DESCRIBE query in the document and returns a string with the resulting model.
+Persists multiple JavaScript objects as children of the current document and retrieves tha updated data from the server.
 
 *Parameters*
 
-- constructQuery
-- requestOptions: Customizable options for the request.
+- objects: An array with the objects to be persisted as the new children.
+- slugs: Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform.
+- requestOptions: Customizable options for every the request.
 
-
---
-
-##### executeUPDATE
 ```typescript 
-executeUPDATE( updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+createChildrenAndRetrieve<T>( objects:T[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
 ```
 
-Executes an UPDATE query.
+Persists multiple JavaScript objects as children of the current document and retrieves tha updated data from the server.
 
 *Parameters*
 
-- updateQuery: UPDATE query to execute in the selected endpoint.
-- requestOptions: Customizable options for the request.
+- objects: An array with the objects to be persisted as the new children.
+- requestOptions: Customizable options for every the request.
 
 
 --
@@ -12091,230 +12102,141 @@ Creates a PersistedNamedFragment from the object provided and the slug specified
 
 --
 
-##### addMember
+##### delete
 ```typescript 
-addMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
+delete():Promise<Carbon.HTTP.Response.Class>
 ```
 
-Adds the specified resource Pointer as a member of the document.
-
-*Parameters*
-
-- member: Pointer object that references the resource to add as a member.
-
-```typescript 
-addMember( memberURI:string ):Promise<Carbon.HTTP.Response.Class>
-```
-
-Adds the specified resource URI as a member of the document.
-
-*Parameters*
-
-- memberURI: URI of the resource to add as a member.
+Remove the data in the server referred by the id of the persisted document.
 
 
 --
 
-##### createChild
+##### executeASKQuery
 ```typescript 
-createChild<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
+executeASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ boolean, Carbon.HTTP.Response.Class ]>
 ```
 
-Persists a document with the slug specified as a child of the current document.
+Executes an ASK query in the document and returns a boolean of the result.
 
 *Parameters*
 
-- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
-- slug: The slug that will be used in the child URI.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChild<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Persists a document as a child of the current document.
-
-*Parameters*
-
-- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChild( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Creates an persists an empty child for the current document with the slug provided.
-
-*Parameters*
-
-- slug: The slug that will be used in the child URI.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChild( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>
-```
-
-Creates and persists an empty child fot he current document.
-
-*Parameters*
-
+- askQuery
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### createChildren
+##### executeRawASKQuery
 ```typescript 
-createChildren<T>( objects:T[],  slugs:string[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
+executeRawASKQuery( askQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
 ```
 
-Persists multiple JavaScript objects as children of the current document.
+Executes an ASK query in the document and returns a raw application/sparql-results+json object.
 
 *Parameters*
 
-- objects: An array with the objects to be persisted as the new children.
-- slugs: Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform.
-- requestOptions: Customizable options for every the request.
-
-```typescript 
-createChildren<T>( objects:T[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
-```
-
-Persists multiple JavaScript objects as children of the current document.
-
-*Parameters*
-
-- objects: An array with the objects to be persisted as the new children.
-- requestOptions: Customizable options for every the request.
-
-
---
-
-##### createChildAndRetrieve
-```typescript 
-createChildAndRetrieve<T>( object:T,  slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
-```
-
-Create a child for the document and retrieves the updated data from the server.
-
-*Parameters*
-
-- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
-- slug: The slug name for the children URI.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChildAndRetrieve<T>( object:T,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
-```
-
-Create a child for the document and retrieves the updated data from the server.
-
-*Parameters*
-
-- object: The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChildAndRetrieve( slug:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
-```
-
-Create a child for the document and retrieves the updated data from the server.
-
-*Parameters*
-
-- slug: The slug name for the children URI.
-- requestOptions: Customizable options for the request.
-
-```typescript 
-createChildAndRetrieve( requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.PersistedProtectedDocument.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>
-```
-
-Create a child for the document and retrieves the updated data from the server.
-
-*Parameters*
-
+- askQuery
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### createChildrenAndRetrieve
+##### executeRawCONSTRUCTQuery
 ```typescript 
-createChildrenAndRetrieve<T>( objects:T[],  slugs:string[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
+executeRawCONSTRUCTQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
 ```
 
-Persists multiple JavaScript objects as children of the current document and retrieves tha updated data from the server.
+Executes a CONSTRUCT query in the document and returns a string with the resulting model.
 
 *Parameters*
 
-- objects: An array with the objects to be persisted as the new children.
-- slugs: Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform.
-- requestOptions: Customizable options for every the request.
-
-```typescript 
-createChildrenAndRetrieve<T>( objects:T[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>
-```
-
-Persists multiple JavaScript objects as children of the current document and retrieves tha updated data from the server.
-
-*Parameters*
-
-- objects: An array with the objects to be persisted as the new children.
-- requestOptions: Customizable options for every the request.
-
-
---
-
-##### createAccessPoint
-```typescript 
-createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  slug?:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
-```
-
-Create an AccessPoint for the document with the slug specified.
-
-*Parameters*
-
-- accessPoint: AccessPoint Document to persist.
-- slug: Slug that will be used for the URI of the new access point.
-- requestOptions: Customisable options for the request.
-
-```typescript 
-createAccessPoint<T>( accessPoint:T & Carbon.AccessPoint.Class,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response ]>
-```
-
-Create an AccessPoint for the document.
-
-*Parameters*
-
-- accessPoint: AccessPoint Document to persist.
+- constructQuery
 - requestOptions: Customizable options for the request.
 
 
 --
 
-##### createAccessPoints
+##### executeRawDESCRIBEQuery
 ```typescript 
-createAccessPoints<T>( accessPoints:(T & Carbon.AccessPoint.Class)[],  slugs:string[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>
+executeRawDESCRIBEQuery( constructQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ string, Carbon.HTTP.Response.Class ]>
 ```
 
-Create multiple access points for the current document with the slug specified.
+Executes a DESCRIBE query in the document and returns a string with the resulting model.
 
 *Parameters*
 
-- accessPoints: The access points to persist.
-- slugs: Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform.
-- requestOptions: Customisable options for the request.
-
-```typescript 
-createAccessPoints<T>( accessPoints:(T & Carbon.AccessPoint.Class)[],  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>
-```
-
-Create multiple access points for the current document.
-
-*Parameters*
-
-- accessPoints: The access points to persist.
+- constructQuery
 - requestOptions: Customizable options for the request.
+
+
+--
+
+##### executeRawSELECTQuery
+```typescript 
+executeRawSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT query in the document and returns a raw application/sparql-results+json object.
+
+*Parameters*
+
+- selectQuery
+- requestOptions: Customizable options for the request.
+
+
+--
+
+##### executeSELECTQuery
+```typescript 
+executeSELECTQuery( selectQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.
+
+*Parameters*
+
+- selectQuery
+- requestOptions: Customizable options for the request.
+
+
+--
+
+##### executeUPDATE
+```typescript 
+executeUPDATE( updateQuery:string,  requestOptions?:Carbon.HTTP.Request.Options ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Executes an UPDATE query.
+
+*Parameters*
+
+- updateQuery: UPDATE query to execute in the selected endpoint.
+- requestOptions: Customizable options for the request.
+
+
+--
+
+##### getChildren
+```typescript 
+getChildren<T>( retrievalPreferences?:Carbon.RetrievalPreferences.Class ):Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>
+```
+
+Retrieves an array of resolved persisted documents that refers to the children of the current document, in accordance to the retrieval preferences specified.
+
+*Parameters*
+
+- retrievalPreferences
+
+
+--
+
+##### getDownloadURL
+```typescript 
+getDownloadURL():Promise<Carbon.HTTP.Response.Class>
+```
+
+Returns the URI of the current document with the properties necessarily for a single download request.
 
 
 --
@@ -12344,6 +12266,50 @@ Retrieves an array of resolved persisted documents that refers to the members of
 
 --
 
+##### listChildren
+```typescript 
+listChildren():Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>
+```
+
+Retrieves an array of unresolved persisted documents that refers to the children of the current document.
+
+
+--
+
+##### listMembers
+```typescript 
+listMembers( includeNonReadable?:boolean ):Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>
+```
+
+Retrieves an array of unresolved persisted documents that refers to the members of the current document.
+
+*Parameters*
+
+- includeNonReadable: By default this option is set to `true`.
+
+
+--
+
+##### refresh
+```typescript 
+refresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>
+```
+
+Sync the persisted document with the data in the server.
+
+
+--
+
+##### removeAllMembers
+```typescript 
+removeAllMembers():Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the current document.
+
+
+--
+
 ##### removeMember
 ```typescript 
 removeMember( member:Carbon.Pointer.Class ):Promise<Carbon.HTTP.Response.Class>
@@ -12364,6 +12330,40 @@ Remove the specified resource URI as a member of the current document.
 *Parameters*
 
 - memberURI: URI of the resource to remove as a member.
+
+
+--
+
+##### removeMembers
+```typescript 
+removeMembers( members:(Carbon.Pointer.Class | string)[] ):Promise<Carbon.HTTP.Response.Class>
+```
+
+Remove the specified resources URI or Pointers as members of the current document.
+
+*Parameters*
+
+- members: Array of URIs or Pointers to remove as members
+
+
+--
+
+##### save
+```typescript 
+save<T>():Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>
+```
+
+Save the persisted document to the server.
+
+
+--
+
+##### saveAndRefresh
+```typescript 
+saveAndRefresh<T>():Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>
+```
+
+Save and refresh the persisted document.
 
 
 --
@@ -12564,7 +12564,7 @@ Adds the specified resources as members of the document.
 
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the Document. Relative and prefixed types are resolved before the operation.
@@ -13041,7 +13041,7 @@ Returns true if the persisted document object has a pointer referenced by the UR
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the Document contains the type specified. Relative and prefixed types are resolved before the operation.
@@ -13161,7 +13161,7 @@ Remove the specified resources URI or Pointers as members of the current documen
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the Document. Relative and prefixed types are resolved before the operation.
@@ -13277,7 +13277,7 @@ A reference to the persisted document the current fragment belongs to.
 #### <a name="Carbon-PersistedFragment-Factory-Methods"/>Methods
 ##### decorate
 ```typescript 
-static decorate( fragment:T extends Carbon.Fragment.Class,  snapshot?:Object )
+static decorate( fragment:T extends Carbon.Fragment.Class,  snapshot?:Object ):void
 ```
 
 Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.
@@ -13301,7 +13301,7 @@ Decorates the object provided with the properties and methods of a `Carbon.Persi
 ##### <a name="Carbon-PersistedFragment-Factory-Decorated-Object-Methods"/>Methods
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the PersistedFragment. Relative and prefixed types are resolved before the operation.
@@ -13315,7 +13315,7 @@ Adds a type to the PersistedFragment. Relative and prefixed types are resolved b
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the PersistedFragment contains the type specified. Relative and prefixed types are resolved before the operation.
@@ -13329,7 +13329,7 @@ Returns true if the PersistedFragment contains the type specified. Relative and 
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the PersistedFragment. Relative and prefixed types are resolved before the operation.
@@ -13379,7 +13379,7 @@ A reference to the persisted document the current named fragment belongs to.
 #### <a name="Carbon-PersistedNamedFragment-Factory-Methods"/>Methods
 ##### decorate
 ```typescript 
-static decorate( fragment:T extends Carbon.NamedFragment.Class,  snapshot?:Object )
+static decorate( fragment:T extends Carbon.NamedFragment.Class,  snapshot?:Object ):void
 ```
 
 Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.
@@ -13538,7 +13538,7 @@ The shallow copy of the resource, which is used to track the changes on the reso
 #### <a name="Carbon-PersistedResource-Class-Methods"/>Methods
 ##### _syncSnapshot
 ```typescript 
-_syncSnapshot()
+_syncSnapshot():void
 ```
 
 Updates the snapshot with the data of the resource.
@@ -13548,7 +13548,7 @@ Updates the snapshot with the data of the resource.
 
 ##### isDirty
 ```typescript 
-isDirty()
+isDirty():void
 ```
 
 Returns true if the resource presents differences from its snapshot.
@@ -13558,7 +13558,7 @@ Returns true if the resource presents differences from its snapshot.
 
 ##### revert
 ```typescript 
-revert()
+revert():void
 ```
 
 Revert the changes made to the resource into the state of the snapshot.
@@ -13578,7 +13578,7 @@ Revert the changes made to the resource into the state of the snapshot.
 #### <a name="Carbon-PersistedResource-Factory-Methods"/>Methods
 ##### decorate
 ```typescript 
-static decorate( fragment:T extends Object,  snapshot?:Object )
+static decorate( fragment:T extends Object,  snapshot?:Object ):void
 ```
 
 Decorates the object provided with the properties and methods of a `Carbon.PersistedResource.Class` object.
@@ -13625,7 +13625,7 @@ The shallow copy of the resource, which is used to track the changes on the reso
 ##### <a name="Carbon-PersistedResource-Factory-Decorated-Object-Methods"/>Methods
 ##### _syncSnapshot
 ```typescript 
-_syncSnapshot()
+_syncSnapshot():void
 ```
 
 Updates the snapshot with the data of the resource.
@@ -13635,7 +13635,7 @@ Updates the snapshot with the data of the resource.
 
 ##### isDirty
 ```typescript 
-isDirty()
+isDirty():void
 ```
 
 Returns true if the resource presents differences from its snapshot.
@@ -13645,7 +13645,7 @@ Returns true if the resource presents differences from its snapshot.
 
 ##### revert
 ```typescript 
-revert()
+revert():void
 ```
 
 Revert the changes made to the resource into the state of the snapshot.
@@ -13823,12 +13823,12 @@ Resolves the pointer. This function throw an Error if it has no been configured 
 
 
 #### <a name="Carbon-Pointer-Library-Methods"/>Methods
-##### hasPointer
+##### getPointer
 ```typescript 
-hasPointer( id:string ):boolean
+getPointer( id:string ):boolean
 ```
 
-Returns true if the object that implements this interface has a pointer referenced by the URI provided.
+Returns the pointer referenced by the URI provided. If none exists, an empty pointer should be created.
 
 *Parameters*
 
@@ -13837,12 +13837,12 @@ Returns true if the object that implements this interface has a pointer referenc
 
 --
 
-##### getPointer
+##### hasPointer
 ```typescript 
-getPointer( id:string ):boolean
+hasPointer( id:string ):boolean
 ```
 
-Returns the pointer referenced by the URI provided. If none exists, an empty pointer should be created.
+Returns true if the object that implements this interface has a pointer referenced by the URI provided.
 
 *Parameters*
 
@@ -14125,18 +14125,18 @@ static SCHEMA:Carbon.ObjectSchema.Class
 
 #### <a name="Carbon-RDF-Document-Class-Properties"/>Properties
 ```typescript 
-@id?:string 
-```
-
-The ID URI of the current document.
-
---
-
-```typescript 
 @graph:Carbon.RDF.Node.Class[] 
 ```
 
 The graph content of the current document.
+
+--
+
+```typescript 
+@id?:string 
+```
+
+The ID URI of the current document.
 
 
 
@@ -14455,7 +14455,7 @@ The actual string value if the literal.
 #### <a name="Carbon-RDF-Literal-Factory-Methods"/>Methods
 ##### from
 ```typescript 
-static from()
+static from():void
 ```
 
 Convert the value provided to a `Carbon.RDF.Literal.Class` object.
@@ -15258,7 +15258,7 @@ Returns a string that represents the URI of the class.
 #### <a name="Carbon-RDF-URI-Util-Methods"/>Methods
 ##### generateBNodeID
 ```typescript 
-static generateBNodeID()
+static generateBNodeID():void
 ```
 
 Returns an ID for a BlankNode using an universally unique identifier (UUID).
@@ -15268,7 +15268,7 @@ Returns an ID for a BlankNode using an universally unique identifier (UUID).
 
 ##### getDocumentURI
 ```typescript 
-static getDocumentURI( uri:string )
+static getDocumentURI( uri:string ):void
 ```
 
 Returns the URI that just reference to the Document of the URI provided.
@@ -15711,7 +15711,7 @@ An array with the types of the resource.
 #### <a name="Carbon-Resource-Class-Methods"/>Methods
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the current resource.
@@ -15725,7 +15725,7 @@ Adds a type to the current resource.
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the current resource contains the type specified.
@@ -15739,7 +15739,7 @@ Returns true if the current resource contains the type specified.
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the current resource.
@@ -15845,7 +15845,7 @@ Returns true if the object provided is considered a `Carbon.Resource.Class` obje
 ##### <a name="Carbon-Resource-Factory-Decorated-Object-Methods"/>Methods
 ##### addType
 ```typescript 
-addType( type:string )
+addType( type:string ):void
 ```
 
 Adds a type to the Resource.
@@ -15859,7 +15859,7 @@ Adds a type to the Resource.
 
 ##### hasType
 ```typescript 
-hasType( type:string )
+hasType( type:string ):void
 ```
 
 Returns true if the Resource contains the type specified.
@@ -15873,7 +15873,7 @@ Returns true if the Resource contains the type specified.
 
 ##### removeType
 ```typescript 
-removeType( type:string )
+removeType( type:string ):void
 ```
 
 Remove the type specified from the Resource.
@@ -15902,14 +15902,6 @@ Remove the type specified from the Resource.
 
 #### <a name="Carbon-RetrievalPreferences-Class-Properties"/>Properties
 ```typescript 
-orderBy?:Carbon.RetrievalPreferences.OrderByProperty[] 
-```
-
-An array of objects that specifies the order of how the platform choose the members or children to retrieve. This not implies the returned elements should be in that order.
-
---
-
-```typescript 
 limit?:number 
 ```
 
@@ -15922,6 +15914,14 @@ offset?:number
 ```
 
 If it is non-negative, the elements will be retrieved starring from the offset provided. If offset is negative, the elements retrieved will be that ones that start from that far the last element to the end.
+
+--
+
+```typescript 
+orderBy?:Carbon.RetrievalPreferences.OrderByProperty[] 
+```
+
+An array of objects that specifies the order of how the platform choose the members or children to retrieve. This not implies the returned elements should be in that order.
 
 
 
@@ -15942,18 +15942,18 @@ The URI of the property. This URI can also be prefixed or a relative one.
 --
 
 ```typescript 
-@type?:"numeric" | "string" | "boolean" | "dateTime" 
-```
-
-The type of property it is. The types actually supported are: `numeric`, `string`, `boolean` and `dateTime`.
-
---
-
-```typescript 
 @language?:string 
 ```
 
 If the property has multiple languages, this elements helps to choose which language will be the one to be used.
+
+--
+
+```typescript 
+@type?:"numeric" | "string" | "boolean" | "dateTime" 
+```
+
+The type of property it is. The types actually supported are: `numeric`, `string`, `boolean` and `dateTime`.
 
 
 
@@ -16076,7 +16076,7 @@ Parent context of the current context. For an instance of `Carbon.SDKContext.Cla
 
 ##### clearObjectSchema
 ```typescript 
-clearObjectSchema( type?:string )
+clearObjectSchema( type?:string ):void
 ```
 
 Remove the schema of the type specified, or the general schema if no type is provided.
@@ -16090,7 +16090,7 @@ Remove the schema of the type specified, or the general schema if no type is pro
 
 ##### deleteSetting
 ```typescript 
-deleteSetting( name:string )
+deleteSetting( name:string ):void
 ```
 
 Deletes the setting specified by the name provided from the current context.
@@ -16104,7 +16104,7 @@ Deletes the setting specified by the name provided from the current context.
 
 ##### extendObjectSchema
 ```typescript 
-extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+extendObjectSchema( type:string,  objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
 Extends the schema for a specified type of Resource.
@@ -16116,7 +16116,7 @@ If a schema for the type exists in the parent context, this is duplicated for th
 - objectSchema: The new schema that will extends the previous one.
 
 ```typescript 
-extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema )
+extendObjectSchema( objectSchema:Carbon.ObjectSchema.DigestedObjectSchema ):void
 ```
 
 Extends the general schema of the current context.
@@ -16211,7 +16211,7 @@ Returns the resolved relative URI specified, in accordance with the scope of the
 
 ##### setSetting
 ```typescript 
-setSetting( name:string,  value:any )
+setSetting( name:string,  value:any ):void
 ```
 
 Set a setting in the current context.
@@ -16273,6 +16273,14 @@ An entry of every `vars` requested as the `name` variable, containing the bindin
 
 #### <a name="Carbon-SPARQL-RawResults-BindingProperty-Properties"/>Properties
 ```typescript 
+datatype?:string 
+```
+
+The URI of the type of the binding property. This is only present when the property is of type `literal`.
+
+--
+
+```typescript 
 type:string 
 ```
 
@@ -16285,14 +16293,6 @@ value:string
 ```
 
 The string value of binding property.
-
---
-
-```typescript 
-datatype?:string 
-```
-
-The URI of the type of the binding property. This is only present when the property is of type `literal`.
 
 --
 
@@ -16313,6 +16313,14 @@ If the property is a `literal` and of data type `xsd:string`, this property indi
 
 #### <a name="Carbon-SPARQL-RawResults-Class-Properties"/>Properties
 ```typescript 
+boolean?:boolean 
+```
+
+The result of an `ASK` query.
+
+--
+
+```typescript 
 head:{ "vars"?:string[], "links"?:string[] } 
 ```
 
@@ -16325,14 +16333,6 @@ results?:{ "bindings":Carbon.SPARQL.RawResults.BindingObject[] }
 ```
 
 The results of a `SELECT` query.
-
---
-
-```typescript 
-boolean?:boolean 
-```
-
-The result of an `ASK` query.
 
 
 
@@ -16479,18 +16479,18 @@ An entry peer every `vars` selected for, which contains the parsed value request
 
 #### <a name="Carbon-SPARQL-SELECTResults-Class-Properties"/>Properties
 ```typescript 
-vars:string[] 
-```
-
-Array of strings that contains the names of the elements asked in the query.
-
---
-
-```typescript 
 bindings:Carbon.SPARQL.SELECTResult.BindingObject[] 
 ```
 
 Array with the entries of the parsed elements asked in the query.
+
+--
+
+```typescript 
+vars:string[] 
+```
+
+Array of strings that contains the names of the elements asked in the query.
 
 
 
@@ -16657,6 +16657,14 @@ A object of type `Carbon.settings.CarbonSettings`, which is the default settings
 
 #### <a name="Carbon-Settings-Class-Properties"/>Properties
 ```typescript 
+auth.method?:Carbon.Auth.Method 
+```
+
+(Not supported) Indicates the default method of authentication to use.
+
+--
+
+```typescript 
 domain?:string 
 ```
 
@@ -16673,18 +16681,10 @@ Indicates if the server uses secure HTTP (HTTPS) or not.
 --
 
 ```typescript 
-auth.method?:Carbon.Auth.Method 
+platform.agents.container?:string 
 ```
 
-(Not supported) Indicates the default method of authentication to use.
-
---
-
-```typescript 
-platform.container?:string 
-```
-
-URI relative to the domain that indicates the slug of the platform container.
+Relative URI to any context, that indicates the slug of the agents container.
 
 --
 
@@ -16697,10 +16697,10 @@ Relative URI that indicates the slug of the apps container.
 --
 
 ```typescript 
-platform.agents.container?:string 
+platform.container?:string 
 ```
 
-Relative URI to any context, that indicates the slug of the agents container.
+URI relative to the domain that indicates the slug of the platform container.
 
 --
 
@@ -16733,7 +16733,7 @@ URI to be used as the default vocabulary. If a relative one is provided, the URI
 ### <a name="Carbon-Utils-Methods"/>Methods
 ##### extend
 ```typescript 
-static extend( target:Object,  ...objects:Objects[] )
+static extend( target:Object,  ...objects:Objects[] ):void
 ```
 
 Extends the target object’s properties with the properties of the objects provided.
@@ -16748,7 +16748,7 @@ Extends the target object’s properties with the properties of the objects prov
 
 ##### forEachOwnProperty
 ```typescript 
-static forEachOwnProperty( object:Object,  action:( name:string, value:any ) => boolean )
+static forEachOwnProperty( object:Object,  action:( name:string, value:any ) => boolean ):void
 ```
 
 Executes an action for each own property of the object.
@@ -17061,7 +17061,7 @@ Takes two or more arrays and joins them while removing duplicates.
 static extend( toExtend:Map<K, V>,  ...extenders:Map<K, V>[] ):Map<K, V>
 ```
 
-Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the first Map provided is preserved.
+Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the last Map is set to the target Map.
 
 *Parameters*
 
