@@ -1,0 +1,15 @@
+{{>header level=2 path=(concat path "--Reexports") name="Reexports" }}
+<div class="ui list">
+	{{#each reexports~}}
+		<div class="item">
+			<i class="mail forward icon"></i>
+			<div class="content">
+				<span class="header">{{name}}</span>
+				<div class="description">
+					<a href="#Module-{{sanitize originalLocation}}">{{originalLocation}}</a>
+				</div>
+			</div>
+		</div>
+	{{/each}}
+</div>
+<br>

@@ -88,14 +88,14 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties that defines a `Carbon.App.Role.Class` object", [
-				{name: "resource", type: "Object"},
+				{ name: "resource", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( AppRole.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any;
+			let object:any = void 0;
 
 			expect( AppRole.Factory.hasClassProperties( object ) ).toBe( false );
 
@@ -107,9 +107,9 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.App.Role.Class` object", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( AppRole.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.is ) ).toBe( true );
@@ -133,11 +133,10 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.App.Role.Class` object with the name and email specified.", [
-				{name: "name", type: "string"},
-				{name: "email", type: "string"},
+			"Create a `Carbon.App.Role.Class` object with the specified name.", [
+				{ name: "name", type: "string" },
 			],
-			{type: "Carbon.App.Role.Class"}
+			{ type: "Carbon.App.Role.Class" }
 		), ():void => {
 			expect( AppRole.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.create ) ).toBe( true );
@@ -157,10 +156,11 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			"Create a `Carbon.App.Role.Class` object with the object provided.", [
-				{name: "object", type: "T extends Object"},
+			"Create a `Carbon.App.Role.Class` object with the object provided and its name.", [
+				{ name: "object", type: "T extends Object" },
+				{ name: "name", type: "string" },
 			],
-			{type: "T & Carbon.App.Role.Class"}
+			{ type: "T & Carbon.App.Role.Class" }
 		), ():void => {
 			expect( AppRole.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( AppRole.Factory.createFrom ) ).toBe( true );
@@ -177,7 +177,7 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( role.name ).toBe( "Role name" );
 			expect( role.types ).toContain( NS.CS.Class.AppRole );
 
-			role = AppRole.Factory.createFrom<TheAppRole>( {myProperty: "a property"}, "Role name" );
+			role = AppRole.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name" );
 			expect( AppRole.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );

@@ -1,0 +1,14 @@
+{{#each properties}}
+	{{>header level=4 path=(concat ../path (concat ../access name) ) name=(concat ../access name) secondary=type}}
+
+	<!--pre><code class="typescript">{{name}}{{#if optional}}?{{/if}}:{{{type}}}</code></pre-->
+
+	<div class="ui vertical segment doc-content doc-object-element__content">
+		{{#if description}}
+			<div class="doc-description">
+				{{>text-markdown element=description}}
+			</div>
+		{{/if}}
+		{{br 1}}
+	</div>
+{{/each}}

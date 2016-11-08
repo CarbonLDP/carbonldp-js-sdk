@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		expect( Utils.hasProperty( Role.SCHEMA, "name" ) ).toBe( true );
 		expect( Role.SCHEMA[ "name" ] ).toEqual( {
 			"@id": NS.CS.Predicate.namae,
-			"@type": NS.XSD.DataType.string
+			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "agents" ) ).toBe( true );
@@ -97,7 +97,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				name: null
+				name: null,
 			};
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -122,7 +122,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			object = {};
 			expect( Role.Factory.is( object ) ).toBe( false );
 			object = {
-				name: null
+				name: null,
 			};
 			expect( Role.Factory.is( object ) ).toBe( false );
 
@@ -141,7 +141,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			expect( Role.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.create ) ).toBe( true );
 
-			let spy = spyOn( Role.Factory, "createFrom" );
+			let spy:jasmine.Spy = spyOn( Role.Factory, "createFrom" );
 
 			Role.Factory.create( "Role name" );
 			expect( spy ).toHaveBeenCalledWith( {}, "Role name" );
