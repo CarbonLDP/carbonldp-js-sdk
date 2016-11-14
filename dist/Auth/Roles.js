@@ -33,8 +33,20 @@ var Class = (function () {
             responseCreated = response;
             persistedRole = PersistedRole.Factory.decorate(newRole, _this);
             return _this.context.documents.addMember(parentURI, newRole);
-        }).then(function (response) {
-            return [persistedRole, responseCreated];
+        }).then(function (responseAddMember) {
+            return [persistedRole, [responseCreated, responseAddMember]];
+        });
+    };
+    Class.prototype.createChildAndRetrieve = function (parentRole, role, slugOrRequestOptions, requestOptions) {
+        var _this = this;
+        var createResponses;
+        return this.createChild(parentRole, role, slugOrRequestOptions, requestOptions).then(function (_a) {
+            var document = _a[0], responses = _a[1];
+            createResponses = responses;
+            return _this.get(document.id);
+        }).then(function (_a) {
+            var persistedDocument = _a[0], response = _a[1];
+            return [persistedDocument, createResponses.concat(response)];
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {

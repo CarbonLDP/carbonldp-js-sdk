@@ -8,6 +8,7 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_roles")
             && Utils.hasFunction(object, "createChild")
+            && Utils.hasFunction(object, "createChildAndRetrieve")
             && Utils.hasFunction(object, "listAgents")
             && Utils.hasFunction(object, "getAgents")
             && Utils.hasFunction(object, "addAgent")
@@ -37,6 +38,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createChild,
+            },
+            "createChildAndRetrieve": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createChildAndRetrieve,
             },
             "listAgents": {
                 writable: true,
@@ -83,6 +90,10 @@ exports.Factory = Factory;
 function createChild(role, slugOrRequestOptions, requestOptions) {
     checkState.call(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
+}
+function createChildAndRetrieve(role, slugOrRequestOptions, requestOptions) {
+    checkState.call(this);
+    return this._roles.createChildAndRetrieve(this.id, role, slugOrRequestOptions, requestOptions);
 }
 function listAgents(requestOptions) {
     checkState.call(this);

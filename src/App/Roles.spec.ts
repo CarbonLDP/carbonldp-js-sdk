@@ -72,7 +72,7 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "appContext", type: "Carbon.App.Context"},
+			{ name: "appContext", type: "Carbon.App.Context" },
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
@@ -93,26 +93,27 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Persists the AppRole provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "Carbon.App.Roles.Class", description: "The appRole that wants to persist."},
-					{name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The appRole that wants to persist." },
+					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spy:jasmine.Spy = spyOn( AuthRoles.Class.prototype, "createChild" );
 
 				let role:AppRole.Class = AppRole.Factory.create( "App Role" );
 				roles.createChild( "http://example.com/role/parent/", role );
 				roles.createChild( "http://example.com/role/parent/", role, "child-role" );
-				roles.createChild( "http://example.com/role/parent/", role, "child-role", {timeout: 5050} );
+				roles.createChild( "http://example.com/role/parent/", role, "child-role", { timeout: 5050 } );
 
 				expect( spy ).toHaveBeenCalledTimes( 3 );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, undefined, undefined );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, "child-role", undefined );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, "child-role", {timeout: 5050} );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, "child-role", { timeout: 5050 } );
 
 				let promise:Promise<any> = roles.createChild( "http://example.com/role/parent/", <any> {}, "child-role" );
 				expect( promise instanceof Promise ).toBe( true );
@@ -123,25 +124,98 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
+				[ "T" ],
 				"Persists the AppRole provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "Carbon.App.Roles.Class", description: "The appRole that wants to persist."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The appRole that wants to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{type: "Promise<[ Carbon.Pointer.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>"}
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spy:jasmine.Spy = spyOn( AuthRoles.Class.prototype, "createChild" );
 
 				let role:AppRole.Class = AppRole.Factory.create( "App Role" );
 				roles.createChild( "http://example.com/role/parent/", role );
-				roles.createChild( "http://example.com/role/parent/", role, {timeout: 5050} );
+				roles.createChild( "http://example.com/role/parent/", role, { timeout: 5050 } );
 
 				expect( spy ).toHaveBeenCalledTimes( 2 );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, undefined, undefined );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, {timeout: 5050}, undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, { timeout: 5050 }, undefined );
 
 				let promise:Promise<any> = roles.createChild( "http://example.com/role/parent/", <any> {} );
+				expect( promise instanceof Promise ).toBe( true );
+				promise.then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					expect( error.message ).toBe( "The role is not a valid `Carbon.App.Role.Class` object." );
+					done();
+				} );
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				expect( roles.createChildAndRetrieve ).toBeDefined();
+				expect( Utils.isFunction( roles.createChildAndRetrieve ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists the AppRole provided with the slug, if specified, as a childRole of the parentRole specified and resolves it.\n" +
+				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The appRole that wants to persist." },
+					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
+				],
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>" }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				let spy:jasmine.Spy = spyOn( AuthRoles.Class.prototype, "createChildAndRetrieve" );
+
+				let role:AppRole.Class = AppRole.Factory.create( "App Role" );
+				roles.createChildAndRetrieve( "http://example.com/role/parent/", role );
+				roles.createChildAndRetrieve( "http://example.com/role/parent/", role, "child-role" );
+				roles.createChildAndRetrieve( "http://example.com/role/parent/", role, "child-role", { timeout: 5050 } );
+
+				expect( spy ).toHaveBeenCalledTimes( 3 );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, undefined, undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, "child-role", undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, "child-role", { timeout: 5050 } );
+
+				let promise:Promise<any> = roles.createChildAndRetrieve( "http://example.com/role/parent/", <any> {}, "child-role" );
+				expect( promise instanceof Promise ).toBe( true );
+				promise.then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					done();
+				} );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists the AppRole provided as a childRole of the parentRole specified and resolves it.\n" +
+				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The appRole that wants to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
+				],
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class] ]>" }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				let spy:jasmine.Spy = spyOn( AuthRoles.Class.prototype, "createChildAndRetrieve" );
+
+				let role:AppRole.Class = AppRole.Factory.create( "App Role" );
+				roles.createChildAndRetrieve( "http://example.com/role/parent/", role );
+				roles.createChildAndRetrieve( "http://example.com/role/parent/", role, { timeout: 5050 } );
+
+				expect( spy ).toHaveBeenCalledTimes( 2 );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, undefined, undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/role/parent/", role, { timeout: 5050 }, undefined );
+
+				let promise:Promise<any> = roles.createChildAndRetrieve( "http://example.com/role/parent/", <any> {} );
 				expect( promise instanceof Promise ).toBe( true );
 				promise.then( done.fail ).catch( ( error:Error ) => {
 					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
@@ -156,10 +230,10 @@ describe( module( "Carbon/App/Roles" ), ():void => {
 			INSTANCE,
 			"get",
 			"Retrieves a role from the current context.", [
-				{name: "roleURI", type: "string", description: "The URI of the app role to retrieve."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the app role to retrieve." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );

@@ -7,12 +7,14 @@ import {
 	module,
 	clazz,
 	interfaze,
+	method,
 
 	isDefined,
 	hasMethod,
 	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasSignature,
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
 import AppContext from "./Context";
@@ -96,6 +98,58 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			persistedRole.childRoles = children;
 			expect( persistedRole.childRoles ).toEqual( jasmine.any( Array ) );
 			expect( Pointer.Factory.is( persistedRole.childRoles[ 0 ] ) ).toBe( true );
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"createChild"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists a new role with the slug specified as a child of the current role.", [
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The role to be persisted." },
+					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists a new role as a child of the current role.", [
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The role to be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists a new role with the slug specified as a child of the current role and resolves it.", [
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The role to be persisted." },
+					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists a new role as a child of the current role and resolves it.", [
+					{ name: "role", type: "T & Carbon.App.Roles.Class", description: "The role to be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.App.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
 		} );
 
 	} );

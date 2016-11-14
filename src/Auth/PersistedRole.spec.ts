@@ -2,14 +2,20 @@ import {
 	STATIC,
 	INSTANCE,
 
+	OPTIONAL,
+	OBLIGATORY,
+
 	module,
 	clazz,
 	method,
+	interfaze,
 
 	isDefined,
 	hasMethod,
+	hasSignature,
+	extendsClass,
+	hasProperty,
 	decoratedObject,
-	hasSignature, interfaze, extendsClass, hasProperty, OBLIGATORY, OPTIONAL,
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
 import Documents from "./../Documents";
@@ -67,9 +73,9 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+				[ "T" ],
 				"Persists a new role with the slug specified as a child of the current role.", [
-					{ name: "role", type: "T", description: "The role to be persisted." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
 					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
@@ -77,9 +83,35 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
-				"Persists a new role as a child of the current one.", [
-					{ name: "role", type: "T", description: "The role to be persisted." },
+				[ "T" ],
+				"Persists a new role as a child of the current role.", [
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+		} );
+
+		describe( method(
+			OBLIGATORY,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists a new role with the slug specified as a child of the current role and resolves it.", [
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
+					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists a new role as a child of the current role and resolves it.", [
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
@@ -189,6 +221,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				name: null,
 				agents: null,
 				createChild: ():void => {},
+				createChildAndRetrieve: ():void => {},
 				listAgents: ():void => {},
 				getAgents: ():void => {},
 				addAgent: ():void => {},
@@ -213,6 +246,10 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			delete object.createChild;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
 			object.createChild = ():void => {};
+
+			delete object.createChildAndRetrieve;
+			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
+			object.createChildAndRetrieve = ():void => {};
 
 			delete object.listAgents;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
@@ -258,6 +295,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				name: null,
 				agents: null,
 				createChild: ():void => {},
+				createChildAndRetrieve: ():void => {},
 				listAgents: ():void => {},
 				getAgents: ():void => {},
 				addAgent: ():void => {},
@@ -344,9 +382,9 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Carbon.Auth.Roles.Class" ],
+					[ "T" ],
 					"Persists a new role with the slug specified as a child of the current role.", [
-						{ name: "role", type: "T", description: "The role to be persisted." },
+						{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
 						{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
@@ -371,9 +409,9 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Carbon.Auth.Roles.Class" ],
+					[ "T" ],
 					"Persists a new role as a child of the current one.", [
-						{ name: "role", type: "T", description: "The role to be persisted." },
+						{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
 					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
@@ -391,6 +429,68 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 					role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 					expect( () => role.createChild( newRole ) ).toThrowError( Errors.IllegalStateError );
+				} );
+
+			} );
+
+			describe( method(
+				INSTANCE,
+				"createChildAndRetrieve"
+			), ():void => {
+
+				it( isDefined(), ():void => {
+					expect( role.listAgents ).toBeDefined();
+					expect( Utils.isFunction( role.listAgents ) ).toBe( true );
+				} );
+
+				it( hasSignature(
+					[ "T" ],
+					"Persists a new role with the slug specified as a child of the current role and resolves it.", [
+						{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
+						{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					],
+					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					let spy:jasmine.Spy = spyOn( roles, "createChildAndRetrieve" );
+
+					let newRole:Role.Class = Role.Factory.create( "Role Name" );
+					let options:HTTP.Request.Options = { timeout: 5050 };
+
+					role.createChildAndRetrieve( newRole, "role-slug", options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, "role-slug", options );
+
+					role.createChildAndRetrieve( newRole, "role-slug" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, "role-slug", undefined );
+
+					role.createChildAndRetrieve( newRole );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, undefined, undefined );
+
+					role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
+					expect( () => role.createChildAndRetrieve( newRole, "role-slug" ) ).toThrowError( Errors.IllegalStateError );
+				} );
+
+				it( hasSignature(
+					[ "T" ],
+					"Persists a new role as a child of the current role and resolves it.", [
+						{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role to be persisted." },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					],
+					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				), ():void => {
+					let spy:jasmine.Spy = spyOn( roles, "createChildAndRetrieve" );
+
+					let newRole:Role.Class = Role.Factory.create( "Role Name" );
+					let options:HTTP.Request.Options = { timeout: 5050 };
+
+					role.createChildAndRetrieve( newRole, options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, options, undefined );
+
+					role.createChildAndRetrieve( newRole );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, undefined, undefined );
+
+					role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
+					expect( () => role.createChildAndRetrieve( newRole ) ).toThrowError( Errors.IllegalStateError );
 				} );
 
 			} );

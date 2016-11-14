@@ -9,8 +9,10 @@ export interface Class extends PersistedProtectedDocument.Class {
     _roles: Roles.Class;
     name?: string;
     agents?: Pointer.Class;
-    createChild<T extends Role.Class>(role: T, requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
-    createChild<T extends Role.Class>(role: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
+    createChild<T>(role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChild<T>(role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve<T>(role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildAndRetrieve<T>(role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
     listAgents(requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     getAgents(requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
     getAgents(retrievalPreferencesOrRequestOptions?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
