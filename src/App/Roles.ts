@@ -15,17 +15,26 @@ export class Class extends AuthRoles {
 		super( appContext );
 	}
 
-	createChild<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, HTTP.Response.Class ]>;
-	createChild<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, HTTP.Response.Class ]>;
-	createChild<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, HTTP.Response.Class ]> {
+	createChild<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChild<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChild<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
 		if( ! AppRole.Factory.is( role ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The role is not a valid `Carbon.App.Role.Class` object." ) );
 
 		return super.createChild<T>( parentRole, role, slugOrRequestOptions, requestOptions );
 	}
 
-	createChildAndRetrieve<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, HTTP.Response.Class ]>;
-	createChildAndRetrieve<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, HTTP.Response.Class ]>;
-	createChildAndRetrieve<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, HTTP.Response.Class ]> {
+	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & AppRole.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAppRole.Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & AppRole.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAppRole.Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & AppRole.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAppRole.Class)[], HTTP.Response.Class[] ]> {
+		let index:number = roles.findIndex( role => ! AppRole.Factory.is( role ) );
+		if( index !== -1 ) return Promise.reject<any>( new Errors.IllegalArgumentError( `The role at index ${ index }, is not a valid \`Carbon.App.Role.Class\` object.` ) );
+
+		return super.createChildren<T>( parentRole, roles, slugsOrRequestOptions, requestOptions );
+	}
+
+	createChildAndRetrieve<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]>;
+	createChildAndRetrieve<T>( parentRole:string | Pointer.Class, role:T & AppRole.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAppRole.Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]> {
 		if( ! AppRole.Factory.is( role ) ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The role is not a valid `Carbon.App.Role.Class` object." ) );
 
 		return super.createChildAndRetrieve<T>( parentRole, role, slugOrRequestOptions, requestOptions );

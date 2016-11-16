@@ -6,6 +6,7 @@
     <option name="typeScriptCompilerParams" value="-p tsconfig.json -m system" />
     <option name="generateSourceMap" value="false" />
     <option name="useConfig" value="true" />
+    <option name="showAllErrors" value="true" />
     <option name="versionType" value="SERVICE_DIRECTORY" />
   </component>
 </project>
