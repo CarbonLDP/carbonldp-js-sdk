@@ -40,6 +40,15 @@ export class Class extends AuthRoles {
 		return super.createChildAndRetrieve<T>( parentRole, role, slugOrRequestOptions, requestOptions );
 	}
 
+	createChildrenAndRetrieve<T>( parentRole:string | Pointer.Class, roles:(T & AppRole.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAppRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildrenAndRetrieve<T>( parentRole:string | Pointer.Class, roles:(T & AppRole.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAppRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildrenAndRetrieve<T>( parentRole:string | Pointer.Class, roles:(T & AppRole.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAppRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]> {
+		let index:number = roles.findIndex( role => ! AppRole.Factory.is( role ) );
+		if( index !== -1 ) return Promise.reject<any>( new Errors.IllegalArgumentError( `The role at index ${ index }, is not a valid \`Carbon.App.Role.Class\` object.` ) );
+
+		return super.createChildrenAndRetrieve<T>( parentRole, roles, slugsOrRequestOptions, requestOptions );
+	}
+
 	get( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAppRole.Class, HTTP.Response.Class ]> {
 		return super.get( roleURI, requestOptions ).then( ( [ role, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ) => {
 			if( ! PersistedAppRole.Factory.is( role ) ) throw new Errors.IllegalArgumentError( `The resource fetched is not a ${ NS.CS.Class.AppRole }` );

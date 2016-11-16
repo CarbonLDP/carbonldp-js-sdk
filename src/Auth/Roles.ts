@@ -93,6 +93,37 @@ export abstract class Class {
 		} );
 	}
 
+	createChildrenAndRetrieve<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildrenAndRetrieve<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildrenAndRetrieve<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]> {
+		let parentURI:string = Utils.isString( parentRole ) ? <string> parentRole : ( <Pointer.Class> parentRole).id;
+		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
+		requestOptions = HTTP.Request.Util.isOptions( slugsOrRequestOptions ) ? slugsOrRequestOptions : requestOptions;
+
+		let containerURI:string;
+		let persistedRoles:(T & PersistedRole.Class)[];
+		let responsesCreated: ( HTTP.Response.Class[] | HTTP.Response.Class )[];
+		return this.resolveURI( "" ).then( ( uri:string ) => {
+			containerURI = uri;
+
+			parentURI = URI.Util.resolve( containerURI, parentURI );
+			if( ! URI.Util.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role of the current context." );
+			return this.context.documents.exists( parentURI );
+
+		} ).then( ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ) => {
+			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
+			return this.context.documents.createChildrenAndRetrieve<T>( containerURI, roles, slugs, requestOptions );
+
+		} ).then( ( [ newRoles, responses ]:[ (T & PersistedDocument.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[] ] ] ) => {
+			responsesCreated = responses;
+			persistedRoles = newRoles.map( role => PersistedRole.Factory.decorate( role, this ) );
+			return this.context.documents.addMembers( parentURI, newRoles );
+
+		} ).then( ( responseAddMember:HTTP.Response.Class ) => {
+			return [ persistedRoles, responsesCreated.concat( responseAddMember ) ];
+		} );
+	}
+
 	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
 			return this.context.documents.get<T & PersistedRole.Class>( uri, requestOptions );

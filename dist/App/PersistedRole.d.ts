@@ -14,6 +14,8 @@ export interface Class extends PersistedRole.Class {
     createChildren<T>(roles: (T & AppRole.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & Class)[], HTTP.Response.Class[]]>;
     createChildAndRetrieve<T>(role: T & AppRole.Class, requestOptions?: HTTP.Request.Options): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
     createChildAndRetrieve<T>(role: T & AppRole.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildrenAndRetrieve<T>(roles: (T & AppRole.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & Class)[], [HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class]]>;
+    createChildrenAndRetrieve<T>(roles: (T & AppRole.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & Class)[], [HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class]]>;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

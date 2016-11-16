@@ -15,6 +15,8 @@ export declare abstract class Class {
     createChildren<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], HTTP.Response.Class[]]>;
     createChildAndRetrieve<T>(parentRole: string | Pointer.Class, role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
     createChildAndRetrieve<T>(parentRole: string | Pointer.Class, role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
+    createChildrenAndRetrieve<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class]]>;
+    createChildrenAndRetrieve<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class]]>;
     get<T>(roleURI: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, HTTP.Response.Class]>;
     listAgents(roleURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class[], HTTP.Response.Class]>;
     getAgents<T>(roleURI: string, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAgent.Class)[], HTTP.Response.Class]>;

@@ -77,6 +77,34 @@ var Class = (function () {
             return [persistedDocument, createResponses.concat(response)];
         });
     };
+    Class.prototype.createChildrenAndRetrieve = function (parentRole, roles, slugsOrRequestOptions, requestOptions) {
+        var _this = this;
+        var parentURI = Utils.isString(parentRole) ? parentRole : parentRole.id;
+        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : null;
+        requestOptions = HTTP.Request.Util.isOptions(slugsOrRequestOptions) ? slugsOrRequestOptions : requestOptions;
+        var containerURI;
+        var persistedRoles;
+        var responsesCreated;
+        return this.resolveURI("").then(function (uri) {
+            containerURI = uri;
+            parentURI = URI.Util.resolve(containerURI, parentURI);
+            if (!URI.Util.isBaseOf(containerURI, parentURI))
+                throw new Errors.IllegalArgumentError("The parent role provided is not a valid role of the current context.");
+            return _this.context.documents.exists(parentURI);
+        }).then(function (_a) {
+            var exists = _a[0], response = _a[1];
+            if (!exists)
+                throw new Errors.IllegalArgumentError("The parent role provided does not exist.");
+            return _this.context.documents.createChildrenAndRetrieve(containerURI, roles, slugs, requestOptions);
+        }).then(function (_a) {
+            var newRoles = _a[0], responses = _a[1];
+            responsesCreated = responses;
+            persistedRoles = newRoles.map(function (role) { return PersistedRole.Factory.decorate(role, _this); });
+            return _this.context.documents.addMembers(parentURI, newRoles);
+        }).then(function (responseAddMember) {
+            return [persistedRoles, responsesCreated.concat(responseAddMember)];
+        });
+    };
     Class.prototype.get = function (roleURI, requestOptions) {
         var _this = this;
         return this.resolveURI(roleURI).then(function (uri) {

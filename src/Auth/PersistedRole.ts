@@ -23,6 +23,9 @@ export interface Class extends PersistedProtectedDocument.Class {
 	createChildAndRetrieve<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]>;
 
+	createChildrenAndRetrieve<T>( roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildrenAndRetrieve<T>( roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+
 	listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
 
 	getAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
@@ -42,6 +45,7 @@ export class Factory {
 			&& Utils.hasFunction( object, "createChild" )
 			&& Utils.hasFunction( object, "createChildren" )
 			&& Utils.hasFunction( object, "createChildAndRetrieve" )
+			&& Utils.hasFunction( object, "createChildrenAndRetrieve" )
 			&& Utils.hasFunction( object, "listAgents" )
 			&& Utils.hasFunction( object, "getAgents" )
 			&& Utils.hasFunction( object, "addAgent" )
@@ -86,6 +90,12 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: createChildAndRetrieve,
+			},
+			"createChildrenAndRetrieve": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+				value: createChildrenAndRetrieve,
 			},
 			"listAgents": {
 				writable: true,
@@ -149,6 +159,13 @@ function createChildAndRetrieve<T extends Role.Class>( role:T, slug?:string, req
 function createChildAndRetrieve<T extends Role.Class>( role:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]> {
 	checkState.call( this );
 	return (<Class> this)._roles.createChildAndRetrieve( (<Class> this).id, role, slugOrRequestOptions, requestOptions );
+}
+
+function createChildrenAndRetrieve<T>( roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+function createChildrenAndRetrieve<T>( roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+function createChildrenAndRetrieve<T extends Role.Class>( roles:(T & Role.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ] ]> {
+	checkState.call( this );
+	return (<Class> this)._roles.createChildrenAndRetrieve( (<Class> this).id, roles, slugsOrRequestOptions, requestOptions );
 }
 
 function listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
