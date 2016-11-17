@@ -11,8 +11,8 @@ export declare abstract class Class {
     constructor(context: Context);
     createChild<T>(parentRole: string | Pointer.Class, role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     createChild<T>(parentRole: string | Pointer.Class, role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildren<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], HTTP.Response.Class[]]>;
-    createChildren<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], HTTP.Response.Class[]]>;
+    createChildren<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], [HTTP.Response.Class[], HTTP.Response.Class]]>;
+    createChildren<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], [HTTP.Response.Class[], HTTP.Response.Class]]>;
     createChildAndRetrieve<T>(parentRole: string | Pointer.Class, role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
     createChildAndRetrieve<T>(parentRole: string | Pointer.Class, role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, [HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class]]>;
     createChildrenAndRetrieve<T>(parentRole: string | Pointer.Class, roles: (T & Role.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedRole.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class]]>;

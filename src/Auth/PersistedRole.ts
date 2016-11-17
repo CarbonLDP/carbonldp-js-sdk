@@ -17,8 +17,8 @@ export interface Class extends PersistedProtectedDocument.Class {
 	createChild<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 
-	createChildren<T>( roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], HTTP.Response.Class[] ]>;
-	createChildren<T>( roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T>( roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildren<T>( roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]>;
 
 	createChildAndRetrieve<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	createChildAndRetrieve<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class, HTTP.Response.Class ] ]>;
@@ -147,9 +147,9 @@ function createChild<T extends Role.Class>( role:T, slugOrRequestOptions?:any, r
 	return (<Class> this)._roles.createChild( (<Class> this).id, role, slugOrRequestOptions, requestOptions );
 }
 
-function createChildren<T>( roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], HTTP.Response.Class[] ]>;
-function createChildren<T>( roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], HTTP.Response.Class[] ]>;
-function createChildren<T extends Role.Class>( roles:(T & Role.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class[] ] ]> {
+function createChildren<T>( roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+function createChildren<T>( roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+function createChildren<T extends Role.Class>( roles:(T & Role.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, [ HTTP.Response.Class, [ HTTP.Response.Class[], HTTP.Response.Class ] ] ]> {
 	checkState.call( this );
 	return (<Class> this)._roles.createChildren( (<Class> this).id, roles, slugsOrRequestOptions, requestOptions );
 }

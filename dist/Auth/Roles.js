@@ -62,7 +62,7 @@ var Class = (function () {
             persistedRoles = newRoles.map(function (role) { return PersistedRole.Factory.decorate(role, _this); });
             return _this.context.documents.addMembers(parentURI, newRoles);
         }).then(function (responseAddMember) {
-            return [persistedRoles, responsesCreated.concat(responseAddMember)];
+            return [persistedRoles, [responsesCreated, responseAddMember]];
         });
     };
     Class.prototype.createChildAndRetrieve = function (parentRole, role, slugOrRequestOptions, requestOptions) {

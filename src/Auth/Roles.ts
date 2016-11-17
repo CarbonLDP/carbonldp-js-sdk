@@ -50,9 +50,9 @@ export abstract class Class {
 		} );
 	}
 
-	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], HTTP.Response.Class[] ]>;
-	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], HTTP.Response.Class[] ]>;
-	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], HTTP.Response.Class[] ]> {
+	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]>;
+	createChildren<T>( parentRole:string | Pointer.Class, roles:(T & Role.Class)[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedRole.Class)[], [ HTTP.Response.Class[], HTTP.Response.Class ] ]> {
 		let parentURI:string = Utils.isString( parentRole ) ? <string> parentRole : ( <Pointer.Class> parentRole).id;
 		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
 		requestOptions = HTTP.Request.Util.isOptions( slugsOrRequestOptions ) ? slugsOrRequestOptions : requestOptions;
@@ -77,7 +77,7 @@ export abstract class Class {
 			return this.context.documents.addMembers( parentURI, newRoles );
 
 		} ).then( ( responseAddMember:HTTP.Response.Class ) => {
-			return [ persistedRoles, responsesCreated.concat( responseAddMember ) ];
+			return [ persistedRoles, [ responsesCreated, responseAddMember ] ];
 		} );
 	}
 
