@@ -8,6 +8,9 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_roles")
             && Utils.hasFunction(object, "createChild")
+            && Utils.hasFunction(object, "createChildren")
+            && Utils.hasFunction(object, "createChildAndRetrieve")
+            && Utils.hasFunction(object, "createChildrenAndRetrieve")
             && Utils.hasFunction(object, "listAgents")
             && Utils.hasFunction(object, "getAgents")
             && Utils.hasFunction(object, "addAgent")
@@ -37,6 +40,24 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createChild,
+            },
+            "createChildren": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createChildren,
+            },
+            "createChildAndRetrieve": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createChildAndRetrieve,
+            },
+            "createChildrenAndRetrieve": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createChildrenAndRetrieve,
             },
             "listAgents": {
                 writable: true,
@@ -83,6 +104,18 @@ exports.Factory = Factory;
 function createChild(role, slugOrRequestOptions, requestOptions) {
     checkState.call(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
+}
+function createChildren(roles, slugsOrRequestOptions, requestOptions) {
+    checkState.call(this);
+    return this._roles.createChildren(this.id, roles, slugsOrRequestOptions, requestOptions);
+}
+function createChildAndRetrieve(role, slugOrRequestOptions, requestOptions) {
+    checkState.call(this);
+    return this._roles.createChildAndRetrieve(this.id, role, slugOrRequestOptions, requestOptions);
+}
+function createChildrenAndRetrieve(roles, slugsOrRequestOptions, requestOptions) {
+    checkState.call(this);
+    return this._roles.createChildrenAndRetrieve(this.id, roles, slugsOrRequestOptions, requestOptions);
 }
 function listAgents(requestOptions) {
     checkState.call(this);

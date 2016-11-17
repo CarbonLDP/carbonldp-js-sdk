@@ -16,6 +16,7 @@ import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as Role from "./Role";
 import * as HTTP from "./../HTTP";
+import * as NS from "./../NS";
 import * as PersistedRole from "./PersistedRole";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as URI from "./../RDF/URI";
@@ -67,7 +68,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context.Class"},
+			{ name: "context", type: "Carbon.Context.Class" },
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
@@ -79,15 +80,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
-				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
+				[ "T" ],
+				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "T", description: "The appRole that wants to persist."},
-					{name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role that wants to persist." },
+					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-				{type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -103,13 +104,17 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
+					success: ( [ pointer, responses ]:[ Pointer.Class, HTTP.Response.Class[] ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.Factory.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/roles/new-role/" );
 
-						expect( response ).toBeTruthy();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 2 );
+						responses.forEach( response => {
+							expect( response instanceof HTTP.Response.Class ).toBe( true );
+						} );
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
@@ -155,14 +160,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
-				"Persists the Role provided as a childRole of the parentRole specified.\n" +
+				[ "T" ],
+				"Persists the Role provided as a childRole of the parentRole specified.\n\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "T", description: "The appRole that wants to persist."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role that wants to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-				{type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -178,13 +183,17 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
+					success: ( [ pointer, responses ]:[ Pointer.Class, HTTP.Response.Class[] ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.Factory.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/roles/new-role/" );
 
-						expect( response ).toBeTruthy();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 2 );
+						responses.forEach( response => {
+							expect( response instanceof HTTP.Response.Class ).toBe( true );
+						} );
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
@@ -233,15 +242,663 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 		} );
 
+		describe( method(
+			INSTANCE,
+			"createChildren"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				expect( roles.createChildren ).toBeDefined();
+				expect( Utils.isFunction( roles.createChildren ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple new roles as children member of the parent role specified.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the roles to persist." },
+					{ name: "roles", type: "(T & Carbon.Auth.Roles.Class)[]", description: "The roles to persist." },
+					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `roles` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every create request." },
+				],
+				{ type: "Promise<[ (T & Carbon.Auth.PersistedRole.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class ] ]>", description: "Promise with the array of persisted but UNRESOLVED roles, and an array of the responses of the requests made. The array of response have two elements: the first one contains an array with the responses of the creation and the second element is the addition as children of the parent role." }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/roles/new-role/",
+					},
+				} );
+
+				let spies:any = {
+					success: ( [ persistedRoles, responses ]:[ PersistedRole.Class[], [ HTTP.Response.Class[], HTTP.Response.Class ] ] ):void => {
+						expect( persistedRoles ).toBeTruthy();
+						expect( persistedRoles ).toEqual( jasmine.any( Array ) );
+						expect( persistedRoles.length ).toEqual( 2 );
+						persistedRoles.forEach( persistedRole => {
+							expect( PersistedRole.Factory.is( persistedRole ) ).toBe( true );
+							expect( persistedRole.id ).toBe( "http://example.com/roles/new-role/" );
+						} );
+
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 2 );
+
+						expect( responses[ 0 ].length ).toBe( persistedRoles.length );
+						responses[ 0 ].forEach( response => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						} );
+						expect( responses[ 1 ] ).toEqual( jasmine.any( HTTP.Response.Class ) );
+					},
+					error: function( error:Error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+
+				roles.createChildren( "http://example.com/roles/parent/", [] ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
+
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+
+					promise = roles.createChildren( "parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], [ "new-role", null ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildren( "http://example.com/roles/parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildren( "role-not-found/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], [ "new-role", null ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						let requests:JasmineAjaxRequest[] = jasmine.Ajax.requests.filter( /roles\/$/ );
+						expect( requests.length ).toBe( 4 );
+						expect( requests[ 0 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
+						expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBeUndefined();
+						expect( requests[ 2 ].requestHeaders[ "slug" ] ).toBeUndefined();
+						expect( requests[ 3 ].requestHeaders[ "slug" ] ).toBeUndefined();
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+						done();
+					} ).catch( done.fail );
+
+				} );
+
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists multiple new roles as children member of the parent role specified.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the roles to persist." },
+					{ name: "roles", type: "(T & Carbon.Auth.Roles.Class)[]", description: "The roles to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every create request." },
+				],
+				{ type: "Promise<[ (T & Carbon.Auth.PersistedRole.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class ] ]>", description: "Promise with the array of persisted but UNRESOLVED roles, and an array of the responses of the requests made. The array of response have two elements: the first one contains an array with the responses of the creation and the second element is the addition as children of the parent role." }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/roles/new-role/",
+					},
+				} );
+
+				let spies:any = {
+					success: ( [ persistedRoles, responses ]:[ PersistedRole.Class[], [ HTTP.Response.Class[], HTTP.Response.Class ] ] ):void => {
+						expect( persistedRoles ).toBeTruthy();
+						expect( persistedRoles ).toEqual( jasmine.any( Array ) );
+						expect( persistedRoles.length ).toEqual( 2 );
+						persistedRoles.forEach( persistedRole => {
+							expect( PersistedRole.Factory.is( persistedRole ) ).toBe( true );
+							expect( persistedRole.isResolved() ).toBe( false );
+							expect( persistedRole.id ).toBe( "http://example.com/roles/new-role/" );
+						} );
+
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 2 );
+
+						expect( responses[ 0 ].length ).toBe( persistedRoles.length );
+						responses[ 0 ].forEach( response => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						} );
+						expect( responses[ 1 ] ).toEqual( jasmine.any( HTTP.Response.Class ) );
+					},
+					error: function( error:Error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyCreate:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callThrough();
+
+				roles.createChildren( "http://example.com/roles/parent/", [] ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
+
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+					let options:HTTP.Request.Options = {
+						timeout: 5555,
+					};
+
+					promise = roles.createChildren( "parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildren( "http://example.com/roles/parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildren( "role-not-found/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+
+						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, options );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
+						done();
+					} ).catch( done.fail );
+
+				} );
+
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists the Role provided with a slug, if specified, as a childRole of the parentRole specified and resolves it.\n\n" +
+				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role that wants to persist." },
+					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				expect( roles.createChildAndRetrieve ).toBeDefined();
+				expect( Utils.isFunction( roles.createChildAndRetrieve ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/roles/new-role/",
+					},
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/new-role/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "1234567890",
+					},
+					responseText: `{
+						"@graph": {
+							"@id": "http://example.com/roles/new-role/",
+							"@type": [ "http://example.com/ns#Role" ],
+							"http://example.com/ns#name": { "@value": "Persisted role name" }
+						},
+						"@id": "http://example.com/roles/new-role/"
+					}`,
+				} );
+
+				let spies:any = {
+					success: ( [ role, responses ]:[ PersistedRole.Class, HTTP.Response.Class[] ] ):void => {
+						expect( role ).toBeTruthy();
+						expect( PersistedRole.Factory.is( role ) ).toBe( true );
+						expect( role.id ).toBe( "http://example.com/roles/new-role/" );
+						expect( role.name ).toBe( "Persisted role name" );
+
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 3 );
+						responses.forEach( response => {
+							expect( response instanceof HTTP.Response.Class ).toBe( true );
+						} );
+					},
+					error: function( error:Error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyRolesCreate:jasmine.Spy = spyOn( roles, "createChild" ).and.callThrough();
+				let spyDocumentsCreate:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
+
+				roles.createChildAndRetrieve( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
+
+					context.setSetting( "vocabulary", "http://example.com/ns#" );
+					context.documents.documentDecorators.set( "http://example.com/ns#Role", { decorator: PersistedRole.Factory.decorate, parameters: [ roles ] } );
+
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+					let options:HTTP.Request.Options = {
+						timeout: 5555,
+					};
+
+					promise = roles.createChildAndRetrieve( "parent/", Role.Factory.create( "Role name" ), "new-role", options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildAndRetrieve( "parent/", Role.Factory.create( "Role name" ), "new-role" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildAndRetrieve( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildAndRetrieve( "role-not-found/", Role.Factory.create( "Role name" ), "new-role" );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						let requests:JasmineAjaxRequest[] = jasmine.Ajax.requests.filter( /roles\/$/ );
+						expect( requests.length ).toBe( 3 );
+						expect( requests[ 0 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
+						expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
+						expect( requests[ 2 ].requestHeaders[ "slug" ] ).toBeUndefined();
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 3 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+
+						expect( spyRolesCreate ).toHaveBeenCalledTimes( 5 );
+
+						expect( spyDocumentsCreate ).toHaveBeenCalledTimes( 3 );
+						expect( spyDocumentsCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), "new-role", options );
+						expect( spyDocumentsCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), "new-role", undefined );
+						expect( spyDocumentsCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
+						done();
+					} ).catch( done.fail );
+
+				} );
+
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists the Role provided as a childRole of the parentRole specified and resolves it.\n\n" +
+				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.Class", description: "The role that wants to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				expect( roles.createChildAndRetrieve ).toBeDefined();
+				expect( Utils.isFunction( roles.createChildAndRetrieve ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/roles/123456789-new-role/",
+					},
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/123456789-new-role/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "1234567890",
+					},
+					responseText: `{
+						"@graph": {
+							"@id": "http://example.com/roles/123456789-new-role/",
+							"@type": [ "http://example.com/ns#Role" ],
+							"http://example.com/ns#name": { "@value": "Persisted role name" }
+						},
+						"@id": "http://example.com/roles/123456789-new-role/"
+					}`,
+				} );
+
+				let spies:any = {
+					success: ( [ role, responses ]:[ PersistedRole.Class, HTTP.Response.Class[] ] ):void => {
+						expect( role ).toBeTruthy();
+						expect( PersistedRole.Factory.is( role ) ).toBe( true );
+						expect( role.id ).toBe( "http://example.com/roles/123456789-new-role/" );
+						expect( role.name ).toBe( "Persisted role name" );
+
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 3 );
+						responses.forEach( response => {
+							expect( response instanceof HTTP.Response.Class ).toBe( true );
+						} );
+					},
+					error: function( error:Error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyRolesCreate:jasmine.Spy = spyOn( roles, "createChild" ).and.callThrough();
+				let spyDocumentsCreate:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
+
+				roles.createChildAndRetrieve( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
+
+					context.setSetting( "vocabulary", "http://example.com/ns#" );
+					context.documents.documentDecorators.set( "http://example.com/ns#Role", { decorator: PersistedRole.Factory.decorate, parameters: [ roles ] } );
+
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+					let options:HTTP.Request.Options = {
+						timeout: 5555,
+					};
+
+					promise = roles.createChildAndRetrieve( "parent/", Role.Factory.create( "Role name" ), options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildAndRetrieve( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildAndRetrieve( "role-not-found/", Role.Factory.create( "Role name" ), options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+
+						expect( spyRolesCreate ).toHaveBeenCalledTimes( 4 );
+
+						expect( spyDocumentsCreate ).toHaveBeenCalledTimes( 2 );
+						expect( spyDocumentsCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, options );
+						expect( spyDocumentsCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
+						done();
+					} ).catch( done.fail );
+
+				} );
+
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildrenAndRetrieve"
+		), ():void => {
+
+			it( isDefined(), ():void => {
+				expect( roles.createChildrenAndRetrieve ).toBeDefined();
+				expect( Utils.isFunction( roles.createChildrenAndRetrieve ) ).toBe( true );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists and resolves multiple new roles as children member of the parent role specified.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the roles to persist." },
+					{ name: "roles", type: "(T & Carbon.Auth.Roles.Class)[]", description: "The roles to persist." },
+					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `roles` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every create request." },
+				],
+				{ type: "Promise<[ (T & Carbon.Auth.PersistedRole.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class ] ]>", description: "Promise with the array of persisted and resolved roles, and an array of the responses of the requests made. The array of response have tree elements: the first one contains an array with the responses of the creation, the second one have another array with the responses of resolving the elements and the third element is the addition as children of the parent role." }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/roles/new-role/",
+					},
+				} );
+				jasmine.Ajax.stubRequest( /\/roles\/new-role/ ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "1234567890",
+					},
+					responseText: `{
+						"@graph": {
+							"@id": "http://example.com/roles/new-role/",
+							"http://example.com/ns#name": { "@value": "Persisted role name" }
+						},
+						"@id": "http://example.com/roles/new-role/"
+					}`,
+				} );
+
+				let getPointer:Function = context.documents.getPointer.bind( context.documents );
+				let roleNumber:number = 0;
+				spyOn( context.documents, "getPointer" ).and.callFake( ( id ) => {
+					if( id === "http://example.com/roles/new-role/" )
+						return getPointer( `http://example.com/roles/new-role-${ roleNumber }/` );
+					return getPointer( id );
+				} );
+
+				let spies:any = {
+					success: ( [ persistedRoles, responses ]:[ PersistedRole.Class[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ] ):void => {
+						expect( persistedRoles ).toBeTruthy();
+						expect( persistedRoles ).toEqual( jasmine.any( Array ) );
+						expect( persistedRoles.length ).toEqual( 2 );
+						persistedRoles.forEach( persistedRole => {
+							expect( PersistedRole.Factory.is( persistedRole ) ).toBe( true );
+							expect( persistedRole.isResolved() ).toBe( true );
+							expect( Utils.S.startsWith( persistedRole.id, "http://example.com/roles/new-role" ) ).toBe( true );
+						} );
+
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 3 );
+
+						expect( responses[ 0 ] ).toEqual( jasmine.any( Array ) );
+						expect( responses[ 0 ].length ).toBe( 2 );
+						responses[ 0 ].forEach( response => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						} );
+
+						expect( responses[ 1 ] ).toEqual( jasmine.any( Array ) );
+						expect( responses[ 1 ].length ).toBe( 2 );
+						responses[ 1 ].forEach( response => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						} );
+
+						expect( responses[ 2 ] ).toEqual( jasmine.any( HTTP.Response.Class ) );
+					},
+					error: function( error:Error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyCreate:jasmine.Spy = spyOn( context.documents, "createChildrenAndRetrieve" ).and.callThrough();
+
+				roles.createChildrenAndRetrieve( "http://example.com/roles/parent/", [] ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
+
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+
+					promise = roles.createChildrenAndRetrieve( "parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], [ "new-role", null ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildrenAndRetrieve( "http://example.com/roles/parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildrenAndRetrieve( "role-not-found/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], [ "new-role", null ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						let requests:JasmineAjaxRequest[] = jasmine.Ajax.requests.filter( /roles\/$/ );
+						expect( requests.length ).toBe( 4 );
+						expect( requests[ 0 ].requestHeaders[ "slug" ] ).toBe( "new-role" );
+						expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBeUndefined();
+						expect( requests[ 2 ].requestHeaders[ "slug" ] ).toBeUndefined();
+						expect( requests[ 3 ].requestHeaders[ "slug" ] ).toBeUndefined();
+
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+
+						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), [ "new-role", null ], undefined );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
+						done();
+					} ).catch( done.fail );
+
+				} );
+
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists and resolves multiple new roles as children member of the parent role specified.", [
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the roles to persist." },
+					{ name: "roles", type: "(T & Carbon.Auth.Roles.Class)[]", description: "The roles to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every create request." },
+				],
+				{ type: "Promise<[ (T & Carbon.Auth.PersistedRole.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class ] ]>", description: "Promise with the array of persisted and resolved roles, and an array of the responses of the requests made. The array of response have tree elements: the first one contains an array with the responses of the creation, the second one have another array with the responses of resolving the elements and the third element is the addition as children of the parent role." }
+			), ( done:{ ():void, fail:() => void } ):void => {
+				jasmine.Ajax.stubRequest( "http://example.com/roles/parent/" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/roles/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"Location": "http://example.com/roles/new-role/",
+					},
+				} );
+				jasmine.Ajax.stubRequest( /\/roles\/new-role/ ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "1234567890",
+					},
+					responseText: `{
+						"@graph": {
+							"@id": "http://example.com/roles/new-role/",
+							"http://example.com/ns#name": { "@value": "Persisted role name" }
+						},
+						"@id": "http://example.com/roles/new-role/"
+					}`,
+				} );
+
+				let getPointer:Function = context.documents.getPointer.bind( context.documents );
+				let roleNumber:number = 0;
+				spyOn( context.documents, "getPointer" ).and.callFake( ( id ) => {
+					if( id === "http://example.com/roles/new-role/" )
+						return getPointer( `http://example.com/roles/new-role-${ roleNumber }/` );
+					return getPointer( id );
+				} );
+
+				let spies:any = {
+					success: ( [ persistedRoles, responses ]:[ PersistedRole.Class[], [ HTTP.Response.Class[], HTTP.Response.Class[], HTTP.Response.Class ] ] ):void => {
+						expect( persistedRoles ).toBeTruthy();
+						expect( persistedRoles ).toEqual( jasmine.any( Array ) );
+						expect( persistedRoles.length ).toEqual( 2 );
+						persistedRoles.forEach( persistedRole => {
+							expect( PersistedRole.Factory.is( persistedRole ) ).toBe( true );
+							expect( persistedRole.id ).toBe( "http://example.com/roles/new-role/" );
+						} );
+
+						expect( responses ).toBeTruthy();
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 3 );
+
+						expect( responses[ 0 ] ).toEqual( jasmine.any( Array ) );
+						expect( responses[ 0 ].length ).toBe( 2 );
+						responses[ 0 ].forEach( response => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						} );
+
+						expect( responses[ 1 ] ).toEqual( jasmine.any( Array ) );
+						expect( responses[ 1 ].length ).toBe( 2 );
+						responses[ 1 ].forEach( response => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						} );
+
+						expect( responses[ 2 ] ).toEqual( jasmine.any( HTTP.Response.Class ) );
+					},
+					error: function( error:Error ):void {
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+
+				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyCreate:jasmine.Spy = spyOn( context.documents, "createChildrenAndRetrieve" ).and.callThrough();
+
+				roles.createChildrenAndRetrieve( "http://example.com/roles/parent/", [] ).then( done.fail ).catch( ( error:Error ) => {
+					expect( error instanceof Errors.IllegalStateError ).toBe( true );
+					context.setSetting( "platform.roles.container", "roles/" );
+
+					let promises:Promise<any>[] = [];
+					let promise:Promise<any>;
+					let options:HTTP.Request.Options = {
+						timeout: 5555,
+					};
+
+					promise = roles.createChildrenAndRetrieve( "parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildrenAndRetrieve( "http://example.com/roles/parent/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ] );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.then( spies.success ) );
+
+					promise = roles.createChildrenAndRetrieve( "role-not-found/", [ Role.Factory.create( "Role name" ), Role.Factory.create( "Role name" ) ], options );
+					expect( promise instanceof Promise ).toBe( true );
+					promises.push( promise.catch( spies.error ) );
+
+					Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+						expect( spyError ).toHaveBeenCalledTimes( 1 );
+
+						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, options );
+						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/roles/", jasmine.anything(), null, undefined );
+						done();
+					} ).catch( done.fail );
+
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"get",
 			[ "T" ],
 			"Retrieves a role from the current context.", [
-				{name: "roleURI", type: "string", description: "The URI of the role to retrieve."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
@@ -319,10 +976,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"listAgents",
 			"Retrieves an array of unresolved pointers for all the agents of the specified role.", [
-				{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.listAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.listAgents ) ).toBe( true );
@@ -551,11 +1208,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Retrieves an array of resolved pointers for all the agents of the specified role.", [
-					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+					{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				// TODO: Change to `PersistedAgent`
-				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
@@ -616,12 +1273,12 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.", [
-					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
-					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+					{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
+					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				// TODO: Change to `PersistedAgent`
-				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
@@ -655,7 +1312,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
+						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
 					};
 
 					promise = roles.getAgents( "a-role/", retrievalPreferences, options );
@@ -690,16 +1347,16 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"addAgent",
 			"Makes a relation in the role specified towards the agent provided.", [
-				{name: "roleURI", type: "string", description: "The URI of the role where to add the agent."},
-				{name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to add to the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role where to add the agent." },
+				{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to add to the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			expect( roles.addAgent ).toBeDefined();
 			expect( Utils.isFunction( roles.addAgent ) );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( roles, "addAgents" );
 
 			roles.addAgent( "http://example.com/roles/a-role/", "http://example.com/agents/an-agent/" );
@@ -716,11 +1373,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"addAgents",
 			"Makes a relation in the role specified towards the agents specified.", [
-				{name: "roleURI", type: "string", description: "The URI of the role where to add agents."},
-				{name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to add to the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role where to add agents." },
+				{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to add to the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.addAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.addAgents ) );
@@ -758,7 +1415,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: constructAccessPointResponse( "http://example.com/roles/another-role/" ),
 			} );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "addMembers" ).and.returnValue( Promise.resolve() );
 			let agents:(string | Pointer.Class)[] = [ "http://example.com/agents/an-agent/", Pointer.Factory.create( "http://example.com/agents/another-agent/" ) ];
 
@@ -797,16 +1454,16 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"removeAgent",
 			"Removes the relation in the role specified towards the agent provided.", [
-				{name: "roleURI", type: "string", description: "The URI of the role from where to remove the agent."},
-				{name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to be removed from the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the agent." },
+				{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to be removed from the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			expect( roles.removeAgent ).toBeDefined();
 			expect( Utils.isFunction( roles.removeAgent ) );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( roles, "removeAgents" );
 
 			roles.removeAgent( "http://example.com/roles/a-role/", "http://example.com/agents/an-agent/" );
@@ -823,11 +1480,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"removeAgents",
 			"Remove the relation in the role specified towards the agents specified.", [
-				{name: "roleURI", type: "string", description: "The URI of the role from where to remove the agents."},
-				{name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents to be removed from the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the agents." },
+				{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents to be removed from the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.removeAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.removeAgents ) );
@@ -865,7 +1522,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: constructAccessPointResponse( "http://example.com/roles/another-role/" ),
 			} );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
 			let agents:(string | Pointer.Class)[] = [ "http://example.com/agents/an-agent/", Pointer.Factory.create( "http://example.com/agents/another-agent/" ) ];
 

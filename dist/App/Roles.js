@@ -22,6 +22,23 @@ var Class = (function (_super) {
             return Promise.reject(new Errors.IllegalArgumentError("The role is not a valid `Carbon.App.Role.Class` object."));
         return _super.prototype.createChild.call(this, parentRole, role, slugOrRequestOptions, requestOptions);
     };
+    Class.prototype.createChildren = function (parentRole, roles, slugsOrRequestOptions, requestOptions) {
+        var index = roles.findIndex(function (role) { return !AppRole.Factory.is(role); });
+        if (index !== -1)
+            return Promise.reject(new Errors.IllegalArgumentError("The role at index " + index + ", is not a valid `Carbon.App.Role.Class` object."));
+        return _super.prototype.createChildren.call(this, parentRole, roles, slugsOrRequestOptions, requestOptions);
+    };
+    Class.prototype.createChildAndRetrieve = function (parentRole, role, slugOrRequestOptions, requestOptions) {
+        if (!AppRole.Factory.is(role))
+            return Promise.reject(new Errors.IllegalArgumentError("The role is not a valid `Carbon.App.Role.Class` object."));
+        return _super.prototype.createChildAndRetrieve.call(this, parentRole, role, slugOrRequestOptions, requestOptions);
+    };
+    Class.prototype.createChildrenAndRetrieve = function (parentRole, roles, slugsOrRequestOptions, requestOptions) {
+        var index = roles.findIndex(function (role) { return !AppRole.Factory.is(role); });
+        if (index !== -1)
+            return Promise.reject(new Errors.IllegalArgumentError("The role at index " + index + ", is not a valid `Carbon.App.Role.Class` object."));
+        return _super.prototype.createChildrenAndRetrieve.call(this, parentRole, roles, slugsOrRequestOptions, requestOptions);
+    };
     Class.prototype.get = function (roleURI, requestOptions) {
         return _super.prototype.get.call(this, roleURI, requestOptions).then(function (_a) {
             var role = _a[0], response = _a[1];
