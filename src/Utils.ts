@@ -297,7 +297,7 @@ class M {
 				let entry:Array<(K|V)> = next.value;
 				let key:K = <K> entry[ 0 ];
 				let value:V = <V> entry[ 1 ];
-				if( ! toExtend.has( key ) ) toExtend.set( key, value );
+				toExtend.set( key, value );
 
 				next = values.next();
 			}

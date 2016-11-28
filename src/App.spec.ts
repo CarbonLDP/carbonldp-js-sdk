@@ -81,7 +81,7 @@ describe( module( "Carbon/App" ), ():void => {
 			OPTIONAL,
 			"allowsOrigin",
 			"(string | Carbon.Pointer.Class)[]",
-			`An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at \`Carbon.NS.CS.Class.AllOrigins\` which translates to \`${ NS.CS.Class.AllOrigins }\`.`
+			`An array of string URIs or Pointers that refers to the origins allowed to connect to the application. An special URI that allows everyone to connect is at \`Carbon.NS.CS.Class#AllOrigins\` which translates to \`${ NS.CS.Class.AllOrigins }\`.`
 		), ():void => {} );
 
 	} );
