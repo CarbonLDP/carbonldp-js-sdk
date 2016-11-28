@@ -14,6 +14,7 @@
 		</a>
 		{{/if}}
 		{{#if secondary}}<span class="doc-header__secondary"> : {{>text-markdown element=secondary noParagraph=true}}</span>{{/if}}
+		{{#if optional}}<label class="ui blue right horizontal label">Optional</label>{{/if}}
 	</h{{level}}>
 
 {{else}}
