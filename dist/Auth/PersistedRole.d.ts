@@ -8,7 +8,7 @@ import * as Roles from "./Roles";
 export interface Class extends PersistedProtectedDocument.Class {
     _roles: Roles.Class;
     name?: string;
-    agents?: Pointer.Class;
+    agents?: Pointer.Class[];
     createChild<T extends Role.Class>(role: T, requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
     createChild<T extends Role.Class>(role: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
     listAgents(requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class[], HTTP.Response.Class]>;
