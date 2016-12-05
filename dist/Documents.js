@@ -668,6 +668,9 @@ var Class = (function () {
                 persistedProtectedDocument,
                 response,
             ];
+        }, function (error) {
+            delete document["__CarbonSDK_InProgressOfPersisting"];
+            throw error;
         });
     };
     Class.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {

@@ -776,6 +776,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				persistedProtectedDocument,
 				response,
 			];
+		}, ( error ) => {
+			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
+			throw error;
 		} );
 	}
 
