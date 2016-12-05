@@ -308,6 +308,11 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 			expect( URI.Util.isBaseOf( resourceURI, anotherURI ) ).toBe( false );
 			expect( URI.Util.isBaseOf( prefixResourceURI, prefixAnotherURI ) ).toBe( false );
+
+			expect( URI.Util.isBaseOf( "http://example.com/resource", "/relative" ) ).toBe( true );
+			expect( URI.Util.isBaseOf( "http://example.com/resource", "/relative/" ) ).toBe( true );
+			expect( URI.Util.isBaseOf( "http://example.com/resource", "relative/" ) ).toBe( true );
+			expect( URI.Util.isBaseOf( "http://example.com/resource", "relative" ) ).toBe( true );
 		} );
 
 		it( hasMethod(
