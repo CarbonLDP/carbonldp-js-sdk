@@ -9,7 +9,7 @@ export interface Class extends PersistedRole.Class {
 	_roles:Roles.Class;
 
 	parentRole?:Pointer.Class;
-	childRoles?:Pointer.Class[];
+	childrenRoles?:Pointer.Class[];
 }
 
 export class Factory {

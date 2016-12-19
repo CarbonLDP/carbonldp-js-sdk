@@ -1,6 +1,5 @@
 import * as ObjectSchema from "./../ObjectSchema";
 import * as NS from "./../NS";
-import * as Resource from "./../Resource";
 import * as Role from "./../Auth/Role";
 import * as Utils from "./../Utils";
 
@@ -11,7 +10,7 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.parentRole,
 		"@type": "@id",
 	},
-	"childRoles": {
+	"childrenRoles": {
 		"@id": NS.CS.Predicate.childRole,
 		"@type": "@id",
 		"@container": "@set",
