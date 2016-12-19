@@ -9,6 +9,10 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.namae,
 		"@type": NS.XSD.DataType.string,
 	},
+	"description": {
+		"@id": NS.CS.Predicate.description,
+		"@type": NS.XSD.DataType.string,
+	},
 	"agents": {
 		"@id": NS.CS.Predicate.agent,
 		"@type": "@id",
@@ -18,6 +22,7 @@ export const SCHEMA:ObjectSchema.Class = {
 
 export interface Class extends Document.Class {
 	name:string;
+	description?:string;
 }
 
 export class Factory {
@@ -31,11 +36,11 @@ export class Factory {
 			;
 	}
 
-	static create( name:string ):Class {
-		return Factory.createFrom<Object>( {}, name );
+	static create( name:string, description?:string ):Class {
+		return Factory.createFrom<Object>( {}, name, description );
 	}
 
-	static createFrom<T extends Object>( object:T, name:string ):T & Class {
+	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
 		if( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 
@@ -43,6 +48,7 @@ export class Factory {
 
 		let role:T & Class = <T & Class> object;
 		role.name = name;
+		role.description = description;
 
 		return role;
 	}

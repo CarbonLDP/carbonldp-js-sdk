@@ -56,6 +56,13 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
+			"description",
+			"string",
+			"An optional description of the current role."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
 			"agents",
 			"Carbon.Pointer.Class[]",
 			"An array of pointers that references to all the agents that have the current role."
