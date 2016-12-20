@@ -9,7 +9,9 @@ var NotImplementedError = (function (_super) {
     __extends(NotImplementedError, _super);
     function NotImplementedError(message) {
         if (message === void 0) { message = ""; }
-        _super.call(this, message);
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, NotImplementedError.prototype);
+        return _this;
     }
     Object.defineProperty(NotImplementedError.prototype, "name", {
         get: function () { return "NotImplementedError"; },

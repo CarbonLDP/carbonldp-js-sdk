@@ -10,12 +10,13 @@ var RDF = require("./../RDF");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext, app) {
-        _super.call(this, parentContext);
-        this.auth = new Auth_1.default(this);
-        this._app = app;
-        this.base = this.getBase(this.app);
-        this.documents.removePointer(app.rootContainer);
-        app.rootContainer = this.documents.getPointer(app.rootContainer.id);
+        var _this = _super.call(this, parentContext) || this;
+        _this.auth = new Auth_1.default(_this);
+        _this._app = app;
+        _this.base = _this.getBase(_this.app);
+        _this.documents.removePointer(app.rootContainer);
+        app.rootContainer = _this.documents.getPointer(app.rootContainer.id);
+        return _this;
     }
     Object.defineProperty(Class.prototype, "app", {
         get: function () { return this._app; },

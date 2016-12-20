@@ -7,8 +7,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 var AbstractError_1 = require("./AbstractError");
 var IllegalArgumentError = (function (_super) {
     __extends(IllegalArgumentError, _super);
-    function IllegalArgumentError() {
-        _super.apply(this, arguments);
+    function IllegalArgumentError(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, IllegalArgumentError.prototype);
+        return _this;
     }
     Object.defineProperty(IllegalArgumentError.prototype, "name", {
         get: function () { return "IllegalArgumentError"; },

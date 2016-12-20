@@ -10,9 +10,10 @@ var Auth_1 = require("./../Auth");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(appContext) {
-        _super.call(this, appContext);
-        this.roles = new Roles_1.default(appContext);
-        this.agents = new Agents_1.default(appContext);
+        var _this = _super.call(this, appContext) || this;
+        _this.roles = new Roles_1.default(appContext);
+        _this.agents = new Agents_1.default(appContext);
+        return _this;
     }
     return Class;
 }(Auth_1.default));

@@ -82,9 +82,9 @@ var Class = (function () {
         var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
     };
-    Class.TOKEN_CONTAINER = "auth-tokens/";
     return Class;
 }());
+Class.TOKEN_CONTAINER = "auth-tokens/";
 exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;

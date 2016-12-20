@@ -9,8 +9,10 @@ var name = "TooManyRequestsError";
 var statusCode = 429;
 var TooManyRequestsError = (function (_super) {
     __extends(TooManyRequestsError, _super);
-    function TooManyRequestsError() {
-        _super.apply(this, arguments);
+    function TooManyRequestsError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, TooManyRequestsError.prototype);
+        return _this;
     }
     Object.defineProperty(TooManyRequestsError, "statusCode", {
         get: function () { return statusCode; },

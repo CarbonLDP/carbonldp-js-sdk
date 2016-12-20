@@ -9,8 +9,10 @@ var name = "InternalServerErrorError";
 var statusCode = 500;
 var InternalServerErrorError = (function (_super) {
     __extends(InternalServerErrorError, _super);
-    function InternalServerErrorError() {
-        _super.apply(this, arguments);
+    function InternalServerErrorError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, InternalServerErrorError.prototype);
+        return _this;
     }
     Object.defineProperty(InternalServerErrorError, "statusCode", {
         get: function () { return statusCode; },

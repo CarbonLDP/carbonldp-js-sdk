@@ -1,4 +1,5 @@
 import HTTPError from "./../HTTPError";
+import Response from "./../../Response";
 
 const name:string = "ConflictError";
 const statusCode:number = 409;
@@ -7,6 +8,11 @@ class ConflictError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
+
+	constructor( message:string, response:Response ) {
+		super( message, response );
+		Object.setPrototypeOf( this, ConflictError.prototype );
+	}
 }
 
 export default ConflictError;

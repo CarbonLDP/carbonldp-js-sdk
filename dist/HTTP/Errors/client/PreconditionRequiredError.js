@@ -9,8 +9,10 @@ var name = "PreconditionRequiredError";
 var statusCode = 428;
 var PreconditionRequiredError = (function (_super) {
     __extends(PreconditionRequiredError, _super);
-    function PreconditionRequiredError() {
-        _super.apply(this, arguments);
+    function PreconditionRequiredError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, PreconditionRequiredError.prototype);
+        return _this;
     }
     Object.defineProperty(PreconditionRequiredError, "statusCode", {
         get: function () { return statusCode; },

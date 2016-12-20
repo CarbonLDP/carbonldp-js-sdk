@@ -9,8 +9,10 @@ var name = "UnsupportedMediaTypeError";
 var statusCode = 415;
 var UnsupportedMediaTypeError = (function (_super) {
     __extends(UnsupportedMediaTypeError, _super);
-    function UnsupportedMediaTypeError() {
-        _super.apply(this, arguments);
+    function UnsupportedMediaTypeError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, UnsupportedMediaTypeError.prototype);
+        return _this;
     }
     Object.defineProperty(UnsupportedMediaTypeError, "statusCode", {
         get: function () { return statusCode; },

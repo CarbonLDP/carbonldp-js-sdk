@@ -9,8 +9,10 @@ var name = "ConflictError";
 var statusCode = 409;
 var ConflictError = (function (_super) {
     __extends(ConflictError, _super);
-    function ConflictError() {
-        _super.apply(this, arguments);
+    function ConflictError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, ConflictError.prototype);
+        return _this;
     }
     Object.defineProperty(ConflictError, "statusCode", {
         get: function () { return statusCode; },

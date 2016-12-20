@@ -9,8 +9,10 @@ var name = "BadResponseError";
 var statusCode = 0;
 var Class = (function (_super) {
     __extends(Class, _super);
-    function Class() {
-        _super.apply(this, arguments);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
     }
     Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },

@@ -9,12 +9,14 @@ var Resource = require("./../../Resource");
 var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
-        _super.call(this, message);
-        Resource.Factory.createFrom(this);
-        this.errors = [];
-        this.requestID = null;
-        this.response = response;
-        this.statusCode = response.status;
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, HTTPError.prototype);
+        Resource.Factory.createFrom(_this);
+        _this.errors = [];
+        _this.requestID = null;
+        _this.response = response;
+        _this.statusCode = response.status;
+        return _this;
     }
     Object.defineProperty(HTTPError, "statusCode", {
         get: function () { return null; },

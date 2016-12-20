@@ -9,8 +9,10 @@ var name = "ServiceUnavailableError";
 var statusCode = 503;
 var ServiceUnavailableError = (function (_super) {
     __extends(ServiceUnavailableError, _super);
-    function ServiceUnavailableError() {
-        _super.apply(this, arguments);
+    function ServiceUnavailableError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, ServiceUnavailableError.prototype);
+        return _this;
     }
     Object.defineProperty(ServiceUnavailableError, "statusCode", {
         get: function () { return statusCode; },

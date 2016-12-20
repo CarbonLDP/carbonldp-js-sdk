@@ -9,8 +9,10 @@ var name = "NotImplementedError";
 var statusCode = 501;
 var NotImplementedError = (function (_super) {
     __extends(NotImplementedError, _super);
-    function NotImplementedError() {
-        _super.apply(this, arguments);
+    function NotImplementedError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, NotImplementedError.prototype);
+        return _this;
     }
     Object.defineProperty(NotImplementedError, "statusCode", {
         get: function () { return statusCode; },
