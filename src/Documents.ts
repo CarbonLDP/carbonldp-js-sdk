@@ -26,14 +26,17 @@ import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
+import SparqlBuilder from "./SPARQL/Builder";
+import { QueryClause } from "sparqler/Clauses";
+
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
 
-	private _documentDecorators:Map<string, {decorator:Function, parameters?:any[]}>;
-	get documentDecorators():Map<string, {decorator:Function, parameters?:any[]}> { return this._documentDecorators; }
+	private _documentDecorators:Map<string, { decorator:Function, parameters?:any[] }>;
+	get documentDecorators():Map<string, { decorator:Function, parameters?:any[] }> { return this._documentDecorators; }
 
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
@@ -54,9 +57,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this._jsonldConverter = new JSONLD.Converter.Class();
 		}
 
-		let decorators:Map<string, {decorator:Function, parameters?:any[]}> = new Map();
+		let decorators:Map<string, { decorator:Function, parameters?:any[] }> = new Map();
 		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let parentDecorators:Map<string, {decorator:Function, parameters?:any[]}> = this.context.parentContext.documents.documentDecorators;
+			let parentDecorators:Map<string, { decorator:Function, parameters?:any[] }> = this.context.parentContext.documents.documentDecorators;
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.M.extend( decorators, parentDecorators );
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate } );
@@ -203,7 +206,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
-		return Promise.all<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>( childrenObjects.map( ( childObject:T, index:number ) => {
+		return Promise.all<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>( childrenObjects.map( ( childObject:T, index:number ) => {
 			let slug:string = (slugs !== null && index < slugs.length && ! ! slugs[ index ]) ? slugs[ index ] : null;
 
 			let options:HTTP.Request.Options = Object.assign( {}, requestOptions );
@@ -329,7 +332,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
-		return Promise.all<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>( accessPoints.map( ( accessPoint:T & AccessPoint.Class, index:number ) => {
+		return Promise.all<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>( accessPoints.map( ( accessPoint:T & AccessPoint.Class, index:number ) => {
 			let slug:string = (slugs !== null && index < slugs.length && ! ! slugs[ index ]) ? slugs[ index ] : null;
 
 			let options:HTTP.Request.Options = Object.assign( {}, requestOptions );
@@ -610,7 +613,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
 		// TODO: Check how to manage the requestOptions for the multiple calls
 
 		let saveResponse:HTTP.Response.Class;
@@ -713,6 +716,26 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
+	}
+
+	sparql( documentURI:string ):QueryClause {
+		let sparqlBuilder:SparqlBuilder = new SparqlBuilder();
+		sparqlBuilder._documents = this;
+		sparqlBuilder._entryPoint = documentURI;
+
+		let builder:QueryClause = sparqlBuilder.base( documentURI );
+
+		if( ! ! this.context ) {
+			builder.base( this.context.getBaseURI() );
+			if( this.context.hasSetting( "vocabulary" ) ) builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
+
+			let schema:ObjectSchema.DigestedObjectSchema = this.context.getObjectSchema();
+			schema.prefixes.forEach( ( uri:RDF.URI.Class, prefix:string ) => {
+				builder.prefix( prefix, uri.stringValue );
+			} );
+		}
+
+		return builder;
 	}
 
 	_getPersistedDocument( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):PersistedDocument.Class {
@@ -1031,7 +1054,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private decoratePersistedDocument( persistedDocument:PersistedDocument.Class ):void {
-		let entries:Iterator<[ string, {decorator:Function, parameters?:any[]} ]> = this._documentDecorators.entries();
+		let entries:Iterator<[ string, { decorator:Function, parameters?:any[] } ]> = this._documentDecorators.entries();
 		for( let [ type, options ] of Utils.A.from( entries ) ) {
 			if( persistedDocument.hasType( type ) ) {
 				options.decorator.apply( null, [ persistedDocument ].concat( options.parameters ) );

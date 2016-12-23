@@ -10,7 +10,7 @@ var statusCode = 502;
 var BadGatewayError = (function (_super) {
     __extends(BadGatewayError, _super);
     function BadGatewayError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(BadGatewayError, "statusCode", {
         get: function () { return statusCode; },

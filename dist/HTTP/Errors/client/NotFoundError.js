@@ -10,7 +10,7 @@ var statusCode = 404;
 var NotFoundError = (function (_super) {
     __extends(NotFoundError, _super);
     function NotFoundError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(NotFoundError, "statusCode", {
         get: function () { return statusCode; },

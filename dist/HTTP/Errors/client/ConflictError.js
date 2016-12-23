@@ -10,7 +10,7 @@ var statusCode = 409;
 var ConflictError = (function (_super) {
     __extends(ConflictError, _super);
     function ConflictError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(ConflictError, "statusCode", {
         get: function () { return statusCode; },

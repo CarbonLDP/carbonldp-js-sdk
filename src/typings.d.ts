@@ -1,2 +1,2 @@
 /// <reference no-default-lib="true"/>
-/// <reference path="./../typings/typings" />
+/// <reference path="./../typings/typings.d.ts" />

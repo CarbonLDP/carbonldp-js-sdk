@@ -9,10 +9,11 @@ var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext) {
         if (parentContext === void 0) { parentContext = null; }
-        _super.call(this);
-        this._parentContext = !!parentContext ? parentContext : SDKContext.instance;
-        this.generalObjectSchema = null;
-        this.typeObjectSchemaMap = new Map();
+        var _this = _super.call(this) || this;
+        _this._parentContext = !!parentContext ? parentContext : SDKContext.instance;
+        _this.generalObjectSchema = null;
+        _this.typeObjectSchemaMap = new Map();
+        return _this;
     }
     Object.defineProperty(Class.prototype, "parentContext", {
         get: function () { return this._parentContext; },

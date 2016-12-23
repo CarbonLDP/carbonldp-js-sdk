@@ -10,7 +10,7 @@ var statusCode = 501;
 var NotImplementedError = (function (_super) {
     __extends(NotImplementedError, _super);
     function NotImplementedError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(NotImplementedError, "statusCode", {
         get: function () { return statusCode; },

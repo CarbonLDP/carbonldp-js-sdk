@@ -12,6 +12,7 @@ import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import { QueryClause } from "sparqler/Clauses";
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
@@ -79,6 +80,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    sparql(documentURI: string): QueryClause;
     _getPersistedDocument(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);

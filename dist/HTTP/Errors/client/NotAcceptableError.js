@@ -10,7 +10,7 @@ var statusCode = 406;
 var NotAcceptableError = (function (_super) {
     __extends(NotAcceptableError, _super);
     function NotAcceptableError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(NotAcceptableError, "statusCode", {
         get: function () { return statusCode; },

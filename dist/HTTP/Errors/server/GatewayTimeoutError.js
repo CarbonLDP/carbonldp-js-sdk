@@ -10,7 +10,7 @@ var statusCode = 504;
 var GatewayTimeoutError = (function (_super) {
     __extends(GatewayTimeoutError, _super);
     function GatewayTimeoutError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(GatewayTimeoutError, "statusCode", {
         get: function () { return statusCode; },

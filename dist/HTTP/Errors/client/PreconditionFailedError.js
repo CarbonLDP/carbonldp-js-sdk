@@ -10,7 +10,7 @@ var statusCode = 412;
 var PreconditionFailedError = (function (_super) {
     __extends(PreconditionFailedError, _super);
     function PreconditionFailedError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(PreconditionFailedError, "statusCode", {
         get: function () { return statusCode; },

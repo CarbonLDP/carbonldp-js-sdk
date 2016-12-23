@@ -10,7 +10,7 @@ var statusCode = 401;
 var UnauthorizedError = (function (_super) {
     __extends(UnauthorizedError, _super);
     function UnauthorizedError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(UnauthorizedError, "statusCode", {
         get: function () { return statusCode; },

@@ -9,7 +9,7 @@ var name = "UnknownError";
 var UnknownError = (function (_super) {
     __extends(UnknownError, _super);
     function UnknownError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(UnknownError.prototype, "name", {
         get: function () { return name; },

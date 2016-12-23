@@ -15,7 +15,8 @@
   "main": "./Carbon.js",
   "typings": "./Carbon.d.ts",
   "dependencies": {
-    "file-type": "^3.8.0"
+    "file-type": "^3.8.0",
+    "sparqler": "^0.1.0"
   },
   "jspm": {}
 }

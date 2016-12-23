@@ -9,7 +9,7 @@ var IllegalStateError = (function (_super) {
     __extends(IllegalStateError, _super);
     function IllegalStateError(message) {
         if (message === void 0) { message = ""; }
-        _super.call(this, message);
+        return _super.call(this, message) || this;
     }
     Object.defineProperty(IllegalStateError.prototype, "name", {
         get: function () { return "IllegalStateError"; },

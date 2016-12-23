@@ -5,8 +5,8 @@
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "localhost:8083" );
-			carbon.setSetting( "http.ssl", false );
+			carbon.setSetting( "domain", "carbonldp.base22.io" );
+			carbon.setSetting( "http.ssl", true );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -69,10 +69,17 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.getChildren( "/" );
-			} ).then( ( [ _resources, response ] ) => {
-				expect( Carbon.Utils.isArray( _resources ) ).toBe( true );
-				console.log( _resources );
+				return appContext.documents.sparql( "posts/" )
+					.selectAll()
+					.where( ( _ ) => {
+						return [
+							_.resource( "posts/" )
+								.has( _.var( "p" ), _.var( "o" ) ),
+						];
+					} )
+					.execute();
+			} ).then( ( [ result, response ] ) => {
+				console.log( result );
 				done();
 			} ).catch( ( error ) => {
 				done.fail( error );

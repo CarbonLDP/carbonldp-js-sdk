@@ -67,7 +67,7 @@ exports.integerSerializer = new IntegerSerializer();
 var UnsignedIntegerSerializer = (function (_super) {
     __extends(UnsignedIntegerSerializer, _super);
     function UnsignedIntegerSerializer() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     UnsignedIntegerSerializer.prototype.serialize = function (value) {
         var stringValue = _super.prototype.serialize.call(this, value);
