@@ -6,7 +6,7 @@ import RawResults from "./RawResults";
 import HTTPResponse from "./../HTTP/Response";
 
 
-import { QueryBuilder } from "sparqler";
+import SPARQLER from "sparqler";
 
 declare module "sparqler/Clauses" {
 
@@ -19,7 +19,7 @@ declare module "sparqler/Clauses" {
 
 declare module "sparqler/Sparqler" {
 
-	export interface QueryBuilder {
+	export interface SPARQLER {
 		_documents:Documents;
 		_entryPoint:string;
 	}
@@ -27,21 +27,21 @@ declare module "sparqler/Sparqler" {
 }
 
 // Add execute functions to the query builder
-let queryPrototype:any = QueryBuilder.prototype;
+let queryPrototype:any = SPARQLER.prototype;
 let superInit:Function = queryPrototype.initInterfaces;
 queryPrototype.initInterfaces = function():void {
 	superInit.call( this );
-	let self:QueryBuilder = this as QueryBuilder;
+	let self:SPARQLER = this as SPARQLER;
 
 	// Add execution of select
 	this.interfaces.finishSelect = {
 		execute: function():Promise<[ SELECTResults, HTTPResponse ]> {
-			return self._documents.executeSELECTQuery( self._entryPoint, self.getCompactSparqlQuery() );
+			return self._documents.executeSELECTQuery( self._entryPoint, self.toCompactString() );
 		},
 		executeRaw: function():Promise<[ RawResults, HTTPResponse ]> {
-			return self._documents.executeRawSELECTQuery( self._entryPoint, self.getCompactSparqlQuery() );
+			return self._documents.executeRawSELECTQuery( self._entryPoint, self.toCompactString() );
 		},
 	};
 };
 
-export default QueryBuilder;
+export default SPARQLER;

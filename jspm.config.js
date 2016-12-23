@@ -62,7 +62,7 @@ SystemJS.config({
     "npm:*.json"
   ],
   map: {
-    "sparqler": "npm:sparqler@0.1.0-alpha.1",
+    "sparqler": "npm:sparqler@0.1.0",
     "typescript": "npm:typescript@2.0.6",
     "net": "npm:jspm-nodelibs-net@0.2.0",
     "os": "npm:jspm-nodelibs-os@0.2.0",
@@ -76,7 +76,7 @@ SystemJS.config({
     "fs": "npm:jspm-nodelibs-fs@0.2.0",
     "http": "npm:jspm-nodelibs-http@0.2.0",
     "path": "npm:jspm-nodelibs-path@0.2.0",
-    "process": "github:jspm/nodelibs-process@0.2.0-alpha",
+    "process": "npm:jspm-nodelibs-process@0.2.0",
     "stream": "npm:jspm-nodelibs-stream@0.2.0",
     "string_decoder": "npm:jspm-nodelibs-string_decoder@0.2.0",
     "url": "npm:jspm-nodelibs-url@0.2.0",
