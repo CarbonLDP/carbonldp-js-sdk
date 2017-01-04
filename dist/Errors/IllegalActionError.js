@@ -7,8 +7,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 var AbstractError_1 = require("./AbstractError");
 var IllegalActionError = (function (_super) {
     __extends(IllegalActionError, _super);
-    function IllegalActionError() {
-        return _super.apply(this, arguments) || this;
+    function IllegalActionError(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, IllegalActionError.prototype);
+        return _this;
     }
     Object.defineProperty(IllegalActionError.prototype, "name", {
         get: function () { return "IllegalActionError"; },

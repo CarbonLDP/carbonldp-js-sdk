@@ -8,6 +8,10 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.namae,
         "@type": NS.XSD.DataType.string,
     },
+    "description": {
+        "@id": NS.CS.Predicate.description,
+        "@type": NS.XSD.DataType.string,
+    },
     "agents": {
         "@id": NS.CS.Predicate.agent,
         "@type": "@id",
@@ -24,16 +28,17 @@ var Factory = (function () {
         return Factory.hasClassProperties(object)
             && Document.Factory.is(object);
     };
-    Factory.create = function (name) {
-        return Factory.createFrom({}, name);
+    Factory.create = function (name, description) {
+        return Factory.createFrom({}, name, description);
     };
-    Factory.createFrom = function (object, name) {
+    Factory.createFrom = function (object, name, description) {
         if (!Document.Factory.hasClassProperties(object))
             object = Document.Factory.createFrom(object);
         if (!name)
             throw new IllegalArgumentError_1.default("The name cannot be empty.");
         var role = object;
         role.name = name;
+        role.description = description;
         return role;
     };
     return Factory;

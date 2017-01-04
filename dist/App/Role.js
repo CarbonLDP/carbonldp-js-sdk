@@ -24,11 +24,11 @@ var Factory = (function () {
         return Role.Factory.is(object)
             && object.hasType(exports.RDF_CLASS);
     };
-    Factory.create = function (name) {
-        return Factory.createFrom({}, name);
+    Factory.create = function (name, description) {
+        return Factory.createFrom({}, name, description);
     };
-    Factory.createFrom = function (object, name) {
-        var role = Role.Factory.createFrom(object, name);
+    Factory.createFrom = function (object, name, description) {
+        var role = Role.Factory.createFrom(object, name, description);
         role.types.push(NS.CS.Class.AppRole);
         return role;
     };

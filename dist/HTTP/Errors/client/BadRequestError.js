@@ -9,8 +9,10 @@ var name = "BadRequestError";
 var statusCode = 400;
 var BadRequestError = (function (_super) {
     __extends(BadRequestError, _super);
-    function BadRequestError() {
-        return _super.apply(this, arguments) || this;
+    function BadRequestError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, BadRequestError.prototype);
+        return _this;
     }
     Object.defineProperty(BadRequestError, "statusCode", {
         get: function () { return statusCode; },

@@ -5,6 +5,7 @@ class IllegalStateError extends AbstractError {
 
 	constructor( message:string = "" ) {
 		super( message );
+		Object.setPrototypeOf( this, IllegalStateError.prototype );
 	}
 }
 
