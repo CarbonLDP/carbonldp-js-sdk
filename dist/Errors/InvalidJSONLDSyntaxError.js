@@ -7,8 +7,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 var AbstractError_1 = require("./AbstractError");
 var InvalidJSONLDSyntaxError = (function (_super) {
     __extends(InvalidJSONLDSyntaxError, _super);
-    function InvalidJSONLDSyntaxError() {
-        _super.apply(this, arguments);
+    function InvalidJSONLDSyntaxError(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, InvalidJSONLDSyntaxError.prototype);
+        return _this;
     }
     Object.defineProperty(InvalidJSONLDSyntaxError.prototype, "name", {
         get: function () { return "InvalidJSONLDSyntaxError"; },

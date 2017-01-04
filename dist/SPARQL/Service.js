@@ -93,11 +93,11 @@ var Class = (function () {
                 throw new Errors.IllegalArgumentError("The bindingProperty has an unsupported type");
         }
     };
-    Class.defaultOptions = {};
-    Class.resultsParser = new RawResultsParser_1.default();
-    Class.stringParser = new HTTP.StringParser.Class();
     return Class;
 }());
+Class.defaultOptions = {};
+Class.resultsParser = new RawResultsParser_1.default();
+Class.stringParser = new HTTP.StringParser.Class();
 exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;

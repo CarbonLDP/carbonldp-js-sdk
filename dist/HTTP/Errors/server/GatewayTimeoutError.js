@@ -9,8 +9,10 @@ var name = "GatewayTimeoutError";
 var statusCode = 504;
 var GatewayTimeoutError = (function (_super) {
     __extends(GatewayTimeoutError, _super);
-    function GatewayTimeoutError() {
-        _super.apply(this, arguments);
+    function GatewayTimeoutError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, GatewayTimeoutError.prototype);
+        return _this;
     }
     Object.defineProperty(GatewayTimeoutError, "statusCode", {
         get: function () { return statusCode; },

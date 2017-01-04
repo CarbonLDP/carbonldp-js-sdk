@@ -904,9 +904,9 @@ var Class = (function () {
             }
         }
     };
-    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;
 }());
+Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;

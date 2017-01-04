@@ -8,8 +8,10 @@ var HTTPError_1 = require("./HTTPError");
 var name = "UnknownError";
 var UnknownError = (function (_super) {
     __extends(UnknownError, _super);
-    function UnknownError() {
-        _super.apply(this, arguments);
+    function UnknownError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, UnknownError.prototype);
+        return _this;
     }
     Object.defineProperty(UnknownError.prototype, "name", {
         get: function () { return name; },

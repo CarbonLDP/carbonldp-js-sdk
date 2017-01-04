@@ -9,8 +9,10 @@ var name = "MethodNotAllowedError";
 var statusCode = 405;
 var MethodNotAllowedError = (function (_super) {
     __extends(MethodNotAllowedError, _super);
-    function MethodNotAllowedError() {
-        _super.apply(this, arguments);
+    function MethodNotAllowedError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, MethodNotAllowedError.prototype);
+        return _this;
     }
     Object.defineProperty(MethodNotAllowedError, "statusCode", {
         get: function () { return statusCode; },

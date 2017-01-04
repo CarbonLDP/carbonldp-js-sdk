@@ -283,7 +283,7 @@ var A = (function () {
     A.joinWithoutDuplicates = function () {
         var arrays = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            arrays[_i - 0] = arguments[_i];
+            arrays[_i] = arguments[_i];
         }
         var result = arrays[0].slice();
         for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
@@ -349,9 +349,9 @@ var UUID = (function () {
             return v.toString(16);
         });
     };
-    UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return UUID;
 }());
+UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 exports.UUID = UUID;
 
 //# sourceMappingURL=Utils.js.map

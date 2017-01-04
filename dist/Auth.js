@@ -35,11 +35,11 @@ var NS = require("./NS");
 var Resource = require("./Resource");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Method;
 (function (Method) {
     Method[Method["BASIC"] = 0] = "BASIC";
     Method[Method["TOKEN"] = 1] = "TOKEN";
-})(exports.Method || (exports.Method = {}));
-var Method = exports.Method;
+})(Method = exports.Method || (exports.Method = {}));
 var Class = (function () {
     function Class(context) {
         this.roles = null;

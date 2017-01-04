@@ -9,8 +9,10 @@ var name = "HTTPVersionNotSupportedError";
 var statusCode = 505;
 var HTTPVersionNotSupportedError = (function (_super) {
     __extends(HTTPVersionNotSupportedError, _super);
-    function HTTPVersionNotSupportedError() {
-        _super.apply(this, arguments);
+    function HTTPVersionNotSupportedError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, HTTPVersionNotSupportedError.prototype);
+        return _this;
     }
     Object.defineProperty(HTTPVersionNotSupportedError, "statusCode", {
         get: function () { return statusCode; },

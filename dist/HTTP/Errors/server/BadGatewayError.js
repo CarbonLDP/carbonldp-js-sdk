@@ -9,8 +9,10 @@ var name = "BadGatewayError";
 var statusCode = 502;
 var BadGatewayError = (function (_super) {
     __extends(BadGatewayError, _super);
-    function BadGatewayError() {
-        _super.apply(this, arguments);
+    function BadGatewayError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, BadGatewayError.prototype);
+        return _this;
     }
     Object.defineProperty(BadGatewayError, "statusCode", {
         get: function () { return statusCode; },

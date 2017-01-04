@@ -8,7 +8,7 @@ var Agents = require("./../Auth/Agents");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(appContext) {
-        _super.call(this, appContext);
+        return _super.call(this, appContext) || this;
     }
     Class.prototype.get = function (agentURI, requestOptions) {
         return _super.prototype.get.call(this, agentURI, requestOptions);

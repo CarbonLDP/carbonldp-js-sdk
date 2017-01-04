@@ -9,8 +9,10 @@ var name = "RequestEntityTooLargeError";
 var statusCode = 413;
 var RequestEntityTooLargeError = (function (_super) {
     __extends(RequestEntityTooLargeError, _super);
-    function RequestEntityTooLargeError() {
-        _super.apply(this, arguments);
+    function RequestEntityTooLargeError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, RequestEntityTooLargeError.prototype);
+        return _this;
     }
     Object.defineProperty(RequestEntityTooLargeError, "statusCode", {
         get: function () { return statusCode; },
