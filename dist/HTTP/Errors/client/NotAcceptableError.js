@@ -9,8 +9,10 @@ var name = "NotAcceptableError";
 var statusCode = 406;
 var NotAcceptableError = (function (_super) {
     __extends(NotAcceptableError, _super);
-    function NotAcceptableError() {
-        return _super.apply(this, arguments) || this;
+    function NotAcceptableError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, NotAcceptableError.prototype);
+        return _this;
     }
     Object.defineProperty(NotAcceptableError, "statusCode", {
         get: function () { return statusCode; },

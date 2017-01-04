@@ -29,14 +29,19 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import SparqlBuilder from "./SPARQL/Builder";
 import { QueryClause } from "sparqler/Clauses";
 
+export interface DocumentDecorator {
+	decorator:( object:Object, ...parameters:any[] ) => Object;
+	parameters?:any[];
+}
+
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
 
-	private _documentDecorators:Map<string, { decorator:Function, parameters?:any[] }>;
-	get documentDecorators():Map<string, { decorator:Function, parameters?:any[] }> { return this._documentDecorators; }
+	private _documentDecorators:Map<string, DocumentDecorator>;
+	get documentDecorators():Map<string, DocumentDecorator> { return this._documentDecorators; }
 
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
@@ -57,9 +62,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this._jsonldConverter = new JSONLD.Converter.Class();
 		}
 
-		let decorators:Map<string, { decorator:Function, parameters?:any[] }> = new Map();
+		let decorators:Map<string, DocumentDecorator> = new Map();
 		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let parentDecorators:Map<string, { decorator:Function, parameters?:any[] }> = this.context.parentContext.documents.documentDecorators;
+			let parentDecorators:Map<string, DocumentDecorator> = this.context.parentContext.documents.documentDecorators;
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.M.extend( decorators, parentDecorators );
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate } );
@@ -67,7 +72,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			decorators.set( Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate } );
 		}
 
-		decorators.set( AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [ ( this.context && this.context.auth ) ? this.context.auth.roles : null ] } );
 		this._documentDecorators = decorators;
 	}
 
@@ -799,6 +803,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				persistedProtectedDocument,
 				response,
 			];
+		} ).catch( ( error ) => {
+			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
+			return Promise.reject( error );
 		} );
 	}
 
@@ -1054,12 +1061,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private decoratePersistedDocument( persistedDocument:PersistedDocument.Class ):void {
-		let entries:Iterator<[ string, { decorator:Function, parameters?:any[] } ]> = this._documentDecorators.entries();
-		for( let [ type, options ] of Utils.A.from( entries ) ) {
+		this._documentDecorators.forEach( ( options:DocumentDecorator, type:string ) => {
 			if( persistedDocument.hasType( type ) ) {
 				options.decorator.apply( null, [ persistedDocument ].concat( options.parameters ) );
 			}
-		}
+		} );
 	}
 
 }

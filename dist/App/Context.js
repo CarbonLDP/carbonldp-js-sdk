@@ -6,12 +6,15 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var AbstractContext_1 = require("./../AbstractContext");
 var Auth_1 = require("./Auth");
+var PersistedRole = require("./PersistedRole");
 var RDF = require("./../RDF");
+var Role = require("./Role");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext, app) {
         var _this = _super.call(this, parentContext) || this;
         _this.auth = new Auth_1.default(_this);
+        _this.documents.documentDecorators.set(Role.RDF_CLASS, { decorator: PersistedRole.Factory.decorate, parameters: [_this.auth.roles] });
         _this._app = app;
         _this.base = _this.getBase(_this.app);
         _this.documents.removePointer(app.rootContainer);

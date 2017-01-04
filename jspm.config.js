@@ -76,7 +76,7 @@ SystemJS.config({
     "fs": "npm:jspm-nodelibs-fs@0.2.0",
     "http": "npm:jspm-nodelibs-http@0.2.0",
     "path": "npm:jspm-nodelibs-path@0.2.0",
-    "process": "npm:jspm-nodelibs-process@0.2.0",
+    "process": "github:jspm/nodelibs-process@0.2.0-alpha",
     "stream": "npm:jspm-nodelibs-stream@0.2.0",
     "string_decoder": "npm:jspm-nodelibs-string_decoder@0.2.0",
     "url": "npm:jspm-nodelibs-url@0.2.0",

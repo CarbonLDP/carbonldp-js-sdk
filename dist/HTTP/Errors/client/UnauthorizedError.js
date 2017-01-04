@@ -9,8 +9,10 @@ var name = "UnauthorizedError";
 var statusCode = 401;
 var UnauthorizedError = (function (_super) {
     __extends(UnauthorizedError, _super);
-    function UnauthorizedError() {
-        return _super.apply(this, arguments) || this;
+    function UnauthorizedError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, UnauthorizedError.prototype);
+        return _this;
     }
     Object.defineProperty(UnauthorizedError, "statusCode", {
         get: function () { return statusCode; },

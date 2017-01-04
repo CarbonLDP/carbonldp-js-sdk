@@ -5,6 +5,7 @@ class NotImplementedError extends AbstractError {
 
 	constructor( message:string = "" ) {
 		super( message );
+		Object.setPrototypeOf( this, NotImplementedError.prototype );
 	}
 }
 

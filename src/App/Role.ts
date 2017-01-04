@@ -34,12 +34,12 @@ export class Factory {
 			;
 	}
 
-	static create( name:string ):Class {
-		return Factory.createFrom<Object>( {}, name );
+	static create( name:string, description?:string ):Class {
+		return Factory.createFrom<Object>( {}, name, description );
 	}
 
-	static createFrom<T extends Object>( object:T, name:string ):T & Class {
-		let role:T & Class = <T & Class> Role.Factory.createFrom( object, name );
+	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
+		let role:T & Class = <T & Class> Role.Factory.createFrom( object, name, description );
 		role.types.push( NS.CS.Class.AppRole );
 
 		return role;
