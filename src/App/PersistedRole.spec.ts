@@ -86,16 +86,16 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"childrenRoles",
+			"childRole",
 			"Carbon.Pointer.Class[]",
 			"An array of pointer that references to all the children of the current role."
 		), ():void => {
 			let children:Pointer.Class[] = [ Pointer.Factory.create() ];
 			let persistedRole:PersistedAppRole.Class = <any> {};
 
-			persistedRole.childrenRoles = children;
-			expect( persistedRole.childrenRoles ).toEqual( jasmine.any( Array ) );
-			expect( Pointer.Factory.is( persistedRole.childrenRoles[ 0 ] ) ).toBe( true );
+			persistedRole.childRoles = children;
+			expect( persistedRole.childRoles ).toEqual( jasmine.any( Array ) );
+			expect( Pointer.Factory.is( persistedRole.childRoles[ 0 ] ) ).toBe( true );
 		} );
 
 	} );
@@ -127,7 +127,7 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			object = {
 				_roles: null,
 				parentRole: null,
-				childrenRoles: null,
+				childRoles: null,
 			};
 			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -139,9 +139,9 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( true );
 			object.parentRole = null;
 
-			delete object.childrenRoles;
+			delete object.childRoles;
 			expect( PersistedAppRole.Factory.hasClassProperties( object ) ).toBe( true );
-			object.childrenRoles = null;
+			object.childRoles = null;
 		} );
 
 		it( hasMethod(
@@ -165,7 +165,7 @@ describe( module( "Carbon/App/PersistedRole" ), ():void => {
 				_roles: null,
 				name: null,
 				parentRole: null,
-				childrenRoles: null,
+				childRoles: null,
 				agents: null,
 				types: [ NS.CS.Class.AppRole ],
 			};

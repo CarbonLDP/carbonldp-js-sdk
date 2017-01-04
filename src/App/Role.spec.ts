@@ -51,8 +51,8 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			"@type": "@id",
 		} );
 
-		expect( Utils.hasProperty( AppRole.SCHEMA, "childrenRoles" ) ).toBe( true );
-		expect( AppRole.SCHEMA[ "childrenRoles" ] ).toEqual( {
+		expect( Utils.hasProperty( AppRole.SCHEMA, "childRoles" ) ).toBe( true );
+		expect( AppRole.SCHEMA[ "childRoles" ] ).toEqual( {
 			"@id": NS.CS.Predicate.childRole,
 			"@type": "@id",
 			"@container": "@set",
