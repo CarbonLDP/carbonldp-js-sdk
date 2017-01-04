@@ -36,7 +36,7 @@ describe( module( "Carbon/App/Agents" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.App.Context.Class", description: "The application context where to manage its Agents." },
+			{ name: "context", type: "Carbon.App.Context", description: "The application context where to manage its Agents." },
 		] ), ():void => {
 			let app:PersistedApp = <any> {
 				rootContainer: {

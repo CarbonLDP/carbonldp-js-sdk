@@ -1,10 +1,13 @@
 import {
 	INSTANCE,
+	OBLIGATORY,
+	OPTIONAL,
 
 	module,
 
 	clazz,
 	method,
+	interfaze,
 
 	isDefined,
 	hasConstructor,
@@ -16,6 +19,7 @@ import {
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
+import Carbon from "./Carbon";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -34,9 +38,26 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
-import { create } from "domain";
 
 describe( module( "Carbon/Documents" ), ():void => {
+
+	describe( interfaze( "Carbon.Documents.DocumentDecorator", "Interface that describes the properties needed to decorate a document when requested" ), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"decorator",
+			"( object:Object, ...parameters:any[] ) => Object",
+			"Function that is called when a specific document will be decorated.\n\nThe function must accept the document to decorate as the first parameter, continued by optional parameters that where specified in the `parameters` property of this interface.\n\nThe function must return the same object provided."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"parameters",
+			"any[]",
+			"Optional parameters that will be provided to the decorator function when called."
+		), ():void => {} );
+
+	} );
 
 	describe( clazz(
 		"Carbon.Documents.Class",
@@ -97,6 +118,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			expect( documents.jsonldConverter ).toBeDefined();
 			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"documentDecorators",
+			"Map<string, Carbon.Documents.DocumentDecorator>",
+			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			expect( documents.documentDecorators ).toBeDefined();
+			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
+
+			// Has default decorators
+			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Agent ) ).toBe( true );
+
+			// This is set at `Carbon.App.Context.Class`
+			expect( documents.documentDecorators.has( NS.CS.Class.AppRole ) ).toBe( false );
 		} );
 
 		describe( method(
@@ -1910,7 +1958,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
 				} );
 
-				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ) => {
 					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, undefined );
 					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/new-child/" );
 
@@ -1957,7 +2005,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
 				} );
 
-				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, "child-document", options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, "child-document", options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ) => {
 					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, "child-document", options );
 					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/child-document/" );
 
@@ -2015,7 +2063,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let childrenObjects:Object[] = [ { index: 0, property: "My property" }, { index: 1, property: "My property" } ];
 
-				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callFake( ():Promise<[  PersistedProtectedDocument.Class[], HTTP.Response.Class[] ]> => {
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callFake( ():Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ]> => {
 					let childrenDocuments:PersistedDocument.Class[] = childrenObjects.map( ( childObject:any ) => {
 						let document:Document.Class = Document.Factory.createFrom( childObject );
 						document.id = `http://example.com/parent-resource/new-child/${ childObject.index }/`;
@@ -2078,7 +2126,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let slugs:string[] = [ "first", "second", "third" ];
 				let childrenObjects:Object[] = [ { index: 0, property: "My property" }, { index: 1, property: "My property" } ];
 
-				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callFake( ( parentURI:string, objects:Object[], createSlugs:string[], requestOptions:HTTP.Request.Options ):Promise<[  PersistedProtectedDocument.Class[], HTTP.Response.Class[] ]> => {
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChildren" ).and.callFake( ( parentURI:string, objects:Object[], createSlugs:string[], requestOptions:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class[] ]> => {
 					expect( parentURI ).toBe( "http://example.com/parent-resource/" );
 					expect( objects ).toBe( childrenObjects );
 					expect( createSlugs ).toBe( slugs );
@@ -2658,7 +2706,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
 				let spy:any = {
-					success: ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
+					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
 						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
@@ -2757,7 +2805,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
 				let spy:any = {
-					success: ( [ pointer, response ]:[Pointer.Class, HTTP.Response.Class] ):void => {
+					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
 						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
@@ -3153,7 +3201,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				if( typeof Blob !== "undefined" ) {
 
 					let spy:any = {
-						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						success: ( response:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
 							expect( response.length ).toBe( 2 );
@@ -3209,7 +3257,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				if( typeof Blob !== "undefined" ) {
 
 					let spy:any = {
-						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						success: ( response:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
 							expect( response.length ).toBe( 2 );
@@ -3264,7 +3312,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				if( typeof Buffer !== "undefined" ) {
 
 					let spy:any = {
-						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						success: ( response:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
 							expect( response.length ).toBe( 2 );
@@ -3320,7 +3368,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				if( typeof Buffer !== "undefined" ) {
 
 					let spy:any = {
-						success: ( response:[Pointer.Class, HTTP.Response.Class] ):void => {
+						success: ( response:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 							expect( response ).toBeDefined();
 							expect( Utils.isArray( response ) ).toBe( true );
 							expect( response.length ).toBe( 2 );
@@ -4955,7 +5003,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
 			let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
 
-			documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class] ] ) => {
+			documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ] ) => {
 				expect( spySave ).toHaveBeenCalledWith( document );
 				expect( spyRefresh ).toHaveBeenCalledWith( document );
 

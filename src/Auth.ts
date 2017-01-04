@@ -8,6 +8,7 @@ import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedAgent from "./Auth/PersistedAgent";
+import * as PersistedRole from "./Auth/PersistedRole";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
@@ -39,6 +40,7 @@ export {
 	PersistedACE,
 	PersistedACL,
 	PersistedAgent,
+	PersistedRole,
 	Role,
 	Roles,
 	Ticket,
