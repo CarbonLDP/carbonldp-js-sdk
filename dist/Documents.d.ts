@@ -12,15 +12,16 @@ import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+export interface DocumentDecorator {
+    decorator: (object: Object, ...parameters: any[]) => Object;
+    parameters?: any[];
+}
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
-    readonly documentDecorators: Map<string, {
-        decorator: (object: Object, ...parameters: any[]) => Object;
-        parameters?: any[];
-    }>;
+    readonly documentDecorators: Map<string, DocumentDecorator>;
     private context;
     private pointers;
     private documentsBeingResolved;

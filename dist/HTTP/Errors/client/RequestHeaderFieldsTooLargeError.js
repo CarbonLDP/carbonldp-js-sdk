@@ -10,7 +10,7 @@ var statusCode = 431;
 var RequestHeaderFieldsTooLargeError = (function (_super) {
     __extends(RequestHeaderFieldsTooLargeError, _super);
     function RequestHeaderFieldsTooLargeError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(RequestHeaderFieldsTooLargeError, "statusCode", {
         get: function () { return statusCode; },

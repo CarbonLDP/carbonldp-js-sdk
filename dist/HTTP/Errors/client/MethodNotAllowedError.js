@@ -10,7 +10,7 @@ var statusCode = 405;
 var MethodNotAllowedError = (function (_super) {
     __extends(MethodNotAllowedError, _super);
     function MethodNotAllowedError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(MethodNotAllowedError, "statusCode", {
         get: function () { return statusCode; },

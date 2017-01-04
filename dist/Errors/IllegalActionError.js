@@ -8,7 +8,7 @@ var AbstractError_1 = require("./AbstractError");
 var IllegalActionError = (function (_super) {
     __extends(IllegalActionError, _super);
     function IllegalActionError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(IllegalActionError.prototype, "name", {
         get: function () { return "IllegalActionError"; },

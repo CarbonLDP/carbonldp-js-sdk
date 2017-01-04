@@ -10,8 +10,9 @@ var Errors = require("./../Errors");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(platformContext) {
-        _super.call(this, platformContext);
-        this.agents = new Agents.Class(platformContext);
+        var _this = _super.call(this, platformContext) || this;
+        _this.agents = new Agents.Class(platformContext);
+        return _this;
     }
     Object.defineProperty(Class.prototype, "roles", {
         get: function () { throw new Errors.NotImplementedError("Currently there is no support for Platform Roles"); },

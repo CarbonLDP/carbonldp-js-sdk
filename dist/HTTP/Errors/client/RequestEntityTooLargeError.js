@@ -10,7 +10,7 @@ var statusCode = 413;
 var RequestEntityTooLargeError = (function (_super) {
     __extends(RequestEntityTooLargeError, _super);
     function RequestEntityTooLargeError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(RequestEntityTooLargeError, "statusCode", {
         get: function () { return statusCode; },

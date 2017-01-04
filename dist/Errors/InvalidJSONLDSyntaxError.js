@@ -8,7 +8,7 @@ var AbstractError_1 = require("./AbstractError");
 var InvalidJSONLDSyntaxError = (function (_super) {
     __extends(InvalidJSONLDSyntaxError, _super);
     function InvalidJSONLDSyntaxError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(InvalidJSONLDSyntaxError.prototype, "name", {
         get: function () { return "InvalidJSONLDSyntaxError"; },

@@ -10,7 +10,7 @@ var statusCode = 429;
 var TooManyRequestsError = (function (_super) {
     __extends(TooManyRequestsError, _super);
     function TooManyRequestsError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(TooManyRequestsError, "statusCode", {
         get: function () { return statusCode; },
