@@ -327,8 +327,7 @@ var M = (function () {
                 var entry = next.value;
                 var key = entry[0];
                 var value = entry[1];
-                if (!toExtend.has(key))
-                    toExtend.set(key, value);
+                toExtend.set(key, value);
                 next = values.next();
             }
         }

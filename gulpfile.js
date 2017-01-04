@@ -21,6 +21,8 @@ const jasmine = require( "gulp-jasmine" );
 
 const Builder = require( "jspm" ).Builder;
 
+const htmlMinifier = require( "gulp-htmlmin" );
+
 let config = {
 	source: {
 		typescript: [
@@ -55,7 +57,8 @@ gulp.task( "build", ( done ) => {
 	runSequence(
 		"version",
 		"clean:dist",
-		[ "compile:typescript", "compile:documentation", "bundle:sfx", "prepare:npm-package" ],
+		[ "compile:typescript", "compile:documentation", "bundle:sfx" ],
+		"prepare:npm-package",
 		"finish",
 		done
 	);
@@ -91,14 +94,48 @@ gulp.task( "clean:temp", () => {
 	del.sync( config.dist.temp );
 } );
 
-gulp.task( "compile:documentation", ( done ) => {
+gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
+
+gulp.task( "compile:documentation:html", ( done ) => {
+	runSequence(
+		"compile:documentation|compile",
+		"compile:documentation|minify",
+		done
+	);
+} );
+
+gulp.task( "compile:documentation|compile", ( done ) => {
 	new karma.Server( {
 		configFile: __dirname + "/karma.conf.js",
 		reporters: [ "markdown" ],
 		markdownReporter: {
-			src: "build/doc-templates/template.hbs",
-			partials: "build/doc-templates/partials/*.hbs",
-			dest: "doc/README.md"
+			src: "build/docs/html/template.hbs",
+			partials: "build/docs/html/partials/*.hbs",
+			dest: "docs/index.html"
+		},
+		singleRun: true
+	}, done ).start();
+} );
+
+gulp.task( "compile:documentation|minify", () => {
+	return gulp.src( "docs/index.html" )
+		.pipe( htmlMinifier( {
+			collapseWhitespace: true,
+			conservativeCollapse: true,
+			removeComments: true
+		} ) )
+		.pipe( gulp.dest( "docs" ) )
+		;
+} );
+
+gulp.task( "compile:documentation:markdown", ( done ) => {
+	new karma.Server( {
+		configFile: __dirname + "/karma.conf.js",
+		reporters: [ "markdown" ],
+		markdownReporter: {
+			src: "build/docs/markdown/template.hbs",
+			partials: "build/docs/markdown/partials/*.hbs",
+			dest: "docs/README.md"
 		},
 		singleRun: true
 	}, done ).start();
@@ -136,17 +173,18 @@ gulp.task( "lint:typescript", () => {
 
 gulp.task( "prepare:npm-package", ( done ) => {
 	runSequence(
-		[ "prepare:npm-package|copy:docs", "prepare:npm-package|copy:package-json" ],
+		[ "prepare:npm-package|copy:documentation", "prepare:npm-package|copy:package-json" ],
 		done
 	);
 } );
 
-gulp.task( "prepare:npm-package|copy:docs", () => {
+gulp.task( "prepare:npm-package|copy:documentation", () => {
 	return gulp.src( [
 		"README.md",
 		"CHANGELOG.md",
 		"LICENSE",
-	] ).pipe( gulp.dest( config.dist.tsOutput ) );
+		"documentation/**/*"
+	], { base: "./" } ).pipe( gulp.dest( config.dist.tsOutput ) );
 } );
 
 gulp.task( "prepare:npm-package|copy:package-json", () => {

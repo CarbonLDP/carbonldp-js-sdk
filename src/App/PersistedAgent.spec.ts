@@ -11,7 +11,7 @@ import * as Utils from "./../Utils";
 import * as PersistedAgent from "./PersistedAgent";
 import DefaultExport from "./PersistedAgent";
 
-describe( module( "Carbon.App.PersistedAgent" ), ():void => {
+describe( module( "Carbon/App/PersistedAgent" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedAgent ).toBeDefined();

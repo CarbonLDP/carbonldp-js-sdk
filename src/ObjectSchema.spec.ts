@@ -117,6 +117,29 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
+	describe( interfaze(
+		"Carbon.ObjectSchema.Resolver",
+		"Interface that defines the methods needed for an element that can provide object schemas."
+	), ():void => {
+
+		it( hasMethod(
+			OPTIONAL,
+			"getGeneralSchema",
+			"Returns the general object schema that applies to all the objects.",
+			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OPTIONAL,
+			"getSchemaFor",
+			"Returns the specific object schema that applies to the object provided.", [
+				{ name: "object", type: "Object", description: "The object to look for its schema." }
+			],
+			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+		), ():void => {} );
+
+	} );
+
 	it( hasDefaultExport( "Carbon.ObjectSchema.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:ObjectSchema.Class;
@@ -476,9 +499,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				},
 				{
 					"dct": "http://purl.org/dc/terms/",
+					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"name": {
-						"@id": "dct:name",
+						"@id": "ex:name",
 						"@type": "xsd:string",
 					},
 					"created": {
@@ -495,10 +519,22 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 			let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( digestedSchemas );
 
-			expect( digestedSchema.prefixes.size ).toEqual( 3 );
+			expect( digestedSchema.prefixes.size ).toEqual( 4 );
 			expect( digestedSchema.prefixes.has( "skos" ) ).toEqual( true );
 			expect( digestedSchema.prefixes.get( "skos" ) instanceof RDF.URI.Class ).toEqual( true );
 			expect( digestedSchema.prefixes.get( "skos" ).toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
+
+			expect( digestedSchema.prefixes.has( "xsd" ) ).toEqual( true );
+			expect( digestedSchema.prefixes.get( "xsd" ) instanceof RDF.URI.Class ).toEqual( true );
+			expect( digestedSchema.prefixes.get( "xsd" ).toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#" );
+
+			expect( digestedSchema.prefixes.has( "dct" ) ).toEqual( true );
+			expect( digestedSchema.prefixes.get( "dct" ) instanceof RDF.URI.Class ).toEqual( true );
+			expect( digestedSchema.prefixes.get( "dct" ).toString() ).toEqual( "http://purl.org/dc/terms/" );
+
+			expect( digestedSchema.prefixes.has( "ex" ) ).toEqual( true );
+			expect( digestedSchema.prefixes.get( "ex" ) instanceof RDF.URI.Class ).toEqual( true );
+			expect( digestedSchema.prefixes.get( "ex" ).toString() ).toEqual( "http://example.com/ns#" );
 
 			expect( digestedSchema.properties.size ).toEqual( 3 );
 			expect( digestedSchema.properties.has( "hasTopConcept" ) ).toEqual( true );
@@ -516,14 +552,14 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.get( "name" ).literalType instanceof RDF.URI.Class ).toEqual( true );
 			expect( digestedSchema.properties.get( "name" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
 			expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
+			expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://example.com/ns#name" );
 			expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 			expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 		} );
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.Utils", "Class with useful functions that use schemas." ), ():void => {
+	describe( clazz( "Carbon.ObjectSchema.Util", "Class with useful functions that use schemas." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.Util ).toBeDefined();

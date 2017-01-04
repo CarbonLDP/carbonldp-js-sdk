@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=0.8">
+	<title>Carbon LDP JavaScript SDK - Docs</title>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/darcula.min.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="pushable">
+	<div class="ui inverted top fixed menu doc-menu doc-menu-top">
+		<a class="item" href="https://carbonldp.com">
+			<img class="ui small image doc-logo" src="images/carbon-ldp-logo.png">
+		</a>
+		<div class="ui right aligned search item doc-search">
+			<div class="ui icon input">
+				<input class="prompt" type="text" placeholder="Search...">
+				<i class="search icon"></i>
+			</div>
+			<div class="results"></div>
+		</div>
+	</div>
+
+	<div class="ui inverted left vertical visible wide sidebar doc-menu-sidebar">
+		<div class="ui top fixed inverted vertical menu doc-menu">
+			<div class="ui item right aligned container">
+				<button class="ui inverted icon button js-sidebar-toggler">
+					<i class="sidebar icon"></i>
+				</button>
+			</div>
+		</div>
+		<div class="ui bottom fixed inverted vertical menu doc-menu">
+			{{#each modules}}
+				<div class="item">
+					<a class="header" href="#Module-{{toURL path}}">{{path}}</a>
+					<div class="menu">
+						{{#combineElements this}}
+							<a class="item{{#if isClass}} item-class{{else}} item-interface{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
+						{{/combineElements}}
+					</div>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+
+	<div class="ui top fixed menu doc-menu doc-menu-location">
+		<a class="item doc-menu-location__launch-item js-sidebar-toggler"><i class="large content icon"></i>Menu</a>
+		<div class="left menu">
+			<a class="item doc-menu-location__item" href="/">JS SDK Docs</a>
+		</div>
+		<div class="right menu">
+			<!--<div class="ui right aligned search item doc-search">
+				<div class="ui icon input">
+					<input class="prompt" type="text" placeholder="Search...">
+					<i class="search icon"></i>
+				</div>
+				<div class="results"></div>
+			</div>-->
+		</div>
+	</div>
+
+	<div class="doc-page-content pusher">
+		<div class="ui padded basic doc-main segment">
+			<h1 class="ui header">Carbon LDP JavaScript SDK API Reference</h1>
+			<div class="ui divider"></div>
+
+			<div class="ui basic segment doc-section__content">
+				{{>header level=2 name="Classes and Interfaces"}}
+				<div class="ui list elements-list elements-list_single">
+					{{#toc-tree modules}}
+						<div class="item">
+							<span class="ui {{#is type "I"}}orange{{else}}blue{{/is}} label icon elements-list__item-type">{{type}}</span>
+							<a class="content" href="#{{toURL path}}">{{path}}</a>
+						</div>
+					{{/toc-tree}}
+				</div>
+			</div>
+
+
+			{{#each modules}}
+				{{br 3}}
+				<div class="ui vertical segment doc-module doc-section">
+					{{>header path=this.path name=this.path isModule=true}}
+
+					{{#if default-export}}
+						{{>section-tags type="Default Export" tag=default-export}}
+					{{/if}}
+
+					<div class="ui basic segment doc-content doc-section__content">
+						{{#with description}}
+							<div class="doc-description">
+								{{>text-markdown element=this}}
+							</div>
+							{{br 1}}
+						{{/with}}
+
+						{{#or this.interfaces this.classes}}
+							{{>header level=2 path=(concat path "--Classes and Interfaces") name="Classes and Interfaces in the Module" }}
+							<div class="ui list elements-list">
+								{{#combineElements this}}
+									<div class="item">
+										<span class="ui {{#if isInterface}}orange{{else}}blue{{/if}} label icon elements-list__item-type">{{#if isClass}}C{{else}}I{{/if}}</span>
+										<div class="content">
+											<a class="header" href="#{{toURL element.path}}">{{element.path}}</a>
+											{{#with element.description}}
+												<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
+											{{/with}}
+										</div>
+									</div>
+								{{/combineElements}}
+							</div>
+							<br>
+						{{/or}}
+
+						{{#if reexports}}
+							{{> reexports}}
+						{{/if}}
+
+						{{#if enums}}
+							{{#each enums}}
+								{{>enum this}}
+							{{/each}}
+						{{/if}}
+
+						{{#with properties}}
+							{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
+
+							<div class="ui basic segment doc-content">
+								{{>properties properties=static access="#" path=../path}}
+
+								{{>properties properties=instance access="." path=../path}}
+							</div>
+						{{/with}}
+
+						{{#with methods}}
+							{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
+
+							<div class="ui basic segment doc-content">
+								{{>methods methods=static access="#" path=../path}}
+
+								{{>methods methods=instance access="." path=../path}}
+							</div>
+						{{/with}}
+					</div>
+
+				</div>
+
+				{{#combineElements this}}
+					{{br 3}}
+					<div class="ui vertical segment doc-object doc-section">
+
+						{{>header path=element.path name=element.path}}
+
+						{{#with element}}
+							{{#if interfaces}}
+								{{>section-tags type="Implements" tags=interfaces}}
+							{{/if}}
+
+							{{#if super-classes}}
+								{{>section-tags type="Extends" tags=super-classes}}
+							{{/if}}
+
+							<div class="ui basic segment doc-content doc-section__content">
+								{{#with description}}
+									<div class="doc-description">
+										{{>text-markdown element=this}}
+									</div>
+								{{/with}}
+								{{br 1}}
+
+								{{#if reexports~}}
+									{{> reexports}}
+								{{/if}}
+
+								{{#with constructors~}}
+									{{>header level=2 path=(concat ../path "--Constructor") name="Constructor" }}
+
+									{{>signatures name=../name }}
+								{{/with}}
+
+								{{#with properties}}
+									{{>header level=2 path=(concat ../path "--Properties") name="Properties" }}
+
+									<div class="ui basic segment doc-content">
+										{{#if ../../isClass}}
+											{{>properties properties=static access="#" path=../path}}
+
+											{{>properties properties=instance access="." path=../path}}
+										{{else}}
+											{{>properties properties=this access="." path=../path}}
+										{{/if}}
+									</div>
+								{{/with}}
+
+								{{#with methods}}
+									{{>header level=2 path=(concat ../path "--Methods") name="Methods" }}
+
+									<div class="ui basic segment doc-content">
+										{{#if ../../isClass}}
+											{{>methods methods=static access="#" path=../path}}
+
+											{{>methods methods=instance access="." path=../path}}
+										{{else}}
+											{{>methods methods=this access="." path=../path}}
+										{{/if}}
+									</div>
+								{{/with}}
+							</div>
+						{{/with}}
+					</div>
+				{{/combineElements}}
+
+			{{!--#each classes}}
+				{{#with decorated-object~}}
+					#### <a name="{{sanitize ../path}}-Decorated-Object"/>Decorated Object
+					{{#if type~}}
+						**Interfaces:** {{#each type}}[{{this}}](#{{sanitize this}}){{^if @last}}, {{/if}}{{/each}}
+					{{/if}}
+
+					{{#with description~}}
+						> {{{trim this}}}
+					{{/with}}
+
+					{{#if properties ~}}
+						##### <a name="{{sanitize ../path}}-Decorated-Object-Properties"/>Properties
+
+						{{~>properties properties=properties.instance access=""}}
+					{{/if}}
+
+					{{#if methods~}}
+						##### <a name="{{sanitize ../path}}-Decorated-Object-Methods"/>Methods
+
+						{{~>methods methods=methods.instance access=""}}
+					{{/if}}
+				{{/with}}
+			{{/each--}}
+
+			{{/each}}
+			<br><br>
+
+		</div>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/languages/typescript.min.js"></script>
+	<script>
+		hljs.initHighlightingOnLoad();
+
+		(function() {
+			var jqWindow = $( window );
+			var sidebarMenu = $( ".doc-menu-sidebar" );
+
+			// Sidebar menu closeable
+			$( ".js-sidebar-toggler" ).click( function() {
+				applyToSidebar( "toggle" );
+			} );
+
+			jqWindow.resize( function() {
+				applyToSidebar();
+			} );
+
+			sidebarMenu
+				.find( ".item" )
+				.click( function() {
+					applyToSidebar();
+				} );
+
+			function applyToSidebar( action ) {
+				if( jqWindow.width() <= 933 ) {
+					sidebarMenu
+						.sidebar( {
+							transition: "overlay",
+							mobileTransition: "overlay",
+							closable: true,
+							dimPage: true,
+						} );
+					action = action || "hide";
+				} else {
+					if( $( ".doc-page-content.dimmed" ).length ) {
+						sidebarMenu.sidebar( "hide" );
+					}
+					sidebarMenu
+						.sidebar( {
+							transition: "uncover",
+							mobileTransition: "uncover",
+							closable: false,
+							dimPage: false,
+						} );
+					action = action || "show";
+				}
+				sidebarMenu
+					.sidebar( action );
+			}
+
+			applyToSidebar();
+
+			// Section in sidebar menu, location and URL
+			$( window ).on( "hashchange", function() {
+				scrollToHash();
+				setActiveSection();
+			} );
+
+			var $locationMenu = $( ".doc-menu-location > .left.menu" );
+			var $moduleLocation = $( '<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>' ).click( scrollToHash );
+			var $objectLocation = $( '<a class="item doc-menu-location__item dynamic-location"></a>' ).click( scrollToHash );
+
+			function scrollToHash() {
+				if( ! window.location.hash ) return;
+				var $sectionItem = $( "#SDKDocs-" + window.location.hash.slice( 1 ).replace( /([+@.])/g, "\\$1" ) );
+				if( $sectionItem.length ) {
+					$( "html, body" ).animate( {
+						scrollTop: $sectionItem.offset().top - 170
+					}, 500 );
+				}
+			}
+
+			function getSidebarItem() {
+				if( ! window.location.hash ) return null;
+
+				var hash = window.location.hash;
+				var $sidebarItem = $( '.doc-menu-sidebar *[href="' + hash + '"]' );
+
+				if( ! $sidebarItem.length ) {
+					var lastIndex = hash.lastIndexOf( "--" );
+					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "+" );
+					if( lastIndex === - 1 ) lastIndex = hash.lastIndexOf( "-" );
+					$sidebarItem = $( '.doc-menu-sidebar *[href="' + hash.slice( 0, lastIndex ) + '"]' );
+				}
+
+				if( ! $sidebarItem.length ) return null;
+				return $sidebarItem;
+			}
+
+			function setActiveSection() {
+				var $sidebarItem = getSidebarItem( window.location.hash );
+				if( $sidebarItem === null ) return;
+
+				$( ".doc-menu-sidebar" )
+					.find( ".item.active" )
+					.removeClass( "active" );
+
+				var module = $sidebarItem
+					.parents( ".item" )
+					.addClass( "active" )
+					.children( ".header" );
+
+				$moduleLocation.html( module.html() );
+				$moduleLocation.attr( "href", module.attr( "href" ) );
+				$locationMenu
+					.find( ".dynamic-location" )
+					.removeClass( "active" )
+					.detach();
+				$locationMenu
+					.append( $moduleLocation );
+
+				if( $sidebarItem.hasClass( "item" ) ) {
+					var object = $sidebarItem
+						.addClass( "active" );
+
+					$objectLocation.removeClass( "dynamic-location_class" ).removeClass( "dynamic-location_interface" );
+					$objectLocation.html( object.html() );
+					$objectLocation.attr( "href", object.attr( "href" ) );
+					$locationMenu
+						.append( $objectLocation );
+
+					if( $sidebarItem.hasClass( "item-class" ) ) $objectLocation.addClass( "dynamic-location_class" );
+					if( $sidebarItem.hasClass( "item-interface" ) ) $objectLocation.addClass( "dynamic-location_interface" );
+				}
+
+				$locationMenu
+					.find( ".dynamic-location" )
+					.last()
+					.addClass( "active" );
+			}
+
+			scrollToHash();
+			setActiveSection();
+
+			// Search box
+			var content = [
+				{{#each modules}}
+					{{#combineElements this}}
+						{
+							"title": "{{element.path}}",
+							"type": "{{#if isClass}}class{{else}}interface{{/if}}",
+							"hash": "#{{toURL element.path}}"
+						},
+					{{/combineElements}}
+				{{/each}}
+			];
+
+			$( ".ui.search.doc-search" )
+				.search( {
+					source: content,
+					searchFields: [
+						"title"
+					],
+					selectFirstResult: true,
+					searchFullText: false,
+					regExp: {
+						escape: /[\-\[\]\/{}()*+?.\\\^$|]/g,
+						beginsWith: '(.*)'
+					},
+					onSelect: function( result ) {
+						window.location.hash = result.hash;
+					}
+				} );
+		})();
+	</script>
+</body>
+</html>

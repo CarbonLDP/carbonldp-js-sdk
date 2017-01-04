@@ -1,0 +1,31 @@
+{{#if level}}
+
+	<h{{level}} class="ui header {{^if path}}doc-header_no-link{{/if}}doc-header" {{#if path}}id="SDKDocs-{{toURL path}}"{{/if}}>
+
+
+		{{#if path}}
+		<a class="doc-header__link" href="#{{toURL path}}">
+			<div class="ui basic label doc-header__symbol symbol">
+				<i class="symbol__anchor large grey linkify icon"></i>
+			</div>
+		{{/if}}
+		<span class="doc-header__main {{#if secondary}}code-label{{/if}}">{{name}}</span>
+		{{#if path}}
+		</a>
+		{{/if}}
+		{{#if secondary}}<span class="doc-header__secondary"> : {{>text-markdown element=secondary noParagraph=true}}</span>{{/if}}
+		{{#if optional}}<label class="ui blue right horizontal label">Optional</label>{{/if}}
+	</h{{level}}>
+
+{{else}}
+
+	<div class="ui basic inverted {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} segment">
+		<h1 class="ui header doc-header{{#if isModule}} doc-header_main{{/if}}{{#or isClass isInterface}} doc-header_main{{/or}}" id="SDKDocs-{{#if isModule}}Module-{{/if}}{{toURL path}}">
+			<a class="doc-header__link doc-header__main" href="#{{#if isModule}}Module-{{/if}}{{toURL path}}">{{name}}</a>
+			<div class="doc-header__label">
+				<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} horizontal basic label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}</span>
+			</div>
+		</h1>
+	</div>
+
+{{/if}}

@@ -1,6 +1,5 @@
 import {
 	STATIC,
-	INSTANCE,
 
 	module,
 	clazz,
@@ -193,7 +192,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		} );
 
 		it( hasMethod(
-			INSTANCE,
+			STATIC,
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
