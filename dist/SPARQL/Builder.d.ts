@@ -9,7 +9,7 @@ declare module "sparqler/Clauses" {
         executeRaw(): Promise<[RawResults, HTTPResponse]>;
     }
 }
-declare module "sparqler/Sparqler" {
+declare module "sparqler/SPARQLER" {
     interface SPARQLER {
         _documents: Documents;
         _entryPoint: string;

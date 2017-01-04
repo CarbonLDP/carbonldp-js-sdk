@@ -17,7 +17,7 @@ declare module "sparqler/Clauses" {
 
 }
 
-declare module "sparqler/Sparqler" {
+declare module "sparqler/SPARQLER" {
 
 	export interface SPARQLER {
 		_documents:Documents;
