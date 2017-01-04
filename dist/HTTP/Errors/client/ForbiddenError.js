@@ -9,8 +9,10 @@ var name = "ForbiddenError";
 var statusCode = 403;
 var ForbiddenError = (function (_super) {
     __extends(ForbiddenError, _super);
-    function ForbiddenError() {
-        return _super.apply(this, arguments) || this;
+    function ForbiddenError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, ForbiddenError.prototype);
+        return _this;
     }
     Object.defineProperty(ForbiddenError, "statusCode", {
         get: function () { return statusCode; },

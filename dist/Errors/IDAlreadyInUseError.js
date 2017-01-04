@@ -7,8 +7,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 var AbstractError_1 = require("./AbstractError");
 var IDAlreadyInUseError = (function (_super) {
     __extends(IDAlreadyInUseError, _super);
-    function IDAlreadyInUseError() {
-        return _super.apply(this, arguments) || this;
+    function IDAlreadyInUseError(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, IDAlreadyInUseError.prototype);
+        return _this;
     }
     Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
         get: function () { return "IDAlreadyInUseError"; },

@@ -10,6 +10,7 @@ var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, HTTPError.prototype);
         Resource.Factory.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;

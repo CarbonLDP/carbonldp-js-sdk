@@ -29,6 +29,7 @@ class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 
 	constructor( message:string, response:Response ) {
 		super( message );
+		Object.setPrototypeOf( this, HTTPError.prototype );
 
 		Resource.Factory.createFrom( this );
 

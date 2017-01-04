@@ -12,6 +12,7 @@ export interface Class extends PersistedProtectedDocument.Class {
 	_roles:Roles.Class;
 
 	name?:string;
+	description?:string;
 	agents?:Pointer.Class[];
 
 	createChild<T extends Role.Class>( role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
@@ -103,7 +104,7 @@ export class Factory {
 				configurable: true,
 				value: removeAgents,
 			},
-		});
+		} );
 
 		return role;
 	}

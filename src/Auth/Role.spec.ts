@@ -42,6 +42,12 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			"@type": NS.XSD.DataType.string,
 		} );
 
+		expect( Utils.hasProperty( Role.SCHEMA, "description" ) ).toBe( true );
+		expect( Role.SCHEMA[ "description" ] ).toEqual( {
+			"@id": NS.CS.Predicate.description,
+			"@type": NS.XSD.DataType.string,
+		} );
+
 		expect( Utils.hasProperty( Role.SCHEMA, "agents" ) ).toBe( true );
 		expect( Role.SCHEMA[ "agents" ] ).toEqual( {
 			"@id": NS.CS.Predicate.agent,
@@ -98,12 +104,17 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 			object = {
 				name: null,
+				description: null,
 			};
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( true );
 
 			delete object.name;
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( false );
 			object.name = null;
+
+			delete object.description;
+			expect( Role.Factory.hasClassProperties( object ) ).toBe( true );
+			object.description = null;
 		} );
 
 		it( hasMethod(
@@ -135,6 +146,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			"create",
 			"Create a `Carbon.Auth.Role.Class` object with the name specified.", [
 				{ name: "name", type: "string", description: "The name of the role to create." },
+				{ name: "description", type: "string", optional: true, description: "The optional description of the role to create." },
 			],
 			{ type: "Carbon.Auth.Role.Class" }
 		), ():void => {
@@ -144,20 +156,26 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			let spy:jasmine.Spy = spyOn( Role.Factory, "createFrom" );
 
 			Role.Factory.create( "Role name" );
-			expect( spy ).toHaveBeenCalledWith( {}, "Role name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Role name", undefined );
 
 			Role.Factory.create( "Another Role name" );
-			expect( spy ).toHaveBeenCalledWith( {}, "Another Role name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another Role name", undefined );
+
+			Role.Factory.create( "Another Role name", "And its description" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another Role name", "And its description" );
 
 			Role.Factory.create( "" );
-			expect( spy ).toHaveBeenCalledWith( {}, "" );
+			expect( spy ).toHaveBeenCalledWith( {}, "", undefined );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.Auth.Role.Class` object with the object provided.", [
-				{ name: "object", type: "T extends Object" },
+				{ name: "object", type: "T", description: "Object where to create the new role." },
+				{ name: "name", type: "string", description: "The name of the role to create." },
+				{ name: "description", type: "string", optional: true, description: "The optional description of the role to create." },
 			],
 			{ type: "T & Carbon.Auth.Role.Class" }
 		), ():void => {
@@ -174,12 +192,21 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			expect( Role.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeUndefined();
 			expect( role.name ).toBe( "Role name" );
+			expect( role.description ).toBeUndefined();
 
 			role = Role.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name" );
 			expect( Role.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );
 			expect( role.name ).toBe( "Role name" );
+			expect( role.description ).toBeUndefined();
+
+			role = Role.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name", "Description of the role" );
+			expect( Role.Factory.is( role ) ).toBe( true );
+			expect( role.myProperty ).toBeDefined();
+			expect( role.myProperty ).toBe( "a property" );
+			expect( role.name ).toBe( "Role name" );
+			expect( role.description ).toBe( "Description of the role" );
 
 			expect( () => Role.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => Role.Factory.createFrom( {}, null ) ).toThrowError( Errors.IllegalArgumentError );

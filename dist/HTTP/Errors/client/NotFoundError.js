@@ -9,8 +9,10 @@ var name = "NotFoundError";
 var statusCode = 404;
 var NotFoundError = (function (_super) {
     __extends(NotFoundError, _super);
-    function NotFoundError() {
-        return _super.apply(this, arguments) || this;
+    function NotFoundError(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, NotFoundError.prototype);
+        return _this;
     }
     Object.defineProperty(NotFoundError, "statusCode", {
         get: function () { return statusCode; },
