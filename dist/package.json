@@ -1,7 +1,7 @@
 {
   "name": "carbonldp",
   "version": "0.40.0",
-  "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
+  "description": "JavaScript/TypeScript SDK for Carbon LDP",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [
     "Miguel Aragon <miguel.aragon@base22.com>",

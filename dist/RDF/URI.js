@@ -50,6 +50,8 @@ var Util = (function () {
             return true;
         if (baseURI === "")
             return true;
+        if (Util.isRelative(uri) && !Util.isPrefixed(uri))
+            return true;
         if (uri.startsWith(baseURI)) {
             if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
                 return true;

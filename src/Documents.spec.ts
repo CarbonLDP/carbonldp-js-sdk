@@ -592,8 +592,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				// Send a plain object
 				(() => {
-
-
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
@@ -802,6 +800,111 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( request.requestHeaders[ "slug" ] ).toBeUndefined();
 
 						expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					} ) );
+				})();
+
+				// Resend object after error
+				(() => {
+					let promises:Promise<any>[] = [];
+
+					class MockedContext extends AbstractContext {
+						resolve( uri:string ):string {
+							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents = context.documents;
+
+					let objectSchema:ObjectSchema.Class = {
+						"ex": "http://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					};
+
+					let childDocument:Document.Class = Document.Factory.create();
+					let fragment1:Fragment.Class = childDocument.createFragment();
+					let fragment2:Fragment.Class = childDocument.createFragment();
+					let namedFragment1:Fragment.Class = childDocument.createFragment( "1" );
+					let namedFragment2:Fragment.Class = childDocument.createFragment( "2" );
+
+					(<any> childDocument).string = "Some string";
+					(<any> childDocument).date = new Date();
+					(<any> childDocument).pointerList = [ fragment1, fragment2 ];
+					(<any> childDocument).pointerSet = [ fragment1, namedFragment1 ];
+
+					(<any> namedFragment2).pointer = childDocument;
+
+					context.extendObjectSchema( objectSchema );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource-error/", null, "POST" ).andReturn( {
+						status: 409,
+					} );
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource-ok/", null, "POST" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource-ok/new-resource/",
+						},
+					} );
+
+					let spy:any = {
+						success: ():void => {},
+						fail: ():void => {},
+					};
+					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
+					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
+
+					promises.push( documents.createChild( "http://example.com/parent-resource-error/", childDocument ).catch( error => {
+						expect( error ).toEqual( jasmine.any( Error ) );
+						expect( PersistedDocument.Factory.is( childDocument ) ).toBe( false );
+
+						return documents.createChild( "http://example.com/parent-resource-ok/", childDocument );
+					} ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( document ).toBe( childDocument );
+						expect( document.id ).toBe( "http://example.com/parent-resource-ok/new-resource/" );
+						expect( document.isResolved() ).toBe( false );
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+
+						spy.success();
+					} ) );
+
+					finishPromises.push( Promise.all( promises ).then( ():void => {
+						expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders[ "slug" ] ).toBeUndefined();
 					} ) );
 				})();
 
