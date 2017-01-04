@@ -7,10 +7,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 var AbstractError = (function (_super) {
     __extends(AbstractError, _super);
     function AbstractError(message) {
-        _super.call(this, message);
+        var _this = _super.call(this, message) || this;
         if ("captureStackTrace" in Error)
-            Error.captureStackTrace(this, this.constructor);
-        this.message = message;
+            Error.captureStackTrace(_this, _this.constructor);
+        _this.message = message;
+        return _this;
     }
     Object.defineProperty(AbstractError.prototype, "name", {
         get: function () { return "AbstractError"; },

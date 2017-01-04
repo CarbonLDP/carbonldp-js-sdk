@@ -4,9 +4,9 @@ exports.namespace = namespace;
 var Predicate = (function () {
     function Predicate() {
     }
-    Predicate.type = namespace + "type";
     return Predicate;
 }());
+Predicate.type = namespace + "type";
 exports.Predicate = Predicate;
 
 //# sourceMappingURL=RDF.js.map

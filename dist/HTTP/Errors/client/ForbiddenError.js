@@ -10,7 +10,7 @@ var statusCode = 403;
 var ForbiddenError = (function (_super) {
     __extends(ForbiddenError, _super);
     function ForbiddenError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(ForbiddenError, "statusCode", {
         get: function () { return statusCode; },

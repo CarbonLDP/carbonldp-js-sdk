@@ -10,7 +10,7 @@ var statusCode = 0;
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },

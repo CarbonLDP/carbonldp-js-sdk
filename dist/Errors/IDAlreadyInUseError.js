@@ -8,7 +8,7 @@ var AbstractError_1 = require("./AbstractError");
 var IDAlreadyInUseError = (function (_super) {
     __extends(IDAlreadyInUseError, _super);
     function IDAlreadyInUseError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
         get: function () { return "IDAlreadyInUseError"; },

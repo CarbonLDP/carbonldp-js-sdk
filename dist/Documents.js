@@ -668,9 +668,9 @@ var Class = (function () {
                 persistedProtectedDocument,
                 response,
             ];
-        }, function (error) {
+        }).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
-            throw error;
+            return Promise.reject(error);
         });
     };
     Class.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
@@ -907,9 +907,9 @@ var Class = (function () {
             }
         }
     };
-    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;
 }());
+Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;

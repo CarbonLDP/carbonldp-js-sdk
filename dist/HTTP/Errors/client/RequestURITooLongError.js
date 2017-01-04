@@ -10,7 +10,7 @@ var statusCode = 414;
 var RequestURITooLongError = (function (_super) {
     __extends(RequestURITooLongError, _super);
     function RequestURITooLongError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(RequestURITooLongError, "statusCode", {
         get: function () { return statusCode; },

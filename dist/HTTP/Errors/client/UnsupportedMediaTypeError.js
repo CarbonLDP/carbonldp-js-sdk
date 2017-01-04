@@ -10,7 +10,7 @@ var statusCode = 415;
 var UnsupportedMediaTypeError = (function (_super) {
     __extends(UnsupportedMediaTypeError, _super);
     function UnsupportedMediaTypeError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(UnsupportedMediaTypeError, "statusCode", {
         get: function () { return statusCode; },

@@ -10,7 +10,7 @@ var statusCode = 500;
 var InternalServerErrorError = (function (_super) {
     __extends(InternalServerErrorError, _super);
     function InternalServerErrorError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(InternalServerErrorError, "statusCode", {
         get: function () { return statusCode; },

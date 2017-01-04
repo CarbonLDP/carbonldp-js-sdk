@@ -13,9 +13,11 @@ var Roles_1 = require("./../Auth/Roles");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(appContext) {
+        var _this;
         if (!(appContext instanceof Context_1.default))
             throw new Errors.NotImplementedError("The context provided is not a AppContext.");
-        _super.call(this, appContext);
+        _this = _super.call(this, appContext) || this;
+        return _this;
     }
     Class.prototype.createChild = function (parentRole, role, slugOrRequestOptions, requestOptions) {
         if (!AppRole.Factory.is(role))

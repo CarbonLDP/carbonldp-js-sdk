@@ -10,7 +10,7 @@ var statusCode = 400;
 var BadRequestError = (function (_super) {
     __extends(BadRequestError, _super);
     function BadRequestError() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Object.defineProperty(BadRequestError, "statusCode", {
         get: function () { return statusCode; },
