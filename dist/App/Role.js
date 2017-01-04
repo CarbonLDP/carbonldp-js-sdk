@@ -8,7 +8,7 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.parentRole,
         "@type": "@id",
     },
-    "childrenRoles": {
+    "childRoles": {
         "@id": NS.CS.Predicate.childRole,
         "@type": "@id",
         "@container": "@set",

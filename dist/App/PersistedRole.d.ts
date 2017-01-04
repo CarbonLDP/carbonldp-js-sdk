@@ -5,7 +5,7 @@ import * as Roles from "./Roles";
 export interface Class extends PersistedRole.Class {
     _roles: Roles.Class;
     parentRole?: Pointer.Class;
-    childrenRoles?: Pointer.Class[];
+    childRoles?: Pointer.Class[];
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
