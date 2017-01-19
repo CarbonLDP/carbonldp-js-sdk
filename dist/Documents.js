@@ -805,6 +805,13 @@ var Class = (function () {
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
+        else {
+            if (this.context) {
+                var baseURI = this.context.getBaseURI();
+                if (!RDF.URI.Util.isBaseOf(baseURI, uri))
+                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context witch its base URI is: '" + baseURI + "'.");
+            }
+        }
         return uri;
     };
     Class.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {

@@ -349,6 +349,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 			],
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
 		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+
+			// Throws an error if the context cannot resolve the provided URI
+			expect( () => {
+				class ErrorMockedContext extends AbstractContext {
+					getBaseURI():string {
+						return "http://example.com";
+					}
+
+					resolve( uri:string ):string {
+						return uri;
+					}
+				}
+
+				let context:ErrorMockedContext = new ErrorMockedContext();
+				context.documents.get( "http://not-example.com" );
+
+			} ).toThrowError( Errors.IllegalArgumentError );
+
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {

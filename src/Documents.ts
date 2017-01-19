@@ -933,6 +933,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
+		} else {
+			if( this.context ) {
+				let baseURI:string = this.context.getBaseURI();
+				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) throw new Errors.IllegalArgumentError( `The provided URI '${ uri }' is not a valid URI for the current context witch its base URI is: '${ baseURI }'.` );
+			}
 		}
 		return uri;
 	}
