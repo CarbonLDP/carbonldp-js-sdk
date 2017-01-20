@@ -496,12 +496,8 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        return HTTP.Request.Service.head(uri, requestOptions).then(function (headerResponse) {
-            var eTag = HTTP.Response.Util.getETag(headerResponse);
-            if (eTag === persistedDocument._etag)
-                return [persistedDocument, null];
-            return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser());
-        }).then(function (_a) {
+        HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
@@ -514,6 +510,10 @@ var Class = (function () {
             var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
+        }).catch(function (error) {
+            if (error.statusCode === 304)
+                return [persistedDocument, null];
+            return Promise.reject(error);
         });
     };
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {

@@ -283,6 +283,12 @@ export class Util {
 		return requestOptions;
 	}
 
+	static setIfNoneMatchHeader( eTag:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "if-none-match", new Header.Class( eTag ) );
+		return requestOptions;
+	}
+
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
 		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );

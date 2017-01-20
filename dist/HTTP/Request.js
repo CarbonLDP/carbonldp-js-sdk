@@ -221,6 +221,11 @@ var Util = (function () {
         headers.set("if-match", new Header.Class(etag));
         return requestOptions;
     };
+    Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("if-none-match", new Header.Class(eTag));
+        return requestOptions;
+    };
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
