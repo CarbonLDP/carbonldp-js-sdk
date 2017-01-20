@@ -1165,7 +1165,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 			};
 			let preferencesIncludeString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
-			let preferencesIncludeStringNoRepresentatation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
+			let preferencesIncludeStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
 			let preferencesIncludeEmpty:Request.ContainerRetrievalPreferences = {
 				include: [],
 			};
@@ -1177,7 +1177,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 			};
 			let preferencesOmitString:string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesOmitStringNoRepresentatation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesOmitStringNoRepresentation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesOmitEmpty:Request.ContainerRetrievalPreferences = {
 				omit: [],
 			};
@@ -1193,7 +1193,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 			};
 			let preferencesFullString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesFullStringNoRepresentatation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesFullStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesFullEmpty:Request.ContainerRetrievalPreferences = {
 				include: [],
 				omit: [],
@@ -1216,11 +1216,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
 
 			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentatation );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentation );
 			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentatation );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentation );
 			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentatation );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentation );
 
 		} );
 
