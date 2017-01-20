@@ -7,7 +7,11 @@ export class Class {
 
 	static get API():string { return namespace + "API"; }
 
+	static get CreatedResource():string { return namespace + "CreatedResource"; }
+
 	static get Document():string { return namespace + "Document"; }
+
+	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
 
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
 
