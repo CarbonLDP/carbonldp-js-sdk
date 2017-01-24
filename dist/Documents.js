@@ -874,12 +874,16 @@ var Class = (function () {
     };
     Class.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
         var namedFragmentsMap = new Map();
-        var blankNodesArray = persistedDocument.getFragments().filter(function (fragment) {
+        var blankNodesArray = [];
+        persistedDocument.getFragments().forEach(function (fragment) {
             persistedDocument._removeFragment(fragment.id);
-            if (RDF.URI.Util.isBNodeID(fragment.id))
-                return true;
-            namedFragmentsMap.set(fragment.id, fragment);
-            return false;
+            if (RDF.URI.Util.isBNodeID(fragment.id)) {
+                blankNodesArray.push(fragment);
+            }
+            else {
+                var fragmentID = RDF.URI.Util.isRelative(fragment.id) ? RDF.URI.Util.resolve(persistedDocument.id, fragment.id) : fragment.id;
+                namedFragmentsMap.set(fragmentID, fragment);
+            }
         });
         var newFragments = [];
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {

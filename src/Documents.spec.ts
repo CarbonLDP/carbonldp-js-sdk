@@ -2088,7 +2088,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let documents:Documents = context.documents;
 
 					let options:HTTP.Request.Options = { timeout: 50550 };
-					let childObject:Object = { property: "my property" };
+
+					let namedFragment:Object = {
+						slug: "#namedFragment",
+						property: "Named fragment property",
+					};
+					let blankNode:Object = {
+						property: "BlankNode property",
+						bNodeIdentifier: "12345",
+					};
+					let childObject:Object = {
+						property: "my property",
+						namedFragment: namedFragment,
+						blankNode: blankNode,
+					};
 
 					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
 						status: 201,
@@ -2102,13 +2115,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/parent-resource/new-child/",
-									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ]
+									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ],
+									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ],
+									"http://example.com/ns#blankNode": [ { "@id": "_:1" } ]
+								},
+								{
+									"@id": "http://example.com/parent-resource/new-child/#namedFragment",
+									"http://example.com/ns#property": [ { "@value": "UPDATED named fragment property" } ]
+								},
+								{
+									"@id": "_:1",
+									"${ NS.C.Predicate.bNodeIdentifier }": [ { "@value": "12345" } ],
+									"http://example.com/ns#property": [ { "@value": "UPDATED blankNode property" } ]
 								}
 							]
 						}`,
 					} );
 					let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
 					let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callThrough();
+
 
 					return documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, responses ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
 						expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, {} );
@@ -2117,6 +2142,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( childObject ).toBe( _document );
 						expect( "property" in childObject ).toBe( true );
 						expect( childObject[ "property" ] ).toBe( "my UPDATED property" );
+
+						// Keep reference with the fragment
+						expect( "namedFragment" in childObject ).toBe( true );
+						expect( childObject[ "namedFragment" ] ).toBe( namedFragment );
+						expect( namedFragment[ "property" ] ).toBe( "UPDATED named fragment property" );
+
+						// Keep reference with the blankNode
+						expect( "blankNode" in childObject ).toBe( true );
+						expect( childObject[ "blankNode" ] ).toBe( blankNode );
+						expect( blankNode[ "property" ] ).toBe( "UPDATED blankNode property" );
 
 						expect( responses ).toEqual( jasmine.any( Array ) );
 						expect( responses.length ).toBe( 1 );

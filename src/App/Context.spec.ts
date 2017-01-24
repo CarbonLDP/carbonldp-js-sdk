@@ -99,10 +99,7 @@ describe( module( "Carbon/App/Context" ), ():void => {
 				expect( role._roles ).toBe( appContext.auth.roles );
 
 				expect( response ).toBeDefined();
-			} ).catch( error => {
-				console.error( error );
-				throw  error;
-			});
+			} );
 			promises.push( promise );
 
 			Promise.all( promises ).then( done ).catch( done.fail );

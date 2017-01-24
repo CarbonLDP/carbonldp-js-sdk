@@ -1010,12 +1010,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	private updatePersistedDocument( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):PersistedDocument.Class {
 		let namedFragmentsMap:Map<string, PersistedNamedFragment.Class> = new Map();
-		let blankNodesArray:PersistedBlankNode.Class[] = <PersistedBlankNode.Class[]> persistedDocument.getFragments().filter( fragment => {
-			persistedDocument._removeFragment( fragment.id );
-			if( RDF.URI.Util.isBNodeID( fragment.id ) ) return true;
+		let blankNodesArray:PersistedBlankNode.Class[] = [];
 
-			namedFragmentsMap.set( fragment.id, <PersistedNamedFragment.Class> fragment );
-			return false;
+		persistedDocument.getFragments().forEach( fragment => {
+			persistedDocument._removeFragment( fragment.id );
+
+			if( RDF.URI.Util.isBNodeID( fragment.id ) ) {
+				blankNodesArray.push( fragment as PersistedBlankNode.Class );
+			} else {
+				let fragmentID:string = RDF.URI.Util.isRelative( fragment.id ) ? RDF.URI.Util.resolve( persistedDocument.id, fragment.id ) : fragment.id;
+				namedFragmentsMap.set( fragmentID, <PersistedNamedFragment.Class> fragment );
+			}
 		} );
 
 		let newFragments:[ PersistedFragment.Class, RDF.Node.Class ][] = [];
