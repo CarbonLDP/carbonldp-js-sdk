@@ -1,7 +1,9 @@
 "use strict";
-var Errors = require("./Errors");
+var Errors = require("./../Errors");
 var Header = require("./Header");
+var HTTPErrors = require("./Errors");
 var Method_1 = require("./Method");
+var NS = require("./../NS");
 var Response_1 = require("./Response");
 var ErrorResponse = require("./../LDP/ErrorResponse");
 var Utils = require("./../Utils");
@@ -19,8 +21,8 @@ function onResolve(resolve, reject, response) {
     if (response.status >= 200 && response.status <= 299) {
         resolve(response);
     }
-    else if (response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has(response.status)) {
-        var errorClass = Errors.statusCodeMap.get(response.status);
+    else if (response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has(response.status)) {
+        var errorClass = HTTPErrors.statusCodeMap.get(response.status);
         var error_1 = new errorClass("", response);
         if (!response.data) {
             reject(error_1);
@@ -35,7 +37,7 @@ function onResolve(resolve, reject, response) {
         });
     }
     else {
-        reject(new Errors.UnknownError(response.data, response));
+        reject(new HTTPErrors.UnknownError(response.data, response));
     }
 }
 function sendWithBrowser(method, url, body, options) {
@@ -229,6 +231,22 @@ var Util = (function () {
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+        return requestOptions;
+    };
+    Util.setPreferredRetrievalResource = function (typeOfRequest, requestOptions) {
+        var prefer = Util.getHeader("prefer", requestOptions, true);
+        var preferType;
+        switch (typeOfRequest) {
+            case "Created":
+                preferType = NS.C.Class.CreatedResource;
+                break;
+            case "Modified":
+                preferType = NS.C.Class.ModifiedResource;
+                break;
+            default:
+                throw new Errors.IllegalArgumentError("Invalid type of request: '" + typeOfRequest + "'.");
+        }
+        prefer.values.push(new Header.Value("return=representation; " + preferType));
         return requestOptions;
     };
     Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {

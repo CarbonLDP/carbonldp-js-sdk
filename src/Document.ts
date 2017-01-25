@@ -437,7 +437,7 @@ function convertNestedObjects( parent:Class, actual:any, fragmentsTracker:Set<st
 			continue;
 		}
 
-		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? "#" + next.slug : "" );
+		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? RDF.URI.Util.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "" );
 		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
 
 		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );

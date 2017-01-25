@@ -50,6 +50,7 @@ export declare class Util {
     static setIfMatchHeader(etag: string, requestOptions: Options): Options;
     static setIfNoneMatchHeader(eTag: string, requestOptions: Options): Options;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
+    static setPreferredRetrievalResource(typeOfRequest: "Created" | "Modified", requestOptions: Options): Options;
     static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
     static isOptions(object: Object): boolean;

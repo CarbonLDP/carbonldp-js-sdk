@@ -1031,7 +1031,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				{ name: "accept", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
-			{ type: "Object" }
+			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
 			expect( Request.Util.setAcceptHeader ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setAcceptHeader ) ).toBe( true );
@@ -1051,7 +1051,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				{ name: "contentType", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
-			{ type: "Object" }
+			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
 			expect( Request.Util.setContentTypeHeader ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setContentTypeHeader ) ).toBe( true );
@@ -1071,7 +1071,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				{ name: "etag", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
-			{ type: "Object" }
+			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
 			expect( Request.Util.setIfMatchHeader ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setIfMatchHeader ) ).toBe( true );
@@ -1111,7 +1111,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				{ name: "interactionModelURI", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
-			{ type: "Object" }
+			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
 			expect( Request.Util.setPreferredInteractionModel ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setPreferredInteractionModel ) ).toBe( true );
@@ -1126,12 +1126,50 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		it( hasMethod(
 			STATIC,
+			"setPreferredRetrievalResource",
+			"Set a Prefer header which indicates to the platform to retrieve the server resource in the same request.", [
+				{ name: "typeOfRequest", type: `"Created" | "Modified"`, description: "The type of the request, where to retrieve the resource, is been made." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+			],
+			{ type: "Carbon.HTTP.Request.Options" }
+		), ():void => {
+			expect( Request.Util.setPreferredRetrievalResource ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.setPreferredRetrievalResource ) ).toBe( true );
+
+			options = newOptionsObject();
+			options = Request.Util.setPreferredRetrievalResource( "Created", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
+
+			options = newOptionsObject();
+			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" ) );
+
+			optionsWithHeaders = Request.Util.setPreferredRetrievalResource( "Created", optionsWithHeaders );
+			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+
+
+			options = {
+				headers: new Map()
+					.set( "prefer", new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
+			};
+			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual(
+				new Header.Class(
+					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
+					"return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource"
+				)
+			);
+		} );
+
+		it( hasMethod(
+			STATIC,
 			"setSlug",
 			"Set a Slug header in an options object request.", [
 				{ name: "slug", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
-			{ type: "Object" }
+			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
 			expect( Request.Util.setSlug ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setSlug ) ).toBe( true );
@@ -1152,7 +1190,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." },
 			],
-			{ type: "Object" }
+			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
 			expect( Request.Util.setContainerRetrievalPreferences ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.setContainerRetrievalPreferences ) ).toBe( true );
