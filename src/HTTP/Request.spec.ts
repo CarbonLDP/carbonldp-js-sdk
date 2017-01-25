@@ -346,7 +346,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.get( "http://example.com/200", null, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -358,7 +358,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.get( "http://example.com/200", options, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -459,7 +459,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.post( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -471,7 +471,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.post( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -572,7 +572,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.put( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -584,7 +584,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.put( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -685,7 +685,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.patch( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -697,7 +697,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.patch( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -798,7 +798,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.delete( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -810,7 +810,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.delete( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -904,7 +904,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.delete( "http://example.com/200", null, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -916,7 +916,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 				promise = Request.Service.delete( "http://example.com/200", options, parser );
 				testPromise( promise );
-				promises.push( promise.then( function( [object, response]:[Object, Response] ):Promise<any> {
+				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
 					expect( response.status ).toEqual( 200 );
 					testHTTPResponseHeaders( response, responseFull.responseHeaders );
@@ -1086,6 +1086,26 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		it( hasMethod(
 			STATIC,
+			"setIfNoneMatchHeader",
+			"Set an If-None-Match header in an options object request.", [
+				{ name: "eTag", type: "string" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+			],
+			{ type: "Object" }
+		), ():void => {
+			expect( Request.Util.setIfNoneMatchHeader ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.setIfNoneMatchHeader ) ).toBe( true );
+
+			options = Request.Util.setIfNoneMatchHeader( 'W/"123456789"', options );
+			expect( Request.Util.getHeader( "If-None-Match", options ) ).toEqual( new Header.Class( 'W/"123456789"' ) );
+
+			optionsWithHeaders = Request.Util.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
+			expect( Request.Util.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header.Class( 'W/"123456789"' ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+		} );
+
+		it( hasMethod(
+			STATIC,
 			"setPreferredInteractionModel",
 			"Set a Prefer header with `rel=interaction-model` in an options object request.", [
 				{ name: "interactionModelURI", type: "string" },
@@ -1183,7 +1203,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 			};
 			let preferencesIncludeString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
-			let preferencesIncludeStringNoRepresentatation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
+			let preferencesIncludeStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
 			let preferencesIncludeEmpty:Request.ContainerRetrievalPreferences = {
 				include: [],
 			};
@@ -1195,7 +1215,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 			};
 			let preferencesOmitString:string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesOmitStringNoRepresentatation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesOmitStringNoRepresentation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesOmitEmpty:Request.ContainerRetrievalPreferences = {
 				omit: [],
 			};
@@ -1211,7 +1231,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 			};
 			let preferencesFullString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesFullStringNoRepresentatation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesFullStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesFullEmpty:Request.ContainerRetrievalPreferences = {
 				include: [],
 				omit: [],
@@ -1234,11 +1254,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
 
 			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentatation );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentation );
 			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentatation );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentation );
 			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentatation );
+			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentation );
 
 		} );
 

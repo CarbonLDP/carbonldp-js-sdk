@@ -5040,55 +5040,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			context.extendObjectSchema( objectSchema );
 
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "HEAD" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"ETag": `"0123456789"`,
-				},
-			} );
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
-				status: 200,
-				responseText: `[ {
-					"@id": "http://example.com/resource/",
-					"@graph": [
-						{
-							"@id": "http://example.com/resource/",
-							"http://example.com/ns#string": [ {"@value": "Document Resource"} ],
-							"http://example.com/ns#pointer": [ {"@id": "http://example.com/resource/#1"} ],
-							"http://example.com/ns#pointerSet": [
-								{"@id": "_:1"},
-								{"@id": "_:2"},
-								{"@id": "http://example.com/resource/#1"},
-								{"@id": "http://example.com/external-resource/"}
-							]
-						},
-						{
-							"@id": "_:1",
-							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
-							"http://example.com/ns#string": [ {"@value": "Fragment 1"} ],
-							"http://example.com/ns#pointerSet": [
-								{"@id": "http://example.com/resource/"},
-								{"@id": "http://example.com/resource/#1"}
-							]
-						},
-						{
-							"@id": "_:2",
-							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
-							"http://example.com/ns#string": [ {"@value": "Fragment 2"} ]
-						},
-						{
-							"@id": "http://example.com/resource/#1",
-							"http://example.com/ns#string": [ {"@value": "NamedFragment 1"} ]
-						},
-						{
-							"@id": "http://example.com/resource/#2",
-							"http://example.com/ns#string": [ {"@value": "NamedFragment 2"} ]
-						}
-					]
-				} ]`,
-				responseHeaders: {
-					"ETag": `"0123456789"`,
-				},
+				status: 304,
 			} );
 
 			let document:PersistedDocument.Class;
@@ -5096,86 +5049,84 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let blankNode01:PersistedBlankNode.Class;
 			let blankNode02:PersistedBlankNode.Class;
 
+			// Mock an existent document
+			document = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
+			document[ "string" ] = "Document Resource";
+
+			document[ "pointer" ] = fragment = document.createNamedFragment( {
+				string: "NamedFragment 1",
+			}, "#1" );
+			blankNode01 = <PersistedBlankNode.Class> document.createFragment( {
+				string: "Fragment 1",
+				bNodeIdentifier: "UUID fo _:1",
+			}, "_:1" );
+			blankNode02 = <PersistedBlankNode.Class> document.createFragment( {
+				string: "Fragment 1",
+				bNodeIdentifier: "UUID fo _:2",
+			}, "_:2" );
+
+			document._resolved = true;
+			document._etag = `"0123456789"`;
+			document.getFragments().forEach( documentFragment => documentFragment._syncSnapshot() );
+			document._syncSavedFragments();
+			document._syncSnapshot();
+
+			// Add properties that supposed not to be in the server document
+			document[ "new-property" ] = "A new property that will be erased at refresh";
+			document[ "new-pointer" ] = document.createFragment( { id: "_:new-pointer", string: "Pointer that will be erased at refresh" } );
+
 			let promises:Promise<any>[] = [];
 
 			let spies:any = {
-				init: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-
-					document = persistedDoc;
-					fragment = persistedDoc.getNamedFragment( "#1" );
-					blankNode01 = <PersistedBlankNode.Class> persistedDoc.getFragment( "_:1" );
-					blankNode02 = <PersistedBlankNode.Class> persistedDoc.getFragment( "_:2" );
-
-					expect( document[ "string" ] ).toBe( "Document Resource" );
-					expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
-					expect( document[ "pointer" ] ).toBe( fragment );
-					expect( blankNode01[ "string" ] ).toBe( "Fragment 1" );
-					expect( blankNode02[ "string" ] ).toBe( "Fragment 2" );
-
-					document[ "new-property" ] = "A new property that will be erased at refresh";
-					document[ "new-pointer" ] = document.createFragment( { id: "_:new-pointer", string: "Pointer that will be erased at refresh" } );
-
-					let promise:Promise<any> = documents.refresh( document );
-					expect( promise instanceof Promise ).toBe( true );
-
-					return promise.then( spies.same );
-				},
 				same: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 					expect( persistedDoc ).toBe( document );
 					expect( response ).toBeNull();
 
-					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "HEAD" ).andReturn( {
-						status: 200,
-						responseHeaders: {
-							"ETag": `"dif0123456789"`,
-						},
-					} );
 					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
 						status: 200,
 						responseText: `[ {
-					"@id": "http://example.com/resource/",
-					"@graph": [
-						{
 							"@id": "http://example.com/resource/",
-							"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
-							"http://example.com/ns#pointer": [ {"@id": "_:0001"} ],
-							"http://example.com/ns#pointerSet": [
-								{"@id": "_:0001"},
-								{"@id": "_:2"},
-								{"@id": "http://example.com/resource/#1"},
-								{"@id": "http://example.com/external-resource/"}
+							"@graph": [
+								{
+									"@id": "http://example.com/resource/",
+									"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
+									"http://example.com/ns#pointer": [ {"@id": "_:0001"} ],
+									"http://example.com/ns#pointerSet": [
+										{"@id": "_:0001"},
+										{"@id": "_:2"},
+										{"@id": "http://example.com/resource/#1"},
+										{"@id": "http://example.com/external-resource/"}
+									]
+								},
+								{
+									"@id": "_:1",
+									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
+									"http://example.com/ns#string": [ {"@value": "Old Fragment 2"} ]
+								},
+								{
+									"@id": "_:0001",
+									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
+									"http://example.com/ns#string": [ {"@value": "Changed Fragment 1"} ],
+									"http://example.com/ns#pointerSet": [
+										{"@id": "http://example.com/resource/"},
+										{"@id": "http://example.com/resource/#1"}
+									]
+								},
+								{
+									"@id": "_:2",
+									"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
+									"http://example.com/ns#string": [ {"@value": "New Fragment 2"} ]
+								},
+								{
+									"@id": "http://example.com/resource/#1",
+									"http://example.com/ns#string": [ {"@value": "Changed NamedFragment 1"} ]
+								},
+								{
+									"@id": "http://example.com/resource/#3",
+									"http://example.com/ns#string": [ {"@value": "NamedFragment 3"} ]
+								}
 							]
-						},
-						{
-							"@id": "_:1",
-							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
-							"http://example.com/ns#string": [ {"@value": "Old Fragment 2"} ]
-						},
-						{
-							"@id": "_:0001",
-							"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
-							"http://example.com/ns#string": [ {"@value": "Changed Fragment 1"} ],
-							"http://example.com/ns#pointerSet": [
-								{"@id": "http://example.com/resource/"},
-								{"@id": "http://example.com/resource/#1"}
-							]
-						},
-						{
-							"@id": "_:2",
-							"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
-							"http://example.com/ns#string": [ {"@value": "New Fragment 2"} ]
-						},
-						{
-							"@id": "http://example.com/resource/#1",
-							"http://example.com/ns#string": [ {"@value": "Changed NamedFragment 1"} ]
-						},
-						{
-							"@id": "http://example.com/resource/#3",
-							"http://example.com/ns#string": [ {"@value": "NamedFragment 3"} ]
-						}
-					]
-				} ]`,
+						} ]`,
 						responseHeaders: {
 							"ETag": `"dif0123456789"`,
 						},
@@ -5223,9 +5174,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 			let spySame:jasmine.Spy = spyOn( spies, "same" ).and.callThrough();
 
-			let promise:Promise<any> = documents.get( "http://example.com/resource/" );
+			let promise:Promise<any> = documents.refresh( document );
 			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.init ) );
+			promises.push( promise.then( spies.same ) );
 
 			Promise.all( promises ).then( ():void => {
 				expect( spySame ).toHaveBeenCalledTimes( 1 );

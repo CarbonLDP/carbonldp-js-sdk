@@ -606,13 +606,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		let uri:string = this.getRequestURI( persistedDocument.id );
 		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
-		return HTTP.Request.Service.head( uri, requestOptions ).then( ( headerResponse:HTTP.Response.Class ) => {
-			let eTag:string = HTTP.Response.Util.getETag( headerResponse );
-			if( eTag === persistedDocument._etag ) return <any> [ persistedDocument, null ];
+		// Add header to check id the document has been modified
+		HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
-			return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() );
-
-		} ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
 			let eTag:string = HTTP.Response.Util.getETag( response );
@@ -625,7 +622,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			updatedPersistedDocument._etag = eTag;
 
 			return [ updatedPersistedDocument, response ];
-		} );
+		} ).catch( ( error:HTTP.Errors.Error ) => {
+			if( error.statusCode === 304 ) return [ persistedDocument, null ];
+			return Promise.reject( error );
+		});
 	}
 
 	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]> {
