@@ -830,7 +830,7 @@ var Class = (function () {
             if (this.context) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
-                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context witch its base URI is: '" + baseURI + "'.");
+                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
             }
         }
         return uri;

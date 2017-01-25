@@ -957,7 +957,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} else {
 			if( this.context ) {
 				let baseURI:string = this.context.getBaseURI();
-				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) throw new Errors.IllegalArgumentError( `The provided URI '${ uri }' is not a valid URI for the current context witch its base URI is: '${ baseURI }'.` );
+				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) throw new Errors.IllegalArgumentError( `The provided URI '${ uri }' is not a valid URI for the current context.` );
 			}
 		}
 		return uri;
