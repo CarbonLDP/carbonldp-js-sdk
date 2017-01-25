@@ -1,6 +1,8 @@
-import * as Errors from "./Errors";
+import * as Errors from "./../Errors";
 import * as Header from "./Header";
+import * as HTTPErrors from "./Errors";
 import Method from "./Method";
+import * as NS from "./../NS";
 import Parser from "./Parser";
 import Response from "./Response";
 import * as ErrorResponse from "./../LDP/ErrorResponse";
@@ -24,7 +26,7 @@ export interface ContainerRetrievalPreferences {
 }
 
 interface Reject {
-	( error:Errors.Error ):void;
+	( error:HTTPErrors.Error ):void;
 }
 interface Resolve {
 	( response:Response ):void;
@@ -33,7 +35,7 @@ interface Resolve {
 function forEachHeaders( headers:Map<string, Header.Class>, setHeader:( name:string, value:string ) => any ):void {
 	let namesIterator:Iterator<string> = headers.keys();
 	let next:IteratorResult<string> = namesIterator.next();
-	while ( ! next.done ) {
+	while( ! next.done ) {
 		let name:string = next.value;
 		let value:Header.Class = headers.get( name );
 		setHeader( name, value.toString() );
@@ -45,8 +47,8 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
 
-	} else if( response.status >= 400 && response.status < 600 && Errors.statusCodeMap.has( response.status ) ) {
-		let errorClass:typeof HTTPError = Errors.statusCodeMap.get( response.status );
+	} else if( response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has( response.status ) ) {
+		let errorClass:typeof HTTPError = HTTPErrors.statusCodeMap.get( response.status );
 		let error:HTTPError = new errorClass( "", response );
 
 		if( ! response.data ) {
@@ -64,7 +66,7 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 		} );
 
 	} else {
-		reject( new Errors.UnknownError( response.data, response ) );
+		reject( new HTTPErrors.UnknownError( response.data, response ) );
 
 	}
 }
@@ -283,10 +285,35 @@ export class Util {
 		return requestOptions;
 	}
 
+	static setIfNoneMatchHeader( eTag:string, requestOptions:Options ):Options {
+		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+		headers.set( "if-none-match", new Header.Class( eTag ) );
+		return requestOptions;
+	}
+
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
 		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );
 
+		return requestOptions;
+	}
+
+	static setPreferredRetrievalResource( typeOfRequest:"Created" | "Modified", requestOptions:Options ):Options {
+		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+
+		let preferType:string;
+		switch( typeOfRequest ) {
+			case "Created":
+				preferType = NS.C.Class.CreatedResource;
+				break;
+			case "Modified":
+				preferType = NS.C.Class.ModifiedResource;
+				break;
+			default:
+				throw new Errors.IllegalArgumentError( `Invalid type of request: '${ typeOfRequest }'.` );
+		}
+
+		prefer.values.push( new Header.Value( `return=representation; ${ preferType }` ) );
 		return requestOptions;
 	}
 
@@ -295,7 +322,7 @@ export class Util {
 		let representation:string = returnRepresentation ? "return=representation; " : "";
 
 		let keys:string[] = [ "include", "omit" ];
-		for ( let key of keys ) {
+		for( let key of keys ) {
 			if( key in preferences && preferences[ key ].length > 0 ) {
 				prefer.values.push( new Header.Value( `${ representation }${ key }="${ preferences[ key ].join( " " ) }"` ) );
 			}

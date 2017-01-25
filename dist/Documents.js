@@ -184,25 +184,39 @@ var Class = (function () {
     };
     Class.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        var createResponse;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var responses = [];
+        var options = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
         return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            createResponse = response;
+            var document = _a[0], createResponse = _a[1];
+            responses.push(createResponse);
+            if (document.isResolved())
+                return [document, null];
             return _this.get(document.id);
         }).then(function (_a) {
-            var persistedDocument = _a[0], response = _a[1];
-            return [persistedDocument, [createResponse, response]];
+            var persistedDocument = _a[0], resolveResponse = _a[1];
+            if (!!resolveResponse)
+                responses.push(resolveResponse);
+            return [persistedDocument, responses];
         });
     };
     Class.prototype.createChildrenAndRetrieve = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
-        var createResponses;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var responses = [];
+        var options = HTTP.Request.Util.isOptions(slugsOrRequestOptions) ? slugsOrRequestOptions : requestOptions;
+        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
         return this.createChildren(parentURI, childrenObjects, slugsOrRequestOptions, requestOptions).then(function (_a) {
-            var documents = _a[0], responses = _a[1];
-            createResponses = responses;
+            var documents = _a[0], creationResponses = _a[1];
+            responses.push(creationResponses);
+            if (documents.every(function (document) { return document.isResolved(); }))
+                return [documents, null];
             return Pointer.Util.resolveAll(documents);
         }).then(function (_a) {
-            var persistedDocuments = _a[0], responses = _a[1];
-            return [persistedDocuments, [createResponses, responses]];
+            var persistedDocuments = _a[0], resolveResponses = _a[1];
+            if (!!resolveResponses)
+                responses.push(resolveResponses);
+            return [persistedDocuments, responses];
         });
     };
     Class.prototype.listChildren = function (parentURI, requestOptions) {
@@ -496,12 +510,8 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        return HTTP.Request.Service.head(uri, requestOptions).then(function (headerResponse) {
-            var eTag = HTTP.Response.Util.getETag(headerResponse);
-            if (eTag === persistedDocument._etag)
-                return [persistedDocument, null];
-            return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser());
-        }).then(function (_a) {
+        HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
@@ -514,19 +524,28 @@ var Class = (function () {
             var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
+        }).catch(function (error) {
+            if (error.statusCode === 304)
+                return [persistedDocument, null];
+            return Promise.reject(error);
         });
     };
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var saveResponse;
-        return this.save(persistedDocument).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            saveResponse = response;
-            return _this.refresh(persistedDocument);
+        var responses = [];
+        HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
+        return this.save(persistedDocument, requestOptions).then(function (_a) {
+            var document = _a[0], saveResponse = _a[1];
+            var preferenceHeader = saveResponse.getHeader("Preference-Applied");
+            if (preferenceHeader !== null && preferenceHeader.toString() === "return=representation")
+                return _this.updateFromPreferenceApplied(persistedDocument, saveResponse);
+            responses.push(saveResponse);
+            return persistedDocument.refresh();
         }).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            return [persistedDocument, [saveResponse, response]];
+            var document = _a[0], refreshResponse = _a[1];
+            responses.push(refreshResponse);
+            return [persistedDocument, responses];
         });
     };
     Class.prototype.delete = function (documentURI, requestOptions) {
@@ -618,13 +637,15 @@ var Class = (function () {
         fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
         var uri = documentResource["@id"];
         var documentPointer = this.getPointer(uri);
-        if (documentPointer.isResolved()) {
-            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+        var persistedDocument;
+        if (PersistedDocument.Factory.is(documentPointer)) {
+            persistedDocument = this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
         }
         else {
-            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+            persistedDocument = this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
         }
-        return documentPointer;
+        persistedDocument._resolved = true;
+        return persistedDocument;
     };
     Class.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources.Factory.create(this);
@@ -661,10 +682,10 @@ var Class = (function () {
             var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(document, localID), _this);
             var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
             _this.pointers.set(localID, persistedProtectedDocument);
-            return [
-                persistedProtectedDocument,
-                response,
-            ];
+            var preferenceHeader = response.getHeader("Preference-Applied");
+            if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
+                return [persistedProtectedDocument, response];
+            return _this.updateFromPreferenceApplied(persistedProtectedDocument, response);
         }).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             return Promise.reject(error);
@@ -855,18 +876,21 @@ var Class = (function () {
         persistedDocument._syncSnapshot();
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
         persistedDocument._syncSavedFragments();
-        persistedDocument._resolved = true;
         this.decoratePersistedDocument(persistedDocument);
         return persistedDocument;
     };
     Class.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
         var namedFragmentsMap = new Map();
-        var blankNodesArray = persistedDocument.getFragments().filter(function (fragment) {
+        var blankNodesArray = [];
+        persistedDocument.getFragments().forEach(function (fragment) {
             persistedDocument._removeFragment(fragment.id);
-            if (RDF.URI.Util.isBNodeID(fragment.id))
-                return true;
-            namedFragmentsMap.set(fragment.id, fragment);
-            return false;
+            if (RDF.URI.Util.isBNodeID(fragment.id)) {
+                blankNodesArray.push(fragment);
+            }
+            else {
+                var fragmentID = RDF.URI.Util.isRelative(fragment.id) ? RDF.URI.Util.resolve(persistedDocument.id, fragment.id) : fragment.id;
+                namedFragmentsMap.set(fragmentID, fragment);
+            }
         });
         var newFragments = [];
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
@@ -907,6 +931,20 @@ var Class = (function () {
             if (persistedDocument.hasType(type)) {
                 options.decorator.apply(null, [persistedDocument].concat(options.parameters));
             }
+        });
+    };
+    Class.prototype.updateFromPreferenceApplied = function (persistedDocument, response) {
+        var _this = this;
+        return new RDF.Document.Parser().parse(response.data).then(function (rdfDocuments) {
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            persistedDocument = _this._getPersistedDocument(rdfDocument, response);
+            persistedDocument._etag = eTag;
+            return [persistedDocument, response];
         });
     };
     return Class;

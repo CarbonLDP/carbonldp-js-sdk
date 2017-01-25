@@ -69,10 +69,15 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.getChildren( "/" );
-			} ).then( ( [ _resources, response ] ) => {
-				expect( Carbon.Utils.isArray( _resources ) ).toBe( true );
-				console.log( _resources );
+				let some = { slug: "slug", name: "A fragment" };
+				let another = { name: "another" };
+				console.log( some, another );
+				return appContext.documents.createChild( "/posts/", { fragment: some, another: another } );
+			} ).then( ( [ _resource, response ] ) => {
+				console.log( _resource );
+				return _resource.resolve();
+			} ).then( ( [ _resource, response ] ) => {
+				console.log( _resource );
 				done();
 			} ).catch( ( error ) => {
 				done.fail( error );
