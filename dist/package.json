@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "description": "JavaScript/TypeScript SDK for Carbon LDP",
   "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
   "contributors": [

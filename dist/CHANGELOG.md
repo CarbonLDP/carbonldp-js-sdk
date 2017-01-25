@@ -1,3 +1,20 @@
+# 0.41.0 (2017/01/25)
+
+- Created HTML based API documentation that can be read in the `docs` folder
+- Completed #108  - Add label for optional attributes of interfaces
+- Completed #127 - Implement the `If-None-Match` header for the `documents.refresh()` method
+- Completed #128 - Add support for retrieving the same updated document from the server in the same request of creation or modification
+- Fixed #102 - Move the addition of the factory decorator for persisted app roles to the app context
+- Fixed #104 - When extending an object schema, if a property is repeated, the last one will override the original
+- Fixed #111 - Fix type of agents in persisted roles interface
+- Fixed #114 - Error asking if URI is relative to another one
+- Fixed #115 - Error when retrying to persist an object after the server sent an error
+- Fixed #118 - Incorrect product brand name
+- Fixed #116 - Throws an specific error if a URI outside the current context is requested
+- Fixed #119 - Missing `description` property for roles
+- Fixed minor issue linking some types in the documentation
+- Fixed error that does not maintained the reference object of a named fragment when persisting a new child document
+
 # 0.40.0 (2016/10/27)
 
 - Completed #99 - Properties declared in the schema can be declared with a relative `@id` that will be resolved when needed with the default vocabulary of the current context

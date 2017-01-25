@@ -43,7 +43,7 @@ var Carbon = (function (_super) {
         return _this;
     }
     Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.40.0"; },
+        get: function () { return "0.41.0"; },
         enumerable: true,
         configurable: true
     });
