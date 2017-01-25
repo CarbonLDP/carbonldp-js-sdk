@@ -3,7 +3,9 @@ export declare class Class {
     static readonly AccessPoint: string;
     static readonly AddMemberAction: string;
     static readonly API: string;
+    static readonly CreatedResource: string;
     static readonly Document: string;
+    static readonly ModifiedResource: string;
     static readonly NonReadableMembershipResourceTriples: string;
     static readonly PreferContainer: string;
     static readonly PreferContainmentResources: string;
