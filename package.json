@@ -15,14 +15,16 @@
   "main": "./dist/Carbon.js",
   "typings": "./dist/Carbon.d.ts",
   "dependencies": {
-    "file-type": "^3.8.0"
+    "file-type": "^4.1.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.5.36",
     "@types/jasmine-ajax": "^3.1.31",
     "@types/node": "^6.0.46",
+    "awesome-typescript-loader": "^3.0.4-rc.0",
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
+    "file-type": "^4.1.0",
     "gulp": "^3.9.1",
     "gulp-htmlmin": "^3.0.0",
     "gulp-jasmine": "^2.3.0",
@@ -50,59 +52,8 @@
     "systemjs-builder": "0.15.35",
     "tslint": "^3.10.2",
     "typescript": "^2.0.6",
-    "typings": "^1.0.4"
-  },
-  "jspm": {
-    "name": "carbonldp",
-    "main": "Carbon.js",
-    "directories": {
-      "lib": "dist",
-      "packages": "test/jspm_packages"
-    },
-    "dependencies": {
-      "plugin-typescript": "github:frankwallis/plugin-typescript@^5.2.7",
-      "typescript": "npm:typescript@^2.0.6"
-    },
-    "devDependencies": {
-      "jsonld": "npm:jsonld@^0.4.11"
-    },
-    "peerDependencies": {
-      "assert": "npm:jspm-nodelibs-assert@^0.2.0",
-      "buffer": "npm:jspm-nodelibs-buffer@^0.2.0",
-      "child_process": "npm:jspm-nodelibs-child_process@^0.2.0",
-      "constants": "npm:jspm-nodelibs-constants@^0.2.0",
-      "crypto": "npm:jspm-nodelibs-crypto@^0.2.0",
-      "events": "npm:jspm-nodelibs-events@^0.2.0",
-      "fs": "npm:jspm-nodelibs-fs@^0.2.0",
-      "http": "npm:jspm-nodelibs-http@^0.2.0",
-      "net": "npm:jspm-nodelibs-net@^0.2.0",
-      "os": "npm:jspm-nodelibs-os@^0.2.0",
-      "path": "npm:jspm-nodelibs-path@^0.2.0",
-      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
-      "stream": "npm:jspm-nodelibs-stream@^0.2.0",
-      "string_decoder": "npm:jspm-nodelibs-string_decoder@^0.2.0",
-      "url": "npm:jspm-nodelibs-url@^0.2.0",
-      "util": "npm:jspm-nodelibs-util@^0.2.0",
-      "vm": "npm:jspm-nodelibs-vm@^0.2.0"
-    },
-    "overrides": {
-      "npm:inherits@2.0.3": {
-        "ignore": [
-          "test.js"
-        ]
-      },
-      "npm:typescript@2.0.6": {
-        "browser": {},
-        "map": {
-          "buffer": "@empty",
-          "child_process": "@empty",
-          "fs": "@empty",
-          "path": "@empty",
-          "process": "@empty",
-          "readline": "@empty"
-        }
-      }
-    }
+    "typings": "^1.0.4",
+    "webpack": "^2.2.1"
   },
   "scripts": {
     "start": "./node_modules/.bin/gulp build",

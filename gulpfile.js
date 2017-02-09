@@ -19,7 +19,7 @@ const jeditor = require( "gulp-json-editor" );
 
 const jasmine = require( "gulp-jasmine" );
 
-const Builder = require( "jspm" ).Builder;
+const webpack = require( "webpack" );
 
 const htmlMinifier = require( "gulp-htmlmin" );
 
@@ -72,17 +72,10 @@ gulp.task( "finish", () => {
 } );
 
 gulp.task( "bundle:sfx", ( done ) => {
-	let builder = new Builder();
-	builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
-		"sourceMaps": "inline",
-		"mangle": false,
-		"lowResSourceMaps": false,
-		"removeComments": true,
-	} ).then( () => {
-		done();
-	} ).catch( ( error ) => {
-		util.log( error );
-		done( error );
+	let compiler = webpack( require( "./webpack.config.js" ) );
+	compiler.run( ( error ) => {
+		if( error ) done( error );
+		else done();
 	} );
 } );
 
@@ -196,10 +189,6 @@ gulp.task( "prepare:npm-package|copy:package-json", () => {
 
 			json.main = json.main.replace( "dist/", "" );
 			json.typings = json.typings.replace( "dist/", "" );
-
-			json.jspm = {
-				map: json.jspm.map,
-			};
 
 			return json;
 		} ) )

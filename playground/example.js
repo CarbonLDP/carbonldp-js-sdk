@@ -69,13 +69,10 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				let some = { slug: "slug", name: "A fragment" };
-				let another = { name: "another" };
-				console.log( some, another );
-				return appContext.documents.createChild( "/posts/", { fragment: some, another: another } );
-			} ).then( ( [ _resource, response ] ) => {
-				console.log( _resource );
-				return _resource.resolve();
+				return appContext.documents.get( "/posts/post-1/" );
+			// } ).then( ( [ _resource, response ] ) => {
+			// 	console.log( _resource );
+			// 	return _resource.resolve();
 			} ).then( ( [ _resource, response ] ) => {
 				console.log( _resource );
 				done();

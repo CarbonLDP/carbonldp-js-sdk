@@ -28,7 +28,7 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
         - **html**: Files used for html based documentation
         - **markdown**: Files used for markdown based documentation
     - **license.js**: Contains the license to append to the build.
-    - **sfx.js**: Main file that feeds the SFX building process. Requires Carbon and exposes it in the global environment.
+    - **sfx.ts**: Main file that feeds the SFX building process. Requires Carbon and exports its entire content as a module.
 - **dist**: Compiled files.
     - **bundles**: Contains different versions of Carbon, bundled for simplicity.
         **Carbon.sfx.js**: Bundle that contains Carbon and all of its dependencies. Carbon is exposed in the global environment.
