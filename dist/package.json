@@ -15,7 +15,6 @@
   "main": "./Carbon.js",
   "typings": "./Carbon.d.ts",
   "dependencies": {
-    "file-type": "^3.8.0"
-  },
-  "jspm": {}
+    "file-type": "^4.1.0"
+  }
 }
