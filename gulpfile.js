@@ -1,7 +1,10 @@
 "use strict";
 
 const fs = require( "fs" );
+const path = require( "path" );
+
 const del = require( "del" );
+const filter = require( 'gulp-filter' );
 
 const gulp = require( "gulp" );
 const util = require( "gulp-util" );
@@ -28,11 +31,11 @@ let config = {
 		typescript: [
 			"src/**/*.ts",
 			"!src/**/*.spec.ts",
-			"!src/test/**"
+			"!src/test/**",
 		],
 		all: "src/**/*.ts",
-		test: "/**/*.spec.js",
-		main: "src/Carbon.ts"
+		test: "**/*.spec.js",
+		main: "src/Carbon.ts",
 	},
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
@@ -81,10 +84,6 @@ gulp.task( "bundle:sfx", ( done ) => {
 
 gulp.task( "clean:dist", ( done ) => {
 	return del( [ config.dist.all, config.dist.doc ], done );
-} );
-
-gulp.task( "clean:temp", () => {
-	del.sync( config.dist.temp );
 } );
 
 gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
@@ -220,26 +219,24 @@ gulp.task( "test:debug", ( done ) => {
 	}, done ).start();
 } );
 
-gulp.task( "test:node", ( done ) => {
-	runSequence(
-		"test:node|exec",
-		"clean:temp",
-		done
-	);
-} );
-
-gulp.task( "test:node|compile", [ "clean:temp" ], () => {
+gulp.task( "test:node", () => {
 	let tsProject = ts.createProject( "tsconfig.json" );
 	let tsResults = gulp.src( config.source.all )
 		.pipe( tsProject() );
 
-	return tsResults.js
-		.pipe( gulp.dest( config.dist.temp ) );
+	let stream =  tsResults.js
+		.pipe( gulp.dest( config.dist.temp ) )
+		.pipe( filter( config.source.test ) )
+		.pipe( jasmine( {
+			includeStackTrace: true,
+		} ) );
+
+	stream.on( "jasmineDone", deleteTmpDir );
+	stream.on( "error", deleteTmpDir );
+
+	return stream;
 } );
 
-gulp.task( "test:node|exec", [ "test:node|compile" ], () => {
-	return gulp.src( config.dist.temp + config.source.test )
-		.pipe( jasmine( {
-			includeStackTrace: true
-		} ) );
-} );
+function deleteTmpDir() {
+	del.sync( config.dist.temp );
+}

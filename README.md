@@ -10,13 +10,11 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 1. Install dependencies
     - [node.js 6+](https://nodejs.org/en/)
     - gulp: `npm install gulp -g` (you may need to run it as root)
-    - jspm: `npm install jspm@beta -g` (you may need to run it as root)
     - typings: `npm install typings -g` (you may need to run it as root)
 2. cd into the project's root directory
 3. Run `npm install`
-4. Run `jspm install`
-5. Run `typings install`
-6. Build the source code by running `npm start`
+4. Run `typings install`
+5. Build the source code by running `npm start`
 
 ## Main gulp tasks
 1. `build`: Same as `npm start`. Build the source code and prepare it for production (inside the dist/ folder)
@@ -49,8 +47,6 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 - **.travis.yml**: Travis configuration file
 - **CHANGELOG.md**: File to track changes. Any new addition needs to be added here
 - **gulpfile.js**: Gulp configuration file
-- **jspm.browser.js**: JSPM browser configuration file used by the unit test suite
-- **jspm.config.js**: JSPM main configuration file used by the unit test suite
 - **karma.conf.js**: Karma test runner configuration file
 - **LICENSE**: Self explanatory
 - **package.json**: npm configuration file
@@ -58,6 +54,7 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 - **tsconfig.json**: TypeScript compiler configuration file
 - **tslint.json**: tslint configuration file
 - **typings.json**: [typings](https://github.com/typings/typings) configuration file
+- **webpack.config.js**: Webpack configuration file used to create the bundle files
 
 ## License
 
