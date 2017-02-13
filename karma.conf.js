@@ -1,32 +1,63 @@
 // Karma configuration
 // Generated on Wed Nov 12 2014 12:33:32 GMT-0600 (CST)
 
+const webpack = require( "webpack" );
+
 module.exports = function( config ) {
 	let configuration = {
-		frameworks: [ "jspm", "jasmine" ],
+		// base path that will be used to resolve all patterns (eg. files, exclude)
+		basePath: "",
 
-		jspm: {
-			browser: "jspm.browser.js",
-			config: "jspm.config.js",
+		// frameworks to use
+		frameworks: [ "jasmine-ajax", "jasmine" ],
 
-			packages: "test/jspm_packages/",
+		// list of files / patterns to load in the browser
+		files: [
+			"test/test_index.ts",
+		],
 
-			stripExtension: false,
+		mime: {
+			"text/x-typescript": [ "ts" ]
+		},
 
-			loadFiles: [
-				"test/karma-jasmine/lib/extender.js",
-				"node_modules/jasmine-ajax/lib/mock-ajax.js",
-				"node_modules/es6-shim/es6-shim.min.js",
+		// preprocess matching files before serving them to the browser
+		preprocessors: {
+			"test/test_index.ts": [ "webpack" ],
+			"src/**/*.ts": [ "webpack" ],
+		},
 
-				"src/**/*.spec.ts"
+		webpack: {
+			devtool: 'inline-source-map',
+
+			resolve: {
+				extensions: [ ".ts", ".js" ],
+			},
+
+			target: "node",
+			node: {},
+			externals: [ "nock", "file-type" ],
+			plugins: [
+				// ignore node dependencies in jsonld.js
+				new webpack.IgnorePlugin( /^(?=.*)((?!\.\/\.\.\/src\/).)((?!webpack amd options).)*$/, /jsonld\/js$/ ),
 			],
-			serveFiles: [
-				"tsconfig.json",
-				"src/**/!(*.spec).ts"
-			]
+
+
+			module: {
+				loaders: [
+					{ test: /\.ts$/, loader: "awesome-typescript-loader" },
+				],
+			},
+		},
+		webpackMiddleware: {
+			stats: 'errors-only'
 		},
 
 		reporters: [ "documentation" ],
+
+		// reporter options
+		mochaReporter: {
+			ignoreSkipped: true,
+		},
 
 		// web server port
 		port: 9876,

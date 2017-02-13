@@ -198,7 +198,8 @@ gulp.task( "prepare:npm-package|copy:package-json", () => {
 
 gulp.task( "test", ( done ) => {
 	runSequence(
-		[ "test:browser", "test:node" ],
+		"test:node",
+		"test:browser",
 		"finish",
 		done
 	);
