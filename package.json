@@ -39,6 +39,7 @@
     "karma": "^0.13.19",
     "karma-chrome-launcher": "^1.0.1",
     "karma-documentation-runner": "file:test/console-reporter",
+    "karma-es6-shim": "^1.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-jasmine-ajax": "^0.1.13",
