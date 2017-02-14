@@ -11,9 +11,9 @@
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
 				"api": "http://purl.org/linked-data/api/vocab#",
-				"c": "http://carbonldp.com/ns/v1/platform#",
-				"cs": "http://carbonldp.com/ns/v1/security#",
-				"cp": "http://carbonldp.com/ns/v1/patch#",
+				"c": "https://carbonldp.com/ns/v1/platform#",
+				"cs": "https://carbonldp.com/ns/v1/security#",
+				"cp": "https://carbonldp.com/ns/v1/patch#",
 				"cc": "http://creativecommons.org/ns#",
 				"cert": "http://www.w3.org/ns/auth/cert#",
 				"dbp": "http://dbpedia.org/property/",
@@ -69,17 +69,21 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				let some = { slug: "slug", name: "A fragment" };
-				let another = { name: "another" };
-				console.log( some, another );
-				return appContext.documents.createChild( "/posts/", { fragment: some, another: another } );
+				return appContext.auth.roles.createChild( "app-admin/", Carbon.App.Role.Factory.create( "a-role" ), "new-role" );
 			} ).then( ( [ _resource, response ] ) => {
 				console.log( _resource );
-				return _resource.resolve();
+				return appContext.documents.get( "posts/post-1/" );
+			} ).then( ( [ _resource, response ] ) => {
+				return _resource.getACL();
+			} ).then( ( [ _resource, response ] ) => {
+				console.log( _resource );
+				_resource.grant( "roles/new-role/", "cs:AppRole", "cs:Read" );
+				return _resource.saveAndRefresh();
 			} ).then( ( [ _resource, response ] ) => {
 				console.log( _resource );
 				done();
 			} ).catch( ( error ) => {
+				console.error( error );
 				done.fail( error );
 			} );
 
