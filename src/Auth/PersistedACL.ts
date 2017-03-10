@@ -55,12 +55,22 @@ export class Factory {
 			},
 		} );
 
+		// Check consistency in ACE
+		// TODO: Possible removal when resolved: CarbonLDP/public-carbonldp-platform#2
+		let removeInvalidACE:( ace:PersistedACE.Class ) => void = ( ace ) => {
+			if( ! ace.subjects ) acl._removeFragment( ace );
+			return ! ! ace.subjects;
+		};
+		if( acl.entries ) acl.entries = acl.entries.filter( removeInvalidACE );
+		if( acl.inheritableEntries ) acl.inheritableEntries = acl.inheritableEntries.filter( removeInvalidACE );
+
+
 		return acl;
 	}
 
 }
 
-function parsePointer( element: string | Pointer.Class ):Pointer.Class {
+function parsePointer( element:string | Pointer.Class ):Pointer.Class {
 	return Pointer.Factory.is( element ) ? <Pointer.Class> element : (this as Class).getPointer( <string> element );
 }
 

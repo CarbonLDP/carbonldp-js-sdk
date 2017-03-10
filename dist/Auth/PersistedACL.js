@@ -18,6 +18,15 @@ var Factory = (function () {
                 value: parsePointer,
             },
         });
+        var removeInvalidACE = function (ace) {
+            if (!ace.subjects)
+                acl._removeFragment(ace);
+            return !!ace.subjects;
+        };
+        if (acl.entries)
+            acl.entries = acl.entries.filter(removeInvalidACE);
+        if (acl.inheritableEntries)
+            acl.inheritableEntries = acl.inheritableEntries.filter(removeInvalidACE);
         return acl;
     };
     return Factory;
