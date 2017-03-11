@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function hasFunction(object, functionName) {
     return typeof object[functionName] === "function";
 }
@@ -52,7 +53,7 @@ function isDouble(value) {
 }
 exports.isDouble = isDouble;
 function isDate(date) {
-    return typeof date === "date" || date instanceof Date;
+    return typeof date === "object" && date instanceof Date;
 }
 exports.isDate = isDate;
 function isObject(object) {

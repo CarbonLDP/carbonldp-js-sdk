@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var StatusCode;
 (function (StatusCode) {
     StatusCode[StatusCode["CONTINUE"] = 100] = "CONTINUE";
@@ -42,7 +43,6 @@ var StatusCode;
     StatusCode[StatusCode["GATEWAY_TIME_OUT"] = 504] = "GATEWAY_TIME_OUT";
     StatusCode[StatusCode["HTTP_VERSION_NOT_SUPPORTED"] = 505] = "HTTP_VERSION_NOT_SUPPORTED";
 })(StatusCode || (StatusCode = {}));
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = StatusCode;
 
 //# sourceMappingURL=StatusCode.js.map

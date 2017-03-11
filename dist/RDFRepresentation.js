@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./NS");
 var PersistedDocument = require("./PersistedDocument");
 var Utils = require("./Utils");

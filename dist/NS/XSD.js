@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = require("./../Utils");
 exports.namespace = "http://www.w3.org/2001/XMLSchema#";
 var DataType = (function () {

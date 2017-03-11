@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var C = require("./NS/C");
 exports.C = C;
 var CP = require("./NS/CP");

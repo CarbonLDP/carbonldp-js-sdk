@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./Errors/HTTPError");
 exports.Error = HTTPError_1.default;
 var BadRequestError_1 = require("./Errors/client/BadRequestError");

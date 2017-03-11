@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AppRole = require("./App/Role");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
@@ -189,7 +190,6 @@ var Class = (function () {
 }());
 exports.Class = Class;
 exports.instance = new Class();
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = exports.instance;
 
 //# sourceMappingURL=SDKContext.js.map

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var RawResults = require("./SPARQL/RawResults");
 exports.RawResults = RawResults;
 var RawResultsParser = require("./SPARQL/RawResultsParser");

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var sparqler_1 = require("sparqler");
 var queryPrototype = sparqler_1.default.prototype;
 var superInit = queryPrototype.initInterfaces;
@@ -14,7 +15,6 @@ queryPrototype.initInterfaces = function () {
         },
     };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = sparqler_1.default;
 
 //# sourceMappingURL=Builder.js.map

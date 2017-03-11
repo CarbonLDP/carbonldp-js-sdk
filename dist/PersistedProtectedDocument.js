@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var HTTP = require("./HTTP");
 var Auth = require("./Auth");
 var NS = require("./NS");

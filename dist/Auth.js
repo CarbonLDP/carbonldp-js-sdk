@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ACE = require("./Auth/ACE");
 exports.ACE = ACE;
 var ACL = require("./Auth/ACL");
@@ -189,7 +190,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Auth.js.map

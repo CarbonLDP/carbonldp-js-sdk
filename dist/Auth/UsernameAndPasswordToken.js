@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Class = (function () {
     function Class(username, password) {
         this._username = username;
@@ -17,7 +18,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=UsernameAndPasswordToken.js.map

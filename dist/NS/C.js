@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.namespace = "https://carbonldp.com/ns/v1/platform#";
 var Class = (function () {
     function Class() {

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var ObjectSchema = require("./ObjectSchema");
 var XSD = require("./NS/XSD");

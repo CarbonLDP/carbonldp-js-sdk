@@ -39,6 +39,8 @@ import * as SPARQL from "./SPARQL";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
+import { QueryClause } from "sparqler/Clauses";
+
 describe( module( "Carbon/Documents" ), ():void => {
 
 	describe( interfaze( "Carbon.Documents.DocumentDecorator", "Interface that describes the properties needed to decorate a document when requested" ), ():void => {
@@ -5425,6 +5427,35 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				spyService.calls.reset();
+			})();
+		} );
+
+		it( hasMethod( INSTANCE, "sparql",
+			"Method that creates an instance of SPARQLER for the provided document end-point.", [
+				{ name: "documentURI", type: "string", description: "URI of the document where to execute the SPARQL query." },
+				], { type: "SPARQLER/Clauses/QueryClause" }
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			// Property Integrity
+			(() => {
+				expect( "sparql" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.sparql ) ).toEqual( true );
+			})();
+
+			// Returns a QueryClause
+			(() => {
+				let queryBuilder:QueryClause = documents.sparql( "http://example.com/resource/" );
+				expect( "base" in queryBuilder ).toBe( true );
+				expect( "vocab" in queryBuilder ).toBe( true );
+				expect( "prefix" in queryBuilder ).toBe( true );
 			})();
 		} );
 

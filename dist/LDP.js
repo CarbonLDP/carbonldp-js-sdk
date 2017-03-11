@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AddMemberAction = require("./LDP/AddMemberAction");
 exports.AddMemberAction = AddMemberAction;
 var DirectContainer = require("./LDP/DirectContainer");
