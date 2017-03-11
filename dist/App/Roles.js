@@ -13,7 +13,7 @@ var Roles_1 = require("./../Auth/Roles");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(appContext) {
-        var _this;
+        var _this = this;
         if (!(appContext instanceof Context_1.default))
             throw new Errors.NotImplementedError("The context provided is not a AppContext.");
         _this = _super.call(this, appContext) || this;

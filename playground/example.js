@@ -5,8 +5,8 @@
 			"use strict";
 
 			let carbon = new Carbon();
-			carbon.setSetting( "domain", "carbonldp.base22.io" );
-			carbon.setSetting( "http.ssl", true );
+			carbon.setSetting( "domain", "localhost:8083" );
+			carbon.setSetting( "http.ssl", false );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
