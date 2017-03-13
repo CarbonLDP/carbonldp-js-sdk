@@ -60,7 +60,7 @@ class Carbon extends AbstractContext.Class {
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
-	static get version():string { return "0.40.0"; }
+	static get version():string { return "0.41.0"; }
 
 	apps:Apps.Class;
 

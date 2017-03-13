@@ -453,7 +453,7 @@ if( typeof XMLHttpRequest === "undefined" ) {
 	const URL:any = require( "url" );
 	/* tslint:enable */
 
-	let methods:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
+	const METHODS:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 
 	jasmine.Ajax = <any> (() => {
 
@@ -481,7 +481,9 @@ if( typeof XMLHttpRequest === "undefined" ) {
 			};
 		}
 
-		function stubRequest( url:string, data:string, method:string = "*" ):any {
+		function stubRequest( url:string, data:string, methods:string = "*" ):any {
+			data = data || undefined;
+
 			let path:any = url;
 			if( Utils.isString( url ) ) {
 				let parsedURL:Url = URL.parse( url );
@@ -489,18 +491,21 @@ if( typeof XMLHttpRequest === "undefined" ) {
 			}
 
 			let currentRequests:any[] = [];
-			let currentMethods:string[] = [ method ];
-			if( method === "*" ) currentMethods = methods;
+			let currentMethods:string[] = [ methods ];
+			if( methods === "*" ) currentMethods = METHODS;
 
-			for( let key of currentMethods ) {
-				let interceptor:any = scope.keyedInterceptors[ `${key} /.*/${path}` ];
-				if( interceptor ) nock.removeInterceptor( interceptor[ 0 ] );
+			for( let method of currentMethods ) {
+				scope.interceptors
+					.filter( interceptor => interceptor._key === `${method} /.*/${path}` )
+					.filter( interceptor => interceptor._requestBody === data )
+					.forEach( interceptor => nock.removeInterceptor( interceptor ) )
+				;
 
-				currentRequests.push( scope.intercept( path, key, data || undefined ) );
+				currentRequests.push( scope.intercept( path, method, data ) );
 			}
 
 			return {
-				method: method,
+				method: methods,
 				andReturn: andReturn( currentRequests ),
 			};
 		}

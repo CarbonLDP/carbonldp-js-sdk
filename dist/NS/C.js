@@ -19,8 +19,18 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "CreatedResource", {
+        get: function () { return exports.namespace + "CreatedResource"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Document", {
         get: function () { return exports.namespace + "Document"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ModifiedResource", {
+        get: function () { return exports.namespace + "ModifiedResource"; },
         enumerable: true,
         configurable: true
     });
