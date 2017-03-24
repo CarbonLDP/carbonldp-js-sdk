@@ -9,7 +9,7 @@ var Method;
     Method[Method["PUT"] = 4] = "PUT";
     Method[Method["PATCH"] = 5] = "PATCH";
     Method[Method["DELETE"] = 6] = "DELETE";
-})(Method || (Method = {}));
+})(Method = exports.Method || (exports.Method = {}));
 exports.default = Method;
 
 //# sourceMappingURL=Method.js.map

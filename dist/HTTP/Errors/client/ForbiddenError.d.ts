@@ -1,6 +1,6 @@
 import HTTPError from "./../HTTPError";
 import Response from "./../../Response";
-declare class ForbiddenError extends HTTPError {
+export declare class ForbiddenError extends HTTPError {
     static readonly statusCode: number;
     readonly name: string;
     constructor(message: string, response: Response);

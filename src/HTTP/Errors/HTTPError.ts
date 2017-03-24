@@ -4,7 +4,7 @@ import * as LDP from "./../../LDP";
 import * as Resource from "./../../Resource";
 import Response from "./../Response";
 
-class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
+export class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 	static get statusCode():number { return null; }
 
 	get name():string { return "HTTPError"; }

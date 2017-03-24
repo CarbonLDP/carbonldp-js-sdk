@@ -2,7 +2,7 @@ import AbstractError from "./../../Errors/AbstractError";
 import * as Pointer from "./../../Pointer";
 import * as LDP from "./../../LDP";
 import Response from "./../Response";
-declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
+export declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
     static readonly statusCode: number;
     readonly name: string;
     _id: string;

@@ -1,6 +1,6 @@
 import AbstractError from "./AbstractError";
 
-class IllegalActionError extends AbstractError {
+export class IllegalActionError extends AbstractError {
 	get name():string { return "IllegalActionError"; }
 
 	constructor( message:string ) {

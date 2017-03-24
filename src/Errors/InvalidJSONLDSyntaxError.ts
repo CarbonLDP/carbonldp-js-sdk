@@ -1,6 +1,6 @@
 import AbstractError from "./AbstractError";
 
-class InvalidJSONLDSyntaxError extends AbstractError {
+export class InvalidJSONLDSyntaxError extends AbstractError {
 	get name():string { return "InvalidJSONLDSyntaxError"; }
 
 	constructor( message:string ) {

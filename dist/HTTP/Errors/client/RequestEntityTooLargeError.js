@@ -32,6 +32,7 @@ var RequestEntityTooLargeError = (function (_super) {
     });
     return RequestEntityTooLargeError;
 }(HTTPError_1.default));
+exports.RequestEntityTooLargeError = RequestEntityTooLargeError;
 exports.default = RequestEntityTooLargeError;
 
 //# sourceMappingURL=RequestEntityTooLargeError.js.map

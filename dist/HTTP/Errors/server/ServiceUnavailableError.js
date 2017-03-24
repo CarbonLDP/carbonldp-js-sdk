@@ -32,6 +32,7 @@ var ServiceUnavailableError = (function (_super) {
     });
     return ServiceUnavailableError;
 }(HTTPError_1.default));
+exports.ServiceUnavailableError = ServiceUnavailableError;
 exports.default = ServiceUnavailableError;
 
 //# sourceMappingURL=ServiceUnavailableError.js.map

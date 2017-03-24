@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "NotImplementedError";
 const statusCode:number = 501;
 
-class NotImplementedError extends HTTPError {
+export class NotImplementedError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

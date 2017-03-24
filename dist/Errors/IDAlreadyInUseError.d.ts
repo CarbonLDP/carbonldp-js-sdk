@@ -1,5 +1,5 @@
 import AbstractError from "./AbstractError";
-declare class IDAlreadyInUseError extends AbstractError {
+export declare class IDAlreadyInUseError extends AbstractError {
     readonly name: string;
     constructor(message: string);
 }

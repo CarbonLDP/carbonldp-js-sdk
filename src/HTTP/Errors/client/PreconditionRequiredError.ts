@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "PreconditionRequiredError";
 const statusCode:number = 428;
 
-class PreconditionRequiredError extends HTTPError {
+export class PreconditionRequiredError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

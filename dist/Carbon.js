@@ -100,6 +100,7 @@ Carbon.SDKContext = SDKContext;
 Carbon.Settings = Settings;
 Carbon.SPARQL = SPARQL;
 Carbon.Utils = Utils;
+exports.Carbon = Carbon;
 exports.default = Carbon;
 
 //# sourceMappingURL=Carbon.js.map

@@ -3,7 +3,7 @@ import Response from "./../Response";
 
 const name:string = "UnknownError";
 
-class UnknownError extends HTTPError {
+export class UnknownError extends HTTPError {
 	get name():string { return name; }
 
 	constructor( message:string, response:Response ) {

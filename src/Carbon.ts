@@ -28,7 +28,7 @@ import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
-class Carbon extends AbstractContext.Class {
+export class Carbon extends AbstractContext.Class {
 
 	/* tslint:disable: variable-name */
 	static AccessPoint:typeof AccessPoint = AccessPoint;

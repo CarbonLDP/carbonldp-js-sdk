@@ -32,6 +32,7 @@ var NotImplementedError = (function (_super) {
     });
     return NotImplementedError;
 }(HTTPError_1.default));
+exports.NotImplementedError = NotImplementedError;
 exports.default = NotImplementedError;
 
 //# sourceMappingURL=NotImplementedError.js.map

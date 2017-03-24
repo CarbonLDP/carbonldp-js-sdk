@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "GatewayTimeoutError";
 const statusCode:number = 504;
 
-class GatewayTimeoutError extends HTTPError {
+export class GatewayTimeoutError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

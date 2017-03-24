@@ -44,4 +44,8 @@ queryPrototype.initInterfaces = function():void {
 	};
 };
 
+export {
+	SPARQLER
+}
+
 export default SPARQLER;

@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "MethodNotAllowedError";
 const statusCode:number = 405;
 
-class MethodNotAllowedError extends HTTPError {
+export class MethodNotAllowedError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

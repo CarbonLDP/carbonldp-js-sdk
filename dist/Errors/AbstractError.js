@@ -30,6 +30,7 @@ var AbstractError = (function (_super) {
     };
     return AbstractError;
 }(Error));
+exports.AbstractError = AbstractError;
 exports.default = AbstractError;
 
 //# sourceMappingURL=AbstractError.js.map

@@ -1,4 +1,4 @@
-abstract class AbstractError extends Error {
+export abstract class AbstractError extends Error {
 	public message:string;
 
 	get name():string { return "AbstractError"; }

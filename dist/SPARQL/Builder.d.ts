@@ -15,4 +15,5 @@ declare module "sparqler/SPARQLER" {
         _entryPoint: string;
     }
 }
+export { SPARQLER };
 export default SPARQLER;

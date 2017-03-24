@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "InternalServerErrorError";
 const statusCode:number = 500;
 
-class InternalServerErrorError extends HTTPError {
+export class InternalServerErrorError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

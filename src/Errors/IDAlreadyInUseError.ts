@@ -1,6 +1,6 @@
 import AbstractError from "./AbstractError";
 
-class IDAlreadyInUseError extends AbstractError {
+export class IDAlreadyInUseError extends AbstractError {
 
 	get name():string { return "IDAlreadyInUseError"; }
 

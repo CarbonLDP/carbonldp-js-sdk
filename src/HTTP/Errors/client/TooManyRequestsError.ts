@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "TooManyRequestsError";
 const statusCode:number = 429;
 
-class TooManyRequestsError extends HTTPError {
+export class TooManyRequestsError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

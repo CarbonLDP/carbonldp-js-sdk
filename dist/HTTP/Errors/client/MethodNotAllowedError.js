@@ -32,6 +32,7 @@ var MethodNotAllowedError = (function (_super) {
     });
     return MethodNotAllowedError;
 }(HTTPError_1.default));
+exports.MethodNotAllowedError = MethodNotAllowedError;
 exports.default = MethodNotAllowedError;
 
 //# sourceMappingURL=MethodNotAllowedError.js.map

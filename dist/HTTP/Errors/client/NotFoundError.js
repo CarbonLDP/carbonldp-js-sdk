@@ -32,6 +32,7 @@ var NotFoundError = (function (_super) {
     });
     return NotFoundError;
 }(HTTPError_1.default));
+exports.NotFoundError = NotFoundError;
 exports.default = NotFoundError;
 
 //# sourceMappingURL=NotFoundError.js.map

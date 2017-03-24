@@ -32,6 +32,7 @@ var GatewayTimeoutError = (function (_super) {
     });
     return GatewayTimeoutError;
 }(HTTPError_1.default));
+exports.GatewayTimeoutError = GatewayTimeoutError;
 exports.default = GatewayTimeoutError;
 
 //# sourceMappingURL=GatewayTimeoutError.js.map

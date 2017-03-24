@@ -1,6 +1,6 @@
 import AbstractError from "./AbstractError";
 
-class IllegalArgumentError extends AbstractError {
+export class IllegalArgumentError extends AbstractError {
 	get name():string { return "IllegalArgumentError"; }
 
 	constructor( message:string ) {

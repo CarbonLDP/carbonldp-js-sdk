@@ -1,4 +1,4 @@
-enum Method {
+export enum Method {
 	OPTIONS,
 	HEAD,
 	GET,

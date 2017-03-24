@@ -25,6 +25,7 @@ var IDAlreadyInUseError = (function (_super) {
     });
     return IDAlreadyInUseError;
 }(AbstractError_1.default));
+exports.IDAlreadyInUseError = IDAlreadyInUseError;
 exports.default = IDAlreadyInUseError;
 
 //# sourceMappingURL=IDAlreadyInUseError.js.map

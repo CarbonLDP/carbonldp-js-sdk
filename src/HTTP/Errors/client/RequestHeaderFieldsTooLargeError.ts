@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "RequestHeaderFieldsTooLargeError";
 const statusCode:number = 431;
 
-class RequestHeaderFieldsTooLargeError extends HTTPError {
+export class RequestHeaderFieldsTooLargeError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

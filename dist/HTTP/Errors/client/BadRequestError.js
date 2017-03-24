@@ -32,6 +32,7 @@ var BadRequestError = (function (_super) {
     });
     return BadRequestError;
 }(HTTPError_1.default));
+exports.BadRequestError = BadRequestError;
 exports.default = BadRequestError;
 
 //# sourceMappingURL=BadRequestError.js.map

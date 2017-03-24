@@ -25,6 +25,7 @@ var InvalidJSONLDSyntaxError = (function (_super) {
     });
     return InvalidJSONLDSyntaxError;
 }(AbstractError_1.default));
+exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError;
 exports.default = InvalidJSONLDSyntaxError;
 
 //# sourceMappingURL=InvalidJSONLDSyntaxError.js.map

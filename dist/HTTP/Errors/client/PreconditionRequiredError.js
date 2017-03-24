@@ -32,6 +32,7 @@ var PreconditionRequiredError = (function (_super) {
     });
     return PreconditionRequiredError;
 }(HTTPError_1.default));
+exports.PreconditionRequiredError = PreconditionRequiredError;
 exports.default = PreconditionRequiredError;
 
 //# sourceMappingURL=PreconditionRequiredError.js.map

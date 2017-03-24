@@ -25,6 +25,7 @@ var IllegalActionError = (function (_super) {
     });
     return IllegalActionError;
 }(AbstractError_1.default));
+exports.IllegalActionError = IllegalActionError;
 exports.default = IllegalActionError;
 
 //# sourceMappingURL=IllegalActionError.js.map

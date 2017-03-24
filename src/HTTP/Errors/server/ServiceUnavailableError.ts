@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "ServiceUnavailableError";
 const statusCode:number = 503;
 
-class ServiceUnavailableError extends HTTPError {
+export class ServiceUnavailableError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

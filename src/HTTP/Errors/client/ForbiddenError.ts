@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "ForbiddenError";
 const statusCode:number = 403;
 
-class ForbiddenError extends HTTPError {
+export class ForbiddenError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

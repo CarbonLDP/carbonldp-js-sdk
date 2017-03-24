@@ -26,6 +26,7 @@ var IllegalStateError = (function (_super) {
     });
     return IllegalStateError;
 }(AbstractError_1.default));
+exports.IllegalStateError = IllegalStateError;
 exports.default = IllegalStateError;
 
 //# sourceMappingURL=IllegalStateError.js.map

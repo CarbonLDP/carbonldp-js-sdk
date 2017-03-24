@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "NotFoundError";
 const statusCode:number = 404;
 
-class NotFoundError extends HTTPError {
+export class NotFoundError extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

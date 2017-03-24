@@ -25,6 +25,7 @@ var IllegalArgumentError = (function (_super) {
     });
     return IllegalArgumentError;
 }(AbstractError_1.default));
+exports.IllegalArgumentError = IllegalArgumentError;
 exports.default = IllegalArgumentError;
 
 //# sourceMappingURL=IllegalArgumentError.js.map

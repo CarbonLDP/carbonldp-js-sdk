@@ -1,4 +1,4 @@
-declare enum Method {
+export declare enum Method {
     OPTIONS = 0,
     HEAD = 1,
     GET = 2,

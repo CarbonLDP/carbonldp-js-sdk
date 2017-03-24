@@ -32,6 +32,7 @@ var HTTPVersionNotSupportedError = (function (_super) {
     });
     return HTTPVersionNotSupportedError;
 }(HTTPError_1.default));
+exports.HTTPVersionNotSupportedError = HTTPVersionNotSupportedError;
 exports.default = HTTPVersionNotSupportedError;
 
 //# sourceMappingURL=HTTPVersionNotSupportedError.js.map
