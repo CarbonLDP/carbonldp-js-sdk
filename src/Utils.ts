@@ -47,7 +47,7 @@ function isDouble( value:any ):boolean {
 }
 
 function isDate( date:any ):boolean {
-	return typeof date === "object" && date instanceof Date;
+	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
 function isObject( object:any ):boolean {
