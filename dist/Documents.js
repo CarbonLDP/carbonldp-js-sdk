@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
@@ -951,7 +952,6 @@ var Class = (function () {
 }());
 Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Documents.js.map

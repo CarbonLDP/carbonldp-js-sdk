@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./Errors");
 var NS = require("./NS");
 var RDF = require("./RDF");

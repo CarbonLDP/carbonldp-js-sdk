@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ObjectSchema = require("./ObjectSchema");
 var PersistedResource = require("./PersistedResource");
 var RDF = require("./RDF");

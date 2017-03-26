@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Method;
 (function (Method) {
     Method[Method["OPTIONS"] = 0] = "OPTIONS";
@@ -9,7 +10,6 @@ var Method;
     Method[Method["PATCH"] = 5] = "PATCH";
     Method[Method["DELETE"] = 6] = "DELETE";
 })(Method || (Method = {}));
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Method;
 
 //# sourceMappingURL=Method.js.map

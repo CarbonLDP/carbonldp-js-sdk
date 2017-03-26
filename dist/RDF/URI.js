@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var Utils = require("./../Utils");
 var Class = (function () {
@@ -173,7 +174,6 @@ function prefixWithObjectSchema(uri, objectSchema) {
         return Util.prefix(uri, prefix, prefixURI.toString());
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=URI.js.map

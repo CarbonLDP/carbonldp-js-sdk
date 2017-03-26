@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Agent = require("./Agent");
 var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
 var Utils = require("./../Utils");

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var Header = require("./Header");
 var HTTPErrors = require("./Errors");

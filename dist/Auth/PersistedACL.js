@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ACL = require("./ACL");
 var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");

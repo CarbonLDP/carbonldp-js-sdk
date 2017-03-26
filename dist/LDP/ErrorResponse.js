@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var FreeResources = require("./../FreeResources");
 var Parser_1 = require("./../JSONLD/Parser");
 var NS = require("./../NS");
