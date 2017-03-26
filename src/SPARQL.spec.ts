@@ -8,6 +8,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
+import * as Builder from "./SPARQL/Builder";
 import * as RawResults from "./SPARQL/RawResults";
 import * as RawResultsParser from "./SPARQL/RawResultsParser";
 import Service from "./SPARQL/Service";
@@ -24,7 +25,16 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"RawResultsRawResults",
+		"Builder",
+		"Carbon/SPARQL/Builder"
+	), ():void => {
+		expect( SPARQL.Builder ).toBeDefined();
+		expect( SPARQL.Builder ).toBe( Builder );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RawResults",
 		"Carbon/SPARQL/RawResults"
 	), ():void => {
 		expect( SPARQL.RawResults ).toBeDefined();
@@ -33,7 +43,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"RawResultsParserRawResultsParser",
+		"RawResultsParser",
 		"Carbon/SPARQL/RawResultsParser"
 	), ():void => {
 		expect( SPARQL.RawResultsParser ).toBeDefined();

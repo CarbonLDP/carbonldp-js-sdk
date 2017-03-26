@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Builder = require("./SPARQL/Builder");
+exports.Builder = Builder;
 var RawResults = require("./SPARQL/RawResults");
 exports.RawResults = RawResults;
 var RawResultsParser = require("./SPARQL/RawResultsParser");
