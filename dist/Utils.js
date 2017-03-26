@@ -53,7 +53,7 @@ function isDouble(value) {
 }
 exports.isDouble = isDouble;
 function isDate(date) {
-    return typeof date === "object" && date instanceof Date;
+    return date instanceof Date || (typeof date === "object" && Object.prototype.toString.call(date) === "[object Date]");
 }
 exports.isDate = isDate;
 function isObject(object) {
