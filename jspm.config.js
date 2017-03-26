@@ -62,7 +62,7 @@ SystemJS.config({
     "npm:*.json"
   ],
   map: {
-    "sparqler": "npm:sparqler@0.1.0",
+    "sparqler": "npm:sparqler@0.1.1",
     "typescript": "npm:typescript@2.0.6",
     "net": "npm:jspm-nodelibs-net@0.2.0",
     "os": "npm:jspm-nodelibs-os@0.2.0",
