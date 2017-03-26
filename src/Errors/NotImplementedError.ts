@@ -1,12 +1,12 @@
 import AbstractError from "./AbstractError";
 
-export class NotImplementedError extends AbstractError {
+export class Class extends AbstractError {
 	get name():string { return "NotImplementedError"; }
 
 	constructor( message:string = "" ) {
 		super( message );
-		Object.setPrototypeOf( this, NotImplementedError.prototype );
+		Object.setPrototypeOf( this, Class.prototype );
 	}
 }
 
-export default NotImplementedError;
+export default Class;

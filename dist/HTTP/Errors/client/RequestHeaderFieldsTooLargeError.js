@@ -13,26 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "RequestHeaderFieldsTooLargeError";
 var statusCode = 431;
-var RequestHeaderFieldsTooLargeError = (function (_super) {
-    __extends(RequestHeaderFieldsTooLargeError, _super);
-    function RequestHeaderFieldsTooLargeError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, RequestHeaderFieldsTooLargeError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(RequestHeaderFieldsTooLargeError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(RequestHeaderFieldsTooLargeError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return RequestHeaderFieldsTooLargeError;
+    return Class;
 }(HTTPError_1.default));
-exports.RequestHeaderFieldsTooLargeError = RequestHeaderFieldsTooLargeError;
-exports.default = RequestHeaderFieldsTooLargeError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=RequestHeaderFieldsTooLargeError.js.map

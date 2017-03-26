@@ -1,6 +1,6 @@
 import AbstractError from "./AbstractError";
-export declare class InvalidJSONLDSyntaxError extends AbstractError {
+export declare class Class extends AbstractError {
     readonly name: string;
     constructor(message: string);
 }
-export default InvalidJSONLDSyntaxError;
+export default Class;

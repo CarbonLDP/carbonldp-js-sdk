@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import ConflictError from "./ConflictError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/ConflictError"
-), ():void => {
+import * as ConflictError from "./ConflictError";
+import DefaultExport from "./ConflictError";
+
+describe( module( "Carbon/HTTP/Errors/client/ConflictError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( ConflictError ).toBeDefined();
+		expect( ConflictError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.ConflictError",
+		"Carbon.HTTP.Errors.ConflictError.Class",
 		"Error class to indicate that the request could not be processed because of a conflict, such as an ID conflict."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( ConflictError ).toBeDefined();
-			expect( Utils.isFunction( ConflictError ) ).toBe( true );
+			expect( ConflictError.Class ).toBeDefined();
+			expect( Utils.isFunction( ConflictError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError.Class = new ConflictError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError.Class = new ConflictError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof ConflictError ).toBe( true );
+			expect( error instanceof ConflictError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError.Class = new ConflictError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:ConflictError = new ConflictError( "Message of the error", response );
+			let error:ConflictError.Class = new ConflictError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,11 +108,16 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( ConflictError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( ConflictError.statusCode ) );
-			expect( ConflictError.statusCode ).toBe( 409 );
+			expect( ConflictError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( ConflictError.Class.statusCode ) );
+			expect( ConflictError.Class.statusCode ).toBe( 409 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.ConflictError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( ConflictError.Class );
 	} );
 
 } );

@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import UnauthorizedError from "./UnauthorizedError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/UnauthorizedError"
-), ():void => {
+import * as UnauthorizedError from "./UnauthorizedError";
+import DefaultExport from "./UnauthorizedError";
+
+describe( module( "Carbon/HTTP/Errors/client/UnauthorizedError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( UnauthorizedError ).toBeDefined();
+		expect( UnauthorizedError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.UnauthorizedError",
+		"Carbon.HTTP.Errors.UnauthorizedError.Class",
 		"Error class to indicate that authentication is required or has failed."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( UnauthorizedError ).toBeDefined();
-			expect( Utils.isFunction( UnauthorizedError ) ).toBe( true );
+			expect( UnauthorizedError.Class ).toBeDefined();
+			expect( Utils.isFunction( UnauthorizedError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:UnauthorizedError = new UnauthorizedError( "Message of the error", response );
+			let error:UnauthorizedError.Class = new UnauthorizedError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:UnauthorizedError = new UnauthorizedError( "Message of the error", response );
+			let error:UnauthorizedError.Class = new UnauthorizedError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof UnauthorizedError ).toBe( true );
+			expect( error instanceof UnauthorizedError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:UnauthorizedError = new UnauthorizedError( "Message of the error", response );
+			let error:UnauthorizedError.Class = new UnauthorizedError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:UnauthorizedError = new UnauthorizedError( "Message of the error", response );
+			let error:UnauthorizedError.Class = new UnauthorizedError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( UnauthorizedError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( UnauthorizedError.statusCode ) );
+			expect( UnauthorizedError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( UnauthorizedError.Class.statusCode ) );
 
-			expect( UnauthorizedError.statusCode ).toBe( 401 );
+			expect( UnauthorizedError.Class.statusCode ).toBe( 401 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.UnauthorizedError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( UnauthorizedError.Class );
 	} );
 
 } );

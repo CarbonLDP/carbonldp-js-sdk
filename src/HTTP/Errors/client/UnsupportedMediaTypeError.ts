@@ -4,15 +4,15 @@ import Response from "./../../Response";
 const name:string = "UnsupportedMediaTypeError";
 const statusCode:number = 415;
 
-export class UnsupportedMediaTypeError extends HTTPError {
+export class Class extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
 
 	constructor( message:string, response:Response ) {
 		super( message, response );
-		Object.setPrototypeOf( this, UnsupportedMediaTypeError.prototype );
+		Object.setPrototypeOf( this, Class.prototype );
 	}
 }
 
-export default UnsupportedMediaTypeError;
+export default Class;

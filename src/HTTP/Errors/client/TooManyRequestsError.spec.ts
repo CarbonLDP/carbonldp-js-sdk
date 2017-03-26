@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import TooManyRequestsError from "./TooManyRequestsError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/TooManyRequestsError"
-), ():void => {
+import * as TooManyRequestsError from "./TooManyRequestsError";
+import DefaultExport from "./TooManyRequestsError";
+
+describe( module( "Carbon/HTTP/Errors/client/TooManyRequestsError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( TooManyRequestsError ).toBeDefined();
+		expect( TooManyRequestsError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.TooManyRequestsError",
+		"Carbon.HTTP.Errors.TooManyRequestsError.Class",
 		"Error class to indicate that the current user has sent too many request in a given amount of time."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( TooManyRequestsError ).toBeDefined();
-			expect( Utils.isFunction( TooManyRequestsError ) ).toBe( true );
+			expect( TooManyRequestsError.Class ).toBeDefined();
+			expect( Utils.isFunction( TooManyRequestsError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:TooManyRequestsError = new TooManyRequestsError( "Message of the error", response );
+			let error:TooManyRequestsError.Class = new TooManyRequestsError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:TooManyRequestsError = new TooManyRequestsError( "Message of the error", response );
+			let error:TooManyRequestsError.Class = new TooManyRequestsError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof TooManyRequestsError ).toBe( true );
+			expect( error instanceof TooManyRequestsError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:TooManyRequestsError = new TooManyRequestsError( "Message of the error", response );
+			let error:TooManyRequestsError.Class = new TooManyRequestsError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:TooManyRequestsError = new TooManyRequestsError( "Message of the error", response );
+			let error:TooManyRequestsError.Class = new TooManyRequestsError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( TooManyRequestsError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( TooManyRequestsError.statusCode ) );
+			expect( TooManyRequestsError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( TooManyRequestsError.Class.statusCode ) );
 
-			expect( TooManyRequestsError.statusCode ).toBe( 429 );
+			expect( TooManyRequestsError.Class.statusCode ).toBe( 429 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.TooManyRequestsError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( TooManyRequestsError.Class );
 	} );
 
 } );

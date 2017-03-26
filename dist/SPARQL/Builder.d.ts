@@ -15,5 +15,5 @@ declare module "sparqler/SPARQLER" {
         _entryPoint: string;
     }
 }
-export { SPARQLER };
+export { SPARQLER as Class };
 export default SPARQLER;

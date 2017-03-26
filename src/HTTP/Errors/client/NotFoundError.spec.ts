@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import NotFoundError from "./NotFoundError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/NotFoundError"
-), ():void => {
+import * as NotFoundError from "./NotFoundError";
+import DefaultExport from "./NotFoundError";
+
+describe( module( "Carbon/HTTP/Errors/client/NotFoundError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( NotFoundError ).toBeDefined();
+		expect( NotFoundError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.NotFoundError",
+		"Carbon.HTTP.Errors.NotFoundError.Class",
 		"Error class to indicate that the resource was not found."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( NotFoundError ).toBeDefined();
-			expect( Utils.isFunction( NotFoundError ) ).toBe( true );
+			expect( NotFoundError.Class ).toBeDefined();
+			expect( Utils.isFunction( NotFoundError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:NotFoundError = new NotFoundError( "Message of the error", response );
+			let error:NotFoundError.Class = new NotFoundError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:NotFoundError = new NotFoundError( "Message of the error", response );
+			let error:NotFoundError.Class = new NotFoundError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotFoundError ).toBe( true );
+			expect( error instanceof NotFoundError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:NotFoundError = new NotFoundError( "Message of the error", response );
+			let error:NotFoundError.Class = new NotFoundError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:NotFoundError = new NotFoundError( "Message of the error", response );
+			let error:NotFoundError.Class = new NotFoundError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( NotFoundError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( NotFoundError.statusCode ) );
+			expect( NotFoundError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( NotFoundError.Class.statusCode ) );
 
-			expect( NotFoundError.statusCode ).toBe( 404 );
+			expect( NotFoundError.Class.statusCode ).toBe( 404 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.NotFoundError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( NotFoundError.Class );
 	} );
 
 } );

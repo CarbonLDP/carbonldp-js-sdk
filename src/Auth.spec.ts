@@ -699,7 +699,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
-						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
+						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 					},
 				};
 				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
@@ -918,7 +918,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
 					},
 					fail: ( error ):void => {
-						expect( error.name ).toBe( Errors.IllegalArgumentError.name );
+						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
 					},
 				};
 				let spySuccess01:jasmine.Spy = spyOn( spies, "success01" ).and.callThrough();

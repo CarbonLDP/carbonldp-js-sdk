@@ -11,21 +11,21 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = require("./AbstractError");
-var IDAlreadyInUseError = (function (_super) {
-    __extends(IDAlreadyInUseError, _super);
-    function IDAlreadyInUseError(message) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
         var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, IDAlreadyInUseError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return "IDAlreadyInUseError"; },
         enumerable: true,
         configurable: true
     });
-    return IDAlreadyInUseError;
+    return Class;
 }(AbstractError_1.default));
-exports.IDAlreadyInUseError = IDAlreadyInUseError;
-exports.default = IDAlreadyInUseError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=IDAlreadyInUseError.js.map

@@ -13,26 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "ServiceUnavailableError";
 var statusCode = 503;
-var ServiceUnavailableError = (function (_super) {
-    __extends(ServiceUnavailableError, _super);
-    function ServiceUnavailableError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, ServiceUnavailableError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(ServiceUnavailableError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ServiceUnavailableError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return ServiceUnavailableError;
+    return Class;
 }(HTTPError_1.default));
-exports.ServiceUnavailableError = ServiceUnavailableError;
-exports.default = ServiceUnavailableError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=ServiceUnavailableError.js.map

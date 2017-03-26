@@ -4,15 +4,15 @@ import Response from "./../../Response";
 const name:string = "ForbiddenError";
 const statusCode:number = 403;
 
-export class ForbiddenError extends HTTPError {
+export class Class extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
 
 	constructor( message:string, response:Response ) {
 		super( message, response );
-		Object.setPrototypeOf( this, ForbiddenError.prototype );
+		Object.setPrototypeOf( this, Class.prototype );
 	}
 }
 
-export default ForbiddenError;
+export default Class;

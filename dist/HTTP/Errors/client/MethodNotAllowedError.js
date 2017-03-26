@@ -13,26 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "MethodNotAllowedError";
 var statusCode = 405;
-var MethodNotAllowedError = (function (_super) {
-    __extends(MethodNotAllowedError, _super);
-    function MethodNotAllowedError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, MethodNotAllowedError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(MethodNotAllowedError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(MethodNotAllowedError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return MethodNotAllowedError;
+    return Class;
 }(HTTPError_1.default));
-exports.MethodNotAllowedError = MethodNotAllowedError;
-exports.default = MethodNotAllowedError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=MethodNotAllowedError.js.map
