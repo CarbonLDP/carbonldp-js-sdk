@@ -15,11 +15,12 @@
   "main": "./dist/Carbon.js",
   "typings": "./dist/Carbon.d.ts",
   "dependencies": {
-    "file-type": "^3.8.0"
+    "file-type": "^3.8.0",
+    "sparqler": "0.1.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.5.36",
-    "@types/jasmine-ajax": "^3.1.31",
+    "@types/jasmine": "2.5.45",
+    "@types/jasmine-ajax": "3.1.33",
     "@types/node": "^6.0.46",
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
@@ -61,6 +62,7 @@
     },
     "dependencies": {
       "plugin-typescript": "github:frankwallis/plugin-typescript@^5.2.7",
+      "sparqler": "npm:sparqler@0.1.1",
       "typescript": "npm:typescript@^2.0.6"
     },
     "devDependencies": {

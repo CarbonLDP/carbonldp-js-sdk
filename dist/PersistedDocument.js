@@ -196,6 +196,9 @@ function executeUPDATE(updateQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeUPDATE(this.id, updateQuery, requestOptions);
 }
+function sparql() {
+    return this._documents.sparql(this.id);
+}
 var Factory = (function () {
     function Factory() {
     }
@@ -229,7 +232,8 @@ var Factory = (function () {
             && Utils.hasFunction(object, "executeSELECTQuery")
             && Utils.hasFunction(object, "executeRawDESCRIBEQuery")
             && Utils.hasFunction(object, "executeRawCONSTRUCTQuery")
-            && Utils.hasFunction(object, "executeUPDATE");
+            && Utils.hasFunction(object, "executeUPDATE")
+            && Utils.hasFunction(object, "sparql");
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
@@ -514,6 +518,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: executeUPDATE,
+            },
+            "sparql": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: sparql,
             },
             "createFragment": {
                 writable: false,

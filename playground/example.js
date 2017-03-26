@@ -69,18 +69,17 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.auth.roles.createChild( "app-admin/", Carbon.App.Role.Factory.create( "a-role" ), "new-role" );
-			} ).then( ( [ _resource, response ] ) => {
-				console.log( _resource );
-				return appContext.documents.get( "posts/post-1/" );
-			} ).then( ( [ _resource, response ] ) => {
-				return _resource.getACL();
-			} ).then( ( [ _resource, response ] ) => {
-				console.log( _resource );
-				_resource.grant( "roles/new-role/", "cs:AppRole", "cs:Read" );
-				return _resource.saveAndRefresh();
-			} ).then( ( [ _resource, response ] ) => {
-				console.log( _resource );
+				return appContext.documents.sparql( "posts/" )
+					.selectAll()
+					.where( ( _ ) => {
+						return [
+							_.resource( "posts/" )
+								.has( _.var( "p" ), _.var( "o" ) ),
+						];
+					} )
+					.execute();
+			} ).then( ( [ result, response ] ) => {
+				console.log( result );
 				done();
 			} ).catch( ( error ) => {
 				console.error( error );
