@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var LDP = require("./LDP");
 var NS = require("./NS");
 exports.RDF_CLASS = NS.C.Class.AccessPoint;

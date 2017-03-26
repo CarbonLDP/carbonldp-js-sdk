@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 var Role = require("./../Auth/Role");
 var Utils = require("./../Utils");

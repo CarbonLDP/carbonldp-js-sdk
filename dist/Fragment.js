@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Resource = require("./Resource");
 var Utils = require("./Utils");
 var Factory = (function () {

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Header = require("./Header");
 var Utils_1 = require("../Utils");
 var Class = (function () {
@@ -56,7 +57,6 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Response.js.map

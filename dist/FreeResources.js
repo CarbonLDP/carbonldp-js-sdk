@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./Errors");
 var Converter_1 = require("./JSONLD/Converter");
 var Pointer = require("./Pointer");

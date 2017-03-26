@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Converter = require("./JSONLD/Converter");
 exports.Converter = Converter;
 var Parser = require("./JSONLD/Parser");
