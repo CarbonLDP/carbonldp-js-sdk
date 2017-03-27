@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var sparqler_1 = require("sparqler");
+exports.Class = sparqler_1.default;
 var queryPrototype = sparqler_1.default.prototype;
 var superInit = queryPrototype.initInterfaces;
 queryPrototype.initInterfaces = function () {

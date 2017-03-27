@@ -11,20 +11,21 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = require("./AbstractError");
-var IllegalActionError = (function (_super) {
-    __extends(IllegalActionError, _super);
-    function IllegalActionError(message) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
         var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, IllegalActionError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(IllegalActionError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return "IllegalActionError"; },
         enumerable: true,
         configurable: true
     });
-    return IllegalActionError;
+    return Class;
 }(AbstractError_1.default));
-exports.default = IllegalActionError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=IllegalActionError.js.map

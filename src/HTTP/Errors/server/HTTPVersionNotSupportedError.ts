@@ -4,15 +4,15 @@ import Response from "./../../Response";
 const name:string = "HTTPVersionNotSupportedError";
 const statusCode:number = 505;
 
-class HTTPVersionNotSupportedError extends HTTPError {
+export class Class extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
 
 	constructor( message:string, response:Response ) {
 		super( message, response );
-		Object.setPrototypeOf( this, HTTPVersionNotSupportedError.prototype );
+		Object.setPrototypeOf( this, Class.prototype );
 	}
 }
 
-export default HTTPVersionNotSupportedError;
+export default Class;

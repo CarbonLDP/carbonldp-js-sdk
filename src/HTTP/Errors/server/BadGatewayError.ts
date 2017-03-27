@@ -4,15 +4,15 @@ import Response from "./../../Response";
 const name:string = "BadGatewayError";
 const statusCode:number = 502;
 
-class BadGatewayError extends HTTPError {
+export class Class extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }
 
 	constructor( message:string, response:Response ) {
 		super( message, response );
-		Object.setPrototypeOf( this, BadGatewayError.prototype );
+		Object.setPrototypeOf( this, Class.prototype );
 	}
 }
 
-export default BadGatewayError;
+export default Class;

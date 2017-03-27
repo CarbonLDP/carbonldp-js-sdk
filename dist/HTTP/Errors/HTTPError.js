@@ -12,11 +12,11 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = require("./../../Errors/AbstractError");
 var Resource = require("./../../Resource");
-var HTTPError = (function (_super) {
-    __extends(HTTPError, _super);
-    function HTTPError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, HTTPError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         Resource.Factory.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;
@@ -24,18 +24,19 @@ var HTTPError = (function (_super) {
         _this.statusCode = response.status;
         return _this;
     }
-    Object.defineProperty(HTTPError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return null; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(HTTPError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return "HTTPError"; },
         enumerable: true,
         configurable: true
     });
-    return HTTPError;
+    return Class;
 }(AbstractError_1.default));
-exports.default = HTTPError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=HTTPError.js.map

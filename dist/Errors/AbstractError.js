@@ -10,26 +10,27 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError = (function (_super) {
-    __extends(AbstractError, _super);
-    function AbstractError(message) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
         var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, AbstractError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         if ("captureStackTrace" in Error)
             Error.captureStackTrace(_this, _this.constructor);
         _this.message = message;
         return _this;
     }
-    Object.defineProperty(AbstractError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return "AbstractError"; },
         enumerable: true,
         configurable: true
     });
-    AbstractError.prototype.toString = function () {
+    Class.prototype.toString = function () {
         return this.name + ": " + this.message;
     };
-    return AbstractError;
+    return Class;
 }(Error));
-exports.default = AbstractError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=AbstractError.js.map

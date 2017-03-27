@@ -1,4 +1,4 @@
-declare enum StatusCode {
+export declare enum StatusCode {
     CONTINUE = 100,
     SWITCHING_PROTOCOLS = 101,
     OK = 200,

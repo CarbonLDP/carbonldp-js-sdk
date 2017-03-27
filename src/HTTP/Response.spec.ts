@@ -10,7 +10,7 @@ import {
 	hasMethod,
 	hasProperty,
 	hasDefaultExport,
-	hasSignature
+	hasSignature,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Header from "./Header";
@@ -29,8 +29,8 @@ describe( module(
 		responseHeaders: {
 			"Content-Type": "text/plain",
 			"Server": "Apache/2.4.1 (Unix)",
-			"ETag": 'W/"123456789"'
-		}
+			"ETag": 'W/"123456789"',
+		},
 	};
 	let inXMLHttpRequest:boolean = ( typeof XMLHttpRequest !== "undefined" );
 
@@ -62,7 +62,7 @@ describe( module(
 
 			it( hasSignature(
 				"Signature that only works in a web browser.", [
-					{ name: "request", type: "XMLHttpRequest" }
+					{ name: "request", type: "XMLHttpRequest" },
 				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
@@ -78,7 +78,7 @@ describe( module(
 				"Signature that only works in Node.js.", [
 					{ name: "request", type: "ClientRequest" },
 					{ name: "data", type: "string" },
-					{ name: "response", type: "IncomingMessage" }
+					{ name: "response", type: "IncomingMessage" },
 				] ), ( done:{ ():void, fail:() => void } ):void => {
 
 				createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
@@ -160,10 +160,11 @@ describe( module(
 			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
 				expect( response.request ).toBeDefined();
 
-				if( inXMLHttpRequest )
+				if( inXMLHttpRequest ) {
 					expect( response.request instanceof XMLHttpRequest ).toBe( true );
-				else
+				} else {
 					expect( response.request instanceof require( "http" ).ClientRequest ).toBe( true );
+				}
 
 				expect( response.request ).toBe( request );
 
@@ -176,7 +177,7 @@ describe( module(
 			INSTANCE,
 			"getHeader",
 			"Return the Header object referred by the name specified.", [
-				{ name: "name", type: "string" }
+				{ name: "name", type: "string" },
 			],
 			{ type: "Carbon.HTTP.Header.Class" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -220,7 +221,7 @@ describe( module(
 			STATIC,
 			"getETag",
 			"Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists.", [
-				{ name: "response", type: "Carbon.HTTP.Response.Class" }
+				{ name: "response", type: "Carbon.HTTP.Response.Class" },
 			],
 			{ type: "string" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -250,7 +251,7 @@ describe( module(
 				request.onerror = fail;
 
 				request.onload = () => {
-					let response = new Response.Class( <XMLHttpRequest> request );
+					let response:Response.Class = new Response.Class( <XMLHttpRequest> request );
 					resolve( [ response, request ] );
 				};
 
@@ -271,8 +272,8 @@ describe( module(
 						data = chunk;
 					} );
 					res.on( "end", () => {
-						let response = new Response.Class( <ClientRequest> request, data, res );
-						resolve( [ response, request ] )
+						let response:Response.Class = new Response.Class( <ClientRequest> request, data, res );
+						resolve( [ response, request ] );
 					} );
 				} );
 

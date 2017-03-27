@@ -32,6 +32,7 @@ var Class = (function (_super) {
     });
     return Class;
 }(HTTPError_1.default));
+exports.Class = Class;
 exports.default = Class;
 
 //# sourceMappingURL=BadResponseError.js.map

@@ -5617,10 +5617,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
-		it( hasMethod( INSTANCE, "sparql",
+		it( hasMethod(
+			INSTANCE,
+			"sparql",
 			"Method that creates an instance of SPARQLER for the provided document end-point.", [
 				{ name: "documentURI", type: "string", description: "URI of the document where to execute the SPARQL query." },
-				], { type: "SPARQLER/Clauses/QueryClause" }
+			],
+			{ type: "SPARQLER/Clauses/QueryClause" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {

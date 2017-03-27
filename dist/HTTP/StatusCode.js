@@ -42,7 +42,7 @@ var StatusCode;
     StatusCode[StatusCode["SERVICE_UNAVAILABLE"] = 503] = "SERVICE_UNAVAILABLE";
     StatusCode[StatusCode["GATEWAY_TIME_OUT"] = 504] = "GATEWAY_TIME_OUT";
     StatusCode[StatusCode["HTTP_VERSION_NOT_SUPPORTED"] = 505] = "HTTP_VERSION_NOT_SUPPORTED";
-})(StatusCode || (StatusCode = {}));
+})(StatusCode = exports.StatusCode || (exports.StatusCode = {}));
 exports.default = StatusCode;
 
 //# sourceMappingURL=StatusCode.js.map

@@ -13,25 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "PreconditionRequiredError";
 var statusCode = 428;
-var PreconditionRequiredError = (function (_super) {
-    __extends(PreconditionRequiredError, _super);
-    function PreconditionRequiredError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, PreconditionRequiredError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(PreconditionRequiredError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(PreconditionRequiredError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return PreconditionRequiredError;
+    return Class;
 }(HTTPError_1.default));
-exports.default = PreconditionRequiredError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=PreconditionRequiredError.js.map

@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import BadRequestError from "./BadRequestError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/BadRequestError"
-), ():void => {
+import * as BadRequestError from "./BadRequestError";
+import DefaultExport from "./BadRequestError";
+
+describe( module( "Carbon/HTTP/Errors/client/BadRequestError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( BadRequestError ).toBeDefined();
+		expect( BadRequestError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.BadRequestError",
+		"Carbon.HTTP.Errors.BadRequestError.Class",
 		"Error class to indicate that a malformed request has been sent."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( BadRequestError ).toBeDefined();
-			expect( Utils.isFunction( BadRequestError ) ).toBe( true );
+			expect( BadRequestError.Class ).toBeDefined();
+			expect( Utils.isFunction( BadRequestError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:BadRequestError = new BadRequestError( "Message of the error", response );
+			let error:BadRequestError.Class = new BadRequestError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:BadRequestError = new BadRequestError( "Message of the error", response );
+			let error:BadRequestError.Class = new BadRequestError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof BadRequestError ).toBe( true );
+			expect( error instanceof BadRequestError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:BadRequestError = new BadRequestError( "Message of the error", response );
+			let error:BadRequestError.Class = new BadRequestError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:BadRequestError = new BadRequestError( "Message of the error", response );
+			let error:BadRequestError.Class = new BadRequestError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,11 +108,16 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( BadRequestError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( BadRequestError.statusCode ) );
-			expect( BadRequestError.statusCode ).toBe( 400 );
+			expect( BadRequestError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( BadRequestError.Class.statusCode ) );
+			expect( BadRequestError.Class.statusCode ).toBe( 400 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.BadRequestError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( BadRequestError.Class );
 	} );
 
 } );

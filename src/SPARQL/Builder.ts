@@ -5,7 +5,6 @@ import RawResults from "./RawResults";
 
 import HTTPResponse from "./../HTTP/Response";
 
-
 import SPARQLER from "sparqler";
 
 declare module "sparqler/Clauses" {
@@ -43,5 +42,9 @@ queryPrototype.initInterfaces = function():void {
 		},
 	};
 };
+
+export {
+	SPARQLER as Class
+}
 
 export default SPARQLER;

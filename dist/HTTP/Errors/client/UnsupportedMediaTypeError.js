@@ -13,25 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "UnsupportedMediaTypeError";
 var statusCode = 415;
-var UnsupportedMediaTypeError = (function (_super) {
-    __extends(UnsupportedMediaTypeError, _super);
-    function UnsupportedMediaTypeError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, UnsupportedMediaTypeError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(UnsupportedMediaTypeError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(UnsupportedMediaTypeError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return UnsupportedMediaTypeError;
+    return Class;
 }(HTTPError_1.default));
-exports.default = UnsupportedMediaTypeError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=UnsupportedMediaTypeError.js.map

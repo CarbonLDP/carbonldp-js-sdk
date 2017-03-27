@@ -204,7 +204,7 @@
         return pointer.resolve();
     }).then( ( [ persistedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
         console.log( "createChild" in persistedDocument ); // true
-        return persistedDocument.createChild( ...
+        return persistedDocument.createChild( ... );
     });
     ```
     
@@ -215,7 +215,7 @@
     
     documents.createChild( "some-project/" ).then( ( [ persistedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
         console.log( "createChild" in persistedDocument ); // true
-        return persistedDocument.createChild( ...
+        return persistedDocument.createChild( ... );
     });
     ```
     
@@ -232,7 +232,7 @@
             {
                 property: "World"
             }
-        ];
+        ]
     }
     
     documents.createChild( "/", objectToPersist ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ) => {
@@ -252,7 +252,7 @@
             {
                 property: "World"
             }
-        ];
+        ]
     }
     
     documents.createChild( "/", objectToPersist ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {

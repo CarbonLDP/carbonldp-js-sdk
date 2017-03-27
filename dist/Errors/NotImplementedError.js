@@ -11,21 +11,22 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = require("./AbstractError");
-var NotImplementedError = (function (_super) {
-    __extends(NotImplementedError, _super);
-    function NotImplementedError(message) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
         if (message === void 0) { message = ""; }
         var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, NotImplementedError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(NotImplementedError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return "NotImplementedError"; },
         enumerable: true,
         configurable: true
     });
-    return NotImplementedError;
+    return Class;
 }(AbstractError_1.default));
-exports.default = NotImplementedError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=NotImplementedError.js.map

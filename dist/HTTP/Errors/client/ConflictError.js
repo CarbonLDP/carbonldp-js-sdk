@@ -13,25 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "ConflictError";
 var statusCode = 409;
-var ConflictError = (function (_super) {
-    __extends(ConflictError, _super);
-    function ConflictError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, ConflictError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(ConflictError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ConflictError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return ConflictError;
+    return Class;
 }(HTTPError_1.default));
-exports.default = ConflictError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=ConflictError.js.map

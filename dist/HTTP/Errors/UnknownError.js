@@ -12,20 +12,21 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./HTTPError");
 var name = "UnknownError";
-var UnknownError = (function (_super) {
-    __extends(UnknownError, _super);
-    function UnknownError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, UnknownError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(UnknownError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return UnknownError;
+    return Class;
 }(HTTPError_1.default));
-exports.default = UnknownError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=UnknownError.js.map

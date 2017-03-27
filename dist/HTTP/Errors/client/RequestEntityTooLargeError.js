@@ -13,25 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HTTPError_1 = require("./../HTTPError");
 var name = "RequestEntityTooLargeError";
 var statusCode = 413;
-var RequestEntityTooLargeError = (function (_super) {
-    __extends(RequestEntityTooLargeError, _super);
-    function RequestEntityTooLargeError(message, response) {
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
         var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, RequestEntityTooLargeError.prototype);
+        Object.setPrototypeOf(_this, Class.prototype);
         return _this;
     }
-    Object.defineProperty(RequestEntityTooLargeError, "statusCode", {
+    Object.defineProperty(Class, "statusCode", {
         get: function () { return statusCode; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(RequestEntityTooLargeError.prototype, "name", {
+    Object.defineProperty(Class.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return RequestEntityTooLargeError;
+    return Class;
 }(HTTPError_1.default));
-exports.default = RequestEntityTooLargeError;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=RequestEntityTooLargeError.js.map
