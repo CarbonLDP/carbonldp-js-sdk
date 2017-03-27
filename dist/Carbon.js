@@ -49,7 +49,7 @@ var Class = (function (_super) {
         return _this;
     }
     Object.defineProperty(Class, "version", {
-        get: function () { return "0.41.0"; },
+        get: function () { return "0.42.0"; },
         enumerable: true,
         configurable: true
     });

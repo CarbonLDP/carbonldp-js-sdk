@@ -1,3 +1,11 @@
+# 0.42.0 (2017/03/27)
+
+- Completed #122 - Integrate SPARQLer into the SDK
+- Completed #137 - Make library Angular2 AOT compliant
+- Export default classes as named exports too
+- Fixed #135 - Add missing favicon to the API documentation
+- Fixed #132 - When an ACL is fetched, remove ACEs that don't have any subject
+
 # 0.41.0 (2017/01/25)
 
 - Created HTML based API documentation that can be read in the `docs` folder
