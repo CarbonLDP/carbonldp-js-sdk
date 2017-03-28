@@ -1,8 +1,8 @@
 {
   "name": "carbonldp",
-  "version": "0.40.0",
-  "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
-  "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
+  "version": "0.42.0",
+  "description": "JavaScript/TypeScript SDK for Carbon LDP",
+  "homepage": "https://github.com/CarbonLDP/carbonldp-js-sdk",
   "contributors": [
     "Miguel Aragon <miguel.aragon@base22.com>",
     "Rodolfo Aguirre <rodolfo.aguirre@base22.com>"
@@ -10,12 +10,13 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
+    "url": "https://github.com/CarbonLDP/carbonldp-js-sdk.git"
   },
   "main": "./Carbon.js",
   "typings": "./Carbon.d.ts",
   "dependencies": {
-    "file-type": "^3.8.0"
+    "file-type": "^3.8.0",
+    "sparqler": "0.1.1"
   },
   "jspm": {}
 }

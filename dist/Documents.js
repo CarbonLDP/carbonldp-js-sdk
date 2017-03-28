@@ -1,15 +1,14 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
 var AccessPoint = require("./AccessPoint");
-var AppRole = require("./App/Role");
 var Auth = require("./Auth");
 var Document = require("./Document");
 var FreeResources = require("./FreeResources");
 var JSONLD = require("./JSONLD");
-var PersistedAppRole = require("./App/PersistedRole");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
@@ -20,6 +19,7 @@ var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
 var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
+var Builder_1 = require("./SPARQL/Builder");
 var Class = (function () {
     function Class(context) {
         if (context === void 0) { context = null; }
@@ -44,7 +44,6 @@ var Class = (function () {
             decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
             decorators.set(Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate });
         }
-        decorators.set(AppRole.RDF_CLASS, { decorator: PersistedAppRole.Factory.decorate, parameters: [(this.context && this.context.auth) ? this.context.auth.roles : null] });
         this._documentDecorators = decorators;
     }
     Object.defineProperty(Class.prototype, "jsonldConverter", {
@@ -187,25 +186,39 @@ var Class = (function () {
     };
     Class.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        var createResponse;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var responses = [];
+        var options = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
         return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            createResponse = response;
+            var document = _a[0], createResponse = _a[1];
+            responses.push(createResponse);
+            if (document.isResolved())
+                return [document, null];
             return _this.get(document.id);
         }).then(function (_a) {
-            var persistedDocument = _a[0], response = _a[1];
-            return [persistedDocument, [createResponse, response]];
+            var persistedDocument = _a[0], resolveResponse = _a[1];
+            if (!!resolveResponse)
+                responses.push(resolveResponse);
+            return [persistedDocument, responses];
         });
     };
     Class.prototype.createChildrenAndRetrieve = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
-        var createResponses;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var responses = [];
+        var options = HTTP.Request.Util.isOptions(slugsOrRequestOptions) ? slugsOrRequestOptions : requestOptions;
+        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
         return this.createChildren(parentURI, childrenObjects, slugsOrRequestOptions, requestOptions).then(function (_a) {
-            var documents = _a[0], responses = _a[1];
-            createResponses = responses;
+            var documents = _a[0], creationResponses = _a[1];
+            responses.push(creationResponses);
+            if (documents.every(function (document) { return document.isResolved(); }))
+                return [documents, null];
             return Pointer.Util.resolveAll(documents);
         }).then(function (_a) {
-            var persistedDocuments = _a[0], responses = _a[1];
-            return [persistedDocuments, [createResponses, responses]];
+            var persistedDocuments = _a[0], resolveResponses = _a[1];
+            if (!!resolveResponses)
+                responses.push(resolveResponses);
+            return [persistedDocuments, responses];
         });
     };
     Class.prototype.listChildren = function (parentURI, requestOptions) {
@@ -499,12 +512,8 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        return HTTP.Request.Service.head(uri, requestOptions).then(function (headerResponse) {
-            var eTag = HTTP.Response.Util.getETag(headerResponse);
-            if (eTag === persistedDocument._etag)
-                return [persistedDocument, null];
-            return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser());
-        }).then(function (_a) {
+        HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        return HTTP.Request.Service.get(uri, requestOptions, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
@@ -517,19 +526,28 @@ var Class = (function () {
             var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
+        }).catch(function (error) {
+            if (error.statusCode === 304)
+                return [persistedDocument, null];
+            return Promise.reject(error);
         });
     };
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var saveResponse;
-        return this.save(persistedDocument).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            saveResponse = response;
-            return _this.refresh(persistedDocument);
+        var responses = [];
+        HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
+        return this.save(persistedDocument, requestOptions).then(function (_a) {
+            var document = _a[0], saveResponse = _a[1];
+            var preferenceHeader = saveResponse.getHeader("Preference-Applied");
+            if (preferenceHeader !== null && preferenceHeader.toString() === "return=representation")
+                return _this.updateFromPreferenceApplied(persistedDocument, saveResponse);
+            responses.push(saveResponse);
+            return persistedDocument.refresh();
         }).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            return [persistedDocument, [saveResponse, response]];
+            var document = _a[0], refreshResponse = _a[1];
+            responses.push(refreshResponse);
+            return [persistedDocument, responses];
         });
     };
     Class.prototype.delete = function (documentURI, requestOptions) {
@@ -615,19 +633,37 @@ var Class = (function () {
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
     };
+    Class.prototype.sparql = function (documentURI) {
+        var sparqlBuilder = new Builder_1.default();
+        sparqlBuilder._documents = this;
+        sparqlBuilder._entryPoint = documentURI;
+        var builder = sparqlBuilder.base(documentURI);
+        if (!!this.context) {
+            builder.base(this.context.getBaseURI());
+            if (this.context.hasSetting("vocabulary"))
+                builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
+            var schema = this.context.getObjectSchema();
+            schema.prefixes.forEach(function (uri, prefix) {
+                builder.prefix(prefix, uri.stringValue);
+            });
+        }
+        return builder;
+    };
     Class.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
         var uri = documentResource["@id"];
         var documentPointer = this.getPointer(uri);
-        if (documentPointer.isResolved()) {
-            this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+        var persistedDocument;
+        if (PersistedDocument.Factory.is(documentPointer)) {
+            persistedDocument = this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
         }
         else {
-            this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+            persistedDocument = this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
         }
-        return documentPointer;
+        persistedDocument._resolved = true;
+        return persistedDocument;
     };
     Class.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources.Factory.create(this);
@@ -664,10 +700,13 @@ var Class = (function () {
             var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(document, localID), _this);
             var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
             _this.pointers.set(localID, persistedProtectedDocument);
-            return [
-                persistedProtectedDocument,
-                response,
-            ];
+            var preferenceHeader = response.getHeader("Preference-Applied");
+            if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
+                return [persistedProtectedDocument, response];
+            return _this.updateFromPreferenceApplied(persistedProtectedDocument, response);
+        }).catch(function (error) {
+            delete document["__CarbonSDK_InProgressOfPersisting"];
+            return Promise.reject(error);
         });
     };
     Class.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
@@ -805,6 +844,13 @@ var Class = (function () {
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
+        else {
+            if (this.context) {
+                var baseURI = this.context.getBaseURI();
+                if (!RDF.URI.Util.isBaseOf(baseURI, uri))
+                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
+            }
+        }
         return uri;
     };
     Class.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
@@ -848,18 +894,21 @@ var Class = (function () {
         persistedDocument._syncSnapshot();
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
         persistedDocument._syncSavedFragments();
-        persistedDocument._resolved = true;
         this.decoratePersistedDocument(persistedDocument);
         return persistedDocument;
     };
     Class.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentResources) {
         var namedFragmentsMap = new Map();
-        var blankNodesArray = persistedDocument.getFragments().filter(function (fragment) {
+        var blankNodesArray = [];
+        persistedDocument.getFragments().forEach(function (fragment) {
             persistedDocument._removeFragment(fragment.id);
-            if (RDF.URI.Util.isBNodeID(fragment.id))
-                return true;
-            namedFragmentsMap.set(fragment.id, fragment);
-            return false;
+            if (RDF.URI.Util.isBNodeID(fragment.id)) {
+                blankNodesArray.push(fragment);
+            }
+            else {
+                var fragmentID = RDF.URI.Util.isRelative(fragment.id) ? RDF.URI.Util.resolve(persistedDocument.id, fragment.id) : fragment.id;
+                namedFragmentsMap.set(fragmentID, fragment);
+            }
         });
         var newFragments = [];
         for (var _i = 0, fragmentResources_2 = fragmentResources; _i < fragmentResources_2.length; _i++) {
@@ -896,19 +945,30 @@ var Class = (function () {
         });
     };
     Class.prototype.decoratePersistedDocument = function (persistedDocument) {
-        var entries = this._documentDecorators.entries();
-        for (var _i = 0, _a = Utils.A.from(entries); _i < _a.length; _i++) {
-            var _b = _a[_i], type = _b[0], options = _b[1];
+        this._documentDecorators.forEach(function (options, type) {
             if (persistedDocument.hasType(type)) {
                 options.decorator.apply(null, [persistedDocument].concat(options.parameters));
             }
-        }
+        });
     };
-    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
+    Class.prototype.updateFromPreferenceApplied = function (persistedDocument, response) {
+        var _this = this;
+        return new RDF.Document.Parser().parse(response.data).then(function (rdfDocuments) {
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            persistedDocument = _this._getPersistedDocument(rdfDocument, response);
+            persistedDocument._etag = eTag;
+            return [persistedDocument, response];
+        });
+    };
     return Class;
 }());
+Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Documents.js.map

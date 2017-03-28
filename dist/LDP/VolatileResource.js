@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 var Resource = require("./../Resource");
 exports.RDF_CLASS = NS.C.Class.VolatileResource;

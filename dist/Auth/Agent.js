@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Document = require("./../Document");
 var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
 var NS = require("./../NS");

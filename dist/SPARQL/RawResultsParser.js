@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var JSONParser_1 = require("./../HTTP/JSONParser");
 var Class = (function () {
     function Class() {
@@ -12,7 +13,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=RawResultsParser.js.map

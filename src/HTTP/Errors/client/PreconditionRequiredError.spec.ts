@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import PreconditionRequiredError from "./PreconditionRequiredError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/PreconditionRequiredError"
-), ():void => {
+import * as PreconditionRequiredError  from "./PreconditionRequiredError";
+import DefaultExport from "./PreconditionRequiredError";
+
+describe( module( "Carbon/HTTP/Errors/client/PreconditionRequiredError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( PreconditionRequiredError ).toBeDefined();
+		expect( PreconditionRequiredError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.PreconditionRequiredError",
+		"Carbon.HTTP.Errors.PreconditionRequiredError.Class",
 		"Error class to indicate that the request is missing a precondition header."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( PreconditionRequiredError ).toBeDefined();
-			expect( Utils.isFunction( PreconditionRequiredError ) ).toBe( true );
+			expect( PreconditionRequiredError.Class ).toBeDefined();
+			expect( Utils.isFunction( PreconditionRequiredError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:PreconditionRequiredError = new PreconditionRequiredError( "Message of the error", response );
+			let error:PreconditionRequiredError.Class = new PreconditionRequiredError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:PreconditionRequiredError = new PreconditionRequiredError( "Message of the error", response );
+			let error:PreconditionRequiredError.Class = new PreconditionRequiredError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof PreconditionRequiredError ).toBe( true );
+			expect( error instanceof PreconditionRequiredError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:PreconditionRequiredError = new PreconditionRequiredError( "Message of the error", response );
+			let error:PreconditionRequiredError.Class = new PreconditionRequiredError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:PreconditionRequiredError = new PreconditionRequiredError( "Message of the error", response );
+			let error:PreconditionRequiredError.Class = new PreconditionRequiredError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( PreconditionRequiredError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( PreconditionRequiredError.statusCode ) );
+			expect( PreconditionRequiredError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( PreconditionRequiredError.Class.statusCode ) );
 
-			expect( PreconditionRequiredError.statusCode ).toBe( 428 );
+			expect( PreconditionRequiredError.Class.statusCode ).toBe( 428 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.PreconditionRequiredError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( PreconditionRequiredError.Class );
 	} );
 
 } );

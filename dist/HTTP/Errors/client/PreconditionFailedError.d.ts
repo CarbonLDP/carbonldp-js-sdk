@@ -1,6 +1,8 @@
 import HTTPError from "./../HTTPError";
-declare class PreconditionFailedError extends HTTPError {
+import Response from "./../../Response";
+export declare class Class extends HTTPError {
     static readonly statusCode: number;
     readonly name: string;
+    constructor(message: string, response: Response);
 }
-export default PreconditionFailedError;
+export default Class;

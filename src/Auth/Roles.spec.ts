@@ -67,7 +67,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context.Class"},
+			{ name: "context", type: "Carbon.Context.Class" },
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
@@ -82,12 +82,12 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "T", description: "The appRole that wants to persist."},
-					{name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T", description: "The appRole that wants to persist." },
+					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -158,11 +158,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist."},
-					{name: "role", type: "T", description: "The appRole that wants to persist."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted."},
+					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "role", type: "T", description: "The appRole that wants to persist." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -238,10 +238,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"get",
 			[ "T" ],
 			"Retrieves a role from the current context.", [
-				{name: "roleURI", type: "string", description: "The URI of the role to retrieve."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
@@ -252,7 +252,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@id": "http://example.com/roles/a-role/",
 					"@graph": [ {
 						"@id": "http://example.com/roles/a-role/",
-						"@type": [ "https://carbonldp.com/ns/v1/security#AppRole" ],
+						"@type": [ "http://example.com/ns#Role" ],
 						"https://carbonldp.com/ns/v1/platform#accessPoint": [ {
 							"@id": "https://dev.carbonldp.com/apps/test-app/roles/blog-editor/agents/"
 						} ],
@@ -268,6 +268,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"ETag": `"1234567890"`,
 				},
 			} );
+			context.documents.documentDecorators.set( "http://example.com/ns#Role", { decorator: PersistedRole.Factory.decorate, parameters: [ roles ] } );
 
 			let spies:any = {
 				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
@@ -319,10 +320,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"listAgents",
 			"Retrieves an array of unresolved pointers for all the agents of the specified role.", [
-				{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.listAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.listAgents ) ).toBe( true );
@@ -551,11 +552,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Retrieves an array of resolved pointers for all the agents of the specified role.", [
-					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+					{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				// TODO: Change to `PersistedAgent`
-				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
@@ -616,12 +617,12 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Retrieves an array of resolved pointers for the agents of the role, in accordance of the retrievalPreferences provided.", [
-					{name: "roleURI", type: "string", description: "The URI of the role to look for its agents."},
-					{name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request."},
-					{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+					{ name: "roleURI", type: "string", description: "The URI of the role to look for its agents." },
+					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				// TODO: Change to `PersistedAgent`
-				{type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>"}
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
@@ -655,7 +656,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
 						offset: 0,
-						orderBy: [ {"@id": "http://example.com/ns#string", "@type": "string"} ],
+						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
 					};
 
 					promise = roles.getAgents( "a-role/", retrievalPreferences, options );
@@ -690,16 +691,16 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"addAgent",
 			"Makes a relation in the role specified towards the agent provided.", [
-				{name: "roleURI", type: "string", description: "The URI of the role where to add the agent."},
-				{name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to add to the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role where to add the agent." },
+				{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to add to the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			expect( roles.addAgent ).toBeDefined();
 			expect( Utils.isFunction( roles.addAgent ) );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( roles, "addAgents" );
 
 			roles.addAgent( "http://example.com/roles/a-role/", "http://example.com/agents/an-agent/" );
@@ -716,11 +717,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"addAgents",
 			"Makes a relation in the role specified towards the agents specified.", [
-				{name: "roleURI", type: "string", description: "The URI of the role where to add agents."},
-				{name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to add to the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role where to add agents." },
+				{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents that wants to add to the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.addAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.addAgents ) );
@@ -758,7 +759,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: constructAccessPointResponse( "http://example.com/roles/another-role/" ),
 			} );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "addMembers" ).and.returnValue( Promise.resolve() );
 			let agents:(string | Pointer.Class)[] = [ "http://example.com/agents/an-agent/", Pointer.Factory.create( "http://example.com/agents/another-agent/" ) ];
 
@@ -797,16 +798,16 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"removeAgent",
 			"Removes the relation in the role specified towards the agent provided.", [
-				{name: "roleURI", type: "string", description: "The URI of the role from where to remove the agent."},
-				{name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to be removed from the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the agent." },
+				{ name: "agent", type: "string | Carbon.Pointer.Class", description: "The agent that wants to be removed from the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			expect( roles.removeAgent ).toBeDefined();
 			expect( Utils.isFunction( roles.removeAgent ) );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( roles, "removeAgents" );
 
 			roles.removeAgent( "http://example.com/roles/a-role/", "http://example.com/agents/an-agent/" );
@@ -823,11 +824,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			INSTANCE,
 			"removeAgents",
 			"Remove the relation in the role specified towards the agents specified.", [
-				{name: "roleURI", type: "string", description: "The URI of the role from where to remove the agents."},
-				{name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents to be removed from the role."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the agents." },
+				{ name: "agents", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the agents to be removed from the role." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.removeAgents ).toBeDefined();
 			expect( Utils.isFunction( roles.removeAgents ) );
@@ -865,7 +866,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: constructAccessPointResponse( "http://example.com/roles/another-role/" ),
 			} );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
 			let agents:(string | Pointer.Class)[] = [ "http://example.com/agents/an-agent/", Pointer.Factory.create( "http://example.com/agents/another-agent/" ) ];
 

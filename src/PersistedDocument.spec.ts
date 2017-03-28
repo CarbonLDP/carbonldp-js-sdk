@@ -33,6 +33,8 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
+import { QueryClause } from "sparqler/Clauses";
+
 import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
 
@@ -638,6 +640,13 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
 
+		it( hasMethod(
+			OBLIGATORY,
+			"sparql",
+			"Method that creates an instance of SPARQLER for the document end-point.",
+			{ type: "SPARQLER/Clauses/QueryClause" }
+		), ():void => {} );
+
 	} );
 
 	it( hasDefaultExport( "Carbon.PersistedDocument.Class" ), ():void => {
@@ -722,6 +731,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeRawDESCRIBEQuery: ():void => {},
 				executeRawCONSTRUCTQuery: ():void => {},
 				executeUPDATE: ():void => {},
+
+				sparql: ():void => {},
 			};
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 
@@ -860,6 +871,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.executeUPDATE;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeUPDATE = ():void => {};
+
+			delete document.sparql;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.sparql = ():void => {};
 		} );
 
 		it( hasMethod(
@@ -919,6 +934,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeRawDESCRIBEQuery: ():void => {},
 				executeRawCONSTRUCTQuery: ():void => {},
 				executeUPDATE: ():void => {},
+
+				sparql: ():void => {},
 			} );
 			expect( PersistedDocument.Factory.is( object ) ).toBe( true );
 		} );
@@ -2568,6 +2585,21 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATE" );
 				document.executeUPDATE( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
 				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, {} );
+			} );
+
+			it( hasMethod(
+				INSTANCE,
+				"sparql",
+				"Method that creates an instance of SPARQLER for the document end-point.",
+				{ type: "SPARQLER/Clauses/QueryClause" }
+			), ():void => {
+				expect( document.sparql ).toBeDefined();
+				expect( Utils.isFunction( document.sparql ) ).toBe( true );
+
+				let spy:jasmine.Spy = spyOn( context.documents, "sparql" );
+
+				document.sparql();
+				expect( spy ).toHaveBeenCalledWith( document.id );
 			} );
 
 		} );

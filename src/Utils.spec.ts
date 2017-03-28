@@ -1100,7 +1100,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		it( hasMethod(
 			STATIC,
 			"extend",
-			"Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the first Map provided is preserved.", [
+			"Adds to a target Map all the entries of the subsequents Maps provided. If entries with the same key exists between Maps, the entry's value of the last Map is set to the target Map.", [
 				{name: "toExtend", type: "Map<K, V>", description: "Target Map to extend."},
 				{name: "...extenders", type: "Map<K, V>[]", description: "Every other Map parameter, from which the entries to be added to the target Map will be taken."},
 			],
@@ -1149,21 +1149,21 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ) );
 			expect( result ).toBe( target );
 			expect( result.size ).toBe( 2 );
-			expect( result.get( "entry0" ) ).toBe( 0 );
+			expect( result.get( "entry0" ) ).toBe( 10 );
 			expect( result.get( "entry3" ) ).toBe( 3 );
 
 			target = new Map<string, number>( <any> [ [ "entry0", 0 ] ] );
 			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry0", 100 ] ] ) );
 			expect( result ).toBe( target );
 			expect( result.size ).toBe( 2 );
-			expect( result.get( "entry0" ) ).toBe( 0 );
+			expect( result.get( "entry0" ) ).toBe( 100 );
 			expect( result.get( "entry3" ) ).toBe( 3 );
 
 			target = new Map();
 			result = Utils.M.extend<string, number>( target, new Map<string, number>( <any> [ [ "entry0", 10 ], [ "entry3", 3 ] ] ), new Map<string, number>( <any> [ [ "entry0", 100 ] ] ) );
 			expect( result ).toBe( target );
 			expect( result.size ).toBe( 2 );
-			expect( result.get( "entry0" ) ).toBe( 10 );
+			expect( result.get( "entry0" ) ).toBe( 100 );
 			expect( result.get( "entry3" ) ).toBe( 3 );
 		} );
 

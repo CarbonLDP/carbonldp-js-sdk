@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedFragment = require("./PersistedFragment");
 var Factory = (function () {
     function Factory() {

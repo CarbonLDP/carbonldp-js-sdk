@@ -1,9 +1,15 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../../../Errors");
 var Utils = require("./../../../Utils");
 function pad(value) {
@@ -67,7 +73,7 @@ exports.integerSerializer = new IntegerSerializer();
 var UnsignedIntegerSerializer = (function (_super) {
     __extends(UnsignedIntegerSerializer, _super);
     function UnsignedIntegerSerializer() {
-        _super.apply(this, arguments);
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     UnsignedIntegerSerializer.prototype.serialize = function (value) {
         var stringValue = _super.prototype.serialize.call(this, value);

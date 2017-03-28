@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./NS");
 exports.RDF_CLASS = NS.C.Class.API;
 exports.SCHEMA = {

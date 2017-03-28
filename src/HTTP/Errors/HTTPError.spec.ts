@@ -9,22 +9,29 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod,
+	hasMethod, hasDefaultExport,
 } from "./../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
 
 import Response from "./../Response";
 
-import HTTPError from "./HTTPError";
 import AbstractError from "./../../Errors/AbstractError";
 import { Service } from "../Request";
+
+import * as HTTPError from "./HTTPError";
+import DefaultExport from "./HTTPError";
 
 describe( module(
 	"Carbon/HTTP/Errors/HTTPError"
 ), ():void => {
 
+	it( isDefined(), ():void => {
+		expect( HTTPError ).toBeDefined();
+		expect( HTTPError ).toEqual( jasmine.any( Object ) );
+	} );
+
 	describe( clazz(
-		"Carbon.HTTP.Errors.HTTPError",
+		"Carbon.HTTP.Errors.HTTPError.Class",
 		"Generic error class that defines any type of HTTP Error used in the SDK."
 	), ():void => {
 
@@ -49,26 +56,26 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( HTTPError ).toBeDefined();
-			expect( Utils.isFunction( HTTPError ) ).toBe( true );
+			expect( HTTPError.Class ).toBeDefined();
+			expect( Utils.isFunction( HTTPError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.AbstractError"
 		), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error instanceof AbstractError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
 			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof HTTPError ).toBe( true );
+			expect( error instanceof HTTPError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -76,7 +83,7 @@ describe( module(
 			"toString",
 			{ type: "string" }
 		), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +96,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,9 +109,9 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( HTTPError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( HTTPError.statusCode ) );
-			expect( HTTPError.statusCode ).toBeNull();
+			expect( HTTPError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( HTTPError.Class.statusCode ) );
+			expect( HTTPError.Class.statusCode ).toBeNull();
 		} );
 
 		it( hasProperty(
@@ -112,7 +119,7 @@ describe( module(
 			"response",
 			"number"
 		), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error.response ).toBeDefined();
 			expect( error.response instanceof Response );
@@ -124,7 +131,7 @@ describe( module(
 			"errors",
 			"Carbon.LDP.Error[]"
 		), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error.errors ).toBeDefined();
 			expect( Utils.isArray( error.errors ) ).toEqual( true );
@@ -135,12 +142,17 @@ describe( module(
 			"requestID",
 			"string"
 		), ():void => {
-			let error:HTTPError = new HTTPError( "Message of the error", response );
+			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 
 			expect( error.requestID ).toBeDefined();
 			expect( error.requestID ).toEqual( null );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.HTTPError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( HTTPError.Class );
 	} );
 
 } );

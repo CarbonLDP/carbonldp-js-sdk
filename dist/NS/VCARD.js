@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.namespace = "http://www.w3.org/2001/vcard-rdf/3.0#";
 var Predicate = (function () {
     function Predicate() {

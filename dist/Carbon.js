@@ -1,9 +1,15 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
 var App = require("./App");
@@ -32,68 +38,69 @@ var SDKContext = require("./SDKContext");
 var Settings = require("./Settings");
 var SPARQL = require("./SPARQL");
 var Utils = require("./Utils");
-var Carbon = (function (_super) {
-    __extends(Carbon, _super);
-    function Carbon(settings) {
-        _super.call(this);
-        this.auth = new Platform.Auth.Class(this);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(settings) {
+        var _this = _super.call(this) || this;
+        _this.auth = new Platform.Auth.Class(_this);
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
-        Utils.M.extend(this.settings, Utils.M.from(settings));
-        this.apps = new Apps.Class(this);
+        Utils.M.extend(_this.settings, Utils.M.from(settings));
+        _this.apps = new Apps.Class(_this);
+        return _this;
     }
-    Object.defineProperty(Carbon, "version", {
-        get: function () { return "0.40.0"; },
+    Object.defineProperty(Class, "version", {
+        get: function () { return "0.42.0"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Carbon.prototype, "version", {
-        get: function () { return Carbon.version; },
+    Object.defineProperty(Class.prototype, "version", {
+        get: function () { return Class.version; },
         enumerable: true,
         configurable: true
     });
-    Carbon.prototype.resolve = function (uri) {
+    Class.prototype.resolve = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
         var finalURI = this.settings.get("http.ssl") ? "https://" : "http://";
         finalURI += this.settings.get("domain") + "/" + this.getSetting("platform.container");
         return RDF.URI.Util.resolve(finalURI, uri);
     };
-    Carbon.prototype.getAPIDescription = function () {
+    Class.prototype.getAPIDescription = function () {
         return this.documents.get("api/").then(function (_a) {
             var description = _a[0], response = _a[1];
             return description;
         });
     };
-    Carbon.AccessPoint = AccessPoint;
-    Carbon.App = App;
-    Carbon.Apps = Apps;
-    Carbon.Auth = Auth;
-    Carbon.Document = Document;
-    Carbon.Documents = Documents;
-    Carbon.Errors = Errors;
-    Carbon.Fragment = Fragment;
-    Carbon.HTTP = HTTP;
-    Carbon.JSONLD = JSONLD;
-    Carbon.LDP = LDP;
-    Carbon.NamedFragment = NamedFragment;
-    Carbon.NS = NS;
-    Carbon.ObjectSchema = ObjectSchema;
-    Carbon.PersistedApp = PersistedApp;
-    Carbon.PersistedDocument = PersistedDocument;
-    Carbon.PersistedFragment = PersistedFragment;
-    Carbon.PersistedNamedFragment = PersistedNamedFragment;
-    Carbon.PersistedResource = PersistedResource;
-    Carbon.Platform = Platform;
-    Carbon.Pointer = Pointer;
-    Carbon.RDF = RDF;
-    Carbon.Resource = Resource;
-    Carbon.SDKContext = SDKContext;
-    Carbon.Settings = Settings;
-    Carbon.SPARQL = SPARQL;
-    Carbon.Utils = Utils;
-    return Carbon;
+    return Class;
 }(AbstractContext.Class));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Carbon;
+Class.AccessPoint = AccessPoint;
+Class.App = App;
+Class.Apps = Apps;
+Class.Auth = Auth;
+Class.Document = Document;
+Class.Documents = Documents;
+Class.Errors = Errors;
+Class.Fragment = Fragment;
+Class.HTTP = HTTP;
+Class.JSONLD = JSONLD;
+Class.LDP = LDP;
+Class.NamedFragment = NamedFragment;
+Class.NS = NS;
+Class.ObjectSchema = ObjectSchema;
+Class.PersistedApp = PersistedApp;
+Class.PersistedDocument = PersistedDocument;
+Class.PersistedFragment = PersistedFragment;
+Class.PersistedNamedFragment = PersistedNamedFragment;
+Class.PersistedResource = PersistedResource;
+Class.Platform = Platform;
+Class.Pointer = Pointer;
+Class.RDF = RDF;
+Class.Resource = Resource;
+Class.SDKContext = SDKContext;
+Class.Settings = Settings;
+Class.SPARQL = SPARQL;
+Class.Utils = Utils;
+exports.Class = Class;
+exports.default = Class;
 
 //# sourceMappingURL=Carbon.js.map

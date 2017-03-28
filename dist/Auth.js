@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ACE = require("./Auth/ACE");
 exports.ACE = ACE;
 var ACL = require("./Auth/ACL");
@@ -15,6 +16,8 @@ var PersistedACL = require("./Auth/PersistedACL");
 exports.PersistedACL = PersistedACL;
 var PersistedAgent = require("./Auth/PersistedAgent");
 exports.PersistedAgent = PersistedAgent;
+var PersistedRole = require("./Auth/PersistedRole");
+exports.PersistedRole = PersistedRole;
 var Role = require("./Auth/Role");
 exports.Role = Role;
 var Roles = require("./Auth/Roles");
@@ -35,11 +38,11 @@ var NS = require("./NS");
 var Resource = require("./Resource");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Method;
 (function (Method) {
     Method[Method["BASIC"] = 0] = "BASIC";
     Method[Method["TOKEN"] = 1] = "TOKEN";
-})(exports.Method || (exports.Method = {}));
-var Method = exports.Method;
+})(Method = exports.Method || (exports.Method = {}));
 var Class = (function () {
     function Class(context) {
         this.roles = null;
@@ -187,7 +190,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Auth.js.map

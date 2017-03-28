@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import RequestEntityTooLargeError from "./RequestEntityTooLargeError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/RequestEntityTooLargeError"
-), ():void => {
+import * as RequestEntityTooLargeError from "./RequestEntityTooLargeError";
+import DefaultExport from "./RequestEntityTooLargeError";
+
+describe( module( "Carbon/HTTP/Errors/client/RequestEntityTooLargeError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( RequestEntityTooLargeError ).toBeDefined();
+		expect( RequestEntityTooLargeError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.RequestEntityTooLargeError",
+		"Carbon.HTTP.Errors.RequestEntityTooLargeError.Class",
 		"Error class to indicate that the request entity is larger than the server is able to process."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( RequestEntityTooLargeError ).toBeDefined();
-			expect( Utils.isFunction( RequestEntityTooLargeError ) ).toBe( true );
+			expect( RequestEntityTooLargeError.Class ).toBeDefined();
+			expect( Utils.isFunction( RequestEntityTooLargeError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:RequestEntityTooLargeError = new RequestEntityTooLargeError( "Message of the error", response );
+			let error:RequestEntityTooLargeError.Class = new RequestEntityTooLargeError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:RequestEntityTooLargeError = new RequestEntityTooLargeError( "Message of the error", response );
+			let error:RequestEntityTooLargeError.Class = new RequestEntityTooLargeError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof RequestEntityTooLargeError ).toBe( true );
+			expect( error instanceof RequestEntityTooLargeError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:RequestEntityTooLargeError = new RequestEntityTooLargeError( "Message of the error", response );
+			let error:RequestEntityTooLargeError.Class = new RequestEntityTooLargeError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:RequestEntityTooLargeError = new RequestEntityTooLargeError( "Message of the error", response );
+			let error:RequestEntityTooLargeError.Class = new RequestEntityTooLargeError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( RequestEntityTooLargeError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( RequestEntityTooLargeError.statusCode ) );
+			expect( RequestEntityTooLargeError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( RequestEntityTooLargeError.Class.statusCode ) );
 
-			expect( RequestEntityTooLargeError.statusCode ).toBe( 413 );
+			expect( RequestEntityTooLargeError.Class.statusCode ).toBe( 413 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.RequestEntityTooLargeError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( RequestEntityTooLargeError.Class );
 	} );
 
 } );

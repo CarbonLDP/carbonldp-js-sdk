@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.CS.Class.AccessControlEntry;

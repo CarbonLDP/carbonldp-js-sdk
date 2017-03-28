@@ -4,7 +4,7 @@ import * as LDP from "./../../LDP";
 import * as Resource from "./../../Resource";
 import Response from "./../Response";
 
-class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
+export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 	static get statusCode():number { return null; }
 
 	get name():string { return "HTTPError"; }
@@ -29,6 +29,7 @@ class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 
 	constructor( message:string, response:Response ) {
 		super( message );
+		Object.setPrototypeOf( this, Class.prototype );
 
 		Resource.Factory.createFrom( this );
 
@@ -39,4 +40,4 @@ class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 	}
 }
 
-export default HTTPError;
+export default Class;

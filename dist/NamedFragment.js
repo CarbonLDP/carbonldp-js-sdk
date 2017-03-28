@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment = require("./Fragment");
 var RDF = require("./RDF");
 var Utils = require("./Utils");

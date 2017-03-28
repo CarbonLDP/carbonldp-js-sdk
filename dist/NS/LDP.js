@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var namespace = "http://www.w3.org/ns/ldp#";
 exports.namespace = namespace;
 var Class = (function () {

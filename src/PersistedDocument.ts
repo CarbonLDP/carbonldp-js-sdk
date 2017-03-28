@@ -17,6 +17,8 @@ import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
 
+import { QueryClause } from "sparqler/Clauses";
+
 export interface Class extends PersistedResource.Class, Document.Class {
 	created?:Date;
 	modified?:Date;
@@ -105,6 +107,8 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeUPDATE( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+
+	sparql():QueryClause;
 }
 
 function extendIsDirty( superFunction:() => boolean ):() => boolean {
@@ -348,6 +352,10 @@ function executeUPDATE( updateQuery:string, requestOptions:HTTP.Request.Options 
 	return this._documents.executeUPDATE( this.id, updateQuery, requestOptions );
 }
 
+function sparql():QueryClause {
+	return this._documents.sparql( this.id );
+}
+
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "_documents" )
@@ -384,6 +392,8 @@ export class Factory {
 			&& Utils.hasFunction( object, "executeRawDESCRIBEQuery" )
 			&& Utils.hasFunction( object, "executeRawCONSTRUCTQuery" )
 			&& Utils.hasFunction( object, "executeUPDATE" )
+
+			&& Utils.hasFunction( object, "sparql" )
 			;
 	}
 
@@ -682,6 +692,13 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: executeUPDATE,
+			},
+
+			"sparql": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: sparql,
 			},
 
 			"createFragment": {

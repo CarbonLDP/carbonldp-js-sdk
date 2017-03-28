@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ACL = require("./ACL");
 var Pointer = require("./../Pointer");
 var Utils = require("./../Utils");
@@ -18,6 +19,15 @@ var Factory = (function () {
                 value: parsePointer,
             },
         });
+        var removeInvalidACE = function (ace) {
+            if (!ace.subjects)
+                acl._removeFragment(ace);
+            return !!ace.subjects;
+        };
+        if (acl.entries)
+            acl.entries = acl.entries.filter(removeInvalidACE);
+        if (acl.inheritableEntries)
+            acl.inheritableEntries = acl.inheritableEntries.filter(removeInvalidACE);
         return acl;
     };
     return Factory;

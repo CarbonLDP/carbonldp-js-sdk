@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var ACE = require("./ACE");
 var NS = require("./../NS");
 var Pointer = require("./../Pointer");

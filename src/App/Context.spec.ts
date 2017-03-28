@@ -15,6 +15,8 @@ import {
 import AbstractContext from "./../AbstractContext";
 import * as App from "./../App";
 import * as Auth from "./Auth";
+import Documents from "./../Documents";
+import * as NS from "./../NS";
 import PersistedApp from "./../PersistedApp";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
@@ -41,6 +43,12 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			let app:PersistedApp = <any> App.Factory.create( "App name", "App description" );
 			app.rootContainer = <any> Pointer.Factory.create( "http://example.com/apps/example-app/" );
 			appContext = new AppContext.Class( parentContext, app );
+
+			jasmine.Ajax.install();
+		} );
+
+		afterEach( ():void => {
+			jasmine.Ajax.uninstall();
 		} );
 
 		it( isDefined(), ():void => {
@@ -49,11 +57,52 @@ describe( module( "Carbon/App/Context" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "parentContext", type: "Carbon.Context.Class"},
-			{name: "app", type: "Carbon.App.Context"},
+			{ name: "parentContext", type: "Carbon.Context.Class" },
+			{ name: "app", type: "Carbon.App.Context" },
 		] ), ():void => {
 			expect( appContext ).toBeTruthy();
 			expect( appContext instanceof AppContext.Class );
+		} );
+
+		it( "Extends Factory decorators of documents instance", ( done:{ ():void, fail:() => void } ):void => {
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
+
+			// Requests data
+			jasmine.Ajax.stubRequest( "http://example.com/apps/example-app/a-role/", null, "GET" ).andReturn( {
+				status: 200,
+				responseHeaders: {
+					"ETag": "\"123456789\"",
+				},
+				responseText: `{
+					"@id": "http://example.com/apps/example-app/a-role/",
+					"@graph": [
+						{
+							"@id": "http://example.com/apps/example-app/a-role/",
+							"@type": [ "${ NS.CS.Class.AppRole }" ],
+							"${ NS.CS.Predicate.namae }": "A Role"
+						}
+					]
+				}`,
+			} );
+			let appDocuments:Documents = appContext.documents;
+
+			expect( appDocuments.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
+			expect( appDocuments.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
+			expect( appDocuments.documentDecorators.has( NS.CS.Class.Agent ) ).toBe( true );
+
+			// The one added by this context
+			expect( appDocuments.documentDecorators.has( NS.CS.Class.AppRole ) ).toBe( true );
+
+			promise = appDocuments.get<App.PersistedRole.Class>( "http://example.com/apps/example-app/a-role/" ).then( ( [ role, response ]:[ App.PersistedRole.Class, any ] ) => {
+				expect( App.PersistedRole.Factory.is( role ) ).toBe( true );
+				expect( role._roles ).toBe( appContext.auth.roles );
+
+				expect( response ).toBeDefined();
+			} );
+			promises.push( promise );
+
+			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
 		it( extendsClass(
@@ -86,9 +135,9 @@ describe( module( "Carbon/App/Context" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the scope of the application.", [
-				{name: "uri", type: "string"},
+				{ name: "uri", type: "string" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			expect( appContext.resolve( "/child/" ) ).toBe( "http://example.com/apps/example-app/child/" );
 

@@ -1,19 +1,20 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./Errors");
 var NS = require("./NS");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var ContainerType;
 (function (ContainerType) {
     ContainerType[ContainerType["SET"] = 0] = "SET";
     ContainerType[ContainerType["LIST"] = 1] = "LIST";
     ContainerType[ContainerType["LANGUAGE"] = 2] = "LANGUAGE";
-})(exports.ContainerType || (exports.ContainerType = {}));
-var ContainerType = exports.ContainerType;
+})(ContainerType = exports.ContainerType || (exports.ContainerType = {}));
+var PointerType;
 (function (PointerType) {
     PointerType[PointerType["ID"] = 0] = "ID";
     PointerType[PointerType["VOCAB"] = 1] = "VOCAB";
-})(exports.PointerType || (exports.PointerType = {}));
-var PointerType = exports.PointerType;
+})(PointerType = exports.PointerType || (exports.PointerType = {}));
 var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";

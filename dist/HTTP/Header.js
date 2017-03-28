@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];
@@ -65,7 +66,6 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Header.js.map

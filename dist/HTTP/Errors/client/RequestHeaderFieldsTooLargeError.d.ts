@@ -1,6 +1,8 @@
 import HTTPError from "./../HTTPError";
-declare class RequestHeaderFieldsTooLargeError extends HTTPError {
+import Response from "./../../Response";
+export declare class Class extends HTTPError {
     static readonly statusCode: number;
     readonly name: string;
+    constructor(message: string, response: Response);
 }
-export default RequestHeaderFieldsTooLargeError;
+export default Class;

@@ -134,7 +134,8 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			STATIC,
 			"create",
 			"Create a `Carbon.App.Role.Class` object with the specified name.", [
-				{ name: "name", type: "string" },
+				{ name: "name", type: "string", description: "Name of the role to create." },
+				{ name: "description", type: "string", optional: true, description: "Optional description of the role." },
 			],
 			{ type: "Carbon.App.Role.Class" }
 		), ():void => {
@@ -144,21 +145,26 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			let spy:jasmine.Spy = spyOn( AppRole.Factory, "createFrom" );
 
 			AppRole.Factory.create( "Role name" );
-			expect( spy ).toHaveBeenCalledWith( {}, "Role name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Role name", undefined );
 
 			AppRole.Factory.create( "Another Role name" );
-			expect( spy ).toHaveBeenCalledWith( {}, "Another Role name" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another Role name", undefined );
+
+			AppRole.Factory.create( "Another Role name", "Optional description" );
+			expect( spy ).toHaveBeenCalledWith( {}, "Another Role name", "Optional description" );
 
 			AppRole.Factory.create( "" );
-			expect( spy ).toHaveBeenCalledWith( {}, "" );
+			expect( spy ).toHaveBeenCalledWith( {}, "", undefined );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
+			[ "T extends Object" ],
 			"Create a `Carbon.App.Role.Class` object with the object provided and its name.", [
-				{ name: "object", type: "T extends Object" },
-				{ name: "name", type: "string" },
+				{ name: "object", type: "T" },
+				{ name: "name", type: "string", description: "Name of the role to create." },
+				{ name: "description", type: "string", optional: true, description: "Optional description of the role." },
 			],
 			{ type: "T & Carbon.App.Role.Class" }
 		), ():void => {
@@ -175,6 +181,7 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( AppRole.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeUndefined();
 			expect( role.name ).toBe( "Role name" );
+			expect( role.description ).toBeUndefined();
 			expect( role.types ).toContain( NS.CS.Class.AppRole );
 
 			role = AppRole.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name" );
@@ -182,6 +189,15 @@ describe( module( "Carbon/Apps/Role" ), ():void => {
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );
 			expect( role.name ).toBe( "Role name" );
+			expect( role.description ).toBeUndefined();
+			expect( role.types ).toContain( NS.CS.Class.AppRole );
+
+			role = AppRole.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name", "Description" );
+			expect( AppRole.Factory.is( role ) ).toBe( true );
+			expect( role.myProperty ).toBeDefined();
+			expect( role.myProperty ).toBe( "a property" );
+			expect( role.name ).toBe( "Role name" );
+			expect( role.description ).toBe( "Description" );
 			expect( role.types ).toContain( NS.CS.Class.AppRole );
 
 			expect( () => AppRole.Factory.createFrom( {}, "" ) ).toThrowError( Errors.IllegalArgumentError );

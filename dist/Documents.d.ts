@@ -12,15 +12,17 @@ import * as Pointer from "./Pointer";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import { QueryClause } from "sparqler/Clauses";
+export interface DocumentDecorator {
+    decorator: (object: Object, ...parameters: any[]) => Object;
+    parameters?: any[];
+}
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
-    readonly documentDecorators: Map<string, {
-        decorator: Function;
-        parameters?: any[];
-    }>;
+    readonly documentDecorators: Map<string, DocumentDecorator>;
     private context;
     private pointers;
     private documentsBeingResolved;
@@ -37,10 +39,10 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     createChild<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChildren<T>(parentURI: string, childrenObjects: T[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
     createChildren<T>(parentURI: string, childrenObjects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
-    createChildAndRetrieve<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildAndRetrieve<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildrenAndRetrieve<T>(parentURI: string, childrenObjects: T[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[]]]>;
-    createChildrenAndRetrieve<T>(parentURI: string, childrenObjects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[]]]>;
+    createChildAndRetrieve<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildAndRetrieve<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildrenAndRetrieve<T>(parentURI: string, childrenObjects: T[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
+    createChildrenAndRetrieve<T>(parentURI: string, childrenObjects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
     listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getChildren<T>(parentURI: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getChildren<T>(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
@@ -67,7 +69,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     refresh<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    saveAndRefresh<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    saveAndRefresh<T>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class[]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
@@ -79,6 +81,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    sparql(documentURI: string): QueryClause;
     _getPersistedDocument(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
@@ -102,5 +105,6 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
     private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
     private decoratePersistedDocument(persistedDocument);
+    private updateFromPreferenceApplied<T>(persistedDocument, response);
 }
 export default Class;

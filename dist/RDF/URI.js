@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var Utils = require("./../Utils");
 var Class = (function () {
@@ -49,6 +50,8 @@ var Util = (function () {
         if (baseURI === uri)
             return true;
         if (baseURI === "")
+            return true;
+        if (Util.isRelative(uri) && !Util.isPrefixed(uri))
             return true;
         if (uri.startsWith(baseURI)) {
             if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
@@ -171,7 +174,6 @@ function prefixWithObjectSchema(uri, objectSchema) {
         return Util.prefix(uri, prefix, prefixURI.toString());
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=URI.js.map

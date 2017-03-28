@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode = require("./BlankNode");
 var Errors = require("./Errors");
 var Converter_1 = require("./JSONLD/Converter");
@@ -354,7 +355,7 @@ function convertNestedObjects(parent, actual, fragmentsTracker) {
             }
             continue;
         }
-        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? "#" + next.slug : "");
+        idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? RDF.URI.Util.hasFragment(next.slug) ? next.slug : "#" + next.slug : "");
         if (!!idOrSlug && !parent.inScope(idOrSlug))
             continue;
         var parentFragment = parent.getFragment(idOrSlug);

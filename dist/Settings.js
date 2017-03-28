@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = require("./Auth");
 exports.defaultSettings = {
     "domain": "carbonldp.com",
@@ -10,7 +11,6 @@ exports.defaultSettings = {
     "platform.roles.container": "roles/",
     "vocabulary": "vocabulary/#",
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = exports.defaultSettings;
 
 //# sourceMappingURL=Settings.js.map

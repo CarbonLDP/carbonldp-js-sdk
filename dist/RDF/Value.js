@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var List = require("./List");
 var Literal = require("./Literal");
 var RDFNode = require("./Node");

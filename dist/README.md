@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg)](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk)
 
-JavaScript SDK that simplifies the use of CarbonLDP's REST API.
+Official JavaScript SDK for Carbon LDP applications, which simplifies the use of Carbon's REST API.
 
 ## Development setup
 1. Install dependencies

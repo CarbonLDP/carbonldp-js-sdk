@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function hasFunction(object, functionName) {
     return typeof object[functionName] === "function";
 }
@@ -52,7 +53,7 @@ function isDouble(value) {
 }
 exports.isDouble = isDouble;
 function isDate(date) {
-    return typeof date === "date" || date instanceof Date;
+    return date instanceof Date || (typeof date === "object" && Object.prototype.toString.call(date) === "[object Date]");
 }
 exports.isDate = isDate;
 function isObject(object) {
@@ -283,7 +284,7 @@ var A = (function () {
     A.joinWithoutDuplicates = function () {
         var arrays = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            arrays[_i - 0] = arguments[_i];
+            arrays[_i] = arguments[_i];
         }
         var result = arrays[0].slice();
         for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
@@ -295,6 +296,8 @@ var A = (function () {
     };
     A.indexOf = function (array, searchedElement, comparator) {
         if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
+        if (!array)
+            return -1;
         for (var i = 0, length_2 = array.length; i < length_2; ++i) {
             if (comparator(array[i], searchedElement))
                 return i;
@@ -327,8 +330,7 @@ var M = (function () {
                 var entry = next.value;
                 var key = entry[0];
                 var value = entry[1];
-                if (!toExtend.has(key))
-                    toExtend.set(key, value);
+                toExtend.set(key, value);
                 next = values.next();
             }
         }
@@ -350,9 +352,9 @@ var UUID = (function () {
             return v.toString(16);
         });
     };
-    UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return UUID;
 }());
+UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 exports.UUID = UUID;
 
 //# sourceMappingURL=Utils.js.map

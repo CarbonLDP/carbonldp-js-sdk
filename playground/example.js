@@ -11,9 +11,9 @@
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
 				"api": "http://purl.org/linked-data/api/vocab#",
-				"c": "http://carbonldp.com/ns/v1/platform#",
-				"cs": "http://carbonldp.com/ns/v1/security#",
-				"cp": "http://carbonldp.com/ns/v1/patch#",
+				"c": "https://carbonldp.com/ns/v1/platform#",
+				"cs": "https://carbonldp.com/ns/v1/security#",
+				"cp": "https://carbonldp.com/ns/v1/patch#",
 				"cc": "http://creativecommons.org/ns#",
 				"cert": "http://www.w3.org/ns/auth/cert#",
 				"dbp": "http://dbpedia.org/property/",
@@ -69,12 +69,20 @@
 				return carbon.apps.getContext( "test-app/" );
 			} ).then( ( _appContext ) => {
 				appContext = _appContext;
-				return appContext.documents.getChildren( "/" );
-			} ).then( ( [ _resources, response ] ) => {
-				expect( Carbon.Utils.isArray( _resources ) ).toBe( true );
-				console.log( _resources );
+				return appContext.documents.sparql( "posts/" )
+					.selectAll()
+					.where( ( _ ) => {
+						return [
+							_.resource( "posts/" )
+								.has( _.var( "p" ), _.var( "o" ) ),
+						];
+					} )
+					.execute();
+			} ).then( ( [ result, response ] ) => {
+				console.log( result );
 				done();
 			} ).catch( ( error ) => {
+				console.error( error );
 				done.fail( error );
 			} );
 

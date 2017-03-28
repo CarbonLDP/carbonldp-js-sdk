@@ -1,6 +1,6 @@
 import AbstractError from "./AbstractError";
-declare class IllegalStateError extends AbstractError {
+export declare class Class extends AbstractError {
     readonly name: string;
     constructor(message?: string);
 }
-export default IllegalStateError;
+export default Class;

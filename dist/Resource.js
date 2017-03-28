@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Pointer = require("./Pointer");
 var Utils = require("./Utils");
 function addType(type) {

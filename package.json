@@ -1,8 +1,8 @@
 {
   "name": "carbonldp",
-  "version": "0.40.0",
-  "description": "JavaScript/TypeScript SDK to create CarbonLDP's Applications",
-  "homepage": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK",
+  "version": "0.42.0",
+  "description": "JavaScript/TypeScript SDK for Carbon LDP",
+  "homepage": "https://github.com/CarbonLDP/carbonldp-js-sdk",
   "contributors": [
     "Miguel Aragon <miguel.aragon@base22.com>",
     "Rodolfo Aguirre <rodolfo.aguirre@base22.com>"
@@ -10,16 +10,17 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CarbonLDP/CarbonLDP-JS-SDK.git"
+    "url": "https://github.com/CarbonLDP/carbonldp-js-sdk.git"
   },
   "main": "./dist/Carbon.js",
   "typings": "./dist/Carbon.d.ts",
   "dependencies": {
-    "file-type": "^3.8.0"
+    "file-type": "^3.8.0",
+    "sparqler": "0.1.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.5.36",
-    "@types/jasmine-ajax": "^3.1.31",
+    "@types/jasmine": "2.5.45",
+    "@types/jasmine-ajax": "3.1.33",
     "@types/node": "^6.0.46",
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
@@ -35,7 +36,7 @@
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.3.4",
     "jsonld": "^0.4.11",
-    "jspm": "^0.17.0-beta.16",
+    "jspm": "0.17.0-beta.32",
     "karma": "^0.13.19",
     "karma-chrome-launcher": "^1.0.1",
     "karma-documentation-runner": "file:test/console-reporter",
@@ -44,10 +45,10 @@
     "karma-jspm": "^2.1.1",
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
     "karma-sourcemap-loader": "^0.3.4",
-    "nock": "^8.0.0",
+    "nock": "^8.2.1",
     "run-sequence": "^1.2.1",
-    "systemjs": "^0.19.27",
-    "systemjs-builder": "^0.15.16",
+    "systemjs": "0.19.41",
+    "systemjs-builder": "0.15.35",
     "tslint": "^3.10.2",
     "typescript": "^2.0.6",
     "typings": "^1.0.4"
@@ -61,6 +62,7 @@
     },
     "dependencies": {
       "plugin-typescript": "github:frankwallis/plugin-typescript@^5.2.7",
+      "sparqler": "npm:sparqler@0.1.1",
       "typescript": "npm:typescript@^2.0.6"
     },
     "devDependencies": {
@@ -78,7 +80,7 @@
       "net": "npm:jspm-nodelibs-net@^0.2.0",
       "os": "npm:jspm-nodelibs-os@^0.2.0",
       "path": "npm:jspm-nodelibs-path@^0.2.0",
-      "process": "npm:jspm-nodelibs-process@^0.2.0",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
       "stream": "npm:jspm-nodelibs-stream@^0.2.0",
       "string_decoder": "npm:jspm-nodelibs-string_decoder@^0.2.0",
       "url": "npm:jspm-nodelibs-url@^0.2.0",

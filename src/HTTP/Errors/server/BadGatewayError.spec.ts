@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import BadGatewayError from "./BadGatewayError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/server/BadGatewayError"
-), ():void => {
+import * as BadGatewayError from "./BadGatewayError";
+import DefaultExport from "./BadGatewayError";
+
+describe( module( "Carbon/HTTP/Errors/server/BadGatewayError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( BadGatewayError ).toBeDefined();
+		expect( BadGatewayError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.BadGatewayError",
+		"Carbon.HTTP.Errors.BadGatewayError.Class",
 		"Error class to indicate that the server was acting as a gateway or proxy and received an invalid response from the upstream server."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( BadGatewayError ).toBeDefined();
-			expect( Utils.isFunction( BadGatewayError ) ).toBe( true );
+			expect( BadGatewayError.Class ).toBeDefined();
+			expect( Utils.isFunction( BadGatewayError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:BadGatewayError = new BadGatewayError( "Message of the error", response );
+			let error:BadGatewayError.Class = new BadGatewayError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:BadGatewayError = new BadGatewayError( "Message of the error", response );
+			let error:BadGatewayError.Class = new BadGatewayError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof BadGatewayError ).toBe( true );
+			expect( error instanceof BadGatewayError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:BadGatewayError = new BadGatewayError( "Message of the error", response );
+			let error:BadGatewayError.Class = new BadGatewayError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:BadGatewayError = new BadGatewayError( "Message of the error", response );
+			let error:BadGatewayError.Class = new BadGatewayError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( BadGatewayError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( BadGatewayError.statusCode ) );
+			expect( BadGatewayError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( BadGatewayError.Class.statusCode ) );
 
-			expect( BadGatewayError.statusCode ).toBe( 502 );
+			expect( BadGatewayError.Class.statusCode ).toBe( 502 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.server.BadGatewayError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( BadGatewayError.Class );
 	} );
 
 } );
