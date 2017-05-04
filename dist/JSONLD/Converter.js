@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var ObjectSchema = require("./../ObjectSchema");
 var NS = require("./../NS");
@@ -401,7 +402,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Converter.js.map

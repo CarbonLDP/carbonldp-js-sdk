@@ -24,6 +24,9 @@ import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 
+import SparqlBuilder from "./SPARQL/Builder";
+import { QueryClause } from "sparqler/Clauses";
+
 export interface DocumentDecorator {
 	decorator:( object:Object, ...parameters:any[] ) => Object;
 	parameters?:any[];
@@ -736,6 +739,26 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 		return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
+	}
+
+	sparql( documentURI:string ):QueryClause {
+		let sparqlBuilder:SparqlBuilder = new SparqlBuilder();
+		sparqlBuilder._documents = this;
+		sparqlBuilder._entryPoint = documentURI;
+
+		let builder:QueryClause = sparqlBuilder.base( documentURI );
+
+		if( ! ! this.context ) {
+			builder.base( this.context.getBaseURI() );
+			if( this.context.hasSetting( "vocabulary" ) ) builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
+
+			let schema:ObjectSchema.DigestedObjectSchema = this.context.getObjectSchema();
+			schema.prefixes.forEach( ( uri:RDF.URI.Class, prefix:string ) => {
+				builder.prefix( prefix, uri.stringValue );
+			} );
+		}
+
+		return builder;
 	}
 
 	_getPersistedDocument( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):PersistedDocument.Class {

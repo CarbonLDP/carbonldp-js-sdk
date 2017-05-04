@@ -27,7 +27,7 @@ import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
-declare class Carbon extends AbstractContext.Class {
+export declare class Class extends AbstractContext.Class {
     static AccessPoint: typeof AccessPoint;
     static App: typeof App;
     static Apps: typeof Apps;
@@ -62,4 +62,4 @@ declare class Carbon extends AbstractContext.Class {
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;
 }
-export default Carbon;
+export default Class;

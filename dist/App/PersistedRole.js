@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AppRole = require("./Role");
 var PersistedRole = require("./../Auth/PersistedRole");
 var Utils = require("./../Utils");

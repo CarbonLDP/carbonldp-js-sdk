@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import BadResponseError from "./BadResponseError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/server/BadResponseError"
-), ():void => {
+import * as BadResponseError from "./BadResponseError";
+import DefaultExport from "./BadResponseError";
+
+describe( module( "Carbon/HTTP/Errors/server/BadResponseError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( BadResponseError ).toBeDefined();
+		expect( BadResponseError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.BadResponseError",
+		"Carbon.HTTP.Errors.BadResponseError.Class",
 		"Error class to indicate that the response obtained isn't the expected or can't be interpreted."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( BadResponseError ).toBeDefined();
-			expect( Utils.isFunction( BadResponseError ) ).toBe( true );
+			expect( BadResponseError.Class ).toBeDefined();
+			expect( Utils.isFunction( BadResponseError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:BadResponseError = new BadResponseError( "Message of the error", response );
+			let error:BadResponseError.Class = new BadResponseError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:BadResponseError = new BadResponseError( "Message of the error", response );
+			let error:BadResponseError.Class = new BadResponseError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof BadResponseError ).toBe( true );
+			expect( error instanceof BadResponseError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:BadResponseError = new BadResponseError( "Message of the error", response );
+			let error:BadResponseError.Class = new BadResponseError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:BadResponseError = new BadResponseError( "Message of the error", response );
+			let error:BadResponseError.Class = new BadResponseError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( BadResponseError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( BadResponseError.statusCode ) );
+			expect( BadResponseError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( BadResponseError.Class.statusCode ) );
 
-			expect( BadResponseError.statusCode ).toBe( 0 );
+			expect( BadResponseError.Class.statusCode ).toBe( 0 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.server.BadResponseError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( BadResponseError.Class );
 	} );
 
 } );

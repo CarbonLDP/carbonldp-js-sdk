@@ -11,6 +11,7 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
+import { QueryClause } from "sparqler/Clauses";
 export interface Class extends PersistedResource.Class, Document.Class {
     created?: Date;
     modified?: Date;
@@ -77,6 +78,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
     executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(updateQuery: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    sparql(): QueryClause;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

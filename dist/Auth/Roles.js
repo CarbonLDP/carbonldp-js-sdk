@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
@@ -103,7 +104,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Roles.js.map

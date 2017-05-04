@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var JSONLD = require("./../JSONLD");
 var Node = require("./Node");
 var Utils = require("./../Utils");

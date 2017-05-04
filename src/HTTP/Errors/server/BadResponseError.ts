@@ -4,7 +4,7 @@ import Response from "./../../Response";
 const name:string = "BadResponseError";
 const statusCode:number = 0;
 
-class Class extends HTTPError {
+export class Class extends HTTPError {
 	static get statusCode():number { return statusCode; }
 
 	get name():string { return name; }

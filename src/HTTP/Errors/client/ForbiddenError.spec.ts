@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import ForbiddenError from "./ForbiddenError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/ForbiddenError"
-), ():void => {
+import * as ForbiddenError from "./ForbiddenError";
+import DefaultExport from "./ForbiddenError";
+
+describe( module( "Carbon/HTTP/Errors/client/ForbiddenError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( ForbiddenError ).toBeDefined();
+		expect( ForbiddenError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.ForbiddenError",
+		"Carbon.HTTP.Errors.ForbiddenError.Class",
 		"Error class to indicate that the current user doesn't have permissions to fulfill the request."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( ForbiddenError ).toBeDefined();
-			expect( Utils.isFunction( ForbiddenError ) ).toBe( true );
+			expect( ForbiddenError.Class ).toBeDefined();
+			expect( Utils.isFunction( ForbiddenError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:ForbiddenError = new ForbiddenError( "Message of the error", response );
+			let error:ForbiddenError.Class = new ForbiddenError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:ForbiddenError = new ForbiddenError( "Message of the error", response );
+			let error:ForbiddenError.Class = new ForbiddenError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof ForbiddenError ).toBe( true );
+			expect( error instanceof ForbiddenError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:ForbiddenError = new ForbiddenError( "Message of the error", response );
+			let error:ForbiddenError.Class = new ForbiddenError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:ForbiddenError = new ForbiddenError( "Message of the error", response );
+			let error:ForbiddenError.Class = new ForbiddenError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( ForbiddenError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( ForbiddenError.statusCode ) );
+			expect( ForbiddenError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( ForbiddenError.Class.statusCode ) );
 
-			expect( ForbiddenError.statusCode ).toBe( 403 );
+			expect( ForbiddenError.Class.statusCode ).toBe( 403 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.ForbiddenError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( ForbiddenError.Class );
 	} );
 
 } );

@@ -28,7 +28,7 @@ import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
-class Carbon extends AbstractContext.Class {
+export class Class extends AbstractContext.Class {
 
 	/* tslint:disable: variable-name */
 	static AccessPoint:typeof AccessPoint = AccessPoint;
@@ -60,11 +60,11 @@ class Carbon extends AbstractContext.Class {
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
-	static get version():string { return "0.41.0"; }
+	static get version():string { return "0.42.0"; }
 
 	apps:Apps.Class;
 
-	get version():string { return Carbon.version; }
+	get version():string { return Class.version; }
 
 	constructor( settings?:Settings.Class ) {
 		super();
@@ -94,4 +94,4 @@ class Carbon extends AbstractContext.Class {
 	}
 }
 
-export default Carbon;
+export default Class;

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = require("./../Utils");
 var XSD = require("./../NS/XSD");
 var Errors = require("./../Errors");

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function hasFunction(object, functionName) {
     return typeof object[functionName] === "function";
 }
@@ -52,7 +53,7 @@ function isDouble(value) {
 }
 exports.isDouble = isDouble;
 function isDate(date) {
-    return typeof date === "date" || date instanceof Date;
+    return date instanceof Date || (typeof date === "object" && Object.prototype.toString.call(date) === "[object Date]");
 }
 exports.isDate = isDate;
 function isObject(object) {
@@ -295,6 +296,8 @@ var A = (function () {
     };
     A.indexOf = function (array, searchedElement, comparator) {
         if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
+        if (!array)
+            return -1;
         for (var i = 0, length_2 = array.length; i < length_2; ++i) {
             if (comparator(array[i], searchedElement))
                 return i;

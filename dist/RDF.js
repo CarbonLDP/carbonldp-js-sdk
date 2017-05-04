@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Literal = require("./RDF/Literal");
 exports.Literal = Literal;
 var Document = require("./RDF/Document");

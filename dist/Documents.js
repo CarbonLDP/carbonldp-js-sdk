@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
@@ -18,6 +19,7 @@ var LDP = require("./LDP");
 var SPARQL = require("./SPARQL");
 var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
+var Builder_1 = require("./SPARQL/Builder");
 var Class = (function () {
     function Class(context) {
         if (context === void 0) { context = null; }
@@ -631,6 +633,22 @@ var Class = (function () {
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
     };
+    Class.prototype.sparql = function (documentURI) {
+        var sparqlBuilder = new Builder_1.default();
+        sparqlBuilder._documents = this;
+        sparqlBuilder._entryPoint = documentURI;
+        var builder = sparqlBuilder.base(documentURI);
+        if (!!this.context) {
+            builder.base(this.context.getBaseURI());
+            if (this.context.hasSetting("vocabulary"))
+                builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
+            var schema = this.context.getObjectSchema();
+            schema.prefixes.forEach(function (uri, prefix) {
+                builder.prefix(prefix, uri.stringValue);
+            });
+        }
+        return builder;
+    };
     Class.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
@@ -951,7 +969,6 @@ var Class = (function () {
 }());
 Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=Documents.js.map

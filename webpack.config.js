@@ -1,3 +1,4 @@
+const path = require( "path" );
 const webpack = require( "webpack" );
 
 module.exports = {
@@ -7,7 +8,7 @@ module.exports = {
 	},
 
 	output: {
-		path: "./dist/bundles",
+		path: path.resolve( __dirname, "./dist/bundles" ),
 		filename: "[name].js",
 		libraryTarget: "umd",
 		library: "Carbon",

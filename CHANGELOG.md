@@ -1,3 +1,11 @@
+# 0.42.0 (2017/03/27)
+
+- Completed #122 - Integrate SPARQLer into the SDK
+- Completed #137 - Make library Angular2 AOT compliant
+- Export default classes as named exports too
+- Fixed #135 - Add missing favicon to the API documentation
+- Fixed #132 - When an ACL is fetched, remove ACEs that don't have any subject
+
 # 0.41.0 (2017/01/25)
 
 - Created HTML based API documentation that can be read in the `docs` folder
@@ -204,7 +212,7 @@
         return pointer.resolve();
     }).then( ( [ persistedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
         console.log( "createChild" in persistedDocument ); // true
-        return persistedDocument.createChild( ...
+        return persistedDocument.createChild( ... );
     });
     ```
     
@@ -215,7 +223,7 @@
     
     documents.createChild( "some-project/" ).then( ( [ persistedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
         console.log( "createChild" in persistedDocument ); // true
-        return persistedDocument.createChild( ...
+        return persistedDocument.createChild( ... );
     });
     ```
     
@@ -232,7 +240,7 @@
             {
                 property: "World"
             }
-        ];
+        ]
     }
     
     documents.createChild( "/", objectToPersist ).then( ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ) => {
@@ -252,7 +260,7 @@
             {
                 property: "World"
             }
-        ];
+        ]
     }
     
     documents.createChild( "/", objectToPersist ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {

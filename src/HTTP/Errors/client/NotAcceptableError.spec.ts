@@ -9,22 +9,28 @@ import {
 	extendsClass,
 	hasConstructor,
 	hasProperty,
-	hasMethod
+	hasMethod,
+	hasDefaultExport,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import Response from "./../../Response";
 
-import NotAcceptableError from "./NotAcceptableError";
 import HTTPError from "./../HTTPError";
-import {Service} from "../../Request";
+import { Service } from "../../Request";
 
-describe( module(
-	"Carbon/HTTP/Errors/client/NotAcceptableError"
-), ():void => {
+import * as NotAcceptableError from "./NotAcceptableError";
+import DefaultExport from "./NotAcceptableError";
+
+describe( module( "Carbon/HTTP/Errors/client/NotAcceptableError" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( NotAcceptableError ).toBeDefined();
+		expect( NotAcceptableError ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.NotAcceptableError",
+		"Carbon.HTTP.Errors.NotAcceptableError.Class",
 		"Error class to indicate that the server cannot respond with the data type specified by the accept header of the request."
 	), ():void => {
 
@@ -34,7 +40,7 @@ describe( module(
 			jasmine.Ajax.install();
 			jasmine.Ajax.stubRequest( "http://example.com/request/" ).andReturn( {
 				"status": 200,
-				"responseText": "A response"
+				"responseText": "A response",
 			} );
 
 			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
@@ -49,34 +55,34 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( NotAcceptableError ).toBeDefined();
-			expect( Utils.isFunction( NotAcceptableError ) ).toBe( true );
+			expect( NotAcceptableError.Class ).toBeDefined();
+			expect( Utils.isFunction( NotAcceptableError.Class ) ).toBe( true );
 		} );
 
 		it( extendsClass(
 			"Carbon.Errors.HTTPError"
 		), ():void => {
-			let error:NotAcceptableError = new NotAcceptableError( "Message of the error", response );
+			let error:NotAcceptableError.Class = new NotAcceptableError.Class( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"},
-			{name: "response", type: "Carbon.HTTP.Response"}
+			{ name: "message", type: "string" },
+			{ name: "response", type: "Carbon.HTTP.Response.Class" },
 		] ), ():void => {
-			let error:NotAcceptableError = new NotAcceptableError( "Message of the error", response );
+			let error:NotAcceptableError.Class = new NotAcceptableError.Class( "Message of the error", response );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotAcceptableError ).toBe( true );
+			expect( error instanceof NotAcceptableError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
 			"toString",
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
-			let error:NotAcceptableError = new NotAcceptableError( "Message of the error", response );
+			let error:NotAcceptableError.Class = new NotAcceptableError.Class( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -89,7 +95,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:NotAcceptableError = new NotAcceptableError( "Message of the error", response );
+			let error:NotAcceptableError.Class = new NotAcceptableError.Class( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -102,12 +108,17 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( NotAcceptableError.statusCode ).toBeDefined();
-			expect( Utils.isNumber( NotAcceptableError.statusCode ) );
+			expect( NotAcceptableError.Class.statusCode ).toBeDefined();
+			expect( Utils.isNumber( NotAcceptableError.Class.statusCode ) );
 
-			expect( NotAcceptableError.statusCode ).toBe( 406 );
+			expect( NotAcceptableError.Class.statusCode ).toBe( 406 );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.HTTP.Errors.client.NotAcceptableError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( NotAcceptableError.Class );
 	} );
 
 } );

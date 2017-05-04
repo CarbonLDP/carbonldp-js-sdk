@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var HTTP = require("./../HTTP");
 var Errors = require("./../Errors");
 var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
@@ -45,7 +46,6 @@ exports.Class = Class;
 function toB64(str) {
     return (typeof btoa !== "undefined") ? btoa(str) : new Buffer(str).toString("base64");
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=BasicAuthenticator.js.map

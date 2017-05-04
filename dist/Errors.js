@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 exports.IDAlreadyInUseError = IDAlreadyInUseError_1.default;
 var IllegalActionError_1 = require("./Errors/IllegalActionError");

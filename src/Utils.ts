@@ -47,7 +47,7 @@ function isDouble( value:any ):boolean {
 }
 
 function isDate( date:any ):boolean {
-	return typeof date === "date" || date instanceof Date;
+	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
 function isObject( object:any ):boolean {
@@ -130,7 +130,7 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 
 class O {
 
-	static extend<T extends Object, W extends Object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false}, ignore:{[ key:string ]:boolean} = {} ):T & W {
+	static extend<T extends Object, W extends Object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):T & W {
 		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return null;
 
 		let clone:T & W = <any> target;
@@ -154,7 +154,7 @@ class O {
 		return clone;
 	}
 
-	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false}, ignore:{[ key:string ]:boolean} = {} ):T {
+	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):T {
 		let isAnArray:boolean = isArray( object );
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
@@ -162,7 +162,7 @@ class O {
 		return O.extend<T, T>( clone, object, config, ignore );
 	}
 
-	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = {arrays: false, objects: false}, ignore:{[ key:string ]:boolean} = {} ):boolean {
+	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
 		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
 	}
 
@@ -190,7 +190,7 @@ class O {
 	}
 }
 
-function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[], ignore:{[ key:string ]:boolean} = {} ):boolean {
+function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean }, stack1:any[], stack2:any[], ignore:{ [ key:string ]:boolean } = {} ):boolean {
 	if( object1 === object2 ) return true;
 	if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;
 
@@ -271,6 +271,8 @@ class A {
 	}
 
 	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+		if( ! array ) return - 1;
+
 		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
 			if( comparator( array[ i ], searchedElement ) ) return i;
 		}

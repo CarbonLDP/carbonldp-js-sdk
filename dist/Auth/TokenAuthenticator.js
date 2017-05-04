@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var JSONLD = require("./../JSONLD");
@@ -86,7 +87,6 @@ var Class = (function () {
 }());
 Class.TOKEN_CONTAINER = "auth-tokens/";
 exports.Class = Class;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Class;
 
 //# sourceMappingURL=TokenAuthenticator.js.map

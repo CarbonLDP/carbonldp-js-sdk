@@ -1,4 +1,3 @@
-import AbstractError from "./AbstractError";
 import * as Utils from "./../Utils";
 
 import {
@@ -9,33 +8,42 @@ import {
 	hasConstructor,
 	hasMethod,
 	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
+
+import * as AbstractError from "./AbstractError";
+import DefaultExport from "./AbstractError";
 
 describe( module( "Carbon/Errors/AbstractError" ), function():void {
 
+	it( isDefined(), ():void => {
+		expect( AbstractError ).toBeDefined();
+		expect( AbstractError ).toEqual( jasmine.any( Object ) );
+	} );
+
 	describe( clazz(
-		"Carbon.Errors.AbstractError",
+		"Carbon.Errors.AbstractError.Class",
 		"Class that works as template for the custom errors in the SDK."
 	), function():void {
 
-		class DummyError extends AbstractError {}
+		class DummyError extends AbstractError.Class {}
 
 		it( isDefined(), function():void {
-			expect( AbstractError ).toBeDefined();
-			expect( AbstractError ).not.toBeNull();
-			expect( Utils.isFunction( AbstractError ) ).toBe( true );
+			expect( AbstractError.Class ).toBeDefined();
+			expect( AbstractError.Class ).not.toBeNull();
+			expect( Utils.isFunction( AbstractError.Class ) ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{name: "message", type: "string"}
+			{ name: "message", type: "string" },
 		] ), function():void {
-			let exception:AbstractError = new DummyError( "This is the message" );
+			let exception:AbstractError.Class = new DummyError( "This is the message" );
 			expect( exception instanceof Error ).toBe( true );
-			expect( exception instanceof AbstractError ).toBe( true );
+			expect( exception instanceof AbstractError.Class ).toBe( true );
 		} );
 
-		it( hasMethod( INSTANCE, "toString", "Returns a string representation of the error.", {type: "string"} ), function():void {
-			let exception:AbstractError = new DummyError( "This is the message" );
+		it( hasMethod( INSTANCE, "toString", "Returns a string representation of the error.", { type: "string" } ), function():void {
+			let exception:AbstractError.Class = new DummyError( "This is the message" );
 
 			expect( exception.toString ).toBeDefined();
 			expect( exception.toString ).not.toBeNull();
@@ -45,7 +53,7 @@ describe( module( "Carbon/Errors/AbstractError" ), function():void {
 		} );
 
 		it( hasProperty( INSTANCE, "name", "string" ), function():void {
-			let exception:AbstractError = new DummyError( "This is the message" );
+			let exception:AbstractError.Class = new DummyError( "This is the message" );
 
 			expect( exception.name ).toBeDefined();
 			expect( Utils.isString( exception.name ) ).toBe( true );
@@ -53,11 +61,17 @@ describe( module( "Carbon/Errors/AbstractError" ), function():void {
 		} );
 
 		it( hasProperty( INSTANCE, "message", "string" ), function():void {
-			let exception:AbstractError = new DummyError( "This is the message" );
+			let exception:AbstractError.Class = new DummyError( "This is the message" );
 
 			expect( exception.message ).toBeDefined();
 			expect( Utils.isString( exception.message ) ).toBe( true );
 			expect( exception.message ).toEqual( "This is the message" );
 		} );
 	} );
+
+	it( hasDefaultExport( "Carbon.Errors.AbstractError.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( AbstractError.Class );
+	} );
+
 } );
