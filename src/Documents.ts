@@ -233,7 +233,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then( ( [ document, createResponse ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			responses.push( createResponse );
-			if( document.isResolved() ) return [ document, null ];
+			if( document.isResolved() ) return [ document, null ] as [ T & PersistedProtectedDocument.Class, HTTP.Response.Class ];
 
 			return this.get<T>( document.id );
 		} ).then( ( [ persistedDocument, resolveResponse ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
@@ -253,7 +253,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return this.createChildren( parentURI, childrenObjects, slugsOrRequestOptions, requestOptions ).then( ( [ documents, creationResponses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
 			responses.push( creationResponses );
-			if( documents.every( document => document.isResolved() ) ) return [ documents, null ];
+			if( documents.every( document => document.isResolved() ) ) return [ documents, null ] as [ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ];
 
 			return Pointer.Util.resolveAll<T>( documents );
 		} ).then( ( [ persistedDocuments, resolveResponses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
@@ -627,8 +627,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			return [ updatedPersistedDocument, response ];
 		} ).catch( ( error:HTTP.Errors.Error ) => {
 			if( error.statusCode === 304 ) return [ persistedDocument, null ];
-			return Promise.reject( error );
-		});
+			return Promise.reject( error ) as any;
+		} );
 	}
 
 	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]> {
@@ -641,8 +641,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				return this.updateFromPreferenceApplied<T & PersistedDocument.Class>( persistedDocument, saveResponse );
 
 			responses.push( saveResponse );
-			return persistedDocument.refresh();
-		} ).then( ( [ document, refreshResponse ]:[ T, HTTP.Response.Class ] ) => {
+			return persistedDocument.refresh<T>();
+		} ).then( ( [ document, refreshResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
 			responses.push( refreshResponse );
 			return [ persistedDocument, responses ];
 		} );
