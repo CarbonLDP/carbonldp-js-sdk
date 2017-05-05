@@ -6,7 +6,7 @@ import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
-export declare abstract class Class {
+export declare class Class {
     private context;
     constructor(context: Context);
     createChild<T extends Role.Class>(parentRole: string | Pointer.Class, role: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedRole.Class, HTTP.Response.Class]>;

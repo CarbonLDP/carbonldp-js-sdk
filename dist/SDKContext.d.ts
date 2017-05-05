@@ -1,11 +1,11 @@
 import * as Auth from "./Auth";
-import Context from "./Context";
-import Documents from "./Documents";
+import * as Context from "./Context";
+import * as Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
-export declare class Class implements Context {
+export declare class Class implements Context.Class {
     auth: Auth.Class;
-    documents: Documents;
-    readonly parentContext: Context;
+    documents: Documents.Class;
+    readonly parentContext: Context.Class;
     protected settings: Map<string, any>;
     protected generalObjectSchema: ObjectSchema.DigestedObjectSchema;
     protected typeObjectSchemaMap: Map<string, ObjectSchema.DigestedObjectSchema>;

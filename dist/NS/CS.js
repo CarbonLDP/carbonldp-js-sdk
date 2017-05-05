@@ -30,16 +30,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Application", {
-        get: function () { return namespace + "Application"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AppRole", {
-        get: function () { return namespace + "AppRole"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "CreateAccessPoint", {
         get: function () { return namespace + "CreateAccessPoint"; },
         enumerable: true,
@@ -70,8 +60,8 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "PlatformRole", {
-        get: function () { return namespace + "PlatformRole"; },
+    Object.defineProperty(Class, "Role", {
+        get: function () { return namespace + "Role"; },
         enumerable: true,
         configurable: true
     });
@@ -198,11 +188,6 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "permission", {
         get: function () { return namespace + "permission"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "platformRole", {
-        get: function () { return namespace + "platformRole"; },
         enumerable: true,
         configurable: true
     });

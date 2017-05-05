@@ -22,11 +22,6 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.enabled,
         "@type": NS.XSD.DataType.boolean,
     },
-    "platformRoles": {
-        "@id": NS.CS.Predicate.platformRole,
-        "@type": "@id",
-        "@container": "@set",
-    },
 };
 var Factory = (function () {
     function Factory() {

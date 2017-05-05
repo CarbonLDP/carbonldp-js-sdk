@@ -17,8 +17,6 @@ import {
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as APIDescription from "./APIDescription";
-import * as App from "./App";
-import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -30,7 +28,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -120,24 +117,6 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.AccessPoint ).toBeDefined();
 			expect( Carbon.Class.AccessPoint ).toBe( AccessPoint );
-		} );
-
-		it( reexports(
-			STATIC,
-			"App",
-			"Carbon/App"
-		), ():void => {
-			expect( Carbon.Class.App ).toBeDefined();
-			expect( Carbon.Class.App ).toBe( App );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Apps",
-			"Carbon/Apps"
-		), ():void => {
-			expect( Carbon.Class.Apps ).toBeDefined();
-			expect( Carbon.Class.Apps ).toBe( Apps );
 		} );
 
 		it( reexports(
@@ -237,15 +216,6 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.ObjectSchema ).toBeDefined();
 			expect( Carbon.Class.ObjectSchema ).toBe( ObjectSchema );
-		} );
-
-		it( reexports(
-			STATIC,
-			"PersistedApp",
-			"Carbon/PersistedApp"
-		), ():void => {
-			expect( Carbon.Class.PersistedApp ).toBeDefined();
-			expect( Carbon.Class.PersistedApp ).toBe( PersistedApp );
 		} );
 
 		it( reexports(
@@ -429,17 +399,6 @@ describe( module( "Carbon" ), ():void => {
 				expect( description.version ).toBe( "1.0.0" );
 				done();
 			}, done.fail );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"apps",
-			"Carbon.Class.Apps.Class",
-			"Instance of the class `Carbon.Apps` in the context of the instanced Carbon class."
-		), ():void => {
-			expect( carbon.apps ).toBeDefined();
-			expect( Utils.isObject( carbon.apps ) );
-			expect( carbon.apps instanceof Apps.Class );
 		} );
 
 		it( hasProperty(

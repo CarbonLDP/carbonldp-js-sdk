@@ -5,15 +5,13 @@ declare class Class {
     static readonly AddMember: string;
     static readonly Agent: string;
     static readonly AllOrigins: string;
-    static readonly Application: string;
-    static readonly AppRole: string;
     static readonly CreateAccessPoint: string;
     static readonly CreateChild: string;
     static readonly Delete: string;
     static readonly Download: string;
     static readonly Extend: string;
     static readonly ManageSecurity: string;
-    static readonly PlatformRole: string;
+    static readonly Role: string;
     static readonly ProtectedDocument: string;
     static readonly Read: string;
     static readonly RemoveMember: string;
@@ -40,7 +38,6 @@ declare class Predicate {
     static readonly parentRole: string;
     static readonly password: string;
     static readonly permission: string;
-    static readonly platformRole: string;
     static readonly rootContainer: string;
     static readonly subject: string;
     static readonly subjectClass: string;

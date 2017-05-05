@@ -262,7 +262,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 21 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 20 );
 		} );
 
 		it( hasProperty(
@@ -274,17 +274,6 @@ describe( module(
 			expect( Utils.isString( C.Predicate.accessPoint ) ).toBe( true );
 
 			expect( C.Predicate.accessPoint ).toBe( "https://carbonldp.com/ns/v1/platform#accessPoint" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"appRoleMap",
-			"string"
-		), ():void => {
-			expect( C.Predicate.appRoleMap ).toBeDefined();
-			expect( Utils.isString( C.Predicate.appRoleMap ) ).toBe( true );
-
-			expect( C.Predicate.appRoleMap ).toBe( "https://carbonldp.com/ns/v1/platform#appRoleMap" );
 		} );
 
 		it( hasProperty(

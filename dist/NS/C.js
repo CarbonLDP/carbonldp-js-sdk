@@ -115,11 +115,6 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "appRoleMap", {
-        get: function () { return exports.namespace + "appRoleMap"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Predicate, "bNodeIdentifier", {
         get: function () { return exports.namespace + "bNodeIdentifier"; },
         enumerable: true,

@@ -12,8 +12,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
-var App = require("./App");
-var Apps = require("./Apps");
 var Auth = require("./Auth");
 var Document = require("./Document");
 var Documents = require("./Documents");
@@ -25,7 +23,6 @@ var LDP = require("./LDP");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
-var PersistedApp = require("./PersistedApp");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
@@ -45,7 +42,6 @@ var Class = (function (_super) {
         _this.auth = new Platform.Auth.Class(_this);
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
-        _this.apps = new Apps.Class(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {
@@ -74,8 +70,6 @@ var Class = (function (_super) {
     return Class;
 }(AbstractContext.Class));
 Class.AccessPoint = AccessPoint;
-Class.App = App;
-Class.Apps = Apps;
 Class.Auth = Auth;
 Class.Document = Document;
 Class.Documents = Documents;
@@ -87,7 +81,6 @@ Class.LDP = LDP;
 Class.NamedFragment = NamedFragment;
 Class.NS = NS;
 Class.ObjectSchema = ObjectSchema;
-Class.PersistedApp = PersistedApp;
 Class.PersistedDocument = PersistedDocument;
 Class.PersistedFragment = PersistedFragment;
 Class.PersistedNamedFragment = PersistedNamedFragment;

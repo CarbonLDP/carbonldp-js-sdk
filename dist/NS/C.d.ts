@@ -23,7 +23,6 @@ export declare class Class {
 }
 export declare class Predicate {
     static readonly accessPoint: string;
-    static readonly appRoleMap: string;
     static readonly bNodeIdentifier: string;
     static readonly buildDate: string;
     static readonly carbonCode: string;

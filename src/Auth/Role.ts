@@ -4,6 +4,8 @@ import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 
+export const RDF_CLASS:string = NS.CS.Class.Role;
+
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
 		"@id": NS.CS.Predicate.namae,

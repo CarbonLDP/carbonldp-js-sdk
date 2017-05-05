@@ -45,8 +45,8 @@ var Method;
 })(Method = exports.Method || (exports.Method = {}));
 var Class = (function () {
     function Class(context) {
-        this.roles = null;
-        this.agents = null;
+        this.roles = new Roles.Class(this.context);
+        this.agents = new Agents.Class(this.context);
         this.context = context;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();

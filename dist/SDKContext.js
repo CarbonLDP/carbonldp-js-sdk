@@ -1,15 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var AppRole = require("./App/Role");
 var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var BlankNode = require("./BlankNode");
-var Documents_1 = require("./Documents");
+var Documents = require("./Documents");
 var Error = require("./LDP/Error");
 var ErrorResponse = require("./LDP/ErrorResponse");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
-var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
@@ -19,8 +17,8 @@ var Class = (function () {
         this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
-        this.auth = null;
-        this.documents = new Documents_1.default(this);
+        this.auth = new Auth.Class(this);
+        this.documents = new Documents.Class(this);
         this.registerDefaultObjectSchemas();
     }
     Object.defineProperty(Class.prototype, "parentContext", {
@@ -55,9 +53,7 @@ var Class = (function () {
         type = this.resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
-        if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
-            return true;
-        return false;
+        return !!this.parentContext && this.parentContext.hasObjectSchema(type);
     };
     Class.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
@@ -141,30 +137,11 @@ var Class = (function () {
         this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
         this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
         this.extendObjectSchema(ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA);
-        this.extendObjectSchema(NS.CS.Class.Application, {
-            "name": {
-                "@id": NS.CS.Predicate.namae,
-                "@type": NS.XSD.DataType.string,
-            },
-            "description": {
-                "@id": NS.CS.Predicate.description,
-                "@type": NS.XSD.DataType.string,
-            },
-            "rootContainer": {
-                "@id": NS.CS.Predicate.rootContainer,
-                "@type": "@id",
-            },
-            "allowsOrigins": {
-                "@id": NS.CS.Predicate.allowsOrigin,
-                "@container": "@set",
-            },
-        });
-        this.extendObjectSchema(AppRole.RDF_CLASS, Auth.Role.SCHEMA);
-        this.extendObjectSchema(AppRole.RDF_CLASS, AppRole.SCHEMA);
         this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
+        this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
         this.extendObjectSchema(Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA);

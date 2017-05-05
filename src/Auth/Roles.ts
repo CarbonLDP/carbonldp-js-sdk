@@ -12,7 +12,7 @@ import * as SPARQL from "./../SPARQL";
 import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
-export abstract class Class {
+export class Class {
 	private context:Context;
 
 	constructor( context:Context ) {

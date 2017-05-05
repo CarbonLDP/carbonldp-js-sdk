@@ -1,8 +1,6 @@
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as APIDescription from "./APIDescription";
-import * as App from "./App";
-import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -14,7 +12,6 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -32,8 +29,6 @@ export class Class extends AbstractContext.Class {
 
 	/* tslint:disable: variable-name */
 	static AccessPoint:typeof AccessPoint = AccessPoint;
-	static App:typeof App = App;
-	static Apps:typeof Apps = Apps;
 	static Auth:typeof Auth = Auth;
 	static Document:typeof Document = Document;
 	static Documents:typeof Documents = Documents;
@@ -45,7 +40,6 @@ export class Class extends AbstractContext.Class {
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static NS:typeof NS = NS;
 	static ObjectSchema:typeof ObjectSchema = ObjectSchema;
-	static PersistedApp:typeof PersistedApp = PersistedApp;
 	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
@@ -62,8 +56,6 @@ export class Class extends AbstractContext.Class {
 
 	static get version():string { return "0.42.0"; }
 
-	apps:Apps.Class;
-
 	get version():string { return Class.version; }
 
 	constructor( settings?:Settings.Class ) {
@@ -73,8 +65,6 @@ export class Class extends AbstractContext.Class {
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
-
-		this.apps = new Apps.Class( this );
 	}
 
 	resolve( uri:string ):string {

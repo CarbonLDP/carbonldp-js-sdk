@@ -6,7 +6,7 @@ import * as PersistedAgent from "./PersistedAgent";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as URI from "./../RDF/URI";
 
-export abstract class Class {
+export class Class {
 	private context:Context;
 
 	constructor( context:Context ) {

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 21 );
+			expect( Object.keys( CS.Class ).length ).toBe( 19 );
 		} );
 
 		it( hasProperty(
@@ -95,28 +95,6 @@ describe( module(
 			expect( Utils.isString( CS.Class.Agent ) ).toBe( true );
 
 			expect( CS.Class.Agent ).toBe( "https://carbonldp.com/ns/v1/security#Agent" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"Application",
-			"string"
-		), ():void => {
-			expect( CS.Class.Application ).toBeDefined();
-			expect( Utils.isString( CS.Class.Application ) ).toBe( true );
-
-			expect( CS.Class.Application ).toBe( "https://carbonldp.com/ns/v1/security#Application" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"AppRole",
-			"string"
-		), ():void => {
-			expect( CS.Class.AppRole ).toBeDefined();
-			expect( Utils.isString( CS.Class.AppRole ) ).toBe( true );
-
-			expect( CS.Class.AppRole ).toBe( "https://carbonldp.com/ns/v1/security#AppRole" );
 		} );
 
 		it( hasProperty(
@@ -187,17 +165,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"PlatformRole",
-			"string"
-		), ():void => {
-			expect( CS.Class.PlatformRole ).toBeDefined();
-			expect( Utils.isString( CS.Class.PlatformRole ) ).toBe( true );
-
-			expect( CS.Class.PlatformRole ).toBe( "https://carbonldp.com/ns/v1/security#PlatformRole" );
-		} );
-
-		it( hasProperty(
-			STATIC,
 			"ProtectedDocument",
 			"string"
 		), ():void => {
@@ -227,6 +194,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.RemoveMember ) ).toBe( true );
 
 			expect( CS.Class.RemoveMember ).toBe( "https://carbonldp.com/ns/v1/security#RemoveMember" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Role",
+			"string"
+		), ():void => {
+			expect( CS.Class.Role ).toBeDefined();
+			expect( Utils.isString( CS.Class.Role ) ).toBe( true );
+
+			expect( CS.Class.Role ).toBe( "https://carbonldp.com/ns/v1/security#Role" );
 		} );
 
 		it( hasProperty(
@@ -284,7 +262,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 23 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 22 );
 		} );
 
 		it( hasProperty(
@@ -461,17 +439,6 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
 
 			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"platformRole",
-			"string"
-		), ():void => {
-			expect( CS.Predicate.platformRole ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.platformRole ) ).toBe( true );
-
-			expect( CS.Predicate.platformRole ).toBe( "https://carbonldp.com/ns/v1/security#platformRole" );
 		} );
 
 		it( hasProperty(

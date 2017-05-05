@@ -4,6 +4,7 @@ var Utils = require("./../Utils");
 var Document = require("./../Document");
 var NS = require("./../NS");
 var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
+exports.RDF_CLASS = NS.CS.Class.Role;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.Predicate.namae,
