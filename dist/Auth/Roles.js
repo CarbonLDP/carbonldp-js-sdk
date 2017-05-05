@@ -97,9 +97,9 @@ var Class = (function () {
         });
     };
     Class.prototype.getContainerURI = function () {
-        if (!this.context.hasSetting("platform.roles.container"))
+        if (!this.context.hasSetting("system.roles.container"))
             throw new Errors.IllegalStateError("The roles container setting hasn't been declared.");
-        return this.context.getSetting("platform.roles.container");
+        return this.context.getSetting("system.roles.container");
     };
     return Class;
 }());

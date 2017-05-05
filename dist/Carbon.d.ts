@@ -16,7 +16,6 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
-import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -41,7 +40,6 @@ export declare class Class extends AbstractContext.Class {
     static PersistedFragment: typeof PersistedFragment;
     static PersistedNamedFragment: typeof PersistedNamedFragment;
     static PersistedResource: typeof PersistedResource;
-    static Platform: typeof Platform;
     static Pointer: typeof Pointer;
     static RDF: typeof RDF;
     static Resource: typeof Resource;
@@ -51,7 +49,10 @@ export declare class Class extends AbstractContext.Class {
     static Utils: typeof Utils;
     static readonly version: string;
     readonly version: string;
-    constructor(settings?: Settings.Class);
+    private domain;
+    private ssl;
+    constructor(domain: string, ssl?: boolean);
+    constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     resolve(uri: string): string;
     getAPIDescription(): Promise<APIDescription.Class>;
 }

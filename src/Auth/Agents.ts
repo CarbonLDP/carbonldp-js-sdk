@@ -64,8 +64,8 @@ export class Class {
 	}
 
 	private getContainerURI():string {
-		if( ! this.context.hasSetting( "platform.agents.container" ) ) throw new Errors.IllegalStateError( "The agents container URI hasn't been set." );
-		return this.context.getSetting( "platform.agents.container" );
+		if( ! this.context.hasSetting( "system.agents.container" ) ) throw new Errors.IllegalStateError( "The agents container URI hasn't been set." );
+		return this.context.getSetting( "system.agents.container" );
 	}
 }
 

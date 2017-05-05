@@ -122,7 +122,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 				roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
 					expect( error instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "platform.roles.container", "roles/" );
+					context.setSetting( "system.roles.container", "roles/" );
 
 					let promises:Promise<any>[] = [];
 					let promise:Promise<any>;
@@ -197,7 +197,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 				roles.createChild( "http://example.com/roles/parent/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( error:Error ) => {
 					expect( error instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "platform.roles.container", "roles/" );
+					context.setSetting( "system.roles.container", "roles/" );
 
 					let promises:Promise<any>[] = [];
 					let promise:Promise<any>;
@@ -289,7 +289,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			roles.get( "http://example.com/roles/a-role/" ).then( done.fail ).catch( ( error:Error ) => {
 				expect( error instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.roles.container", "roles/" );
+				context.setSetting( "system.roles.container", "roles/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -375,7 +375,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			roles.listAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.roles.container", "roles/" );
+				context.setSetting( "system.roles.container", "roles/" );
 
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
@@ -560,7 +560,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "platform.roles.container", "roles/" );
+					context.setSetting( "system.roles.container", "roles/" );
 
 					let spies:any = {
 						success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
@@ -626,7 +626,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			), ( done:{ ():void, fail:() => void } ):void => {
 				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "platform.roles.container", "roles/" );
+					context.setSetting( "system.roles.container", "roles/" );
 
 					let spies:any = {
 						success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
@@ -765,7 +765,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			roles.addAgents( "http://example.com/roles/a-role/", agents ).then( done.fail ).catch( ( error:Error ) => {
 				expect( error instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.roles.container", "roles/" );
+				context.setSetting( "system.roles.container", "roles/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -872,7 +872,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			roles.removeAgents( "http://example.com/roles/a-role/", agents ).then( done.fail ).catch( ( error:Error ) => {
 				expect( error instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.roles.container", "roles/" );
+				context.setSetting( "system.roles.container", "roles/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;

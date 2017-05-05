@@ -2,13 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = require("./Auth");
 exports.defaultSettings = {
-    "domain": "carbonldp.com",
-    "http.ssl": true,
     "auth.method": Auth.Method.TOKEN,
-    "platform.container": "platform/",
-    "platform.apps.container": "apps/",
-    "platform.agents.container": "agents/",
-    "platform.roles.container": "roles/",
+    "system.container": ".system/",
+    "system.agents.container": "agents/",
+    "system.roles.container": "roles/",
     "vocabulary": "vocabulary/#",
 };
 exports.default = exports.defaultSettings;

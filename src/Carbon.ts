@@ -16,7 +16,6 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
-import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -44,7 +43,6 @@ export class Class extends AbstractContext.Class {
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
-	static Platform:typeof Platform = Platform;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
@@ -58,21 +56,26 @@ export class Class extends AbstractContext.Class {
 
 	get version():string { return Class.version; }
 
-	constructor( settings?:Settings.Class ) {
+	private domain:string;
+	private ssl:boolean;
+
+	constructor( domain:string, ssl?:boolean );
+	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
+	constructor( domain:string, ssl?:boolean, settings?:Settings.Class ) {
 		super();
-		this.auth = new Platform.Auth.Class( this );
+
+		this.domain = domain;
+		this.ssl = ssl;
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
-
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 	}
 
 	resolve( uri:string ):string {
 		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-		let finalURI:string = this.settings.get( "http.ssl" ) ? "https://" : "http://";
-		finalURI += this.settings.get( "domain" ) + "/" + this.getSetting( "platform.container" );
-		return RDF.URI.Util.resolve( finalURI, uri );
+		let baseURI:string = ( this.ssl ? "https://" : "http://" ) + this.domain;
+		return RDF.URI.Util.resolve( baseURI, uri );
 	}
 
 	getAPIDescription():Promise<APIDescription.Class> {

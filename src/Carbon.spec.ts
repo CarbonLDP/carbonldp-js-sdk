@@ -32,7 +32,6 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
-import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -60,14 +59,12 @@ describe( module( "Carbon" ), ():void => {
 		let myCarbon:Carbon.Class;
 
 		beforeEach( ():void => {
-			carbon = new Carbon.Class();
+			carbon = new Carbon.Class( "carbonldp.com", true );
 
-			myCarbon = new Carbon.Class( {
-				"domain": "example.com",
-				"http.ssl": false,
+			myCarbon = new Carbon.Class( "example.com", false, {
 				"auth.method": Auth.Method.TOKEN,
-				"platform.container": "example-platform/",
-				"platform.apps.container": "example-apps/",
+				"system.container": ".another-system/",
+				"system.roles.container": "example-roles/",
 			} );
 
 			jasmine.Ajax.install();
@@ -82,7 +79,7 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isFunction( Carbon.Class ) ).toBe( true );
 		} );
 
-		it( extendsClass( "Carbon.Class.AbstractContext.Class" ), ():void => {
+		it( extendsClass( "Carbon.AbstractContext.Class" ), ():void => {
 			expect( carbon instanceof AbstractContext.Class ).toBe( true );
 		} );
 
@@ -256,15 +253,6 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Platform",
-			"Carbon/Platform"
-		), ():void => {
-			expect( Carbon.Class.Platform ).toBeDefined();
-			expect( Carbon.Class.Platform ).toBe( Platform );
-		} );
-
-		it( reexports(
-			STATIC,
 			"Pointer",
 			"Carbon/Pointer"
 		), ():void => {
@@ -327,7 +315,7 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "settings", type: "Carbon.Class.Settings.Class", optional: true },
+			{ name: "settings", type: "Carbon.Settings.Class", optional: true },
 		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
@@ -340,7 +328,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Resolve the URI provided in the scope of the CarbonLDP Platform.", [
+			"Resolve the URI provided in the scope your CarbonLDP Platform instance.", [
 				{ name: "uri", type: "string" },
 			],
 			{ type: "string" }
@@ -348,11 +336,11 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.resolve ).toBeDefined();
 			expect( Utils.isFunction( carbon.resolve ) ).toBe( true );
 
-			expect( carbon.resolve( "http://example.com/platform/my-resource/" ) ).toBe( "http://example.com/platform/my-resource/" );
-			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://carbonldp.com/platform/my-resource/" );
+			expect( carbon.resolve( "http://example.com/my-resource/" ) ).toBe( "http://example.com/my-resource/" );
+			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://carbonldp.com/my-resource/" );
 
-			expect( myCarbon.resolve( "http://example.com/example-platform/my-resource/" ) ).toBe( "http://example.com/example-platform/my-resource/" );
-			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://example.com/example-platform/my-resource/" );
+			expect( myCarbon.resolve( "http://example.com/my-resource/" ) ).toBe( "http://example.com/my-resource/" );
+			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://example.com/my-resource/" );
 		} );
 
 		it( hasMethod(
@@ -371,7 +359,7 @@ describe( module( "Carbon" ), ():void => {
 				},
 				responseText: `[ {
 					"@graph": [ {
-						"@id": "https://carbonldp.com/platform/api/",
+						"@id": "https://carbonldp.com/api/",
 						"@type": [
 							"http://www.w3.org/ns/ldp#Resource",
 							"https://carbonldp.com/ns/v1/platform#API",
@@ -386,7 +374,7 @@ describe( module( "Carbon" ), ():void => {
 						} ]
 					}
 					],
-					"@id": "https://carbonldp.com/platform/api/"
+					"@id": "https://carbonldp.com/api/"
 				} ]`,
 			} );
 
@@ -399,17 +387,6 @@ describe( module( "Carbon" ), ():void => {
 				expect( description.version ).toBe( "1.0.0" );
 				done();
 			}, done.fail );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"auth",
-			"Carbon.Class.Platform.Auth.Class",
-			"Instance of `Carbon.Platform.Auth.Class` class for manage the auth inside of the platform."
-		), ():void => {
-			expect( carbon.auth ).toBeDefined();
-			expect( Utils.isObject( carbon.auth ) );
-			expect( carbon.auth instanceof Platform.Auth.Class );
 		} );
 
 	} );

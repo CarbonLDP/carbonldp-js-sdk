@@ -90,7 +90,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 			agents.register( agent ).then( done.fail ).catch( stateError => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.agents.container", "agents/" );
+				context.setSetting( "system.agents.container", "agents/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -155,7 +155,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 			agents.get( "http://example.com/agents/an-agent/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.agents.container", "agents/" );
+				context.setSetting( "system.agents.container", "agents/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -221,7 +221,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 			agents.enable( "http://example.com/agents/an-agent/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.agents.container", "agents/" );
+				context.setSetting( "system.agents.container", "agents/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -293,7 +293,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 			agents.disable( "http://example.com/agents/an-agent/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.agents.container", "agents/" );
+				context.setSetting( "system.agents.container", "agents/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -361,7 +361,7 @@ describe( module( "Carbon/Auth/Agents" ), ():void => {
 
 			agents.delete( "http://example.com/agents/an-agent/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "platform.agents.container", "agents/" );
+				context.setSetting( "system.agents.container", "agents/" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;

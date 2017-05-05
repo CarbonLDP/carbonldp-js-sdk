@@ -57,9 +57,9 @@ var Class = (function () {
         });
     };
     Class.prototype.getContainerURI = function () {
-        if (!this.context.hasSetting("platform.agents.container"))
+        if (!this.context.hasSetting("system.agents.container"))
             throw new Errors.IllegalStateError("The agents container URI hasn't been set.");
-        return this.context.getSetting("platform.agents.container");
+        return this.context.getSetting("system.agents.container");
     };
     return Class;
 }());

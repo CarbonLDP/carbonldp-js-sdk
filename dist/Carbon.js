@@ -27,7 +27,6 @@ var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
 var PersistedResource = require("./PersistedResource");
-var Platform = require("./Platform");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
@@ -37,9 +36,10 @@ var SPARQL = require("./SPARQL");
 var Utils = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
-    function Class(settings) {
+    function Class(domain, ssl, settings) {
         var _this = _super.call(this) || this;
-        _this.auth = new Platform.Auth.Class(_this);
+        _this.domain = domain;
+        _this.ssl = ssl;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
         return _this;
@@ -57,9 +57,8 @@ var Class = (function (_super) {
     Class.prototype.resolve = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
-        var finalURI = this.settings.get("http.ssl") ? "https://" : "http://";
-        finalURI += this.settings.get("domain") + "/" + this.getSetting("platform.container");
-        return RDF.URI.Util.resolve(finalURI, uri);
+        var baseURI = (this.ssl ? "https://" : "http://") + this.domain;
+        return RDF.URI.Util.resolve(baseURI, uri);
     };
     Class.prototype.getAPIDescription = function () {
         return this.documents.get("api/").then(function (_a) {
@@ -85,7 +84,6 @@ Class.PersistedDocument = PersistedDocument;
 Class.PersistedFragment = PersistedFragment;
 Class.PersistedNamedFragment = PersistedNamedFragment;
 Class.PersistedResource = PersistedResource;
-Class.Platform = Platform;
 Class.Pointer = Pointer;
 Class.RDF = RDF;
 Class.Resource = Resource;

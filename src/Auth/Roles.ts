@@ -117,8 +117,8 @@ export class Class {
 	}
 
 	private getContainerURI():string {
-		if( ! this.context.hasSetting( "platform.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
-		return this.context.getSetting( "platform.roles.container" );
+		if( ! this.context.hasSetting( "system.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
+		return this.context.getSetting( "system.roles.container" );
 	}
 
 }
