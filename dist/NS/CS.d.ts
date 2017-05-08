@@ -2,7 +2,6 @@ declare const namespace: string;
 declare class Class {
     static readonly AccessControlEntry: string;
     static readonly AccessControlList: string;
-    static readonly AddMember: string;
     static readonly Agent: string;
     static readonly AllOrigins: string;
     static readonly CreateAccessPoint: string;
@@ -11,10 +10,10 @@ declare class Class {
     static readonly Download: string;
     static readonly Extend: string;
     static readonly ManageSecurity: string;
-    static readonly Role: string;
     static readonly ProtectedDocument: string;
     static readonly Read: string;
     static readonly RemoveMember: string;
+    static readonly Role: string;
     static readonly Ticket: string;
     static readonly Token: string;
     static readonly Update: string;

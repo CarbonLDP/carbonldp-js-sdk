@@ -1,7 +1,9 @@
-import * as NS from "./NS";
-import * as ObjectSchema from "./ObjectSchema";
+import * as VolatileResource from "./../LDP/VolatileResource";
+import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
 
-export const RDF_CLASS:string = NS.C.Class.API;
+
+export const RDF_CLASS:string = NS.C.Class.Platform;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"version": {
@@ -14,7 +16,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class {
+export interface Class extends VolatileResource.Class  {
 	version:string;
 	buildDate:Date;
 }

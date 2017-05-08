@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 20 );
+			expect( Object.keys( C.Class ).length ).toBe( 21 );
 		} );
 
 		it( hasProperty(
@@ -51,17 +51,6 @@ describe( module(
 			expect( Utils.isString( C.Class.AccessPoint ) ).toBe( true );
 
 			expect( C.Class.AccessPoint ).toBe( "https://carbonldp.com/ns/v1/platform#AccessPoint" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"API",
-			"string"
-		), ():void => {
-			expect( C.Class.API ).toBeDefined();
-			expect( Utils.isString( C.Class.API ) ).toBe( true );
-
-			expect( C.Class.API ).toBe( "https://carbonldp.com/ns/v1/platform#API" );
 		} );
 
 		it( hasProperty(
@@ -88,6 +77,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"Instance",
+			"string"
+		), ():void => {
+			expect( C.Class.Instance ).toBeDefined();
+			expect( Utils.isString( C.Class.Instance ) ).toBe( true );
+
+			expect( C.Class.Instance ).toBe( "https://carbonldp.com/ns/v1/platform#Instance" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"ModifiedResource",
 			"string"
 		), ():void => {
@@ -106,6 +106,17 @@ describe( module(
 			expect( Utils.isString( C.Class.NonReadableMembershipResourceTriples ) ).toBe( true );
 
 			expect( C.Class.NonReadableMembershipResourceTriples ).toBe( "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Platform",
+			"string"
+		), ():void => {
+			expect( C.Class.Platform ).toBeDefined();
+			expect( Utils.isString( C.Class.Platform ) ).toBe( true );
+
+			expect( C.Class.Platform ).toBe( "https://carbonldp.com/ns/v1/platform#Platform" );
 		} );
 
 		it( hasProperty(

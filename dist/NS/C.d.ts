@@ -2,11 +2,12 @@ export declare let namespace: string;
 export declare class Class {
     static readonly AccessPoint: string;
     static readonly AddMemberAction: string;
-    static readonly API: string;
     static readonly CreatedResource: string;
     static readonly Document: string;
+    static readonly Instance: string;
     static readonly ModifiedResource: string;
     static readonly NonReadableMembershipResourceTriples: string;
+    static readonly Platform: string;
     static readonly PreferContainer: string;
     static readonly PreferContainmentResources: string;
     static readonly PreferContainmentTriples: string;

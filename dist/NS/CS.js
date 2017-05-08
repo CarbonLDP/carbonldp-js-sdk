@@ -15,11 +15,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "AddMember", {
-        get: function () { return namespace + "AddMember"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "Agent", {
         get: function () { return namespace + "Agent"; },
         enumerable: true,
@@ -60,11 +55,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Role", {
-        get: function () { return namespace + "Role"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "ProtectedDocument", {
         get: function () { return namespace + "ProtectedDocument"; },
         enumerable: true,
@@ -77,6 +67,11 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "RemoveMember", {
         get: function () { return namespace + "RemoveMember"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Role", {
+        get: function () { return namespace + "Role"; },
         enumerable: true,
         configurable: true
     });

@@ -455,7 +455,7 @@ if( typeof XMLHttpRequest === "undefined" ) {
 
 	const METHODS:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 
-	jasmine.Ajax = <any> (() => {
+	(jasmine as any).Ajax = (() => {
 
 		let requests:any[] = [];
 

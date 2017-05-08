@@ -33,6 +33,7 @@ var Resource = require("./Resource");
 var SDKContext = require("./SDKContext");
 var Settings = require("./Settings");
 var SPARQL = require("./SPARQL");
+var System = require("./System");
 var Utils = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
@@ -54,16 +55,30 @@ var Class = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Class.prototype.resolve = function (uri) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
+    Class.prototype.resolve = function (relativeURI) {
+        if (RDF.URI.Util.isAbsolute(relativeURI))
+            return relativeURI;
         var baseURI = (this.ssl ? "https://" : "http://") + this.domain;
-        return RDF.URI.Util.resolve(baseURI, uri);
+        return RDF.URI.Util.resolve(baseURI, relativeURI);
     };
-    Class.prototype.getAPIDescription = function () {
-        return this.documents.get("api/").then(function (_a) {
-            var description = _a[0], response = _a[1];
-            return description;
+    Class.prototype.getPlatformMetadata = function () {
+        return this.getResourceMetadata("system.platform.metadata");
+    };
+    Class.prototype.getInstanceMetadata = function () {
+        return this.getResourceMetadata("system.instance.metadata");
+    };
+    Class.prototype.getResourceMetadata = function (metadataSetting) {
+        var _this = this;
+        if (!this.hasSetting("system.container"))
+            return Promise.reject(new Errors.IllegalStateError("The \"system.container\" setting hasn't been defied."));
+        if (!this.hasSetting(metadataSetting))
+            return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));
+        return Promise.resolve()
+            .then(function (systemURI) { return RDF.URI.Util.resolve(_this.getSetting("system.container"), _this.getSetting(metadataSetting)); })
+            .then(function (metadataURI) { return _this.documents.get(metadataURI); })
+            .then(function (_a) {
+            var metadataDocument = _a[0];
+            return metadataDocument;
         });
     };
     return Class;
@@ -90,6 +105,7 @@ Class.Resource = Resource;
 Class.SDKContext = SDKContext;
 Class.Settings = Settings;
 Class.SPARQL = SPARQL;
+Class.System = System;
 Class.Utils = Utils;
 exports.Class = Class;
 exports.default = Class;

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./NS");
-exports.RDF_CLASS = NS.C.Class.API;
+var NS = require("./../NS");
+exports.RDF_CLASS = NS.C.Class.Platform;
 exports.SCHEMA = {
     "version": {
         "@id": NS.C.Predicate.version,
@@ -13,4 +13,4 @@ exports.SCHEMA = {
     },
 };
 
-//# sourceMappingURL=APIDescription.js.map
+//# sourceMappingURL=PlatformMetadata.js.map

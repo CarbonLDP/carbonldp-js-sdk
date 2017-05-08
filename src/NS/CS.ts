@@ -5,8 +5,6 @@ class Class {
 
 	static get AccessControlList():string { return namespace + "AccessControlList"; }
 
-	static get AddMember():string { return namespace + "AddMember"; }
-
 	static get Agent():string { return namespace + "Agent"; }
 
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
@@ -23,13 +21,13 @@ class Class {
 
 	static get ManageSecurity():string { return namespace + "ManageSecurity"; }
 
-	static get Role():string { return namespace + "Role"; }
-
 	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
 
 	static get Read():string { return namespace + "Read"; }
 
 	static get RemoveMember():string { return namespace + "RemoveMember"; }
+
+	static get Role():string { return namespace + "Role"; }
 
 	static get Ticket():string { return namespace + "Ticket"; }
 

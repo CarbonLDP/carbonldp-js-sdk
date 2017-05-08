@@ -19,8 +19,8 @@
     "sparqler": "0.1.1"
   },
   "devDependencies": {
-    "@types/jasmine": "2.5.45",
-    "@types/jasmine-ajax": "3.1.33",
+    "@types/jasmine": "^2.5.47",
+    "@types/jasmine-ajax": "^3.1.36",
     "@types/node": "^6.0.46",
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
@@ -33,8 +33,8 @@
     "gulp-tslint": "^5.0.0",
     "gulp-typescript": "^3.1.0",
     "gulp-util": "^3.0.7",
-    "jasmine-ajax": "^3.2.0",
-    "jasmine-core": "^2.3.4",
+    "jasmine-ajax": "^3.3.1",
+    "jasmine-core": "^2.6.1",
     "jsonld": "^0.4.11",
     "jspm": "0.17.0-beta.32",
     "karma": "^0.13.19",

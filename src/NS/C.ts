@@ -5,15 +5,17 @@ export class Class {
 
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 
-	static get API():string { return namespace + "API"; }
-
 	static get CreatedResource():string { return namespace + "CreatedResource"; }
 
 	static get Document():string { return namespace + "Document"; }
 
+	static get Instance():string { return namespace + "Instance"; }
+
 	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
 
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
+
+	static get Platform():string { return namespace + "Platform"; }
 
 	static get PreferContainer():string { return namespace + "PreferContainer"; }
 

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 19 );
+			expect( Object.keys( CS.Class ).length ).toBe( 18 );
 		} );
 
 		it( hasProperty(
@@ -62,17 +62,6 @@ describe( module(
 			expect( Utils.isString( CS.Class.AccessControlList ) ).toBe( true );
 
 			expect( CS.Class.AccessControlList ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlList" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"AddMember",
-			"string"
-		), ():void => {
-			expect( CS.Class.AddMember ).toBeDefined();
-			expect( Utils.isString( CS.Class.AddMember ) ).toBe( true );
-
-			expect( CS.Class.AddMember ).toBe( "https://carbonldp.com/ns/v1/security#AddMember" );
 		} );
 
 		it( hasProperty(

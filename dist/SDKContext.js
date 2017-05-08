@@ -1,17 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var APIDescription = require("./APIDescription");
 var Auth = require("./Auth");
 var BlankNode = require("./BlankNode");
 var Documents = require("./Documents");
-var Error = require("./LDP/Error");
-var ErrorResponse = require("./LDP/ErrorResponse");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var ObjectSchema = require("./ObjectSchema");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
 var RDFRepresentation = require("./RDFRepresentation");
+var System = require("./System");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -133,10 +131,11 @@ var Class = (function () {
     Class.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(BlankNode.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
+        this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
+        this.extendObjectSchema(System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
-        this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
-        this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
-        this.extendObjectSchema(ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA);
+        this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);
+        this.extendObjectSchema(LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA);
         this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);

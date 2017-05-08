@@ -1,6 +1,5 @@
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -22,6 +21,7 @@ import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
+import * as System from "./System";
 import * as Utils from "./Utils";
 export declare class Class extends AbstractContext.Class {
     static AccessPoint: typeof AccessPoint;
@@ -46,6 +46,7 @@ export declare class Class extends AbstractContext.Class {
     static SDKContext: typeof SDKContext;
     static Settings: typeof Settings;
     static SPARQL: typeof SPARQL;
+    static System: typeof System;
     static Utils: typeof Utils;
     static readonly version: string;
     readonly version: string;
@@ -53,7 +54,9 @@ export declare class Class extends AbstractContext.Class {
     private ssl;
     constructor(domain: string, ssl?: boolean);
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
-    resolve(uri: string): string;
-    getAPIDescription(): Promise<APIDescription.Class>;
+    resolve(relativeURI: string): string;
+    getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
+    getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;
+    private getResourceMetadata<T>(metadataSetting);
 }
 export default Class;

@@ -1,6 +1,5 @@
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as APIDescription from "./APIDescription";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -22,6 +21,7 @@ import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
+import * as System from "./System";
 import * as Utils from "./Utils";
 
 export class Class extends AbstractContext.Class {
@@ -49,6 +49,7 @@ export class Class extends AbstractContext.Class {
 	static SDKContext:typeof SDKContext = SDKContext;
 	static Settings:typeof Settings = Settings;
 	static SPARQL:typeof SPARQL = SPARQL;
+	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
@@ -71,19 +72,37 @@ export class Class extends AbstractContext.Class {
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 	}
 
-	resolve( uri:string ):string {
-		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+	resolve( relativeURI:string ):string {
+		if( RDF.URI.Util.isAbsolute( relativeURI ) ) return relativeURI;
 
 		let baseURI:string = ( this.ssl ? "https://" : "http://" ) + this.domain;
-		return RDF.URI.Util.resolve( baseURI, uri );
+		return RDF.URI.Util.resolve( baseURI, relativeURI );
 	}
 
-	getAPIDescription():Promise<APIDescription.Class> {
-		return this.documents.get( "api/" ).then(
-			( [ description, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
-				return <any> description;
-			}
-		);
+	/**
+	 * Retrieves the Metadata related to the CarbonLDP Platform.
+	 */
+	getPlatformMetadata():Promise<System.PlatformMetadata.Class> {
+		return this.getResourceMetadata<System.PlatformMetadata.Class>( "system.platform.metadata" );
+	}
+
+	/**
+	 * Retrieves the Metadata related to your instance of the Carbon LDP Platform.
+	 */
+	getInstanceMetadata():Promise<System.InstanceMetadata.Class> {
+		return this.getResourceMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
+	}
+
+	private getResourceMetadata<T>( metadataSetting:string ):Promise<T> {
+		if( ! this.hasSetting( "system.container" ) )
+			return Promise.reject( new Errors.IllegalStateError( `The "system.container" setting hasn't been defied.` ) );
+		if( ! this.hasSetting( metadataSetting ) )
+			return Promise.reject( new Errors.IllegalStateError( `The "${ metadataSetting }" setting hasn't been defined.` ) );
+
+		return Promise.resolve()
+			.then( systemURI => RDF.URI.Util.resolve( this.getSetting( "system.container" ), this.getSetting( metadataSetting ) ) )
+			.then( metadataURI => this.documents.get<T>( metadataURI ) )
+			.then( ( [ metadataDocument ] ) => metadataDocument );
 	}
 }
 

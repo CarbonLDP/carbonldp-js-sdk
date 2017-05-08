@@ -14,11 +14,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "API", {
-        get: function () { return exports.namespace + "API"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "CreatedResource", {
         get: function () { return exports.namespace + "CreatedResource"; },
         enumerable: true,
@@ -29,6 +24,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "Instance", {
+        get: function () { return exports.namespace + "Instance"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "ModifiedResource", {
         get: function () { return exports.namespace + "ModifiedResource"; },
         enumerable: true,
@@ -36,6 +36,11 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
         get: function () { return exports.namespace + "NonReadableMembershipResourceTriples"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Platform", {
+        get: function () { return exports.namespace + "Platform"; },
         enumerable: true,
         configurable: true
     });
