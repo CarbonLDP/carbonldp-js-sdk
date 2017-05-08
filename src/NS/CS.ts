@@ -5,8 +5,6 @@ class Class {
 
 	static get AccessControlList():string { return namespace + "AccessControlList"; }
 
-	static get Agent():string { return namespace + "Agent"; }
-
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
 
 	static get CreateAccessPoint():string { return namespace + "CreateAccessPoint"; }
@@ -36,6 +34,8 @@ class Class {
 	static get Update():string { return namespace + "Update"; }
 
 	static get Upload():string { return namespace + "Upload"; }
+
+	static get User():string { return namespace + "User"; }
 }
 
 class Predicate {
@@ -44,8 +44,6 @@ class Predicate {
 	static get accessControlList():string { return namespace + "accessControlList"; }
 
 	static get accessTo():string { return namespace + "accessTo"; }
-
-	static get agent():string { return namespace + "agent"; }
 
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
 
@@ -82,6 +80,8 @@ class Predicate {
 	static get ticketKey():string { return namespace + "ticketKey"; }
 
 	static get tokenKey():string { return namespace + "tokenKey"; }
+
+	static get user():string { return namespace + "user"; }
 }
 
 export {

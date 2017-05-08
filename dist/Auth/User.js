@@ -4,7 +4,7 @@ var Document = require("./../Document");
 var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
 var NS = require("./../NS");
 var Utils = require("./../Utils");
-exports.RDF_CLASS = NS.CS.Class.Agent;
+exports.RDF_CLASS = NS.CS.Class.User;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.Predicate.namae,
@@ -52,11 +52,11 @@ var Factory = (function () {
         app.name = name;
         app.email = email;
         app.password = password;
-        app.types.push(NS.CS.Class.Agent);
+        app.types.push(NS.CS.Class.User);
         return app;
     };
     return Factory;
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=Agent.js.map
+//# sourceMappingURL=User.js.map

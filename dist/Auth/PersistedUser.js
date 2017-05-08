@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Agent = require("./Agent");
+var User = require("./User");
 var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
 var Utils = require("./../Utils");
 var Factory = (function () {
@@ -16,15 +16,15 @@ var Factory = (function () {
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && PersistedProtectedDocument.Factory.is(object)
-            && object.hasType(Agent.RDF_CLASS);
+            && object.hasType(User.RDF_CLASS);
     };
     Factory.decorate = function (object) {
-        var agent = object;
-        if (Factory.hasClassProperties(agent))
-            return agent;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(agent))
-            PersistedProtectedDocument.Factory.decorate(agent);
-        Object.defineProperties(agent, {
+        var user = object;
+        if (Factory.hasClassProperties(user))
+            return user;
+        if (!PersistedProtectedDocument.Factory.hasClassProperties(user))
+            PersistedProtectedDocument.Factory.decorate(user);
+        Object.defineProperties(user, {
             "enable": {
                 writable: false,
                 enumerable: false,
@@ -38,7 +38,7 @@ var Factory = (function () {
                 value: disable,
             },
         });
-        return agent;
+        return user;
     };
     return Factory;
 }());
@@ -52,4 +52,4 @@ function disable() {
     return this.save();
 }
 
-//# sourceMappingURL=PersistedAgent.js.map
+//# sourceMappingURL=PersistedUser.js.map

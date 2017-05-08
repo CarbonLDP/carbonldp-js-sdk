@@ -22,19 +22,19 @@ import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 
-import * as PersistedAgent from "./PersistedAgent";
-import DefaultExport from "./PersistedAgent";
+import * as PersistedUser from "./PersistedUser";
+import DefaultExport from "./PersistedUser";
 
-describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
+describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 	it( isDefined(), ():void => {
-		expect( PersistedAgent ).toBeDefined();
-		expect( Utils.isObject( PersistedAgent ) ).toBe( true );
+		expect( PersistedUser ).toBeDefined();
+		expect( Utils.isObject( PersistedUser ) ).toBe( true );
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.PersistedAgent.Class",
-		"Interface that represents the base of a persisted Agent in any context."
+		"Carbon.Auth.PersistedUser.Class",
+		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
 		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
@@ -43,69 +43,69 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			OBLIGATORY,
 			"name",
 			"string",
-			"The name of he current Agent."
+			"The name of he current User."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"email",
 			"string",
-			"The email of he current Agent."
+			"The email of he current User."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"enabled",
 			"boolean",
-			"Flag that indicates if the current agent has been activated o not."
+			"Flag that indicates if the current user has been activated o not."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"password",
 			"string",
-			"Property that represents the password of the agent. This property is not retrieved but you can change the current password by setting a new one here and saving it."
+			"Property that represents the password of the user. This property is not retrieved but you can change the current password by setting a new one here and saving it."
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"enable",
-			"Activate the account of the agent.",
-			{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
+			"Activate the account of the user.",
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"disable",
-			"Deactivate the account of the agent.",
-			{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
+			"Deactivate the account of the user.",
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.PersistedAgent.Factory",
-		"Factory class for `Carbon.Auth.PersistedAgent.Class` objects."
+		"Carbon.Auth.PersistedUser.Factory",
+		"Factory class for `Carbon.Auth.PersistedUser.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedAgent.Factory ).toBeDefined();
-			expect( Utils.isFunction( PersistedAgent.Factory ) ).toBe( true );
+			expect( PersistedUser.Factory ).toBeDefined();
+			expect( Utils.isFunction( PersistedUser.Factory ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.Auth.PersistedAgent.Class` object.", [
+			"Returns true if the object provided has the properties of a `Carbon.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "Object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
-			expect( PersistedAgent.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( PersistedAgent.Factory.hasClassProperties ) ).toBe( true );
+			expect( PersistedUser.Factory.hasClassProperties ).toBeDefined();
+			expect( Utils.isFunction( PersistedUser.Factory.hasClassProperties ) ).toBe( true );
 
 			let object:any = void 0;
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
 				name: null,
@@ -114,39 +114,39 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				enable: ():void => {},
 				disable: ():void => {},
 			};
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( true );
 
 			delete object.name;
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 			object.name = null;
 
 			delete object.email;
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 			object.email = null;
 
 			delete object.enabled;
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 			object.enabled = null;
 
 			delete object.enable;
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 			object.enable = ():void => {};
 
 			delete object.disable;
-			expect( PersistedAgent.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 			object.disable = ():void => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Auth.PersistedAgent.Class` object.", [
+			"Returns true if the object provided is considered a `Carbon.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "Object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
-			expect( PersistedAgent.Factory.is ).toBeDefined();
-			expect( Utils.isFunction( PersistedAgent.Factory.is ) ).toBe( true );
+			expect( PersistedUser.Factory.is ).toBeDefined();
+			expect( Utils.isFunction( PersistedUser.Factory.is ) ).toBe( true );
 
 			let object:any;
 
@@ -157,7 +157,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				enable: ():void => {},
 				disable: ():void => {},
 			};
-			expect( PersistedAgent.Factory.is( object ) ).toBe( false );
+			expect( PersistedUser.Factory.is( object ) ).toBe( false );
 
 			object = PersistedDocument.Factory.createFrom( {
 				name: null,
@@ -166,25 +166,25 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				enable: ():void => {},
 				disable: ():void => {},
 			}, "http://example.com/resource/", null );
-			expect( PersistedAgent.Factory.is( object ) ).toBe( false );
-			object.types.push( NS.CS.Class.Agent );
-			expect( PersistedAgent.Factory.is( object ) ).toBe( false );
+			expect( PersistedUser.Factory.is( object ) ).toBe( false );
+			object.types.push( NS.CS.Class.User );
+			expect( PersistedUser.Factory.is( object ) ).toBe( false );
 
 			object = PersistedProtectedDocument.Factory.decorate( object );
-			expect( PersistedAgent.Factory.is( object ) ).toBe( true );
+			expect( PersistedUser.Factory.is( object ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			[ "T extends Carbon.PersistedDocument.Class" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedAgent.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
-			{ type: "T & Carbon.Auth.PersistedAgent.Class" }
+			{ type: "T & Carbon.Auth.PersistedUser.Class" }
 		), ():void => {
-			expect( PersistedAgent.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedAgent.Factory.decorate ) ).toBe( true );
+			expect( PersistedUser.Factory.decorate ).toBeDefined();
+			expect( Utils.isFunction( PersistedUser.Factory.decorate ) ).toBe( true );
 
 			let object:any;
 
@@ -202,7 +202,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				enable: fn,
 				disable: fn,
 			};
-			object = PersistedAgent.Factory.decorate( object );
+			object = PersistedUser.Factory.decorate( object );
 			expect( object.myProperty ).toBe( "My Property" );
 			expect( object.enable ).toBeDefined();
 			expect( object.enable ).toBe( fn );
@@ -215,7 +215,7 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 				enabled: null,
 				myProperty: "My Property",
 			};
-			object = PersistedAgent.Factory.decorate( object );
+			object = PersistedUser.Factory.decorate( object );
 			expect( object.myProperty ).toBe( "My Property" );
 			expect( object.enable ).toBeDefined();
 			expect( object.enable ).not.toBe( fn );
@@ -223,8 +223,8 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			expect( object.disable ).not.toBe( fn );
 		} );
 
-		describe( decoratedObject( "Object decorated by the `Carbon.Auth.PersistedAgent.Factory.decorate()` function.", [
-			"Carbon.Auth.PersistedAgent.Class",
+		describe( decoratedObject( "Object decorated by the `Carbon.Auth.PersistedUser.Factory.decorate()` function.", [
+			"Carbon.Auth.PersistedUser.Class",
 		] ), ():void => {
 			let context:AbstractContext;
 
@@ -240,28 +240,28 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"enable",
-				"Activate the account of the agent.",
-				{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
+				"Activate the account of the user.",
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				let persistedDocument:PersistedDocument.Class;
-				let agent:PersistedAgent.Class;
+				let user:PersistedUser.Class;
 
-				agent = PersistedAgent.Factory.decorate( <any> {} );
-				expect( agent.enable ).toBeDefined();
-				expect( Utils.isFunction( agent.enable ) ).toBe( true );
+				user = PersistedUser.Factory.decorate( <any> {} );
+				expect( user.enable ).toBeDefined();
+				expect( Utils.isFunction( user.enable ) ).toBe( true );
 
 				persistedDocument = PersistedDocument.Factory.createFrom( {}, "", context.documents );
-				agent = PersistedAgent.Factory.decorate( persistedDocument );
-				agent.enable();
+				user = PersistedUser.Factory.decorate( persistedDocument );
+				user.enable();
 
 				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: false }, "", context.documents );
-				agent = PersistedAgent.Factory.decorate( persistedDocument );
-				agent.enable();
+				user = PersistedUser.Factory.decorate( persistedDocument );
+				user.enable();
 
 				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: true }, "", context.documents );
-				agent = PersistedAgent.Factory.decorate( persistedDocument );
-				agent.enable();
+				user = PersistedUser.Factory.decorate( persistedDocument );
+				user.enable();
 
 				expect( spy.calls.count() ).toBe( 3 );
 				for( let call of spy.calls.all() ) {
@@ -272,28 +272,28 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"disable",
-				"Deactivate the account of the agent.",
-				{ type: "Promise<[ Carbon.Auth.PersistedAgent.Class, Carbon.HTTP.Response.Class ]>" }
+				"Deactivate the account of the user.",
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				let persistedDocument:PersistedDocument.Class;
-				let agent:PersistedAgent.Class;
+				let user:PersistedUser.Class;
 
-				agent = PersistedAgent.Factory.decorate( <any> {} );
-				expect( agent.disable ).toBeDefined();
-				expect( Utils.isFunction( agent.disable ) ).toBe( true );
+				user = PersistedUser.Factory.decorate( <any> {} );
+				expect( user.disable ).toBeDefined();
+				expect( Utils.isFunction( user.disable ) ).toBe( true );
 
 				persistedDocument = PersistedDocument.Factory.createFrom( {}, "", context.documents );
-				agent = PersistedAgent.Factory.decorate( persistedDocument );
-				agent.disable();
+				user = PersistedUser.Factory.decorate( persistedDocument );
+				user.disable();
 
 				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: false }, "", context.documents );
-				agent = PersistedAgent.Factory.decorate( persistedDocument );
-				agent.disable();
+				user = PersistedUser.Factory.decorate( persistedDocument );
+				user.disable();
 
 				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: true }, "", context.documents );
-				agent = PersistedAgent.Factory.decorate( persistedDocument );
-				agent.disable();
+				user = PersistedUser.Factory.decorate( persistedDocument );
+				user.disable();
 
 				expect( spy.calls.count() ).toBe( 3 );
 				for( let call of spy.calls.all() ) {
@@ -305,9 +305,9 @@ describe( module( "Carbon/Auth/PersistedAgent" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.PersistedAgent.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Auth.PersistedUser.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedAgent.Class;
+		let defaultTarget:PersistedUser.Class;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

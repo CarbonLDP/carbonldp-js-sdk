@@ -42,9 +42,9 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"system.agents.container",
+			"system.users.container",
 			"string",
-			"Relative URI to any context, that indicates the slug of the agents container."
+			"Relative URI to any context, that indicates the slug of the users container."
 		), ():void => {} );
 
 		it( hasProperty(
@@ -68,7 +68,7 @@ describe( module( "Carbon/Settings" ), ():void => {
 		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
 		* auth.method: \`Carbon.Auth.Method.TOKEN\`
 		* system.container: \`".system/"\`
-		* system.agents.container: \`"agents/"\`
+		* system.users.container: \`"users/"\`
 		* system.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
 		`
@@ -85,8 +85,8 @@ describe( module( "Carbon/Settings" ), ():void => {
 		expect( defaultExport[ "system.roles.container" ] ).toBeDefined();
 		expect( defaultExport[ "system.roles.container" ] ).toBe( "roles/" );
 
-		expect( defaultExport[ "system.agents.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.agents.container" ] ).toBe( "agents/" );
+		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
 
 		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
 		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );

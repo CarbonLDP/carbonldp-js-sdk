@@ -7,10 +7,10 @@ var LDP = require("./../LDP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var Resource = require("./../Resource");
-var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
-var Token = require("./Token");
 var Utils = require("./../Utils");
+var BasicAuthenticator_1 = require("./BasicAuthenticator");
+var Token = require("./Token");
+var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Class = (function () {
     function Class(context) {
         if (context === null)
@@ -65,8 +65,8 @@ var Class = (function () {
             if (tokenResources.length > 1)
                 throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
             var token = tokenResources[0];
-            var agentDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.agent.id; });
-            agentDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
+            var userDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
+            userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources.getResources().find(function (resource) { return Resource.Util.hasType(resource, LDP.ResponseMetadata.RDF_CLASS); });
             if (!!responseMetadata)
                 responseMetadata.resourcesMetadata.forEach(function (resourceMetadata) {

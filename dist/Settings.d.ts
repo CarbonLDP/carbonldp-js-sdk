@@ -4,7 +4,7 @@ export interface Class {
     "system.container"?: string;
     "system.platform.metadata"?: string;
     "system.instance.metadata"?: string;
-    "system.agents.container"?: string;
+    "system.users.container"?: string;
     "system.roles.container"?: string;
     "vocabulary"?: string;
 }

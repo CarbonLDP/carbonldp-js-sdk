@@ -1,4 +1,4 @@
-import * as Agent from "./Agent";
+import * as User from "./User";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
@@ -27,17 +27,17 @@ export class Factory {
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
 			&& PersistedProtectedDocument.Factory.is( object )
-			&& (<PersistedProtectedDocument.Class> object).hasType( Agent.RDF_CLASS )
+			&& (<PersistedProtectedDocument.Class> object).hasType( User.RDF_CLASS )
 			;
 	}
 
 	static decorate<T extends PersistedDocument.Class>( object:T ):Class & T {
-		let agent:T & Class = <any> object;
+		let user:T & Class = <any> object;
 
-		if( Factory.hasClassProperties( agent ) ) return agent;
-		if( ! PersistedProtectedDocument.Factory.hasClassProperties( agent ) ) PersistedProtectedDocument.Factory.decorate( agent );
+		if( Factory.hasClassProperties( user ) ) return user;
+		if( ! PersistedProtectedDocument.Factory.hasClassProperties( user ) ) PersistedProtectedDocument.Factory.decorate( user );
 
-		Object.defineProperties( agent, {
+		Object.defineProperties( user, {
 			"enable": {
 				writable: false,
 				enumerable: false,
@@ -52,7 +52,7 @@ export class Factory {
 			},
 		} );
 
-		return agent;
+		return user;
 	}
 
 }

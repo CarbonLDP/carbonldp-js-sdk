@@ -5,17 +5,14 @@ import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";
 import * as LDP from "./../LDP";
 import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
-import Authenticator from "./Authenticator";
-import AuthenticationToken from "./AuthenticationToken";
-import BasicAuthenticator from "./BasicAuthenticator";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-import * as Token from "./Token";
-import * as Credentials from "./Credentials";
 import * as Utils from "./../Utils";
+import Authenticator from "./Authenticator";
+import BasicAuthenticator from "./BasicAuthenticator";
+import * as Token from "./Token";
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
 	private static TOKEN_CONTAINER:string = "auth-tokens/";
@@ -85,8 +82,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
 			let token:Token.Class = tokenResources[ 0 ];
 
-			let agentDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.agent.id );
-			agentDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
+			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
+			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
 			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
 

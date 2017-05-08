@@ -17,8 +17,8 @@ import {
 	hasSignature,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import * as Agent from "./Auth/Agent";
-import * as Agents from "./Auth/Agents";
+import * as User from "./Auth/User";
+import * as Users from "./Auth/Users";
 import AbstractContext from "./AbstractContext";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
@@ -27,7 +27,7 @@ import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedAgent from "./Auth/PersistedAgent";
+import * as PersistedUser from "./Auth/PersistedUser";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedRole from "./Auth/PersistedRole";
 import * as Role from "./Auth/Role";
@@ -71,20 +71,20 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Agent",
-		"Carbon.Auth.Agent"
+		"User",
+		"Carbon.Auth.User"
 	), ():void => {
-		expect( Auth.Agent ).toBeDefined();
-		expect( Auth.Agent ).toBe( Agent );
+		expect( Auth.User ).toBeDefined();
+		expect( Auth.User ).toBe( User );
 	} );
 
 	it( reexports(
 		STATIC,
-		"Agents",
-		"Carbon.Auth.Agents"
+		"Users",
+		"Carbon.Auth.Users"
 	), ():void => {
-		expect( Auth.Agents ).toBeDefined();
-		expect( Auth.Agents ).toBe( Agents );
+		expect( Auth.Users ).toBeDefined();
+		expect( Auth.Users ).toBe( Users );
 	} );
 
 	it( reexports(
@@ -130,11 +130,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"PersistedAgent",
-		"Carbon.Auth.PersistedAgent"
+		"PersistedUser",
+		"Carbon.Auth.PersistedUser"
 	), ():void => {
-		expect( Auth.PersistedAgent ).toBeDefined();
-		expect( Auth.PersistedAgent ).toBe( PersistedAgent );
+		expect( Auth.PersistedUser ).toBeDefined();
+		expect( Auth.PersistedUser ).toBe( PersistedUser );
 	} );
 
 	it( reexports(
@@ -259,9 +259,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
-			"agents",
-			"Carbon.Auth.Agents.Class",
-			"Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context."
+			"users",
+			"Carbon.Auth.Users.Class",
+			"Instance of `Carbon.Auth.Users.Class` that helps you manage the users of the current context."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -270,28 +270,28 @@ describe( module( "Carbon/Auth" ), ():void => {
 			}
 			let auth:Auth.Class = new Auth.Class( new MockedContext() );
 
-			expect( auth.agents ).toBeDefined();
-			expect( auth.agents ).toEqual( jasmine.any( Agents.Class ) );
+			expect( auth.users ).toBeDefined();
+			expect( auth.users ).toEqual( jasmine.any( Users.Class ) );
 		} );
 
 		it( hasProperty(
 			INSTANCE,
-			"authenticatedAgent",
-			"Carbon.Auth.PersistedAgent.Class",
-			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
+			"authenticatedUser",
+			"Carbon.Auth.PersistedUser.Class",
+			"The user of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
 
-			function createAgent( context:AbstractContext ):PersistedAgent.Class {
-				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", context.documents );
+			function createUser( context:AbstractContext ):PersistedUser.Class {
+				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/users/my-user/", context.documents );
 
-				let persistedAgent:PersistedAgent.Class = PersistedAgent.Factory.decorate( persistedDocument );
-				persistedAgent.email = null;
-				persistedAgent.name = null;
-				persistedAgent.enabled = true;
-				persistedAgent.types.push( Agent.RDF_CLASS );
+				let persistedUser:PersistedUser.Class = PersistedUser.Factory.decorate( persistedDocument );
+				persistedUser.email = null;
+				persistedUser.name = null;
+				persistedUser.enabled = true;
+				persistedUser.types.push( User.RDF_CLASS );
 
-				return persistedAgent;
+				return persistedUser;
 			}
 
 			(() => {
@@ -302,7 +302,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				}
 				let context:AbstractContext = new MockedContext();
 
-				expect( context.auth.authenticatedAgent ).toBeNull();
+				expect( context.auth.authenticatedUser ).toBeNull();
 			})();
 
 			(() => {
@@ -313,17 +313,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 				}
 				let context:AbstractContext = new MockedContext();
 
-				expect( context.auth.authenticatedAgent ).toBeNull();
+				expect( context.auth.authenticatedUser ).toBeNull();
 
 				// Authenticated Auth
 				let auth:Auth.Class = new class extends Auth.Class {
 					constructor() {
 						super( context );
-						this._authenticatedAgent = createAgent( context );
+						this._authenticatedUser = createUser( context );
 					}
 				};
-				expect( auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( auth.authenticatedAgent ) ).toBe( true );
+				expect( auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( auth.authenticatedUser ) ).toBe( true );
 			})();
 
 			(() => {
@@ -333,7 +333,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this.auth = new class extends Auth.Class {
 							constructor( _context:AbstractContext ) {
 								super( _context );
-								this._authenticatedAgent = createAgent( _context );
+								this._authenticatedUser = createUser( _context );
 							}
 						}( this );
 					}
@@ -348,13 +348,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 					}
 				}( parentContext );
 
-				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
+				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
 
-				expect( context.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
+				expect( context.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( context.auth.authenticatedUser ) ).toBe( true );
 
-				expect( parentContext.auth.authenticatedAgent ).toBe( context.auth.authenticatedAgent );
+				expect( parentContext.auth.authenticatedUser ).toBe( context.auth.authenticatedUser );
 			})();
 
 			(() => {
@@ -364,7 +364,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this.auth = new class extends Auth.Class {
 							constructor( _context:AbstractContext ) {
 								super( _context );
-								this._authenticatedAgent = createAgent( _context );
+								this._authenticatedUser = createUser( _context );
 							}
 						}( this );
 					}
@@ -379,7 +379,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this.auth = new class extends Auth.Class {
 							constructor( _context:AbstractContext ) {
 								super( _context );
-								this._authenticatedAgent = createAgent( _context );
+								this._authenticatedUser = createUser( _context );
 							}
 						}( this );
 					}
@@ -389,13 +389,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 					}
 				};
 
-				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
+				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
 
-				expect( context.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
+				expect( context.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( context.auth.authenticatedUser ) ).toBe( true );
 
-				expect( parentContext.auth.authenticatedAgent ).not.toBe( context.auth.authenticatedAgent );
+				expect( parentContext.auth.authenticatedUser ).not.toBe( context.auth.authenticatedUser );
 			})();
 
 		} );
@@ -608,23 +608,23 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": "1234567890",
-						"Content-Location": "http://example.com/agents/my-agent/",
+						"Content-Location": "http://example.com/users/my-user/",
 					},
 					responseText: `[ {
-						"@id": "http://example.com/agents/my-agent/",
+						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"@id": "http://example.com/users/my-user/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
+								"@value": "my-user@users.com",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"https://carbonldp.com/ns/v1/security#enabled": [ {
@@ -653,8 +653,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.username ).toEqual( username );
 						expect( credentials.password ).toEqual( password );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -713,9 +713,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 						expect( credentials.key ).toEqual( "token-value" );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( credentials.user ).toBe( _auth.authenticatedUser );
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
@@ -745,7 +745,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@value": "\\"1234567890\\""
 						} ],
 						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/successful/agents/my-agent/"
+							"@id": "http://example.com/successful/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
@@ -761,19 +761,19 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 						},
 						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-							"@id": "http://example.com/successful/agents/my-agent/"
+							"@id": "http://example.com/successful/users/my-user/"
 						} ]
 					}, {
-						"@id": "http://example.com/successful/agents/my-agent/",
+						"@id": "http://example.com/successful/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/successful/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"@id": "http://example.com/successful/users/my-user/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
+								"@value": "my-user@users.com",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"https://carbonldp.com/ns/v1/security#enabled": [ {
@@ -818,23 +818,23 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": "1234567890",
-						"Content-Location": "http://example.com/agents/my-agent/",
+						"Content-Location": "http://example.com/users/my-user/",
 					},
 					responseText: `[ {
-						"@id": "http://example.com/agents/my-agent/",
+						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"@id": "http://example.com/users/my-user/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
+								"@value": "my-user@users.com",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"https://carbonldp.com/ns/v1/security#enabled": [ {
@@ -861,17 +861,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.key ).toEqual( token.key );
 						expect( _auth.isAuthenticated() ).toBe( true );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( credentials.user ).toBe( _auth.authenticatedUser );
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					success02: ( _auth:Auth.Class, credentials:Token.Class ):void => {
 						expect( credentials.key ).toEqual( token.key );
 						expect( _auth.isAuthenticated() ).toBe( true );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( credentials.user ).toBe( _auth.authenticatedUser );
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -997,7 +997,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					options[ "parentAuth" ] = "no authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
@@ -1024,7 +1024,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					options[ "parentAuth" ] = "is authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
@@ -1056,7 +1056,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					options[ "parentAuth" ] = "is authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -1087,7 +1087,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					options[ "parentAuth" ] = "no authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();

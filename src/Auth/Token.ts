@@ -1,7 +1,7 @@
 import Credentials from "./Credentials";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedAgent from "./PersistedAgent";
+import * as PersistedUser from "./PersistedUser";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
@@ -16,7 +16,7 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.expirationTime,
 		"@type": NS.XSD.DataType.dateTime,
 	},
-	"agent": {
+	"user": {
 		"@id": NS.CS.Predicate.credentialsOf,
 		"@type": "@id",
 	},
@@ -25,7 +25,7 @@ export const SCHEMA:ObjectSchema.Class = {
 export interface Class extends Resource.Class, Credentials {
 	key:string;
 	expirationTime:Date;
-	agent:PersistedAgent.Class;
+	user:PersistedUser.Class;
 }
 
 export class Factory {
@@ -40,7 +40,7 @@ export class Factory {
 		return (
 			Utils.hasPropertyDefined( object, "key" )
 			&& Utils.hasPropertyDefined( object, "expirationTime" )
-			&& Utils.hasPropertyDefined( object, "agent" )
+			&& Utils.hasPropertyDefined( object, "user" )
 		);
 	}
 

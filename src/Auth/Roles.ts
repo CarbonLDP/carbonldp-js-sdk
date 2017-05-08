@@ -1,16 +1,16 @@
 import Context from "./../Context";
 import * as Errors from "./../Errors";
-import * as Pointer from "./../Pointer";
 import * as HTTP from "./../HTTP";
-import * as PersistedAgent from "./../Auth/PersistedAgent";
 import * as PersistedDocument from "./../PersistedDocument";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as PersistedRole from "./PersistedRole";
-import * as Role from "./Role";
-import * as SPARQL from "./../SPARQL";
+import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
+import * as RetrievalPreferences from "./../RetrievalPreferences";
+import * as SPARQL from "./../SPARQL";
 import * as Utils from "./../Utils";
+import * as PersistedRole from "./PersistedRole";
+import * as PersistedUser from "./PersistedUser";
+import * as Role from "./Role";
 
 export class Class {
 	private context:Context;
@@ -57,46 +57,46 @@ export class Class {
 		} );
 	}
 
-	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
-		} ).then( ( [ agents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-			return [ agents.map( agent => PersistedProtectedDocument.Factory.decorate( agent ) ), response ];
+	listUsers( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
+		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
+			return this.context.documents.listMembers( usersAccessPoint.id, requestOptions );
+		} ).then( ( [ users, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+			return [ users.map( user => PersistedProtectedDocument.Factory.decorate( user ) ), response ];
 		} );
 	}
 
-	getAgents<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]>;
-	getAgents<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]>;
-	getAgents<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers<T>( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
+	getUsers<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
+	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
+		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
+			return this.context.documents.getMembers<T>( usersAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
 		} );
 	}
 
-	addAgent( roleURI:string, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.addAgents( roleURI, [ agent ], requestOptions );
+	addUser( roleURI:string, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.addUsers( roleURI, [ user ], requestOptions );
 	}
 
-	addAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.addMembers( agentsAccessPoint.id, agents, requestOptions );
+	addUsers( roleURI:string, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
+			return this.context.documents.addMembers( usersAccessPoint.id, users, requestOptions );
 		} );
 	}
 
-	removeAgent( roleURI:string, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.removeAgents( roleURI, [ agent ], requestOptions );
+	removeUser( roleURI:string, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.removeUsers( roleURI, [ user ], requestOptions );
 	}
 
-	removeAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.removeMembers( agentsAccessPoint.id, agents, requestOptions );
+	removeUsers( roleURI:string, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
+			return this.context.documents.removeMembers( usersAccessPoint.id, users, requestOptions );
 		} );
 	}
 
-	private resolveURI( agentURI:string ):Promise<string> {
+	private resolveURI( userURI:string ):Promise<string> {
 		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
 			let containerURI:string = this.context.resolve( this.getContainerURI() );
-			let uri:string = URI.Util.resolve( containerURI, agentURI );
+			let uri:string = URI.Util.resolve( containerURI, userURI );
 
 			if( ! URI.Util.isBaseOf( containerURI, uri ) ) throw new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." );
 
@@ -105,14 +105,14 @@ export class Class {
 	}
 
 	// TODO: Optimize
-	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
+	private getUsersAccessPoint( roleURI:string ):Promise<Pointer.Class> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
-			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {
-				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .
-				?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .
+			return this.context.documents.executeSELECTQuery( uri, `select distinct ?usersAccessPoint where {
+				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .
+				?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .
 			}` );
 		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
-			return <Pointer.Class> selectResults.bindings[ 0 ][ "agentsAccessPoint" ];
+			return <Pointer.Class> selectResults.bindings[ 0 ][ "usersAccessPoint" ];
 		} );
 	}
 

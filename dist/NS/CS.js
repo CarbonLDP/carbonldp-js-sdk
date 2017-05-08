@@ -15,11 +15,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Agent", {
-        get: function () { return namespace + "Agent"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "AllOrigins", {
         get: function () { return namespace + "AllOrigins"; },
         enumerable: true,
@@ -95,6 +90,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "User", {
+        get: function () { return namespace + "User"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -113,11 +113,6 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "accessTo", {
         get: function () { return namespace + "accessTo"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "agent", {
-        get: function () { return namespace + "agent"; },
         enumerable: true,
         configurable: true
     });
@@ -208,6 +203,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "tokenKey", {
         get: function () { return namespace + "tokenKey"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "user", {
+        get: function () { return namespace + "user"; },
         enumerable: true,
         configurable: true
     });

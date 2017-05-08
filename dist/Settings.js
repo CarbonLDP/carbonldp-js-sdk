@@ -6,7 +6,7 @@ exports.defaultSettings = {
     "system.container": ".system/",
     "system.platform.metadata": "platform/",
     "system.instance.metadata": "instance/",
-    "system.agents.container": "agents/",
+    "system.users.container": "users/",
     "system.roles.container": "roles/",
     "vocabulary": "vocabulary/#",
 };

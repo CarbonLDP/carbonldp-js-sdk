@@ -4,7 +4,7 @@ import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Class.Agent;
+export const RDF_CLASS:string = NS.CS.Class.User;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
@@ -62,7 +62,7 @@ export class Factory {
 		app.name = name;
 		app.email = email;
 		app.password = password;
-		app.types.push( NS.CS.Class.Agent );
+		app.types.push( NS.CS.Class.User );
 
 		return app;
 	}

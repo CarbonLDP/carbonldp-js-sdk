@@ -260,7 +260,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 									],
 									"https://carbonldp.com/ns/v1/security#subjectClass": [
 										{
-											"@id": "https://carbonldp.com/ns/v1/security#AppRole"
+											"@id": "https://carbonldp.com/ns/v1/security#Role"
 										}
 									]
 								},
@@ -290,7 +290,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 									],
 									"https://carbonldp.com/ns/v1/security#subjectClass": [
 										{
-											"@id": "https://carbonldp.com/ns/v1/security#AppRole"
+											"@id": "https://carbonldp.com/ns/v1/security#Role"
 										}
 									]
 								},

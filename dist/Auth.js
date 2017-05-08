@@ -4,18 +4,18 @@ var ACE = require("./Auth/ACE");
 exports.ACE = ACE;
 var ACL = require("./Auth/ACL");
 exports.ACL = ACL;
-var Agent = require("./Auth/Agent");
-exports.Agent = Agent;
-var Agents = require("./Auth/Agents");
-exports.Agents = Agents;
+var User = require("./Auth/User");
+exports.User = User;
+var Users = require("./Auth/Users");
+exports.Users = Users;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
 var PersistedACE = require("./Auth/PersistedACE");
 exports.PersistedACE = PersistedACE;
 var PersistedACL = require("./Auth/PersistedACL");
 exports.PersistedACL = PersistedACL;
-var PersistedAgent = require("./Auth/PersistedAgent");
-exports.PersistedAgent = PersistedAgent;
+var PersistedUser = require("./Auth/PersistedUser");
+exports.PersistedUser = PersistedUser;
 var PersistedRole = require("./Auth/PersistedRole");
 exports.PersistedRole = PersistedRole;
 var Role = require("./Auth/Role");
@@ -46,20 +46,20 @@ var Method;
 var Class = (function () {
     function Class(context) {
         this.roles = new Roles.Class(this.context);
-        this.agents = new Agents.Class(this.context);
+        this.users = new Users.Class(this.context);
         this.context = context;
         this.authenticators = [];
         this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
         this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
     }
-    Object.defineProperty(Class.prototype, "authenticatedAgent", {
+    Object.defineProperty(Class.prototype, "authenticatedUser", {
         get: function () {
-            if (!this._authenticatedAgent) {
+            if (!this._authenticatedUser) {
                 if (this.context.parentContext && this.context.parentContext.auth)
-                    return this.context.parentContext.auth.authenticatedAgent;
+                    return this.context.parentContext.auth.authenticatedUser;
                 return null;
             }
-            return this._authenticatedAgent;
+            return this._authenticatedUser;
         },
         enumerable: true,
         configurable: true
@@ -98,7 +98,7 @@ var Class = (function () {
             return;
         this.authenticator.clearAuthentication();
         this.authenticator = null;
-        this._authenticatedAgent = null;
+        this._authenticatedUser = null;
     };
     Class.prototype.createTicket = function (uri, requestOptions) {
         var _this = this;
@@ -145,9 +145,9 @@ var Class = (function () {
         var credentials;
         return authenticator.authenticate(authenticationToken).then(function (_credentials) {
             credentials = _credentials;
-            return _this.getAuthenticatedAgent(authenticator);
-        }).then(function (persistedAgent) {
-            _this._authenticatedAgent = persistedAgent;
+            return _this.getAuthenticatedUser(authenticator);
+        }).then(function (persistedUser) {
+            _this._authenticatedUser = persistedUser;
             _this.authenticator = authenticator;
             return credentials;
         });
@@ -169,22 +169,22 @@ var Class = (function () {
         this.clearAuthentication();
         return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
             credentials = _credentials;
-            if (PersistedAgent.Factory.is(credentials.agent))
-                return credentials.agent;
-            return _this.getAuthenticatedAgent(authenticator);
-        }).then(function (persistedAgent) {
-            _this._authenticatedAgent = persistedAgent;
-            credentials.agent = persistedAgent;
+            if (PersistedUser.Factory.is(credentials.user))
+                return credentials.user;
+            return _this.getAuthenticatedUser(authenticator);
+        }).then(function (persistedUser) {
+            _this._authenticatedUser = persistedUser;
+            credentials.user = persistedUser;
             _this.authenticator = authenticator;
             return credentials;
         });
     };
-    Class.prototype.getAuthenticatedAgent = function (authenticator) {
+    Class.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        return this.context.documents.get("agents/me/", requestOptions).then(function (_a) {
-            var agentDocument = _a[0], response = _a[1];
-            return agentDocument;
+        return this.context.documents.get("users/me/", requestOptions).then(function (_a) {
+            var userDocument = _a[0], response = _a[1];
+            return userDocument;
         });
     };
     return Class;

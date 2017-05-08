@@ -2,7 +2,6 @@ declare const namespace: string;
 declare class Class {
     static readonly AccessControlEntry: string;
     static readonly AccessControlList: string;
-    static readonly Agent: string;
     static readonly AllOrigins: string;
     static readonly CreateAccessPoint: string;
     static readonly CreateChild: string;
@@ -18,12 +17,12 @@ declare class Class {
     static readonly Token: string;
     static readonly Update: string;
     static readonly Upload: string;
+    static readonly User: string;
 }
 declare class Predicate {
     static readonly accessControlEntry: string;
     static readonly accessControlList: string;
     static readonly accessTo: string;
-    static readonly agent: string;
     static readonly allowsOrigin: string;
     static readonly childRole: string;
     static readonly credentialsOf: string;
@@ -42,5 +41,6 @@ declare class Predicate {
     static readonly subjectClass: string;
     static readonly ticketKey: string;
     static readonly tokenKey: string;
+    static readonly user: string;
 }
 export { namespace, Class, Predicate };

@@ -15,11 +15,10 @@ import {
 } from "./../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
-import * as PersistedAgent from "./PersistedAgent";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
-
+import * as PersistedUser from "./PersistedUser";
 import * as Token from "./Token";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
@@ -36,7 +35,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 	describe( clazz(
 		"Carbon.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web Token (JWT) Authentication.", [
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>"
+			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
 		]
 	), ():void => {
 
@@ -54,7 +53,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the agent." },
+			{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the user." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				resolve( uri:string ):string {
@@ -169,7 +168,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@value": "\\"1234567890\\""
 							} ],
 							"https://carbonldp.com/ns/v1/platform#resource": [ {
-								"@id": "http://example.com/successful/agents/my-agent/"
+								"@id": "http://example.com/successful/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
@@ -185,19 +184,19 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 							},
 							"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-								"@id": "http://example.com/successful/agents/my-agent/"
+								"@id": "http://example.com/successful/users/my-user/"
 							} ]
 						}, {
-							"@id": "http://example.com/successful/agents/my-agent/",
+							"@id": "http://example.com/successful/users/my-user/",
 							"@graph": [ {
-								"@id": "http://example.com/successful/agents/my-agent/",
-								"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+								"@id": "http://example.com/successful/users/my-user/",
+								"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 								"https://carbonldp.com/ns/v1/security#name": [ {
-									"@value": "My Agent Name",
+									"@value": "My User Name",
 									"@type": "http://www.w3.org/2001/XMLSchema#string"
 								} ],
 								"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-									"@value": "my-agent@agents.com",
+									"@value": "my-user@users.com",
 									"@type": "http://www.w3.org/2001/XMLSchema#string"
 								} ],
 								"https://carbonldp.com/ns/v1/security#enabled": [ {
@@ -218,7 +217,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						expect( token ).not.toBeNull();
 						expect( Token.Factory.is( token ) ).toEqual( true );
 
-						expect( PersistedAgent.Factory.is( token.agent ) ).toBe( true );
+						expect( PersistedUser.Factory.is( token.user ) ).toBe( true );
 					} ) );
 				})();
 
@@ -284,7 +283,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"id": "",
 						"key": "token-value",
 						"types": [ "https://carbonldp.com/ns/v1/security#Token" ],
-						"agent": { "id": "http://exmple.com/agents/my-agent/" }
+						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -329,7 +328,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"id": "",
 						"key": "token-value",
 						"types": [ "https://carbonldp.com/ns/v1/security#Token" ],
-						"agent": { "id": "http://exmple.com/agents/my-agent/" }
+						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -634,7 +633,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							"@value": "\\"1234567890\\""
 						} ],
 						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/successful/agents/my-agent/"
+							"@id": "http://example.com/successful/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
@@ -650,19 +649,19 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 						},
 						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-							"@id": "http://example.com/successful/agents/my-agent/"
+							"@id": "http://example.com/successful/users/my-user/"
 						} ]
 					}, {
-						"@id": "http://example.com/successful/agents/my-agent/",
+						"@id": "http://example.com/successful/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/successful/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
+							"@id": "http://example.com/successful/users/my-user/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
+								"@value": "my-user@users.com",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
 							"https://carbonldp.com/ns/v1/security#enabled": [ {

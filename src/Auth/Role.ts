@@ -1,8 +1,8 @@
-import * as Utils from "./../Utils";
 import * as Document from "./../Document";
+import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import IllegalArgumentError from "./../Errors/IllegalArgumentError";
+import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.CS.Class.Role;
 
@@ -15,8 +15,8 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@id": NS.CS.Predicate.description,
 		"@type": NS.XSD.DataType.string,
 	},
-	"agents": {
-		"@id": NS.CS.Predicate.agent,
+	"users": {
+		"@id": NS.CS.Predicate.user,
 		"@type": "@id",
 		"@container": "@set",
 	},
