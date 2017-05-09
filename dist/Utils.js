@@ -136,6 +136,44 @@ function forEachOwnProperty(object, action) {
     }
 }
 exports.forEachOwnProperty = forEachOwnProperty;
+var A = (function () {
+    function A() {
+    }
+    A.from = function (iterator) {
+        var array = [];
+        var next = iterator.next();
+        while (!next.done) {
+            array.push(next.value);
+            next = iterator.next();
+        }
+        return array;
+    };
+    A.joinWithoutDuplicates = function () {
+        var arrays = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            arrays[_i] = arguments[_i];
+        }
+        var result = arrays[0].slice();
+        for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
+            result = result.concat(arrays[i].filter(function (item) {
+                return result.indexOf(item) < 0;
+            }));
+        }
+        return result;
+    };
+    A.indexOf = function (array, searchedElement, comparator) {
+        if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
+        if (!array)
+            return -1;
+        for (var i = 0, length_2 = array.length; i < length_2; ++i) {
+            if (comparator(array[i], searchedElement))
+                return i;
+        }
+        return -1;
+    };
+    return A;
+}());
+exports.A = A;
 var O = (function () {
     function O() {
     }
@@ -269,44 +307,6 @@ var S = (function () {
     return S;
 }());
 exports.S = S;
-var A = (function () {
-    function A() {
-    }
-    A.from = function (iterator) {
-        var array = [];
-        var next = iterator.next();
-        while (!next.done) {
-            array.push(next.value);
-            next = iterator.next();
-        }
-        return array;
-    };
-    A.joinWithoutDuplicates = function () {
-        var arrays = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            arrays[_i] = arguments[_i];
-        }
-        var result = arrays[0].slice();
-        for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
-            result = result.concat(arrays[i].filter(function (item) {
-                return result.indexOf(item) < 0;
-            }));
-        }
-        return result;
-    };
-    A.indexOf = function (array, searchedElement, comparator) {
-        if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
-        if (!array)
-            return -1;
-        for (var i = 0, length_2 = array.length; i < length_2; ++i) {
-            if (comparator(array[i], searchedElement))
-                return i;
-        }
-        return -1;
-    };
-    return A;
-}());
-exports.A = A;
 var M = (function () {
     function M() {
     }

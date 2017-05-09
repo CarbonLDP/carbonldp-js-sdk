@@ -47,11 +47,11 @@ export {
 	Token,
 	TokenAuthenticator,
 	UsernameAndPasswordToken
-}
+};
 
 export enum Method {
 	BASIC,
-	TOKEN
+	TOKEN,
 }
 
 export class Class {

@@ -1,6 +1,5 @@
 import * as Errors from "./Errors";
 import * as NS from "./NS";
-import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
@@ -23,7 +22,7 @@ export interface Class {
 export enum ContainerType {
 	SET,
 	LIST,
-	LANGUAGE
+	LANGUAGE,
 }
 
 export enum PointerType {

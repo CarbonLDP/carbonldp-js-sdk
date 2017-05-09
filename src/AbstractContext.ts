@@ -4,7 +4,7 @@ import * as ObjectSchema from "./ObjectSchema";
 
 export abstract class Class extends SDKContext.Class {
 	_parentContext:Context;
-	get parentContext():Context { return this._parentContext; };
+	get parentContext():Context { return this._parentContext; }
 
 	constructor( parentContext:Context = null ) {
 		super();

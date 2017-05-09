@@ -55,6 +55,7 @@ export class Class extends AbstractContext.Class {
 
 	static get version():string { return "0.42.0"; }
 
+	// noinspection JSMethodCanBeStatic
 	get version():string { return Class.version; }
 
 	private domain:string;

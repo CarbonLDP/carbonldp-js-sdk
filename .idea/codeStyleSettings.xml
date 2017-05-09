@@ -33,6 +33,7 @@
           <option name="RIGHT_MARGIN" value="72" />
         </MarkdownNavigatorCodeStyleSettings>
         <TypeScriptCodeStyleSettings>
+          <option name="FORCE_SEMICOLON_STYLE" value="true" />
           <option name="SPACE_AFTER_TYPE_COLON" value="false" />
           <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
           <option name="REFORMAT_C_STYLE_COMMENTS" value="false" />

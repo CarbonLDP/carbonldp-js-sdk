@@ -26,7 +26,6 @@ var Class = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ;
     return Class;
 }(SDKContext.Class));
 exports.Class = Class;
