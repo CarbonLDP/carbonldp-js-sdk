@@ -104,7 +104,6 @@ var Class = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var resourceURI = this.context.resolve(uri);
-        var containerURI = this.context.resolve(Ticket.TICKETS_CONTAINER);
         var freeResources = FreeResources.Factory.create(this.context.documents);
         Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
         if (this.isAuthenticated())
@@ -112,7 +111,10 @@ var Class = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
+        return Promise.resolve().then(function () {
+            var containerURI = _this.context.resolveSystemURI(Ticket.TICKETS_CONTAINER);
+            return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class());
+        }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });

@@ -19,7 +19,7 @@ export declare class Class {
     addUsers(roleURI: string, users: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeUser(roleURI: string, user: Pointer.Class | string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeUsers(roleURI: string, users: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    private resolveURI(userURI);
+    private resolveURI(relativeURI);
     private getUsersAccessPoint(roleURI);
     private getContainerURI();
 }

@@ -6,11 +6,12 @@ export interface Class {
 	auth:Auth;
 	documents:Documents;
 
-	parentContext:Class;
-
-	getBaseURI():string;
+	readonly baseURI:string;
+	readonly parentContext:Class;
 
 	resolve( relativeURI:string ):string;
+
+	resolveSystemURI( relativeURI:string );
 
 	hasSetting( name:string ):boolean;
 

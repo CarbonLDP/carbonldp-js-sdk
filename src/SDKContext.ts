@@ -14,6 +14,7 @@ export class Class implements Context.Class {
 	auth:Auth.Class;
 	documents:Documents.Class;
 
+	get baseURI():string { return ""; }
 	get parentContext():Context.Class { return null; }
 
 	protected settings:Map<string, any>;
@@ -33,12 +34,27 @@ export class Class implements Context.Class {
 		this.registerDefaultObjectSchemas();
 	}
 
-	getBaseURI():string {
-		return this.resolve( "" );
-	}
-
 	resolve( relativeURI:string ):string {
 		return relativeURI;
+	}
+
+	/**
+	 * Resolve the URI provided in the scope of the system container of your Carbon LDP instance.
+	 *
+	 * If no `system.container` setting has been set an IllegalStateError will be thrown.
+	 * If the URI provided is outside the system container an IllegalArgumentError will be thrown.
+	 *
+	 * @param relativeURI Relative URI to be resolved.
+	 * @returns The absolute URI that has been resolved.
+	 */
+	resolveSystemURI( relativeURI:string ):string {
+		if( ! this.hasSetting( "system.container" ) ) throw new Errors.IllegalStateError( `The "system.container" setting hasn't been defined.` );
+		const systemContainer:string = this.resolve( this.getSetting( "system.container" ) );
+
+		const systemURI:string = RDF.URI.Util.resolve( systemContainer, relativeURI );
+		if( ! systemURI.startsWith( systemContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the system container of your Carbon LDP instance.` );
+
+		return systemURI;
 	}
 
 	hasSetting( name:string ):boolean {

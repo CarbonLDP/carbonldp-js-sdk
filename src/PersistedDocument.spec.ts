@@ -665,8 +665,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isRelative( uri ) ? `http://example.com/${uri}` : uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();

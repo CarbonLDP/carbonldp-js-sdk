@@ -19,16 +19,27 @@ var Class = (function () {
         this.documents = new Documents.Class(this);
         this.registerDefaultObjectSchemas();
     }
+    Object.defineProperty(Class.prototype, "baseURI", {
+        get: function () { return ""; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class.prototype, "parentContext", {
         get: function () { return null; },
         enumerable: true,
         configurable: true
     });
-    Class.prototype.getBaseURI = function () {
-        return this.resolve("");
-    };
     Class.prototype.resolve = function (relativeURI) {
         return relativeURI;
+    };
+    Class.prototype.resolveSystemURI = function (relativeURI) {
+        if (!this.hasSetting("system.container"))
+            throw new Errors.IllegalStateError("The \"system.container\" setting hasn't been defined.");
+        var systemContainer = this.resolve(this.getSetting("system.container"));
+        var systemURI = RDF.URI.Util.resolve(systemContainer, relativeURI);
+        if (!systemURI.startsWith(systemContainer))
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP instance.");
+        return systemURI;
     };
     Class.prototype.hasSetting = function (name) {
         return (this.settings.has(name))

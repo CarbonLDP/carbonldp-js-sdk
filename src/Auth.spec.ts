@@ -248,8 +248,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			{ name: "context", type: "Carbon.Context.Class" },
 		] ), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			} );
 
@@ -264,8 +268,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"Instance of `Carbon.Auth.Users.Class` that helps you manage the users of the current context."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "";
 				}
 			}
 			let auth:Auth.Class = new Auth.Class( new MockedContext() );
@@ -296,8 +303,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			(() => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -307,8 +317,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			(() => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -328,8 +341,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			(() => {
 				let parentContext:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
+						this._baseURI = "";
 						this.auth = new class extends Auth.Class {
 							constructor( _context:AbstractContext ) {
 								super( _context );
@@ -337,16 +353,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 							}
 						}( this );
 					}
-
-					resolve( uri:string ):string {
-						return uri;
-					}
 				};
 				let context:AbstractContext = new class extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super( parentContext );
+						this._baseURI = "";
 					}
-				}( parentContext );
+				};
 
 				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
 				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
@@ -359,33 +374,31 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			(() => {
 				let parentContext:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
+						this._baseURI = "";
 						this.auth = new class extends Auth.Class {
 							constructor( _context:AbstractContext ) {
 								super( _context );
 								this._authenticatedUser = createUser( _context );
 							}
 						}( this );
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				};
 				let context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super( parentContext );
+						this._baseURI = "";
 						this.auth = new class extends Auth.Class {
 							constructor( _context:AbstractContext ) {
 								super( _context );
 								this._authenticatedUser = createUser( _context );
 							}
 						}( this );
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				};
 
@@ -408,8 +421,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"In this class the property is set to `null`, and implementations of this class set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`."
 		), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "";
 				}
 			} );
 
@@ -429,8 +445,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Property Integrity
 			(function propertyIntegrity():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -443,13 +462,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Neither current nor parent authenticated
 			(function currentNotAuthenticated_parentNotAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -472,13 +490,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Current not authenticated but parent is
 			(function currentNotAuthenticated_parentAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -501,13 +518,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Current and parent authenticated
 			(function currentAuthenticated_parentAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -531,13 +547,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Current authenticated but parent not
 			(function currentAuthenticated_parentNotAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -570,8 +585,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			{ type: "Promise<Carbon.Auth.Token.Class>" }
 		), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "";
 				}
 			} );
 
@@ -593,8 +611,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				context = new MockedContext();
@@ -608,7 +630,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/users/me/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": "1234567890",
@@ -724,7 +746,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
-				jasmine.Ajax.stubRequest( /token/ ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/.system/auth-tokens/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
 						"@id": "_:00",
@@ -745,7 +767,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@value": "\\"1234567890\\""
 						} ],
 						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/successful/users/my-user/"
+							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
@@ -761,12 +783,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 						},
 						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-							"@id": "http://example.com/successful/users/my-user/"
+							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
-						"@id": "http://example.com/successful/users/my-user/",
+						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/successful/users/my-user/",
+							"@id": "http://example.com/users/my-user/",
 							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 							"https://carbonldp.com/ns/v1/security#name": [ {
 								"@value": "My User Name",
@@ -965,8 +987,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Property Integrity
 			(function propertyIntegrity():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -980,14 +1005,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Neither current nor parent authenticated
 			(function currentNotAuthenticated_parentNotAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
 						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1007,14 +1031,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Current not authenticated but parent is
 			(function currentNotAuthenticated_parentAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
 						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1034,14 +1057,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Current and parent authenticated
 			(function currentAuthenticated_parentAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
 						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1066,14 +1088,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Current authenticated but parent not
 			(function currentAuthenticated_parentNotAuthenticated():void {
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
 						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1105,8 +1126,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Property Integrity
 			(function propertyIntegrity():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1120,8 +1144,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// The module isn't authenticated
 			(function NotAuthenticated():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1135,8 +1162,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// The module is authenticated
 			(function currentAuthenticated():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -1168,25 +1198,34 @@ describe( module( "Carbon/Auth" ), ():void => {
 			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			class MockedEmptyContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/empty/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://empty.example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			class MockedMultipleContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/multiple/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://multiple.example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
-			let context:AbstractContext = new MockedContext();
-
-			let auth:Auth.Class = new Auth.Class( context );
-
+			let auth:Auth.Class = new Auth.Class( new MockedContext() );
 			let auth2:Auth.Class = new Auth.Class( new MockedEmptyContext() );
 			let auth3:Auth.Class = new Auth.Class( new MockedMultipleContext() );
 
@@ -1196,7 +1235,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			let expirationTime:Date = new Date();
 			expirationTime.setDate( expirationTime.getDate() + 1 );
 
-			jasmine.Ajax.stubRequest( "http://example.com/auth-tickets/", null, "POST" ).andReturn( {
+			jasmine.Ajax.stubRequest( "http://example.com/.system/auth-tickets/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: `[ {
 					"@id":"_:01",
@@ -1216,11 +1255,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 				} ]`,
 			} );
 
-			jasmine.Ajax.stubRequest( "http://example.com/empty/auth-tickets/", null, "POST" ).andReturn( {
+			jasmine.Ajax.stubRequest( "http://empty.example.com/.system/auth-tickets/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: "[]",
 			} );
-			jasmine.Ajax.stubRequest( "http://example.com/multiple/auth-tickets/", null, "POST" ).andReturn( {
+			jasmine.Ajax.stubRequest( "http://multiple.example.com/.system/auth-tickets/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: `[ {
 					"@id":"_:01",
@@ -1232,7 +1271,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"https://carbonldp.com/ns/v1/security#forIRI":[ {
-						"@id": "http://example.com/resource/"
+						"@id": "http://multiple.example.com/resource/"
 					} ],
 					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
 						"@value": "1234123412341234"
@@ -1247,7 +1286,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"https://carbonldp.com/ns/v1/security#forIRI":[ {
-						"@id": "http://example.com/resource/"
+						"@id": "http://multiple.example.com/resource/"
 					} ],
 					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
 						"@value": "1234123412341234"
@@ -1278,11 +1317,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( checkSuccess ) );
 
-			promise = auth2.createTicket( "http://example.com/resource/" );
+			promise = auth2.createTicket( "http://empty.example.com/resource/" );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( checkFail ) );
 
-			promise = auth3.createTicket( "http://example.com/resource/" );
+			promise = auth3.createTicket( "http://multiple.example.com/resource/" );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( checkFail ) );
 
@@ -1299,8 +1338,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			{ type: "Promise<string>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 

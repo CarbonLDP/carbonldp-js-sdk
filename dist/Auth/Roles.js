@@ -18,16 +18,16 @@ var Class = (function () {
         var containerURI;
         var persistedRole;
         var responseCreated;
-        return this.resolveURI("").then(function (uri) {
-            containerURI = uri;
+        return Promise.resolve().then(function () {
+            containerURI = _this.getContainerURI();
             parentURI = URI.Util.resolve(containerURI, parentURI);
             if (!URI.Util.isBaseOf(containerURI, parentURI))
-                throw new Errors.IllegalArgumentError("The parent role provided is not a valid role of the current context.");
+                throw new Errors.IllegalArgumentError("The parent role provided is not a valid role.");
             return _this.context.documents.exists(parentURI);
         }).then(function (_a) {
             var exists = _a[0], response = _a[1];
             if (!exists)
-                throw new Errors.IllegalArgumentError("The parent role provided does not exist.");
+                throw new Errors.IllegalArgumentError("The parent role provided doesn't exist.");
             return _this.context.documents.createChild(containerURI, role, slug, requestOptions);
         }).then(function (_a) {
             var newRole = _a[0], response = _a[1];
@@ -40,8 +40,8 @@ var Class = (function () {
     };
     Class.prototype.get = function (roleURI, requestOptions) {
         var _this = this;
-        return this.resolveURI(roleURI).then(function (uri) {
-            return _this.context.documents.get(uri, requestOptions);
+        return Promise.resolve().then(function () {
+            return _this.context.documents.get(_this.resolveURI(roleURI), requestOptions);
         });
     };
     Class.prototype.listUsers = function (roleURI, requestOptions) {
@@ -77,29 +77,27 @@ var Class = (function () {
             return _this.context.documents.removeMembers(usersAccessPoint.id, users, requestOptions);
         });
     };
-    Class.prototype.resolveURI = function (userURI) {
-        var _this = this;
-        return new Promise(function (resolve) {
-            var containerURI = _this.context.resolve(_this.getContainerURI());
-            var uri = URI.Util.resolve(containerURI, userURI);
-            if (!URI.Util.isBaseOf(containerURI, uri))
-                throw new Errors.IllegalArgumentError("The URI provided is not a valid role of the current context.");
-            resolve(uri);
-        });
+    Class.prototype.resolveURI = function (relativeURI) {
+        var rolesContainer = this.getContainerURI();
+        var absoluteRoleURI = URI.Util.resolve(rolesContainer, relativeURI);
+        if (!absoluteRoleURI.startsWith(rolesContainer))
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" isn't a valid Carbon LDP role.");
+        return absoluteRoleURI;
     };
     Class.prototype.getUsersAccessPoint = function (roleURI) {
         var _this = this;
-        return this.resolveURI(roleURI).then(function (uri) {
-            return _this.context.documents.executeSELECTQuery(uri, "select distinct ?usersAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .\n\t\t\t\t?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .\n\t\t\t}");
-        }).then(function (_a) {
+        return Promise.resolve()
+            .then(function () { return _this.resolveURI(roleURI); })
+            .then(function (uri) { return _this.context.documents.executeSELECTQuery(uri, "select distinct ?usersAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .\n\t\t\t\t?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .\n\t\t\t}"); })
+            .then(function (_a) {
             var selectResults = _a[0], response = _a[1];
             return selectResults.bindings[0]["usersAccessPoint"];
         });
     };
     Class.prototype.getContainerURI = function () {
         if (!this.context.hasSetting("system.roles.container"))
-            throw new Errors.IllegalStateError("The roles container setting hasn't been declared.");
-        return this.context.getSetting("system.roles.container");
+            throw new Errors.IllegalStateError("The \"system.roles.container\" setting hasn't been defined.");
+        return this.context.resolveSystemURI(this.context.getSetting("system.roles.container"));
     };
     return Class;
 }());

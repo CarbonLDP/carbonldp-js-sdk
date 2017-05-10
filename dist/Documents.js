@@ -64,10 +64,9 @@ var Class = (function () {
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(id))
                 id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
-            var baseURI = this.context.getBaseURI();
             if (RDF.URI.Util.isRelative(id))
                 return true;
-            if (RDF.URI.Util.isBaseOf(baseURI, id))
+            if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
                 return true;
         }
         else {
@@ -640,7 +639,7 @@ var Class = (function () {
         sparqlBuilder._entryPoint = documentURI;
         var builder = sparqlBuilder.base(documentURI);
         if (!!this.context) {
-            builder.base(this.context.getBaseURI());
+            builder.base(this.context.baseURI);
             if (this.context.hasSetting("vocabulary"))
                 builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
             var schema = this.context.getObjectSchema();
@@ -731,7 +730,7 @@ var Class = (function () {
             if (RDF.URI.Util.isPrefixed(uri))
                 uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
-                var baseURI = this.context.getBaseURI();
+                var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
                     return null;
                 return uri.substring(baseURI.length);
@@ -845,12 +844,8 @@ var Class = (function () {
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
-        else {
-            if (this.context) {
-                var baseURI = this.context.getBaseURI();
-                if (!RDF.URI.Util.isBaseOf(baseURI, uri))
-                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
-            }
+        else if (this.context && !RDF.URI.Util.isBaseOf(this.context.baseURI, uri)) {
+            throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
         }
         return uri;
     };

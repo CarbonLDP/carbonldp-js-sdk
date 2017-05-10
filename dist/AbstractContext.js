@@ -10,6 +10,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = require("./Errors");
+var RDF = require("./RDF");
 var SDKContext = require("./SDKContext");
 var Class = (function (_super) {
     __extends(Class, _super);
@@ -21,11 +23,22 @@ var Class = (function (_super) {
         _this.typeObjectSchemaMap = new Map();
         return _this;
     }
+    Object.defineProperty(Class.prototype, "baseURI", {
+        get: function () { return this._baseURI; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class.prototype, "parentContext", {
         get: function () { return this._parentContext; },
         enumerable: true,
         configurable: true
     });
+    Class.prototype.resolve = function (relativeURI) {
+        var absoluteURI = RDF.URI.Util.resolve(this.baseURI, relativeURI);
+        if (!absoluteURI.startsWith(this.baseURI))
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to your Carbon LDP instance.");
+        return absoluteURI;
+    };
     return Class;
 }(SDKContext.Class));
 exports.Class = Class;

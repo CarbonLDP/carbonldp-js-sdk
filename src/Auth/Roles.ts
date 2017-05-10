@@ -30,18 +30,18 @@ export class Class {
 		let containerURI:string;
 		let persistedRole:T & PersistedRole.Class;
 		let responseCreated:HTTP.Response.Class;
-		return this.resolveURI( "" ).then( ( uri:string ) => {
-			containerURI = uri;
+		return Promise.resolve().then( () => {
+			containerURI = this.getContainerURI();
 
 			parentURI = URI.Util.resolve( containerURI, parentURI );
-			if( ! URI.Util.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role of the current context." );
+			if( ! URI.Util.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role." );
 			return this.context.documents.exists( parentURI );
 
 		} ).then( ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ) => {
-			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
+			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided doesn't exist." );
 			return this.context.documents.createChild<T>( containerURI, role, slug, requestOptions );
 
-		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class] ) => {
+		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
 			responseCreated = response;
 			persistedRole = PersistedRole.Factory.decorate( newRole, this );
 			return this.context.documents.addMember( parentURI, newRole );
@@ -52,8 +52,8 @@ export class Class {
 	}
 
 	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
-		return this.resolveURI( roleURI ).then( ( uri:string ) => {
-			return this.context.documents.get<T & PersistedRole.Class>( uri, requestOptions );
+		return Promise.resolve().then( () => {
+			return this.context.documents.get<T & PersistedRole.Class>( this.resolveURI( roleURI ), requestOptions );
 		} );
 	}
 
@@ -93,32 +93,30 @@ export class Class {
 		} );
 	}
 
-	private resolveURI( userURI:string ):Promise<string> {
-		return new Promise<string>( ( resolve:( uri:string ) => void ) => {
-			let containerURI:string = this.context.resolve( this.getContainerURI() );
-			let uri:string = URI.Util.resolve( containerURI, userURI );
+	private resolveURI( relativeURI:string ):string {
+		const rolesContainer:string = this.getContainerURI();
+		const absoluteRoleURI:string = URI.Util.resolve( rolesContainer, relativeURI );
+		if( ! absoluteRoleURI.startsWith( rolesContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" isn't a valid Carbon LDP role.` );
 
-			if( ! URI.Util.isBaseOf( containerURI, uri ) ) throw new Errors.IllegalArgumentError( "The URI provided is not a valid role of the current context." );
-
-			resolve( uri );
-		} );
+		return absoluteRoleURI;
 	}
 
 	// TODO: Optimize
 	private getUsersAccessPoint( roleURI:string ):Promise<Pointer.Class> {
-		return this.resolveURI( roleURI ).then( ( uri:string ) => {
-			return this.context.documents.executeSELECTQuery( uri, `select distinct ?usersAccessPoint where {
+		return Promise.resolve()
+			.then( () => this.resolveURI( roleURI ) )
+			.then( ( uri:string ) => this.context.documents.executeSELECTQuery( uri, `select distinct ?usersAccessPoint where {
 				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .
 				?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .
-			}` );
-		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
-			return <Pointer.Class> selectResults.bindings[ 0 ][ "usersAccessPoint" ];
-		} );
+			}` ) )
+			.then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
+				return <Pointer.Class> selectResults.bindings[ 0 ][ "usersAccessPoint" ];
+			} );
 	}
 
 	private getContainerURI():string {
-		if( ! this.context.hasSetting( "system.roles.container" ) ) throw new Errors.IllegalStateError( "The roles container setting hasn't been declared." );
-		return this.context.getSetting( "system.roles.container" );
+		if( ! this.context.hasSetting( "system.roles.container" ) ) throw new Errors.IllegalStateError( `The "system.roles.container" setting hasn't been defined.` );
+		return this.context.resolveSystemURI( this.context.getSetting( "system.roles.container" ) );
 	}
 
 }

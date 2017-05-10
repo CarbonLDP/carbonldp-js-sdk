@@ -38,14 +38,18 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Users."},
+			{ name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Users." },
 		] ), ():void => {
 			let users:Users.Class;
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/container/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -72,8 +76,12 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/container/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -113,9 +121,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 				Promise.all( promises ).then( ():void => {
 					expect( spy ).toHaveBeenCalledTimes( 3 );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/container/users/", user, "userSlug" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/container/users/", user, null );
-					expect( spy ).not.toHaveBeenCalledWith( "http://example.com/container/users/", user );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/", user, "userSlug" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/", user, null );
+					expect( spy ).not.toHaveBeenCalledWith( "http://example.com/users/", user );
 					done();
 				} );
 
@@ -127,17 +135,21 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			INSTANCE,
 			"get",
 			"Retrieves the user specified from the current context.", [
-				{name: "userURI", type: "string", description: "The URI of the user to retrieve."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -148,7 +160,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.get ).toBeDefined();
 			expect( Utils.isFunction( users.get ) ).toBe( true );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
 
 			users.get( "http://example.com/users/an-user/" ).then( done.fail ).catch( ( stateError:Error ) => {
@@ -190,17 +202,21 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			INSTANCE,
 			"enable",
 			"Activate the account of the user specified.", [
-				{name: "userURI", type: "string", description: "The URI of the user to be activated."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "userURI", type: "string", description: "The URI of the user to be activated." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -210,9 +226,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.enable ).toBeDefined();
 			expect( Utils.isFunction( users.enable ) ).toBe( true );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spyGet:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( ():[ PersistedUser.Class, HTTP.Response.Class ] => {
-				let persistedUser:PersistedUser.Class = <any> PersistedDocument.Factory.createFrom( {enabled: false}, "", context.documents );
+				let persistedUser:PersistedUser.Class = <any> PersistedDocument.Factory.createFrom( { enabled: false }, "", context.documents );
 				return [ persistedUser, null ];
 			} );
 			let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, null ] ) );
@@ -262,17 +278,21 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			INSTANCE,
 			"disable",
 			"Deactivate the account of the user specified.", [
-				{name: "userURI", type: "string", description: "The URI of the user to be deactivated."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "userURI", type: "string", description: "The URI of the user to be deactivated." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>"}
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -282,9 +302,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.disable ).toBeDefined();
 			expect( Utils.isFunction( users.disable ) ).toBe( true );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spyGet:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( ():[ PersistedUser.Class, HTTP.Response.Class ] => {
-				let persistedUser:PersistedUser.Class = <any> PersistedDocument.Factory.createFrom( {enabled: true}, "", context.documents );
+				let persistedUser:PersistedUser.Class = <any> PersistedDocument.Factory.createFrom( { enabled: true }, "", context.documents );
 				return [ persistedUser, null ];
 			} );
 			let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, null ] ) );
@@ -334,17 +354,21 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			INSTANCE,
 			"delete",
 			"Deletes the user specified.", [
-				{name: "userURI", type: "string", description: "The URI of the user to be deleted."},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>"}
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -354,7 +378,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.delete ).toBeDefined();
 			expect( Utils.isFunction( users.delete ) ).toBe( true );
 
-			let options:HTTP.Request.Options = {timeout: 5555};
+			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "delete" ).and.returnValue( Promise.resolve() );
 
 			users.delete( "http://example.com/users/an-user/" ).then( done.fail ).catch( ( stateError:Error ) => {

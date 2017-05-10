@@ -11,6 +11,7 @@ var Utils = require("./../Utils");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var Token = require("./Token");
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
+exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {
         if (context === null)
@@ -50,12 +51,14 @@ var Class = (function () {
     };
     Class.prototype.createToken = function () {
         var _this = this;
-        var uri = this.context.resolve(Class.TOKEN_CONTAINER);
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return HTTP.Request.Service.post(uri, null, requestOptions, new JSONLD.Parser.Class()).then(function (_a) {
+        return Promise.resolve().then(function () {
+            var tokensURI = _this.context.resolveSystemURI(exports.TOKEN_CONTAINER);
+            return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
+        }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);
@@ -85,7 +88,6 @@ var Class = (function () {
     };
     return Class;
 }());
-Class.TOKEN_CONTAINER = "auth-tokens/";
 exports.Class = Class;
 exports.default = Class;
 

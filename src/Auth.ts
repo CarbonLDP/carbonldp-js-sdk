@@ -135,7 +135,6 @@ export class Class {
 
 	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
 		let resourceURI:string = this.context.resolve( uri );
-		let containerURI:string = this.context.resolve( Ticket.TICKETS_CONTAINER );
 
 		let freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
 		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
@@ -145,7 +144,10 @@ export class Class {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return Promise.resolve().then( () => {
+			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
+			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() );
+		} ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );

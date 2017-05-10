@@ -3,7 +3,7 @@
 
 module.exports = function( config ) {
 	let configuration = {
-		frameworks: [ "jspm", "jasmine" ],
+		frameworks: [ "jspm", "jasmine-ajax", "jasmine" ],
 
 		jspm: {
 			browser: "jspm.browser.js",
@@ -15,7 +15,6 @@ module.exports = function( config ) {
 
 			loadFiles: [
 				"test/karma-jasmine/lib/extender.js",
-				"node_modules/jasmine-ajax/lib/mock-ajax.js",
 				"node_modules/es6-shim/es6-shim.min.js",
 
 				"src/**/*.spec.ts"

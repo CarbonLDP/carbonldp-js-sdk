@@ -14,8 +14,9 @@ import BasicAuthenticator from "./BasicAuthenticator";
 import * as Token from "./Token";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
+export const TOKEN_CONTAINER:string = "auth-tokens/";
+
 export class Class implements Authenticator<UsernameAndPasswordToken> {
-	private static TOKEN_CONTAINER:string = "auth-tokens/";
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
@@ -64,7 +65,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
-		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
@@ -72,7 +72,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( uri, null, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return Promise.resolve().then( () => {
+			const tokensURI:string = this.context.resolveSystemURI( TOKEN_CONTAINER );
+			return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
+		} ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );

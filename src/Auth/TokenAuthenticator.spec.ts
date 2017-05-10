@@ -32,6 +32,11 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		expect( Utils.isObject( TokenAuthenticator ) ).toEqual( true );
 	} );
 
+	it( "should have token container constant", () => {
+		expect( TokenAuthenticator.TOKEN_CONTAINER ).toBeDefined();
+		expect( TokenAuthenticator.TOKEN_CONTAINER ).toBe( "auth-tokens/" );
+	} );
+
 	describe( clazz(
 		"Carbon.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web Token (JWT) Authentication.", [
@@ -56,8 +61,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the user." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -74,8 +83,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -124,8 +137,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				// Property Integrity
 				(() => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 					let context:AbstractContext = new MockedContext();
@@ -140,14 +157,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				// Successful Authentication
 				(() => {
 					class SuccessfulContext extends AbstractContext {
-						resolve( relativeURI:string ):string {
-							return "http://example.com/successful/" + relativeURI;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://successful.example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let expirationTime:Date = new Date();
 					expirationTime.setDate( expirationTime.getDate() + 1 );
-					jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
+					jasmine.Ajax.stubRequest( "http://successful.example.com/.system/auth-tokens/", null, "POST" ).andReturn( {
 						status: 200,
 						responseText: `[ {
 							"@id": "_:00",
@@ -168,7 +189,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@value": "\\"1234567890\\""
 							} ],
 							"https://carbonldp.com/ns/v1/platform#resource": [ {
-								"@id": "http://example.com/successful/users/my-user/"
+								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
@@ -184,12 +205,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 							},
 							"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-								"@id": "http://example.com/successful/users/my-user/"
+								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
-							"@id": "http://example.com/successful/users/my-user/",
+							"@id": "http://successful.example.com/users/my-user/",
 							"@graph": [ {
-								"@id": "http://example.com/successful/users/my-user/",
+								"@id": "http://successful.example.com/users/my-user/",
 								"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 								"https://carbonldp.com/ns/v1/security#name": [ {
 									"@value": "My User Name",
@@ -224,14 +245,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				// Unsuccessful Authentication
 				(() => {
 					class UnsuccessfulContext extends AbstractContext {
-						resolve( relativeURI:string ):string {
-							return "http://example.com/unsuccessful/" + relativeURI;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://unsuccessful.example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let expirationTime:Date = new Date();
 					expirationTime.setDate( expirationTime.getDate() + 1 );
-					jasmine.Ajax.stubRequest( "http://example.com/unsuccessful/auth-tokens/", null, "POST" ).andReturn( {
+					jasmine.Ajax.stubRequest( "http://unsuccessful.example.com/.system/auth-tokens/", null, "POST" ).andReturn( {
 						status: 401,
 					} );
 
@@ -258,8 +283,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -359,8 +388,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			// Property Integrity
 			(() => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -372,8 +405,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			(() => {
 				class Context extends AbstractContext {
-					resolve( relativeURI:string ):string {
-						return "http://example.com/successful/" + relativeURI;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://successful.example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -408,8 +445,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			(() => {
 				class Context extends AbstractContext {
-					resolve( relativeURI:string ):string {
-						return "http://example.com/successful/" + relativeURI;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://successfull.example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -448,8 +489,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			(() => {
 				class Context extends AbstractContext {
-					resolve( relativeURI:string ):string {
-						return "http://example.com/successful/" + relativeURI;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://successfull.example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -492,8 +537,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			(() => {
 				class Context extends AbstractContext {
-					resolve( relativeURI:string ):string {
-						return "http://example.com/successful/" + relativeURI;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://successful.example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -537,8 +586,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			(() => {
 				class Context extends AbstractContext {
-					resolve( relativeURI:string ):string {
-						return "http://example.com/successful/" + relativeURI;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://successful.example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -588,8 +641,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			// Property Integrity
 			(() => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
@@ -605,14 +662,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			// Successful Authentication
 			(() => {
 				class SuccessfulContext extends AbstractContext {
-					resolve( relativeURI:string ):string {
-						return "http://example.com/successful/" + relativeURI;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://successful.example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				jasmine.Ajax.stubRequest( "http://example.com/successful/auth-tokens/", null, "POST" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://successful.example.com/.system/auth-tokens/", null, "POST" ).andReturn( {
 					status: 200,
 					responseText: `[ {
 						"@id": "_:00",
@@ -633,7 +694,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							"@value": "\\"1234567890\\""
 						} ],
 						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/successful/users/my-user/"
+							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
@@ -649,12 +710,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 						},
 						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-							"@id": "http://example.com/successful/users/my-user/"
+							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
-						"@id": "http://example.com/successful/users/my-user/",
+						"@id": "http://successful.example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/successful/users/my-user/",
+							"@id": "http://successful.example.com/users/my-user/",
 							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
 							"https://carbonldp.com/ns/v1/security#name": [ {
 								"@value": "My User Name",

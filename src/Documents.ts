@@ -84,9 +84,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( ! ! this.context ) {
 			if( RDF.URI.Util.isPrefixed( id ) ) id = ObjectSchema.Digester.resolvePrefixedURI( id, this.context.getObjectSchema() );
 
-			let baseURI:string = this.context.getBaseURI();
 			if( RDF.URI.Util.isRelative( id ) ) return true;
-			if( RDF.URI.Util.isBaseOf( baseURI, id ) ) return true;
+			if( RDF.URI.Util.isBaseOf( this.context.baseURI, id ) ) return true;
 		} else {
 			if( RDF.URI.Util.isAbsolute( id ) ) return true;
 		}
@@ -750,7 +749,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		let builder:QueryClause = sparqlBuilder.base( documentURI );
 
 		if( ! ! this.context ) {
-			builder.base( this.context.getBaseURI() );
+			builder.base( this.context.baseURI );
 			if( this.context.hasSetting( "vocabulary" ) ) builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
 
 			let schema:ObjectSchema.DigestedObjectSchema = this.context.getObjectSchema();
@@ -858,7 +857,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.getGeneralSchema() );
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
-				let baseURI:string = this.context.getBaseURI();
+				const baseURI:string = this.context.baseURI;
 				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) return null;
 
 				return uri.substring( baseURI.length );
@@ -978,11 +977,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
-		} else {
-			if( this.context ) {
-				let baseURI:string = this.context.getBaseURI();
-				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) throw new Errors.IllegalArgumentError( `The provided URI '${ uri }' is not a valid URI for the current context.` );
-			}
+		} else if( this.context && ! RDF.URI.Util.isBaseOf( this.context.baseURI, uri ) ) {
+			throw new Errors.IllegalArgumentError( `The provided URI '${ uri }' is not a valid URI for the current context.` );
 		}
 		return uri;
 	}

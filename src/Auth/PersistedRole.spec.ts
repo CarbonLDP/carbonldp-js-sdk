@@ -304,8 +304,12 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			expect( Utils.isFunction( PersistedRole.Factory.decorate ) ).toBe( true );
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.resolve( "http://example.com/", uri );
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:AbstractContext = new MockedContext();
@@ -334,8 +338,12 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.resolve( "http://example.com/", uri );
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -344,7 +352,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				roles = new MockRoles( context );
 
 				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), roles );
-				role.id = "http://example.com/roles/a-role/";
+				role.id = "http://example.com/.system/roles/a-role/";
 			} );
 
 			describe( method(
@@ -372,13 +380,13 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					let options:HTTP.Request.Options = { timeout: 5050 };
 
 					role.createChild( newRole, "role-slug", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, "role-slug", options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, "role-slug", options );
 
 					role.createChild( newRole, "role-slug" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, "role-slug", undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, "role-slug", undefined );
 
 					role.createChild( newRole );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, undefined, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, undefined, undefined );
 
 					role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 					expect( () => role.createChild( newRole, "role-slug" ) ).toThrowError( Errors.IllegalStateError );
@@ -398,10 +406,10 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					let options:HTTP.Request.Options = { timeout: 5050 };
 
 					role.createChild( newRole, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, options, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, options, undefined );
 
 					role.createChild( newRole );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", newRole, undefined, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, undefined, undefined );
 
 					role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 					expect( () => role.createChild( newRole ) ).toThrowError( Errors.IllegalStateError );
@@ -423,11 +431,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				let spy:jasmine.Spy = spyOn( roles, "listUsers" );
 
 				role.listUsers();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
 
 				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.listUsers( options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
 
 				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.listUsers() ).toThrowError( Errors.IllegalStateError );
@@ -455,11 +463,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "getUsers" );
 
 					role.getUsers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", undefined, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined, undefined );
 
 					let options:HTTP.Request.Options = { timeout: 5050 };
 					role.getUsers( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", options, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options, undefined );
 				} );
 
 				it( hasSignature(
@@ -472,7 +480,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "getUsers" );
 
 					role.getUsers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", undefined, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined, undefined );
 
 					let retrievalPreferences:RetrievalPreferences.Class = {
 						limit: 10,
@@ -480,11 +488,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
 					};
 					role.getUsers( retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", retrievalPreferences, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", retrievalPreferences, undefined );
 
 					let options:HTTP.Request.Options = { timeout: 5050 };
 					role.getUsers( retrievalPreferences, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", retrievalPreferences, options );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", retrievalPreferences, options );
 
 				} );
 			} );
@@ -504,11 +512,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				let spy:jasmine.Spy = spyOn( roles, "addUsers" );
 
 				role.addUser( "http://example.com/users/an-user/" );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
 
 				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.addUser( role.getPointer( "http://example.com/users/another-user/" ), options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
 
 				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.addUser( "http://example.com/users/an-user/" ) ).toThrowError( Errors.IllegalStateError );
@@ -530,11 +538,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				let users:(string | Pointer.Class)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
 
 				role.addUsers( users );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", users, undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, undefined );
 
 				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.addUsers( users, options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", users, options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, options );
 
 				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.addUsers( users ) ).toThrowError( Errors.IllegalStateError );
@@ -555,11 +563,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				let spy:jasmine.Spy = spyOn( roles, "removeUsers" );
 
 				role.removeUser( "http://example.com/users/an-user/" );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
 
 				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.removeUser( role.getPointer( "http://example.com/users/another-user/" ), options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
 
 				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.removeUser( "http://example.com/users/an-user/" ) ).toThrowError( Errors.IllegalStateError );
@@ -581,11 +589,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				let users:(Pointer.Class | string)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
 
 				role.removeUsers( users );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", users, undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, undefined );
 
 				let options:HTTP.Request.Options = { timeout: 5050 };
 				role.removeUsers( users, options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/roles/a-role/", users, options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, options );
 
 				role = PersistedRole.Factory.decorate( PersistedDocument.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() ), null );
 				expect( () => role.addUsers( users ) ).toThrowError( Errors.IllegalStateError );

@@ -60,12 +60,12 @@ describe( module( "Carbon" ), ():void => {
 		let myCarbon:Carbon.Class;
 
 		beforeEach( ():void => {
-			carbon = new Carbon.Class( "my-carbonldp.example.com", true );
+			carbon = new Carbon.Class( "example.com", true );
 
-			myCarbon = new Carbon.Class( "example.com", false, {
+			myCarbon = new Carbon.Class( "my-carbonldp.example.com", false, {
 				"auth.method": Auth.Method.TOKEN,
-				"system.container": ".another-system/",
-				"system.roles.container": "example-roles/",
+				"system.container": ".my-system/",
+				"system.roles.container": "my-roles/",
 			} );
 
 			jasmine.Ajax.install();
@@ -339,18 +339,47 @@ describe( module( "Carbon" ), ():void => {
 			INSTANCE,
 			"resolve",
 			"Resolve the URI provided in the scope your CarbonLDP Platform instance.", [
-				{ name: "uri", type: "string" },
+				{ name: "relativeURI", type: "string", description: "Relative URI to be resolved." },
 			],
-			{ type: "string" }
+			{ type: "string", description: "The absolute URI that has been resolved." }
 		), ():void => {
 			expect( carbon.resolve ).toBeDefined();
 			expect( Utils.isFunction( carbon.resolve ) ).toBe( true );
 
-			expect( carbon.resolve( "http://example.com/my-resource/" ) ).toBe( "http://example.com/my-resource/" );
-			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://my-carbonldp.example.com/my-resource/" );
+			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://example.com/my-resource/" );
+			expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
+			expect( () => carbon.resolve( "http://my-carbon.example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
 
-			expect( myCarbon.resolve( "http://example.com/my-resource/" ) ).toBe( "http://example.com/my-resource/" );
-			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://example.com/my-resource/" );
+			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
+			expect( myCarbon.resolve( "http://my-carbonldp.example.com/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
+			expect( () => myCarbon.resolve( "https://example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+		} );
+
+		it( hasMethod(
+			INSTANCE,
+			"resolveSystemURI",
+			"Resolve the URI provided in the scope of the system container of your Carbon LDP instance.\n\nIf no `system.container` setting has been set an IllegalStateError will be thrown.\nIf the URI provided is outside the system container an IllegalArgumentError will be thrown.", [
+				{ name: "relativeURI", type: "string", description: "Relative URI to be resolved." },
+			],
+			{ type: "string", description: "The absolute URI that has been resolved." }
+		), ():void => {
+			expect( carbon.resolveSystemURI ).toBeDefined();
+			expect( carbon.resolveSystemURI ).toEqual( jasmine.any( Function ) );
+
+			expect( carbon.resolveSystemURI( "my-resource/" ) ).toBe( "https://example.com/.system/my-resource/" );
+			expect( carbon.resolveSystemURI( "https://example.com/.system/my-resource/" ) ).toBe( "https://example.com/.system/my-resource/" );
+			expect( () => carbon.resolveSystemURI( "https://example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => carbon.resolveSystemURI( "https://example.com/.my-system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+
+			expect( myCarbon.resolveSystemURI( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/.my-system/my-resource/" );
+			expect( myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/.my-system/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/.my-system/my-resource/" );
+			expect( () => myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/.system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => myCarbon.resolveSystemURI( "https://example.com/.my-system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+
+			// No `system.container` defined
+			carbon.deleteSetting( "system.container" );
+			expect( () => carbon.resolveSystemURI( "my-resource/" ) ).toThrowError( Errors.IllegalStateError );
 		} );
 
 		describe( method(
@@ -395,14 +424,14 @@ describe( module( "Carbon" ), ():void => {
 			it( hasSignature(
 				{ type: "Promise<Carbon.PlatformMetadata.Class>" }
 			), ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://my-carbonldp.example.com/.system/platform/", null, "GET" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": '"123456789"',
 					},
 					responseText: `[ {
 					"@graph": [ {
-						"@id": "https://my-carbonldp.example.com/.system/platform/",
+						"@id": "https://example.com/.system/platform/",
 						"@type": [ "${ NS.C.Class.VolatileResource }", "${ NS.C.Class.Platform }" ],
 						"${ NS.C.Predicate.buildDate }": [ {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
@@ -413,7 +442,7 @@ describe( module( "Carbon" ), ():void => {
 						} ]
 					}
 					],
-					"@id": "https://my-carbonldp.example.com/.system/platform/"
+					"@id": "https://example.com/.system/platform/"
 				} ]`,
 				} );
 
@@ -442,7 +471,7 @@ describe( module( "Carbon" ), ():void => {
 		describe( method(
 			INSTANCE,
 			"getInstanceMetadata",
-			"Retrieves the Metadata related to your instance of the Carbon LDP Platform.",
+			"Retrieves the Metadata related to your instance of the Carbon LDP Platform."
 		), ():void => {
 
 			it( "should exists", ():void => {
@@ -481,14 +510,14 @@ describe( module( "Carbon" ), ():void => {
 			it( hasSignature(
 				{ type: "Promise<Carbon.InstanceMetadata.Class>" }
 			), ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://my-carbonldp.example.com/.system/instance/", null, "GET" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/.system/instance/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": '"123456789"',
 					},
 					responseText: `[ {
 					"@graph": [ {
-						"@id": "https://my-carbonldp.example.com/.system/instance/",
+						"@id": "https://example.com/.system/instance/",
 						"@type": [ "${ NS.CS.Class.ProtectedDocument }", "${ NS.C.Class.Instance }" ],
 						"${ NS.CS.Predicate.namae }": [ {
 							"@value": "Your instance's name"
@@ -503,7 +532,7 @@ describe( module( "Carbon" ), ():void => {
 						} ]
 					}
 					],
-					"@id": "https://my-carbonldp.example.com/.system/instance/"
+					"@id": "https://example.com/.system/instance/"
 				} ]`,
 				} );
 

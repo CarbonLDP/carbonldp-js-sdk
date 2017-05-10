@@ -58,26 +58,16 @@ export class Class extends AbstractContext.Class {
 	// noinspection JSMethodCanBeStatic
 	get version():string { return Class.version; }
 
-	private domain:string;
-	private ssl:boolean;
+	protected _baseURI:string;
 
 	constructor( domain:string, ssl?:boolean );
 	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
 	constructor( domain:string, ssl?:boolean, settings?:Settings.Class ) {
 		super();
-
-		this.domain = domain;
-		this.ssl = ssl;
+		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
-	}
-
-	resolve( relativeURI:string ):string {
-		if( RDF.URI.Util.isAbsolute( relativeURI ) ) return relativeURI;
-
-		let baseURI:string = ( this.ssl ? "https://" : "http://" ) + this.domain;
-		return RDF.URI.Util.resolve( baseURI, relativeURI );
 	}
 
 	/**
@@ -94,14 +84,12 @@ export class Class extends AbstractContext.Class {
 		return this.getResourceMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
 	}
 
-	private getResourceMetadata<T>( metadataSetting:string ):Promise<T> {
-		if( ! this.hasSetting( "system.container" ) )
-			return Promise.reject( new Errors.IllegalStateError( `The "system.container" setting hasn't been defied.` ) );
+	private getResourceMetadata<T>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {
 		if( ! this.hasSetting( metadataSetting ) )
 			return Promise.reject( new Errors.IllegalStateError( `The "${ metadataSetting }" setting hasn't been defined.` ) );
 
 		return Promise.resolve()
-			.then( systemURI => RDF.URI.Util.resolve( this.getSetting( "system.container" ), this.getSetting( metadataSetting ) ) )
+			.then( () => this.resolveSystemURI( this.getSetting( metadataSetting ) ) )
 			.then( metadataURI => this.documents.get<T>( metadataURI ) )
 			.then( ( [ metadataDocument ] ) => metadataDocument );
 	}

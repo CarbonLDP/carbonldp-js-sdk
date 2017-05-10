@@ -175,7 +175,13 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockContext extends AbstractContext {
-					resolve( uri:string ):string { return uri; }
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
+					}
 				}
 				let context:AbstractContext = new MockContext();
 				documents = context.documents;
@@ -255,7 +261,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 									],
 									"https://carbonldp.com/ns/v1/security#subject": [
 										{
-											"@id": "https://example.com/roles/my-role/"
+											"@id": "https://example.com/.system/roles/my-role/"
 										}
 									],
 									"https://carbonldp.com/ns/v1/security#subjectClass": [
@@ -285,7 +291,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 									],
 									"https://carbonldp.com/ns/v1/security#subject": [
 										{
-											"@id": "https://example.com/roles/my-role/"
+											"@id": "https://example.com/.system/roles/my-role/"
 										}
 									],
 									"https://carbonldp.com/ns/v1/security#subjectClass": [

@@ -96,8 +96,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -119,8 +123,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -138,8 +146,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -164,8 +176,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -183,8 +199,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "boolean" }
 			), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -222,8 +242,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "boolean" }
 			), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -258,8 +282,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let documents:Documents.Class;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -304,8 +332,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let documents:Documents.Class;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -363,12 +395,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// Throws an error if the context cannot resolve the provided URI
 			expect( () => {
 				class ErrorMockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -380,8 +412,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -545,8 +581,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -623,8 +663,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -732,8 +776,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -836,8 +884,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -955,8 +1007,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -1062,8 +1118,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -1174,8 +1234,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -1202,8 +1266,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -1360,8 +1428,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -1545,8 +1617,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -1719,8 +1795,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -1859,8 +1939,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -2068,8 +2152,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// Two request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -2105,8 +2193,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// One request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -2202,8 +2294,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -2248,8 +2344,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -2274,8 +2374,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// Two request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -2326,8 +2430,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// One request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
@@ -2398,8 +2506,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -2467,8 +2579,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
@@ -2581,8 +2697,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -2985,8 +3105,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3084,8 +3208,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3178,8 +3306,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3201,8 +3333,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3359,8 +3495,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3473,8 +3613,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3529,8 +3673,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3584,8 +3732,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3640,8 +3792,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3691,8 +3847,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -4002,8 +4162,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -4697,8 +4861,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext;
@@ -4757,8 +4925,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
@@ -4811,8 +4983,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext;
@@ -4871,8 +5047,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
@@ -4929,8 +5109,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
@@ -4981,8 +5165,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
@@ -5018,8 +5206,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
@@ -5226,8 +5418,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// Two request behaviour
 			finalPromises.push( (():Promise<any> => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:MockedContext = new MockedContext();
@@ -5257,8 +5453,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// One request behaviour
 			finalPromises.push( (():Promise<any> => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:MockedContext = new MockedContext();
@@ -5323,8 +5523,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -5386,13 +5590,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedAuth extends Auth.Class {}
 			class MockedContext extends AbstractContext {
+				protected _baseURI:string;
+
 				constructor() {
 					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 					this.auth = new MockedAuth( this );
-				}
-
-				resolve( uri:string ):string {
-					return uri;
 				}
 			}
 
@@ -5418,8 +5622,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -5459,8 +5667,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -5502,8 +5714,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -5545,8 +5761,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -5588,8 +5808,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -5632,8 +5856,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "SPARQLER/Clauses/QueryClause" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 

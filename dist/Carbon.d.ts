@@ -50,11 +50,9 @@ export declare class Class extends AbstractContext.Class {
     static Utils: typeof Utils;
     static readonly version: string;
     readonly version: string;
-    private domain;
-    private ssl;
+    protected _baseURI: string;
     constructor(domain: string, ssl?: boolean);
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
-    resolve(relativeURI: string): string;
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;
     private getResourceMetadata<T>(metadataSetting);
