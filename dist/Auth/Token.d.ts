@@ -1,10 +1,9 @@
-import Credentials from "./Credentials";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedUser from "./PersistedUser";
 import * as Resource from "./../Resource";
+import * as PersistedUser from "./PersistedUser";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class, Credentials {
+export interface Class extends Resource.Class {
     key: string;
     expirationTime: Date;
     user: PersistedUser.Class;

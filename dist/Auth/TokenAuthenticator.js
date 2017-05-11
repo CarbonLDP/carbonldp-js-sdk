@@ -10,7 +10,7 @@ var Resource = require("./../Resource");
 var Utils = require("./../Utils");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var Token = require("./Token");
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
+var UsernameAndPasswordToken = require("./UsernameAndPasswordToken");
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {
@@ -24,7 +24,7 @@ var Class = (function () {
     };
     Class.prototype.authenticate = function (authenticationOrCredentials) {
         var _this = this;
-        if (authenticationOrCredentials instanceof UsernameAndPasswordToken_1.default)
+        if (authenticationOrCredentials instanceof UsernameAndPasswordToken.Class)
             return this.basicAuthenticator.authenticate(authenticationOrCredentials).then(function () {
                 return _this.createToken();
             }).then(function (_a) {

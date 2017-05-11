@@ -1,9 +1,8 @@
-import Credentials from "./Credentials";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedUser from "./PersistedUser";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
+import * as PersistedUser from "./PersistedUser";
 
 export const RDF_CLASS:string = NS.CS.Class.Token;
 
@@ -22,7 +21,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Resource.Class, Credentials {
+export interface Class extends Resource.Class {
 	key:string;
 	expirationTime:Date;
 	user:PersistedUser.Class;

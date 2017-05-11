@@ -23,9 +23,7 @@ describe( module( "Carbon/Auth/UsernameAndPasswordCredentials" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.UsernameAndPasswordCredentials.Class",
-		"Wrapper to manage Authentication Credentials in form of Username/Password.", [
-			"Carbon.Auth.Credentials.Class",
-		]
+		"Wrapper to manage Authentication Credentials in form of Username/Password."
 	), ():void => {
 
 		it( isDefined(), ():void => {

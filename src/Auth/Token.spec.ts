@@ -66,7 +66,6 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.Auth.Credentials.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

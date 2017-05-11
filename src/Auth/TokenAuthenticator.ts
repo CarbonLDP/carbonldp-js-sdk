@@ -12,11 +12,11 @@ import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
 import * as Token from "./Token";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 export const TOKEN_CONTAINER:string = "auth-tokens/";
 
-export class Class implements Authenticator<UsernameAndPasswordToken> {
+export class Class implements Authenticator<UsernameAndPasswordToken.Class, Token.Class> {
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
@@ -33,10 +33,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		return ! ! this._credentials && this._credentials.expirationTime > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<Token.Class>;
+	authenticate( authenticationToken:UsernameAndPasswordToken.Class ):Promise<Token.Class>;
 	authenticate( credentials:Token.Class ):Promise<Token.Class>;
-	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
-		if( authenticationOrCredentials instanceof UsernameAndPasswordToken ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
+	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
+		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
 			return this.createToken();
 		} ).then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
 			this.basicAuthenticator.clearAuthentication();

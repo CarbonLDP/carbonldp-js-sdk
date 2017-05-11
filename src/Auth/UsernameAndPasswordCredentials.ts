@@ -1,6 +1,4 @@
-import * as Credentials from "./Credentials";
-
-export class Class implements Credentials.Class {
+export class Class {
 	private _username:string;
 	private _password:string;
 

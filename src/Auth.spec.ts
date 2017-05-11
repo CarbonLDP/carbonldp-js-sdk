@@ -16,30 +16,31 @@ import {
 	hasEnumeral,
 	hasSignature,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as User from "./Auth/User";
-import * as Users from "./Auth/Users";
 import AbstractContext from "./AbstractContext";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedUser from "./Auth/PersistedUser";
-import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedRole from "./Auth/PersistedRole";
+import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import * as User from "./Auth/User";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
+import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import * as Users from "./Auth/Users";
+
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
 import * as URI from "./RDF/URI";
+import * as Utils from "./Utils";
+
 
 import * as Auth from "./Auth";
 import DefaultExport from "./Auth";
@@ -85,13 +86,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.Users ).toBeDefined();
 		expect( Auth.Users ).toBe( Users );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AuthenticationToken",
-		"Carbon.Auth.AuthenticationToken"
-	), ():void => {
 	} );
 
 	it( reexports(
@@ -695,13 +689,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
-				promise = auth02.authenticateUsing( "BASIC", {} );
+				promise = auth02.authenticateUsing( "BASIC" as any, {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication type
 				let auth03:Auth.Class = new Auth.Class( context );
-				promise = auth03.authenticateUsing( "Error", username, password );
+				promise = auth03.authenticateUsing( "Error" as any, username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -816,13 +810,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
-				promise = auth02.authenticateUsing( "TOKEN", {} );
+				promise = auth02.authenticateUsing( "TOKEN", {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication method
 				let auth03:Auth.Class = new Auth.Class( context );
-				promise = auth03.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
+				promise = auth03.authenticateUsing( "Error" as any, "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -957,12 +951,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 				promises.push( promise.catch( spies.fail ) );
 
 				// Wrong parameters
-				promise = auth03.authenticateUsing( "TOKEN", {} );
+				promise = auth03.authenticateUsing( "TOKEN", {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication method
-				promise = auth03.authenticateUsing( "Error", token );
+				promise = auth03.authenticateUsing( "Error" as any, token );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
