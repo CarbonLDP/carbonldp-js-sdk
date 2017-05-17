@@ -41,27 +41,25 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, id:string = null, types:string[] = null ):T & Class {
-		id = ! ! id ? id : ( (<any> object).id || "" );
-		types = ! ! types ? types : ( (<any> object).types || [] );
+		const resource:T & Class = object as T & Class;
+		resource.id = id || resource.id;
+		resource.types = types || resource.types;
 
-		let resource:Class = Factory.decorate( object );
-		resource.id = id;
-		resource.types = types;
-
-		return <any> resource;
+		return Factory.decorate<T>( resource );
 	}
 
 	static decorate<T extends Object>( object:T ):T & Class {
-		Pointer.Factory.decorate<T>( object );
+		const resource:T & Class = object as T & Class;
+		if( Factory.hasClassProperties( object ) ) return resource;
 
-		if( Factory.hasClassProperties( object ) ) return <any> object;
+		Pointer.Factory.decorate<T>( resource );
 
-		Object.defineProperties( object, {
+		Object.defineProperties( resource, {
 			"types": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: [],
+				value: resource.types || [],
 			},
 
 			"addType": {
@@ -84,7 +82,7 @@ export class Factory {
 			},
 		} );
 
-		return <any> object;
+		return resource;
 	}
 }
 

@@ -162,11 +162,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
 
 			// Has default decorators
-			expect( documents.documentDecorators.size ).toBe( 4 );
+			expect( documents.documentDecorators.size ).toBe( 5 );
 			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
 			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
 			expect( documents.documentDecorators.has( NS.CS.Class.User ) ).toBe( true );
 			expect( documents.documentDecorators.has( NS.CS.Class.Role ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Credentials ) ).toBe( true );
 		} );
 
 		describe( method(

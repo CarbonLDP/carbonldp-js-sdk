@@ -35,7 +35,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
     createNamedFragment(slug: string): PersistedNamedFragment.Class;
     createNamedFragment<T extends Object>(object: T, slug: string): PersistedNamedFragment.Class & T;
     refresh<T>(): Promise<[T & Class, HTTP.Response.Class]>;
-    save<T>(): Promise<[T & Class, HTTP.Response.Class]>;
+    save<T>(requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
     saveAndRefresh<T>(): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
     delete(): Promise<HTTP.Response.Class>;
     getDownloadURL(): Promise<string>;
@@ -84,7 +84,7 @@ export declare class Factory {
     static hasClassProperties(object: Object): boolean;
     static is(object: Object): boolean;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
-    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): Class;
+    static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): T & Class;
     static decorate<T extends Object>(document: T, documents: Documents, snapshot?: Object): T & Class;
 }
 export default Class;

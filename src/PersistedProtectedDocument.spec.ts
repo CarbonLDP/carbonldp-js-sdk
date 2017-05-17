@@ -17,7 +17,8 @@ import {
 	hasDefaultExport,
 } from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
-import Documents from "./Documents";
+import * as Document from "./Document";
+import * as Documents from "./Documents";
 import * as HTTP from "./HTTP";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedDocument from "./PersistedDocument";
@@ -125,14 +126,14 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			};
 			expect( PersistedProtectedDocument.Factory.is( object ) ).toBe( false );
 
-			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( object, new Documents() );
+			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( object, new Documents.Class() );
 			expect( PersistedProtectedDocument.Factory.is( document ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			[ "T extends Carbon.PersistedDocument.Class" ],
+			[ "T extends object" ],
 			"Decorate the object with the properties and methods of a `Carbon.PersistedProtectedDocument.Class` object.", [
 				{ name: "document", type: "T", description: "The persisted document to decorate." },
 			],
@@ -141,24 +142,28 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
+			const persistedDocumentSpy:jasmine.Spy = spyOn( PersistedDocument.Factory, "decorate" ).and.callThrough();
+
 			let fn:Function = ():void => {};
-			let document:any;
+			let document:object;
 			let protectedDocument:PersistedProtectedDocument.Class;
 
 			document = {
 				accessControlList: null,
 				getACL: fn,
 			};
-			protectedDocument = PersistedProtectedDocument.Factory.decorate( document );
+			protectedDocument = PersistedProtectedDocument.Factory.decorate( document, new Documents.Class() );
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( protectedDocument ) ).toBe( true );
 			expect( protectedDocument.getACL ).toBe( fn );
 
 			document = {
 				accessControlList: null,
 			};
-			protectedDocument = PersistedProtectedDocument.Factory.decorate( document );
+			protectedDocument = PersistedProtectedDocument.Factory.decorate( document, new Documents.Class() );
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( protectedDocument ) ).toBe( true );
 			expect( protectedDocument.getACL ).not.toBe( fn );
+
+			expect( persistedDocumentSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		describe( decoratedObject(
@@ -167,7 +172,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			]
 		), ():void => {
 			let protectedDocument:PersistedProtectedDocument.Class;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeAll( ():void => {
 				jasmine.Ajax.install();
@@ -186,10 +191,12 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				let context:AbstractContext = new MockContext();
 				documents = context.documents;
 
-				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
-				document._resolved = true;
-				protectedDocument = PersistedProtectedDocument.Factory.decorate( document );
-				protectedDocument.accessControlList = document.getPointer( "http://example.com/resource/~acl/" );
+				let document:Document.Class = Document.Factory.createFrom( {
+					id: "http://example.com/resource/",
+					accessControlList: documents.getPointer( "http://example.com/resource/~acl/" ),
+					_resolved: true,
+				} );
+				protectedDocument = PersistedProtectedDocument.Factory.decorate( document, documents );
 			} );
 
 			afterAll( ():void => {
@@ -301,7 +308,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 									]
 								},
 								{
-									"@id": "https://dev.carbonldp.com/apps/test-app/~acl/",
+									"@id": "http://example.com/resource/~acl/",
 									"@type": [
 										"https://carbonldp.com/ns/v1/security#AccessControlList"
 									],
@@ -341,8 +348,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 					expect( acl.accessTo.id ).toBe( protectedDocument.id );
 				} ) );
 
-				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
-				let unresolvedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( document );
+				const unresolvedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( { id: "http://example.com/resource/" }, documents );
 				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
 					expect( acl ).toBeDefined();
 					expect( response ).toBeDefined();

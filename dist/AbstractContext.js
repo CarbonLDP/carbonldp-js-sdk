@@ -36,7 +36,7 @@ var Class = (function (_super) {
     Class.prototype.resolve = function (relativeURI) {
         var absoluteURI = RDF.URI.Util.resolve(this.baseURI, relativeURI);
         if (!absoluteURI.startsWith(this.baseURI))
-            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to your Carbon LDP instance.");
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to your Carbon LDP.");
         return absoluteURI;
     };
     return Class;

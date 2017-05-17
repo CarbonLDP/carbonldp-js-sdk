@@ -358,7 +358,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolveSystemURI",
-			"Resolve the URI provided in the scope of the system container of your Carbon LDP instance.\n\nIf no `system.container` setting has been set an IllegalStateError will be thrown.\nIf the URI provided is outside the system container an IllegalArgumentError will be thrown.", [
+			"Resolve the URI provided in the scope of the system container of a Carbon LDP.\n\nIf no `system.container` setting has been set an IllegalStateError will be thrown.\nIf the URI provided is outside the system container an IllegalArgumentError will be thrown.", [
 				{ name: "relativeURI", type: "string", description: "Relative URI to be resolved." },
 			],
 			{ type: "string", description: "The absolute URI that has been resolved." }

@@ -1,65 +1,72 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var User = require("./User");
 var Errors = require("./../Errors");
 var URI = require("./../RDF/URI");
+var Credentials = require("./Credentials");
+var PersistedUser = require("./PersistedUser");
 var Class = (function () {
     function Class(context) {
         this.context = context;
     }
-    Class.prototype.register = function (userDocument, slug) {
+    Class.prototype.register = function (email, password, enabled) {
         var _this = this;
-        if (slug === void 0) { slug = null; }
-        return this.resolveURI("").then(function (containerURI) {
-            if (!User.Factory.is(userDocument))
-                throw new Errors.IllegalArgumentError("The Document is not a cs:User object.");
-            return _this.context.documents.createChild(containerURI, userDocument, slug);
+        var credentials = Credentials.Factory.create(email, password);
+        credentials.enabled = enabled;
+        return Promise.resolve()
+            .then(function () {
+            var containerURI = _this.getCredentialsContainerURI();
+            return _this.context.documents.createChildAndRetrieve(containerURI, credentials);
+        })
+            .then(function (_a) {
+            var persistedCredentials = _a[0], responses = _a[1];
+            return [persistedCredentials.user, responses];
         });
     };
     Class.prototype.get = function (userURI, requestOptions) {
         var _this = this;
-        return this.resolveURI(userURI).then(function (uri) {
-            return _this.context.documents.get(uri, requestOptions);
+        return new Promise(function (resolve) {
+            return resolve(_this.context.documents.get(_this.resolveURI(userURI), requestOptions));
         });
     };
-    Class.prototype.enable = function (userURI, requestOptions) {
+    Class.prototype.enableCredentials = function (userURI, requestOptions) {
         return this.changeEnabledStatus(userURI, true, requestOptions);
     };
-    Class.prototype.disable = function (userURI, requestOptions) {
+    Class.prototype.disableCredentials = function (userURI, requestOptions) {
         return this.changeEnabledStatus(userURI, false, requestOptions);
     };
     Class.prototype.delete = function (userURI, requestOptions) {
         var _this = this;
-        return this.resolveURI(userURI).then(function (uri) {
-            return _this.context.documents.delete(uri, requestOptions);
+        return new Promise(function (resolve) {
+            return resolve(_this.context.documents.delete(_this.resolveURI(userURI), requestOptions));
         });
     };
     Class.prototype.changeEnabledStatus = function (userURI, value, requestOptions) {
-        var getResponse;
-        return this.get(userURI, requestOptions).then(function (_a) {
-            var user = _a[0], response = _a[1];
-            getResponse = response;
-            user.enabled = value;
-            return user.save();
-        }).then(function (_a) {
-            var user = _a[0], response = _a[1];
-            return [user, [getResponse, response]];
+        var _this = this;
+        return Promise.resolve().then(function () {
+            var absoluteUserURI = _this.resolveURI(userURI);
+            var userPointer = _this.context.documents.getPointer(absoluteUserURI);
+            var persistedUser = PersistedUser.Factory.decorate(userPointer, _this.context.documents);
+            if (value)
+                return persistedUser.enableCredentials(requestOptions);
+            return persistedUser.disableCredentials(requestOptions);
         });
     };
-    Class.prototype.resolveURI = function (userURI) {
-        var _this = this;
-        return new Promise(function (resolve) {
-            var containerURI = _this.context.resolve(_this.getContainerURI());
-            var uri = URI.Util.resolve(containerURI, userURI);
-            if (!URI.Util.isBaseOf(containerURI, uri))
-                throw new Errors.IllegalArgumentError("The URI provided is not a valid user of the current context.");
-            resolve(uri);
-        });
+    Class.prototype.resolveURI = function (relativeURI) {
+        var usersContainer = this.getContainerURI();
+        var absoluteRoleURI = URI.Util.resolve(usersContainer, relativeURI);
+        if (!absoluteRoleURI.startsWith(usersContainer))
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" isn't a valid Carbon LDP user.");
+        return absoluteRoleURI;
     };
     Class.prototype.getContainerURI = function () {
         if (!this.context.hasSetting("system.users.container"))
-            throw new Errors.IllegalStateError("The users container URI hasn't been set.");
-        return this.context.getSetting("system.users.container");
+            throw new Errors.IllegalStateError("The \"system.users.container\" setting hasn't been defined.");
+        return this.context.resolve(this.context.getSetting("system.users.container"));
+    };
+    Class.prototype.getCredentialsContainerURI = function () {
+        if (!this.context.hasSetting("system.credentials.container"))
+            throw new Errors.IllegalStateError("The \"system.credentials.container\" setting hasn't been defined.");
+        return this.context.resolveSystemURI(this.context.getSetting("system.credentials.container"));
     };
     return Class;
 }());

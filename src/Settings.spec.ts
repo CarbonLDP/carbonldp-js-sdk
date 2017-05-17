@@ -49,6 +49,13 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
+			"system.credentials.container",
+			"string",
+			"Relative URI to any context, that indicates the slug of the user's credentials container."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
 			"system.roles.container",
 			"string",
 			"Relative URI to any context, that indicates the slug of the roles container."
@@ -69,6 +76,7 @@ describe( module( "Carbon/Settings" ), ():void => {
 		* auth.method: \`Carbon.Auth.Method.TOKEN\`
 		* system.container: \`".system/"\`
 		* system.users.container: \`"users/"\`
+		* system.credentials.container: \`"credentials/"\`
 		* system.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
 		`
@@ -87,6 +95,9 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
 		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
+
+		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.credentials.container" ] ).toBe( "credentials/" );
 
 		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
 		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );

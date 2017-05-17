@@ -39,7 +39,7 @@ export class Class implements Context.Class {
 	}
 
 	/**
-	 * Resolve the URI provided in the scope of the system container of your Carbon LDP instance.
+	 * Resolve the URI provided in the scope of the system container of a Carbon LDP.
 	 *
 	 * If no `system.container` setting has been set an IllegalStateError will be thrown.
 	 * If the URI provided is outside the system container an IllegalArgumentError will be thrown.
@@ -52,7 +52,7 @@ export class Class implements Context.Class {
 		const systemContainer:string = this.resolve( this.getSetting( "system.container" ) );
 
 		const systemURI:string = RDF.URI.Util.resolve( systemContainer, relativeURI );
-		if( ! systemURI.startsWith( systemContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the system container of your Carbon LDP instance.` );
+		if( ! systemURI.startsWith( systemContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the system container of your Carbon LDP.` );
 
 		return systemURI;
 	}
@@ -180,6 +180,7 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
 		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
 		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
+		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 	}

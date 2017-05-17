@@ -17,13 +17,22 @@ import {
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
-import * as NS from "./../NS";
+import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 
+import * as PersistedCredentials from "./PersistedCredentials";
+
 import * as PersistedUser from "./PersistedUser";
 import DefaultExport from "./PersistedUser";
+
+interface MockPersistedUser {
+	name:string;
+	credentials:PersistedCredentials.Class;
+	enableCredentials:Function;
+	disableCredentials:Function;
+}
 
 describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
@@ -69,15 +78,15 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"enable",
-			"Activate the account of the user.",
+			"enableCredentials",
+			"Activate the account credentials of the user.",
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
-			"disable",
-			"Deactivate the account of the user.",
+			"disableCredentials",
+			"Deactivate the account credentials of the user.",
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
@@ -104,37 +113,32 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			expect( PersistedUser.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( PersistedUser.Factory.hasClassProperties ) ).toBe( true );
 
-			let object:any = void 0;
+			let object:MockPersistedUser = void 0;
 			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
 				name: null,
-				email: null,
-				enabled: null,
-				enable: ():void => {},
-				disable: ():void => {},
+				credentials: null,
+				enableCredentials: ():void => {},
+				disableCredentials: ():void => {},
 			};
 			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( true );
 
 			delete object.name;
-			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( true );
 			object.name = null;
 
-			delete object.email;
-			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
-			object.email = null;
+			delete object.credentials;
+			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( true );
+			object.credentials = null;
 
-			delete object.enabled;
+			delete object.enableCredentials;
 			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
-			object.enabled = null;
+			object.enableCredentials = ():void => {};
 
-			delete object.enable;
+			delete object.disableCredentials;
 			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
-			object.enable = ():void => {};
-
-			delete object.disable;
-			expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
-			object.disable = ():void => {};
+			object.disableCredentials = ():void => {};
 		} );
 
 		it( hasMethod(
@@ -148,36 +152,37 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			expect( PersistedUser.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( PersistedUser.Factory.is ) ).toBe( true );
 
-			let object:any;
+			let object:MockPersistedUser;
 
 			object = {
 				name: null,
-				email: null,
-				enabled: null,
-				enable: ():void => {},
-				disable: ():void => {},
+				credentials: null,
+				enableCredentials: ():void => {},
+				disableCredentials: ():void => {},
 			};
 			expect( PersistedUser.Factory.is( object ) ).toBe( false );
 
-			object = PersistedDocument.Factory.createFrom( {
+			object = PersistedDocument.Factory.decorate<MockPersistedUser>( {
 				name: null,
-				email: null,
-				enabled: null,
-				enable: ():void => {},
-				disable: ():void => {},
-			}, "http://example.com/resource/", null );
-			expect( PersistedUser.Factory.is( object ) ).toBe( false );
-			object.types.push( NS.CS.Class.User );
+				credentials: null,
+				enableCredentials: ():void => {},
+				disableCredentials: ():void => {},
+			}, null );
 			expect( PersistedUser.Factory.is( object ) ).toBe( false );
 
-			object = PersistedProtectedDocument.Factory.decorate( object );
+			object = PersistedProtectedDocument.Factory.decorate( {
+				name: null,
+				credentials: null,
+				enableCredentials: ():void => {},
+				disableCredentials: ():void => {},
+			}, null );
 			expect( PersistedUser.Factory.is( object ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			[ "T extends Carbon.PersistedDocument.Class" ],
+			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
@@ -186,41 +191,37 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			expect( PersistedUser.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedUser.Factory.decorate ) ).toBe( true );
 
-			let object:any;
+			let object:Partial<MockPersistedUser> & { myProperty?:string };
 
 			object = { myProperty: "My Property" };
 			expect( object.myProperty ).toBe( "My Property" );
-			expect( object.enable ).toBeUndefined();
-			expect( object.disable ).toBeUndefined();
+			expect( object.enableCredentials ).toBeUndefined();
+			expect( object.disableCredentials ).toBeUndefined();
 
 			let fn:Function = ():void => {};
-			object = {
+			object = PersistedUser.Factory.decorate( {
 				name: null,
-				email: null,
-				enabled: null,
+				credentials: null,
 				myProperty: "My Property",
-				enable: fn,
-				disable: fn,
-			};
-			object = PersistedUser.Factory.decorate( object );
+				enableCredentials: fn,
+				disableCredentials: fn,
+			}, null );
 			expect( object.myProperty ).toBe( "My Property" );
-			expect( object.enable ).toBeDefined();
-			expect( object.enable ).toBe( fn );
-			expect( object.disable ).toBeDefined();
-			expect( object.disable ).toBe( fn );
+			expect( object.enableCredentials ).toBeDefined();
+			expect( object.enableCredentials ).toBe( fn );
+			expect( object.disableCredentials ).toBeDefined();
+			expect( object.disableCredentials ).toBe( fn );
 
-			object = {
+			object = PersistedUser.Factory.decorate( {
 				name: null,
-				email: null,
-				enabled: null,
+				credentials: null,
 				myProperty: "My Property",
-			};
-			object = PersistedUser.Factory.decorate( object );
+			}, null );
 			expect( object.myProperty ).toBe( "My Property" );
-			expect( object.enable ).toBeDefined();
-			expect( object.enable ).not.toBe( fn );
-			expect( object.disable ).toBeDefined();
-			expect( object.disable ).not.toBe( fn );
+			expect( object.enableCredentials ).toBeDefined();
+			expect( object.enableCredentials ).not.toBe( fn );
+			expect( object.disableCredentials ).toBeDefined();
+			expect( object.disableCredentials ).not.toBe( fn );
 		} );
 
 		describe( decoratedObject( "Object decorated by the `Carbon.Auth.PersistedUser.Factory.decorate()` function.", [
@@ -243,66 +244,124 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"enable",
+				"enableCredentials",
 				"Activate the account of the user.",
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {
-				let spy:jasmine.Spy = spyOn( context.documents, "save" );
-				let persistedDocument:PersistedDocument.Class;
-				let user:PersistedUser.Class;
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+			), ( done:DoneFn ):void => {
+				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const promises:Promise<void>[] = [];
 
-				user = PersistedUser.Factory.decorate( <any> {} );
-				expect( user.enable ).toBeDefined();
-				expect( Utils.isFunction( user.enable ) ).toBe( true );
-
-				persistedDocument = PersistedDocument.Factory.createFrom( {}, "", context.documents );
-				user = PersistedUser.Factory.decorate( persistedDocument );
-				user.enable();
-
-				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: false }, "", context.documents );
-				user = PersistedUser.Factory.decorate( persistedDocument );
-				user.enable();
-
-				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: true }, "", context.documents );
-				user = PersistedUser.Factory.decorate( persistedDocument );
-				user.enable();
-
-				expect( spy.calls.count() ).toBe( 3 );
-				for( let call of spy.calls.all() ) {
-					expect( call.args[ 0 ].enabled ).toBe( true );
+				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, HTTP.Response.Class[] ] ):void {
+					expect( currentObject ).toBe( returnedObject );
+					expect( responses.length ).toBe( expectedResponses );
+					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
 				}
+
+				// Property Integrity
+				(() => {
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {}, null );
+					expect( user.enableCredentials ).toBeDefined();
+					expect( Utils.isFunction( user.enableCredentials ) ).toBe( true );
+				})();
+
+				// Will make a request for the credentials
+				(() => {
+					const mockCredentials:PersistedCredentials.Class = PersistedCredentials.Factory.decorate(
+						context.documents.getPointer( "http://example.org/.system/credentials/my-user-credentials/" ),
+						context.documents
+					);
+					const selectSPARQLSpy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" ).and.returnValue( Promise.resolve( [ { bindings: [ { credentials: mockCredentials } ] }, mockedResponse ] ) );
+					Object.defineProperty( mockCredentials, "enable", { writable: true } );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "enable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {
+						id: "http://example.com/user/my-user/",
+					}, context.documents );
+					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.enableCredentials();
+					expect( promise ).toEqual( jasmine.any( Promise ) );
+					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
+						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
+						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
+					} ) );
+				})();
+
+				// Already has the credentials relation
+				(() => {
+					const mockCredentials:PersistedCredentials.Class = PersistedCredentials.Factory.decorate( {}, context.documents );
+					Object.defineProperty( mockCredentials, "enable", { writable: true } );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "enable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {
+						credentials: mockCredentials,
+					}, context.documents );
+					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.enableCredentials();
+					expect( promise ).toEqual( jasmine.any( Promise ) );
+					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
+						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
+					} ) );
+				})();
+
+				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
 			it( hasMethod(
 				INSTANCE,
-				"disable",
+				"disableCredentials",
 				"Deactivate the account of the user.",
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {
-				let spy:jasmine.Spy = spyOn( context.documents, "save" );
-				let persistedDocument:PersistedDocument.Class;
-				let user:PersistedUser.Class;
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+			), ( done:DoneFn ):void => {
+				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const promises:Promise<void>[] = [];
 
-				user = PersistedUser.Factory.decorate( <any> {} );
-				expect( user.disable ).toBeDefined();
-				expect( Utils.isFunction( user.disable ) ).toBe( true );
-
-				persistedDocument = PersistedDocument.Factory.createFrom( {}, "", context.documents );
-				user = PersistedUser.Factory.decorate( persistedDocument );
-				user.disable();
-
-				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: false }, "", context.documents );
-				user = PersistedUser.Factory.decorate( persistedDocument );
-				user.disable();
-
-				persistedDocument = PersistedDocument.Factory.createFrom( { enabled: true }, "", context.documents );
-				user = PersistedUser.Factory.decorate( persistedDocument );
-				user.disable();
-
-				expect( spy.calls.count() ).toBe( 3 );
-				for( let call of spy.calls.all() ) {
-					expect( call.args[ 0 ].enabled ).toBe( false );
+				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, HTTP.Response.Class[] ] ):void {
+					expect( currentObject ).toBe( returnedObject );
+					expect( responses.length ).toBe( expectedResponses );
+					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
 				}
+
+				// Property Integrity
+				(() => {
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {}, null );
+					expect( user.disableCredentials ).toBeDefined();
+					expect( Utils.isFunction( user.disableCredentials ) ).toBe( true );
+				})();
+
+				// Will make a request for the credentials
+				(() => {
+					const mockCredentials:PersistedCredentials.Class = PersistedCredentials.Factory.decorate(
+						context.documents.getPointer( "http://example.org/.system/credentials/my-user-credentials/" ),
+						context.documents
+					);
+					const selectSPARQLSpy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" ).and.returnValue( Promise.resolve( [ { bindings: [ { credentials: mockCredentials } ] }, mockedResponse ] ) );
+					Object.defineProperty( mockCredentials, "disable", { writable: true } );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "disable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate( { id: "http://example.com/user/my-user/" }, context.documents );
+
+					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.disableCredentials();
+					expect( promise ).toEqual( jasmine.any( Promise ) );
+					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
+						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
+						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
+					} ) );
+				})();
+
+				// Already has the credentials relation
+				(() => {
+					const mockCredentials:PersistedCredentials.Class = PersistedCredentials.Factory.decorate( {}, context.documents );
+					Object.defineProperty( mockCredentials, "disable", { writable: true } );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "disable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate( { credentials: mockCredentials }, context.documents );
+
+					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.disableCredentials();
+					expect( promise ).toEqual( jasmine.any( Promise ) );
+					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
+						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
+					} ) );
+				})();
+
+				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
 		} );

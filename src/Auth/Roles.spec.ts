@@ -34,7 +34,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Roles.Class",
-		"Class that manage the roles of your Carbon LDP instance."
+		"Class that manage the roles of a Carbon LDP."
 	), ():void => {
 		let roles:Roles.Class;
 		let context:AbstractContext;

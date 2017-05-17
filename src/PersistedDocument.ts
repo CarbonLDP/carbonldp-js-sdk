@@ -47,7 +47,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	createNamedFragment<T extends Object>( object:T, slug:string ):PersistedNamedFragment.Class & T;
 
 	refresh<T>():Promise<[ T & Class, HTTP.Response.Class ]>;
-	save<T>():Promise<[ T & Class, HTTP.Response.Class ]>;
+	save<T>( requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 	saveAndRefresh<T>():Promise<[ T & Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>;
 	delete():Promise<HTTP.Response.Class>;
 
@@ -204,10 +204,10 @@ function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:stri
 function refresh<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.refresh( this );
 }
-function save<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
-	return this._documents.save( this );
+function save<T extends Class>( requestOptions?:HTTP.Request.Options ):Promise<[ T, HTTP.Response.Class ]> {
+	return this._documents.save( this, requestOptions );
 }
-function saveAndRefresh<T extends Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class] ]> {
+function saveAndRefresh<T extends Class>():Promise<[ T, [ HTTP.Response.Class, HTTP.Response.Class ] ]> {
 	return (<Class> this)._documents.saveAndRefresh<T>( this );
 }
 
@@ -409,11 +409,11 @@ export class Factory {
 		return Factory.decorate( document, documents, snapshot );
 	}
 
-	static createFrom<T extends Object>( object:T, uri:string, documents:Documents, snapshot:Object = {} ):Class {
-		let document:Document.Class = Document.Factory.createFrom( object );
+	static createFrom<T extends Object>( object:T, uri:string, documents:Documents, snapshot:Object = {} ):T & Class {
+		let document:T & Class = Factory.decorate<T>( object, documents, snapshot );
 		document.id = uri;
 
-		return Factory.decorate( document, documents, snapshot );
+		return document;
 	}
 
 	static decorate<T extends Object>( document:T, documents:Documents, snapshot:Object = {} ):T & Class {

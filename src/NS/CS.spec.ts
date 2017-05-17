@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 18 );
+			expect( Object.keys( CS.Class ).length ).toBe( 19 );
 		} );
 
 		it( hasProperty(
@@ -95,6 +95,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.CreateChild ) ).toBe( true );
 
 			expect( CS.Class.CreateChild ).toBe( "https://carbonldp.com/ns/v1/security#CreateChild" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Credentials",
+			"string"
+		), ():void => {
+			expect( CS.Class.Credentials ).toBeDefined();
+			expect( Utils.isString( CS.Class.Credentials ) ).toBe( true );
+
+			expect( CS.Class.Credentials ).toBe( "https://carbonldp.com/ns/v1/security#Credentials" );
 		} );
 
 		it( hasProperty(
@@ -251,7 +262,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 22 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 23 );
 		} );
 
 		it( hasProperty(
@@ -307,6 +318,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.childRole ) ).toBe( true );
 
 			expect( CS.Predicate.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"credentials",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.credentials ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.credentials ) ).toBe( true );
+
+			expect( CS.Predicate.credentials ).toBe( "https://carbonldp.com/ns/v1/security#credentials" );
 		} );
 
 		it( hasProperty(

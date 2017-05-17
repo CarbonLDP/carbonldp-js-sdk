@@ -21,8 +21,10 @@ import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Credentials from "./Auth/Credentials";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
 import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
@@ -37,7 +39,7 @@ import * as Users from "./Auth/Users";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
-import * as PersistedDocument from "./PersistedDocument";
+import * as NS from "./NS";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
@@ -106,6 +108,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"Credentials",
+		"Carbon.Auth.Credentials"
+	), ():void => {
+		expect( Auth.Credentials ).toBeDefined();
+		expect( Auth.Credentials ).toBe( Credentials );
+	} );
+
+	it( reexports(
+		STATIC,
 		"PersistedACE",
 		"Carbon.Auth.PersistedACE"
 	), ():void => {
@@ -120,6 +131,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.PersistedACL ).toBeDefined();
 		expect( Auth.PersistedACL ).toBe( PersistedACL );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PersistedCredentials",
+		"Carbon.Auth.PersistedCredentials"
+	), ():void => {
+		expect( Auth.PersistedCredentials ).toBeDefined();
+		expect( Auth.PersistedCredentials ).toBe( PersistedCredentials );
 	} );
 
 	it( reexports(
@@ -196,7 +216,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( enumeration(
 		"Carbon.Auth.Method",
-		"Enum with the methods of authentication supported by CarbonLDP."
+		"Enum with the methods of authentication supported by Carbon LDP."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -222,7 +242,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Class",
-		"Abstract class that manages authentications and authorizations of a context."
+		"Abstract class that manages authentications and authorizations."
 	), ():void => {
 
 		beforeEach( ():void => {
@@ -259,7 +279,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"users",
 			"Carbon.Auth.Users.Class",
-			"Instance of `Carbon.Auth.Users.Class` that helps you manage the users of the current context."
+			"Instance of `Carbon.Auth.Users.Class` that helps managing the users of your Carbon LDP."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -279,20 +299,18 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"authenticatedUser",
 			"Carbon.Auth.PersistedUser.Class",
-			"The user of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
+			"The user of the user that has been authenticated.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
 
 			function createUser( context:AbstractContext ):PersistedUser.Class {
-				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/users/my-user/", context.documents );
-
-				let persistedUser:PersistedUser.Class = PersistedUser.Factory.decorate( persistedDocument );
-				persistedUser.email = null;
-				persistedUser.name = null;
-				persistedUser.enabled = true;
-				persistedUser.types.push( User.RDF_CLASS );
-
-				return persistedUser;
+				return PersistedUser.Factory.decorate( {
+					id: "http://example.com/users/my-user/",
+					types: [ User.RDF_CLASS ],
+					email: null,
+					name: null,
+					enabled: true,
+				}, context.documents );
 			}
 
 			(() => {
@@ -411,8 +429,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"roles",
 			"Carbon.Auth.Roles.Class",
-			"Instance of a implementation of the `Carbon.Auth.Roles.Class` abstract class, that help managing the roles of the current context.\n" +
-			"In this class the property is set to `null`, and implementations of this class set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`."
+			"Instance of `Carbon.Auth.Roles.Class` that helps managing the roles of your Carbon LDP."
 		), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
 				protected _baseURI:string;
@@ -592,6 +609,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			let spy:jasmine.Spy = spyOn( auth, "authenticateUsing" );
 
+			//noinspection JSIgnoredPromiseFromCall
 			auth.authenticate( "myUer@user.com", "myAwesomePassword" );
 
 			expect( spy ).toHaveBeenCalledWith( "TOKEN", "myUer@user.com", "myAwesomePassword" );
@@ -635,17 +653,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
 							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
+							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-user@users.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
-							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
-								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							"${ NS.CS.Predicate.credentials }": [ {
+								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
 					} ]`,
@@ -783,18 +796,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
+							"@type": [ "${ NS.CS.Class.User }" ],
+							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-user@users.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
-							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
-								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							"${ NS.CS.Predicate.credentials }": [ {
+								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
 					} ]`,
@@ -844,18 +852,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
+							"@type": [ "${ NS.CS.Class.User }" ],
+							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-user@users.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
-							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
-								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							"${ NS.CS.Predicate.credentials }": [ {
+								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
 					} ]`,
@@ -903,7 +906,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				token = <any> {
 					expirationTime: date,
 					id: "_:BlankNode",
-					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
+					key: "dG9rZW4tdmFsdWU=",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
 					],
@@ -921,7 +924,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					let storedToken:any = {
 						expirationTime: date.toISOString(),
 						id: "_:BlankNode",
-						key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
+						key: "dG9rZW4tdmFsdWU=",
 						types: [
 							"https://carbonldp.com/ns/v1/security#Token",
 						],
@@ -941,7 +944,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				token = <any> {
 					expirationTime: date,
 					id: "_:BlankNode",
-					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
+					key: "dG9rZW4tdmFsdWU=",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
 					],

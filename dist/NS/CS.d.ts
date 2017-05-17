@@ -5,6 +5,7 @@ declare class Class {
     static readonly AllOrigins: string;
     static readonly CreateAccessPoint: string;
     static readonly CreateChild: string;
+    static readonly Credentials: string;
     static readonly Delete: string;
     static readonly Download: string;
     static readonly Extend: string;
@@ -25,6 +26,7 @@ declare class Predicate {
     static readonly accessTo: string;
     static readonly allowsOrigin: string;
     static readonly childRole: string;
+    static readonly credentials: string;
     static readonly credentialsOf: string;
     static readonly description: string;
     static readonly enabled: string;

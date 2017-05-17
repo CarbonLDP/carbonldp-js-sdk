@@ -456,6 +456,7 @@ if( typeof XMLHttpRequest === "undefined" ) {
 	const METHODS:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 
 	(jasmine as any).Ajax = (() => {
+		let installed:boolean = false;
 
 		let requests:any[] = [];
 
@@ -470,11 +471,13 @@ if( typeof XMLHttpRequest === "undefined" ) {
 		}
 
 		function install():void {
+			installed = true;
 			nock.disableNetConnect();
 			createScope( /.*/ );
 		}
 
 		function uninstall():void {
+			installed = false;
 			requests = [];
 			nock.cleanAll();
 			nock.enableNetConnect();
@@ -490,6 +493,7 @@ if( typeof XMLHttpRequest === "undefined" ) {
 		}
 
 		function stubRequest( url:string, data:string, methods:string = "*" ):any {
+			if( ! installed ) throw new Error( "Jasmine Ajax not installed" );
 			data = data || undefined;
 
 			let applicableScopes:any[] = scopes;

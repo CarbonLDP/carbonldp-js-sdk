@@ -207,7 +207,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"save",
 			[ "T" ],
-			"Save the persisted document to the server.",
+			"Save the persisted document to the server.", [
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+			],
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
@@ -1613,7 +1615,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"save",
 				[ "T" ],
-				"Save the persisted document to the server.",
+				"Save the persisted document to the server.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
 				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.save ).toBeDefined();
@@ -1621,7 +1625,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				document.save();
-				expect( spy ).toHaveBeenCalledWith( document );
+				expect( spy ).toHaveBeenCalledWith( document, void 0 );
+
+				const requestOptions:HTTP.Request.Options = { timeout: 5555 };
+				document.save( requestOptions );
+				expect( spy ).toHaveBeenCalledWith( document, requestOptions );
 			} );
 
 			it( hasMethod(

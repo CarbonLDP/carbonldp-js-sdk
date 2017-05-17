@@ -2,8 +2,10 @@ import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Credentials from "./Auth/Credentials";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
+import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
 import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
@@ -34,10 +36,12 @@ export {
 	Users,
 	Authenticator,
 	BasicAuthenticator,
+	Credentials,
 	PersistedACE,
 	PersistedACL,
-	PersistedUser,
+	PersistedCredentials,
 	PersistedRole,
+	PersistedUser,
 	Role,
 	Roles,
 	Ticket,

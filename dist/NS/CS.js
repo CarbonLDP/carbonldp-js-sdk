@@ -30,6 +30,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "Credentials", {
+        get: function () { return namespace + "Credentials"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Delete", {
         get: function () { return namespace + "Delete"; },
         enumerable: true,
@@ -123,6 +128,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "childRole", {
         get: function () { return namespace + "childRole"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "credentials", {
+        get: function () { return namespace + "credentials"; },
         enumerable: true,
         configurable: true
     });

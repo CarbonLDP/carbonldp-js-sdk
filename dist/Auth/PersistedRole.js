@@ -20,13 +20,14 @@ var Factory = (function () {
         return Factory.hasClassProperties(object)
             && PersistedProtectedDocument.Factory.is(object);
     };
-    Factory.decorate = function (object, roles) {
-        var role = object;
-        if (Factory.hasClassProperties(role))
-            return role;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(role))
-            PersistedProtectedDocument.Factory.decorate(role);
-        Object.defineProperties(role, {
+    Factory.decorate = function (object, documents) {
+        var persistedRole = object;
+        if (Factory.hasClassProperties(persistedRole))
+            return persistedRole;
+        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
+        var context = documents.context;
+        var roles = context ? context.auth.roles : null;
+        Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,
                 enumerable: false,
@@ -76,41 +77,41 @@ var Factory = (function () {
                 value: removeUsers,
             },
         });
-        return role;
+        return persistedRole;
     };
     return Factory;
 }());
 exports.Factory = Factory;
 function createChild(role, slugOrRequestOptions, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
 }
 function listUsers(requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.listUsers(this.id, requestOptions);
 }
 function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.getUsers(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
 }
 function addUser(user, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.addUsers(this.id, [user], requestOptions);
 }
 function addUsers(users, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.addUsers(this.id, users, requestOptions);
 }
 function removeUser(user, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.removeUsers(this.id, [user], requestOptions);
 }
 function removeUsers(users, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.removeUsers(this.id, users, requestOptions);
 }
-function checkState() {
-    if (!this._roles)
+function checkState(role) {
+    if (!role._roles)
         throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
 }
 

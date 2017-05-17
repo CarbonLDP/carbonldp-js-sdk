@@ -67,8 +67,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate } );
 			decorators.set( Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate } );
-			decorators.set( Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate } );
-			decorators.set( Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: this.context ? [ this.context.auth.roles ] : null } );
+			decorators.set( Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate, parameters: [ this ]  } );
+			decorators.set( Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: [ this ] } );
+			decorators.set( Auth.Credentials.RDF_CLASS, { decorator: Auth.PersistedCredentials.Factory.decorate, parameters: [ this ] } );
 		}
 
 		this._documentDecorators = decorators;
@@ -816,9 +817,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
 
 			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
-			let persistedDocument:T & PersistedDocument.Class = PersistedDocument.Factory.decorate<T>( this.createPointerFrom( document, localID ), this );
-			let persistedProtectedDocument:T & W = <T & W> PersistedProtectedDocument.Factory.decorate<T & PersistedDocument.Class>( persistedDocument );
-			this.pointers.set( localID, persistedProtectedDocument );
+			this.pointers.set( localID, this.createPointerFrom( document, localID ) );
+			let persistedProtectedDocument:T & W = <T & W> PersistedProtectedDocument.Factory.decorate<T>( document, this );
 
 			let preferenceHeader:HTTP.Header.Class = response.getHeader( "Preference-Applied" );
 			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return [ persistedProtectedDocument, response ];

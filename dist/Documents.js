@@ -42,8 +42,9 @@ var Class = (function () {
         else {
             decorators.set(ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate });
             decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
-            decorators.set(Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate });
-            decorators.set(Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: this.context ? [this.context.auth.roles] : null });
+            decorators.set(Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate, parameters: [this] });
+            decorators.set(Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: [this] });
+            decorators.set(Auth.Credentials.RDF_CLASS, { decorator: Auth.PersistedCredentials.Factory.decorate, parameters: [this] });
         }
         this._documentDecorators = decorators;
     }
@@ -697,9 +698,8 @@ var Class = (function () {
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
-            var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(document, localID), _this);
-            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
-            _this.pointers.set(localID, persistedProtectedDocument);
+            _this.pointers.set(localID, _this.createPointerFrom(document, localID));
+            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
             var preferenceHeader = response.getHeader("Preference-Applied");
             if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
                 return [persistedProtectedDocument, response];

@@ -32,7 +32,7 @@ var Class = (function () {
         }).then(function (_a) {
             var newRole = _a[0], response = _a[1];
             responseCreated = response;
-            persistedRole = PersistedRole.Factory.decorate(newRole, _this);
+            persistedRole = PersistedRole.Factory.decorate(newRole, _this.context.documents);
             return _this.context.documents.addMember(parentURI, newRole);
         }).then(function (response) {
             return [persistedRole, responseCreated];
@@ -50,7 +50,7 @@ var Class = (function () {
             return _this.context.documents.listMembers(usersAccessPoint.id, requestOptions);
         }).then(function (_a) {
             var users = _a[0], response = _a[1];
-            return [users.map(function (user) { return PersistedProtectedDocument.Factory.decorate(user); }), response];
+            return [users.map(function (user) { return PersistedProtectedDocument.Factory.decorate(user, _this.context.documents); }), response];
         });
     };
     Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {

@@ -22,7 +22,7 @@ export abstract class Class extends SDKContext.Class {
 
 	resolve( relativeURI:string ):string {
 		const absoluteURI:string = RDF.URI.Util.resolve( this.baseURI, relativeURI );
-		if( ! absoluteURI.startsWith( this.baseURI ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to your Carbon LDP instance.` );
+		if( ! absoluteURI.startsWith( this.baseURI ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to your Carbon LDP.` );
 
 		return absoluteURI;
 	}

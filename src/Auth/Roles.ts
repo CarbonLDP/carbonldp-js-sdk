@@ -43,7 +43,7 @@ export class Class {
 
 		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
 			responseCreated = response;
-			persistedRole = PersistedRole.Factory.decorate( newRole, this );
+			persistedRole = PersistedRole.Factory.decorate( newRole, this.context.documents );
 			return this.context.documents.addMember( parentURI, newRole );
 
 		} ).then( ( response ) => {
@@ -61,7 +61,7 @@ export class Class {
 		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
 			return this.context.documents.listMembers( usersAccessPoint.id, requestOptions );
 		} ).then( ( [ users, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-			return [ users.map( user => PersistedProtectedDocument.Factory.decorate( user ) ), response ];
+			return [ users.map( user => PersistedProtectedDocument.Factory.decorate( user, this.context.documents ) ), response ];
 		} );
 	}
 

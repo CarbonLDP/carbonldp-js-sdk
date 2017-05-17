@@ -38,7 +38,7 @@ var Class = (function () {
         var systemContainer = this.resolve(this.getSetting("system.container"));
         var systemURI = RDF.URI.Util.resolve(systemContainer, relativeURI);
         if (!systemURI.startsWith(systemContainer))
-            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP instance.");
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP.");
         return systemURI;
     };
     Class.prototype.hasSetting = function (name) {
@@ -155,6 +155,7 @@ var Class = (function () {
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
+        this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
     };

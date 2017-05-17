@@ -12,10 +12,10 @@ import {
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as PersistedDocument from "./../PersistedDocument";
+import * as NS from "./../NS";
+import * as PersistedCredentials from "./PersistedCredentials";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
-import * as User from "./User";
 
 import * as Users from "./Users";
 import DefaultExport from "./Users";
@@ -40,22 +40,10 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		it( hasConstructor( [
 			{ name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Users." },
 		] ), ():void => {
-			let users:Users.Class;
-			let context:AbstractContext;
-
-			class MockedContext extends AbstractContext {
+			const context:AbstractContext = new class extends AbstractContext {
 				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-			context = new MockedContext();
-
-			class MockedUsers extends Users.Class {}
-			users = new MockedUsers( context );
+			};
+			const users:Users.Class = new Users.Class( context );
 
 			expect( users ).toBeTruthy();
 			expect( users instanceof Users.Class ).toBe( true );
@@ -64,69 +52,130 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"register",
-			"Persists a `Carbon.Auth.User.Class` object using the slug specified.\n" +
-			"Returns a Promise with a Pointer to the stored User, and the response of the request.",
+			"Creates a new user with the provided credentials.\n" +
+			"Returns a Promise with a persisted user, and the responses of the request.",
 			[
-				{ name: "userDocument", type: "Carbon.Auth.User.Class" },
-				{ name: "slug", type: "string", optional: true },
+				{ name: "email", type: "string" },
+				{ name: "password", type: "string" },
 			],
-			{ type: "Promise<Carbon.Pointer.Class, Carbon.HTTP.Response.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			let users:Users.Class;
-			let context:AbstractContext;
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[]] >" }
+		), ():void => {} );
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+		describe( "register", ():void => {
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-			context = new MockedContext();
-			class MockedUsers extends Users.Class {}
-			users = new MockedUsers( context );
+			it( "should exists", ():void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+				};
+				const users:Users.Class = new Users.Class( context );
 
-			expect( users.register ).toBeDefined();
-			expect( Utils.isFunction( users.register ) ).toBe( true );
+				expect( users.register ).toBeDefined();
+				expect( Utils.isFunction( users.register ) ).toBe( true );
+			} );
 
-			let spy:jasmine.Spy = spyOn( context.documents, "createChild" );
-			let user:User.Class = User.Factory.create( "User name", "email.of.user@example.com", "myAwesomePassword" );
+			it( "should reject promise when no \"system.container\" setting is declared", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
 
-			users.register( user ).then( done.fail ).catch( stateError => {
-				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "system.users.container", "users/" );
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.credentials.container", "credentials/" );
+					}
+				};
+				const users:Users.Class = new Users.Class( context );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.register( "user@example.com", "my-password" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toContain( "system.container" );
+						done();
+					} );
+			} );
 
-				promise = users.register( user, "userSlug" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			it( "should reject promise when no \"system.credentials.container\" setting is declared", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
 
-				users.register( user, null );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+					constructor() {
+						super();
+						this._baseURI = "http://example.com";
+						this.setSetting( "system.container", ".system/" );
+					}
+				};
 
-				users.register( user );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+				const users:Users.Class = new Users.Class( context );
 
-				promise = users.register( null );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalArgumentError );
-				} ) );
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.register( "user@example.com", "my-password" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toContain( "system.credentials.container" );
+						done();
+					} );
+			} );
 
-				Promise.all( promises ).then( ():void => {
-					expect( spy ).toHaveBeenCalledTimes( 3 );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/", user, "userSlug" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/", user, null );
-					expect( spy ).not.toHaveBeenCalledWith( "http://example.com/users/", user );
-					done();
+			it( "should register a new user", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com";
+						this.setSetting( "system.container", ".system/" );
+						this.setSetting( "system.credentials.container", "credentials/" );
+					}
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				// Mock request to credentials creation
+				jasmine.Ajax.install();
+				jasmine.Ajax.stubRequest( "http://example.com/.system/credentials/" ).andReturn( {
+					status: 201,
+					responseHeaders: {
+						"Location": "http://example.com/.system/credentials/a-user-credentials/",
+						"Preference-Applied": "return=representation",
+						"ETag": '"1234567890"',
+					},
+					responseText: `{
+						"@id": "http://example.com/.system/credentials/a-user-credentials/",
+						"@graph": [ {
+							"@id": "http://example.com/.system/credentials/a-user-credentials/",
+							"@type": [ "${ NS.CS.Class.Credentials }" ],
+							"${ NS.VCARD.Predicate.email }": {
+								"@value": "user@example.com"
+							},
+							"${ NS.CS.Predicate.password }": {
+								"@value": "my-encrypted-password"
+							},
+							"${ NS.CS.Predicate.credentialsOf }": {
+								"@id": "http://example.com/users/a-user/"
+							}
+						} ]
+					}`,
 				} );
 
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.register( "user@example.com", "my-password" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+
+				promise.then( ( [ persistedUser, responses ]:[ PersistedUser.Class, HTTP.Response.Class[] ] ) => {
+					expect( responses ).toEqual( jasmine.any( Array ) );
+					expect( responses.length ).toBe( 1 );
+					responses.forEach( response => expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) ) );
+
+					expect( PersistedUser.Factory.is( persistedUser ) ).toBe( true );
+					expect( persistedUser ).toEqual( jasmine.objectContaining( { credentials: jasmine.any( Object ) as any } ) );
+					expect( persistedUser.credentials ).toEqual( jasmine.objectContaining( { email: "user@example.com" } ) );
+					expect( persistedUser.credentials ).toEqual( jasmine.objectContaining( { password: "my-encrypted-password" } ) );
+					expect( persistedUser.credentials ).not.toEqual( jasmine.objectContaining( { enabled: jasmine.any( Boolean ) as any } ) );
+					expect( PersistedCredentials.Factory.hasClassProperties( persistedUser.credentials ) ).toBe( true );
+
+					jasmine.Ajax.uninstall();
+					done();
+				} ).catch( done.fail );
 			} );
 
 		} );
@@ -149,13 +198,11 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
 
-			class MockedUsers extends Users.Class {}
-			users = new MockedUsers( context );
+			users = new Users.Class( context );
 
 			expect( users.get ).toBeDefined();
 			expect( Utils.isFunction( users.get ) ).toBe( true );
@@ -198,76 +245,194 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 		} );
 
+		describe( "enableCredentials", ():void => {
+
+			it( "should exists", ():void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				expect( users.enableCredentials ).toBeDefined();
+				expect( users.enableCredentials ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should reject promise when no \"system.users.container\" setting is declared", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "a-user/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toContain( "system.users.container" );
+						done();
+					} );
+			} );
+
+			it( "should reject promise when IRI provided is not a user IRI", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.users.container", "users/" );
+					}
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "http://example.com/not-users-container/a-user/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toMatch( /valid.+user/ );
+						done();
+					} );
+			} );
+
+			it( "should call the enableCredentials() of the persisted user", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.users.container", "users/" );
+					}
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				// Spies decorator and function called
+				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedUser:PersistedUser.Class = PersistedUser.Factory.decorate(
+					context.documents.getPointer( "http://example.com/users/a-user/" ),
+					context.documents
+				);
+				const decoratorSpy:jasmine.Spy = spyOn( PersistedUser.Factory, "decorate" ).and.callThrough();
+				Object.defineProperty( mockedUser, "enableCredentials", { writable: true } );
+				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "enableCredentials" ).and.returnValue( [ null, [ mockedResponse ] ] );
+
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "a-user/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise.then( ( [ returnedUser, responses ] ) => {
+					expect( responses ).toEqual( jasmine.any( Array ) );
+					expect( responses.length ).toBe( 1 );
+					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
+
+					// Null from the spy
+					expect( returnedUser ).toBeNull();
+
+					expect( decoratorSpy ).toHaveBeenCalledTimes( 1 );
+					expect( decoratorSpy ).toHaveBeenCalledWith( mockedUser, context.documents );
+
+					expect( enableCredentialsSpy ).toHaveBeenCalledTimes( 1 );
+					done();
+				} ).catch( done.fail );
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
-			"enable",
+			"disableCredentials",
 			"Activate the account of the user specified.", [
-				{ name: "userURI", type: "string", description: "The URI of the user to be activated." },
+				{ name: "userURI", type: "string", description: "The URI of the user to deactivate its credentials." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
-		), ( done:{ ():void, fail:() => void } ) => {
-			let users:Users.Class;
-			let context:AbstractContext;
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+		), () => {} );
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+		describe( "disableCredentials", ():void => {
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-			context = new MockedContext();
-			class MockedUsers extends Users.Class {}
-			users = new MockedUsers( context );
+			it( "should exists", ():void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+				};
+				const users:Users.Class = new Users.Class( context );
 
-			expect( users.enable ).toBeDefined();
-			expect( Utils.isFunction( users.enable ) ).toBe( true );
-
-			let options:HTTP.Request.Options = { timeout: 5555 };
-			let spyGet:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( ():[ PersistedUser.Class, HTTP.Response.Class ] => {
-				let persistedUser:PersistedUser.Class = <any> PersistedDocument.Factory.createFrom( { enabled: false }, "", context.documents );
-				return [ persistedUser, null ];
+				expect( users.disableCredentials ).toBeDefined();
+				expect( users.disableCredentials ).toEqual( jasmine.any( Function ) );
 			} );
-			let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, null ] ) );
 
-			users.enable( "http://example.com/users/an-user/" ).then( done.fail ).catch( ( stateError:Error ) => {
-				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "system.users.container", "users/" );
+			it( "should reject promise when no \"system.users.container\" setting is declared", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+				};
+				const users:Users.Class = new Users.Class( context );
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "a-user/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toContain( "system.users.container" );
+						done();
+					} );
+			} );
 
-				promise = users.enable( "http://example.com/users/an-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			it( "should reject promise when IRI provided is not a user IRI", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
 
-				promise = users.enable( "http://example.com/users/another-user/", options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
-
-				promise = users.enable( "http://example.com/users/another-another-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
-
-				promise = users.enable( "http://example.com/not-an-users/resource/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				} ) );
-
-				Promise.all( promises ).then( () => {
-					expect( spyGet.calls.count() ).toBe( 3 );
-					expect( spyGet ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
-					expect( spyGet ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
-					expect( spyGet ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
-
-					expect( spySave.calls.count() ).toBe( 3 );
-					for( let call of spySave.calls.all() ) {
-						expect( call.args[ 0 ].enabled ).toBe( true );
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.users.container", "users/" );
 					}
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "http://example.com/not-users-container/a-user/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toMatch( /valid.+user/ );
+						done();
+					} );
+			} );
+
+			it( "should call the disableCredentials() of the persisted user", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.users.container", "users/" );
+					}
+				};
+				const users:Users.Class = new Users.Class( context );
+
+				// Spies decorator and function called
+				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedUser:PersistedUser.Class = PersistedUser.Factory.decorate(
+					context.documents.getPointer( "http://example.com/users/a-user/" ),
+					context.documents
+				);
+				const decoratorSpy:jasmine.Spy = spyOn( PersistedUser.Factory, "decorate" ).and.callThrough();
+				Object.defineProperty( mockedUser, "disableCredentials", { writable: true } );
+				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "disableCredentials" ).and.returnValue( [ null, [ mockedResponse ] ] );
+
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "a-user/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise.then( ( [ returnedUser, responses ] ) => {
+					expect( responses ).toEqual( jasmine.any( Array ) );
+					expect( responses.length ).toBe( 1 );
+					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
+
+					// Null from the spy
+					expect( returnedUser ).toBeNull();
+
+					expect( decoratorSpy ).toHaveBeenCalledTimes( 1 );
+					expect( decoratorSpy ).toHaveBeenCalledWith( mockedUser, context.documents );
+
+					expect( enableCredentialsSpy ).toHaveBeenCalledTimes( 1 );
 					done();
 				} ).catch( done.fail );
 			} );
@@ -276,79 +441,13 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 		it( hasMethod(
 			INSTANCE,
-			"disable",
+			"disableCredentials",
 			"Deactivate the account of the user specified.", [
-				{ name: "userURI", type: "string", description: "The URI of the user to be deactivated." },
+				{ name: "userURI", type: "string", description: "The URI of the user to activate its credentials." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
-		), ( done:{ ():void, fail:() => void } ) => {
-			let users:Users.Class;
-			let context:AbstractContext;
-
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-			context = new MockedContext();
-			class MockedUsers extends Users.Class {}
-			users = new MockedUsers( context );
-
-			expect( users.disable ).toBeDefined();
-			expect( Utils.isFunction( users.disable ) ).toBe( true );
-
-			let options:HTTP.Request.Options = { timeout: 5555 };
-			let spyGet:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( ():[ PersistedUser.Class, HTTP.Response.Class ] => {
-				let persistedUser:PersistedUser.Class = <any> PersistedDocument.Factory.createFrom( { enabled: true }, "", context.documents );
-				return [ persistedUser, null ];
-			} );
-			let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, null ] ) );
-
-			users.disable( "http://example.com/users/an-user/" ).then( done.fail ).catch( ( stateError:Error ) => {
-				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "system.users.container", "users/" );
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				promise = users.disable( "http://example.com/users/an-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
-
-				promise = users.disable( "http://example.com/users/another-user/", options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
-
-				promise = users.disable( "http://example.com/users/another-another-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
-
-				promise = users.disable( "http://example.com/not-an-users/resource/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				} ) );
-
-				Promise.all( promises ).then( () => {
-					expect( spyGet.calls.count() ).toBe( 3 );
-					expect( spyGet ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
-					expect( spyGet ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
-					expect( spyGet ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
-
-					expect( spySave.calls.count() ).toBe( 3 );
-					for( let call of spySave.calls.all() ) {
-						expect( call.args[ 0 ].enabled ).toBe( false );
-					}
-					done();
-				} ).catch( done.fail );
-			} );
-
-		} );
+		), () => {} );
 
 		it( hasMethod(
 			INSTANCE,
@@ -368,12 +467,10 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
-			class MockedUsers extends Users.Class {}
-			users = new MockedUsers( context );
+			users = new Users.Class( context );
 
 			expect( users.delete ).toBeDefined();
 			expect( Utils.isFunction( users.delete ) ).toBe( true );
@@ -406,7 +503,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
 				} ) );
 
-				Promise.all( promises ).then( () => {
+				Promise.all( promises ).then( ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
