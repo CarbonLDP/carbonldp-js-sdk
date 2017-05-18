@@ -10,9 +10,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var SDKContext = require("./SDKContext");
 var Errors = require("./Errors");
 var RDF = require("./RDF");
-var SDKContext = require("./SDKContext");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext) {

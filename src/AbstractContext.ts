@@ -1,8 +1,8 @@
+import * as SDKContext from "./SDKContext";
 import Context from "./Context";
 import * as Errors from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
-import * as SDKContext from "./SDKContext";
 
 export abstract class Class extends SDKContext.Class {
 	protected abstract _baseURI:string;

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Documents = require("./Documents");
 var Auth = require("./Auth");
 var BlankNode = require("./BlankNode");
-var Documents = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
 var ObjectSchema = require("./ObjectSchema");

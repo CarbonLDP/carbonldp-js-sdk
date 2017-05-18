@@ -1,7 +1,7 @@
+import * as Documents from "./Documents";
 import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";
 import * as Context from "./Context";
-import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as ObjectSchema from "./ObjectSchema";
