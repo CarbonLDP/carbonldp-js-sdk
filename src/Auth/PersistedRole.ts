@@ -14,6 +14,10 @@ export interface Class extends PersistedProtectedDocument.Class {
 
 	name?:string;
 	description?:string;
+
+	parentRole?:Pointer.Class;
+	childRoles?:Pointer.Class[];
+
 	users?:Pointer.Class[];
 
 	createChild<T extends Role.Class>( role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;

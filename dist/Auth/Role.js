@@ -14,6 +14,15 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.description,
         "@type": NS.XSD.DataType.string,
     },
+    "parentRole": {
+        "@id": NS.CS.Predicate.parentRole,
+        "@type": "@id",
+    },
+    "childRoles": {
+        "@id": NS.CS.Predicate.childRole,
+        "@type": "@id",
+        "@container": "@set",
+    },
     "users": {
         "@id": NS.CS.Predicate.user,
         "@type": "@id",

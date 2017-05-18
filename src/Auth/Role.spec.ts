@@ -48,6 +48,19 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			"@type": NS.XSD.DataType.string,
 		} );
 
+		expect( Utils.hasProperty( Role.SCHEMA, "parentRole" ) ).toBe( true );
+		expect( Role.SCHEMA[ "parentRole" ] ).toEqual( {
+			"@id": NS.CS.Predicate.parentRole,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Role.SCHEMA, "childRoles" ) ).toBe( true );
+		expect( Role.SCHEMA[ "childRoles" ] ).toEqual( {
+			"@id": NS.CS.Predicate.childRole,
+			"@type": "@id",
+			"@container": "@set",
+		} );
+
 		expect( Utils.hasProperty( Role.SCHEMA, "users" ) ).toBe( true );
 		expect( Role.SCHEMA[ "users" ] ).toEqual( {
 			"@id": NS.CS.Predicate.user,

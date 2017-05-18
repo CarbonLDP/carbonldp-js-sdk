@@ -51,7 +51,6 @@ export declare class Class extends AbstractContext.Class {
     static readonly version: string;
     readonly version: string;
     protected _baseURI: string;
-    constructor(domain: string, ssl?: boolean);
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;

@@ -24,7 +24,6 @@ import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
-import * as URI from "./../RDF/URI";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";

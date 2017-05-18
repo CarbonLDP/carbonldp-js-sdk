@@ -7,7 +7,7 @@ export interface Class {
     readonly baseURI: string;
     readonly parentContext: Class;
     resolve(relativeURI: string): string;
-    resolveSystemURI(relativeURI: string): any;
+    resolveSystemURI(relativeURI: string): string;
     hasSetting(name: string): boolean;
     getSetting(name: string): any;
     setSetting(name: string, value: any): any;

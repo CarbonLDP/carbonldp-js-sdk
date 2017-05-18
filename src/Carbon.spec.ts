@@ -325,7 +325,9 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "settings", type: "Carbon.Settings.Class", optional: true },
+			{ name: "domain", type: "string", description: "Domain of your Carbon LDP." },
+			{ name: "ssl", type: "boolean", optional: true, defaultValue: "true", description: "If the domain is under secure connection. If not set it is considered `true`." },
+			{ name: "settings", type: "Carbon.Settings.Class", optional: true, description: "Optional configuration settings. You can also use `setSetting()` method later on." },
 		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();

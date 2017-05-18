@@ -11,7 +11,7 @@ export interface Class {
 
 	resolve( relativeURI:string ):string;
 
-	resolveSystemURI( relativeURI:string );
+	resolveSystemURI( relativeURI:string ):string;
 
 	hasSetting( name:string ):boolean;
 

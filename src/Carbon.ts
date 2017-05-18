@@ -60,10 +60,10 @@ export class Class extends AbstractContext.Class {
 
 	protected _baseURI:string;
 
-	constructor( domain:string, ssl?:boolean );
 	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
-	constructor( domain:string, ssl?:boolean, settings?:Settings.Class ) {
+	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
 		super();
+		domain = RDF.URI.Util.hasProtocol( domain ) ? RDF.URI.Util.removeProtocol( domain ) : domain;
 		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
