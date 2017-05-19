@@ -108,6 +108,19 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
 		} );
 
+		it( hasProperty(
+			INSTANCE,
+			"baseURI",
+			"string",
+			"Returns the URI of your Carbon LDP."
+		), ():void => {
+			expect( carbon.baseURI ).toBeDefined();
+			expect( Utils.isString( carbon.baseURI ) ).toBe( true );
+
+			expect( carbon.baseURI ).toMatch( "https://example.com/" );
+			expect( myCarbon.baseURI ).toMatch( "http://my-carbonldp.example.com/" );
+		} );
+
 		it( reexports(
 			STATIC,
 			"AccessPoint",
