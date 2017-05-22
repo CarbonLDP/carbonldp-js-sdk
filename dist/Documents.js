@@ -282,6 +282,8 @@ var Class = (function () {
     };
     Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
+        if (this.context)
+            documentURI = this.context.resolve(documentURI);
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         if (PersistedDocument.Factory.is(accessPoint))
