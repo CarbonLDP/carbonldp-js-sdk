@@ -54,7 +54,8 @@ export class Factory {
 
 function changeEnabled( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
 	const responses:HTTP.Response.Class[] = [];
-	const promise:Promise<[ Class, HTTP.Response.Class ]> = this.isResolved() ? Promise.resolve( [] ) : this.resolve();
+	const promise:Promise<[ Class, HTTP.Response.Class ]> = this.isResolved() ?
+		Promise.resolve( [] as [ Class, HTTP.Response.Class ] ) : this.resolve();
 	return promise.then( ( [ _credentials, response ] ) => {
 		if( response ) responses.push( response );
 
@@ -63,7 +64,7 @@ function changeEnabled( this:Class, enabled:boolean, requestOptions?:HTTP.Reques
 	} ).then( ( [ _credentials, response ] ) => {
 		if( response ) responses.push( response );
 
-		return [ this, responses ];
+		return [ this, responses ] as [ Class, HTTP.Response.Class[] ];
 	} );
 }
 

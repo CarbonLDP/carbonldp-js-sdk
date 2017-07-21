@@ -47,7 +47,7 @@ export class Class {
 			return this.context.documents.addMember( parentURI, newRole );
 
 		} ).then( ( response ) => {
-			return [ persistedRole, responseCreated ];
+			return [ persistedRole, responseCreated ] as [ T & PersistedRole.Class, HTTP.Response.Class ];
 		} );
 	}
 
@@ -61,15 +61,18 @@ export class Class {
 		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
 			return this.context.documents.listMembers( usersAccessPoint.id, requestOptions );
 		} ).then( ( [ users, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-			return [ users.map( user => PersistedProtectedDocument.Factory.decorate( user, this.context.documents ) ), response ];
+			const documents:PersistedProtectedDocument.Class[] = users.map( user =>
+				PersistedProtectedDocument.Factory.decorate( user, this.context.documents )
+			);
+			return [ documents, response ] as [ PersistedProtectedDocument.Class[], HTTP.Response.Class ];
 		} );
 	}
 
 	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
-	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
+	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
 		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers<T>( usersAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+			return this.context.documents.getMembers<T & PersistedUser.Class>( usersAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
 		} );
 	}
 

@@ -42,7 +42,8 @@ exports.Factory = Factory;
 function changeEnabled(enabled, requestOptions) {
     var _this = this;
     var responses = [];
-    var promise = this.isResolved() ? Promise.resolve([]) : this.resolve();
+    var promise = this.isResolved() ?
+        Promise.resolve([]) : this.resolve();
     return promise.then(function (_a) {
         var _credentials = _a[0], response = _a[1];
         if (response)

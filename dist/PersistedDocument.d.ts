@@ -36,7 +36,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
     createNamedFragment<T extends Object>(object: T, slug: string): PersistedNamedFragment.Class & T;
     refresh<T>(): Promise<[T & Class, HTTP.Response.Class]>;
     save<T>(requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
-    saveAndRefresh<T>(): Promise<[T & Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
+    saveAndRefresh<T>(): Promise<[T & Class, HTTP.Response.Class[]]>;
     delete(): Promise<HTTP.Response.Class>;
     getDownloadURL(): Promise<string>;
     addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
@@ -48,12 +48,12 @@ export interface Class extends PersistedResource.Class, Document.Class {
     createChild(requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChildren<T>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
     createChildren<T>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
-    createChildAndRetrieve<T>(object: T, slug: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildAndRetrieve<T>(object: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildAndRetrieve(slug: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildAndRetrieve(requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, [HTTP.Response.Class, HTTP.Response.Class]]>;
-    createChildrenAndRetrieve<T>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[]]]>;
-    createChildrenAndRetrieve<T>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], [HTTP.Response.Class[], HTTP.Response.Class[]]]>;
+    createChildAndRetrieve<T>(object: T, slug: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildAndRetrieve<T>(object: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildAndRetrieve(slug: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildAndRetrieve(requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildrenAndRetrieve<T>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
+    createChildrenAndRetrieve<T>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;

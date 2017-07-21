@@ -50,7 +50,10 @@ var Class = (function () {
             return _this.context.documents.listMembers(usersAccessPoint.id, requestOptions);
         }).then(function (_a) {
             var users = _a[0], response = _a[1];
-            return [users.map(function (user) { return PersistedProtectedDocument.Factory.decorate(user, _this.context.documents); }), response];
+            var documents = users.map(function (user) {
+                return PersistedProtectedDocument.Factory.decorate(user, _this.context.documents);
+            });
+            return [documents, response];
         });
     };
     Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {

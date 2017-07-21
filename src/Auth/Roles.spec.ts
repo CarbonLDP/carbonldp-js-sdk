@@ -377,7 +377,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} ]`,
 			} );
 
-			roles.listUsers( "http://example.com/.system/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+			roles.listUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "system.roles.container", "roles/" );
 
@@ -562,7 +562,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				// TODO: Change to `PersistedUser`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getUsers( "http://example.com/.system/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				roles.getUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "system.roles.container", "roles/" );
 
@@ -628,7 +628,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				// TODO: Change to `PersistedUser`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getUsers( "http://example.com/.system/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				roles.getUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "system.roles.container", "roles/" );
 

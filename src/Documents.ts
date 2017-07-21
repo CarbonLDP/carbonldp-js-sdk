@@ -150,7 +150,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			}
 		}
 
-		if( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID );
+		if( this.documentsBeingResolved.has( pointerID ) )
+			return this.documentsBeingResolved.get( pointerID ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 
 		let promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let eTag:string = HTTP.Response.Util.getETag( response );
@@ -171,7 +172,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			document._etag = eTag;
 
 			this.documentsBeingResolved.delete( pointerID );
-			return [ <any> document, response ];
+			return [ <any> document, response ] as [ T & PersistedDocument.Class, HTTP.Response.Class ];
 		} );
 
 		this.documentsBeingResolved.set( pointerID, promise );
@@ -220,7 +221,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let persistedDocuments:(T & PersistedProtectedDocument.Class)[] = requestResponses.map( response => response[ 0 ] );
 			let responses:HTTP.Response.Class[] = requestResponses.map( response => response[ 1 ] );
 
-			return [ persistedDocuments, responses ];
+			return [ persistedDocuments, responses ] as [ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ];
 		} );
 	}
 
@@ -240,7 +241,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then( ( [ persistedDocument, resolveResponse ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			if( ! ! resolveResponse ) responses.push( resolveResponse );
 
-			return [ persistedDocument, responses ];
+			return [ persistedDocument, responses ] as [ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ];
 		} );
 	}
 
@@ -260,7 +261,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then( ( [ persistedDocuments, resolveResponses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
 			if( ! ! resolveResponses ) responses.push( resolveResponses );
 
-			return [ persistedDocuments, responses ];
+			return [ persistedDocuments, responses ] as [ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ];
 		} );
 	}
 
@@ -282,7 +283,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
 		return HTTP.Request.Service.get( parentURI, requestOptions, new RDF.Document.Parser() )
-			.then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			.then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ):[ PersistedDocument.Class[], HTTP.Response.Class ] => {
 				let rdfDocument:RDF.Document.Class = this.getRDFDocument( parentURI, rdfDocuments, response );
 				if( rdfDocument === null ) return [ [], response ];
 
@@ -324,7 +325,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( document => document[ "@id" ] !== containerURI );
 
 			let resources:PersistedDocument.Class[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
-			return [ resources, response ];
+			return [ resources, response ] as [ (T & PersistedDocument.Class)[], HTTP.Response.Class ];
 		} );
 	}
 
@@ -359,7 +360,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			if( requestOptions.headers ) options.headers = Utils.M.extend( new Map(), requestOptions.headers );
 			return this.createAccessPoint<T>( documentURI, accessPoint, slug, options );
 
-		} ) ).then( ( requestResponses:[ T & PersistedAccessPoint.Class, HTTP.Response.Class ][] ) => {
+		} ) ).then( ( requestResponses:[ T & PersistedAccessPoint.Class, HTTP.Response.Class ][] ):[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ] => {
 			let persistedAccessPoints:(T & PersistedAccessPoint.Class)[] = requestResponses.map( response => response[ 0 ] );
 			let responses:HTTP.Response.Class[] = requestResponses.map( response => response[ 1 ] );
 
@@ -392,7 +393,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
-		return HTTP.Request.Service.post( parentURI, <any> data, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+		return HTTP.Request.Service.post( parentURI, <any> data, requestOptions ).then( ( response:HTTP.Response.Class ):[ Pointer.Class, HTTP.Response.Class ] => {
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
@@ -436,7 +437,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ):[ PersistedDocument.Class[], HTTP.Response.Class ] => {
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
@@ -487,7 +488,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 		HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-		return HTTP.Request.Service.get( uri, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return HTTP.Request.Service.get( uri, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ):[ (T & PersistedDocument.Class)[], HTTP.Response.Class ] => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
 
@@ -602,7 +603,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		persistedDocument._normalize();
 		let body:string = persistedDocument.toJSON( this, this.jsonldConverter );
 
-		return HTTP.Request.Service.put( uri, body, requestOptions ).then( ( response:HTTP.Response.Class ) => {
+		return HTTP.Request.Service.put( uri, body, requestOptions ).then( ( response:HTTP.Response.Class ):[ T & PersistedDocument.Class, HTTP.Response.Class ] => {
 			return [ persistedDocument, response ];
 		} );
 	}
@@ -644,7 +645,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			responses.push( saveResponse );
 			return persistedDocument.refresh<T>();
-		} ).then( ( [ document, refreshResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+		} ).then( ( [ document, refreshResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ):[ T & PersistedDocument.Class, HTTP.Response.Class[] ] => {
 			responses.push( refreshResponse );
 			return [ persistedDocument, responses ];
 		} );

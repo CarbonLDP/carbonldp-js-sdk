@@ -271,7 +271,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				Object.defineProperty( credentials, "resolve", {
 					value: ():Promise<[ PersistedCredentials.Class, HTTP.Response.Class ]> => {
 						credentials._resolved = true;
-						return Promise.resolve( [ credentials, mockedResponse ] );
+						return Promise.resolve( [ credentials, mockedResponse ] as [ PersistedCredentials.Class, HTTP.Response.Class ] );
 					},
 				} );
 				promise = credentials.enable();
@@ -342,7 +342,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				Object.defineProperty( credentials, "resolve", {
 					value: ():Promise<[ PersistedCredentials.Class, HTTP.Response.Class ]> => {
 						credentials._resolved = true;
-						return Promise.resolve( [ credentials, mockedResponse ] );
+						return Promise.resolve( [ credentials, mockedResponse ] as [ PersistedCredentials.Class, HTTP.Response.Class ] );
 					},
 				} );
 				promise = credentials.disable();

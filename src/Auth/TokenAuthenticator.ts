@@ -94,7 +94,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
 			} );
 
-			return [ token, response ];
+			return [ token, response ] as [ Token.Class, HTTP.Response.Class ];
 		} );
 	}
 

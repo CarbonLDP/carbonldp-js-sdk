@@ -963,9 +963,9 @@ var Class = (function () {
             return [persistedDocument, response];
         });
     };
+    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;
 }());
-Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
 exports.default = Class;
 

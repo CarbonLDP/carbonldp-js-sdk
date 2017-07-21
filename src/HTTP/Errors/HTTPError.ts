@@ -1,5 +1,5 @@
 import AbstractError from "./../../Errors/AbstractError";
-import * as Pointer from "./../../Pointer";
+import * as PersistedDocument from "./../../PersistedDocument";
 import * as LDP from "./../../LDP";
 import * as Resource from "./../../Resource";
 import Response from "./../Response";
@@ -21,7 +21,7 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 
 	isResolved:() => boolean;
 
-	resolve:() => Promise<[ Pointer.Class, Response ]>;
+	resolve: <T>() => Promise<[ T & PersistedDocument.Class, Response ]>;
 
 	addType:( type:string ) => void;
 	hasType:( type:string ) => boolean;

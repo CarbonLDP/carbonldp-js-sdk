@@ -133,7 +133,8 @@ function listUsers( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[
 }
 
 function getUsers( requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
-function getUsers( this:Class, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
+function getUsers( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]>;
+function getUsers( this:Class, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class[], HTTP.Response.Class ]> {
 	checkState( this );
 	return this._roles.getUsers( this.id, retrievalPreferencesOrRequestOptions, requestOptions );
 }

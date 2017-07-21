@@ -69,7 +69,7 @@ function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:
 	} ).then( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => {
 		responses.push( ...credentialsResponses );
 
-		return [ this, responses ];
+		return [ this, responses ] as [ Class, HTTP.Response.Class[] ];
 	} );
 }
 
