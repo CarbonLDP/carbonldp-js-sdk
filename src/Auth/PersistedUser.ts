@@ -73,11 +73,13 @@ function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:
 	} );
 }
 
+type CredentialsResult = { credentials:Pointer.Class };
+
 function obtainCredentials( user:Class ):Promise<HTTP.Response.Class> {
 	return user
-		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.Predicate.credentials}>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class, HTTP.Response.Class ] ) => {
-			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding[ "credentials" ] as Pointer.Class, user._documents );
+		.executeSELECTQuery<CredentialsResult>( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.Predicate.credentials }>?c}}` )
+		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<CredentialsResult>, HTTP.Response.Class ] ) => {
+			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
 			return response;
 		} );
 }

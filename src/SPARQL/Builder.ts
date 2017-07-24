@@ -10,7 +10,7 @@ import SPARQLER from "sparqler";
 declare module "sparqler/Clauses" {
 
 	export interface FinishSelect {
-		execute():Promise<[ SELECTResults, HTTPResponse ]>;
+		execute<T>():Promise<[ SELECTResults<T>, HTTPResponse ]>;
 		executeRaw():Promise<[ RawResults, HTTPResponse ]>;
 	}
 
@@ -34,8 +34,8 @@ queryPrototype.initInterfaces = function():void {
 
 	// Add execution of select
 	this.interfaces.finishSelect = {
-		execute: function():Promise<[ SELECTResults, HTTPResponse ]> {
-			return self._documents.executeSELECTQuery( self._entryPoint, self.toCompactString() );
+		execute: function<T>():Promise<[ SELECTResults<T>, HTTPResponse ]> {
+			return self._documents.executeSELECTQuery<T>( self._entryPoint, self.toCompactString() );
 		},
 		executeRaw: function():Promise<[ RawResults, HTTPResponse ]> {
 			return self._documents.executeRawSELECTQuery( self._entryPoint, self.toCompactString() );

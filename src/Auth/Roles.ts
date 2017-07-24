@@ -106,14 +106,16 @@ export class Class {
 
 	// TODO: Optimize
 	private getUsersAccessPoint( roleURI:string ):Promise<Pointer.Class> {
+		type UserAccessPointResult = { usersAccessPoint: Pointer.Class };
+
 		return Promise.resolve()
 			.then( () => this.resolveURI( roleURI ) )
 			.then( ( uri:string ) => this.context.documents.executeSELECTQuery( uri, `select distinct ?usersAccessPoint where {
 				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .
 				?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .
 			}` ) )
-			.then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
-				return <Pointer.Class> selectResults.bindings[ 0 ][ "usersAccessPoint" ];
+			.then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class<UserAccessPointResult>, HTTP.Response.Class ] ) => {
+				return <Pointer.Class> selectResults.bindings[ 0 ].usersAccessPoint;
 			} );
 	}
 

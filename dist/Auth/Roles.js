@@ -94,7 +94,7 @@ var Class = (function () {
             .then(function (uri) { return _this.context.documents.executeSELECTQuery(uri, "select distinct ?usersAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .\n\t\t\t\t?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .\n\t\t\t}"); })
             .then(function (_a) {
             var selectResults = _a[0], response = _a[1];
-            return selectResults.bindings[0]["usersAccessPoint"];
+            return selectResults.bindings[0].usersAccessPoint;
         });
     };
     Class.prototype.getContainerURI = function () {
