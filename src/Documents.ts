@@ -173,6 +173,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			this.documentsBeingResolved.delete( pointerID );
 			return [ <any> document, response ] as [ T & PersistedDocument.Class, HTTP.Response.Class ];
+		} ).catch( error => {
+			this.documentsBeingResolved.delete( pointerID );
+			return Promise.reject( error );
 		} );
 
 		this.documentsBeingResolved.set( pointerID, promise );

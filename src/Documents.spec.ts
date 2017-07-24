@@ -382,6 +382,51 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( pointer ).toBe( anotherPointer );
 		} );
 
+		describe( "Documents.get", ():void => {
+
+			it( "should release cached request when failed", ( done:DoneFn ):void => {
+
+				class MockedContext extends AbstractContext {
+					_baseURI:string = "";
+				}
+
+				const context:MockedContext = new MockedContext();
+				const documents:Documents.Class = context.documents;
+
+				const spyGet:jasmine.Spy = spyOn( HTTP.Request.Service, "get" );
+
+				// First failed request
+				spyGet.and.returnValue( Promise.reject( new Error( "A error in the GET request." ) ) );
+				documents.get( "resource/" )
+					.then( () => {
+						done.fail( "Should not have been resolved." );
+					} )
+					.catch( ( error:Error ) => {
+						expect( error ).toEqual( new Error( "A error in the GET request." ) );
+
+						// Second correct request
+						spyGet.and.returnValue( Promise.resolve( [
+							[ { "@id": "http://example.com/resource/", "@graph":[ { "@id": "http://example.com/resource/" } ] } ],
+							new HTTP.Response.Class( <any> null, "", <any> { headers: {
+								"ETag": "123456",
+								"Content-Location": "http://example.com/resource/",
+							} } ),
+						] ) );
+						return documents.get( "resource/" );
+					} )
+					.then( ( responseData ) => {
+						expect( responseData ).toBeDefined();
+						expect( responseData[ 0 ] ).toBeDefined();
+						expect( responseData[ 0 ][ "id" ] ).toBe( "http://example.com/resource/" );
+						done();
+					} )
+					.catch( error => {
+						done.fail( error );
+					} );
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"get",
@@ -405,8 +450,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}
 				}
 
-				let context:ErrorMockedContext = new ErrorMockedContext();
-				context.documents.get( "http://not-example.com" );
+				new ErrorMockedContext().documents.get( "http://not-example.com" );
 
 			} ).toThrowError( Errors.IllegalArgumentError );
 
@@ -3347,15 +3391,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					const mockAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						mockAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return mockAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -3509,15 +3553,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					let mockAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						mockAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return mockAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -5351,10 +5395,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					let promise:Promise<any> = documents.refresh( document );
-					expect( promise instanceof Promise ).toBe( true );
+					let refreshPromise:Promise<any> = documents.refresh( document );
+					expect( refreshPromise instanceof Promise ).toBe( true );
 
-					return promise.then( spies.success );
+					return refreshPromise.then( spies.success );
 				},
 				success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 					expect( persistedDoc ).toBe( document );
