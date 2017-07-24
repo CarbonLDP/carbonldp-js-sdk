@@ -17,11 +17,12 @@ var Factory = (function () {
         return Factory.hasClassProperties(object)
             && PersistedDocument.Factory.is(object);
     };
-    Factory.decorate = function (document) {
+    Factory.decorate = function (document, documents) {
+        var persistedProtectedDocument = document;
         if (Factory.hasClassProperties(document))
-            return document;
-        var rdfSource = document;
-        Object.defineProperties(rdfSource, {
+            return persistedProtectedDocument;
+        PersistedDocument.Factory.decorate(document, documents);
+        Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
                 writable: false,
                 enumerable: false,
@@ -29,7 +30,7 @@ var Factory = (function () {
                 value: getACL,
             },
         });
-        return rdfSource;
+        return persistedProtectedDocument;
     };
     return Factory;
 }());
@@ -42,8 +43,8 @@ function getACL(requestOptions) {
     }
     else {
         aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.Predicate.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
-            var results = _a[0], response = _a[1];
-            return results.bindings[0]["acl"];
+            var results = _a[0];
+            return results.bindings[0].acl;
         });
     }
     return aclPromise.then(function (acl) {

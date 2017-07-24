@@ -28,20 +28,6 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"domain",
-			"string",
-			"The domain of the Carbon LDP server to be used."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"http.ssl",
-			"boolean",
-			"Indicates if the server uses secure HTTP (HTTPS) or not."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
 			"auth.method",
 			"Carbon.Auth.Method",
 			"(Not supported) Indicates the default method of authentication to use."
@@ -49,28 +35,28 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"platform.container",
+			"system.container",
 			"string",
-			"URI relative to the domain that indicates the slug of the platform container."
+			"URI relative to the domain that indicates the slug of the system container."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
-			"platform.apps.container",
+			"system.users.container",
 			"string",
-			"Relative URI that indicates the slug of the apps container."
+			"Relative URI to any context, that indicates the slug of the users container."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
-			"platform.agents.container",
+			"system.credentials.container",
 			"string",
-			"Relative URI to any context, that indicates the slug of the agents container."
+			"Relative URI to any context, that indicates the slug of the user's credentials container."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
-			"platform.roles.container",
+			"system.roles.container",
 			"string",
 			"Relative URI to any context, that indicates the slug of the roles container."
 		), ():void => {} );
@@ -87,39 +73,31 @@ describe( module( "Carbon/Settings" ), ():void => {
 	it( hasDefaultExport(
 		"Carbon.settings", `
 		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
-		* domain: \`"carbonldp.com"\`
-		* http.ssl: \`true\`
 		* auth.method: \`Carbon.Auth.Method.TOKEN\`
-		* platform.container: \`"platform/"\`
-		* platform.apps.container: \`"apps/"\`
-		* platform.agents.container: \`"agents/"\`
-		* platform.roles.container: \`"roles/"\`
+		* system.container: \`".system/"\`
+		* system.users.container: \`"users/"\`
+		* system.credentials.container: \`"credentials/"\`
+		* system.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
 		`
 	), ():void => {
 		expect( defaultExport ).toBeDefined();
 		expect( Utils.isObject( defaultExport ) ).toBe( true );
 
-		expect( defaultExport[ "domain" ] ).toBeDefined();
-		expect( defaultExport[ "domain" ] ).toBe( "carbonldp.com" );
-
-		expect( defaultExport[ "http.ssl" ] ).toBeDefined();
-		expect( defaultExport[ "http.ssl" ] ).toBe( true );
-
 		expect( defaultExport[ "auth.method" ] ).toBeDefined();
 		expect( defaultExport[ "auth.method" ] ).toBe( Auth.Method.TOKEN );
 
-		expect( defaultExport[ "platform.container" ] ).toBeDefined();
-		expect( defaultExport[ "platform.container" ] ).toBe( "platform/" );
+		expect( defaultExport[ "system.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.container" ] ).toBe( ".system/" );
 
-		expect( defaultExport[ "platform.apps.container" ] ).toBeDefined();
-		expect( defaultExport[ "platform.apps.container" ] ).toBe( "apps/" );
+		expect( defaultExport[ "system.roles.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.roles.container" ] ).toBe( "roles/" );
 
-		expect( defaultExport[ "platform.roles.container" ] ).toBeDefined();
-		expect( defaultExport[ "platform.roles.container" ] ).toBe( "roles/" );
+		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
 
-		expect( defaultExport[ "platform.agents.container" ] ).toBeDefined();
-		expect( defaultExport[ "platform.agents.container" ] ).toBe( "agents/" );
+		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.credentials.container" ] ).toBe( "credentials/" );
 
 		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
 		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );

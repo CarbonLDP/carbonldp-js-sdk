@@ -31,7 +31,7 @@ var Class = (function () {
             if (Utils_1.isObject(headers)) {
                 for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
                     var name_1 = _a[_i];
-                    this.headers.set(name_1, new Header.Class(headers[name_1]));
+                    this.headers.set(name_1.toLowerCase(), new Header.Class(headers[name_1]));
                 }
             }
         }

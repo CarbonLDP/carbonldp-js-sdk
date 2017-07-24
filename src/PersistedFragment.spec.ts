@@ -93,8 +93,12 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return RDF.URI.Util.isRelative( uri ) ? `http://example.com/${uri}` : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:AbstractContext = new MockedContext();

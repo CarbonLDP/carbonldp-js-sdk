@@ -8,9 +8,7 @@ src/**/*.js
 src/**/*.map
 
 # Typings
-**/typings/globals/
-**/typings/modules/
-**/typings/index.d.ts
+**/typings/
 
 # JSPM
 **/jspm_packages/
@@ -22,6 +20,7 @@ reports/
 
 # IntelliJ
 .idea/workspace.xml
+.idea/dictionaries/
 # *.iml
 # *.iws
 

@@ -96,24 +96,24 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
+			"baseURI",
+			"string",
+			"The base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string."
+		), ():void => {
+			expect( context.baseURI ).toBeDefined();
+			expect( context.baseURI ).toEqual( jasmine.any( String ) );
+
+			expect( context.baseURI ).toBe( "" );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
 			"parentContext",
 			"Carbon.Context.Class",
 			"Parent context of the current context. For an instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 			expect( context.parentContext ).toBeNull();
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"getBaseURI",
-			"Returns the base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string.",
-			{ type: "string" }
-		), ():void => {
-			expect( context.getBaseURI ).toBeDefined();
-			expect( Utils.isFunction( context.getBaseURI ) ).toBe( true );
-
-			expect( context.getBaseURI() ).toBe( "" );
 		} );
 
 		it( hasMethod(

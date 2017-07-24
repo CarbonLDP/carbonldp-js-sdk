@@ -4,6 +4,7 @@ import {
 
 	module,
 	clazz,
+	method,
 
 	isDefined,
 	hasConstructor,
@@ -12,13 +13,11 @@ import {
 	extendsClass,
 	reexports,
 	hasDefaultExport,
+	hasSignature,
 } from "./test/JasmineExtender";
 
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as APIDescription from "./APIDescription";
-import * as App from "./App";
-import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -30,23 +29,21 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
-import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
+import * as System from "./System";
 import * as Utils from "./Utils";
 
 import * as Carbon from "./Carbon";
 import DefaultExport from "./Carbon";
-
 
 describe( module( "Carbon" ), ():void => {
 
@@ -63,14 +60,12 @@ describe( module( "Carbon" ), ():void => {
 		let myCarbon:Carbon.Class;
 
 		beforeEach( ():void => {
-			carbon = new Carbon.Class();
+			carbon = new Carbon.Class( "example.com", true );
 
-			myCarbon = new Carbon.Class( {
-				"domain": "example.com",
-				"http.ssl": false,
+			myCarbon = new Carbon.Class( "my-carbonldp.example.com", false, {
 				"auth.method": Auth.Method.TOKEN,
-				"platform.container": "example-platform/",
-				"platform.apps.container": "example-apps/",
+				"system.container": ".my-system/",
+				"system.roles.container": "my-roles/",
 			} );
 
 			jasmine.Ajax.install();
@@ -85,7 +80,7 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isFunction( Carbon.Class ) ).toBe( true );
 		} );
 
-		it( extendsClass( "Carbon.Class.AbstractContext.Class" ), ():void => {
+		it( extendsClass( "Carbon.AbstractContext.Class" ), ():void => {
 			expect( carbon instanceof AbstractContext.Class ).toBe( true );
 		} );
 
@@ -113,6 +108,19 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
 		} );
 
+		it( hasProperty(
+			INSTANCE,
+			"baseURI",
+			"string",
+			"Returns the URI of your Carbon LDP."
+		), ():void => {
+			expect( carbon.baseURI ).toBeDefined();
+			expect( Utils.isString( carbon.baseURI ) ).toBe( true );
+
+			expect( carbon.baseURI ).toMatch( "https://example.com/" );
+			expect( myCarbon.baseURI ).toMatch( "http://my-carbonldp.example.com/" );
+		} );
+
 		it( reexports(
 			STATIC,
 			"AccessPoint",
@@ -120,24 +128,6 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.AccessPoint ).toBeDefined();
 			expect( Carbon.Class.AccessPoint ).toBe( AccessPoint );
-		} );
-
-		it( reexports(
-			STATIC,
-			"App",
-			"Carbon/App"
-		), ():void => {
-			expect( Carbon.Class.App ).toBeDefined();
-			expect( Carbon.Class.App ).toBe( App );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Apps",
-			"Carbon/Apps"
-		), ():void => {
-			expect( Carbon.Class.Apps ).toBeDefined();
-			expect( Carbon.Class.Apps ).toBe( Apps );
 		} );
 
 		it( reexports(
@@ -241,15 +231,6 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedApp",
-			"Carbon/PersistedApp"
-		), ():void => {
-			expect( Carbon.Class.PersistedApp ).toBeDefined();
-			expect( Carbon.Class.PersistedApp ).toBe( PersistedApp );
-		} );
-
-		it( reexports(
-			STATIC,
 			"PersistedDocument",
 			"Carbon/PersistedDocument"
 		), ():void => {
@@ -282,15 +263,6 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.PersistedResource ).toBeDefined();
 			expect( Carbon.Class.PersistedResource ).toBe( PersistedResource );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Platform",
-			"Carbon/Platform"
-		), ():void => {
-			expect( Carbon.Class.Platform ).toBeDefined();
-			expect( Carbon.Class.Platform ).toBe( Platform );
 		} );
 
 		it( reexports(
@@ -349,6 +321,15 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"System",
+			"Carbon/System"
+		), ():void => {
+			expect( Carbon.Class.System ).toBeDefined();
+			expect( Carbon.Class.System ).toBe( System );
+		} );
+
+		it( reexports(
+			STATIC,
 			"Utils",
 			"Carbon/Utils"
 		), ():void => {
@@ -357,7 +338,9 @@ describe( module( "Carbon" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "settings", type: "Carbon.Class.Settings.Class", optional: true },
+			{ name: "domain", type: "string", description: "Domain of your Carbon LDP." },
+			{ name: "ssl", type: "boolean", optional: true, defaultValue: "true", description: "If the domain is under secure connection. If not set it is considered `true`." },
+			{ name: "settings", type: "Carbon.Settings.Class", optional: true, description: "Optional configuration settings. You can also use `setSetting()` method later on." },
 		] ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
@@ -370,87 +353,230 @@ describe( module( "Carbon" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"resolve",
-			"Resolve the URI provided in the scope of the CarbonLDP Platform.", [
-				{ name: "uri", type: "string" },
+			"Resolve the URI provided in the scope your CarbonLDP Platform instance.", [
+				{ name: "relativeURI", type: "string", description: "Relative URI to be resolved." },
 			],
-			{ type: "string" }
+			{ type: "string", description: "The absolute URI that has been resolved." }
 		), ():void => {
 			expect( carbon.resolve ).toBeDefined();
 			expect( Utils.isFunction( carbon.resolve ) ).toBe( true );
 
-			expect( carbon.resolve( "http://example.com/platform/my-resource/" ) ).toBe( "http://example.com/platform/my-resource/" );
-			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://carbonldp.com/platform/my-resource/" );
+			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://example.com/my-resource/" );
+			expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
+			expect( () => carbon.resolve( "http://my-carbon.example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
 
-			expect( myCarbon.resolve( "http://example.com/example-platform/my-resource/" ) ).toBe( "http://example.com/example-platform/my-resource/" );
-			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://example.com/example-platform/my-resource/" );
+			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
+			expect( myCarbon.resolve( "http://my-carbonldp.example.com/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
+			expect( () => myCarbon.resolve( "https://example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
 		} );
 
 		it( hasMethod(
 			INSTANCE,
-			"getAPIDescription",
-			"Returns the API description of the related CarbonLDP Platform.",
-			{ type: "Promise<Carbon.APIDescription.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( carbon.getAPIDescription ).toBeDefined();
-			expect( Utils.isFunction( carbon.getAPIDescription ) ).toBe( true );
+			"resolveSystemURI",
+			"Resolve the URI provided in the scope of the system container of a Carbon LDP.\n\nIf no `system.container` setting has been set an IllegalStateError will be thrown.\nIf the URI provided is outside the system container an IllegalArgumentError will be thrown.", [
+				{ name: "relativeURI", type: "string", description: "Relative URI to be resolved." },
+			],
+			{ type: "string", description: "The absolute URI that has been resolved." }
+		), ():void => {
+			expect( carbon.resolveSystemURI ).toBeDefined();
+			expect( carbon.resolveSystemURI ).toEqual( jasmine.any( Function ) );
 
-			jasmine.Ajax.stubRequest( /api/, null, "GET" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"ETag": 'W/"123456789"',
-				},
-				responseText: `[ {
+			expect( carbon.resolveSystemURI( "my-resource/" ) ).toBe( "https://example.com/.system/my-resource/" );
+			expect( carbon.resolveSystemURI( "https://example.com/.system/my-resource/" ) ).toBe( "https://example.com/.system/my-resource/" );
+			expect( () => carbon.resolveSystemURI( "https://example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => carbon.resolveSystemURI( "https://example.com/.my-system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+
+			expect( myCarbon.resolveSystemURI( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/.my-system/my-resource/" );
+			expect( myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/.my-system/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/.my-system/my-resource/" );
+			expect( () => myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/.system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( () => myCarbon.resolveSystemURI( "https://example.com/.my-system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+
+			// No `system.container` defined
+			carbon.deleteSetting( "system.container" );
+			expect( () => carbon.resolveSystemURI( "my-resource/" ) ).toThrowError( Errors.IllegalStateError );
+		} );
+
+		describe( method(
+			INSTANCE,
+			"getPlatformMetadata",
+			"Retrieves the Metadata related to the CarbonLDP Platform."
+		), ():void => {
+
+			it( "should exists", ():void => {
+				expect( carbon.getPlatformMetadata ).toBeDefined();
+				expect( Utils.isFunction( carbon.getPlatformMetadata ) ).toBe( true );
+			} );
+
+			it( "should reject promise when no \"system.container\" setting declared", ( done:DoneFn ):void => {
+				carbon.deleteSetting( "system.container" );
+				let promise:Promise<System.PlatformMetadata.Class>;
+
+				promise = carbon.getPlatformMetadata();
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toMatch( /system\.container/ );
+						done();
+					} );
+			} );
+
+			it( "should reject promise when no \"system.platform.metadata\" setting declared", ( done:DoneFn ):void => {
+				carbon.deleteSetting( "system.platform.metadata" );
+				let promise:Promise<System.PlatformMetadata.Class>;
+
+				promise = carbon.getPlatformMetadata();
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toMatch( /system\.platform\.metadata/ );
+						done();
+					} );
+			} );
+
+			it( hasSignature(
+				{ type: "Promise<Carbon.PlatformMetadata.Class>" }
+			), ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", null, "GET" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": '"123456789"',
+					},
+					responseText: `[ {
 					"@graph": [ {
-						"@id": "https://carbonldp.com/platform/api/",
-						"@type": [
-							"http://www.w3.org/ns/ldp#Resource",
-							"https://carbonldp.com/ns/v1/platform#API",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
-						],
-						"https://carbonldp.com/ns/v1/platform#buildDate": [ {
+						"@id": "https://example.com/.system/platform/",
+						"@type": [ "${ NS.C.Class.VolatileResource }", "${ NS.C.Class.Platform }" ],
+						"${ NS.C.Predicate.buildDate }": [ {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							"@value": "2016-06-01T00:00:00.000-06:00"
 						} ],
-						"https://carbonldp.com/ns/v1/platform#version": [ {
+						"${ NS.C.Predicate.version }": [ {
 							"@value": "1.0.0"
 						} ]
 					}
 					],
-					"@id": "https://carbonldp.com/platform/api/"
+					"@id": "https://example.com/.system/platform/"
 				} ]`,
+				} );
+
+				let promise:Promise<System.PlatformMetadata.Class>;
+				promise = carbon.getPlatformMetadata();
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+
+				promise.then( ( platformMetadata:System.PlatformMetadata.Class ):void => {
+					expect( platformMetadata ).toBeTruthy();
+					expect( Object.keys( platformMetadata ).length ).toBe( 2 );
+
+					expect( platformMetadata.version ).toBeDefined();
+					expect( platformMetadata.version ).toEqual( jasmine.any( String ) );
+					expect( platformMetadata.version ).toBe( "1.0.0" );
+
+					expect( platformMetadata.buildDate ).toBeDefined();
+					expect( platformMetadata.buildDate ).toEqual( jasmine.any( Date ) );
+					expect( platformMetadata.buildDate ).toEqual( new Date( "2016-06-01T06:00:00.000Z" ) );
+
+					done();
+				} ).catch( done.fail );
 			} );
 
-			let promise:Promise<any>;
-			promise = carbon.getAPIDescription();
-			expect( promise instanceof Promise ).toBe( true );
-
-			promise.then( ( description:APIDescription.Class ):void => {
-				expect( description ).toBeTruthy();
-				expect( description.version ).toBe( "1.0.0" );
-				done();
-			}, done.fail );
 		} );
 
-		it( hasProperty(
+		describe( method(
 			INSTANCE,
-			"apps",
-			"Carbon.Class.Apps.Class",
-			"Instance of the class `Carbon.Apps` in the context of the instanced Carbon class."
+			"getInstanceMetadata",
+			"Retrieves the Metadata related to your instance of the Carbon LDP Platform."
 		), ():void => {
-			expect( carbon.apps ).toBeDefined();
-			expect( Utils.isObject( carbon.apps ) );
-			expect( carbon.apps instanceof Apps.Class );
-		} );
 
-		it( hasProperty(
-			INSTANCE,
-			"auth",
-			"Carbon.Class.Platform.Auth.Class",
-			"Instance of `Carbon.Platform.Auth.Class` class for manage the auth inside of the platform."
-		), ():void => {
-			expect( carbon.auth ).toBeDefined();
-			expect( Utils.isObject( carbon.auth ) );
-			expect( carbon.auth instanceof Platform.Auth.Class );
+			it( "should exists", ():void => {
+				expect( carbon.getInstanceMetadata ).toBeDefined();
+				expect( Utils.isFunction( carbon.getInstanceMetadata ) ).toBe( true );
+			} );
+
+			it( "should reject promise when no \"system.container\" setting declared", ( done:DoneFn ):void => {
+				carbon.deleteSetting( "system.container" );
+				let promise:Promise<System.InstanceMetadata.Class>;
+
+				promise = carbon.getInstanceMetadata();
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toMatch( /system\.container/ );
+						done();
+					} );
+			} );
+
+			it( "should reject promise when no \"system.instance.metadata\" setting declared", ( done:DoneFn ):void => {
+				carbon.deleteSetting( "system.instance.metadata" );
+				let promise:Promise<System.InstanceMetadata.Class>;
+
+				promise = carbon.getInstanceMetadata();
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promise
+					.then( () => done.fail( "Promise should not be resolved." ) )
+					.catch( error => {
+						expect( error.message ).toMatch( /system\.instance\.metadata/ );
+						done();
+					} );
+			} );
+
+			it( hasSignature(
+				{ type: "Promise<Carbon.InstanceMetadata.Class>" }
+			), ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/.system/instance/", null, "GET" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": '"123456789"',
+					},
+					responseText: `[ {
+					"@graph": [ {
+						"@id": "https://example.com/.system/instance/",
+						"@type": [ "${ NS.CS.Class.ProtectedDocument }", "${ NS.C.Class.Instance }" ],
+						"${ NS.CS.Predicate.namae }": [ {
+							"@value": "Your instance's name"
+						} ],
+						"${ NS.CS.Predicate.description }": [ {
+							"@value": "Your instance's description"
+						} ],
+						"${ NS.CS.Predicate.allowsOrigin }": [ {
+							"@value": "http://example.com"
+						}, {
+							"@id": "${ NS.CS.Class.AllOrigins }"
+						} ]
+					}
+					],
+					"@id": "https://example.com/.system/instance/"
+				} ]`,
+				} );
+
+				let promise:Promise<System.InstanceMetadata.Class>;
+				promise = carbon.getInstanceMetadata();
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+
+				promise.then( ( instanceMetadata:System.InstanceMetadata.Class ):void => {
+					expect( instanceMetadata ).toBeTruthy();
+					expect( Object.keys( instanceMetadata ).length ).toBe( 3 );
+
+					expect( instanceMetadata.name ).toBeDefined();
+					expect( instanceMetadata.name ).toEqual( jasmine.any( String ) );
+					expect( instanceMetadata.name ).toBe( "Your instance's name" );
+
+					expect( instanceMetadata.description ).toBeDefined();
+					expect( instanceMetadata.description ).toEqual( jasmine.any( String ) );
+					expect( instanceMetadata.description ).toBe( "Your instance's description" );
+
+					expect( instanceMetadata.allowsOrigins ).toBeDefined();
+					expect( instanceMetadata.allowsOrigins ).toEqual( jasmine.any( Array ) );
+					expect( instanceMetadata.allowsOrigins.length ).toBe( 2 );
+					expect( instanceMetadata.allowsOrigins ).toContain( "http://example.com" );
+					expect( instanceMetadata.allowsOrigins ).toContain( Pointer.Factory.create( NS.CS.Class.AllOrigins ) );
+
+					done();
+				} ).catch( done.fail );
+			} );
+
 		} );
 
 	} );

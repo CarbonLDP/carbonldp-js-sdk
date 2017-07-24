@@ -1,38 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var AppRole = require("./App/Role");
-var APIDescription = require("./APIDescription");
+var Documents = require("./Documents");
 var Auth = require("./Auth");
 var BlankNode = require("./BlankNode");
-var Documents_1 = require("./Documents");
-var Error = require("./LDP/Error");
-var ErrorResponse = require("./LDP/ErrorResponse");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
-var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
 var RDFRepresentation = require("./RDFRepresentation");
+var System = require("./System");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
-        this.auth = null;
-        this.documents = new Documents_1.default(this);
+        this.auth = new Auth.Class(this);
+        this.documents = new Documents.Class(this);
         this.registerDefaultObjectSchemas();
     }
+    Object.defineProperty(Class.prototype, "baseURI", {
+        get: function () { return ""; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class.prototype, "parentContext", {
         get: function () { return null; },
         enumerable: true,
         configurable: true
     });
-    Class.prototype.getBaseURI = function () {
-        return this.resolve("");
-    };
     Class.prototype.resolve = function (relativeURI) {
         return relativeURI;
+    };
+    Class.prototype.resolveSystemURI = function (relativeURI) {
+        if (!this.hasSetting("system.container"))
+            throw new Errors.IllegalStateError("The \"system.container\" setting hasn't been defined.");
+        var systemContainer = this.resolve(this.getSetting("system.container"));
+        var systemURI = RDF.URI.Util.resolve(systemContainer, relativeURI);
+        if (!systemURI.startsWith(systemContainer))
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP.");
+        return systemURI;
     };
     Class.prototype.hasSetting = function (name) {
         return (this.settings.has(name))
@@ -55,9 +62,7 @@ var Class = (function () {
         type = this.resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
-        if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
-            return true;
-        return false;
+        return !!this.parentContext && this.parentContext.hasObjectSchema(type);
     };
     Class.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
@@ -137,37 +142,20 @@ var Class = (function () {
     Class.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(BlankNode.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
+        this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
+        this.extendObjectSchema(System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
-        this.extendObjectSchema(APIDescription.RDF_CLASS, APIDescription.SCHEMA);
-        this.extendObjectSchema(Error.RDF_CLASS, Error.SCHEMA);
-        this.extendObjectSchema(ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA);
-        this.extendObjectSchema(NS.CS.Class.Application, {
-            "name": {
-                "@id": NS.CS.Predicate.namae,
-                "@type": NS.XSD.DataType.string,
-            },
-            "description": {
-                "@id": NS.CS.Predicate.description,
-                "@type": NS.XSD.DataType.string,
-            },
-            "rootContainer": {
-                "@id": NS.CS.Predicate.rootContainer,
-                "@type": "@id",
-            },
-            "allowsOrigins": {
-                "@id": NS.CS.Predicate.allowsOrigin,
-                "@container": "@set",
-            },
-        });
-        this.extendObjectSchema(AppRole.RDF_CLASS, Auth.Role.SCHEMA);
-        this.extendObjectSchema(AppRole.RDF_CLASS, AppRole.SCHEMA);
+        this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);
+        this.extendObjectSchema(LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA);
         this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA);
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
+        this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
-        this.extendObjectSchema(Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA);
+        this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
+        this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
     };

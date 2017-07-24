@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Credentials.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Auth.PersistedACE.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let persistedACE:PersistedACE.Class;
 

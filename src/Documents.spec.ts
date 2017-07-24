@@ -14,6 +14,7 @@ import {
 	hasMethod,
 	hasSignature,
 	hasProperty,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 
 import AbstractContext from "./AbstractContext";
@@ -21,27 +22,35 @@ import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
 import Carbon from "./Carbon";
 import * as Document from "./Document";
-import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
-import * as JSONLD from "./JSONLD";
 import * as HTTP from "./HTTP";
+import * as JSONLD from "./JSONLD";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
+import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
+import * as URI from "./RDF/URI";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
-import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
 import { QueryClause } from "sparqler/Clauses";
 
+
+import * as Documents from "./Documents";
+import DefaultExport from "./Documents";
+
 describe( module( "Carbon/Documents" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( Documents ).toBeDefined();
+		expect( Documents ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( interfaze( "Carbon.Documents.DocumentDecorator", "Interface that describes the properties needed to decorate a document when requested" ), ():void => {
 
@@ -79,28 +88,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( isDefined(), ():void => {
-			expect( Documents ).toBeDefined();
-			expect( Utils.isFunction( Documents ) ).toBe( true );
+			expect( Documents.Class ).toBeDefined();
+			expect( Utils.isFunction( Documents.Class ) ).toBe( true );
 		} );
 
 		it( hasConstructor( [
 			{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
 
-			let documents:Documents = new Documents( context );
+			let documents:Documents.Class = new Documents.Class( context );
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents ).toBe( true );
+			expect( documents instanceof Documents.Class ).toBe( true );
 
-			documents = new Documents();
+			documents = new Documents.Class();
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents ).toBe( true );
+			expect( documents instanceof Documents.Class ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -110,13 +123,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
 			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
@@ -129,24 +146,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.documentDecorators ).toBeDefined();
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
 
 			// Has default decorators
+			expect( documents.documentDecorators.size ).toBe( 5 );
 			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
 			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.Agent ) ).toBe( true );
-
-			// This is set at `Carbon.App.Context.Class`
-			expect( documents.documentDecorators.has( NS.CS.Class.AppRole ) ).toBe( false );
+			expect( documents.documentDecorators.has( NS.CS.Class.User ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Role ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Credentials ) ).toBe( true );
 		} );
 
 		describe( method(
@@ -156,13 +177,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.inScope ).toBeDefined();
 				expect( Utils.isFunction( documents.inScope ) ).toBe( true );
@@ -175,13 +200,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "boolean" }
 			), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				let pointer:Pointer.Class;
 
@@ -214,13 +243,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "boolean" }
 			), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.inScope( "http://example.com/document/" ) ).toBe( true );
 				expect( documents.inScope( "http://example.com/document/child/" ) ).toBe( true );
@@ -247,11 +280,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -293,11 +330,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -341,6 +382,51 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( pointer ).toBe( anotherPointer );
 		} );
 
+		describe( "Documents.get", ():void => {
+
+			it( "should release cached request when failed", ( done:DoneFn ):void => {
+
+				class MockedContext extends AbstractContext {
+					_baseURI:string = "";
+				}
+
+				const context:MockedContext = new MockedContext();
+				const documents:Documents.Class = context.documents;
+
+				const spyGet:jasmine.Spy = spyOn( HTTP.Request.Service, "get" );
+
+				// First failed request
+				spyGet.and.returnValue( Promise.reject( new Error( "A error in the GET request." ) ) );
+				documents.get( "resource/" )
+					.then( () => {
+						done.fail( "Should not have been resolved." );
+					} )
+					.catch( ( error:Error ) => {
+						expect( error ).toEqual( new Error( "A error in the GET request." ) );
+
+						// Second correct request
+						spyGet.and.returnValue( Promise.resolve( [
+							[ { "@id": "http://example.com/resource/", "@graph":[ { "@id": "http://example.com/resource/" } ] } ],
+							new HTTP.Response.Class( <any> null, "", <any> { headers: {
+								"ETag": "123456",
+								"Content-Location": "http://example.com/resource/",
+							} } ),
+						] ) );
+						return documents.get( "resource/" );
+					} )
+					.then( ( responseData ) => {
+						expect( responseData ).toBeDefined();
+						expect( responseData[ 0 ] ).toBeDefined();
+						expect( responseData[ 0 ][ "id" ] ).toBe( "http://example.com/resource/" );
+						done();
+					} )
+					.catch( error => {
+						done.fail( error );
+					} );
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"get",
@@ -355,30 +441,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// Throws an error if the context cannot resolve the provided URI
 			expect( () => {
 				class ErrorMockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
-				let context:ErrorMockedContext = new ErrorMockedContext();
-				context.documents.get( "http://not-example.com" );
+				new ErrorMockedContext().documents.get( "http://not-example.com" );
 
 			} ).toThrowError( Errors.IllegalArgumentError );
 
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			let responseBody:string = JSON.stringify( {
 				"@id": "http://example.com/resource/",
@@ -537,13 +626,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			let spies:any = {
 				exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
@@ -615,13 +708,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -694,7 +791,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
-					promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
 						expect( document ).toBe( childObject );
@@ -724,13 +821,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -800,7 +901,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( document ).toBe( childDocument );
+						expect( document ).toBe( childDocument as (typeof childDocument & PersistedDocument.Class) );
 						expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 						expect( document.isResolved() ).toBe( false );
 						expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
@@ -828,13 +929,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -903,7 +1008,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 						fail: ():void => {},
 					};
 					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
-					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
 					promises.push( documents.createChild( "http://example.com/parent-resource-error/", childDocument ).catch( error => {
 						expect( error ).toEqual( jasmine.any( Error ) );
@@ -913,7 +1017,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( document ).toBe( childDocument );
+						expect( document ).toBe( childDocument as (typeof childDocument & PersistedDocument.Class) );
 						expect( document.id ).toBe( "http://example.com/parent-resource-ok/new-resource/" );
 						expect( document.isResolved() ).toBe( false );
 						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
@@ -948,13 +1052,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1055,13 +1163,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1131,7 +1243,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument, "child-document" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( document ).toBe( childDocument );
+						expect( document ).toBe( childDocument as (typeof childDocument & PersistedDocument.Class) );
 						expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 						expect( document.isResolved() ).toBe( false );
 						expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
@@ -1167,13 +1279,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.createChildren ).toBeDefined();
 				expect( Utils.isFunction( documents.createChildren ) ).toBe( true );
@@ -1195,13 +1311,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1305,7 +1425,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/without-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -1353,13 +1473,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1468,7 +1592,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/with-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -1538,13 +1662,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1649,7 +1777,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/without-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -1712,13 +1840,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1816,7 +1948,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 6 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/null-slugs/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -1852,13 +1984,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1968,7 +2104,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/with-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -2061,13 +2197,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// Two request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let mockCreateResponse:any = { val: "Mock Save Response" };
 					let mockRetrieveResponse:any = { val: "Mock Save Response" };
@@ -2098,14 +2238,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// One request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
 					context.setSetting( "vocabulary", "http://example.com/ns#" );
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let options:HTTP.Request.Options = { timeout: 50550 };
 
@@ -2195,13 +2339,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				let mockCreateResponse:any = { val: "Mock Save Response" };
 				let mockRetrieveResponse:any = { val: "Mock Save Response" };
@@ -2241,13 +2389,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.createChildrenAndRetrieve ).toBeDefined();
 				expect( Utils.isFunction( documents.createChildrenAndRetrieve ) ).toBe( true );
@@ -2267,13 +2419,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// Two request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let mockCreateResponse:any[] = [ { index: 0, val: "Create response" }, { index: 1, val: "Create response" } ];
 					let mockRetrieveResponse:any[] = [ { index: 0, val: "Resolve response" }, { index: 1, val: "Resolve response" } ];
@@ -2309,7 +2465,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( createResponses.length ).toBe( 2 );
 						expect( retrieveResponses.length ).toBe( 2 );
 						for( let index:number = 0; index < 2; ++ index ) {
-							expect( persistedDocuments ).toContain( childrenObjects[ index ] );
+							expect( persistedDocuments ).toContain( childrenObjects[ index ] as PersistedDocument.Class );
 							expect( createResponses ).toContain( mockCreateResponse[ index ] );
 							expect( retrieveResponses ).toContain( mockRetrieveResponse[ index ] );
 						}
@@ -2319,14 +2475,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// One request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
 					context.setSetting( "vocabulary", "http://example.com/ns#" );
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let options:HTTP.Request.Options = { timeout: 50550 };
 					let childrenObjects:{ index:number; property:string; }[] = [ { index: 0, property: "My property" }, { index: 1, property: "My property" } ];
@@ -2391,13 +2551,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				let mockCreateResponse:any[] = [ { index: 0, val: "Create response" }, { index: 1, val: "Create response" } ];
 				let mockRetrieveResponse:any[] = [ { index: 0, val: "Resolve response" }, { index: 1, val: "Resolve response" } ];
@@ -2439,7 +2603,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( createResponses.length ).toBe( 2 );
 					expect( retrieveResponses.length ).toBe( 2 );
 					for( let index:number = 0; index < 2; ++ index ) {
-						expect( persistedDocuments ).toContain( childrenObjects[ index ] );
+						expect( persistedDocuments ).toContain( childrenObjects[ index ] as PersistedDocument.Class );
 						expect( createResponses ).toContain( mockCreateResponse[ index ] );
 						expect( retrieveResponses ).toContain( mockRetrieveResponse[ index ] );
 					}
@@ -2460,12 +2624,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.listChildren ).toBeDefined();
 			expect( Utils.isFunction( documents.listChildren ) ).toBe( true );
@@ -2570,12 +2738,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"getChildren",
 			"Retrieves and resolves all the children of a specified document."
 		), () => {
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -2978,13 +3150,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 				let spy:any = {
 					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
@@ -3077,13 +3253,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 				let spy:any = {
 					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
@@ -3171,13 +3351,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.createAccessPoints ).toBeDefined();
 				expect( Utils.isFunction( documents.createAccessPoints ) ).toBe( true );
@@ -3194,24 +3378,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					const mockAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						mockAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return mockAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -3226,7 +3414,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let accessPoints:AccessPoint.Class[];
 				let requestOptions:HTTP.Request.Options;
 
-				let createSpy:jasmine.Spy = spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+				spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
 					expect( documentURI ).toBe( "http://example.com/parent-resource/" );
 					checkRequestState( accessPoint, slug, options );
 
@@ -3352,24 +3540,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					let mockAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						mockAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return mockAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -3383,7 +3575,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let accessPoints:AccessPoint.Class[];
 				let requestOptions:HTTP.Request.Options;
 
-				let createSpy:jasmine.Spy = spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+				spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
 					expect( documentURI ).toBe( "http://example.com/parent-resource/" );
 					checkRequestState( accessPoint, slug, options );
 
@@ -3428,7 +3620,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 					// Without request options
 					accessPoints = createAccessPoint( 3 );
 					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
-						let index:number = (<any> accessPoint).index;
 						expect( slug ).toBeNull();
 						expect( options ).toEqual( {} );
 					};
@@ -3467,13 +3658,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -3523,13 +3718,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -3578,13 +3777,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -3634,13 +3837,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -3681,12 +3888,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "listMembers" ), () => {
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3992,12 +4203,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"getMembers",
 			"Retrieves and resolve all the members of a specified document."
 		), () => {
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -4691,12 +4906,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -4751,12 +4970,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.addMembers ).toBeDefined();
 			expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
@@ -4805,12 +5028,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -4865,12 +5092,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.removeMembers ).toBeDefined();
 			expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
@@ -4923,12 +5154,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.removeAllMembers ).toBeDefined();
 			expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
@@ -4975,12 +5210,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.refresh ).toBeDefined();
 			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
@@ -5012,12 +5251,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.refresh ).toBeDefined();
 			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
@@ -5152,10 +5395,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					let promise:Promise<any> = documents.refresh( document );
-					expect( promise instanceof Promise ).toBe( true );
+					let refreshPromise:Promise<any> = documents.refresh( document );
+					expect( refreshPromise instanceof Promise ).toBe( true );
 
-					return promise.then( spies.success );
+					return refreshPromise.then( spies.success );
 				},
 				success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 					expect( persistedDoc ).toBe( document );
@@ -5166,11 +5409,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( document[ "pointer" ][ "string" ] ).toBe( "Changed Fragment 1" );
 					expect( blankNode01[ "string" ] ).toBe( "Changed Fragment 1" );
 					expect( blankNode01.id ).toBe( "_:0001" );
-					expect( blankNode01 ).toBe( document.getFragment( "_:0001" ) );
+					expect( blankNode01 ).toBe( document.getFragment<PersistedBlankNode.Class>( "_:0001" ) );
 					expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
 
 					expect( blankNode02.id ).not.toBe( "_:2" );
-					expect( blankNode02 ).not.toBe( document.getFragment( "_:2" ) );
+					expect( blankNode02 ).not.toBe( document.getFragment<PersistedBlankNode.Class>( "_:2" ) );
 					expect( document[ "pointerSet" ][ 1 ] ).not.toBe( blankNode02 );
 					expect( document[ "pointerSet" ][ 1 ] ).toBe( document.getFragment( "_:2" ) );
 					expect( document.getFragment( "_:2" )[ "string" ] ).toBe( "New Fragment 2" );
@@ -5220,12 +5463,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// Two request behaviour
 			finalPromises.push( (():Promise<any> => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
@@ -5238,7 +5485,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
 				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
 
-				return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+				return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
 					expect( spySave ).toHaveBeenCalledWith( document, options );
 					expect( spyRefresh ).toHaveBeenCalledWith( document );
 
@@ -5251,13 +5498,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// One request behaviour
 			finalPromises.push( (():Promise<any> => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				let context:MockedContext = new MockedContext();
 				context.setSetting( "vocabulary", "http://example.com/ns#" );
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
@@ -5284,7 +5535,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.callThrough();
 				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.callThrough();
 
-				return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+				return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
 					expect( spySave ).toHaveBeenCalledTimes( 1 );
 					expect( spySave ).toHaveBeenCalledWith( document, options );
 					expect( spyRefresh ).not.toHaveBeenCalled();
@@ -5317,13 +5568,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.delete ).toBeDefined();
 			expect( Utils.isFunction( documents.delete ) ).toBe( true );
@@ -5380,18 +5635,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedAuth extends Auth.Class {}
 			class MockedContext extends AbstractContext {
+				protected _baseURI:string;
+
 				constructor() {
 					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 					this.auth = new MockedAuth( this );
-				}
-
-				resolve( uri:string ):string {
-					return uri;
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.getDownloadURL ).toBeDefined();
 			expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
@@ -5412,13 +5667,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -5453,13 +5712,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -5496,13 +5759,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -5539,13 +5806,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -5582,13 +5853,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -5626,13 +5901,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "SPARQLER/Clauses/QueryClause" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -5649,6 +5928,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.Documents.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( Documents.Class );
 	} );
 
 } );

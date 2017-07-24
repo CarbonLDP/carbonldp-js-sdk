@@ -1,13 +1,17 @@
 import {
 	STATIC,
 
+	OBLIGATORY,
+
 	module,
 	clazz,
+	interfaze,
 
 	isDefined,
 	hasMethod,
 	hasProperty,
-	hasDefaultExport, interfaze, extendsClass, OBLIGATORY,
+	hasDefaultExport,
+	extendsClass,
 } from "./../test/JasmineExtender";
 import * as NS from "./../NS";
 import * as Resource from "./../Resource";
@@ -62,13 +66,12 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.Auth.Credentials.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"agent",
-			"Carbon.Auth.PersistedAgent.Class",
-			"Agent that has been requested the token, and which authentication the token represents."
+			"user",
+			"Carbon.Auth.PersistedUser.Class",
+			"User that has been requested the token, and which authentication the token represents."
 		), ():void => {} );
 
 		it( hasProperty(
@@ -114,8 +117,8 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 				"@type": NS.XSD.DataType.dateTime,
 			} );
 
-			expect( Utils.hasProperty( Token.SCHEMA, "agent" ) ).toBe( true );
-			expect( Token.SCHEMA[ "agent" ] ).toEqual( {
+			expect( Utils.hasProperty( Token.SCHEMA, "user" ) ).toBe( true );
+			expect( Token.SCHEMA[ "user" ] ).toEqual( {
 				"@id": NS.CS.Predicate.credentialsOf,
 				"@type": "@id",
 			} );
@@ -124,9 +127,9 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 		it( hasMethod( STATIC, "is",
 			"Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.", [
-				{name: "value", type: "any"},
+				{ name: "value", type: "any" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( "is" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.is ) ).toBe( true );
@@ -137,7 +140,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			let object:any = Resource.Factory.createFrom( {
 				key: null,
 				expirationTime: null,
-				agent: null,
+				user: null,
 			} );
 
 			expect( Token.Factory.is( object ) ).toBe( true );
@@ -150,16 +153,16 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			expect( Token.Factory.is( object ) ).toBe( false );
 			object.expirationTime = null;
 
-			delete object.agent;
+			delete object.user;
 			expect( Token.Factory.is( object ) ).toBe( false );
-			object.agent = null;
+			object.user = null;
 		} );
 
 		it( hasMethod( STATIC, "hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( "hasClassProperties" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.hasClassProperties ) ).toBe( true );
@@ -169,7 +172,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			let object:any = {
 				key: null,
 				expirationTime: null,
-				agent: null,
+				user: null,
 			};
 
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( true );
@@ -186,9 +189,9 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( false );
 			object.expirationTime = null;
 
-			delete object.agent;
+			delete object.user;
 			expect( Token.Factory.hasClassProperties( object ) ).toBe( false );
-			object.agent = null;
+			object.user = null;
 		} );
 
 		it( hasMethod(
@@ -196,9 +199,9 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
-				{name: "object", type: "T"},
+				{ name: "object", type: "T" },
 			],
-			{type: "T & Carbon.Auth.Token.Class"}
+			{ type: "T & Carbon.Auth.Token.Class" }
 		), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );
@@ -206,13 +209,14 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			let object:any = {
 				key: null,
 				expirationTime: null,
-				agent: null,
+				user: null,
 			};
 			let token:Token.Class = Token.Factory.decorate( object );
-			expect( token ).toEqual( {
+			// Decorate does nothing
+			expect( token ).toEqual( <any> {
 				key: null,
 				expirationTime: null,
-				agent: null,
+				user: null,
 			} );
 		} );
 
