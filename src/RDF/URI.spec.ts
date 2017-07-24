@@ -485,6 +485,9 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( "resolve" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.resolve ) ).toBe( true );
 
+			expect( URI.Util.resolve( "", "http://example.com/resource/" ) ).toEqual( "http://example.com/resource/" );
+			expect( URI.Util.resolve( "", "child/" ) ).toEqual( "child/" );
+
 			expect( URI.Util.resolve( "http://example.com/resource/", "/child/" ) ).toEqual( "http://example.com/resource/child/" );
 			expect( URI.Util.resolve( "http://example.com/resource", "/child/" ) ).toEqual( "http://example.com/child/" );
 

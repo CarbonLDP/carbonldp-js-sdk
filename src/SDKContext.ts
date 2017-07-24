@@ -1,24 +1,21 @@
-import * as AppRole from "./App/Role";
-import * as APIDescription from "./APIDescription";
+import * as Documents from "./Documents";
 import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";
-import Context from "./Context";
-import Documents from "./Documents";
-import * as Error from "./LDP/Error";
-import * as ErrorResponse from "./LDP/ErrorResponse";
+import * as Context from "./Context";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
-import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as System from "./System";
 
-export class Class implements Context {
+export class Class implements Context.Class {
 	auth:Auth.Class;
-	documents:Documents;
+	documents:Documents.Class;
 
-	get parentContext():Context { return null; }
+	get baseURI():string { return ""; }
+	get parentContext():Context.Class { return null; }
 
 	protected settings:Map<string, any>;
 
@@ -31,18 +28,33 @@ export class Class implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.auth = null;
-		this.documents = new Documents( this );
+		this.auth = new Auth.Class( this );
+		this.documents = new Documents.Class( this );
 
 		this.registerDefaultObjectSchemas();
 	}
 
-	getBaseURI():string {
-		return this.resolve( "" );
-	}
-
 	resolve( relativeURI:string ):string {
 		return relativeURI;
+	}
+
+	/**
+	 * Resolve the URI provided in the scope of the system container of a Carbon LDP.
+	 *
+	 * If no `system.container` setting has been set an IllegalStateError will be thrown.
+	 * If the URI provided is outside the system container an IllegalArgumentError will be thrown.
+	 *
+	 * @param relativeURI Relative URI to be resolved.
+	 * @returns The absolute URI that has been resolved.
+	 */
+	resolveSystemURI( relativeURI:string ):string {
+		if( ! this.hasSetting( "system.container" ) ) throw new Errors.IllegalStateError( `The "system.container" setting hasn't been defined.` );
+		const systemContainer:string = this.resolve( this.getSetting( "system.container" ) );
+
+		const systemURI:string = RDF.URI.Util.resolve( systemContainer, relativeURI );
+		if( ! systemURI.startsWith( systemContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the system container of your Carbon LDP.` );
+
+		return systemURI;
 	}
 
 	hasSetting( name:string ):boolean {
@@ -67,9 +79,7 @@ export class Class implements Context {
 	hasObjectSchema( type:string ):boolean {
 		type = this.resolveTypeURI( type );
 		if( this.typeObjectSchemaMap.has( type ) ) return true;
-		if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return true;
-
-		return false;
+		return ! ! this.parentContext && this.parentContext.hasObjectSchema( type );
 	}
 
 	getObjectSchema( type:string = null ):ObjectSchema.DigestedObjectSchema {
@@ -154,42 +164,23 @@ export class Class implements Context {
 
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
+		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
+		this.extendObjectSchema( System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA );
+
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
-		this.extendObjectSchema( APIDescription.RDF_CLASS, APIDescription.SCHEMA );
-		this.extendObjectSchema( Error.RDF_CLASS, Error.SCHEMA );
-		this.extendObjectSchema( ErrorResponse.RDF_CLASS, ErrorResponse.SCHEMA );
 
-		// TODO Fix error of cycle reference because the App module dependency of AbstractClass which has a dependency with SDKContext. For now add manual data
-		/* this.extendObjectSchema( App.RDF_CLASS, App.SCHEMA ); */
-		this.extendObjectSchema( NS.CS.Class.Application, {
-			"name": {
-				"@id": NS.CS.Predicate.namae,
-				"@type": NS.XSD.DataType.string,
-			},
-			"description": {
-				"@id": NS.CS.Predicate.description,
-				"@type": NS.XSD.DataType.string,
-			},
-			"rootContainer": {
-				"@id": NS.CS.Predicate.rootContainer,
-				"@type": "@id",
-			},
-			"allowsOrigins": {
-				"@id": NS.CS.Predicate.allowsOrigin,
-				"@container": "@set",
-			},
-		} );
-		this.extendObjectSchema( AppRole.RDF_CLASS, Auth.Role.SCHEMA );
-		this.extendObjectSchema( AppRole.RDF_CLASS, AppRole.SCHEMA );
-
+		this.extendObjectSchema( LDP.Error.RDF_CLASS, LDP.Error.SCHEMA );
+		this.extendObjectSchema( LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA );
 		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 
+		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
 		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
-		this.extendObjectSchema( Auth.Agent.RDF_CLASS, Auth.Agent.SCHEMA );
+		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
+		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 	}

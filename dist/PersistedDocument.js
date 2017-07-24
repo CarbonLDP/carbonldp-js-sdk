@@ -92,8 +92,8 @@ function extendCreateNamedFragment(superFunction) {
 function refresh() {
     return this._documents.refresh(this);
 }
-function save() {
-    return this._documents.save(this);
+function save(requestOptions) {
+    return this._documents.save(this, requestOptions);
 }
 function saveAndRefresh() {
     return this._documents.saveAndRefresh(this);
@@ -247,9 +247,9 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object, uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        var document = Document.Factory.createFrom(object);
+        var document = Factory.decorate(object, documents, snapshot);
         document.id = uri;
-        return Factory.decorate(document, documents, snapshot);
+        return document;
     };
     Factory.decorate = function (document, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }

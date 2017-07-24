@@ -131,7 +131,7 @@ export class Util {
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {
-		if( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
+		if( ! parentURI || Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;
 
 		let protocol:string = parentURI.substr( 0, parentURI.indexOf( "://" ) + 3 );

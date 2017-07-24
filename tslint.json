@@ -6,7 +6,10 @@
 		"comment-format": [
 			true,
 			"check-space",
-			"check-uppercase"
+			"check-uppercase",
+			{
+				"ignore-words": [ "noinspection" ]
+			}
 		],
 		"curly": false,
 		"eofline": true,
@@ -18,7 +21,6 @@
 		"interface-name": false,
 		"jsdoc-format": true,
 		"label-position": true,
-		"label-undefined": true,
 		"max-line-length": false,
 		"member-access": false,
 		"member-ordering": [
@@ -41,9 +43,8 @@
 			"trace"
 		],
 		"no-construct": true,
-		"no-constructor-vars": true,
+		"no-parameter-properties": true,
 		"no-debugger": true,
-		"no-duplicate-key": true,
 		"no-duplicate-variable": true,
 		"no-empty": false,
 		"no-eval": true,
@@ -54,7 +55,6 @@
 		"no-string-literal": false,
 		"no-switch-case-fall-through": false,
 		"no-trailing-whitespace": true,
-		"no-unreachable": true,
 		"no-unused-expression": false,
 		"no-unused-variable": false,
 		"no-use-before-declare": true,
@@ -74,12 +74,17 @@
 			"avoid-escape"
 		],
 		"radix": true,
-		"semicolon": true,
+		"semicolon": [ true, "always" ],
 		"switch-default": true,
 		"trailing-comma": [
 			true,
 			{
-				"multiline": "always"
+				"multiline": {
+					"objects": "always",
+					"arrays": "always",
+					"functions": "never",
+					"typeLiterals": "ignore"
+				}
 			}
 		],
 		"triple-equals": [
@@ -104,7 +109,6 @@
 				"variable-declaration": "nospace"
 			}
 		],
-		"use-strict": false,
 		"variable-name": [
 			true,
 			"check-format",

@@ -19,8 +19,8 @@
     "sparqler": "0.1.1"
   },
   "devDependencies": {
-    "@types/jasmine": "2.5.45",
-    "@types/jasmine-ajax": "3.1.33",
+    "@types/jasmine": "^2.5.47",
+    "@types/jasmine-ajax": "^3.1.36",
     "@types/node": "^6.0.46",
     "del": "^2.0.2",
     "es6-shim": "^0.35.1",
@@ -30,27 +30,28 @@
     "gulp-json-editor": "^2.2.1",
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-tslint": "^5.0.0",
+    "gulp-tslint": "^8.0.0",
     "gulp-typescript": "^3.1.0",
     "gulp-util": "^3.0.7",
-    "jasmine-ajax": "^3.2.0",
-    "jasmine-core": "^2.3.4",
+    "jasmine-ajax": "^3.3.1",
+    "jasmine-core": "^2.6.1",
     "jsonld": "^0.4.11",
     "jspm": "0.17.0-beta.32",
-    "karma": "^0.13.19",
+    "karma": "^1.7.0",
     "karma-chrome-launcher": "^1.0.1",
     "karma-documentation-runner": "file:test/console-reporter",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
+    "karma-jasmine-ajax": "^0.1.13",
     "karma-jspm": "^2.1.1",
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
     "karma-sourcemap-loader": "^0.3.4",
-    "nock": "^8.2.1",
+    "nock": "^9.0.13",
     "run-sequence": "^1.2.1",
     "systemjs": "0.19.41",
     "systemjs-builder": "0.15.35",
-    "tslint": "^3.10.2",
-    "typescript": "^2.0.6",
+    "tslint": "^5.2.0",
+    "typescript": "^2.4.2",
     "typings": "^1.0.4"
   },
   "jspm": {
@@ -63,7 +64,7 @@
     "dependencies": {
       "plugin-typescript": "github:frankwallis/plugin-typescript@^5.2.7",
       "sparqler": "npm:sparqler@0.1.1",
-      "typescript": "npm:typescript@^2.0.6"
+      "typescript": "npm:typescript@^2.4.2"
     },
     "devDependencies": {
       "jsonld": "npm:jsonld@^0.4.11"
@@ -77,10 +78,11 @@
       "events": "npm:jspm-nodelibs-events@^0.2.0",
       "fs": "npm:jspm-nodelibs-fs@^0.2.0",
       "http": "npm:jspm-nodelibs-http@^0.2.0",
+      "module": "npm:jspm-nodelibs-module@^0.2.0",
       "net": "npm:jspm-nodelibs-net@^0.2.0",
       "os": "npm:jspm-nodelibs-os@^0.2.0",
       "path": "npm:jspm-nodelibs-path@^0.2.0",
-      "process": "npm:jspm-nodelibs-process@^0.2.0",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
       "stream": "npm:jspm-nodelibs-stream@^0.2.0",
       "string_decoder": "npm:jspm-nodelibs-string_decoder@^0.2.0",
       "url": "npm:jspm-nodelibs-url@^0.2.0",
@@ -93,7 +95,7 @@
           "test.js"
         ]
       },
-      "npm:typescript@2.0.6": {
+      "npm:typescript@2.4.2": {
         "browser": {},
         "map": {
           "buffer": "@empty",
@@ -102,6 +104,9 @@
           "path": "@empty",
           "process": "@empty",
           "readline": "@empty"
+        },
+        "dependencies": {
+          "source-map-support": "*"
         }
       }
     }

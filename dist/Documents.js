@@ -42,7 +42,9 @@ var Class = (function () {
         else {
             decorators.set(ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate });
             decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
-            decorators.set(Auth.Agent.RDF_CLASS, { decorator: Auth.PersistedAgent.Factory.decorate });
+            decorators.set(Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate, parameters: [this] });
+            decorators.set(Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: [this] });
+            decorators.set(Auth.Credentials.RDF_CLASS, { decorator: Auth.PersistedCredentials.Factory.decorate, parameters: [this] });
         }
         this._documentDecorators = decorators;
     }
@@ -63,10 +65,9 @@ var Class = (function () {
         if (!!this.context) {
             if (RDF.URI.Util.isPrefixed(id))
                 id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
-            var baseURI = this.context.getBaseURI();
             if (RDF.URI.Util.isRelative(id))
                 return true;
-            if (RDF.URI.Util.isBaseOf(baseURI, id))
+            if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
                 return true;
         }
         else {
@@ -281,6 +282,8 @@ var Class = (function () {
     };
     Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
+        if (this.context)
+            documentURI = this.context.resolve(documentURI);
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         if (PersistedDocument.Factory.is(accessPoint))
@@ -562,7 +565,7 @@ var Class = (function () {
         });
     };
     Class.prototype.getDownloadURL = function (documentURI, requestOptions) {
-        if (!this.context.auth)
+        if (!this.context)
             Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
         return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
     };
@@ -583,42 +586,42 @@ var Class = (function () {
     Class.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions);
     };
     Class.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions);
     };
     Class.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions);
     };
     Class.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, this, requestOptions);
     };
     Class.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions);
     };
     Class.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         documentURI = this.getRequestURI(documentURI);
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions);
     };
@@ -629,7 +632,7 @@ var Class = (function () {
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             documentURI = this.context.resolve(documentURI);
         }
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions);
     };
@@ -639,7 +642,7 @@ var Class = (function () {
         sparqlBuilder._entryPoint = documentURI;
         var builder = sparqlBuilder.base(documentURI);
         if (!!this.context) {
-            builder.base(this.context.getBaseURI());
+            builder.base(this.context.baseURI);
             if (this.context.hasSetting("vocabulary"))
                 builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
             var schema = this.context.getObjectSchema();
@@ -697,9 +700,8 @@ var Class = (function () {
             if (locationHeader.values.length !== 1)
                 throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
-            var persistedDocument = PersistedDocument.Factory.decorate(_this.createPointerFrom(document, localID), _this);
-            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(persistedDocument);
-            _this.pointers.set(localID, persistedProtectedDocument);
+            _this.pointers.set(localID, _this.createPointerFrom(document, localID));
+            var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
             var preferenceHeader = response.getHeader("Preference-Applied");
             if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
                 return [persistedProtectedDocument, response];
@@ -730,7 +732,7 @@ var Class = (function () {
             if (RDF.URI.Util.isPrefixed(uri))
                 uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
-                var baseURI = this.context.getBaseURI();
+                var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
                     return null;
                 return uri.substring(baseURI.length);
@@ -844,17 +846,13 @@ var Class = (function () {
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
-        else {
-            if (this.context) {
-                var baseURI = this.context.getBaseURI();
-                if (!RDF.URI.Util.isBaseOf(baseURI, uri))
-                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
-            }
+        else if (this.context && !RDF.URI.Util.isBaseOf(this.context.baseURI, uri)) {
+            throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
         }
         return uri;
     };
     Class.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
-        if (this.context && this.context.auth && this.context.auth.isAuthenticated())
+        if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
@@ -965,9 +963,9 @@ var Class = (function () {
             return [persistedDocument, response];
         });
     };
+    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;
 }());
-Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
 exports.Class = Class;
 exports.default = Class;
 

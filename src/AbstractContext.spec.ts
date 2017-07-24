@@ -19,9 +19,7 @@ import DefaultExport from "./AbstractContext";
 
 describe( module( "Carbon/AbstractContext" ), ():void => {
 	class MockedContext extends AbstractContext.Class {
-		resolve( uri:string ):string {
-			return uri;
-		}
+		protected _baseURI:string = "";
 	}
 	let context:AbstractContext.Class;
 

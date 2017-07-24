@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTP = require("./../HTTP");
 var Errors = require("./../Errors");
+var HTTP = require("./../HTTP");
 var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
 var Class = (function () {
     function Class() {

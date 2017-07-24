@@ -5,7 +5,7 @@ export enum Method {
 	POST,
 	PUT,
 	PATCH,
-	DELETE
+	DELETE,
 }
 
 export default Method;

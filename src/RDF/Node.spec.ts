@@ -192,8 +192,12 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			} ];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
