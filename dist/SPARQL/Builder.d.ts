@@ -5,7 +5,7 @@ import HTTPResponse from "./../HTTP/Response";
 import SPARQLER from "sparqler";
 declare module "sparqler/Clauses" {
     interface FinishSelect {
-        execute(): Promise<[SELECTResults, HTTPResponse]>;
+        execute<T>(): Promise<[SELECTResults<T>, HTTPResponse]>;
         executeRaw(): Promise<[RawResults, HTTPResponse]>;
     }
 }

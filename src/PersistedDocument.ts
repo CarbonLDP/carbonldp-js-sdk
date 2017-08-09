@@ -103,7 +103,7 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
-	executeSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]>;
+	executeSELECTQuery<T>( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class<T>, HTTP.Response.Class ]>;
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
 	executeUPDATE( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
@@ -336,8 +336,8 @@ function executeRawSELECTQuery( selectQuery:string, requestOptions:HTTP.Request.
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 
-function executeSELECTQuery( selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]> {
-	return this._documents.executeSELECTQuery( this.id, selectQuery, requestOptions );
+function executeSELECTQuery<T>( this:Class, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, HTTP.Response.Class ]> {
+	return this._documents.executeSELECTQuery<T>( this.id, selectQuery, requestOptions );
 }
 
 function executeRawCONSTRUCTQuery( constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {

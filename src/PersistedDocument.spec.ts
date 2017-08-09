@@ -603,11 +603,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"executeSELECTQuery",
+			[ "T" ],
 			"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		it( hasMethod(

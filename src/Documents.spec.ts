@@ -254,6 +254,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			context = new MockedContext();
 			documents = context.documents;
 
@@ -300,6 +301,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			context = new MockedContext();
 			documents = context.documents;
 
@@ -2464,6 +2466,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
@@ -3219,6 +3222,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						super( <any>{}, "", <any>{} );
 					}
 				}
+
 				let promise:Promise<any> = Promise.resolve();
 				let checkRequestState:( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => void = <any>( () => {} );
 
@@ -3377,6 +3381,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						super( <any>{}, "", <any>{} );
 					}
 				}
+
 				let promise:Promise<any> = Promise.resolve();
 				let checkRequestState:( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => void = <any>( () => {} );
 
@@ -4695,6 +4700,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let context:MockedContext;
 			let documents:Documents;
 
@@ -4755,6 +4761,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
@@ -4809,6 +4816,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let context:MockedContext;
 			let documents:Documents;
 
@@ -4869,6 +4877,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
@@ -4927,6 +4936,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
@@ -4979,6 +4989,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return uri;
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
@@ -5016,6 +5027,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					return uri;
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents = context.documents;
 
@@ -5224,6 +5236,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						return uri;
 					}
 				}
+
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
 
@@ -5255,6 +5268,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						return uri;
 					}
 				}
+
 				let context:MockedContext = new MockedContext();
 				context.setSetting( "vocabulary", "http://example.com/ns#" );
 				let documents:Documents = context.documents;
@@ -5379,6 +5393,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedAuth extends Auth.Class {}
+
 			class MockedContext extends AbstractContext {
 				constructor() {
 					super();

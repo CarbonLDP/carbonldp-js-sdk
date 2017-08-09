@@ -706,12 +706,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions );
 	}
 
-	executeSELECTQuery( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class, HTTP.Response.Class ]> {
+	executeSELECTQuery<T>( documentURI:string, selectQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, HTTP.Response.Class ]> {
 		documentURI = this.getRequestURI( documentURI );
 
 		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-		return SPARQL.Service.executeSELECTQuery( documentURI, selectQuery, this, requestOptions );
+		return SPARQL.Service.executeSELECTQuery<T>( documentURI, selectQuery, this, requestOptions );
 	}
 
 	executeRawCONSTRUCTQuery( documentURI:string, constructQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
