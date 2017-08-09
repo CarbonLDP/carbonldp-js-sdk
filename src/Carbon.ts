@@ -53,7 +53,7 @@ export class Class extends AbstractContext.Class {
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
-	static get version():string { return "0.42.0"; }
+	static get version():string { return "1.0.0-alpha.1"; }
 
 	// noinspection JSMethodCanBeStatic
 	get version():string { return Class.version; }
