@@ -4,6 +4,6 @@ import * as HTTP from "./../HTTP";
 import * as PersistedAgent from "./PersistedAgent";
 export declare class Class extends Agents.Class {
     constructor(appContext: Carbon);
-    get(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedAgent.Class, HTTP.Response.Class]>;
+    get<T>(agentURI: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAgent.Class, HTTP.Response.Class]>;
 }
 export default Class;

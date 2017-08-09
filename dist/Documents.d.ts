@@ -82,7 +82,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     sparql(documentURI: string): QueryClause;
-    _getPersistedDocument(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): PersistedDocument.Class;
+    _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
@@ -101,8 +101,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
     private getMembershipResource(documentResource, rdfDocuments, response);
-    private createPersistedDocument(documentPointer, documentResource, fragmentResources);
-    private updatePersistedDocument(persistedDocument, documentResource, fragmentResources);
+    private createPersistedDocument<T>(documentPointer, documentResource, fragmentResources);
+    private updatePersistedDocument<T>(persistedDocument, documentResource, fragmentResources);
     private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
     private decoratePersistedDocument(persistedDocument);
     private updateFromPreferenceApplied<T>(persistedDocument, response);

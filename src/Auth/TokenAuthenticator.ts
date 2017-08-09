@@ -5,16 +5,13 @@ import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";
 import * as LDP from "./../LDP";
 import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
 import Authenticator from "./Authenticator";
-import AuthenticationToken from "./AuthenticationToken";
 import BasicAuthenticator from "./BasicAuthenticator";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
-import * as Credentials from "./Credentials";
 import * as Utils from "./../Utils";
 
 export class Class implements Authenticator<UsernameAndPasswordToken> {
@@ -94,7 +91,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
 			} );
 
-			return [ token, response ];
+			return [ token, response ] as [ Token.Class, HTTP.Response.Class ];
 		} );
 	}
 

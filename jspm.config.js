@@ -62,8 +62,9 @@ SystemJS.config({
     "npm:*.json"
   ],
   map: {
+    "module": "npm:jspm-nodelibs-module@0.2.1",
     "sparqler": "npm:sparqler@0.1.1",
-    "typescript": "npm:typescript@2.0.6",
+    "typescript": "npm:typescript@2.4.2",
     "net": "npm:jspm-nodelibs-net@0.2.0",
     "os": "npm:jspm-nodelibs-os@0.2.0",
     "plugin-typescript": "github:frankwallis/plugin-typescript@5.2.7",
@@ -259,7 +260,7 @@ SystemJS.config({
     },
     "github:frankwallis/plugin-typescript@5.2.7": {
       "map": {
-        "typescript": "npm:typescript@2.0.6"
+        "typescript": "npm:typescript@2.4.2"
       }
     },
     "npm:stream-http@2.4.0": {
@@ -312,6 +313,16 @@ SystemJS.config({
         "inherits": "npm:inherits@2.0.3",
         "bn.js": "npm:bn.js@4.11.6",
         "minimalistic-assert": "npm:minimalistic-assert@1.0.0"
+      }
+    },
+    "npm:typescript@2.4.2": {
+      "map": {
+        "source-map-support": "npm:source-map-support@0.4.15"
+      }
+    },
+    "npm:source-map-support@0.4.15": {
+      "map": {
+        "source-map": "npm:source-map@0.5.6"
       }
     }
   }

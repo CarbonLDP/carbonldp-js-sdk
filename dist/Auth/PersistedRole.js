@@ -82,35 +82,35 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function createChild(role, slugOrRequestOptions, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
 }
 function listAgents(requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.listAgents(this.id, requestOptions);
 }
 function getAgents(retrievalPreferencesOrRequestOptions, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.getAgents(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
 }
 function addAgent(agent, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.addAgents(this.id, [agent], requestOptions);
 }
 function addAgents(agents, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.addAgents(this.id, agents, requestOptions);
 }
 function removeAgent(agent, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.removeAgents(this.id, [agent], requestOptions);
 }
 function removeAgents(agents, requestOptions) {
-    checkState.call(this);
+    checkState(this);
     return this._roles.removeAgents(this.id, agents, requestOptions);
 }
-function checkState() {
-    if (!this._roles)
+function checkState(self) {
+    if (!self._roles)
         throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
 }
 

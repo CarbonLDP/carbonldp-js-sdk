@@ -188,11 +188,11 @@ var Service = (function () {
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
+    Service.defaultOptions = {
+        sendCredentialsOnCORS: true,
+    };
     return Service;
 }());
-Service.defaultOptions = {
-    sendCredentialsOnCORS: true,
-};
 exports.Service = Service;
 var Util = (function () {
     function Util() {

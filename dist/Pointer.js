@@ -6,14 +6,14 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return !!(Utils.hasPropertyDefined(object, "_id") &&
+        return (Utils.hasPropertyDefined(object, "_id") &&
             Utils.hasPropertyDefined(object, "_resolved") &&
             Utils.hasPropertyDefined(object, "id") &&
             Utils.hasFunction(object, "isResolved") &&
             Utils.hasPropertyDefined(object, "resolve"));
     };
     Factory.is = function (value) {
-        return !!(Utils.isObject(value) &&
+        return (Utils.isObject(value) &&
             Factory.hasClassProperties(value));
     };
     Factory.create = function (id) {

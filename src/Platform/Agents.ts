@@ -9,8 +9,8 @@ export class Class extends Agents.Class {
 		super( appContext );
 	}
 
-	get( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedAgent.Class, HTTP.Response.Class ]> {
-		return super.get( agentURI, requestOptions );
+	get<T>( agentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAgent.Class, HTTP.Response.Class ]> {
+		return super.get<T>( agentURI, requestOptions );
 	}
 
 }

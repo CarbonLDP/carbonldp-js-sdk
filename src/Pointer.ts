@@ -19,7 +19,7 @@ export interface Library {
 
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
-		return ! ! (
+		return (
 			Utils.hasPropertyDefined( object, "_id" ) &&
 			Utils.hasPropertyDefined( object, "_resolved" ) &&
 
@@ -30,7 +30,7 @@ export class Factory {
 	}
 
 	static is( value:any ):boolean {
-		return ! ! (
+		return (
 			Utils.isObject( value ) &&
 			Factory.hasClassProperties( value )
 		);
@@ -117,7 +117,7 @@ export class Util {
 			let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
 			let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
 
-			return [ resolvedPointers, responses ];
+			return [ resolvedPointers, responses ] as [ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ];
 		} );
 	}
 }
