@@ -5460,6 +5460,47 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
+		it( hasMethod( INSTANCE, "executeASKQuery",
+			"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
+				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+				{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+			], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			// Property Integrity
+			(() => {
+				expect( "executeASKQuery" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.executeASKQuery ) ).toEqual( true );
+			})();
+
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" );
+
+			// Proper execution
+			(function ProperExecution():void {
+				documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+
+			// Relative URI
+			(function RelativeURI():void {
+				documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+		} );
+
 		it( hasMethod( INSTANCE, "executeRawSELECTQuery",
 			"Executes a SELECT query on a document and returns a raw application/sparql-results+json object.", [
 				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
@@ -5499,6 +5540,50 @@ describe( module( "Carbon/Documents" ), ():void => {
 				documents.executeRawSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
 
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+		} );
+
+		it( hasMethod( INSTANCE, "executeSELECTQuery",
+			[ "T" ],
+			"Executes a SELECT query on a document and returns a parsed response object.", [
+				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+				{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+			], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				resolve( uri:string ):string {
+					return "http://example.com/" + uri;
+				}
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents = context.documents;
+
+			// Property Integrity
+			(() => {
+				expect( "executeSELECTQuery" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.executeSELECTQuery ) ).toEqual( true );
+			})();
+
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" );
+
+			// Proper execution
+			(function ProperExecution():void {
+
+				documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+
+			// Relative URI
+			(function RelativeURI():void {
+
+				documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
 		} );
