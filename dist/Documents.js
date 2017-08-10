@@ -143,6 +143,9 @@ var Class = (function () {
             document._etag = eTag;
             _this.documentsBeingResolved.delete(pointerID);
             return [document, response];
+        }).catch(function (error) {
+            _this.documentsBeingResolved.delete(pointerID);
+            return Promise.reject(error);
         });
         this.documentsBeingResolved.set(pointerID, promise);
         return promise;
