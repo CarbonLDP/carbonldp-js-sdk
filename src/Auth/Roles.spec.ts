@@ -335,13 +335,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: `{
 					"head": {
 						"vars": [
-							"agentsAccessPoint"
+							"accessPoint"
 						]
 					},
 					"results": {
 						"bindings": [
 							{
-								"agentsAccessPoint": {
+								"accessPoint": {
 									"type": "uri",
 									"value": "http://example.com/roles/a-role/agents/"
 								}
@@ -441,13 +441,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					responseText: `{
 						"head": {
 							"vars": [
-								"agentsAccessPoint"
+								"accessPoint"
 							]
 						},
 						"results": {
 							"bindings": [
 								{
-									"agentsAccessPoint": {
+									"accessPoint": {
 										"type": "uri",
 										"value": "http://example.com/roles/a-role/agents/"
 									}
@@ -732,13 +732,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				return `{
 					"head": {
 						"vars": [
-							"agentsAccessPoint"
+							"accessPoint"
 						]
 					},
 					"results": {
 						"bindings": [
 							{
-								"agentsAccessPoint": {
+								"accessPoint": {
 									"type": "uri",
 									"value": "${ uri }agents/"
 								}
@@ -839,13 +839,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				return `{
 					"head": {
 						"vars": [
-							"agentsAccessPoint"
+							"accessPoint"
 						]
 					},
 					"results": {
 						"bindings": [
 							{
-								"agentsAccessPoint": {
+								"accessPoint": {
 									"type": "uri",
 									"value": "${ uri }agents/"
 								}

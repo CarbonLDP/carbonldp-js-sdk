@@ -51,15 +51,15 @@ export abstract class Class {
 		} );
 	}
 
-	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	get <T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
 			return this.context.documents.get<T & PersistedRole.Class>( uri, requestOptions );
 		} );
 	}
 
 	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
+		return this.getAgentsAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.listMembers( accessPoint.id, requestOptions );
 		} ).then( ( [ documents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 			let agents:PersistedProtectedDocument.Class[] = documents.map( agent => PersistedProtectedDocument.Factory.decorate( agent ) );
 			return [ agents, response ] as [ PersistedProtectedDocument.Class[], HTTP.Response.Class ];
@@ -69,8 +69,8 @@ export abstract class Class {
 	getAgents<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]>;
 	getAgents<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]>;
 	getAgents<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers<T & PersistedAgent.Class>( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+		return this.getAgentsAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.getMembers<T & PersistedAgent.Class>( accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
 		} );
 	}
 
@@ -79,8 +79,8 @@ export abstract class Class {
 	}
 
 	addAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.addMembers( agentsAccessPoint.id, agents, requestOptions );
+		return this.getAgentsAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.addMembers( accessPoint.id, agents, requestOptions );
 		} );
 	}
 
@@ -89,8 +89,8 @@ export abstract class Class {
 	}
 
 	removeAgents( roleURI:string, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.removeMembers( agentsAccessPoint.id, agents, requestOptions );
+		return this.getAgentsAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.removeMembers( accessPoint.id, agents, requestOptions );
 		} );
 	}
 
@@ -107,13 +107,12 @@ export abstract class Class {
 
 	// TODO: Optimize
 	private getAgentsAccessPoint( roleURI:string ):Promise<Pointer.Class> {
+		type AccessPointResult = { accessPoint:Pointer.Class };
+
 		return this.resolveURI( roleURI ).then( ( uri:string ) => {
-			return this.context.documents.executeSELECTQuery( uri, ` select distinct ?agentsAccessPoint where {
-				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .
-				?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .
-			}` );
-		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
-			return <Pointer.Class> selectResults.bindings[ 0 ][ "agentsAccessPoint" ];
+			return this.context.documents.executeSELECTQuery( uri, `PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<${ uri }>:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#agent}` );
+		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class<AccessPointResult>, HTTP.Response.Class ] ) => {
+			return <Pointer.Class> selectResults.bindings[ 0 ].accessPoint;
 		} );
 	}
 
