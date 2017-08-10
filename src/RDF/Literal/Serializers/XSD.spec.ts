@@ -7,7 +7,7 @@ import {
 
 	isDefined,
 	hasMethod,
-	hasProperty
+	hasProperty,
 } from "./../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
@@ -42,19 +42,19 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns the string with format `YYYY-MM-DD`, of the Date object", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.DateSerializer = new XSD.DateSerializer();
 
 			expect( serializer.serialize ).toBeDefined();
 			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
 
-			let date = new Date( '05 October 2011 14:48 UTC' );
+			let date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "2011-10-05" );
 
-			expect( serializer.serialize.bind( null, {another: "object", that: "is", not: "a Date"} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "2011-10-05" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
@@ -92,19 +92,19 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns the simplified extended ISO format (ISO 8601) of the Date object.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.DateTimeSerializer = new XSD.DateTimeSerializer();
 
 			expect( serializer.serialize ).toBeDefined();
 			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
 
-			let date = new Date( '05 October 2011 14:48 UTC' );
+			let date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "2011-10-05T14:48:00.000Z" );
 
-			expect( serializer.serialize.bind( null, {another: "object", that: "is", not: "a Date"} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "2011-10-05T14:48:00.000Z" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
@@ -142,19 +142,19 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing the Date object with format `HH:mm:ss.sssZ`.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.TimeSerializer = new XSD.TimeSerializer();
 
 			expect( serializer.serialize ).toBeDefined();
 			expect( Utils.isFunction( serializer.serialize ) ).toBe( true );
 
-			let date = new Date( '05 October 2011 14:48 UTC' );
+			let date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "14:48:00.000Z" );
 
-			expect( serializer.serialize.bind( null, {another: "object", that: "is", not: "a Date"} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "14:48:00.000Z" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
@@ -188,13 +188,23 @@ describe( module(
 			expect( serializer instanceof XSD.IntegerSerializer ).toBe( true );
 		} );
 
+		describe( "IntegerSerializer.serialize", ():void => {
+
+			it( "should overflow if larger than 2^32 - 1", ():void => {
+				const serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
+				expect( serializer.serialize( Math.pow( 2, 32 ) ) ).not.toBe( "4294967296" );
+				expect( serializer.serialize( Math.pow( 2, 40 ) ) ).not.toBe( "1099511627776" );
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing a integer from the Number provided.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
 
@@ -211,7 +221,7 @@ describe( module(
 			expect( serializer.serialize( Infinity ) ).toBe( "0" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
 
-			expect( serializer.serialize.bind( null, {another: "object", that: "is", not: "a Number"} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
@@ -249,9 +259,9 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing an unsigned integer from the Number provided.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.UnsignedIntegerSerializer = new XSD.UnsignedIntegerSerializer();
 
@@ -268,11 +278,57 @@ describe( module(
 			expect( serializer.serialize( Infinity ) ).toBe( "0" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
 
-			expect( serializer.serialize.bind( null, {another: "object", that: "is", not: "a Number"} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+		} );
+
+	} );
+
+	describe( "LongSerializer", ():void => {
+
+		describe( "LongSerializer.serialize", ():void => {
+
+			it( "should accept numbers larger than 2^32 - 1", ():void => {
+				const serializer:XSD.LongSerializer = new XSD.LongSerializer();
+				expect( serializer.serialize( Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
+				expect( serializer.serialize( - Math.pow( 2, 32 ) ) ).toBe( "-4294967296" );
+
+				expect( serializer.serialize( Math.pow( 2, 40 ) ) ).toBe( "1099511627776" );
+				expect( serializer.serialize( - Math.pow( 2, 40 ) ) ).toBe( "-1099511627776" );
+			} );
+
+			it( "should remove decimals", ():void => {
+				const serializer:XSD.LongSerializer = new XSD.LongSerializer();
+				expect( serializer.serialize( 4294967296.45 ) ).toBe( "4294967296" );
+				expect( serializer.serialize( 1099511627776.7632 ) ).toBe( "1099511627776" );
+			} );
+
+		} );
+
+	} );
+
+	describe( "UnsignedLongSerializer", ():void => {
+
+		describe( "UnsignedLongSerializer.serialize", ():void => {
+
+			it( "should accept numbers larger than 2^32 - 1", ():void => {
+				const serializer:XSD.UnsignedLongSerializer = new XSD.UnsignedLongSerializer();
+				expect( serializer.serialize( Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
+				expect( serializer.serialize( - Math.pow( 2, 32 ) ) ).toBe( "4294967296" );
+
+				expect( serializer.serialize( Math.pow( 2, 40 ) ) ).toBe( "1099511627776" );
+				expect( serializer.serialize( - Math.pow( 2, 40 ) ) ).toBe( "1099511627776" );
+			} );
+
+			it( "should remove decimals", ():void => {
+				const serializer:XSD.UnsignedLongSerializer = new XSD.UnsignedLongSerializer();
+				expect( serializer.serialize( - 4294967296.45 ) ).toBe( "4294967296" );
+				expect( serializer.serialize( - 1099511627776.7632 ) ).toBe( "1099511627776" );
+			} );
+
 		} );
 
 	} );
@@ -306,9 +362,9 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing a float from the Number provided.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.FloatSerializer = new XSD.FloatSerializer();
 
@@ -325,7 +381,7 @@ describe( module(
 			expect( serializer.serialize( Infinity ) ).toBe( "INF" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "-INF" );
 
-			expect( serializer.serialize.bind( null, {another: "object", that: "is", not: "a Number"} ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
@@ -363,9 +419,9 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing the truth value from the variable provided.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.BooleanSerializer = new XSD.BooleanSerializer();
 
@@ -382,7 +438,7 @@ describe( module(
 			expect( serializer.serialize( - 0.123456789 ) ).toBe( "true" );
 			expect( serializer.serialize( Infinity ) ).toBe( "true" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "true" );
-			expect( serializer.serialize( {another: "object", that: "is", not: "a Boolean"} ) ).toBe( "true" );
+			expect( serializer.serialize( { another: "object", that: "is", not: "a Boolean" } ) ).toBe( "true" );
 			expect( serializer.serialize( "another object that: is not a Boolean" ) ).toBe( "true" );
 			expect( serializer.serialize( {} ) ).toBe( "true" );
 			expect( serializer.serialize( [] ) ).toBe( "true" );
@@ -427,9 +483,9 @@ describe( module(
 			INSTANCE,
 			"serialize",
 			"Returns a string representing the truth value from the variable provided.", [
-				{name: "value", type: "any"}
+				{ name: "value", type: "any" },
 			],
-			{type: "string"}
+			{ type: "string" }
 		), ():void => {
 			let serializer:XSD.StringSerializer = new XSD.StringSerializer();
 
@@ -446,13 +502,13 @@ describe( module(
 			expect( serializer.serialize( NaN ) ).toBe( "NaN" );
 			expect( serializer.serialize( Infinity ) ).toBe( "Infinity" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "-Infinity" );
-			expect( serializer.serialize( {an: "object"} ) ).toBe( "[object Object]" );
+			expect( serializer.serialize( { an: "object" } ) ).toBe( "[object Object]" );
 			expect( serializer.serialize( [ "an", "array" ] ) ).toBe( "an,array" );
 			expect( serializer.serialize( "a string" ) ).toBe( "a string" );
 			expect( serializer.serialize( "" ) ).toBe( "" );
 			expect( serializer.serialize( true ) ).toBe( "true" );
 			expect( serializer.serialize( false ) ).toBe( "false" );
-			expect( serializer.serialize( function() { return "some"; } ) ).toBe( 'function () { return "some"; }' );
+			expect( serializer.serialize( function():string { return "some"; } ) ).toBe( 'function () { return "some"; }' );
 			expect( serializer.serialize( undefined ) ).toBe( "undefined" );
 			expect( serializer.serialize( null ) ).toBe( "null" );
 		} );
