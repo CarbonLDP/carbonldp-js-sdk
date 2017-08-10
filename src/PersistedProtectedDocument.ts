@@ -56,7 +56,7 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 	} else {
 		aclPromise = protectedDocument.executeSELECTQuery( `SELECT ?acl WHERE {
 			<${ protectedDocument.id }> <${ NS.CS.Predicate.accessControlList }> ?acl.
-		}` ).then( ( [ results, response ]:[ SELECTResults, HTTP.Response.Class ] ) => {
+		}` ).then( ( [ results ]:[ SELECTResults, HTTP.Response.Class ] ) => {
 			return results.bindings[ 0 ][ "acl" ] as Pointer.Class;
 		} );
 	}
@@ -65,7 +65,7 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 		return protectedDocument._documents.get( acl.id, requestOptions );
 	} ).then( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
 		if( ! Resource.Util.hasType( acl, Auth.ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
-		return [ acl, response ];
+		return [ acl, response ] as [ Auth.PersistedACL.Class, HTTP.Response.Class ];
 	} );
 }
 

@@ -83,9 +83,9 @@ var Class = (function () {
         var authorization = "Token " + this._credentials.key;
         header.values.push(new HTTP.Header.Value(authorization));
     };
+    Class.TOKEN_CONTAINER = "auth-tokens/";
     return Class;
 }());
-Class.TOKEN_CONTAINER = "auth-tokens/";
 exports.Class = Class;
 exports.default = Class;
 

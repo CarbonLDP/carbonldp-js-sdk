@@ -35,15 +35,16 @@ var Class = (function () {
         });
     };
     Class.prototype.changeEnabledStatus = function (agentURI, value, requestOptions) {
-        var getResponse;
+        var responses = [];
         return this.get(agentURI, requestOptions).then(function (_a) {
             var agent = _a[0], response = _a[1];
-            getResponse = response;
+            responses.push(response);
             agent.enabled = value;
             return agent.save();
         }).then(function (_a) {
             var agent = _a[0], response = _a[1];
-            return [agent, [getResponse, response]];
+            responses.push(response);
+            return [agent, responses];
         });
     };
     Class.prototype.resolveURI = function (agentURI) {

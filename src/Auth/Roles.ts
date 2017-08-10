@@ -20,9 +20,9 @@ export abstract class Class {
 	}
 
 	// TODO: Requests must return all the responses made
-	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
+	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
+	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		let parentURI:string = Utils.isString( parentRole ) ? <string> parentRole : ( <Pointer.Class> parentRole).id;
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
@@ -41,13 +41,13 @@ export abstract class Class {
 			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided does not exist." );
 			return this.context.documents.createChild<T>( containerURI, role, slug, requestOptions );
 
-		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class] ) => {
+		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
 			responseCreated = response;
 			persistedRole = PersistedRole.Factory.decorate( newRole, this );
 			return this.context.documents.addMember( parentURI, newRole );
 
 		} ).then( ( response ) => {
-			return [ persistedRole, responseCreated ];
+			return [ persistedRole, responseCreated ] as [ T & PersistedRole.Class, HTTP.Response.Class ];
 		} );
 	}
 
@@ -60,16 +60,17 @@ export abstract class Class {
 	listAgents( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
 		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
 			return this.context.documents.listMembers( agentsAccessPoint.id, requestOptions );
-		} ).then( ( [ agents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-			return [ agents.map( agent => PersistedProtectedDocument.Factory.decorate( agent ) ), response ];
+		} ).then( ( [ documents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+			let agents:PersistedProtectedDocument.Class[] = documents.map( agent => PersistedProtectedDocument.Factory.decorate( agent ) );
+			return [ agents, response ] as [ PersistedProtectedDocument.Class[], HTTP.Response.Class ];
 		} );
 	}
 
 	getAgents<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]>;
 	getAgents<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]>;
-	getAgents<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]> {
+	getAgents<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAgent.Class)[], HTTP.Response.Class ]> {
 		return this.getAgentsAccessPoint( roleURI ).then( ( agentsAccessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers<T>( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+			return this.context.documents.getMembers<T & PersistedAgent.Class>( agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
 		} );
 	}
 

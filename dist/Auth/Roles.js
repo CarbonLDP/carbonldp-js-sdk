@@ -49,8 +49,9 @@ var Class = (function () {
         return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
             return _this.context.documents.listMembers(agentsAccessPoint.id, requestOptions);
         }).then(function (_a) {
-            var agents = _a[0], response = _a[1];
-            return [agents.map(function (agent) { return PersistedProtectedDocument.Factory.decorate(agent); }), response];
+            var documents = _a[0], response = _a[1];
+            var agents = documents.map(function (agent) { return PersistedProtectedDocument.Factory.decorate(agent); });
+            return [agents, response];
         });
     };
     Class.prototype.getAgents = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {

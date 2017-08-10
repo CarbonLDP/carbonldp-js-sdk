@@ -45,9 +45,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					return URI.Util.resolve( "http://example.com/", uri );
 				}
 			}
+
 			context = new MockedContext();
 
 			class MockRoles extends Roles.Class {}
+
 			roles = new MockRoles( context );
 
 			jasmine.Ajax.install();
@@ -373,7 +375,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} ]`,
 			} );
 
-			roles.listAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+			roles.listAgents( "http://example.com/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "platform.roles.container", "roles/" );
 
@@ -558,7 +560,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				// TODO: Change to `PersistedAgent`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				roles.getAgents( "http://example.com/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "platform.roles.container", "roles/" );
 
@@ -624,7 +626,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				// TODO: Change to `PersistedAgent`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getAgents( "http://example.com/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				roles.getAgents( "http://example.com/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "platform.roles.container", "roles/" );
 

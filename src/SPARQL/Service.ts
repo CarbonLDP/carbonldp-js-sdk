@@ -25,7 +25,7 @@ export class Class {
 
 	static executeASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
 		return Class.executeRawASKQuery( url, askQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
-			return [ rawResults.boolean, response ];
+			return [ rawResults.boolean, response ] as [ boolean, HTTP.Response.Class ];
 		} );
 	}
 
@@ -38,7 +38,7 @@ export class Class {
 		return HTTP.Request.Service.post( url, selectQuery, options, Class.resultsParser );
 	}
 
-	static executeSELECTQuery( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ any, HTTP.Response.Class]> {
+	static executeSELECTQuery( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class, HTTP.Response.Class ]> {
 		return Class.executeRawSELECTQuery( url, selectQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
 			let rawBindings:RawResults.BindingObject[] = rawResults.results.bindings;
 			let bindings:SELECTResults.BindingObject[] = [];
@@ -58,7 +58,7 @@ export class Class {
 				vars: rawResults.head.vars,
 				bindings: bindings,
 			};
-			return [ results, response ];
+			return [ results, response ] as [ SELECTResults.Class, HTTP.Response.Class ];
 		} );
 	}
 

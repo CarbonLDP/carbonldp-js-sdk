@@ -62,7 +62,6 @@ export class Class {
 	protected _authenticatedAgent:PersistedAgent.Class;
 
 	private context:Context;
-	private method:Method;
 	private authenticators:Array<Authenticator<AuthenticationToken>>;
 	private authenticator:Authenticator<AuthenticationToken>;
 
@@ -161,7 +160,7 @@ export class Class {
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
-			return [ ticket, response ];
+			return [ ticket, response ] as [ Ticket.Class, HTTP.Response.Class ];
 		} );
 	}
 

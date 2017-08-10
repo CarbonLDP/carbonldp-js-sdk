@@ -42,7 +42,7 @@ function getACL(requestOptions) {
     }
     else {
         aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.Predicate.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
-            var results = _a[0], response = _a[1];
+            var results = _a[0];
             return results.bindings[0]["acl"];
         });
     }
