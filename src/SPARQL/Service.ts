@@ -38,13 +38,13 @@ export class Class {
 		return HTTP.Request.Service.post( url, selectQuery, options, Class.resultsParser );
 	}
 
-	static executeSELECTQuery( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class, HTTP.Response.Class ]> {
+	static executeSELECTQuery<T>( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class<T>, HTTP.Response.Class ]> {
 		return Class.executeRawSELECTQuery( url, selectQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
 			let rawBindings:RawResults.BindingObject[] = rawResults.results.bindings;
-			let bindings:SELECTResults.BindingObject[] = [];
+			let bindings:T[] = [];
 
 			for( let bindingColumn of rawBindings ) {
-				let binding:SELECTResults.BindingObject = {};
+				let binding:T = {} as T;
 				for( let bindingRow in bindingColumn ) {
 					if( ! bindingColumn.hasOwnProperty( bindingRow ) ) continue;
 
@@ -54,11 +54,11 @@ export class Class {
 				bindings.push( binding );
 			}
 
-			let results:SELECTResults.Class = {
+			let results:SELECTResults.Class<T> = {
 				vars: rawResults.head.vars,
 				bindings: bindings,
 			};
-			return [ results, response ] as [ SELECTResults.Class, HTTP.Response.Class ];
+			return [ results, response ] as [ SELECTResults.Class<T>, HTTP.Response.Class ];
 		} );
 	}
 

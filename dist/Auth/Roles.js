@@ -46,8 +46,8 @@ var Class = (function () {
     };
     Class.prototype.listAgents = function (roleURI, requestOptions) {
         var _this = this;
-        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
-            return _this.context.documents.listMembers(agentsAccessPoint.id, requestOptions);
+        return this.getAgentsAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.listMembers(accessPoint.id, requestOptions);
         }).then(function (_a) {
             var documents = _a[0], response = _a[1];
             var agents = documents.map(function (agent) { return PersistedProtectedDocument.Factory.decorate(agent); });
@@ -56,8 +56,8 @@ var Class = (function () {
     };
     Class.prototype.getAgents = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
         var _this = this;
-        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
-            return _this.context.documents.getMembers(agentsAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
+        return this.getAgentsAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.getMembers(accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
         });
     };
     Class.prototype.addAgent = function (roleURI, agent, requestOptions) {
@@ -65,8 +65,8 @@ var Class = (function () {
     };
     Class.prototype.addAgents = function (roleURI, agents, requestOptions) {
         var _this = this;
-        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
-            return _this.context.documents.addMembers(agentsAccessPoint.id, agents, requestOptions);
+        return this.getAgentsAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.addMembers(accessPoint.id, agents, requestOptions);
         });
     };
     Class.prototype.removeAgent = function (roleURI, agent, requestOptions) {
@@ -74,8 +74,8 @@ var Class = (function () {
     };
     Class.prototype.removeAgents = function (roleURI, agents, requestOptions) {
         var _this = this;
-        return this.getAgentsAccessPoint(roleURI).then(function (agentsAccessPoint) {
-            return _this.context.documents.removeMembers(agentsAccessPoint.id, agents, requestOptions);
+        return this.getAgentsAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.removeMembers(accessPoint.id, agents, requestOptions);
         });
     };
     Class.prototype.resolveURI = function (agentURI) {
@@ -91,10 +91,10 @@ var Class = (function () {
     Class.prototype.getAgentsAccessPoint = function (roleURI) {
         var _this = this;
         return this.resolveURI(roleURI).then(function (uri) {
-            return _this.context.documents.executeSELECTQuery(uri, " select distinct ?agentsAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?agentsAccessPoint .\n\t\t\t\t?agentsAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#agent> .\n\t\t\t}");
+            return _this.context.documents.executeSELECTQuery(uri, "PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<" + uri + ">:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#agent}");
         }).then(function (_a) {
             var selectResults = _a[0], response = _a[1];
-            return selectResults.bindings[0]["agentsAccessPoint"];
+            return selectResults.bindings[0].accessPoint;
         });
     };
     Class.prototype.getContainerURI = function () {
