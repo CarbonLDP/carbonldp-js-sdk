@@ -463,7 +463,7 @@ var Class = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
-            var pointers = _this._parsePointers(members);
+            var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
@@ -480,7 +480,7 @@ var Class = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
-            var pointers = _this._parsePointers(members);
+            var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
@@ -590,9 +590,13 @@ var Class = (function () {
         });
     };
     Class.prototype.getDownloadURL = function (documentURI, requestOptions) {
-        if (!this.context.auth)
+        var _this = this;
+        if (!this.context || !this.context.auth)
             return Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
-        return this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
+        return Utils_1.promiseMethod(function () {
+            documentURI = _this.getRequestURI(documentURI);
+            return _this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
+        });
     };
     Class.prototype.getGeneralSchema = function () {
         if (!this.context)
@@ -784,10 +788,10 @@ var Class = (function () {
             }
         }
         else {
-            if (RDF.URI.Util.isRelative(uri))
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
+            if (RDF.URI.Util.isRelative(uri))
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             return uri;
         }
     };
@@ -876,23 +880,23 @@ var Class = (function () {
         return null;
     };
     Class.prototype.getRequestURI = function (uri) {
-        if (RDF.URI.Util.isRelative(uri)) {
-            if (!this.context)
-                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
-            uri = this.context.resolve(uri);
-        }
-        else if (RDF.URI.Util.isPrefixed(uri)) {
+        if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
             uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
+        else if (RDF.URI.Util.isRelative(uri)) {
+            if (!this.context)
+                throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
+            uri = this.context.resolve(uri);
+        }
         else {
             if (this.context) {
                 var baseURI = this.context.getBaseURI();
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
-                    throw new Errors.IllegalArgumentError("The provided URI '" + uri + "' is not a valid URI for the current context.");
+                    throw new Errors.IllegalArgumentError("The provided URI \"" + uri + "\" is not a valid URI for the current context.");
             }
         }
         return uri;
@@ -1009,7 +1013,7 @@ var Class = (function () {
             return [persistedDocument, response];
         });
     };
-    Class.prototype._parsePointers = function (pointers) {
+    Class.prototype._parseMembers = function (pointers) {
         var _this = this;
         return pointers.map(function (pointer) {
             if (Utils.isString(pointer))

@@ -536,7 +536,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	addMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 	addMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
-			const pointers:Pointer.Class[] = this._parsePointers( members );
+			const pointers:Pointer.Class[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
@@ -558,7 +558,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	removeMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
-			const pointers:Pointer.Class[] = this._parsePointers( members );
+			const pointers:Pointer.Class[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
@@ -684,8 +684,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	getDownloadURL( documentURI:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
-		if( ! this.context.auth ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
-		return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
+		if( ! this.context || ! this.context.auth ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
+		return promiseMethod( () => {
+			documentURI = this.getRequestURI( documentURI );
+			return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
+		} );
 	}
 
 	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
@@ -896,8 +899,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				return uri[ 0 ] === "/" ? uri.substr( 1 ) : uri;
 			}
 		} else {
-			if( RDF.URI.Util.isRelative( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
+			if( RDF.URI.Util.isRelative( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			return uri;
 		}
 	}
@@ -1000,18 +1003,18 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private getRequestURI( uri:string ):string {
-		if( RDF.URI.Util.isRelative( uri ) ) {
-			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
-			uri = this.context.resolve( uri );
-		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
+		if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
 			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
+		} else if( RDF.URI.Util.isRelative( uri ) ) {
+			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			uri = this.context.resolve( uri );
 		} else {
 			if( this.context ) {
 				let baseURI:string = this.context.getBaseURI();
-				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) throw new Errors.IllegalArgumentError( `The provided URI '${ uri }' is not a valid URI for the current context.` );
+				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ uri }" is not a valid URI for the current context.` );
 			}
 		}
 		return uri;
@@ -1144,7 +1147,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private _parsePointers( pointers:(string | Pointer.Class)[] ):Pointer.Class[] {
+	private _parseMembers( pointers:(string | Pointer.Class)[] ):Pointer.Class[] {
 		return pointers.map( pointer => {
 			if( Utils.isString( pointer ) ) return this.getPointer( pointer );
 			if( Pointer.Factory.is( pointer ) ) return pointer;
