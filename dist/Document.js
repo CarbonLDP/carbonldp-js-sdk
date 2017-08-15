@@ -155,23 +155,21 @@ function createNamedFragment(slugOrObject, slug) {
     return fragment;
 }
 function removeFragment(fragmentOrSlug) {
-    var document = this;
     var id = Utils.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
     if (RDF.URI.Util.isAbsolute(id)) {
-        if (!RDF.URI.Util.isFragmentOf(id, document.id))
+        if (!RDF.URI.Util.isFragmentOf(id, this.id))
             return;
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
     else if (Utils.S.startsWith(id, "#"))
         id = id.substring(1);
-    document._fragmentsIndex.delete(id);
+    this._fragmentsIndex.delete(id);
 }
 function removeNamedFragment(fragmentOrSlug) {
-    var document = this;
     var id = Utils.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
     if (RDF.URI.Util.isBNodeID(id))
         throw new Errors.IllegalArgumentError("You can only remove NamedFragments.");
-    document._removeFragment(id);
+    this._removeFragment(id);
 }
 function toJSON(objectSchemaResolver, jsonldConverter) {
     if (objectSchemaResolver === void 0) { objectSchemaResolver = null; }
