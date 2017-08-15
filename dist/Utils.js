@@ -136,6 +136,10 @@ function forEachOwnProperty(object, action) {
     }
 }
 exports.forEachOwnProperty = forEachOwnProperty;
+function promiseMethod(fn) {
+    return new Promise(function (resolve) { return resolve(fn()); });
+}
+exports.promiseMethod = promiseMethod;
 var O = (function () {
     function O() {
     }

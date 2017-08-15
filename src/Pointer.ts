@@ -8,12 +8,15 @@ export interface Class {
 	_resolved:boolean;
 
 	id:string;
+
 	isResolved():boolean;
+
 	resolve<T>():Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 }
 
 export interface Library {
 	hasPointer( id:string ):boolean;
+
 	getPointer( id:string ):Class;
 }
 
@@ -29,7 +32,7 @@ export class Factory {
 		);
 	}
 
-	static is( value:any ):boolean {
+	static is( value:any ):value is Class {
 		return (
 			Utils.isObject( value ) &&
 			Factory.hasClassProperties( value )
@@ -124,6 +127,7 @@ export class Util {
 
 export interface Validator {
 	inScope( id:string ):boolean;
+
 	inScope( pointer:Class ):boolean;
 }
 
