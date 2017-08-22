@@ -103,8 +103,9 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getMembershipResource(documentResource, rdfDocuments, response);
     private createPersistedDocument<T>(documentPointer, documentResource, fragmentResources);
     private updatePersistedDocument<T>(persistedDocument, documentResource, fragmentResources);
-    private getPersistedMetadataResources(freeNodes, rdfDocuments, response);
+    private getPersistedMetadataResources<T>(freeNodes, rdfDocuments, response);
     private decoratePersistedDocument(persistedDocument);
     private updateFromPreferenceApplied<T>(persistedDocument, response);
+    private _parseMembers(pointers);
 }
 export default Class;
