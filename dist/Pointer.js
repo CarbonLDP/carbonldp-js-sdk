@@ -91,7 +91,9 @@ var Util = (function () {
     };
     Util.resolveAll = function (pointers) {
         var promises = pointers.map(function (pointer) { return pointer.resolve(); });
-        return Promise.all(promises).then(function (results) {
+        return Promise
+            .all(promises)
+            .then(function (results) {
             var resolvedPointers = results.map(function (result) { return result[0]; });
             var responses = results.map(function (result) { return result[1]; });
             return [resolvedPointers, responses];

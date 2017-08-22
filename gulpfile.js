@@ -58,7 +58,7 @@ gulp.task( "build", ( done ) => {
 	runSequence(
 		"version",
 		"clean:dist",
-		[ "compile:typescript", "compile:documentation", "bundle:sfx" ],
+		[ "compile:typescript", "bundle:sfx" ],
 		"prepare:npm-package",
 		"finish",
 		done

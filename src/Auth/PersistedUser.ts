@@ -12,6 +12,7 @@ export interface Class extends PersistedProtectedDocument.Class {
 	credentials?:PersistedCredentials.Class;
 
 	enableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+
 	disableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
 }
 
@@ -66,7 +67,7 @@ function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:
 
 		if( enabled ) return this.credentials.enable( requestOptions );
 		return this.credentials.disable( requestOptions );
-	} ).then( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => {
+	} ).then<[ Class, HTTP.Response.Class[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => {
 		responses.push( ...credentialsResponses );
 
 		return [ this, responses ];
@@ -76,8 +77,8 @@ function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:
 function obtainCredentials( user:Class ):Promise<HTTP.Response.Class> {
 	return user
 		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.Predicate.credentials}>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class, HTTP.Response.Class ] ) => {
-			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding[ "credentials" ] as Pointer.Class, user._documents );
+		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer.Class }>, HTTP.Response.Class ] ) => {
+			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
 			return response;
 		} );
 }

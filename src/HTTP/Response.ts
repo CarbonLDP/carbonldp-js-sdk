@@ -39,7 +39,7 @@ export class Class {
 			this.headers = new Map<string, Header.Class>();
 			if( isObject( headers ) ) {
 				for( let name of Object.keys( headers ) ) {
-					this.headers.set( name, new Header.Class( headers[ name ] ) );
+					this.headers.set( name.toLowerCase(), new Header.Class( headers[ name ] ) );
 				}
 			}
 		}

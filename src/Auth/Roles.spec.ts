@@ -49,9 +49,11 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			context = new MockedContext();
 
 			class MockRoles extends Roles.Class {}
+
 			roles = new MockRoles( context );
 
 			jasmine.Ajax.install();
@@ -337,13 +339,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: `{
 					"head": {
 						"vars": [
-							"usersAccessPoint"
+							"accessPoint"
 						]
 					},
 					"results": {
 						"bindings": [
 							{
-								"usersAccessPoint": {
+								"accessPoint": {
 									"type": "uri",
 									"value": "http://example.com/.system/roles/a-role/users/"
 								}
@@ -377,7 +379,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} ]`,
 			} );
 
-			roles.listUsers( "http://example.com/.system/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+			roles.listUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 				context.setSetting( "system.roles.container", "roles/" );
 
@@ -443,13 +445,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					responseText: `{
 						"head": {
 							"vars": [
-								"usersAccessPoint"
+								"accessPoint"
 							]
 						},
 						"results": {
 							"bindings": [
 								{
-									"usersAccessPoint": {
+									"accessPoint": {
 										"type": "uri",
 										"value": "http://example.com/.system/roles/a-role/users/"
 									}
@@ -562,7 +564,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				// TODO: Change to `PersistedUser`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getUsers( "http://example.com/.system/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				roles.getUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "system.roles.container", "roles/" );
 
@@ -628,7 +630,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				// TODO: Change to `PersistedUser`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getUsers( "http://example.com/.system/roles/a-role/", Role.Factory.create( "Role name" ) ).then( done.fail ).catch( ( stateError:Error ) => {
+				roles.getUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
 					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
 					context.setSetting( "system.roles.container", "roles/" );
 
@@ -734,13 +736,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				return `{
 					"head": {
 						"vars": [
-							"usersAccessPoint"
+							"accessPoint"
 						]
 					},
 					"results": {
 						"bindings": [
 							{
-								"usersAccessPoint": {
+								"accessPoint": {
 									"type": "uri",
 									"value": "${ uri }users/"
 								}
@@ -841,13 +843,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				return `{
 					"head": {
 						"vars": [
-							"usersAccessPoint"
+							"accessPoint"
 						]
 					},
 					"results": {
 						"bindings": [
 							{
-								"usersAccessPoint": {
+								"accessPoint": {
 									"type": "uri",
 									"value": "${ uri }users/"
 								}

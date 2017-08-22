@@ -1,6 +1,5 @@
 import * as SDKContext from "./SDKContext";
 import Context from "./Context";
-import * as Errors from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 
@@ -21,10 +20,7 @@ export abstract class Class extends SDKContext.Class {
 	}
 
 	resolve( relativeURI:string ):string {
-		const absoluteURI:string = RDF.URI.Util.resolve( this.baseURI, relativeURI );
-		if( ! absoluteURI.startsWith( this.baseURI ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to your Carbon LDP.` );
-
-		return absoluteURI;
+		return RDF.URI.Util.resolve( this.baseURI, relativeURI );
 	}
 }
 

@@ -34,13 +34,11 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
-import * as URI from "./RDF/URI";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 
 import { QueryClause } from "sparqler/Clauses";
-
 
 import * as Documents from "./Documents";
 import DefaultExport from "./Documents";
@@ -291,6 +289,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			context = new MockedContext();
 			documents = context.documents;
 
@@ -341,6 +340,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			context = new MockedContext();
 			documents = context.documents;
 
@@ -382,6 +382,138 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( pointer ).toBe( anotherPointer );
 		} );
 
+		describe( "get", ():void => {
+
+			it( "should release cached request when failed", ( done:DoneFn ):void => {
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				const context:MockedContext = new MockedContext();
+				const documents:Documents.Class = context.documents;
+
+				const spyGet:jasmine.Spy = spyOn( HTTP.Request.Service, "get" );
+
+				// First failed request
+				spyGet.and.returnValue( Promise.reject( new Error( "A error in the GET request." ) ) );
+				documents.get( "resource/" )
+					.then( () => {
+						done.fail( "Should not have been resolved." );
+					} )
+					.catch( ( error:Error ) => {
+						expect( error ).toEqual( new Error( "A error in the GET request." ) );
+
+						// Second correct request
+						spyGet.and.returnValue( Promise.resolve( [
+							[ { "@id": "http://example.com/resource/", "@graph": [ { "@id": "http://example.com/resource/" } ] } ],
+							new HTTP.Response.Class( <any> null, "", <any> {
+								headers: {
+									"ETag": "123456",
+									"Content-Location": "http://example.com/resource/",
+								},
+							} ),
+						] ) );
+						return documents.get( "resource/" );
+					} )
+					.then( ( responseData ) => {
+						expect( responseData ).toBeDefined();
+						expect( responseData[ 0 ] ).toBeDefined();
+						expect( responseData[ 0 ][ "id" ] ).toBe( "http://example.com/resource/" );
+						done();
+					} )
+					.catch( error => {
+						if( error.message === "A error in the GET request." )
+							error = "Error is been cached";
+						done.fail( error );
+					} );
+			} );
+
+			it( "should reject promise if URI is a BNode", ( done:DoneFn ):void => {
+				let promise:Promise<any> = new Documents.Class().get( "_:a-blank-node" );
+				promise.then( () => {
+					done.fail( "Should not resolve promise." );
+				} ).catch( error => {
+					expect( error.message ).toBe( `BNodes cannot be fetched directly.` );
+					done();
+				} );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.get( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.get( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.get( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.get( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"get",
@@ -392,24 +524,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 			],
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
 		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
-
-			// Throws an error if the context cannot resolve the provided URI
-			expect( () => {
-				class ErrorMockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:ErrorMockedContext = new ErrorMockedContext();
-				context.documents.get( "http://not-example.com" );
-
-			} ).toThrowError( Errors.IllegalArgumentError );
-
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
@@ -570,6 +684,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 		} );
 
+		describe( "exists", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.exists( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.exists( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.exists( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.exists( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"exists",
@@ -641,6 +827,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyFail ).toHaveBeenCalledTimes( 1 );
 				done();
 			}, done.fail );
+		} );
+
+		describe( "createChild", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChild( "http://not-example.com", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChild( "prefix:the-uri", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChild( "relative-uri/", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChild( "prefix:the-uri", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		describe( method(
@@ -1226,6 +1484,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				Promise.all( finishPromises ).then( done ).catch( done.fail );
 			} );
+		} );
+
+		describe( "createChildren", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "http://not-example.com", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "relative-uri/", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		describe( method(
@@ -2134,6 +2464,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+		describe( "createChildAndRetrieve", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildAndRetrieve( "http://not-example.com", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildAndRetrieve( "prefix:the-uri", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents.Class does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildAndRetrieve( "relative-uri/", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildAndRetrieve( "prefix:the-uri", {} );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		describe( method(
 			INSTANCE,
 			"createChildAndRetrieve"
@@ -2333,6 +2735,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					done();
 				} ).catch( done.fail );
+
+			} );
+
+		} );
+
+		describe( "createChildrenAndRetrieve", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "http://not-example.com", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "relative-uri/", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
 
 			} );
 
@@ -2570,6 +3044,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+		describe( "listChildren", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listChildren( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listChildren( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listChildren( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listChildren( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"listChildren",
@@ -2588,6 +3134,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
@@ -2687,6 +3234,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyFail ).not.toHaveBeenCalled();
 				done();
 			} ).catch( done.fail );
+		} );
+
+		describe( "getChildren", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getChildren( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getChildren( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getChildren( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getChildren( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		describe( method(
@@ -3088,6 +3707,82 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+		describe( "createAccessPoint", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoint( "http://not-example.com", accessPoint );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoint( "relative-uri/", accessPoint );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		describe( method(
 			INSTANCE,
 			"createAccessPoint"
@@ -3300,6 +3995,82 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 		} );
 
+		describe( "createAccessPoints", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "http://not-example.com", [ accessPoint ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "relative-uri/", [ accessPoint ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		describe( method(
 			INSTANCE,
 			"createAccessPoints"
@@ -3347,15 +4118,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					let newAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						newAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return newAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -3363,6 +4134,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						super( <any>{}, "", <any>{} );
 					}
 				}
+
 				let promise:Promise<any> = Promise.resolve();
 				let checkRequestState:( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => void = <any>( () => {} );
 
@@ -3509,15 +4281,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					let newAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						newAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return newAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -3525,6 +4297,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						super( <any>{}, "", <any>{} );
 					}
 				}
+
 				let promise:Promise<any> = Promise.resolve();
 				let checkRequestState:( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => void = <any>( () => {} );
 
@@ -3596,6 +4369,94 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				promise.then( done, done.fail );
 			} );
+		} );
+
+		describe( "upload", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "http://not-example.com", <any>data );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "prefix:the-uri", <any>data );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "relative-uri/", <any>data );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "prefix:the-uri", <any>data );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		describe( method(
@@ -3839,6 +4700,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, done.fail );
 
 				} else { done(); }
+			} );
+
+		} );
+
+		describe( "listMembers", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
@@ -4151,6 +5084,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let includes:string[] = preferInclude.toString().substring( prefer.length, preferInclude.toString().length - 1 ).split( " " );
 				expect( includes ).toContain( NS.C.Class.NonReadableMembershipResourceTriples );
 			}
+
+		} );
+
+		describe( "getMembers", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
 
 		} );
 
@@ -4856,6 +5861,98 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+		describe( "addMember", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMember( "http://not-example.com", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMember( "prefix:the-uri", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMember( "relative-uri/", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMember( "prefix:the-uri", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if member is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMember( "http://example.com/resource/", "relative-member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if member is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMember( "http://example.com/resource/", "prefix:member" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		describe( method(
 			INSTANCE,
 			"addMember"
@@ -4870,6 +5967,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext;
 			let documents:Documents.Class;
 
@@ -4915,6 +6013,98 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+		describe( "addMembers", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMembers( "http://not-example.com", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMembers( "relative-uri/", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if members is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMembers( "http://example.com/resource/", [ "relative-members/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if member is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.addMembers( "http://example.com/resource/", [ "prefix:member" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"addMembers",
@@ -4934,6 +6124,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
@@ -4978,6 +6169,98 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}, done.fail );
 		} );
 
+		describe( "removeMember", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMember( "http://not-example.com", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMember( "prefix:the-uri", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMember( "relative-uri/", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMember( "prefix:the-uri", "http://example.com/member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if member is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMember( "http://example.com/resource/", "relative-member/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if member is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMember( "http://example.com/resource/", "prefix:member" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		describe( method(
 			INSTANCE,
 			"removeMember"
@@ -4992,6 +6275,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext;
 			let documents:Documents.Class;
 
@@ -5037,6 +6321,98 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+		describe( "removeMembers", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMembers( "http://not-example.com", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMembers( "relative-uri/", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if members is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMembers( "http://example.com/resource/", [ "relative-members/" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if members is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeMembers( "http://example.com/resource/", [ "prefix:member" ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"removeMembers",
@@ -5056,6 +6432,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
@@ -5100,6 +6477,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}, done.fail );
 		} );
 
+		describe( "removeAllMembers", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeAllMembers( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeAllMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeAllMembers( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.removeAllMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"removeAllMembers",
@@ -5118,6 +6567,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
@@ -5155,6 +6605,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} ).catch( done.fail );
 		} );
 
+		describe( "save", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.save( <any>{ id: "http://not-example.com" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.save( <any>{ id: "prefix:the-uri" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.save( <any>{ id: "relative-uri/" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.save( <any>{ id: "prefix:the-uri" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"save",
@@ -5174,6 +6696,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
@@ -5196,6 +6719,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} ).catch( done.fail );
 		} );
 
+		describe( "refresh", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.refresh( <any>{ id: "http://not-example.com" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.refresh( <any>{ id: "prefix:the-uri" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.refresh( <any>{ id: "relative-uri/" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.refresh( <any>{ id: "prefix:the-uri" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"refresh",
@@ -5215,6 +6810,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
@@ -5351,10 +6947,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					let promise:Promise<any> = documents.refresh( document );
-					expect( promise instanceof Promise ).toBe( true );
+					const refreshPromise:Promise<any> = documents.refresh( document );
+					expect( refreshPromise instanceof Promise ).toBe( true );
 
-					return promise.then( spies.success );
+					return refreshPromise.then( spies.success );
 				},
 				success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 					expect( persistedDoc ).toBe( document );
@@ -5393,7 +6989,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 			let spySame:jasmine.Spy = spyOn( spies, "same" ).and.callThrough();
 
-			let promise:Promise<any> = documents.refresh( document );
+			const promise:Promise<any> = documents.refresh( document );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( spies.same ) );
 
@@ -5402,6 +6998,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
 				done();
 			} ).catch( done.fail );
+		} );
+
+		describe( "saveAndRefresh", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.saveAndRefresh( <any>{ id: "http://not-example.com" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.saveAndRefresh( <any>{ id: "prefix:the-uri" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.saveAndRefresh( <any>{ id: "relative-uri/" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.saveAndRefresh( <any>{ id: "prefix:the-uri" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		it( hasMethod(
@@ -5427,6 +7095,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				let context:MockedContext = new MockedContext();
 				let documents:Documents.Class = context.documents;
 
@@ -5462,6 +7131,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				let context:MockedContext = new MockedContext();
 				context.setSetting( "vocabulary", "http://example.com/ns#" );
 				let documents:Documents.Class = context.documents;
@@ -5512,6 +7182,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( finalPromises.length ).toBe( 2 );
 			expect( finalPromises.every( promise => promise instanceof Promise ) ).toBe( true );
 			Promise.all( finalPromises ).then( done ).catch( done.fail );
+		} );
+
+		describe( "delete", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.delete( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.delete( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.delete( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.delete( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		it( hasMethod(
@@ -5580,6 +7322,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}, done.fail );
 		} );
 
+		describe( "getDownloadURL", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					auth:Auth.Class = new Auth.Class( this );
+
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getDownloadURL( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getDownloadURL( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject any request", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getDownloadURL( "http://example.com/resource/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This instance doesn't support Authenticated request." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod(
 			INSTANCE,
 			"getDownloadURL",
@@ -5590,6 +7396,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedAuth extends Auth.Class {}
+
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
 
@@ -5613,6 +7420,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
 				done();
 			} ).catch( done.fail );
+		} );
+
+		describe( "executeRawASKQuery", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawASKQuery( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawASKQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawASKQuery( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawASKQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		it( hasMethod( INSTANCE, "executeRawASKQuery",
@@ -5658,6 +7537,189 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
+		} );
+
+		describe( "executeASKQuery", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeASKQuery( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeASKQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeASKQuery( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeASKQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
+		it( hasMethod( INSTANCE, "executeASKQuery",
+			"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
+				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+				{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+			], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				protected _baseURI:string = "http://example.com/";
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents.Class = context.documents;
+
+			// Property Integrity
+			(() => {
+				expect( "executeASKQuery" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.executeASKQuery ) ).toEqual( true );
+			})();
+
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" );
+
+			// Proper execution
+			(function ProperExecution():void {
+				documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+
+			// Relative URI
+			(function RelativeURI():void {
+				documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+		} );
+
+		describe( "executeRawSELECTQuery", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawSELECTQuery( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawSELECTQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawSELECTQuery( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawSELECTQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		it( hasMethod( INSTANCE, "executeRawSELECTQuery",
@@ -5707,6 +7769,192 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
+		describe( "executeSELECTQuery", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeSELECTQuery( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeSELECTQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeSELECTQuery( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeSELECTQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
+		it( hasMethod( INSTANCE, "executeSELECTQuery",
+			[ "T" ],
+			"Executes a SELECT query on a document and returns a parsed response object.", [
+				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+				{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+			], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+		), ():void => {
+			class MockedContext extends AbstractContext {
+				protected _baseURI:string = "http://example.com/";
+			}
+
+			let context:MockedContext = new MockedContext();
+			let documents:Documents.Class = context.documents;
+
+			// Property Integrity
+			(() => {
+				expect( "executeSELECTQuery" in documents ).toEqual( true );
+				expect( Utils.isFunction( documents.executeSELECTQuery ) ).toEqual( true );
+			})();
+
+			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" );
+
+			// Proper execution
+			(function ProperExecution():void {
+
+				documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+
+			// Relative URI
+			(function RelativeURI():void {
+
+				documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+				spyService.calls.reset();
+			})();
+		} );
+
+		describe( "executeRawCONSTRUCTQuery", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawCONSTRUCTQuery( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawCONSTRUCTQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawCONSTRUCTQuery( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawCONSTRUCTQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod( INSTANCE, "executeRawCONSTRUCTQuery",
 			"Executes a CONSTRUCT query on a document and returns a string with the resulting model.", [
 				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
@@ -5754,6 +8002,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
+		describe( "executeRawDESCRIBEQuery", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawDESCRIBEQuery( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawDESCRIBEQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawDESCRIBEQuery( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeRawDESCRIBEQuery( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
 		it( hasMethod( INSTANCE, "executeRawDESCRIBEQuery",
 			"Executes a DESCRIBE query and returns a string with the resulting model.", [
 				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
@@ -5799,6 +8119,78 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				spyService.calls.reset();
 			})();
+		} );
+
+		describe( "executeUPDATE", ():void => {
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+					}
+				}
+
+				beforeEach( () => {
+					let context:MockedContext = new MockedContext();
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeUPDATE( "http://not-example.com", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeUPDATE( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeUPDATE( "relative-uri/", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.executeUPDATE( "prefix:the-uri", "query" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+			} );
+
 		} );
 
 		it( hasMethod( INSTANCE, "executeUPDATE",

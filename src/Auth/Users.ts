@@ -22,7 +22,7 @@ export class Class {
 				const containerURI:string = this.getCredentialsContainerURI();
 				return this.context.documents.createChildAndRetrieve<PersistedCredentials.Class>( containerURI, credentials as any );
 			} )
-			.then( ( [ persistedCredentials, responses ] ) => [ persistedCredentials.user, responses ] );
+			.then<[ PersistedUser.Class, HTTP.Response.Class[] ]>( ( [ persistedCredentials, responses ] ) => [ persistedCredentials.user, responses ] );
 	}
 
 	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {

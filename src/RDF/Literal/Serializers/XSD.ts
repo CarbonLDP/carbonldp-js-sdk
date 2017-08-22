@@ -9,6 +9,8 @@ function pad( value:number ):string {
 	return paddedValue;
 }
 
+const notNumberError:string = "The value is not a number.";
+
 export class DateSerializer implements Serializer {
 	serialize( value:any ):string {
 		if( ! Utils.isDate( value ) ) throw new Errors.IllegalArgumentError( "The value is not a Date object." );
@@ -46,7 +48,7 @@ export let timeSerializer:TimeSerializer = new TimeSerializer();
 
 export class IntegerSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( "The value is not a number." );
+		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
 
 		// Negative truncate
 		return ( ~ ~ value ).toString();
@@ -54,6 +56,15 @@ export class IntegerSerializer implements Serializer {
 }
 
 export let integerSerializer:IntegerSerializer = new IntegerSerializer();
+
+export class LongSerializer implements Serializer {
+	serialize( value:any ):string {
+		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
+		return Math.trunc( value ).toString();
+	}
+}
+
+export const longSerializer:LongSerializer = new LongSerializer();
 
 export class UnsignedIntegerSerializer extends IntegerSerializer {
 	serialize( value:any ):string {
@@ -67,9 +78,18 @@ export class UnsignedIntegerSerializer extends IntegerSerializer {
 
 export let unsignedIntegerSerializer:UnsignedIntegerSerializer = new UnsignedIntegerSerializer();
 
+export class UnsignedLongSerializer implements Serializer {
+	serialize( value:any ):string {
+		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
+		return Math.trunc( Math.abs( value ) ).toString();
+	}
+}
+
+export const unsignedLongSerializer:UnsignedLongSerializer = new UnsignedLongSerializer();
+
 export class FloatSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( "The value is not a number." );
+		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
 		if( value === Number.POSITIVE_INFINITY ) return "INF";
 		if( value === Number.NEGATIVE_INFINITY ) return "-INF";
 

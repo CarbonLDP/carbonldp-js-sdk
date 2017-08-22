@@ -4,8 +4,8 @@ var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
 var URI = require("./../RDF/URI");
-var Utils = require("./../Utils");
 var PersistedRole = require("./PersistedRole");
+var Utils = require("./../Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -18,7 +18,7 @@ var Class = (function () {
         var containerURI;
         var persistedRole;
         var responseCreated;
-        return Promise.resolve().then(function () {
+        return Utils.promiseMethod(function () {
             containerURI = _this.getContainerURI();
             parentURI = URI.Util.resolve(containerURI, parentURI);
             if (!URI.Util.isBaseOf(containerURI, parentURI))
@@ -40,23 +40,24 @@ var Class = (function () {
     };
     Class.prototype.get = function (roleURI, requestOptions) {
         var _this = this;
-        return Promise.resolve().then(function () {
+        return Utils.promiseMethod(function () {
             return _this.context.documents.get(_this.resolveURI(roleURI), requestOptions);
         });
     };
     Class.prototype.listUsers = function (roleURI, requestOptions) {
         var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (usersAccessPoint) {
-            return _this.context.documents.listMembers(usersAccessPoint.id, requestOptions);
+        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.listMembers(accessPoint.id, requestOptions);
         }).then(function (_a) {
-            var users = _a[0], response = _a[1];
-            return [users.map(function (user) { return PersistedProtectedDocument.Factory.decorate(user, _this.context.documents); }), response];
+            var documents = _a[0], response = _a[1];
+            var users = documents.map(function (user) { return PersistedProtectedDocument.Factory.decorate(user, _this.context.documents); });
+            return [users, response];
         });
     };
     Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
         var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (usersAccessPoint) {
-            return _this.context.documents.getMembers(usersAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
+        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.getMembers(accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
         });
     };
     Class.prototype.addUser = function (roleURI, user, requestOptions) {
@@ -64,8 +65,8 @@ var Class = (function () {
     };
     Class.prototype.addUsers = function (roleURI, users, requestOptions) {
         var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (usersAccessPoint) {
-            return _this.context.documents.addMembers(usersAccessPoint.id, users, requestOptions);
+        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.addMembers(accessPoint.id, users, requestOptions);
         });
     };
     Class.prototype.removeUser = function (roleURI, user, requestOptions) {
@@ -73,8 +74,8 @@ var Class = (function () {
     };
     Class.prototype.removeUsers = function (roleURI, users, requestOptions) {
         var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (usersAccessPoint) {
-            return _this.context.documents.removeMembers(usersAccessPoint.id, users, requestOptions);
+        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
+            return _this.context.documents.removeMembers(accessPoint.id, users, requestOptions);
         });
     };
     Class.prototype.resolveURI = function (relativeURI) {
@@ -86,12 +87,12 @@ var Class = (function () {
     };
     Class.prototype.getUsersAccessPoint = function (roleURI) {
         var _this = this;
-        return Promise.resolve()
-            .then(function () { return _this.resolveURI(roleURI); })
-            .then(function (uri) { return _this.context.documents.executeSELECTQuery(uri, "select distinct ?usersAccessPoint where {\n\t\t\t\t<" + uri + "> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .\n\t\t\t\t?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .\n\t\t\t}"); })
-            .then(function (_a) {
+        return Utils.promiseMethod(function () {
+            var uri = _this.resolveURI(roleURI);
+            return _this.context.documents.executeSELECTQuery(uri, "PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<" + uri + ">:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}");
+        }).then(function (_a) {
             var selectResults = _a[0], response = _a[1];
-            return selectResults.bindings[0]["usersAccessPoint"];
+            return selectResults.bindings[0].accessPoint;
         });
     };
     Class.prototype.getContainerURI = function () {

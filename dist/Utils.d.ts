@@ -4,7 +4,7 @@ declare function hasPropertyDefined(object: Object, property: string): boolean;
 declare function isDefined(value: any): boolean;
 declare function isNull(value: any): boolean;
 declare function isArray(object: any): boolean;
-declare function isString(value: any): boolean;
+declare function isString(value: any): value is string;
 declare function isBoolean(value: any): boolean;
 declare function isNumber(value: any): boolean;
 declare function isInteger(value: any): boolean;
@@ -17,6 +17,7 @@ declare function isMap(value: any): boolean;
 declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
+export declare function promiseMethod<T>(fn: () => T | Promise<T>): Promise<T>;
 declare class A {
     static from<T>(iterator: Iterator<T>): Array<T>;
     static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;

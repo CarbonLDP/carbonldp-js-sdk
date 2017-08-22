@@ -42,10 +42,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "executeRawASKQuery", "Executes an ASK Query and returns a raw application/sparql-results+json object.", [
-			{name: "url", type: "string"},
-			{name: "askQuery", type: "string"},
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-		], {type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>"} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "url", type: "string" },
+			{ name: "askQuery", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawASKQuery" in Service.Class ).toEqual( true );
@@ -93,10 +93,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "executeASKQuery", "Executes an ASK Query and returns a boolean.", [
-			{name: "url", type: "string"},
-			{name: "askQuery", type: "string"},
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-		], {type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>"} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "url", type: "string" },
+			{ name: "askQuery", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeASKQuery" in Service.Class ).toEqual( true );
@@ -137,12 +137,16 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
-		it( hasMethod( STATIC, "executeSELECTQuery", "Executes a SELECT Query and parses the results.", [
-			{name: "url", type: "string"},
-			{name: "selectQuery", type: "string"},
-			{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-		], {type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>"} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		it( hasMethod( STATIC, "executeSELECTQuery",
+			[ "T" ],
+			"Executes a SELECT Query and parses the results.", [
+				{ name: "url", type: "string" },
+				{ name: "selectQuery", type: "string" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			],
+			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeSELECTQuery" in Service.Class ).toEqual( true );
@@ -314,10 +318,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "executeRawSELECTQuery", "Executes a SELECT Query and returns a raw application/sparql-results+json object.", [
-			{name: "url", type: "string"},
-			{name: "selectQuery", type: "string"},
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-		], {type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>"} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "url", type: "string" },
+			{ name: "selectQuery", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawSELECTQuery" in Service.Class ).toEqual( true );
@@ -462,10 +466,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "executeRawCONSTRUCTQuery", "Executes a CONSTRUCT Query and returns a string with the resulting model.", [
-			{name: "url", type: "string"},
-			{name: "constructQuery", type: "string"},
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-		], {type: "Promise<[ string, Carbon.HTTP.Response.Class ]>"} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "url", type: "string" },
+			{ name: "constructQuery", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawCONSTRUCTQuery" in Service.Class ).toEqual( true );
@@ -525,7 +529,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						ldp:contains <l1>, <l2>, <l3>.
 				`;
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = {headers: new Map().set( "some", new HTTP.Header.Class( "some" ) )};
+				let requestOptions:HTTP.Request.Options = { headers: new Map().set( "some", new HTTP.Header.Class( "some" ) ) };
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {
@@ -559,10 +563,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "executeRawDESCRIBEQuery", "Executes a DESCRIBE Query and returns a string with the resulting model.", [
-			{name: "url", type: "string"},
-			{name: "describeQuery", type: "string"},
-			{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
-		], {type: "Promise<[ string, Carbon.HTTP.Response.Class ]>"} ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "url", type: "string" },
+			{ name: "describeQuery", type: "string" },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawDESCRIBEQuery" in Service.Class ).toEqual( true );
@@ -658,11 +662,11 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"executeUPDATE", "Executes an UPDATE query.", [
-				{name: "url", type: "string"},
-				{name: "update", type: "string"},
-				{name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true},
+				{ name: "url", type: "string" },
+				{ name: "update", type: "string" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
-			{type: "Promise<Carbon.HTTP.Response.Class>"}
+			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {

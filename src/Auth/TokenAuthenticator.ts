@@ -8,11 +8,11 @@ import * as NS from "./../NS";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
-import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
 import * as Token from "./Token";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as Utils from "./../Utils";
 
 export const TOKEN_CONTAINER:string = "auth-tokens/";
 
@@ -75,7 +75,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context.resolveSystemURI( TOKEN_CONTAINER );
 			return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
-		} ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		} ).then<[ Token.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
