@@ -1,18 +1,17 @@
+import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import Authenticator from "./Authenticator";
-import * as Errors from "./../Errors";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
-
-export class Class implements Authenticator<UsernameAndPasswordToken> {
+export class Class implements Authenticator<UsernameAndPasswordToken.Class, UsernameAndPasswordCredentials.Class> {
 	private credentials:UsernameAndPasswordCredentials.Class;
 
 	isAuthenticated():boolean {
 		return ! ! this.credentials;
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<UsernameAndPasswordCredentials.Class> {
+	authenticate( authenticationToken:UsernameAndPasswordToken.Class ):Promise<UsernameAndPasswordCredentials.Class> {
 		if( authenticationToken === null ) throw new Errors.IllegalArgumentError( "The authenticationToken cannot be null." );
 
 		return new Promise<UsernameAndPasswordCredentials.Class>( ( resolve:( result:any ) => void, reject:( error:any ) => void ) => {

@@ -10,13 +10,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    ;
     Object.defineProperty(Class.prototype, "password", {
         get: function () { return this._password; },
         enumerable: true,
         configurable: true
     });
-    ;
     return Class;
 }());
 exports.Class = Class;

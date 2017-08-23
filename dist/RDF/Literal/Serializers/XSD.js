@@ -18,6 +18,7 @@ function pad(value) {
         paddedValue = "0" + paddedValue;
     return paddedValue;
 }
+var notNumberError = "The value is not a number.";
 var DateSerializer = (function () {
     function DateSerializer() {
     }
@@ -63,13 +64,25 @@ var IntegerSerializer = (function () {
     }
     IntegerSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError("The value is not a number.");
+            throw new Errors.IllegalArgumentError(notNumberError);
         return (~~value).toString();
     };
     return IntegerSerializer;
 }());
 exports.IntegerSerializer = IntegerSerializer;
 exports.integerSerializer = new IntegerSerializer();
+var LongSerializer = (function () {
+    function LongSerializer() {
+    }
+    LongSerializer.prototype.serialize = function (value) {
+        if (!Utils.isNumber(value))
+            throw new Errors.IllegalArgumentError(notNumberError);
+        return Math.trunc(value).toString();
+    };
+    return LongSerializer;
+}());
+exports.LongSerializer = LongSerializer;
+exports.longSerializer = new LongSerializer();
 var UnsignedIntegerSerializer = (function (_super) {
     __extends(UnsignedIntegerSerializer, _super);
     function UnsignedIntegerSerializer() {
@@ -84,12 +97,24 @@ var UnsignedIntegerSerializer = (function (_super) {
 }(IntegerSerializer));
 exports.UnsignedIntegerSerializer = UnsignedIntegerSerializer;
 exports.unsignedIntegerSerializer = new UnsignedIntegerSerializer();
+var UnsignedLongSerializer = (function () {
+    function UnsignedLongSerializer() {
+    }
+    UnsignedLongSerializer.prototype.serialize = function (value) {
+        if (!Utils.isNumber(value))
+            throw new Errors.IllegalArgumentError(notNumberError);
+        return Math.trunc(Math.abs(value)).toString();
+    };
+    return UnsignedLongSerializer;
+}());
+exports.UnsignedLongSerializer = UnsignedLongSerializer;
+exports.unsignedLongSerializer = new UnsignedLongSerializer();
 var FloatSerializer = (function () {
     function FloatSerializer() {
     }
     FloatSerializer.prototype.serialize = function (value) {
         if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError("The value is not a number.");
+            throw new Errors.IllegalArgumentError(notNumberError);
         if (value === Number.POSITIVE_INFINITY)
             return "INF";
         if (value === Number.NEGATIVE_INFINITY)

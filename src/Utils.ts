@@ -24,7 +24,7 @@ function isArray( object:any ):boolean {
 	return object instanceof Array;
 }
 
-function isString( value:any ):boolean {
+function isString( value:any ):value is string {
 	return typeof value === "string" || value instanceof String;
 }
 
@@ -37,7 +37,7 @@ function isNumber( value:any ):boolean {
 }
 
 function isInteger( value:any ):boolean {
-	if( ! isNumber( value ) )return false;
+	if( ! isNumber( value ) ) return false;
 	return value % 1 === 0;
 }
 
@@ -125,6 +125,43 @@ function forEachOwnProperty( object:Object, action:( name:string, value:any ) =>
 		if( object.hasOwnProperty( name ) ) {
 			if( action( name, object[ name ] ) === false ) break;
 		}
+	}
+}
+
+export function promiseMethod<T>( fn:() => T | Promise<T> ):Promise<T> {
+	return new Promise<T>( resolve => resolve( fn() ) );
+}
+
+class A {
+	static from<T>( iterator:Iterator<T> ):Array<T> {
+		let array:Array<T> = [];
+		let next:IteratorResult<T> = iterator.next();
+		while( ! next.done ) {
+			array.push( next.value );
+			next = iterator.next();
+		}
+		return array;
+	}
+
+	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
+		let result:Array<T> = arrays[ 0 ].slice();
+
+		for( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
+			result = result.concat( arrays[ i ].filter( function( item:T ):boolean {
+				return result.indexOf( item ) < 0;
+			} ) );
+		}
+
+		return result;
+	}
+
+	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+		if( ! array ) return - 1;
+
+		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
+			if( comparator( array[ i ], searchedElement ) ) return i;
+		}
+		return - 1;
 	}
 }
 
@@ -247,39 +284,6 @@ class S {
 	}
 }
 
-class A {
-	static from<T>( iterator:Iterator<T> ):Array<T> {
-		let array:Array<T> = [];
-		let next:IteratorResult<T> = iterator.next();
-		while( ! next.done ) {
-			array.push( next.value );
-			next = iterator.next();
-		}
-		return array;
-	}
-
-	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
-		let result:Array<T> = arrays[ 0 ].slice();
-
-		for( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
-			result = result.concat( arrays[ i ].filter( function( item:T ):boolean {
-				return result.indexOf( item ) < 0;
-			} ) );
-		}
-
-		return result;
-	}
-
-	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
-		if( ! array ) return - 1;
-
-		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
-			if( comparator( array[ i ], searchedElement ) ) return i;
-		}
-		return - 1;
-	}
-}
-
 class M {
 	static from<V>( object:Object ):Map<string, V> {
 		let map:Map<string, V> = new Map<string, V>();
@@ -292,11 +296,11 @@ class M {
 	static extend<K, V>( toExtend:Map<K, V>, ...extenders:Map<K, V>[] ):Map<K, V> {
 		for( let i:number = 0, length:number = extenders.length; i < length; i ++ ) {
 			let extender:Map<K, V> = extenders[ i ];
-			let values:Iterator<Array<(K|V)>> = extender.entries();
+			let values:Iterator<Array<(K | V)>> = extender.entries();
 
-			let next:IteratorResult<Array<(K|V)>> = values.next();
+			let next:IteratorResult<Array<(K | V)>> = values.next();
 			while( ! next.done ) {
-				let entry:Array<(K|V)> = next.value;
+				let entry:Array<(K | V)> = next.value;
 				let key:K = <K> entry[ 0 ];
 				let value:V = <V> entry[ 1 ];
 				toExtend.set( key, value );

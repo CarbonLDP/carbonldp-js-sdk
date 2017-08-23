@@ -16,7 +16,8 @@ const karma = require( "karma" );
 const sourcemaps = require( "gulp-sourcemaps" );
 const ts = require( "gulp-typescript" );
 
-const tslint = require( "gulp-tslint" );
+const tslint = require( "tslint" );
+const gulpTslint = require( "gulp-tslint" );
 
 const jeditor = require( "gulp-json-editor" );
 
@@ -60,7 +61,7 @@ gulp.task( "build", ( done ) => {
 	runSequence(
 		"version",
 		"clean:dist",
-		[ "compile:typescript", "compile:documentation", "bundle:sfx" ],
+		[ "compile:typescript", "bundle:sfx" ],
 		"prepare:npm-package",
 		"finish",
 		done
@@ -155,11 +156,13 @@ gulp.task( "compile:typescript", () => {
 gulp.task( "lint", [ "lint:typescript" ] );
 
 gulp.task( "lint:typescript", () => {
+	let program = tslint.Linter.createProgram( "./tsconfig.json" );
 	return gulp.src( config.source.typescript )
-		.pipe( tslint( {
-			tslint: require( "tslint" )
+		.pipe( gulpTslint( {
+			formatter: "prose",
+			program,
 		} ) )
-		.pipe( tslint.report( "prose" ) )
+		.pipe( gulpTslint.report() )
 		;
 } );
 

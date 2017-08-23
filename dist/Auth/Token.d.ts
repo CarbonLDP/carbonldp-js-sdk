@@ -1,13 +1,12 @@
-import Credentials from "./Credentials";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedAgent from "./PersistedAgent";
 import * as Resource from "./../Resource";
+import * as PersistedUser from "./PersistedUser";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class, Credentials {
+export interface Class extends Resource.Class {
     key: string;
     expirationTime: Date;
-    agent: PersistedAgent.Class;
+    user: PersistedUser.Class;
 }
 export declare class Factory {
     static is(value: any): boolean;

@@ -1,8 +1,5 @@
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as APIDescription from "./APIDescription";
-import * as App from "./App";
-import * as Apps from "./Apps";
 import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -14,26 +11,23 @@ import * as LDP from "./LDP";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedApp from "./PersistedApp";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
-import * as Platform from "./Platform";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
+import * as System from "./System";
 import * as Utils from "./Utils";
 
 export class Class extends AbstractContext.Class {
 
 	/* tslint:disable: variable-name */
 	static AccessPoint:typeof AccessPoint = AccessPoint;
-	static App:typeof App = App;
-	static Apps:typeof Apps = Apps;
 	static Auth:typeof Auth = Auth;
 	static Document:typeof Document = Document;
 	static Documents:typeof Documents = Documents;
@@ -45,52 +39,60 @@ export class Class extends AbstractContext.Class {
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static NS:typeof NS = NS;
 	static ObjectSchema:typeof ObjectSchema = ObjectSchema;
-	static PersistedApp:typeof PersistedApp = PersistedApp;
 	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
-	static Platform:typeof Platform = Platform;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
 	static SDKContext:typeof SDKContext = SDKContext;
 	static Settings:typeof Settings = Settings;
 	static SPARQL:typeof SPARQL = SPARQL;
+	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
 	/* tslint:enable: variable-name */
 
-	static get version():string { return "0.42.0"; }
+	static get version():string { return "1.0.0-alpha.1"; }
 
-	apps:Apps.Class;
-
+	// noinspection JSMethodCanBeStatic
 	get version():string { return Class.version; }
 
-	constructor( settings?:Settings.Class ) {
+	protected _baseURI:string;
+
+	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
+	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
 		super();
-		this.auth = new Platform.Auth.Class( this );
+		domain = RDF.URI.Util.hasProtocol( domain ) ? RDF.URI.Util.removeProtocol( domain ) : domain;
+		domain = Utils.S.endsWith( domain,  "/" ) ? domain : domain + "/";
+		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
-
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
-
-		this.apps = new Apps.Class( this );
 	}
 
-	resolve( uri:string ):string {
-		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		let finalURI:string = this.settings.get( "http.ssl" ) ? "https://" : "http://";
-		finalURI += this.settings.get( "domain" ) + "/" + this.getSetting( "platform.container" );
-		return RDF.URI.Util.resolve( finalURI, uri );
+	/**
+	 * Retrieves the Metadata related to the CarbonLDP Platform.
+	 */
+	getPlatformMetadata():Promise<System.PlatformMetadata.Class> {
+		return this.getResourceMetadata<System.PlatformMetadata.Class>( "system.platform.metadata" );
 	}
 
-	getAPIDescription():Promise<APIDescription.Class> {
-		return this.documents.get( "api/" ).then(
-			( [ description, response ]:[ Document.Class, HTTP.Response.Class ] ) => {
-				return <any> description;
-			}
-		);
+	/**
+	 * Retrieves the Metadata related to your instance of the Carbon LDP Platform.
+	 */
+	getInstanceMetadata():Promise<System.InstanceMetadata.Class> {
+		return this.getResourceMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
+	}
+
+	private getResourceMetadata<T>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {
+		if( ! this.hasSetting( metadataSetting ) )
+			return Promise.reject( new Errors.IllegalStateError( `The "${ metadataSetting }" setting hasn't been defined.` ) );
+
+		return Promise.resolve()
+			.then( () => this.resolveSystemURI( this.getSetting( metadataSetting ) ) )
+			.then( metadataURI => this.documents.get<T>( metadataURI ) )
+			.then( ( [ metadataDocument ] ) => metadataDocument );
 	}
 }
 

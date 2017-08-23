@@ -15,10 +15,18 @@ export declare class IntegerSerializer implements Serializer {
     serialize(value: any): string;
 }
 export declare let integerSerializer: IntegerSerializer;
+export declare class LongSerializer implements Serializer {
+    serialize(value: any): string;
+}
+export declare const longSerializer: LongSerializer;
 export declare class UnsignedIntegerSerializer extends IntegerSerializer {
     serialize(value: any): string;
 }
 export declare let unsignedIntegerSerializer: UnsignedIntegerSerializer;
+export declare class UnsignedLongSerializer implements Serializer {
+    serialize(value: any): string;
+}
+export declare const unsignedLongSerializer: UnsignedLongSerializer;
 export declare class FloatSerializer implements Serializer {
     serialize(value: any): string;
 }

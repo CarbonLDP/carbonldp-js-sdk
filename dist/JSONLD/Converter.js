@@ -15,7 +15,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    ;
     Class.getDefaultSerializers = function () {
         var literalSerializers = new Map();
         literalSerializers.set(NS.XSD.DataType.date, RDF.Literal.Serializers.XSD.dateSerializer);
@@ -24,8 +23,8 @@ var Class = (function () {
         literalSerializers.set(NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer);
         literalSerializers.set(NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer);
         literalSerializers.set(NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
-        literalSerializers.set(NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
+        literalSerializers.set(NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.longSerializer);
+        literalSerializers.set(NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
         literalSerializers.set(NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer);
         literalSerializers.set(NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer);
         literalSerializers.set(NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);

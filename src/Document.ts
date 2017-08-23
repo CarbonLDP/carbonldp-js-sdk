@@ -68,26 +68,37 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
 	_normalize():void;
 
 	_removeFragment( fragment:Fragment.Class ):void;
+
 	_removeFragment( slug:string ):void;
 
 	hasFragment( slug:string ):boolean;
+
 	getFragment<T>( slug:string ):T & Fragment.Class;
+
 	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
+
 	getFragments():Fragment.Class[];
 
 	createFragment<T>( object:T, slug:string ):T & Fragment.Class;
+
 	createFragment<T>( object:T ):T & Fragment.Class;
+
 	createFragment( slug:string ):Fragment.Class;
+
 	createFragment():Fragment.Class;
 
 	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment.Class;
+
 	createNamedFragment( slug:string ):NamedFragment.Class;
 
 	removeNamedFragment( fragment:NamedFragment.Class ):void;
+
 	removeNamedFragment( slug:string ):void;
 
 	toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
+
 	toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
+
 	toJSON():string;
 }
 
@@ -140,6 +151,7 @@ function hasFragment( id:string ):boolean {
 
 	return document._fragmentsIndex.has( id );
 }
+
 function getFragment( id:string ):Fragment.Class {
 	let document:Class = <Class> this;
 
@@ -147,6 +159,7 @@ function getFragment( id:string ):Fragment.Class {
 
 	return document._fragmentsIndex.get( id ) || null;
 }
+
 function getNamedFragment( id:string ):NamedFragment.Class {
 	let document:Class = <Class> this;
 
@@ -158,6 +171,7 @@ function getNamedFragment( id:string ):NamedFragment.Class {
 
 	return <NamedFragment.Class> document._fragmentsIndex.get( id ) || null;
 }
+
 function getFragments():Fragment.Class[] {
 	let document:Class = <Class> this;
 	return Utils.A.from( document._fragmentsIndex.values() );
@@ -207,31 +221,23 @@ function createNamedFragment<T extends Object>( slugOrObject:any, slug?:string )
 	return fragment;
 }
 
-function removeFragment( fragment:Fragment.Class ):void;
-function removeFragment( slug:string ):void;
-function removeFragment( fragmentOrSlug:any ):void {
-	let document:Class = <Class> this;
-
-	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : <Fragment.Class> fragmentOrSlug.id;
+function removeFragment( this:Class, fragmentOrSlug:string | Fragment.Class ):void {
+	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) return;
+		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) return;
 		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
 	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
 
-	document._fragmentsIndex.delete( id );
+	this._fragmentsIndex.delete( id );
 }
 
-function removeNamedFragment( fragment:NamedFragment.Class ):void;
-function removeNamedFragment( slug:string ):void;
-function removeNamedFragment( fragmentOrSlug:any ):void {
-	let document:Class = <Class> this;
-
-	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : <Fragment.Class> fragmentOrSlug.id;
+function removeNamedFragment( this:Class, fragmentOrSlug:NamedFragment.Class | string ):void {
+	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "You can only remove NamedFragments." );
 
-	document._removeFragment( id );
+	this._removeFragment( id );
 }
 
 function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;

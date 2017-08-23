@@ -13,10 +13,10 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
-import * as NS from "./../NS";
-import * as Errors from "./../Errors";
 import * as Document from "./../Document";
+import * as Errors from "./../Errors";
+import * as NS from "./../NS";
+import * as Utils from "./../Utils";
 
 import * as Role from "./Role";
 import DefaultExport from "./Role";
@@ -48,9 +48,22 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			"@type": NS.XSD.DataType.string,
 		} );
 
-		expect( Utils.hasProperty( Role.SCHEMA, "agents" ) ).toBe( true );
-		expect( Role.SCHEMA[ "agents" ] ).toEqual( {
-			"@id": NS.CS.Predicate.agent,
+		expect( Utils.hasProperty( Role.SCHEMA, "parentRole" ) ).toBe( true );
+		expect( Role.SCHEMA[ "parentRole" ] ).toEqual( {
+			"@id": NS.CS.Predicate.parentRole,
+			"@type": "@id",
+		} );
+
+		expect( Utils.hasProperty( Role.SCHEMA, "childRoles" ) ).toBe( true );
+		expect( Role.SCHEMA[ "childRoles" ] ).toEqual( {
+			"@id": NS.CS.Predicate.childRole,
+			"@type": "@id",
+			"@container": "@set",
+		} );
+
+		expect( Utils.hasProperty( Role.SCHEMA, "users" ) ).toBe( true );
+		expect( Role.SCHEMA[ "users" ] ).toEqual( {
+			"@id": NS.CS.Predicate.user,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -105,6 +118,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			object = {
 				name: null,
 				description: null,
+				users: null,
 			};
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -115,6 +129,10 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			delete object.description;
 			expect( Role.Factory.hasClassProperties( object ) ).toBe( true );
 			object.description = null;
+
+			delete object.users;
+			expect( Role.Factory.hasClassProperties( object ) ).toBe( true );
+			object.users = null;
 		} );
 
 		it( hasMethod(
@@ -182,26 +200,26 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			expect( Role.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.createFrom ) ).toBe( true );
 
-			interface TheAppRole {
+			interface TheRole {
 				myProperty?:string;
 			}
-			interface MyAppRole extends Role.Class, TheAppRole {}
+			interface MyRole extends Role.Class, TheRole {}
 
-			let role:MyAppRole;
-			role = Role.Factory.createFrom<TheAppRole>( {}, "Role name" );
+			let role:MyRole;
+			role = Role.Factory.createFrom<TheRole>( {}, "Role name" );
 			expect( Role.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeUndefined();
 			expect( role.name ).toBe( "Role name" );
 			expect( role.description ).toBeUndefined();
 
-			role = Role.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name" );
+			role = Role.Factory.createFrom<TheRole>( { myProperty: "a property" }, "Role name" );
 			expect( Role.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );
 			expect( role.name ).toBe( "Role name" );
 			expect( role.description ).toBeUndefined();
 
-			role = Role.Factory.createFrom<TheAppRole>( { myProperty: "a property" }, "Role name", "Description of the role" );
+			role = Role.Factory.createFrom<TheRole>( { myProperty: "a property" }, "Role name", "Description of the role" );
 			expect( Role.Factory.is( role ) ).toBe( true );
 			expect( role.myProperty ).toBeDefined();
 			expect( role.myProperty ).toBe( "a property" );

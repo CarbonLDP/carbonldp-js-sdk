@@ -118,7 +118,7 @@ var Util = (function () {
         return parameters;
     };
     Util.resolve = function (parentURI, childURI) {
-        if (Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
+        if (!parentURI || Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
             return childURI;
         var protocol = parentURI.substr(0, parentURI.indexOf("://") + 3);
         var path = parentURI.substr(parentURI.indexOf("://") + 3, parentURI.length - 1);

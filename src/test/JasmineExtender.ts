@@ -70,7 +70,7 @@ export interface DecorateDescriptor extends SuiteDescriptor {
 	type:string[];
 }
 
-export function serialize( descriptor:SuiteDescriptor ):string
+export function serialize( descriptor:SuiteDescriptor ):string;
 export function serialize( descriptor:PropertyDescriptor ):string;
 export function serialize( descriptor:MethodDescriptor ):string;
 export function serialize( descriptor:any ):string {
@@ -197,7 +197,7 @@ export function isDefined():string {
 
 export function hasConstructor():string;
 export function hasConstructor( constructorArguments:MethodArgument[] ):string;
-export function hasConstructor( description:string, constructorArguments:MethodArgument[] ):string
+export function hasConstructor( description:string, constructorArguments:MethodArgument[] ):string;
 export function hasConstructor( argumentsOrDescription:any = null, constructorArguments:MethodArgument[] = null ):string {
 	let description:string = null;
 
@@ -455,58 +455,80 @@ if( typeof XMLHttpRequest === "undefined" ) {
 
 	const METHODS:string[] = [ "OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE" ];
 
-	jasmine.Ajax = <any> (() => {
+	(jasmine as any).Ajax = (() => {
+		let installed:boolean = false;
 
 		let requests:any[] = [];
 
-		let scope:any = nock( /.*/ );
-		scope.persist();
-		scope.on( "request", updateRequests );
+		let scopes:any[] = [];
+
+		function createScope( basePath:string | RegExp ):any {
+			const scope:any = new nock( basePath );
+			scope.persist();
+			scope.on( "request", updateRequests );
+			scopes.push( scope );
+			return scope;
+		}
 
 		function install():void {
+			installed = true;
 			nock.disableNetConnect();
+			createScope( /.*/ );
 		}
 
 		function uninstall():void {
+			installed = false;
 			requests = [];
 			nock.cleanAll();
 			nock.enableNetConnect();
+			scopes.length = 0;
 		}
 
-		function andReturn( requests:any[] ):Function {
+		function andReturn( interceptors:any[] ):Function {
 			return ( options:JasmineAjaxRequestStubReturnOptions ) => {
-				for( let req of requests ) {
+				for( let req of interceptors ) {
 					req.reply( options.status || 200, options.responseText || options.response || "", options.responseHeaders || {} );
 				}
 			};
 		}
 
 		function stubRequest( url:string, data:string, methods:string = "*" ):any {
+			if( ! installed ) throw new Error( "Jasmine Ajax not installed" );
 			data = data || undefined;
 
-			let path:any = url;
+			let applicableScopes:any[] = scopes;
 			if( Utils.isString( url ) ) {
-				let parsedURL:Url = URL.parse( url );
-				path = parsedURL.path;
+				const parsedURL:Url = URL.parse( url );
+				const port:string = parsedURL.port || parsedURL.protocol === "http:" ? "80" : "443";
+				const basePath:string = parsedURL.protocol + "//" + parsedURL.hostname + ":" + port;
+
+				applicableScopes = scopes.filter( scope => scope.basePath === basePath );
+				if( applicableScopes.length === 0 )
+					applicableScopes = [ createScope( basePath ) ];
+
+				url = parsedURL.path || "" + parsedURL.hash || "";
 			}
 
-			let currentRequests:any[] = [];
+			let currentInterceptors:any[] = [];
 			let currentMethods:string[] = [ methods ];
 			if( methods === "*" ) currentMethods = METHODS;
 
 			for( let method of currentMethods ) {
-				scope.interceptors
-					.filter( interceptor => interceptor._key === `${method} /.*/${path}` )
-					.filter( interceptor => interceptor._requestBody === data )
-					.forEach( interceptor => nock.removeInterceptor( interceptor ) )
-				;
+				applicableScopes.forEach( scope => {
+					scope.interceptors
+						.filter( interceptor => interceptor.uri === url )
+						.filter( interceptor => interceptor.method === method )
+						.filter( interceptor => interceptor._requestBody === data )
+						.forEach( interceptor => nock.removeInterceptor( interceptor ) )
+					;
 
-				currentRequests.push( scope.intercept( path, method, data ) );
+					currentInterceptors.push( scope.intercept( url, method, data ) );
+				} );
 			}
 
 			return {
 				method: methods,
-				andReturn: andReturn( currentRequests ),
+				andReturn: andReturn( currentInterceptors ),
 			};
 		}
 

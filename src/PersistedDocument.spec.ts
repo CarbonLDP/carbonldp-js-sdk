@@ -207,7 +207,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"save",
 			[ "T" ],
-			"Save the persisted document to the server.",
+			"Save the persisted document to the server.", [
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+			],
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
@@ -603,11 +605,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"executeSELECTQuery",
+			[ "T" ],
 			"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -665,8 +668,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		beforeEach( ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isRelative( uri ) ? `http://example.com/${uri}` : uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			context = new MockedContext();
@@ -1609,7 +1616,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"save",
 				[ "T" ],
-				"Save the persisted document to the server.",
+				"Save the persisted document to the server.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
 				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {
 				expect( document.save ).toBeDefined();
@@ -1617,7 +1626,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "save" );
 				document.save();
-				expect( spy ).toHaveBeenCalledWith( document );
+				expect( spy ).toHaveBeenCalledWith( document, void 0 );
+
+				const requestOptions:HTTP.Request.Options = { timeout: 5555 };
+				document.save( requestOptions );
+				expect( spy ).toHaveBeenCalledWith( document, requestOptions );
 			} );
 
 			it( hasMethod(

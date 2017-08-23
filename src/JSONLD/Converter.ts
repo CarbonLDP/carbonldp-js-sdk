@@ -9,7 +9,7 @@ import * as Utils from "./../Utils";
 export class Class {
 	private _literalSerializers:Map<string, RDF.Literal.Serializer>;
 
-	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; };
+	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; }
 
 	private static getDefaultSerializers():Map<string, RDF.Literal.Serializer> {
 		let literalSerializers:Map<string, RDF.Literal.Serializer> = new Map<string, RDF.Literal.Serializer>();
@@ -20,8 +20,8 @@ export class Class {
 		literalSerializers.set( NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer );
 		literalSerializers.set( NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer );
 		literalSerializers.set( NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
-		literalSerializers.set( NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.integerSerializer );
-		literalSerializers.set( NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
+		literalSerializers.set( NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.longSerializer );
+		literalSerializers.set( NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer );
 		literalSerializers.set( NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer );
 		literalSerializers.set( NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer );
 		literalSerializers.set( NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer );

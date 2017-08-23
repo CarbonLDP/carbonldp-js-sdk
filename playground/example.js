@@ -4,9 +4,7 @@
 		it( "something else", ( done ) => {
 			"use strict";
 
-			let carbon = new Carbon();
-			carbon.setSetting( "domain", "localhost:8083" );
-			carbon.setSetting( "http.ssl", false );
+			let carbon = new Carbon( "localhost:8083", false );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -61,23 +59,24 @@
 				}
 			} );
 
-			let appContext;
 			let resource;
 			let fragment;
 
-			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.getContext( "test-app/" );
-			} ).then( ( _appContext ) => {
-				appContext = _appContext;
-				return appContext.documents.sparql( "posts/" )
-					.selectAll()
-					.where( ( _ ) => {
-						return [
-							_.resource( "posts/" )
-								.has( _.var( "p" ), _.var( "o" ) ),
-						];
-					} )
-					.execute();
+			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
+			Promise.resolve().then( () => {
+				// return carbon.documents.sparql( "/" )
+				// 	.selectAll()
+				// 	.where( ( _ ) => {
+				// 		return [
+				// 			_.resource( "/" )
+				// 				.has( _.var( "p" ), _.var( "o" ) ),
+				// 		];
+				// 	} )
+				// 	.execute();
+				return carbon.documents.createAccessPoint( "7580801781387042137/", {
+					hasMemberRelation: "memberRelation",
+					isMemberOfRelation: "parentRelation",
+				} )
 			} ).then( ( [ result, response ] ) => {
 				console.log( result );
 				done();

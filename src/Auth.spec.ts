@@ -16,30 +16,33 @@ import {
 	hasEnumeral,
 	hasSignature,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Agent from "./Auth/Agent";
-import * as Agents from "./Auth/Agents";
 import AbstractContext from "./AbstractContext";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Credentials from "./Auth/Credentials";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedAgent from "./Auth/PersistedAgent";
-import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
+import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import * as User from "./Auth/User";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
+import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import * as Users from "./Auth/Users";
+
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import * as NS from "./NS";
 import * as URI from "./RDF/URI";
+import * as Utils from "./Utils";
+
 
 import * as Auth from "./Auth";
 import DefaultExport from "./Auth";
@@ -71,27 +74,20 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Agent",
-		"Carbon.Auth.Agent"
+		"User",
+		"Carbon.Auth.User"
 	), ():void => {
-		expect( Auth.Agent ).toBeDefined();
-		expect( Auth.Agent ).toBe( Agent );
+		expect( Auth.User ).toBeDefined();
+		expect( Auth.User ).toBe( User );
 	} );
 
 	it( reexports(
 		STATIC,
-		"Agents",
-		"Carbon.Auth.Agents"
+		"Users",
+		"Carbon.Auth.Users"
 	), ():void => {
-		expect( Auth.Agents ).toBeDefined();
-		expect( Auth.Agents ).toBe( Agents );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AuthenticationToken",
-		"Carbon.Auth.AuthenticationToken"
-	), ():void => {
+		expect( Auth.Users ).toBeDefined();
+		expect( Auth.Users ).toBe( Users );
 	} );
 
 	it( reexports(
@@ -108,6 +104,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Credentials",
+		"Carbon.Auth.Credentials"
+	), ():void => {
+		expect( Auth.Credentials ).toBeDefined();
+		expect( Auth.Credentials ).toBe( Credentials );
 	} );
 
 	it( reexports(
@@ -130,11 +135,20 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"PersistedAgent",
-		"Carbon.Auth.PersistedAgent"
+		"PersistedCredentials",
+		"Carbon.Auth.PersistedCredentials"
 	), ():void => {
-		expect( Auth.PersistedAgent ).toBeDefined();
-		expect( Auth.PersistedAgent ).toBe( PersistedAgent );
+		expect( Auth.PersistedCredentials ).toBeDefined();
+		expect( Auth.PersistedCredentials ).toBe( PersistedCredentials );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PersistedUser",
+		"Carbon.Auth.PersistedUser"
+	), ():void => {
+		expect( Auth.PersistedUser ).toBeDefined();
+		expect( Auth.PersistedUser ).toBe( PersistedUser );
 	} );
 
 	it( reexports(
@@ -202,7 +216,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( enumeration(
 		"Carbon.Auth.Method",
-		"Enum with the methods of authentication supported by CarbonLDP."
+		"Enum with the methods of authentication supported by Carbon LDP."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -228,7 +242,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.Class",
-		"Abstract class that manages authentications and authorizations of a context."
+		"Abstract class that manages authentications and authorizations."
 	), ():void => {
 
 		beforeEach( ():void => {
@@ -245,18 +259,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{name: "context", type: "Carbon.Context.Class"},
+			{ name: "context", type: "Carbon.Context.Class" },
 		] ), ():void => {
-			let context:AbstractContext;
-			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
-				}
-			}
-			context = new MockedContext();
+			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
+				protected _baseURI:string;
 
-			class MockedAuth extends Auth.Class {}
-			let auth:Auth.Class = new MockedAuth( context );
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
+				}
+			} );
 
 			expect( auth ).toBeTruthy();
 			expect( auth instanceof Auth.Class ).toBe( true );
@@ -264,157 +277,150 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 		it( hasProperty(
 			INSTANCE,
-			"agents",
-			"Carbon.Auth.Agents.Class",
-			"Instance of `Carbon.Auth.Agents.Class` that helps you manage the agents of the current context."
+			"users",
+			"Carbon.Auth.Users.Class",
+			"Instance of `Carbon.Auth.Users.Class` that helps managing the users of your Carbon LDP."
 		), ():void => {
-			let context:AbstractContext;
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "";
 				}
 			}
-			context = new MockedContext();
-			class MockedAuth extends Auth.Class {}
-			let auth:Auth.Class = new MockedAuth( context );
+			let auth:Auth.Class = new Auth.Class( new MockedContext() );
 
-			expect( auth.agents ).toBeDefined();
-			expect( auth.agents ).toBeNull();
+			expect( auth.users ).toBeDefined();
+			expect( auth.users ).toEqual( jasmine.any( Users.Class ) );
 		} );
 
 		it( hasProperty(
 			INSTANCE,
-			"authenticatedAgent",
-			"Carbon.Auth.PersistedAgent.Class",
-			"The agent of the user that has been authenticated. If no authentication exists in the current context, it will ask to it's parent context.\n" +
+			"authenticatedUser",
+			"Carbon.Auth.PersistedUser.Class",
+			"The user of the user that has been authenticated.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
 
-			function createAgent( context:AbstractContext ):PersistedAgent.Class {
-				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/agents/my-agent/", context.documents );
-
-				let persistedAgent:PersistedAgent.Class = PersistedAgent.Factory.decorate( persistedDocument );
-				persistedAgent.email = null;
-				persistedAgent.name = null;
-				persistedAgent.enabled = true;
-				persistedAgent.types.push( Agent.RDF_CLASS );
-
-				return persistedAgent;
+			function createUser( context:AbstractContext ):PersistedUser.Class {
+				return PersistedUser.Factory.decorate( {
+					id: "http://example.com/users/my-user/",
+					types: [ User.RDF_CLASS ],
+					email: null,
+					name: null,
+					enabled: true,
+				}, context.documents );
 			}
 
 			(() => {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
-					constructor( _context?:AbstractContext ) {
-						super( _context );
-						this.auth = new MockedAuth( this );
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
 
-				expect( context.auth.authenticatedAgent ).toBeNull();
+				expect( context.auth.authenticatedUser ).toBeNull();
 			})();
 
 			(() => {
-				class BasicMockedAuth extends Auth.Class {}
-				class MockedAuth extends Auth.Class {
-					constructor( _context:AbstractContext ) {
-						super( _context );
-						this._authenticatedAgent = createAgent( _context );
-					}
-				}
 				class MockedContext extends AbstractContext {
-					constructor( _context?:AbstractContext ) {
-						super( _context );
-						this.auth = new BasicMockedAuth( this );
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
-
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
 
-				expect( context.auth.authenticatedAgent ).toBeNull();
+				expect( context.auth.authenticatedUser ).toBeNull();
 
-				expect( auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( auth.authenticatedAgent ) ).toBe( true );
+				// Authenticated Auth
+				let auth:Auth.Class = new class extends Auth.Class {
+					constructor() {
+						super( context );
+						this._authenticatedUser = createUser( context );
+					}
+				};
+				expect( auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( auth.authenticatedUser ) ).toBe( true );
 			})();
 
 			(() => {
-				class BasicMockedAuth extends Auth.Class {}
-				class MockedAuth extends Auth.Class {
-					constructor( _context:AbstractContext ) {
-						super( _context );
-						this._authenticatedAgent = createAgent( _context );
+				let parentContext:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
+						this.auth = new class extends Auth.Class {
+							constructor( _context:AbstractContext ) {
+								super( _context );
+								this._authenticatedUser = createUser( _context );
+							}
+						}( this );
 					}
-				}
-				class MockedContext extends AbstractContext {
-					constructor( _context?:AbstractContext, flag:boolean = false ) {
-						super( _context );
-						if( flag ) {
-							this.auth = new MockedAuth( this );
-						} else {
-							this.auth = new BasicMockedAuth( this );
-						}
+				};
+				let context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super( parentContext );
+						this._baseURI = "";
 					}
+				};
 
-					resolve( uri:string ):string {
-						return uri;
-					}
-				}
+				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
 
-				let parentContext:AbstractContext = new MockedContext( null, true );
-				let context:AbstractContext = new MockedContext( parentContext );
+				expect( context.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( context.auth.authenticatedUser ) ).toBe( true );
 
-				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
-
-				expect( context.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
-
-				expect( parentContext.auth.authenticatedAgent ).toBe( context.auth.authenticatedAgent );
+				expect( parentContext.auth.authenticatedUser ).toBe( context.auth.authenticatedUser );
 			})();
 
 			(() => {
-				class BasicMockedAuth extends Auth.Class {}
-				class MockedAuth extends Auth.Class {
-					constructor( _context:AbstractContext ) {
-						super( _context );
-						this._authenticatedAgent = createAgent( _context );
+				let parentContext:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
+						this.auth = new class extends Auth.Class {
+							constructor( _context:AbstractContext ) {
+								super( _context );
+								this._authenticatedUser = createUser( _context );
+							}
+						}( this );
 					}
-				}
-				class MockedContext extends AbstractContext {
-					constructor( _context?:AbstractContext, flag:boolean = false ) {
-						super( _context );
-						if( flag ) {
-							this.auth = new MockedAuth( this );
-						} else {
-							this.auth = new BasicMockedAuth( this );
-						}
+				};
+				let context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super( parentContext );
+						this._baseURI = "";
+						this.auth = new class extends Auth.Class {
+							constructor( _context:AbstractContext ) {
+								super( _context );
+								this._authenticatedUser = createUser( _context );
+							}
+						}( this );
 					}
+				};
 
-					resolve( uri:string ):string {
-						return uri;
-					}
-				}
+				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
 
-				let parentContext:AbstractContext = new MockedContext( null, true );
-				let context:AbstractContext = new MockedContext( parentContext, true );
+				expect( context.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.Factory.is( context.auth.authenticatedUser ) ).toBe( true );
 
-				expect( parentContext.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( parentContext.auth.authenticatedAgent ) ).toBe( true );
-
-				expect( context.auth.authenticatedAgent ).toBeTruthy();
-				expect( PersistedAgent.Factory.is( context.auth.authenticatedAgent ) ).toBe( true );
-
-				expect( parentContext.auth.authenticatedAgent ).not.toBe( context.auth.authenticatedAgent );
+				expect( parentContext.auth.authenticatedUser ).not.toBe( context.auth.authenticatedUser );
 			})();
 
 		} );
@@ -423,21 +429,19 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"roles",
 			"Carbon.Auth.Roles.Class",
-			"Instance of a implementation of the `Carbon.Auth.Roles.Class` abstract class, that help managing the roles of the current context.\n" +
-			"In this class the property is set to `null`, and implementations of this class set it to their respective role model using a valid instance of `Carbon.Auth.Roles.Class`."
+			"Instance of `Carbon.Auth.Roles.Class` that helps managing the roles of your Carbon LDP."
 		), ():void => {
-			let context:AbstractContext;
-			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "";
 				}
-			}
-			context = new MockedContext();
-			class MockedAuth extends Auth.Class {}
-			let auth:Auth.Class = new MockedAuth( context );
+			} );
 
 			expect( auth.roles ).toBeDefined();
-			expect( auth.roles ).toBeNull();
+			expect( auth.roles ).toEqual( jasmine.any( Roles.Class ) );
 		} );
 
 		it( hasMethod(
@@ -451,15 +455,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Property Integrity
 			(function propertyIntegrity():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
-					}
-
-					resolve( uri:string ):string {
-						return uri;
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -471,20 +472,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Neither current nor parent authenticated
 			(function currentNotAuthenticated_parentNotAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
 
@@ -502,20 +500,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Current not authenticated but parent is
 			(function currentNotAuthenticated_parentAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
 
@@ -533,20 +528,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Current and parent authenticated
 			(function currentAuthenticated_parentAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
@@ -565,20 +557,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Current authenticated but parent not
 			(function currentAuthenticated_parentNotAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
@@ -606,21 +595,21 @@ describe( module( "Carbon/Auth" ), ():void => {
 			],
 			{ type: "Promise<Carbon.Auth.Token.Class>" }
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
-				}
-			}
-			let context:AbstractContext = new MockedContext();
+			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
+				protected _baseURI:string;
 
-			class MockedAuth extends Auth.Class {}
-			let auth:Auth.Class = new MockedAuth( context );
+				constructor() {
+					super();
+					this._baseURI = "";
+				}
+			} );
 
 			expect( auth.authenticate ).toBeDefined();
 			expect( Utils.isFunction( auth.authenticate ) ).toBe( true );
 
 			let spy:jasmine.Spy = spyOn( auth, "authenticateUsing" );
 
+			//noinspection JSIgnoredPromiseFromCall
 			auth.authenticate( "myUer@user.com", "myAwesomePassword" );
 
 			expect( spy ).toHaveBeenCalledWith( "TOKEN", "myUer@user.com", "myAwesomePassword" );
@@ -634,8 +623,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				context = new MockedContext();
@@ -649,35 +642,29 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/users/me/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": "1234567890",
-						"Content-Location": "http://example.com/agents/my-agent/",
+						"Content-Location": "http://example.com/users/my-user/",
 					},
 					responseText: `[ {
-						"@id": "http://example.com/agents/my-agent/",
+						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+							"@id": "http://example.com/users/my-user/",
+							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
+							"${ NS.CS.Predicate.namae }": [ {
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
-							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
-								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							"${ NS.CS.Predicate.credentials }": [ {
+								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
 					} ]`,
 				} );
 
-				class MockedAuth extends Auth.Class {}
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				expect( auth.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
@@ -695,8 +682,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.username ).toEqual( username );
 						expect( credentials.password ).toEqual( password );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -706,7 +693,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 				// Expected behavior
-				let auth01:Auth.Class = new MockedAuth( context );
+				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( "BASIC", username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( ( credentials:UsernameAndPasswordCredentials ):void => {
@@ -714,14 +701,14 @@ describe( module( "Carbon/Auth" ), ():void => {
 				} ) );
 
 				// Wrong parameters
-				let auth02:Auth.Class = new MockedAuth( context );
-				promise = auth02.authenticateUsing( "BASIC", {} );
+				let auth02:Auth.Class = new Auth.Class( context );
+				promise = auth02.authenticateUsing( "BASIC" as any, {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication type
-				let auth03:Auth.Class = new MockedAuth( context );
-				promise = auth03.authenticateUsing( "Error", username, password );
+				let auth03:Auth.Class = new Auth.Class( context );
+				promise = auth03.authenticateUsing( "Error" as any, username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -739,9 +726,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 					{ name: "password", type: "string" },
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>" }
-			), ( done:{():void, fail:() => void} ):void => {
-				class MockedAuth extends Auth.Class {}
-				let auth:Auth.Class = new MockedAuth( context );
+			), ( done:{ ():void, fail:() => void } ):void => {
+				let auth:Auth.Class = new Auth.Class( context );
 
 				expect( auth.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
@@ -756,9 +742,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 						expect( credentials.key ).toEqual( "token-value" );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( credentials.user ).toBe( _auth.authenticatedUser );
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
@@ -767,7 +753,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
-				jasmine.Ajax.stubRequest( /token/ ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/.system/auth-tokens/" ).andReturn( {
 					status: 200,
 					responseText: `[ {
 						"@id": "_:00",
@@ -788,7 +774,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@value": "\\"1234567890\\""
 						} ],
 						"https://carbonldp.com/ns/v1/platform#resource": [ {
-							"@id": "http://example.com/successful/agents/my-agent/"
+							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
@@ -804,31 +790,26 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
 						},
 						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
-							"@id": "http://example.com/successful/agents/my-agent/"
+							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
-						"@id": "http://example.com/successful/agents/my-agent/",
+						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/successful/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+							"@id": "http://example.com/users/my-user/",
+							"@type": [ "${ NS.CS.Class.User }" ],
+							"${ NS.CS.Predicate.namae }": [ {
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
-							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
-								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							"${ NS.CS.Predicate.credentials }": [ {
+								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
 					} ]`,
 				} );
 
 				// Expected behavior
-				let auth01:Auth.Class = new MockedAuth( context );
+				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( ( credentials:Token.Class ):void => {
@@ -836,14 +817,14 @@ describe( module( "Carbon/Auth" ), ():void => {
 				} ) );
 
 				// Wrong parameters
-				let auth02:Auth.Class = new MockedAuth( context );
-				promise = auth02.authenticateUsing( "TOKEN", {} );
+				let auth02:Auth.Class = new Auth.Class( context );
+				promise = auth02.authenticateUsing( "TOKEN", {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication method
-				let auth03:Auth.Class = new MockedAuth( context );
-				promise = auth03.authenticateUsing( "Error", "myUser@user.con", "myAwesomePassword" );
+				let auth03:Auth.Class = new Auth.Class( context );
+				promise = auth03.authenticateUsing( "Error" as any, "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -861,35 +842,29 @@ describe( module( "Carbon/Auth" ), ():void => {
 				],
 				{ type: "Promise<Carbon.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/agents/me/" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
 						"ETag": "1234567890",
-						"Content-Location": "http://example.com/agents/my-agent/",
+						"Content-Location": "http://example.com/users/my-user/",
 					},
 					responseText: `[ {
-						"@id": "http://example.com/agents/my-agent/",
+						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
-							"@id": "http://example.com/agents/my-agent/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#Agent" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
-								"@value": "My Agent Name",
+							"@id": "http://example.com/users/my-user/",
+							"@type": [ "${ NS.CS.Class.User }" ],
+							"${ NS.CS.Predicate.namae }": [ {
+								"@value": "My User Name",
 								"@type": "http://www.w3.org/2001/XMLSchema#string"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
-								"@value": "my-agent@agents.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
-							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
-								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+							"${ NS.CS.Predicate.credentials }": [ {
+								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
 					} ]`,
 				} );
-				class MockedAuth extends Auth.Class {}
-				let auth01:Auth.Class = new MockedAuth( context );
-				let auth02:Auth.Class = new MockedAuth( context );
+				let auth01:Auth.Class = new Auth.Class( context );
+				let auth02:Auth.Class = new Auth.Class( context );
 
 				expect( auth01.authenticateUsing ).toBeDefined();
 				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
@@ -905,17 +880,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.key ).toEqual( token.key );
 						expect( _auth.isAuthenticated() ).toBe( true );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( credentials.user ).toBe( _auth.authenticatedUser );
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					success02: ( _auth:Auth.Class, credentials:Token.Class ):void => {
 						expect( credentials.key ).toEqual( token.key );
 						expect( _auth.isAuthenticated() ).toBe( true );
 
-						expect( _auth.authenticatedAgent ).toBeTruthy();
-						expect( credentials.agent ).toBe( _auth.authenticatedAgent );
-						expect( PersistedAgent.Factory.is( _auth.authenticatedAgent ) ).toBe( true );
+						expect( _auth.authenticatedUser ).toBeTruthy();
+						expect( credentials.user ).toBe( _auth.authenticatedUser );
+						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -931,7 +906,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				token = <any> {
 					expirationTime: date,
 					id: "_:BlankNode",
-					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
+					key: "dG9rZW4tdmFsdWU=",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
 					],
@@ -949,7 +924,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					let storedToken:any = {
 						expirationTime: date.toISOString(),
 						id: "_:BlankNode",
-						key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
+						key: "dG9rZW4tdmFsdWU=",
 						types: [
 							"https://carbonldp.com/ns/v1/security#Token",
 						],
@@ -963,13 +938,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 				} ) );
 
 				// ExpirationDate has been reached
-				let auth03:Auth.Class = new MockedAuth( context );
+				let auth03:Auth.Class = new Auth.Class( context );
 				date = new Date();
 				date.setDate( date.getDate() - 1 );
 				token = <any> {
 					expirationTime: date,
 					id: "_:BlankNode",
-					key: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJodHRwczovL2V4YW1wbGUuY29tL3VzZXJzL2EtdXNlci8iLCJleHAiOjExNDkxMjAwMDAwMDB9.T8XSFKyiT-5PAx_yxv2uY94nfvx65zWz8mI2OlSUFnE",
+					key: "dG9rZW4tdmFsdWU=",
 					types: [
 						"https://carbonldp.com/ns/v1/security#Token",
 					],
@@ -979,12 +954,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 				promises.push( promise.catch( spies.fail ) );
 
 				// Wrong parameters
-				promise = auth03.authenticateUsing( "TOKEN", {} );
+				promise = auth03.authenticateUsing( "TOKEN", {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Nonexistent authentication method
-				promise = auth03.authenticateUsing( "Error", token );
+				promise = auth03.authenticateUsing( "Error" as any, token );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -1009,14 +984,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Property Integrity
 			(function propertyIntegrity():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
 
-				class MockedAuth extends Auth.Class {}
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				expect( auth.addAuthentication ).toBeDefined();
 				expect( Utils.isFunction( auth.addAuthentication ) ).toBe( true );
@@ -1024,26 +1001,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Neither current nor parent authenticated
 			(function currentNotAuthenticated_parentNotAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
 					options[ "parentAuth" ] = "no authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
@@ -1052,26 +1027,24 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Current not authenticated but parent is
 			(function currentNotAuthenticated_parentAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
 					options[ "parentAuth" ] = "is authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
@@ -1080,20 +1053,18 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Current and parent authenticated
 			(function currentAuthenticated_parentAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				(<any> auth).authenticator = {
 					isAuthenticated: ():boolean => true, addAuthentication: ( options:any ):void => {
@@ -1104,7 +1075,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					options[ "parentAuth" ] = "is authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -1113,20 +1084,18 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			// Current authenticated but parent not
 			(function currentAuthenticated_parentNotAuthenticated():void {
-				class MockedAuth extends Auth.Class {}
 				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
 					constructor() {
 						super();
-						this.auth = new MockedAuth( this );
+						this.auth = new Auth.Class( this );
+						this._baseURI = "";
 						this._parentContext = this;
-					}
-
-					resolve( uri:string ):string {
-						return uri;
 					}
 				}
 				let context:AbstractContext = new MockedContext();
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = {
 					isAuthenticated: ():boolean => true, addAuthentication: ( options:any ):void => {
 						options[ "currentAuth" ] = "is authenticated";
@@ -1136,7 +1105,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					options[ "parentAuth" ] = "no authenticated";
 				} );
 
-				let options:HTTP.Request.Options = {};
+				let options:HTTP.Request.Options & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -1154,14 +1123,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// Property Integrity
 			(function propertyIntegrity():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
 
-				class MockedAuth extends Auth.Class {}
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				expect( auth.clearAuthentication ).toBeDefined();
 				expect( Utils.isFunction( auth.clearAuthentication ) ).toBe( true );
@@ -1170,14 +1141,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// The module isn't authenticated
 			(function NotAuthenticated():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
 
-				class MockedAuth extends Auth.Class {}
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				auth.clearAuthentication();
 				expect( (<any> auth).authenticator ).toBeFalsy();
@@ -1186,14 +1159,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 			// The module is authenticated
 			(function currentAuthenticated():void {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "";
 					}
 				}
 				let context:AbstractContext = new MockedContext();
 
-				class MockedAuth extends Auth.Class {}
-				let auth:Auth.Class = new MockedAuth( context );
+				let auth:Auth.Class = new Auth.Class( context );
 
 				(<any> auth).authenticator = {
 					isAuthenticated: ():boolean => true,
@@ -1220,28 +1195,36 @@ describe( module( "Carbon/Auth" ), ():void => {
 			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			class MockedEmptyContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/empty/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://empty.example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			class MockedMultipleContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/multiple/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://multiple.example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
-			let context:AbstractContext = new MockedContext();
-
-			class MockedAuth extends Auth.Class {}
-			let auth:Auth.Class = new MockedAuth( context );
-
-			let auth2:Auth.Class = new MockedAuth( new MockedEmptyContext() );
-			let auth3:Auth.Class = new MockedAuth( new MockedMultipleContext() );
+			let auth:Auth.Class = new Auth.Class( new MockedContext() );
+			let auth2:Auth.Class = new Auth.Class( new MockedEmptyContext() );
+			let auth3:Auth.Class = new Auth.Class( new MockedMultipleContext() );
 
 			expect( auth.createTicket ).toBeDefined();
 			expect( Utils.isFunction( auth.createTicket ) ).toBe( true );
@@ -1249,7 +1232,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			let expirationTime:Date = new Date();
 			expirationTime.setDate( expirationTime.getDate() + 1 );
 
-			jasmine.Ajax.stubRequest( "http://example.com/auth-tickets/", null, "POST" ).andReturn( {
+			jasmine.Ajax.stubRequest( "http://example.com/.system/auth-tickets/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: `[ {
 					"@id":"_:01",
@@ -1269,11 +1252,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 				} ]`,
 			} );
 
-			jasmine.Ajax.stubRequest( "http://example.com/empty/auth-tickets/", null, "POST" ).andReturn( {
+			jasmine.Ajax.stubRequest( "http://empty.example.com/.system/auth-tickets/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: "[]",
 			} );
-			jasmine.Ajax.stubRequest( "http://example.com/multiple/auth-tickets/", null, "POST" ).andReturn( {
+			jasmine.Ajax.stubRequest( "http://multiple.example.com/.system/auth-tickets/", null, "POST" ).andReturn( {
 				status: 200,
 				responseText: `[ {
 					"@id":"_:01",
@@ -1285,7 +1268,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"https://carbonldp.com/ns/v1/security#forIRI":[ {
-						"@id": "http://example.com/resource/"
+						"@id": "http://multiple.example.com/resource/"
 					} ],
 					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
 						"@value": "1234123412341234"
@@ -1300,7 +1283,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"https://carbonldp.com/ns/v1/security#forIRI":[ {
-						"@id": "http://example.com/resource/"
+						"@id": "http://multiple.example.com/resource/"
 					} ],
 					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
 						"@value": "1234123412341234"
@@ -1331,11 +1314,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( checkSuccess ) );
 
-			promise = auth2.createTicket( "http://example.com/resource/" );
+			promise = auth2.createTicket( "http://empty.example.com/resource/" );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( checkFail ) );
 
-			promise = auth3.createTicket( "http://example.com/resource/" );
+			promise = auth3.createTicket( "http://multiple.example.com/resource/" );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( checkFail ) );
 
@@ -1352,14 +1335,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 			{ type: "Promise<string>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return URI.Util.isAbsolute( uri ) ? uri : "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:AbstractContext = new MockedContext();
-			class MockedAuth extends Auth.Class {}
-			let auth:Auth.Class = new MockedAuth( context );
+			let auth:Auth.Class = new Auth.Class( context );
 
 			expect( auth.getAuthenticatedURL ).toBeDefined();
 			expect( Utils.isFunction( auth.getAuthenticatedURL ) ).toBe( true );

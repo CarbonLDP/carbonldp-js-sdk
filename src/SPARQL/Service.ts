@@ -24,9 +24,11 @@ export class Class {
 	}
 
 	static executeASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
-		return Class.executeRawASKQuery( url, askQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
-			return [ rawResults.boolean, response ];
-		} );
+		return Class
+			.executeRawASKQuery( url, askQuery, options )
+			.then<[ boolean, HTTP.Response.Class ]>( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
+				return [ rawResults.boolean, response ];
+			} );
 	}
 
 	static executeRawSELECTQuery( url:string, selectQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, HTTP.Response.Class ]> {
@@ -38,28 +40,30 @@ export class Class {
 		return HTTP.Request.Service.post( url, selectQuery, options, Class.resultsParser );
 	}
 
-	static executeSELECTQuery( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ any, HTTP.Response.Class]> {
-		return Class.executeRawSELECTQuery( url, selectQuery, options ).then( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
-			let rawBindings:RawResults.BindingObject[] = rawResults.results.bindings;
-			let bindings:SELECTResults.BindingObject[] = [];
+	static executeSELECTQuery<T>( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class<T>, HTTP.Response.Class ]> {
+		return Class
+			.executeRawSELECTQuery( url, selectQuery, options )
+			.then<[ SELECTResults.Class<T>, HTTP.Response.Class ]>( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
+				let rawBindings:RawResults.BindingObject[] = rawResults.results.bindings;
+				let bindings:T[] = [];
 
-			for( let bindingColumn of rawBindings ) {
-				let binding:SELECTResults.BindingObject = {};
-				for( let bindingRow in bindingColumn ) {
-					if( ! bindingColumn.hasOwnProperty( bindingRow ) ) continue;
+				for( let bindingColumn of rawBindings ) {
+					let binding:T = {} as T;
+					for( let bindingRow in bindingColumn ) {
+						if( ! bindingColumn.hasOwnProperty( bindingRow ) ) continue;
 
-					let bindingCell:RawResults.BindingProperty = bindingColumn[ bindingRow ];
-					binding[ bindingRow ] = Class.parseRawBindingProperty( bindingCell, pointerLibrary );
+						let bindingCell:RawResults.BindingProperty = bindingColumn[ bindingRow ];
+						binding[ bindingRow ] = Class.parseRawBindingProperty( bindingCell, pointerLibrary );
+					}
+					bindings.push( binding );
 				}
-				bindings.push( binding );
-			}
 
-			let results:SELECTResults.Class = {
-				vars: rawResults.head.vars,
-				bindings: bindings,
-			};
-			return [ results, response ];
-		} );
+				let results:SELECTResults.Class<T> = {
+					vars: rawResults.head.vars,
+					bindings: bindings,
+				};
+				return [ results, response ];
+			} );
 	}
 
 	static executeRawCONSTRUCTQuery( url:string, constructQuery:string, options:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {

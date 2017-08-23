@@ -6,40 +6,40 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return !!(Utils.hasPropertyDefined(object, "_id") &&
+        return (Utils.hasPropertyDefined(object, "_id") &&
             Utils.hasPropertyDefined(object, "_resolved") &&
             Utils.hasPropertyDefined(object, "id") &&
             Utils.hasFunction(object, "isResolved") &&
             Utils.hasPropertyDefined(object, "resolve"));
     };
     Factory.is = function (value) {
-        return !!(Utils.isObject(value) &&
+        return (Utils.isObject(value) &&
             Factory.hasClassProperties(value));
     };
     Factory.create = function (id) {
         return Factory.createFrom({}, id);
     };
     Factory.createFrom = function (object, id) {
-        id = !!id ? id : "";
-        var pointer = Factory.decorate(object);
-        pointer.id = id;
-        return pointer;
+        var pointer = object;
+        pointer.id = id || pointer.id;
+        return Factory.decorate(pointer);
     };
     Factory.decorate = function (object) {
+        var pointer = object;
         if (Factory.hasClassProperties(object))
-            return object;
-        Object.defineProperties(object, {
+            return pointer;
+        Object.defineProperties(pointer, {
             "_id": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: "",
+                value: pointer.id,
             },
             "_resolved": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: false,
+                value: !!pointer._resolved,
             },
             "id": {
                 enumerable: false,
@@ -47,7 +47,7 @@ var Factory = (function () {
                 get: function () {
                     if (!this._id)
                         return "";
-                    return this._id;
+                    return this._id || "";
                 },
                 set: function (value) {
                     this._id = value;
@@ -70,7 +70,7 @@ var Factory = (function () {
                 },
             },
         });
-        return object;
+        return pointer;
     };
     return Factory;
 }());
@@ -91,7 +91,9 @@ var Util = (function () {
     };
     Util.resolveAll = function (pointers) {
         var promises = pointers.map(function (pointer) { return pointer.resolve(); });
-        return Promise.all(promises).then(function (results) {
+        return Promise
+            .all(promises)
+            .then(function (results) {
             var resolvedPointers = results.map(function (result) { return result[0]; });
             var responses = results.map(function (result) { return result[1]; });
             return [resolvedPointers, responses];

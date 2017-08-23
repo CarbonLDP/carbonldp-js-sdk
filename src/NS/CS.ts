@@ -5,19 +5,13 @@ class Class {
 
 	static get AccessControlList():string { return namespace + "AccessControlList"; }
 
-	static get AddMember():string { return namespace + "AddMember"; }
-
-	static get Agent():string { return namespace + "Agent"; }
-
 	static get AllOrigins():string { return namespace + "AllOrigins"; }
-
-	static get Application():string { return namespace + "Application"; }
-
-	static get AppRole():string { return namespace + "AppRole"; }
 
 	static get CreateAccessPoint():string { return namespace + "CreateAccessPoint"; }
 
 	static get CreateChild():string { return namespace + "CreateChild"; }
+
+	static get Credentials():string { return namespace + "Credentials"; }
 
 	static get Delete():string { return namespace + "Delete"; }
 
@@ -27,13 +21,13 @@ class Class {
 
 	static get ManageSecurity():string { return namespace + "ManageSecurity"; }
 
-	static get PlatformRole():string { return namespace + "PlatformRole"; }
-
 	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
 
 	static get Read():string { return namespace + "Read"; }
 
 	static get RemoveMember():string { return namespace + "RemoveMember"; }
+
+	static get Role():string { return namespace + "Role"; }
 
 	static get Ticket():string { return namespace + "Ticket"; }
 
@@ -42,6 +36,8 @@ class Class {
 	static get Update():string { return namespace + "Update"; }
 
 	static get Upload():string { return namespace + "Upload"; }
+
+	static get User():string { return namespace + "User"; }
 }
 
 class Predicate {
@@ -51,11 +47,11 @@ class Predicate {
 
 	static get accessTo():string { return namespace + "accessTo"; }
 
-	static get agent():string { return namespace + "agent"; }
-
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
 
 	static get childRole():string { return namespace + "childRole"; }
+
+	static get credentials():string { return namespace + "credentials"; }
 
 	static get credentialsOf():string { return namespace + "credentialsOf"; }
 
@@ -79,8 +75,6 @@ class Predicate {
 
 	static get permission():string { return namespace + "permission"; }
 
-	static get platformRole():string { return namespace + "platformRole"; }
-
 	static get rootContainer():string { return namespace + "rootContainer"; }
 
 	static get subject():string { return namespace + "subject"; }
@@ -90,6 +84,8 @@ class Predicate {
 	static get ticketKey():string { return namespace + "ticketKey"; }
 
 	static get tokenKey():string { return namespace + "tokenKey"; }
+
+	static get user():string { return namespace + "user"; }
 }
 
 export {

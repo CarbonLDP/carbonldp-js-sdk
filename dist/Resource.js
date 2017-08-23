@@ -34,23 +34,22 @@ var Factory = (function () {
     Factory.createFrom = function (object, id, types) {
         if (id === void 0) { id = null; }
         if (types === void 0) { types = null; }
-        id = !!id ? id : (object.id || "");
-        types = !!types ? types : (object.types || []);
-        var resource = Factory.decorate(object);
-        resource.id = id;
-        resource.types = types;
-        return resource;
+        var resource = object;
+        resource.id = id || resource.id;
+        resource.types = types || resource.types;
+        return Factory.decorate(resource);
     };
     Factory.decorate = function (object) {
-        Pointer.Factory.decorate(object);
+        var resource = object;
         if (Factory.hasClassProperties(object))
-            return object;
-        Object.defineProperties(object, {
+            return resource;
+        Pointer.Factory.decorate(resource);
+        Object.defineProperties(resource, {
             "types": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: [],
+                value: resource.types || [],
             },
             "addType": {
                 writable: true,
@@ -71,7 +70,7 @@ var Factory = (function () {
                 value: removeType,
             },
         });
-        return object;
+        return resource;
     };
     return Factory;
 }());

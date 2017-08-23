@@ -1,0 +1,1 @@
+{"version":3,"sources":["System.ts"],"names":[],"mappings":";;AAAA,4DAA8D;AAI7D,4CAAgB;AAHjB,4DAA8D;AAI7D,4CAAgB","file":"System.js","sourcesContent":["import * as PlatformMetadata from \"./System/PlatformMetadata\";\nimport * as InstanceMetadata from \"./System/InstanceMetadata\";\n\nexport {\n\tPlatformMetadata,\n\tInstanceMetadata,\n};\n"]}

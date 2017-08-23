@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var SDKContext = require("./SDKContext");
+var RDF = require("./RDF");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(parentContext) {
@@ -21,12 +22,19 @@ var Class = (function (_super) {
         _this.typeObjectSchemaMap = new Map();
         return _this;
     }
+    Object.defineProperty(Class.prototype, "baseURI", {
+        get: function () { return this._baseURI; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class.prototype, "parentContext", {
         get: function () { return this._parentContext; },
         enumerable: true,
         configurable: true
     });
-    ;
+    Class.prototype.resolve = function (relativeURI) {
+        return RDF.URI.Util.resolve(this.baseURI, relativeURI);
+    };
     return Class;
 }(SDKContext.Class));
 exports.Class = Class;
