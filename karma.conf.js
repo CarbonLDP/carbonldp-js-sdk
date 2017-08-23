@@ -7,7 +7,7 @@ module.exports = function( config ) {
 		basePath: "",
 
 		// frameworks to use
-		frameworks: [ "jasmine-ajax", "jasmine", "es6-shim", "karma-typescript" ],
+		frameworks: [ "jasmine-ajax", "jasmine", "karma-typescript" ],
 
 		// list of files / patterns to load in the browser
 		files: [
@@ -65,20 +65,13 @@ module.exports = function( config ) {
 		browserNoActivityTimeout: 60 * 1000,
 		browsers: [ "ChromeHeadless" ],
 
-		customLaunchers: {
-			chrome_travis_ci: {
-				base: "Chrome",
-				flags: [ "--no-sandbox" ]
-			}
-		},
-
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true
 	};
 
-	if( process.env.TRAVIS ) configuration.browsers = [ "chrome_travis_ci" ];
+	if( process.env.TRAVIS ) configuration.browsers = [ "ChromeHeadless" ];
 
 	config.set( configuration );
 };
