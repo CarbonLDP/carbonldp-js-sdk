@@ -1,55 +1,39 @@
 // Karma configuration
 // Generated on Wed Nov 12 2014 12:33:32 GMT-0600 (CST)
 
-const webpack = require( "webpack" );
-
 module.exports = function( config ) {
 	let configuration = {
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: "",
 
 		// frameworks to use
-		frameworks: [ "jasmine-ajax", "jasmine", "es6-shim" ],
+		frameworks: [ "jasmine-ajax", "jasmine", "es6-shim", "karma-typescript" ],
 
 		// list of files / patterns to load in the browser
 		files: [
-			"test/test_index.ts",
+			"src/**/*.ts",
 		],
 
-		mime: {
-			"text/x-typescript": [ "ts" ]
+		karmaTypescriptConfig: {
+			tsconfig: "./tsconfig.json",
+			bundlerOptions: {
+				// TODO: https://github.com/monounity/karma-typescript/issues/144
+				// sourceMap: true,
+				addNodeGlobals: false,
+				entrypoints: /\.spec\.ts$/,
+				exclude: [ "file-type", "nock", "http", "https", "url",
+					// TODO: https://github.com/monounity/karma-typescript/issues/166
+					       "crypto", "jsonld-request", "pkginfo", "request", "util", "xmldom" ],
+				// noParse: [ "jsonld" ],
+			},
+			compilerOptions: {
+				sourceMap: true,
+			},
 		},
 
 		// preprocess matching files before serving them to the browser
 		preprocessors: {
-			"test/test_index.ts": [ "webpack" ],
-			"src/**/*.ts": [ "webpack" ],
-		},
-
-		webpack: {
-			devtool: 'inline-source-map',
-
-			resolve: {
-				extensions: [ ".ts", ".js" ],
-			},
-
-			target: "node",
-			node: {},
-			externals: [ "nock", "file-type" ],
-			plugins: [
-				// ignore node dependencies in jsonld.js
-				new webpack.IgnorePlugin( /^(?=.*)((?!\.\/\.\.\/src\/).)((?!webpack amd options).)*$/, /jsonld\/js$/ ),
-			],
-
-
-			module: {
-				loaders: [
-					{ test: /\.ts$/, loader: "awesome-typescript-loader" },
-				],
-			},
-		},
-		webpackMiddleware: {
-			stats: 'errors-only'
+			"src/**/*.ts": [ "karma-typescript" ],
 		},
 
 		reporters: [ "documentation" ],
@@ -79,7 +63,7 @@ module.exports = function( config ) {
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browserNoActivityTimeout: 60 * 1000,
-		browsers: [ "Chrome" ],
+		browsers: [ "ChromeHeadless" ],
 
 		customLaunchers: {
 			chrome_travis_ci: {
