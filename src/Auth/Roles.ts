@@ -46,12 +46,12 @@ export class Class {
 			persistedRole = PersistedRole.Factory.decorate( newRole, this.context.documents );
 			return this.context.documents.addMember( parentURI, newRole );
 
-		} ).then( ( response ) => {
-			return [ persistedRole, responseCreated ] as [ T & PersistedRole.Class, HTTP.Response.Class ];
+		} ).then<[ T & PersistedRole.Class, HTTP.Response.Class ]>( ( response ) => {
+			return [ persistedRole, responseCreated ];
 		} );
 	}
 
-	get <T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		return Utils.promiseMethod( () => {
 			return this.context.documents.get<T & PersistedRole.Class>( this.resolveURI( roleURI ), requestOptions );
 		} );
@@ -60,9 +60,9 @@ export class Class {
 	listUsers( this:Class, roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
 		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
 			return this.context.documents.listMembers( accessPoint.id, requestOptions );
-		} ).then( ( [ documents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+		} ).then<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]>( ( [ documents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
 			const users:PersistedProtectedDocument.Class[] = documents.map( user => PersistedProtectedDocument.Factory.decorate( user, this.context.documents ) );
-			return [ users, response ] as [ PersistedProtectedDocument.Class[], HTTP.Response.Class ];
+			return [ users, response ];
 		} );
 	}
 

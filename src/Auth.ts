@@ -141,7 +141,7 @@ export class Class {
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
 			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() );
-		} ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
@@ -156,7 +156,7 @@ export class Class {
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
-			return [ ticket, response ] as [ Ticket.Class, HTTP.Response.Class ];
+			return [ ticket, response ];
 		} );
 	}
 

@@ -244,7 +244,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>( ( [ document, createResponse ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			responses.push( createResponse );
-			if( document.isResolved() ) return [ document, null ] as [ T & PersistedProtectedDocument.Class, HTTP.Response.Class ];
+			if( document.isResolved() ) return [ document, null ];
 
 			return this.get<T & PersistedProtectedDocument.Class>( document.id );
 		} ).then<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>( ( [ persistedDocument, resolveResponse ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
@@ -264,7 +264,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return this.createChildren( parentURI, childrenObjects, slugsOrRequestOptions, requestOptions ).then<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>( ( [ documents, creationResponses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
 			responses.push( creationResponses );
-			if( documents.every( document => document.isResolved() ) ) return [ documents, null ] as [ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ];
+			if( documents.every( document => document.isResolved() ) ) return [ documents, null ];
 
 			return Pointer.Util.resolveAll<T & PersistedProtectedDocument.Class>( documents );
 		} ).then<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>( ( [ persistedDocuments, resolveResponses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {

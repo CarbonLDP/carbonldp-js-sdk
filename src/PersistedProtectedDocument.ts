@@ -69,9 +69,9 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 
 	return aclPromise.then( ( acl:Pointer.Class ) => {
 		return protectedDocument._documents.get( acl.id, requestOptions );
-	} ).then( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
+	} ).then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
 		if( ! Resource.Util.hasType( acl, Auth.ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
-		return [ acl, response ] as [ Auth.PersistedACL.Class, HTTP.Response.Class ];
+		return [ acl, response ];
 	} );
 }
 
