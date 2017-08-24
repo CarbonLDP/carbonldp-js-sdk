@@ -289,6 +289,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					this._baseURI = "";
 				}
 			}
+
 			let auth:Auth.Class = new Auth.Class( new MockedContext() );
 
 			expect( auth.users ).toBeDefined();
@@ -322,6 +323,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				expect( context.auth.authenticatedUser ).toBeNull();
@@ -336,6 +338,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				expect( context.auth.authenticatedUser ).toBeNull();
@@ -463,6 +466,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				expect( context.auth.isAuthenticated ).toBeDefined();
@@ -481,6 +485,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
@@ -509,6 +514,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
@@ -537,6 +543,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
@@ -566,6 +573,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
@@ -631,6 +639,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				context = new MockedContext();
 			} );
 
@@ -761,13 +770,13 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
 							"https://carbonldp.com/ns/v1/platform#VolatileResource"
 						],
-						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+						"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
 							"https://carbonldp.com/ns/v1/platform#VolatileResource"
 						],
 						"https://carbonldp.com/ns/v1/platform#eTag": [ {
@@ -991,6 +1000,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1011,11 +1021,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "no authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "no authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { parentAuth?:string } = {};
@@ -1037,11 +1048,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "is authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "is authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { parentAuth?:string } = {};
@@ -1063,16 +1075,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
 				(<any> auth).authenticator = {
-					isAuthenticated: ():boolean => true, addAuthentication: ( options:any ):void => {
-						options[ "currentAuth" ] = "is authenticated";
+					isAuthenticated: ():boolean => true, addAuthentication: ( mockOptions:any ):void => {
+						mockOptions[ "currentAuth" ] = "is authenticated";
 					},
 				};
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "is authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "is authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { currentAuth?:string } = {};
@@ -1094,15 +1107,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = {
-					isAuthenticated: ():boolean => true, addAuthentication: ( options:any ):void => {
-						options[ "currentAuth" ] = "is authenticated";
+					isAuthenticated: ():boolean => true, addAuthentication: ( mockOptions:any ):void => {
+						mockOptions[ "currentAuth" ] = "is authenticated";
 					},
 				};
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "no authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "no authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { currentAuth?:string } = {};
@@ -1130,6 +1144,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1148,6 +1163,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1166,6 +1182,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1203,6 +1220,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			class MockedEmptyContext extends AbstractContext {
 				protected _baseURI:string;
 
@@ -1212,6 +1230,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			class MockedMultipleContext extends AbstractContext {
 				protected _baseURI:string;
 

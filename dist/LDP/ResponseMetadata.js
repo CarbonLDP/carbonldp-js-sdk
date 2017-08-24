@@ -2,16 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 var VolatileResource = require("./VolatileResource");
+var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
 exports.SCHEMA = {
-    "resourcesMetadata": {
-        "@id": NS.C.Predicate.resourceMetadata,
+    "documentsMetadata": {
+        "@id": NS.C.Predicate.documentMetadata,
         "@type": "@id",
         "@container": "@set",
-    },
-    "bNodesMapping": {
-        "@id": NS.C.Predicate.bNodesMapping,
-        "@type": "@id",
     },
 };
 var Factory = (function () {
@@ -19,6 +16,7 @@ var Factory = (function () {
     }
     Factory.is = function (object) {
         return VolatileResource.Factory.is(object)
+            && Utils.hasProperty(object, "documentsMetadata")
             && object.hasType(exports.RDF_CLASS);
     };
     return Factory;

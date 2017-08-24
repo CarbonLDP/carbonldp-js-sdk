@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var AddMemberAction = require("./LDP/AddMemberAction");
 exports.AddMemberAction = AddMemberAction;
-var BNodesMapping = require("./LDP/BNodesMapping");
+var BNodesMapping = require("./LDP/Map");
 exports.BNodesMapping = BNodesMapping;
 var DirectContainer = require("./LDP/DirectContainer");
 exports.DirectContainer = DirectContainer;
@@ -16,8 +16,8 @@ var IndirectContainer = require("./LDP/IndirectContainer");
 exports.IndirectContainer = IndirectContainer;
 var RemoveMemberAction = require("./LDP/RemoveMemberAction");
 exports.RemoveMemberAction = RemoveMemberAction;
-var ResourceMetadata = require("./LDP/ResourceMetadata");
-exports.ResourceMetadata = ResourceMetadata;
+var DocumentMetadata = require("./LDP/DocumentMetadata");
+exports.DocumentMetadata = DocumentMetadata;
 var ResponseMetadata = require("./LDP/ResponseMetadata");
 exports.ResponseMetadata = ResponseMetadata;
 

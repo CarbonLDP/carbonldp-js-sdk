@@ -66,17 +66,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"BNodesMapping",
-			"string"
-		), ():void => {
-			expect( C.Class.BNodesMapping ).toBeDefined();
-			expect( Utils.isString( C.Class.BNodesMapping ) ).toBe( true );
-
-			expect( C.Class.BNodesMapping ).toBe( "https://carbonldp.com/ns/v1/platform#BNodesMapping" );
-		} );
-
-		it( hasProperty(
-			STATIC,
 			"CreatedResource",
 			"string"
 		), ():void => {
@@ -99,6 +88,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"DocumentMetadata",
+			"string"
+		), ():void => {
+			expect( C.Class.DocumentMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.DocumentMetadata ) ).toBe( true );
+
+			expect( C.Class.DocumentMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentMetadata" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"Instance",
 			"string"
 		), ():void => {
@@ -106,6 +106,17 @@ describe( module(
 			expect( Utils.isString( C.Class.Instance ) ).toBe( true );
 
 			expect( C.Class.Instance ).toBe( "https://carbonldp.com/ns/v1/platform#Instance" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Map",
+			"string"
+		), ():void => {
+			expect( C.Class.Map ).toBeDefined();
+			expect( Utils.isString( C.Class.Map ) ).toBe( true );
+
+			expect( C.Class.Map ).toBe( "https://carbonldp.com/ns/v1/platform#Map" );
 		} );
 
 		it( hasProperty(
@@ -262,17 +273,6 @@ describe( module(
 			expect( C.Class.ResponseMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetadata" );
 		} );
 
-		it( hasProperty(
-			STATIC,
-			"ResourceMetadata",
-			"string"
-		), ():void => {
-			expect( C.Class.ResourceMetadata ).toBeDefined();
-			expect( Utils.isString( C.Class.ResourceMetadata ) ).toBe( true );
-
-			expect( C.Class.ResourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResourceMetadata" );
-		} );
-
 	} );
 
 	describe( clazz(
@@ -311,13 +311,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"bNodesMapping",
+			"bNodesMap",
 			"string"
 		), ():void => {
-			expect( C.Predicate.bNodesMapping ).toBeDefined();
-			expect( Utils.isString( C.Predicate.bNodesMapping ) ).toBe( true );
+			expect( C.Predicate.bNodesMap ).toBeDefined();
+			expect( Utils.isString( C.Predicate.bNodesMap ) ).toBe( true );
 
-			expect( C.Predicate.bNodesMapping ).toBe( "https://carbonldp.com/ns/v1/platform#bNodesMapping" );
+			expect( C.Predicate.bNodesMap ).toBe( "https://carbonldp.com/ns/v1/platform#bNodesMap" );
 		} );
 
 		it( hasProperty(
@@ -340,6 +340,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.created ) ).toBe( true );
 
 			expect( C.Predicate.created ).toBe( "https://carbonldp.com/ns/v1/platform#created" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"documentMetadata",
+			"string"
+		), ():void => {
+			expect( C.Predicate.documentMetadata ).toBeDefined();
+			expect( Utils.isString( C.Predicate.documentMetadata ) ).toBe( true );
+
+			expect( C.Predicate.documentMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#documentMetadata" );
 		} );
 
 		it( hasProperty(
@@ -463,17 +474,6 @@ describe( module(
 			expect( Utils.isString( C.Predicate.message ) ).toBe( true );
 
 			expect( C.Predicate.message ).toBe( "https://carbonldp.com/ns/v1/platform#message" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"resourceMetadata",
-			"string"
-		), ():void => {
-			expect( C.Predicate.resourceMetadata ).toBeDefined();
-			expect( Utils.isString( C.Predicate.resourceMetadata ) ).toBe( true );
-
-			expect( C.Predicate.resourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#resourceMetadata" );
 		} );
 
 		it( hasProperty(

@@ -51,10 +51,10 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.LDP.Entry.Class",
-		"Entries of the `Carbon.LDP.BNodesMapping` with the previous and new BNodes ID."
+		"Entries of the `Carbon.LDP.Map` with the previous and new BNodes ID."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Pointer.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.BlankNode.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

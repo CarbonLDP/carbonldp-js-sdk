@@ -1,11 +1,9 @@
 import { Class as ObjectSchema } from "./../ObjectSchema";
-import { Class as Pointer } from "./../Pointer";
 import { Class as Entry } from "./Entry";
-import { Class as VolatileResource } from "./VolatileResource";
+import { Class as Resource } from "./../Resource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema;
-export interface Class extends VolatileResource {
-    resource: Pointer;
+export interface Class extends Resource {
     entries: Entry[];
 }
 export declare class Factory {

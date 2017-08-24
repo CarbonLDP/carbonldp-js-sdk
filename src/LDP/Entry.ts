@@ -1,7 +1,6 @@
 import { Class as BlankNode } from "./../BlankNode";
 import * as NS from "./../NS";
 import { Class as ObjectSchema } from "./../ObjectSchema";
-import { Class as Pointer } from "./../Pointer";
 
 export const SCHEMA:ObjectSchema = {
 	"key": {
@@ -14,7 +13,7 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export interface Class extends Pointer {
+export interface Class extends BlankNode {
 	key:BlankNode;
 	value:BlankNode;
 }

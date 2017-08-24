@@ -9,7 +9,7 @@ import {
 import * as Utils from "./Utils";
 
 import * as AddMemberAction from "./LDP/AddMemberAction";
-import * as BNodesMapping from "./LDP/BNodesMapping";
+import * as BNodesMapping from "./LDP/Map";
 import * as DirectContainer from "./LDP/DirectContainer";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
@@ -17,7 +17,7 @@ import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 import * as ErrorResponse from "./LDP/ErrorResponse";
 import * as ResponseMetadata from "./LDP/ResponseMetadata";
-import * as ResourceMetadata from "./LDP/ResourceMetadata";
+import * as DocumentMetadata from "./LDP/DocumentMetadata";
 
 import * as LDP from "./LDP";
 
@@ -40,7 +40,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"BNodesMapping",
-		"Carbon/LDP/BNodesMapping"
+		"Carbon/LDP/Map"
 	), ():void => {
 		expect( LDP.BNodesMapping ).toBeDefined();
 		expect( LDP.BNodesMapping ).toBe( BNodesMapping );
@@ -111,11 +111,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"ResourceMetadata",
-		"Carbon/LDP/ResourceMetadata"
+		"DocumentMetadata",
+		"Carbon/LDP/DocumentMetadata"
 	), ():void => {
-		expect( LDP.ResourceMetadata ).toBeDefined();
-		expect( LDP.ResourceMetadata ).toBe( ResourceMetadata );
+		expect( LDP.DocumentMetadata ).toBeDefined();
+		expect( LDP.DocumentMetadata ).toBe( DocumentMetadata );
 	} );
 
 } );

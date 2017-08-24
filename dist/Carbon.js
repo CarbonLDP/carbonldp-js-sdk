@@ -58,12 +58,12 @@ var Class = (function (_super) {
         configurable: true
     });
     Class.prototype.getPlatformMetadata = function () {
-        return this.getResourceMetadata("system.platform.metadata");
+        return this.getDocumentMetadata("system.platform.metadata");
     };
     Class.prototype.getInstanceMetadata = function () {
-        return this.getResourceMetadata("system.instance.metadata");
+        return this.getDocumentMetadata("system.instance.metadata");
     };
-    Class.prototype.getResourceMetadata = function (metadataSetting) {
+    Class.prototype.getDocumentMetadata = function (metadataSetting) {
         var _this = this;
         if (!this.hasSetting(metadataSetting))
             return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));

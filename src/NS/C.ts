@@ -5,13 +5,15 @@ export class Class {
 
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 
-	static get BNodesMapping():string { return namespace + "BNodesMapping"; }
-
 	static get CreatedResource():string { return namespace + "CreatedResource"; }
 
 	static get Document():string { return namespace + "Document"; }
 
+	static get DocumentMetadata():string { return namespace + "DocumentMetadata"; }
+
 	static get Instance():string { return namespace + "Instance"; }
+
+	static get Map():string { return namespace + "Map"; }
 
 	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
 
@@ -42,8 +44,6 @@ export class Class {
 	static get Error():string { return namespace + "Error"; }
 
 	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
-
-	static get ResourceMetadata():string { return namespace + "ResourceMetadata"; }
 }
 
 export class Predicate {
@@ -51,13 +51,15 @@ export class Predicate {
 
 	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
 
-	static get bNodesMapping():string { return namespace + "bNodesMapping"; }
+	static get bNodesMap():string { return namespace + "bNodesMap"; }
 
 	static get buildDate():string { return namespace + "buildDate"; }
 
 	static get carbonCode():string { return namespace + "carbonCode"; }
 
 	static get created():string { return namespace + "created"; }
+
+	static get documentMetadata():string { return namespace + "documentMetadata"; }
 
 	static get defaultInteractionModel():string { return namespace + "defaultInteractionModel"; }
 
@@ -78,8 +80,6 @@ export class Predicate {
 	static get modified():string { return namespace + "modified"; }
 
 	static get requestID():string { return namespace + "requestID"; }
-
-	static get resourceMetadata():string { return namespace + "resourceMetadata"; }
 
 	static get resource():string { return namespace + "resource"; }
 

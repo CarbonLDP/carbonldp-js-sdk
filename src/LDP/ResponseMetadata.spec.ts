@@ -47,19 +47,13 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		expect( Utils.isObject( ResponseMetadata.SCHEMA ) ).toBe( true );
 
 		expect( ResponseMetadata.SCHEMA as { [key:string]:object } ).toEqual( {
-			resourcesMetadata: jasmine.any( Object ),
-			bNodesMapping: jasmine.any( Object ),
+			documentsMetadata: jasmine.any( Object ),
 		} );
 
-		expect( ResponseMetadata.SCHEMA[ "resourcesMetadata" ] ).toEqual( {
-			"@id": NS.C.Predicate.resourceMetadata,
+		expect( ResponseMetadata.SCHEMA[ "documentsMetadata" ] ).toEqual( {
+			"@id": NS.C.Predicate.documentMetadata,
 			"@type": "@id",
 			"@container": "@set",
-		} );
-
-		expect( ResponseMetadata.SCHEMA[ "bNodesMapping" ] ).toEqual( {
-			"@id": NS.C.Predicate.bNodesMapping,
-			"@type": "@id",
 		} );
 
 	} );
@@ -73,8 +67,8 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"resourcesMetadata",
-			"Carbon.LDP.ResourceMetadata.Class[]",
+			"documentsMetadata",
+			"Carbon.LDP.DocumentMetadata.Class[]",
 			"An array with all the metadata resources of the dynamic response."
 		), ():void => {} );
 
@@ -108,20 +102,26 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			object = {};
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 
-			object.resourcesMetadata = null;
-			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-
-			object.bNodesMapping = null;
-			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-
-			Resource.Factory.decorate( object );
-			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-
-			object.types.push( NS.C.Class.VolatileResource );
-			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-
-			object.types.push( NS.C.Class.ResponseMetadata );
+			object = Resource.Factory.decorate( {
+				types: [
+					NS.C.Class.VolatileResource,
+					NS.C.Class.ResponseMetadata,
+				],
+				documentsMetadata: null,
+			} );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );
+
+			object.removeType( NS.C.Class.VolatileResource );
+			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
+			object.addType( NS.C.Class.VolatileResource );
+
+			object.removeType( NS.C.Class.ResponseMetadata );
+			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
+			object.addType( NS.C.Class.ResponseMetadata );
+
+			delete object.documentsMetadata;
+			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
+			object.documentsMetadata = null;
 		} );
 
 	} );

@@ -19,7 +19,7 @@
     "sparqler": "0.1.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.5.47",
+    "@types/jasmine": "^2.5.54",
     "@types/jasmine-ajax": "^3.1.36",
     "@types/node": "^6.0.46",
     "del": "^2.0.2",
@@ -34,7 +34,7 @@
     "gulp-typescript": "^3.1.0",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.3.1",
-    "jasmine-core": "^2.6.1",
+    "jasmine-core": "^2.8.0",
     "jsonld": "^0.4.11",
     "jspm": "0.17.0-beta.32",
     "karma": "^1.7.0",
@@ -82,7 +82,7 @@
       "net": "npm:jspm-nodelibs-net@^0.2.0",
       "os": "npm:jspm-nodelibs-os@^0.2.0",
       "path": "npm:jspm-nodelibs-path@^0.2.0",
-      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
+      "process": "npm:jspm-nodelibs-process@^0.2.0",
       "stream": "npm:jspm-nodelibs-stream@^0.2.0",
       "string_decoder": "npm:jspm-nodelibs-string_decoder@^0.2.0",
       "url": "npm:jspm-nodelibs-url@^0.2.0",

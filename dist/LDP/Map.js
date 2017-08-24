@@ -1,13 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
-var VolatileResource_1 = require("./VolatileResource");
-exports.RDF_CLASS = NS.C.Class.BNodesMapping;
+var Resource_1 = require("./../Resource");
+exports.RDF_CLASS = NS.C.Class.Map;
 exports.SCHEMA = {
-    "resource": {
-        "@id": NS.C.Predicate.resource,
-        "@type": "@id",
-    },
     "entries": {
         "@id": NS.C.Predicate.entry,
         "@type": "@id",
@@ -18,11 +14,12 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return VolatileResource_1.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS);
+        return Resource_1.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS)
+            && object.hasOwnProperty("entries");
     };
     return Factory;
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=BNodesMapping.js.map
+//# sourceMappingURL=Map.js.map

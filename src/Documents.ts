@@ -1113,9 +1113,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		rdfDocuments.forEach( rdfDocument => this._getPersistedDocument( rdfDocument, response ) );
 
 		let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
-		return responseMetadata.resourcesMetadata.map( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
-			let resource:T & PersistedDocument.Class = <T & PersistedDocument.Class> resourceMetadata.resource;
-			resource._etag = resourceMetadata.eTag;
+		return responseMetadata.documentsMetadata.map( ( documentMetadata:LDP.DocumentMetadata.Class ) => {
+			let resource:T & PersistedDocument.Class = <T & PersistedDocument.Class> documentMetadata.resource;
+			resource._etag = documentMetadata.eTag;
 
 			return resource;
 		} );

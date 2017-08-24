@@ -72,8 +72,8 @@ var Class = (function () {
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources.getResources().find(function (resource) { return Resource.Util.hasType(resource, LDP.ResponseMetadata.RDF_CLASS); });
             if (!!responseMetadata)
-                responseMetadata.resourcesMetadata.forEach(function (resourceMetadata) {
-                    resourceMetadata.resource._etag = resourceMetadata.eTag;
+                responseMetadata.documentsMetadata.forEach(function (documentMetadata) {
+                    documentMetadata.resource._etag = documentMetadata.eTag;
                 });
             return [token, response];
         });

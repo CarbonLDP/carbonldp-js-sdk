@@ -90,8 +90,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 
 			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
 
-			if( ! ! responseMetadata ) responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
-				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
+			if( ! ! responseMetadata ) responseMetadata.documentsMetadata.forEach( ( documentMetadata:LDP.DocumentMetadata.Class ) => {
+				(<PersistedDocument.Class> documentMetadata.resource)._etag = documentMetadata.eTag;
 			} );
 
 			return [ token, response ];

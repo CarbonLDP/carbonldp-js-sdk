@@ -176,13 +176,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
 								"https://carbonldp.com/ns/v1/platform#VolatileResource"
 							],
-							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
 								"@id": "_:01"
 							} ]
 						}, {
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
 								"https://carbonldp.com/ns/v1/platform#VolatileResource"
 							],
 							"https://carbonldp.com/ns/v1/platform#eTag": [ {
@@ -681,13 +681,13 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
 							"https://carbonldp.com/ns/v1/platform#VolatileResource"
 						],
-						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+						"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
+							"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
 							"https://carbonldp.com/ns/v1/platform#VolatileResource"
 						],
 						"https://carbonldp.com/ns/v1/platform#eTag": [ {

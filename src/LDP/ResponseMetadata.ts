@@ -1,32 +1,28 @@
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import { Class as BNodesMapping } from "./BNodesMapping";
-import * as ResourceMetadata from "./ResourceMetadata";
+import * as DocumentMetadata from "./DocumentMetadata";
 import * as VolatileResource from "./VolatileResource";
+import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.C.Class.ResponseMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
-	"resourcesMetadata": {
-		"@id": NS.C.Predicate.resourceMetadata,
+	"documentsMetadata": {
+		"@id": NS.C.Predicate.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
-	},
-	"bNodesMapping": {
-		"@id": NS.C.Predicate.bNodesMapping,
-		"@type": "@id",
 	},
 };
 
 export interface Class extends VolatileResource.Class {
-	resourcesMetadata?:ResourceMetadata.Class[];
-	bNodesMapping?:BNodesMapping;
+	documentsMetadata:DocumentMetadata.Class[];
 }
 
 export class Factory {
 
 	static is( object:object ):object is Class {
 		return VolatileResource.Factory.is( object )
+			&& Utils.hasProperty( object, "documentsMetadata" )
 			&& object.hasType( RDF_CLASS );
 	}
 

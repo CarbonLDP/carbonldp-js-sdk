@@ -984,9 +984,9 @@ var Class = (function () {
             throw new HTTP.Errors.BadResponseError("The response contained multiple " + LDP.ResponseMetadata.RDF_CLASS + " objects.", response);
         rdfDocuments.forEach(function (rdfDocument) { return _this._getPersistedDocument(rdfDocument, response); });
         var responseMetadata = descriptionResources[0];
-        return responseMetadata.resourcesMetadata.map(function (resourceMetadata) {
-            var resource = resourceMetadata.resource;
-            resource._etag = resourceMetadata.eTag;
+        return responseMetadata.documentsMetadata.map(function (documentMetadata) {
+            var resource = documentMetadata.resource;
+            resource._etag = documentMetadata.eTag;
             return resource;
         });
     };
