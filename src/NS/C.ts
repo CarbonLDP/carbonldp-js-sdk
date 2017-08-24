@@ -5,6 +5,8 @@ export class Class {
 
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 
+	static get BNodesMapping():string { return namespace + "BNodesMapping"; }
+
 	static get CreatedResource():string { return namespace + "CreatedResource"; }
 
 	static get Document():string { return namespace + "Document"; }
@@ -49,6 +51,8 @@ export class Predicate {
 
 	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
 
+	static get bNodesMapping():string { return namespace + "bNodesMapping"; }
+
 	static get buildDate():string { return namespace + "buildDate"; }
 
 	static get carbonCode():string { return namespace + "carbonCode"; }
@@ -82,6 +86,8 @@ export class Predicate {
 	static get size():string { return namespace + "size"; }
 
 	static get targetMember():string { return namespace + "targetMember"; }
+
+	static get value():string { return namespace + "value"; }
 
 	static get version():string { return namespace + "version"; }
 }

@@ -9,7 +9,9 @@ import {
 import * as Utils from "./Utils";
 
 import * as AddMemberAction from "./LDP/AddMemberAction";
+import * as BNodesMapping from "./LDP/BNodesMapping";
 import * as DirectContainer from "./LDP/DirectContainer";
+import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
 import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
@@ -37,11 +39,29 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"BNodesMapping",
+		"Carbon/LDP/BNodesMapping"
+	), ():void => {
+		expect( LDP.BNodesMapping ).toBeDefined();
+		expect( LDP.BNodesMapping ).toBe( BNodesMapping );
+	} );
+
+	it( reexports(
+		STATIC,
 		"DirectContainer",
 		"Carbon/LDP/DirectContainer"
 	), ():void => {
 		expect( LDP.DirectContainer ).toBeDefined();
 		expect( LDP.DirectContainer ).toBe( DirectContainer );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Entry",
+		"Carbon/LDP/Entry"
+	), ():void => {
+		expect( LDP.Entry ).toBeDefined();
+		expect( LDP.Entry ).toBe( Entry );
 	} );
 
 	it( reexports(

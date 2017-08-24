@@ -977,7 +977,7 @@ var Class = (function () {
     Class.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
         var _this = this;
         var freeResources = this._getFreeResources(freeNodes);
-        var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.hasRDFClass);
+        var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.is);
         if (descriptionResources.length === 0)
             return [];
         if (descriptionResources.length > 1)

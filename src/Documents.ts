@@ -1106,7 +1106,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private getPersistedMetadataResources<T>( freeNodes:RDF.Node.Class[], rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):(T & PersistedDocument.Class)[] {
 		let freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
 
-		let descriptionResources:LDP.ResponseMetadata.Class[] = <any> freeResources.getResources().filter( LDP.ResponseMetadata.Factory.hasRDFClass );
+		let descriptionResources:LDP.ResponseMetadata.Class[] = freeResources.getResources().filter( LDP.ResponseMetadata.Factory.is );
 		if( descriptionResources.length === 0 ) return [];
 		if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contained multiple ${ LDP.ResponseMetadata.RDF_CLASS } objects.`, response );
 

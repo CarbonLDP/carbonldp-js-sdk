@@ -2,6 +2,7 @@ export declare let namespace: string;
 export declare class Class {
     static readonly AccessPoint: string;
     static readonly AddMemberAction: string;
+    static readonly BNodesMapping: string;
     static readonly CreatedResource: string;
     static readonly Document: string;
     static readonly Instance: string;
@@ -25,6 +26,7 @@ export declare class Class {
 export declare class Predicate {
     static readonly accessPoint: string;
     static readonly bNodeIdentifier: string;
+    static readonly bNodesMapping: string;
     static readonly buildDate: string;
     static readonly carbonCode: string;
     static readonly created: string;
@@ -42,5 +44,6 @@ export declare class Predicate {
     static readonly resource: string;
     static readonly size: string;
     static readonly targetMember: string;
+    static readonly value: string;
     static readonly version: string;
 }

@@ -46,11 +46,20 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		expect( ResponseMetadata.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ResponseMetadata.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( ResponseMetadata.SCHEMA, "resourcesMetadata" ) ).toBe( true );
+		expect( ResponseMetadata.SCHEMA as { [key:string]:object } ).toEqual( {
+			resourcesMetadata: jasmine.any( Object ),
+			bNodesMapping: jasmine.any( Object ),
+		} );
+
 		expect( ResponseMetadata.SCHEMA[ "resourcesMetadata" ] ).toEqual( {
 			"@id": NS.C.Predicate.resourceMetadata,
 			"@type": "@id",
 			"@container": "@set",
+		} );
+
+		expect( ResponseMetadata.SCHEMA[ "bNodesMapping" ] ).toEqual( {
+			"@id": NS.C.Predicate.bNodesMapping,
+			"@type": "@id",
 		} );
 
 	} );
@@ -83,30 +92,6 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"hasClassProperties",
-			"Return true if the object provided has the properties of a `Carbon.LDP.ResponseMetadata.Class` object.", [
-				{ name: "object", type: "Object", description: "Object to check." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( ResponseMetadata.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( ResponseMetadata.Factory.hasClassProperties ) ).toBe( true );
-
-			let object:any = void 0;
-			expect( ResponseMetadata.Factory.hasClassProperties( object ) ).toBe( false );
-
-			object = {
-				resourcesMetadata: null,
-			};
-			expect( ResponseMetadata.Factory.hasClassProperties( object ) ).toBe( true );
-
-			delete object.resourcesMetadata;
-			expect( ResponseMetadata.Factory.hasClassProperties( object ) ).toBe( false );
-			object.resourcesMetadata = null;
-		} );
-
-		it( hasMethod(
-			STATIC,
 			"is",
 			"Return true if the object provided is considered a `Carbon.LDP.ResponseMetadata.Class` object.", [
 				{ name: "object", type: "Object", description: "Object to check" },
@@ -116,61 +101,27 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			expect( ResponseMetadata.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( ResponseMetadata.Factory.is ) ).toBe( true );
 
-			let object:Object = void 0;
+			let object:Partial<ResponseMetadata.Class> = void 0;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 			object = null;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 			object = {};
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 
-			object[ "resourcesMetadata" ] = null;
+			object.resourcesMetadata = null;
+			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
+
+			object.bNodesMapping = null;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 
 			Resource.Factory.decorate( object );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 
-			object[ "types" ].push( NS.C.Class.VolatileResource );
+			object.types.push( NS.C.Class.VolatileResource );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 
-			object[ "types" ].push( NS.C.Class.ResponseMetadata );
+			object.types.push( NS.C.Class.ResponseMetadata );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"hasRDFClass",
-			"Return true if the object provided have the RDF_CLASS of a ResponseMetadata, either if it's a Carbon Resource or an RDF object.", [
-				{ name: "object", type: "Object", description: "Object to check." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( ResponseMetadata.Factory.hasRDFClass ).toBeDefined();
-			expect( Utils.isFunction( ResponseMetadata.Factory.hasRDFClass ) ).toBe( true );
-
-			let object:Object = void 0;
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-			object = null;
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-			object = {};
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-
-			object = { types: [ NS.C.Class.VolatileResource ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-			object = { types: [ NS.C.Class.ResponseMetadata ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = { types: [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = { types: [ NS.C.Class.ResponseMetadata, NS.C.Class.VolatileResource ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-
-			object = { "@type": [ NS.C.Class.VolatileResource ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( false );
-			object = { "@type": [ NS.C.Class.ResponseMetadata ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = { "@type": [ NS.C.Class.VolatileResource, NS.C.Class.ResponseMetadata ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
-			object = { "@type": [ NS.C.Class.ResponseMetadata, NS.C.Class.VolatileResource ] };
-			expect( ResponseMetadata.Factory.hasRDFClass( object ) ).toBe( true );
 		} );
 
 	} );

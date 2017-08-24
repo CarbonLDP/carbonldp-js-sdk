@@ -14,6 +14,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "BNodesMapping", {
+        get: function () { return exports.namespace + "BNodesMapping"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "CreatedResource", {
         get: function () { return exports.namespace + "CreatedResource"; },
         enumerable: true,
@@ -125,6 +130,11 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "bNodesMapping", {
+        get: function () { return exports.namespace + "bNodesMapping"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "buildDate", {
         get: function () { return exports.namespace + "buildDate"; },
         enumerable: true,
@@ -207,6 +217,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "targetMember", {
         get: function () { return exports.namespace + "targetMember"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "value", {
+        get: function () { return exports.namespace + "value"; },
         enumerable: true,
         configurable: true
     });

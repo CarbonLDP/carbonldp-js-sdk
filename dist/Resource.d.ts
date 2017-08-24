@@ -7,7 +7,7 @@ export interface Class extends Pointer.Class {
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
+    static is(object: object): object is Class;
     static create(id?: string, types?: string[]): Class;
     static createFrom<T extends Object>(object: T, id?: string, types?: string[]): T & Class;
     static decorate<T extends Object>(object: T): T & Class;
