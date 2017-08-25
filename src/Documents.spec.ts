@@ -21,6 +21,7 @@ import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
 import Carbon from "./Carbon";
+import * as BlankNode from "./BlankNode";
 import * as Document from "./Document";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
@@ -868,6 +869,116 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				fit( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/new-resource/",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.resource }": [ {
+									"@id": "http://example.com/new-resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.key }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.value }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.key }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.value }": [ {
+									"@id": "_:new-2"
+								} ]
+							}
+						]`,
+					} );
+
+					/*
+							{
+								"@id": "http://example.com/new-resource/",
+								"@graph": [
+									{
+										"@id": "http://example.com/new-resource/",
+										"http://example.com/ns#property": [ { "@value": "property value" } ]
+									}
+								]
+							}
+					*/
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:RawDocument = {
+						blankNode1: {
+							id: "_:1",
+							value: "a value 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							value: "a value 2",
+						},
+					};
+
+					try {
+						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
+				} );
 			} );
 
 			describe( "When Documents does not have a context", ():void => {

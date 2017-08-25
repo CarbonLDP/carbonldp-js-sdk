@@ -6,6 +6,7 @@ import * as Utils from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
+import * as BlankNode from "./BlankNode";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLD from "./JSONLD";
@@ -620,7 +621,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			return HTTP.Request.Service.put( uri, body, requestOptions );
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
-			return [ persistedDocument, response ];
+			return this.applyResponseData( persistedDocument, response );
 		} );
 	}
 
@@ -654,16 +655,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]> {
-		let responses:HTTP.Response.Class[] = [];
-		HTTP.Request.Util.setPreferredRetrievalResource( "Modified", requestOptions );
+		const responses:HTTP.Response.Class[] = [];
+		const previousETag:string = persistedDocument._etag;
 
-		return this.save<T>( persistedDocument, requestOptions ).then( ( [ document, saveResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
-			let preferenceHeader:HTTP.Header.Class = saveResponse.getHeader( "Preference-Applied" );
-			if( preferenceHeader !== null && preferenceHeader.toString() === "return=representation" )
-				return this.updateFromPreferenceApplied<T & PersistedDocument.Class>( persistedDocument, saveResponse );
+		return Utils.promiseMethod( () => {
+			HTTP.Request.Util.setPreferredRetrievalResource( "Modified", requestOptions );
+			return this.save<T>( persistedDocument, requestOptions );
+		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ document, saveResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
+			if( document._etag !== previousETag ) return [ document, saveResponse ];
 
 			responses.push( saveResponse );
-			return persistedDocument.refresh<T>();
+			return this.refresh<T>( document );
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]>( ( [ document, refreshResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
 			responses.push( refreshResponse );
 			return [ persistedDocument, responses ];
@@ -844,7 +846,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
-		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then( ( response:HTTP.Response.Class ):Promise<[ T & W, HTTP.Response.Class ]> | [ T & W, HTTP.Response.Class ] => {
+		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then<[ T & W, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
@@ -854,11 +856,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
 			this.pointers.set( localID, this.createPointerFrom( document, localID ) );
 			let persistedProtectedDocument:T & W = <T & W> PersistedProtectedDocument.Factory.decorate<T>( document, this );
-
-			let preferenceHeader:HTTP.Header.Class = response.getHeader( "Preference-Applied" );
-			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return [ persistedProtectedDocument, response ];
-
-			return this.updateFromPreferenceApplied<T & W>( persistedProtectedDocument, response );
+			return this.applyResponseData( persistedProtectedDocument, response );
 		} ).catch( ( error ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 			return Promise.reject( error );
@@ -1129,19 +1127,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private updateFromPreferenceApplied<T>( persistedDocument:T & PersistedDocument.Class, response:HTTP.Response.Class ):Promise<[ T, HTTP.Response.Class ]> {
-		return new RDF.Document.Parser().parse( response.data ).then( ( rdfDocuments:RDF.Document.Class[] ):[ T, HTTP.Response.Class ] => {
-			let eTag:string = HTTP.Response.Util.getETag( response );
-			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+	private updateFromPreferenceApplied<T>( persistedDocument:T & PersistedDocument.Class, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):[ T, HTTP.Response.Class ] {
+		let eTag:string = HTTP.Response.Util.getETag( response );
+		if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+		let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
+		if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-			persistedDocument = <any> this._getPersistedDocument( rdfDocument, response );
-			persistedDocument._etag = eTag;
+		persistedDocument = <any> this._getPersistedDocument( rdfDocument, response );
+		persistedDocument._etag = eTag;
 
-			return [ persistedDocument, response ];
-		} );
+		return [ persistedDocument, response ];
 	}
 
 	private _parseMembers( pointers:(string | Pointer.Class)[] ):Pointer.Class[] {
@@ -1151,6 +1147,39 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			throw new Errors.IllegalArgumentError( "No Carbon.Pointer or URI provided." );
 		} );
+	}
+
+	private applyResponseData<T extends PersistedDocument.Class>( persistedProtectedDocument:T, response:HTTP.Response.Class ):[ T, HTTP.Response.Class ] | Promise<[ T, HTTP.Response.Class ]> {
+		if( response.status === 204 || ! response.data ) return [ persistedProtectedDocument, response ];
+
+		return new JSONLD.Parser.Class().parse( response.data ).then<[ T, HTTP.Response.Class ]>( ( expandedResult:object[] ) => {
+			const freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			this.applyNodeMap( freeNodes );
+
+			let preferenceHeader:HTTP.Header.Class = response.getHeader( "Preference-Applied" );
+			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return [ persistedProtectedDocument, response ];
+
+			const rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+			return this.updateFromPreferenceApplied<T>( persistedProtectedDocument, rdfDocuments, response );
+		} );
+	}
+
+	private applyNodeMap( freeNodes:RDF.Node.Class[] ):void {
+		if( ! freeNodes.length ) return;
+		const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
+		const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( LDP.ResponseMetadata.Factory.is );
+
+		for( const documentMetadata of responseMetadata.documentsMetadata ) {
+			const document:PersistedDocument.Class = documentMetadata.resource as PersistedDocument.Class;
+			for( const { key: keyBNode, value: valueBNode } of documentMetadata.bNodesMap.entries ) {
+				const originalBNode:PersistedBlankNode.Class = document.getFragment( keyBNode.id );
+				originalBNode.id = valueBNode.id;
+
+				document._fragmentsIndex.delete( keyBNode.id );
+				document._fragmentsIndex.set( valueBNode.id, originalBNode );
+			}
+			document._syncSavedFragments();
+		}
 	}
 }
 

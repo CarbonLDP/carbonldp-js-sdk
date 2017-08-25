@@ -530,7 +530,7 @@ var Class = (function () {
             var body = persistedDocument.toJSON(_this, _this.jsonldConverter);
             return HTTP.Request.Service.put(uri, body, requestOptions);
         }).then(function (response) {
-            return [persistedDocument, response];
+            return _this.applyResponseData(persistedDocument, response);
         });
     };
     Class.prototype.refresh = function (persistedDocument, requestOptions) {
@@ -565,14 +565,16 @@ var Class = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
-        HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
-        return this.save(persistedDocument, requestOptions).then(function (_a) {
+        var previousETag = persistedDocument._etag;
+        return Utils.promiseMethod(function () {
+            HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
+            return _this.save(persistedDocument, requestOptions);
+        }).then(function (_a) {
             var document = _a[0], saveResponse = _a[1];
-            var preferenceHeader = saveResponse.getHeader("Preference-Applied");
-            if (preferenceHeader !== null && preferenceHeader.toString() === "return=representation")
-                return _this.updateFromPreferenceApplied(persistedDocument, saveResponse);
+            if (document._etag !== previousETag)
+                return [document, saveResponse];
             responses.push(saveResponse);
-            return persistedDocument.refresh();
+            return _this.refresh(document);
         }).then(function (_a) {
             var document = _a[0], refreshResponse = _a[1];
             responses.push(refreshResponse);
@@ -750,10 +752,7 @@ var Class = (function () {
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this.createPointerFrom(document, localID));
             var persistedProtectedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
-            var preferenceHeader = response.getHeader("Preference-Applied");
-            if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
-                return [persistedProtectedDocument, response];
-            return _this.updateFromPreferenceApplied(persistedProtectedDocument, response);
+            return _this.applyResponseData(persistedProtectedDocument, response);
         }).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             return Promise.reject(error);
@@ -997,19 +996,16 @@ var Class = (function () {
             }
         });
     };
-    Class.prototype.updateFromPreferenceApplied = function (persistedDocument, response) {
-        var _this = this;
-        return new RDF.Document.Parser().parse(response.data).then(function (rdfDocuments) {
-            var eTag = HTTP.Response.Util.getETag(response);
-            if (eTag === null)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-            var rdfDocument = _this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
-            if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            persistedDocument = _this._getPersistedDocument(rdfDocument, response);
-            persistedDocument._etag = eTag;
-            return [persistedDocument, response];
-        });
+    Class.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
+        var eTag = HTTP.Response.Util.getETag(response);
+        if (eTag === null)
+            throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+        var rdfDocument = this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
+        if (rdfDocument === null)
+            throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+        persistedDocument = this._getPersistedDocument(rdfDocument, response);
+        persistedDocument._etag = eTag;
+        return [persistedDocument, response];
     };
     Class.prototype._parseMembers = function (pointers) {
         var _this = this;
@@ -1020,6 +1016,38 @@ var Class = (function () {
                 return pointer;
             throw new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided.");
         });
+    };
+    Class.prototype.applyResponseData = function (persistedProtectedDocument, response) {
+        var _this = this;
+        if (response.status === 204 || !response.data)
+            return [persistedProtectedDocument, response];
+        return new JSONLD.Parser.Class().parse(response.data).then(function (expandedResult) {
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            _this.applyNodeMap(freeNodes);
+            var preferenceHeader = response.getHeader("Preference-Applied");
+            if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
+                return [persistedProtectedDocument, response];
+            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+            return _this.updateFromPreferenceApplied(persistedProtectedDocument, rdfDocuments, response);
+        });
+    };
+    Class.prototype.applyNodeMap = function (freeNodes) {
+        if (!freeNodes.length)
+            return;
+        var freeResources = this._getFreeResources(freeNodes);
+        var responseMetadata = freeResources.getResources().find(LDP.ResponseMetadata.Factory.is);
+        for (var _i = 0, _a = responseMetadata.documentsMetadata; _i < _a.length; _i++) {
+            var documentMetadata = _a[_i];
+            var document_1 = documentMetadata.resource;
+            for (var _b = 0, _c = documentMetadata.bNodesMap.entries; _b < _c.length; _b++) {
+                var _d = _c[_b], keyBNode = _d.key, valueBNode = _d.value;
+                var originalBNode = document_1.getFragment(keyBNode.id);
+                originalBNode.id = valueBNode.id;
+                document_1._fragmentsIndex.delete(keyBNode.id);
+                document_1._fragmentsIndex.set(valueBNode.id, originalBNode);
+            }
+            document_1._syncSavedFragments();
+        }
     };
     Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;

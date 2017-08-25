@@ -691,9 +691,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 					expect( error instanceof Error ).toBe( true );
 				},
 			};
-			let success:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let successEmpty:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
-			let error:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+			let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let successEmptySpy:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
+			let errorSpy:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -715,9 +715,9 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			promises.push( promise );
 
 			Promise.all( promises ).then( ():void => {
-				expect( success.calls.count() ).toBe( 1 );
-				expect( successEmpty.calls.count() ).toBe( 2 );
-				expect( error.calls.count() ).toBe( 1 );
+				expect( successSpy.calls.count() ).toBe( 1 );
+				expect( successEmptySpy.calls.count() ).toBe( 2 );
+				expect( errorSpy.calls.count() ).toBe( 1 );
 				done();
 			}, done.fail );
 
