@@ -1,6 +1,5 @@
 import * as Documents from "./Documents";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
 import * as Context from "./Context";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
@@ -161,8 +160,6 @@ export class Class implements Context.Class {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( BlankNode.SCHEMA );
-
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );

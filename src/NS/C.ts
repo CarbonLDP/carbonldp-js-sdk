@@ -49,8 +49,6 @@ export class Class {
 export class Predicate {
 	static get accessPoint():string { return namespace + "accessPoint"; }
 
-	static get bNodeIdentifier():string { return namespace + "bNodeIdentifier"; }
-
 	static get bNodesMap():string { return namespace + "bNodesMap"; }
 
 	static get buildDate():string { return namespace + "buildDate"; }
