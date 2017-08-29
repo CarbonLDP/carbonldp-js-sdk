@@ -910,19 +910,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -2646,19 +2646,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -6898,19 +6898,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -7346,19 +7346,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.key }": [ {
+								"${ NS.C.Predicate.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.value }": [ {
+								"${ NS.C.Predicate.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},

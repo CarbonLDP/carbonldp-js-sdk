@@ -366,13 +366,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"key",
+			"entryKey",
 			"string"
 		), ():void => {
-			expect( C.Predicate.key ).toBeDefined();
-			expect( Utils.isString( C.Predicate.key ) ).toBe( true );
+			expect( C.Predicate.entryKey ).toBeDefined();
+			expect( Utils.isString( C.Predicate.entryKey ) ).toBe( true );
 
-			expect( C.Predicate.key ).toBe( "https://carbonldp.com/ns/v1/platform#key" );
+			expect( C.Predicate.entryKey ).toBe( "https://carbonldp.com/ns/v1/platform#entryKey" );
 		} );
 
 		it( hasProperty(
@@ -500,13 +500,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"value",
+			"entryValue",
 			"string"
 		), ():void => {
-			expect( C.Predicate.value ).toBeDefined();
-			expect( Utils.isString( C.Predicate.value ) ).toBe( true );
+			expect( C.Predicate.entryValue ).toBeDefined();
+			expect( Utils.isString( C.Predicate.entryValue ) ).toBe( true );
 
-			expect( C.Predicate.value ).toBe( "https://carbonldp.com/ns/v1/platform#value" );
+			expect( C.Predicate.entryValue ).toBe( "https://carbonldp.com/ns/v1/platform#entryValue" );
 		} );
 
 		it( hasProperty(

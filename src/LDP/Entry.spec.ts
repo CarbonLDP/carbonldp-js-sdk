@@ -38,12 +38,12 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 		} );
 
 		expect( Entry.SCHEMA[ "key" ] ).toEqual( {
-			"@id": NS.C.Predicate.key,
+			"@id": NS.C.Predicate.entryKey,
 			"@type": "@id",
 		} );
 
 		expect( Entry.SCHEMA[ "value" ] ).toEqual( {
-			"@id": NS.C.Predicate.value,
+			"@id": NS.C.Predicate.entryValue,
 			"@type": "@id",
 		} );
 

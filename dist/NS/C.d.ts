@@ -35,7 +35,7 @@ export declare class Predicate {
     static readonly error: string;
     static readonly eTag: string;
     static readonly httpStatusCode: string;
-    static readonly key: string;
+    static readonly entryKey: string;
     static readonly mediaType: string;
     static readonly message: string;
     static readonly modified: string;
@@ -43,6 +43,6 @@ export declare class Predicate {
     static readonly relatedDocument: string;
     static readonly size: string;
     static readonly targetMember: string;
-    static readonly value: string;
+    static readonly entryValue: string;
     static readonly version: string;
 }
