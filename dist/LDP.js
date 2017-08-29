@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var AddMemberAction = require("./LDP/AddMemberAction");
 exports.AddMemberAction = AddMemberAction;
-var BNodesMapping = require("./LDP/Map");
-exports.BNodesMapping = BNodesMapping;
+var Map = require("./LDP/Map");
+exports.Map = Map;
 var DirectContainer = require("./LDP/DirectContainer");
 exports.DirectContainer = DirectContainer;
 var Entry = require("./LDP/Entry");

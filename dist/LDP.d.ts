@@ -1,5 +1,5 @@
 import * as AddMemberAction from "./LDP/AddMemberAction";
-import * as BNodesMapping from "./LDP/Map";
+import * as Map from "./LDP/Map";
 import * as DirectContainer from "./LDP/DirectContainer";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
@@ -8,4 +8,4 @@ import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 import * as DocumentMetadata from "./LDP/DocumentMetadata";
 import * as ResponseMetadata from "./LDP/ResponseMetadata";
-export { AddMemberAction, BNodesMapping, DirectContainer, Entry, Error, ErrorResponse, IndirectContainer, RemoveMemberAction, DocumentMetadata, ResponseMetadata };
+export { AddMemberAction, Map, DirectContainer, Entry, Error, ErrorResponse, IndirectContainer, RemoveMemberAction, DocumentMetadata, ResponseMetadata };

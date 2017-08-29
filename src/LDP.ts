@@ -1,5 +1,5 @@
 import * as AddMemberAction from "./LDP/AddMemberAction";
-import * as BNodesMapping from "./LDP/Map";
+import * as Map from "./LDP/Map";
 import * as DirectContainer from "./LDP/DirectContainer";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
@@ -11,7 +11,7 @@ import * as ResponseMetadata from "./LDP/ResponseMetadata";
 
 export {
 	AddMemberAction,
-	BNodesMapping,
+	Map,
 	DirectContainer,
 	Entry,
 	Error,

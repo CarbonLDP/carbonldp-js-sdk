@@ -9,7 +9,7 @@ import {
 import * as Utils from "./Utils";
 
 import * as AddMemberAction from "./LDP/AddMemberAction";
-import * as BNodesMapping from "./LDP/Map";
+import * as Map from "./LDP/Map";
 import * as DirectContainer from "./LDP/DirectContainer";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
@@ -39,11 +39,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"BNodesMapping",
+		"Map",
 		"Carbon/LDP/Map"
 	), ():void => {
-		expect( LDP.BNodesMapping ).toBeDefined();
-		expect( LDP.BNodesMapping ).toBe( BNodesMapping );
+		expect( LDP.Map ).toBeDefined();
+		expect( LDP.Map ).toBe( Map );
 	} );
 
 	it( reexports(
