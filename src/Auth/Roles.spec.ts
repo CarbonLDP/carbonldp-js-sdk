@@ -15,8 +15,8 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
-import * as URI from "./../RDF/URI";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
+import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
@@ -259,13 +259,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/",
 						"@type": [ "http://example.com/ns#Role" ],
-						"https://carbonldp.com/ns/v1/platform#accessPoint": [ {
+						"${ NS.C.Predicate.accessPoint }": [ {
 							"@id": "https://dev.carbonldp.com/.system/roles/a-role/users/"
 						} ],
-						"https://carbonldp.com/ns/v1/security#name": [ {
+						"${ NS.CS.Predicate.name }": [ {
 							"@value": "A Role"
 						} ],
-						"https://carbonldp.com/ns/v1/security#parentRole": [ {
+						"${ NS.CS.Predicate.parentRole }": [ {
 							"@id": "https://example.com/.system/roles/parent-role/"
 						} ]
 					} ]
@@ -359,7 +359,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/",
-						"https://carbonldp.com/ns/v1/security#user": [ {
+						"${ NS.CS.Predicate.user }": [ {
 							"@id": "http://example.com/users/an-user/"
 						} ]
 					} ],
@@ -369,7 +369,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						"@id": "http://example.com/.system/roles/a-role/users/",
 						"@type": [ "http://www.w3.org/ns/ldp#RDFSource", "http://www.w3.org/ns/ldp#DirectContainer", "http://www.w3.org/ns/ldp#Container" ],
 						"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-							"@id": "https://carbonldp.com/ns/v1/security#user"
+							"@id": "${ NS.CS.Predicate.user }"
 						} ],
 						"http://www.w3.org/ns/ldp#membershipResource": [ {
 							"@id": "http://example.com/.system/roles/a-role/"
@@ -466,10 +466,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#documentMetadata": [
+							"${ NS.C.Predicate.documentMetadata }": [
 								{
 									"@id": "_:02"
 								}
@@ -478,15 +478,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [
+							"${ NS.C.Predicate.eTag }": [
 								{
 									"@value": "\\"1234567890\\""
 								}
 							],
-							"https://carbonldp.com/ns/v1/platform#resource": [
+							"${ NS.C.Predicate.relatedDocument }": [
 								{
 									"@id": "http://example.com/users/an-user/"
 								}
@@ -496,7 +496,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/.system/roles/a-role/",
-									"https://carbonldp.com/ns/v1/security#user": [
+									"${ NS.CS.Predicate.user }": [
 										{
 											"@id": "http://example.com/users/an-user/"
 										}
@@ -516,7 +516,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 									],
 									"http://www.w3.org/ns/ldp#hasMemberRelation": [
 										{
-											"@id": "https://carbonldp.com/ns/v1/security#user"
+											"@id": "${ NS.CS.Predicate.user }"
 										}
 									],
 									"http://www.w3.org/ns/ldp#membershipResource": [
@@ -537,7 +537,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 											"@value": "an-user@example.com"
 										}
 									],
-									"https://carbonldp.com/ns/v1/security#name": [
+									"${ NS.CS.Predicate.name }": [
 										{
 											"@value": "The User Name"
 										}

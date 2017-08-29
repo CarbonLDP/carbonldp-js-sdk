@@ -18,6 +18,7 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
+import * as NS from "./../NS";
 import * as PersistedUser from "./PersistedUser";
 import * as Token from "./Token";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
@@ -173,56 +174,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						responseText: `[ {
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							} ]
 						}, {
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/security#Token",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.CS.Class.Token }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+							"${ NS.CS.Predicate.tokenKey }": [ {
 								"@value": "token-value"
 							} ],
-							"https://carbonldp.com/ns/v1/security#expirationTime": {
+							"${ NS.CS.Predicate.expirationTime }": {
 								"@value": "${ expirationTime.toISOString() }",
-								"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+								"@type": "${ NS.XSD.DataType.dateTime }"
 							},
-							"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+							"${ NS.CS.Predicate.credentialsOf }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "http://successful.example.com/users/my-user/",
 							"@graph": [ {
 								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
-								"https://carbonldp.com/ns/v1/security#name": [ {
+								"@type": [ "${ NS.CS.Class.User }" ],
+								"${ NS.CS.Predicate.name }": [ {
 									"@value": "My User Name",
-									"@type": "http://www.w3.org/2001/XMLSchema#string"
+									"@type": "${ NS.XSD.DataType.string }"
 								} ],
-								"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+								"${ NS.VCARD.Predicate.email }": [ {
 									"@value": "my-user@users.com",
-									"@type": "http://www.w3.org/2001/XMLSchema#string"
+									"@type": "${ NS.XSD.DataType.string }"
 								} ],
-								"https://carbonldp.com/ns/v1/security#enabled": [ {
+								"${ NS.CS.Predicate.enabled }": [ {
 									"@value": "true",
-									"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+									"@type": "${ NS.XSD.DataType.boolean }"
 								} ]
 							} ]
 						} ]`,
@@ -311,7 +312,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "https://carbonldp.com/ns/v1/security#Token" ],
+						"types": [ "${ NS.CS.Class.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -333,7 +334,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${expirationTime.toISOString()}",
 						"id": "",
 						"key": "token-value",
-						"types": [ "https://carbonldp.com/ns/v1/security#Token" ]
+						"types": [ "${ NS.CS.Class.Token }" ]
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -356,7 +357,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "https://carbonldp.com/ns/v1/security#Token" ],
+						"types": [ "${ NS.CS.Class.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -678,56 +679,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.ResponseMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
+						"${ NS.C.Predicate.documentMetadata }": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"https://carbonldp.com/ns/v1/security#Token",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.CS.Class.Token }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+						"${ NS.CS.Predicate.tokenKey }": [ {
 							"@value": "token-value"
 						} ],
-						"https://carbonldp.com/ns/v1/security#expirationTime": {
+						"${ NS.CS.Predicate.expirationTime }": {
 							"@value": "${expirationTime.toISOString()}",
-							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+							"@type": "${ NS.XSD.DataType.dateTime }"
 						},
-						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+						"${ NS.CS.Predicate.credentialsOf }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "http://successful.example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://successful.example.com/users/my-user/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
-							"https://carbonldp.com/ns/v1/security#name": [ {
+							"@type": [ "${ NS.CS.Class.User }" ],
+							"${ NS.CS.Predicate.name }": [ {
 								"@value": "My User Name",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "${ NS.XSD.DataType.string }"
 							} ],
-							"http://www.w3.org/2001/vcard-rdf/3.0#email": [ {
+							"${ NS.VCARD.Predicate.email }": [ {
 								"@value": "my-user@users.com",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "${ NS.XSD.DataType.string }"
 							} ],
-							"https://carbonldp.com/ns/v1/security#enabled": [ {
+							"${ NS.CS.Predicate.enabled }": [ {
 								"@value": "true",
-								"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+								"@type": "${ NS.XSD.DataType.boolean }"
 							} ]
 						} ]
 					} ]`,

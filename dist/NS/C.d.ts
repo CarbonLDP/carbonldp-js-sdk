@@ -40,7 +40,7 @@ export declare class Predicate {
     static readonly message: string;
     static readonly modified: string;
     static readonly requestID: string;
-    static readonly resource: string;
+    static readonly relatedDocument: string;
     static readonly size: string;
     static readonly targetMember: string;
     static readonly value: string;

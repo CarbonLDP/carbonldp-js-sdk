@@ -8,8 +8,8 @@ import * as Map from "./Map";
 export const RDF_CLASS:string = NS.C.Class.DocumentMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
-	"resource": {
-		"@id": NS.C.Predicate.resource,
+	"relatedDocument": {
+		"@id": NS.C.Predicate.relatedDocument,
 		"@type": "@id",
 	},
 	"eTag": {
@@ -23,7 +23,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends VolatileResource.Class {
-	resource:Pointer.Class;
+	relatedDocument:Pointer.Class;
 	eTag?:string;
 	bNodesMap?:Map.Class;
 }
@@ -31,7 +31,7 @@ export interface Class extends VolatileResource.Class {
 export class Factory {
 
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "resource" );
+		return Utils.hasPropertyDefined( object, "relatedDocument" );
 	}
 
 	static is( object:Object ):boolean {

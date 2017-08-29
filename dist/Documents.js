@@ -945,9 +945,9 @@ var Class = (function () {
         rdfDocuments.forEach(function (rdfDocument) { return _this._getPersistedDocument(rdfDocument, response); });
         var responseMetadata = descriptionResources[0];
         return responseMetadata.documentsMetadata.map(function (documentMetadata) {
-            var resource = documentMetadata.resource;
-            resource._etag = documentMetadata.eTag;
-            return resource;
+            var document = documentMetadata.relatedDocument;
+            document._etag = documentMetadata.eTag;
+            return document;
         });
     };
     Class.prototype.decoratePersistedDocument = function (persistedDocument) {
@@ -1000,7 +1000,7 @@ var Class = (function () {
         var responseMetadata = freeResources.getResources().find(LDP.ResponseMetadata.Factory.is);
         for (var _i = 0, _a = responseMetadata.documentsMetadata; _i < _a.length; _i++) {
             var documentMetadata = _a[_i];
-            var document_1 = documentMetadata.resource;
+            var document_1 = documentMetadata.relatedDocument;
             for (var _b = 0, _c = documentMetadata.bNodesMap.entries; _b < _c.length; _b++) {
                 var _d = _c[_b], keyBNode = _d.key, valueBNode = _d.value;
                 var originalBNode = document_1.getFragment(keyBNode.id);

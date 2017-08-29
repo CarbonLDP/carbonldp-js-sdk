@@ -200,8 +200,8 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "resource", {
-        get: function () { return exports.namespace + "resource"; },
+    Object.defineProperty(Predicate, "relatedDocument", {
+        get: function () { return exports.namespace + "relatedDocument"; },
         enumerable: true,
         configurable: true
     });

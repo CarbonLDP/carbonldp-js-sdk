@@ -893,7 +893,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						            "${ NS.C.Class.VolatileResource }",
 						            "${ NS.C.Class.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.resource }": [ {
+								"${ NS.C.Predicate.relatedDocument }": [ {
 									"@id": "http://example.com/new-resource/"
 								} ],
 								"${ NS.C.Predicate.bNodesMap }": [ {
@@ -2629,7 +2629,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						            "${ NS.C.Class.VolatileResource }",
 						            "${ NS.C.Class.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.resource }": [ {
+								"${ NS.C.Predicate.relatedDocument }": [ {
 									"@id": "http://example.com/new-resource/"
 								} ],
 								"${ NS.C.Predicate.bNodesMap }": [ {
@@ -2892,7 +2892,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( responses.length ).toBe( 1 );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-						expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" );
+						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
 					} );
 				})() );
 
@@ -3173,7 +3173,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocument[ "property" ] ).toBe( "my UPDATED property " + index );
 
 							let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( index );
-							expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" );
+							expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
 						} );
 					} );
 				})() );
@@ -3363,7 +3363,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/resource/",
-						"http://www.w3.org/ns/ldp#contains": []
+						"${ NS.LDP.Predicate.contains }": []
 					} ],
 					"@id": "http://example.com/resource/"
 				} ]`,
@@ -3382,7 +3382,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/resource/",
-						"http://www.w3.org/ns/ldp#contains": [ {
+						"${ NS.LDP.Predicate.contains }": [ {
 							"@id": "http://example.com/resource/pointer-01/"
 						}, {
 							"@id": "http://example.com/resource/pointer-02/"
@@ -3567,10 +3567,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.ResponseMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
+						"${ NS.C.Predicate.documentMetadata }": [ {
 							"@id": "_:01"
 						}, {
 							"@id": "_:02"
@@ -3578,33 +3578,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/resource/element-01/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"0987654321\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/resource/element-02/"
 						} ]
 					}, {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#contains": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.contains }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							}, {
 								"@id": "http://example.com/resource/element-02/"
@@ -3614,7 +3614,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/resource/element-01/",
 						"@graph": [ {
 							"@id": "http://example.com/resource/element-01/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 							"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 							"http://example.com/ns#pointer": [
 								{"@id": "http://example.com/resource/element-01/#1"}
@@ -3627,7 +3627,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/resource/element-02/",
 						"@graph": [ {
 							"@id": "http://example.com/resource/element-02/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 							"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 							"http://example.com/ns#pointer": [
 								{"@id": "_:01"}
@@ -5216,8 +5216,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							${ withMembers ? `
 							} ],
@@ -5240,11 +5240,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							} ],
-							"http://www.w3.org/ns/ldp#membershipResource": [{
+							"${ NS.LDP.Predicate.membershipResource }": [{
 								"@id": "http://example.com/members-resource/"
 							} ]
 						} ]
@@ -5252,8 +5252,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/members-resource/",
 						"@graph": [ {
 							"@id": "http://example.com/members-resource/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#another-member"
 							${ withMembers ? `
 							} ],
@@ -5419,10 +5419,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							}, {
 								"@id": "_:02"
@@ -5431,26 +5431,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							} ]
 						},
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"0987654321\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-02/"
 							} ]
 						},
@@ -5458,9 +5458,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@graph": [ {
 								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-									"@id": "http://www.w3.org/ns/ldp#my-member"
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
+									"@id": "$http://example.com/ns#my-member"
 								} ],
 								"http://example.com/ns#my-member": [ {
 									"@id": "http://example.com/resource/element-01/"
@@ -5473,7 +5473,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-01/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "http://example.com/resource/element-01/#1"}
@@ -5487,7 +5487,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-02/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "_:01"}
@@ -5501,9 +5501,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-								"@id": "http://www.w3.org/ns/ldp#my-member"
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
+								"@id": "$http://example.com/ns#my-member"
 							} ]
 						} ]
 					} ]`,
@@ -5517,10 +5517,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#documentMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							}, {
 								"@id": "_:02"
@@ -5529,26 +5529,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							} ]
 						},
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#DocumentMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"0987654321\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-02/"
 							} ]
 						},
@@ -5556,11 +5556,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@graph": [ {
 								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 									"@id": "http://example.com/ns#my-member"
 								} ],
-								"http://www.w3.org/ns/ldp#membershipResource": [{
+								"${ NS.LDP.Predicate.membershipResource }": [{
 									"@id": "http://example.com/members-resource/"
 								} ]
 							} ]
@@ -5568,8 +5568,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/members-resource/",
 							"@graph": [ {
 								"@id": "http://example.com/members-resource/",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 									"@id": "http://example.com/ns#another-member"
 								} ],
 								"http://example.com/ns#my-member": [ {
@@ -5583,7 +5583,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-01/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "http://example.com/resource/element-01/#1"}
@@ -5597,7 +5597,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-02/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "_:01"}
@@ -5611,11 +5611,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							} ],
-							"http://www.w3.org/ns/ldp#membershipResource": [{
+							"${ NS.LDP.Predicate.membershipResource }": [{
 								"@id": "http://example.com/members-resource/"
 							} ]
 						} ]
@@ -6881,7 +6881,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						            "${ NS.C.Class.VolatileResource }",
 						            "${ NS.C.Class.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.resource }": [ {
+								"${ NS.C.Predicate.relatedDocument }": [ {
 									"@id": "http://example.com/resource/"
 								} ],
 								"${ NS.C.Predicate.bNodesMap }": [ {
@@ -7329,7 +7329,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						            "${ NS.C.Class.VolatileResource }",
 						            "${ NS.C.Class.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.resource }": [ {
+								"${ NS.C.Predicate.relatedDocument }": [ {
 									"@id": "http://example.com/resource/"
 								} ],
 								"${ NS.C.Predicate.bNodesMap }": [ {
@@ -7565,7 +7565,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( responses.length ).toBe( 1 );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-					expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" );
+					expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
 
 					expect( document ).toBe( _document );
 					expect( "property" in document ).toBe( true );

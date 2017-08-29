@@ -33,13 +33,13 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		expect( Utils.isObject( DocumentMetadata.SCHEMA ) ).toBe( true );
 
 		expect( DocumentMetadata.SCHEMA as { [key:string]:jasmine.Any } ).toEqual( {
-			resource: jasmine.any( Object ),
+			relatedDocument: jasmine.any( Object ),
 			eTag: jasmine.any( Object ),
 			bNodesMap: jasmine.any( Object ),
 		} );
 
-		expect( DocumentMetadata.SCHEMA[ "resource" ] ).toEqual( {
-			"@id": NS.C.Predicate.resource,
+		expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
+			"@id": NS.C.Predicate.relatedDocument,
 			"@type": "@id",
 		} );
 
@@ -65,7 +65,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"resource",
+			"relatedDocument",
 			"Carbon.Pointer.Class",
 			"Reference to the resource the metadata information refers to."
 		), ():void => {} );
@@ -111,15 +111,15 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( false );
 
 			object = {
-				resource: null,
+				relatedDocument: null,
 				eTag: null,
 				bNodesMap: null,
 			};
 			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( true );
 
-			delete object.resource;
+			delete object.relatedDocument;
 			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( false );
-			object.resource = null;
+			object.relatedDocument = null;
 
 			delete object.eTag;
 			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( true );
@@ -151,14 +151,14 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 					NS.C.Class.VolatileResource,
 					NS.C.Class.DocumentMetadata,
 				],
-				resource: null,
+				relatedDocument: null,
 				eTag: null,
 				bNodesMap: null,
 			} );
 
-			delete object.resource;
+			delete object.relatedDocument;
 			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
-			object.resource = null;
+			object.relatedDocument = null;
 
 			delete object.eTag;
 			expect( DocumentMetadata.Factory.is( object ) ).toBe( true );

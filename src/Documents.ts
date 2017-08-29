@@ -1073,10 +1073,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
 		return responseMetadata.documentsMetadata.map( ( documentMetadata:LDP.DocumentMetadata.Class ) => {
-			let resource:T & PersistedDocument.Class = <T & PersistedDocument.Class> documentMetadata.resource;
-			resource._etag = documentMetadata.eTag;
+			const document:T & PersistedDocument.Class = <T & PersistedDocument.Class> documentMetadata.relatedDocument;
+			document._etag = documentMetadata.eTag;
 
-			return resource;
+			return document;
 		} );
 	}
 
@@ -1130,7 +1130,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( LDP.ResponseMetadata.Factory.is );
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
-			const document:PersistedDocument.Class = documentMetadata.resource as PersistedDocument.Class;
+			const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
 			for( const { key: keyBNode, value: valueBNode } of documentMetadata.bNodesMap.entries ) {
 				const originalBNode:PersistedBlankNode.Class = document.getFragment( keyBNode.id );
 				originalBNode.id = valueBNode.id;

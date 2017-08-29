@@ -79,7 +79,7 @@ export class Predicate {
 
 	static get requestID():string { return namespace + "requestID"; }
 
-	static get resource():string { return namespace + "resource"; }
+	static get relatedDocument():string { return namespace + "relatedDocument"; }
 
 	static get size():string { return namespace + "size"; }
 

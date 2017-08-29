@@ -5,8 +5,8 @@ var Utils = require("./../Utils");
 var VolatileResource = require("./VolatileResource");
 exports.RDF_CLASS = NS.C.Class.DocumentMetadata;
 exports.SCHEMA = {
-    "resource": {
-        "@id": NS.C.Predicate.resource,
+    "relatedDocument": {
+        "@id": NS.C.Predicate.relatedDocument,
         "@type": "@id",
     },
     "eTag": {
@@ -22,7 +22,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "resource");
+        return Utils.hasPropertyDefined(object, "relatedDocument");
     };
     Factory.is = function (object) {
         return VolatileResource.Factory.is(object)

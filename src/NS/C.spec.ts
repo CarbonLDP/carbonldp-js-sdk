@@ -467,13 +467,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"resource",
+			"relatedDocument",
 			"string"
 		), ():void => {
-			expect( C.Predicate.resource ).toBeDefined();
-			expect( Utils.isString( C.Predicate.resource ) ).toBe( true );
+			expect( C.Predicate.relatedDocument ).toBeDefined();
+			expect( Utils.isString( C.Predicate.relatedDocument ) ).toBe( true );
 
-			expect( C.Predicate.resource ).toBe( "https://carbonldp.com/ns/v1/platform#resource" );
+			expect( C.Predicate.relatedDocument ).toBe( "https://carbonldp.com/ns/v1/platform#relatedDocument" );
 		} );
 
 		it( hasProperty(

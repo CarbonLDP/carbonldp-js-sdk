@@ -5,7 +5,7 @@ import * as Map from "./Map";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends VolatileResource.Class {
-    resource: Pointer.Class;
+    relatedDocument: Pointer.Class;
     eTag?: string;
     bNodesMap?: Map.Class;
 }
