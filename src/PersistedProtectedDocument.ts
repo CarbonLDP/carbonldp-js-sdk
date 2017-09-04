@@ -48,24 +48,28 @@ export class Factory {
 
 }
 
+interface ACLResult {
+	acl:Pointer.Class;
+}
+
 function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]> {
 	let protectedDocument:Class = <Class> this;
 
 	let aclPromise:Promise<Pointer.Class>;
 
-	if ( protectedDocument.isResolved() ) {
+	if( protectedDocument.isResolved() ) {
 		aclPromise = Promise.resolve( protectedDocument.accessControlList );
 	} else {
-		aclPromise = protectedDocument.executeSELECTQuery( `SELECT ?acl WHERE {
+		aclPromise = protectedDocument.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {
 			<${ protectedDocument.id }> <${ NS.CS.Predicate.accessControlList }> ?acl.
-		}` ).then( ( [ results, response ]:[ SELECTResults, HTTP.Response.Class ] ) => {
-			return results.bindings[ 0 ][ "acl" ] as Pointer.Class;
+		}` ).then( ( [ results ]:[ SELECTResults<ACLResult>, HTTP.Response.Class ] ) => {
+			return results.bindings[ 0 ].acl;
 		} );
 	}
 
 	return aclPromise.then( ( acl:Pointer.Class ) => {
 		return protectedDocument._documents.get( acl.id, requestOptions );
-	} ).then( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
+	} ).then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
 		if( ! Resource.Util.hasType( acl, Auth.ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
 		return [ acl, response ];
 	} );

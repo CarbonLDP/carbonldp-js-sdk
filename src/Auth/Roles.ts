@@ -7,10 +7,10 @@ import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as SPARQL from "./../SPARQL";
-import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";
 import * as Role from "./Role";
+import * as Utils from "./../Utils";
 
 export class Class {
 	private context:Context;
@@ -20,9 +20,9 @@ export class Class {
 	}
 
 	// TODO: Requests must return all the responses made
-	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T extends Role.Class>( parentRole:string | Pointer.Class, role:T, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
+	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
+	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		let parentURI:string = Utils.isString( parentRole ) ? <string> parentRole : ( <Pointer.Class> parentRole).id;
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
@@ -30,7 +30,7 @@ export class Class {
 		let containerURI:string;
 		let persistedRole:T & PersistedRole.Class;
 		let responseCreated:HTTP.Response.Class;
-		return Promise.resolve().then( () => {
+		return Utils.promiseMethod( () => {
 			containerURI = this.getContainerURI();
 
 			parentURI = URI.Util.resolve( containerURI, parentURI );
@@ -46,30 +46,31 @@ export class Class {
 			persistedRole = PersistedRole.Factory.decorate( newRole, this.context.documents );
 			return this.context.documents.addMember( parentURI, newRole );
 
-		} ).then( ( response ) => {
+		} ).then<[ T & PersistedRole.Class, HTTP.Response.Class ]>( ( response ) => {
 			return [ persistedRole, responseCreated ];
 		} );
 	}
 
 	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
-		return Promise.resolve().then( () => {
+		return Utils.promiseMethod( () => {
 			return this.context.documents.get<T & PersistedRole.Class>( this.resolveURI( roleURI ), requestOptions );
 		} );
 	}
 
-	listUsers( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
-		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
-			return this.context.documents.listMembers( usersAccessPoint.id, requestOptions );
-		} ).then( ( [ users, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-			return [ users.map( user => PersistedProtectedDocument.Factory.decorate( user, this.context.documents ) ), response ];
+	listUsers( this:Class, roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
+		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.listMembers( accessPoint.id, requestOptions );
+		} ).then<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]>( ( [ documents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
+			const users:PersistedProtectedDocument.Class[] = documents.map( user => PersistedProtectedDocument.Factory.decorate( user, this.context.documents ) );
+			return [ users, response ];
 		} );
 	}
 
 	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
-	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
-		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers<T>( usersAccessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
+	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
+		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.getMembers<T & PersistedUser.Class>( accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
 		} );
 	}
 
@@ -78,8 +79,8 @@ export class Class {
 	}
 
 	addUsers( roleURI:string, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
-			return this.context.documents.addMembers( usersAccessPoint.id, users, requestOptions );
+		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.addMembers( accessPoint.id, users, requestOptions );
 		} );
 	}
 
@@ -88,8 +89,8 @@ export class Class {
 	}
 
 	removeUsers( roleURI:string, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return this.getUsersAccessPoint( roleURI ).then( ( usersAccessPoint:Pointer.Class ) => {
-			return this.context.documents.removeMembers( usersAccessPoint.id, users, requestOptions );
+		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
+			return this.context.documents.removeMembers( accessPoint.id, users, requestOptions );
 		} );
 	}
 
@@ -103,15 +104,14 @@ export class Class {
 
 	// TODO: Optimize
 	private getUsersAccessPoint( roleURI:string ):Promise<Pointer.Class> {
-		return Promise.resolve()
-			.then( () => this.resolveURI( roleURI ) )
-			.then( ( uri:string ) => this.context.documents.executeSELECTQuery( uri, `select distinct ?usersAccessPoint where {
-				<${ uri }> <https://carbonldp.com/ns/v1/platform#accessPoint> ?usersAccessPoint .
-				?usersAccessPoint <http://www.w3.org/ns/ldp#hasMemberRelation> <https://carbonldp.com/ns/v1/security#user> .
-			}` ) )
-			.then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class, HTTP.Response.Class ] ) => {
-				return <Pointer.Class> selectResults.bindings[ 0 ][ "usersAccessPoint" ];
-			} );
+		type AccessPointResult = { accessPoint:Pointer.Class };
+
+		return Utils.promiseMethod( () => {
+			const uri:string = this.resolveURI( roleURI );
+			return this.context.documents.executeSELECTQuery( uri, `PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<${ uri }>:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}` );
+		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class<AccessPointResult>, HTTP.Response.Class ] ) => {
+			return <Pointer.Class> selectResults.bindings[ 0 ].accessPoint;
+		} );
 	}
 
 	private getContainerURI():string {

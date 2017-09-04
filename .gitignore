@@ -20,7 +20,7 @@ reports/
 
 # IntelliJ
 .idea/workspace.xml
-.idea/dictionaries/
+.idea/dictionaries
 # *.iml
 # *.iws
 

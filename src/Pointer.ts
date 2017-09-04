@@ -8,12 +8,15 @@ export interface Class {
 	_resolved:boolean;
 
 	id:string;
+
 	isResolved():boolean;
+
 	resolve<T>():Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 }
 
 export interface Library {
 	hasPointer( id:string ):boolean;
+
 	getPointer( id:string ):Class;
 }
 
@@ -29,7 +32,7 @@ export class Factory {
 		);
 	}
 
-	static is( value:any ):boolean {
+	static is( value:any ):value is Class {
 		return (
 			Utils.isObject( value ) &&
 			Factory.hasClassProperties( value )
@@ -112,17 +115,20 @@ export class Util {
 
 	static resolveAll<T>( pointers:Class[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]> {
 		let promises:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve<T>() );
-		return Promise.all<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( promises ).then( ( results:[ T & PersistedDocument.Class, HTTP.Response.Class ][] ) => {
-			let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
-			let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
+		return Promise
+			.all<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( promises )
+			.then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]>( ( results:[ T & PersistedDocument.Class, HTTP.Response.Class ][] ) => {
+				let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
+				let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
 
-			return [ resolvedPointers, responses ];
-		} );
+				return [ resolvedPointers, responses ];
+			} );
 	}
 }
 
 export interface Validator {
 	inScope( id:string ):boolean;
+
 	inScope( pointer:Class ):boolean;
 }
 

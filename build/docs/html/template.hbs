@@ -307,10 +307,19 @@
 			applyToSidebar();
 
 			// Section in sidebar menu, location and URL
-			$( window ).on( "hashchange", function() {
-				scrollToHash();
-				setActiveSection();
-			} );
+			$( window )
+				.on( "beforeunload", function() {
+					$( "html, body" ).scrollTop( 0 );
+				} )
+				.on( "hashchange", function() {
+					scrollToHash();
+					setActiveSection();
+				} )
+				.ready( function() {
+					scrollToHash();
+					setActiveSection();
+				} )
+			;
 
 			var $locationMenu = $( ".doc-menu-location > .left.menu" );
 			var $moduleLocation = $( '<a class="item doc-menu-location__item dynamic-location dynamic-location_module"></a>' ).click( scrollToHash );
@@ -384,9 +393,6 @@
 					.last()
 					.addClass( "active" );
 			}
-
-			scrollToHash();
-			setActiveSection();
 
 			// Search box
 			var content = [

@@ -22,6 +22,7 @@ describe( module( "Carbon/SPARQL/SELECTResults" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.SPARQL.SELECTResults.Class",
+		[ "T = Carbon.SPARQL.SELECTResult.BindingObject" ],
 		"Interface that represents a parsed response of a SELECT SPARQL query."
 	), ():void => {
 
@@ -35,7 +36,7 @@ describe( module( "Carbon/SPARQL/SELECTResults" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bindings",
-			"Carbon.SPARQL.SELECTResult.BindingObject[]",
+			"T[]",
 			"Array with the entries of the parsed elements asked in the query."
 		), ():void => {} );
 

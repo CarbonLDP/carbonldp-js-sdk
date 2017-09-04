@@ -29,7 +29,6 @@ export declare class Class {
     roles: Roles.Class;
     protected _authenticatedUser: PersistedUser.Class;
     private context;
-    private method;
     private authenticators;
     private authenticator;
     readonly authenticatedUser: PersistedUser.Class;

@@ -13,7 +13,7 @@ export interface Library {
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(value: any): boolean;
+    static is(value: any): value is Class;
     static create(id?: string): Class;
     static createFrom<T extends Object>(object: T, id?: string): T & Class;
     static decorate<T extends Object>(object: T): T & Class;

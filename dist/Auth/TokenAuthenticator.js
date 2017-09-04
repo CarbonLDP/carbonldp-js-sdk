@@ -7,10 +7,10 @@ var LDP = require("./../LDP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var Resource = require("./../Resource");
-var Utils = require("./../Utils");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var Token = require("./Token");
 var UsernameAndPasswordToken = require("./UsernameAndPasswordToken");
+var Utils = require("./../Utils");
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {

@@ -54,13 +54,13 @@ export class Factory {
 
 function changeEnabled( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
 	const responses:HTTP.Response.Class[] = [];
-	const promise:Promise<[ Class, HTTP.Response.Class ]> = this.isResolved() ? Promise.resolve( [] ) : this.resolve();
+	const promise:Promise<[ Class, HTTP.Response.Class ]> = this.isResolved() ? Promise.resolve<any>( [] ) : this.resolve();
 	return promise.then( ( [ _credentials, response ] ) => {
 		if( response ) responses.push( response );
 
 		this.enabled = enabled;
 		return this.save( requestOptions );
-	} ).then( ( [ _credentials, response ] ) => {
+	} ).then<[ Class, HTTP.Response.Class[] ]>( ( [ _credentials, response ] ) => {
 		if( response ) responses.push( response );
 
 		return [ this, responses ];

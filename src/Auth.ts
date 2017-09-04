@@ -62,7 +62,6 @@ export class Class {
 	protected _authenticatedUser:PersistedUser.Class;
 
 	private context:Context;
-	private method:Method;
 	private authenticators:Authenticator<Object, Object>[];
 	private authenticator:Authenticator<Object, Object>;
 
@@ -142,7 +141,7 @@ export class Class {
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
 			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() );
-		} ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );

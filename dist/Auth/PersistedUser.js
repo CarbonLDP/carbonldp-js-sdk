@@ -65,7 +65,7 @@ function obtainCredentials(user) {
         .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + NS.CS.Predicate.credentials + ">?c}}")
         .then(function (_a) {
         var credentialsBinding = _a[0].bindings[0], response = _a[1];
-        user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding["credentials"], user._documents);
+        user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding.credentials, user._documents);
         return response;
     });
 }

@@ -363,11 +363,11 @@ describe( module( "Carbon" ), ():void => {
 
 			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 			expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
-			expect( () => carbon.resolve( "http://my-carbon.example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( carbon.resolve( "http://my-carbon.example.com/my-resource/" ) ).toBe( "http://my-carbon.example.com/my-resource/" );
 
 			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
 			expect( myCarbon.resolve( "http://my-carbonldp.example.com/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
-			expect( () => myCarbon.resolve( "https://example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( myCarbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 		} );
 
 		it( hasMethod(

@@ -136,6 +136,10 @@ function forEachOwnProperty(object, action) {
     }
 }
 exports.forEachOwnProperty = forEachOwnProperty;
+function promiseMethod(fn) {
+    return new Promise(function (resolve) { return resolve(fn()); });
+}
+exports.promiseMethod = promiseMethod;
 var A = (function () {
     function A() {
     }
@@ -352,9 +356,9 @@ var UUID = (function () {
             return v.toString(16);
         });
     };
+    UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return UUID;
 }());
-UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 exports.UUID = UUID;
 
 //# sourceMappingURL=Utils.js.map

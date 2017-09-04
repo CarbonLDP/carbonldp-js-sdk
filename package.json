@@ -46,7 +46,7 @@
     "karma-jspm": "^2.1.1",
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
     "karma-sourcemap-loader": "^0.3.4",
-    "nock": "^9.0.13",
+    "nock": "^9.0.14",
     "run-sequence": "^1.2.1",
     "systemjs": "0.19.41",
     "systemjs-builder": "0.15.35",
@@ -78,10 +78,11 @@
       "events": "npm:jspm-nodelibs-events@^0.2.0",
       "fs": "npm:jspm-nodelibs-fs@^0.2.0",
       "http": "npm:jspm-nodelibs-http@^0.2.0",
+      "module": "npm:jspm-nodelibs-module@^0.2.0",
       "net": "npm:jspm-nodelibs-net@^0.2.0",
       "os": "npm:jspm-nodelibs-os@^0.2.0",
       "path": "npm:jspm-nodelibs-path@^0.2.0",
-      "process": "npm:jspm-nodelibs-process@^0.2.0",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
       "stream": "npm:jspm-nodelibs-stream@^0.2.0",
       "string_decoder": "npm:jspm-nodelibs-string_decoder@^0.2.0",
       "url": "npm:jspm-nodelibs-url@^0.2.0",
@@ -94,7 +95,7 @@
           "test.js"
         ]
       },
-      "npm:typescript@2.0.6": {
+      "npm:typescript@2.4.2": {
         "browser": {},
         "map": {
           "buffer": "@empty",
@@ -103,6 +104,9 @@
           "path": "@empty",
           "process": "@empty",
           "readline": "@empty"
+        },
+        "dependencies": {
+          "source-map-support": "*"
         }
       }
     }
