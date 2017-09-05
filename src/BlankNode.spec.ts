@@ -29,32 +29,10 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 		expect( Utils.isObject( BlankNode ) ).toBe( true );
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( BlankNode.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( BlankNode.SCHEMA ) ).toBe( true );
-
-		expect( Utils.hasProperty( BlankNode.SCHEMA, "bNodeIdentifier" ) ).toBe( true );
-		expect( BlankNode.SCHEMA[ "bNodeIdentifier" ] ).toEqual( {
-			"@id": NS.C.Predicate.bNodeIdentifier,
-			"@type": NS.XSD.DataType.string,
-		} );
-	} );
-
 	describe( interfaze(
 		"Carbon.BlankNode.Class",
 		"Interface that represents the basic data of a blank node."
 	), ():void => {
-
-		it( hasProperty(
-			OBLIGATORY,
-			"bNodeIdentifier",
-			"string",
-			"A UUID identifier for the blank node."
-		), ():void => {} );
 
 	} );
 
@@ -102,16 +80,12 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 				expect( blankNode ).toBeTruthy();
 				expect( blankNode.document ).toBe( document );
 				expect( blankNode.id ).toBe( "_:BlankNode-1" );
-				expect( blankNode.bNodeIdentifier ).toBeDefined();
-				expect( Utils.UUID.is( blankNode.bNodeIdentifier ) ).toBe( true );
 				expect( blankNode.property ).toBe( "my property 1" );
 
-				let anotherBlankNode:BlankNode.Class = BlankNode.Factory.createFrom<{bNodeIdentifier:string}>( {bNodeIdentifier: "1345-9876-0"}, "_:BlankNode-2", document );
+				let anotherBlankNode:BlankNode.Class = BlankNode.Factory.createFrom<{}>( {}, "_:BlankNode-2", document );
 				expect( anotherBlankNode ).toBeTruthy();
 				expect( anotherBlankNode.document ).toBe( document );
 				expect( anotherBlankNode.id ).toBe( "_:BlankNode-2" );
-				expect( anotherBlankNode.bNodeIdentifier ).toBeDefined();
-				expect( anotherBlankNode.bNodeIdentifier ).toBe( "1345-9876-0" );
 				expect( anotherBlankNode[ "property" ] ).toBeUndefined();
 			} );
 
@@ -133,44 +107,15 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 				expect( blankNode ).toBeTruthy();
 				expect( blankNode.document ).toBe( document );
 				expect( RDF.URI.Util.isBNodeID( blankNode.id ) ).toBe( true );
-				expect( blankNode.bNodeIdentifier ).toBeDefined();
-				expect( Utils.UUID.is( blankNode.bNodeIdentifier ) ).toBe( true );
 				expect( blankNode.property ).toBe( "my property 3" );
 
-				let anotherBlankNode:BlankNode.Class = BlankNode.Factory.createFrom<{bNodeIdentifier:string}>( {bNodeIdentifier: "1345-9876-0"}, document );
+				let anotherBlankNode:BlankNode.Class = BlankNode.Factory.createFrom<{}>( {}, document );
 				expect( anotherBlankNode ).toBeTruthy();
 				expect( anotherBlankNode.document ).toBe( document );
 				expect( RDF.URI.Util.isBNodeID( anotherBlankNode.id ) ).toBe( true );
-				expect( anotherBlankNode.bNodeIdentifier ).toBeDefined();
-				expect( anotherBlankNode.bNodeIdentifier ).toBe( "1345-9876-0" );
 				expect( anotherBlankNode[ "property" ] ).toBeUndefined();
 			} );
 
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			"Decorates the object provided with the properties and methods of a Carbon.FreeResources.Class object.", [
-				{name: "object", type: "T extends Object", description: "The object to be decorated."},
-				{name: "bNodeIdentifier", type: "string", optional: true, description: "The identifier to be added to the decorated BlankNode."},
-			],
-			{type: "T & Carbon.BlankNode.Class"}
-		), ():void => {
-			expect( BlankNode.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( BlankNode.Factory.decorate ) ).toBe( true );
-
-			let blankNode:BlankNode.Class;
-
-			blankNode = BlankNode.Factory.decorate( {} );
-			expect( Utils.UUID.is( blankNode.bNodeIdentifier ) ).toBe( true );
-
-			blankNode = BlankNode.Factory.decorate( {bNodeIdentifier: "12345-9876-0"} );
-			expect( Utils.UUID.is( blankNode.bNodeIdentifier ) ).toBe( true );
-			expect( blankNode.bNodeIdentifier ).not.toBe( "12345-9876-0" );
-
-			blankNode = BlankNode.Factory.decorate( {}, "12345-9876-0" );
-			expect( blankNode.bNodeIdentifier ).toBe( "12345-9876-0" );
 		} );
 
 	} );

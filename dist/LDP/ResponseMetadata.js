@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
-var Utils = require("../Utils");
 var VolatileResource = require("./VolatileResource");
+var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
 exports.SCHEMA = {
-    "resourcesMetadata": {
-        "@id": NS.C.Predicate.resourceMetadata,
+    "documentsMetadata": {
+        "@id": NS.C.Predicate.documentMetadata,
         "@type": "@id",
         "@container": "@set",
     },
@@ -14,19 +14,10 @@ exports.SCHEMA = {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "resourcesMetadata");
-    };
     Factory.is = function (object) {
         return VolatileResource.Factory.is(object)
-            && Factory.hasClassProperties(object)
-            && Factory.hasRDFClass(object);
-    };
-    Factory.hasRDFClass = function (object) {
-        if (!object)
-            return false;
-        var types = ("@type" in object) ? object["@type"] : ("types" in object) ? object.types : [];
-        return types.indexOf(exports.RDF_CLASS) !== -1;
+            && Utils.hasProperty(object, "documentsMetadata")
+            && object.hasType(exports.RDF_CLASS);
     };
     return Factory;
 }());

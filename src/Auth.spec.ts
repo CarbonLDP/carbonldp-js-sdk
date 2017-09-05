@@ -289,6 +289,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					this._baseURI = "";
 				}
 			}
+
 			let auth:Auth.Class = new Auth.Class( new MockedContext() );
 
 			expect( auth.users ).toBeDefined();
@@ -322,6 +323,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				expect( context.auth.authenticatedUser ).toBeNull();
@@ -336,6 +338,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				expect( context.auth.authenticatedUser ).toBeNull();
@@ -463,6 +466,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				expect( context.auth.isAuthenticated ).toBeDefined();
@@ -481,6 +485,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
@@ -509,6 +514,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
@@ -537,6 +543,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
@@ -566,6 +573,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
@@ -631,6 +639,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				context = new MockedContext();
 			} );
 
@@ -652,10 +661,10 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
-							"@type": [ "https://carbonldp.com/ns/v1/security#User" ],
+							"@type": [ "${ NS.CS.Class.User }" ],
 							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "My User Name",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "${ NS.XSD.DataType.string }"
 							} ],
 							"${ NS.CS.Predicate.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
@@ -758,38 +767,38 @@ describe( module( "Carbon/Auth" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.ResponseMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+						"${ NS.C.Predicate.documentMetadata }": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"https://carbonldp.com/ns/v1/security#Token",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.CS.Class.Token }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/security#tokenKey": [ {
+						"${ NS.CS.Predicate.tokenKey }": [ {
 							"@value": "token-value"
 						} ],
-						"https://carbonldp.com/ns/v1/security#expirationTime": {
+						"${ NS.CS.Predicate.expirationTime }": {
 							"@value": "${ date.toISOString() }",
-							"@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+							"@type": "${ NS.XSD.DataType.dateTime }"
 						},
-						"https://carbonldp.com/ns/v1/security#credentialsOf": [ {
+						"${ NS.CS.Predicate.credentialsOf }": [ {
 							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
@@ -799,7 +808,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": [ "${ NS.CS.Class.User }" ],
 							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "My User Name",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "${ NS.XSD.DataType.string }"
 							} ],
 							"${ NS.CS.Predicate.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
@@ -855,7 +864,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": [ "${ NS.CS.Class.User }" ],
 							"${ NS.CS.Predicate.namae }": [ {
 								"@value": "My User Name",
-								"@type": "http://www.w3.org/2001/XMLSchema#string"
+								"@type": "${ NS.XSD.DataType.string }"
 							} ],
 							"${ NS.CS.Predicate.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
@@ -907,9 +916,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					expirationTime: date,
 					id: "_:BlankNode",
 					key: "dG9rZW4tdmFsdWU=",
-					types: [
-						"https://carbonldp.com/ns/v1/security#Token",
-					],
+					types: [ NS.CS.Class.Token ],
 				};
 				promise = auth01.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
@@ -925,9 +932,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expirationTime: date.toISOString(),
 						id: "_:BlankNode",
 						key: "dG9rZW4tdmFsdWU=",
-						types: [
-							"https://carbonldp.com/ns/v1/security#Token",
-						],
+						types: [ NS.CS.Class.Token ],
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
@@ -945,9 +950,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					expirationTime: date,
 					id: "_:BlankNode",
 					key: "dG9rZW4tdmFsdWU=",
-					types: [
-						"https://carbonldp.com/ns/v1/security#Token",
-					],
+					types: [ NS.CS.Class.Token ],
 				};
 				promise = auth03.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
@@ -991,6 +994,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1011,11 +1015,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "no authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "no authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { parentAuth?:string } = {};
@@ -1037,11 +1042,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "is authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "is authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { parentAuth?:string } = {};
@@ -1063,16 +1069,17 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 
 				(<any> auth).authenticator = {
-					isAuthenticated: ():boolean => true, addAuthentication: ( options:any ):void => {
-						options[ "currentAuth" ] = "is authenticated";
+					isAuthenticated: ():boolean => true, addAuthentication: ( mockOptions:any ):void => {
+						mockOptions[ "currentAuth" ] = "is authenticated";
 					},
 				};
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "is authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "is authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { currentAuth?:string } = {};
@@ -1094,15 +1101,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._parentContext = this;
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				let auth:Auth.Class = new Auth.Class( context );
 				(<any> auth).authenticator = {
-					isAuthenticated: ():boolean => true, addAuthentication: ( options:any ):void => {
-						options[ "currentAuth" ] = "is authenticated";
+					isAuthenticated: ():boolean => true, addAuthentication: ( mockOptions:any ):void => {
+						mockOptions[ "currentAuth" ] = "is authenticated";
 					},
 				};
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( options => {
-					options[ "parentAuth" ] = "no authenticated";
+				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "no authenticated";
 				} );
 
 				let options:HTTP.Request.Options & { currentAuth?:string } = {};
@@ -1130,6 +1138,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1148,6 +1157,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1166,6 +1176,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						this._baseURI = "";
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				let auth:Auth.Class = new Auth.Class( context );
@@ -1203,6 +1214,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			class MockedEmptyContext extends AbstractContext {
 				protected _baseURI:string;
 
@@ -1212,6 +1224,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			class MockedMultipleContext extends AbstractContext {
 				protected _baseURI:string;
 
@@ -1237,16 +1250,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 				responseText: `[ {
 					"@id":"_:01",
 					"@type":[
-						"https://carbonldp.com/ns/v1/security#Ticket"
+						"${ NS.CS.Class.Ticket }"
 					],
-					"https://carbonldp.com/ns/v1/security#expirationTime":[ {
-						"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+					"${ NS.CS.Predicate.expirationTime }":[ {
+						"@type": "${ NS.XSD.DataType.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
-					"https://carbonldp.com/ns/v1/security#forIRI":[ {
+					"${ NS.CS.Predicate.forIRI }":[ {
 						"@id": "http://example.com/resource/"
 					} ],
-					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
+					"${ NS.CS.Predicate.ticketKey }":[ {
 						"@value": "1234123412341234"
 					} ]
 				} ]`,
@@ -1261,31 +1274,31 @@ describe( module( "Carbon/Auth" ), ():void => {
 				responseText: `[ {
 					"@id":"_:01",
 					"@type":[
-						"https://carbonldp.com/ns/v1/security#Ticket"
+						"${ NS.CS.Class.Ticket }"
 					],
-					"https://carbonldp.com/ns/v1/security#expirationTime":[ {
-						"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+					"${ NS.CS.Predicate.expirationTime }":[ {
+						"@type": "${ NS.XSD.DataType.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
-					"https://carbonldp.com/ns/v1/security#forIRI":[ {
+					"${ NS.CS.Predicate.forIRI }":[ {
 						"@id": "http://multiple.example.com/resource/"
 					} ],
-					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
+					"${ NS.CS.Predicate.ticketKey }":[ {
 						"@value": "1234123412341234"
 					} ]
 				}, {
 					"@id":"_:02",
 					"@type":[
-						"https://carbonldp.com/ns/v1/security#Ticket"
+						"${ NS.CS.Class.Ticket }"
 					],
-					"https://carbonldp.com/ns/v1/security#expirationTime":[ {
-						"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+					"${ NS.CS.Predicate.expirationTime }":[ {
+						"@type": "${ NS.XSD.DataType.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
-					"https://carbonldp.com/ns/v1/security#forIRI":[ {
+					"${ NS.CS.Predicate.forIRI }":[ {
 						"@id": "http://multiple.example.com/resource/"
 					} ],
-					"https://carbonldp.com/ns/v1/security#ticketKey":[ {
+					"${ NS.CS.Predicate.ticketKey }":[ {
 						"@value": "1234123412341234"
 					} ]
 				} ]`,
@@ -1352,7 +1365,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			spyOn( auth, "createTicket" ).and.returnValue( Promise.resolve( [ {
 				id: "_:01",
-				types: [ "https://carbonldp.com/ns/v1/security#Ticket" ],
+				types: [ "${ NS.CS.Class.Ticket }" ],
 				expirationTime: new Date(),
 				forURI: context.documents.getPointer( "http://example.com/resource/" ),
 				ticketKey: "1234123412341234",

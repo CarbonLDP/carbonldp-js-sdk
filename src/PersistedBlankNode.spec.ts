@@ -29,13 +29,6 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 
 		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"bNodeIdentifier",
-			"string",
-			"A UUID identifier for the blank node."
-		), ():void => {} );
-
 	} );
 
 	it( hasDefaultExport( "Carbon.PersistedBlankNode.Class" ), ():void => {

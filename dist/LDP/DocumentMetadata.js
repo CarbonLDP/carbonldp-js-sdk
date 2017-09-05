@@ -3,14 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 var Utils = require("./../Utils");
 var VolatileResource = require("./VolatileResource");
-exports.RDF_CLASS = NS.C.Class.ResourceMetadata;
+exports.RDF_CLASS = NS.C.Class.DocumentMetadata;
 exports.SCHEMA = {
+    "relatedDocument": {
+        "@id": NS.C.Predicate.relatedDocument,
+        "@type": "@id",
+    },
     "eTag": {
         "@id": NS.C.Predicate.eTag,
         "@type": NS.XSD.DataType.string,
     },
-    "resource": {
-        "@id": NS.C.Predicate.resource,
+    "bNodesMap": {
+        "@id": NS.C.Predicate.bNodesMap,
         "@type": "@id",
     },
 };
@@ -18,22 +22,15 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "eTag")
-            && Utils.hasPropertyDefined(object, "resource");
+        return Utils.hasPropertyDefined(object, "relatedDocument");
     };
     Factory.is = function (object) {
         return VolatileResource.Factory.is(object)
             && Factory.hasClassProperties(object)
-            && Factory.hasRDFClass(object);
-    };
-    Factory.hasRDFClass = function (object) {
-        if (!object)
-            return false;
-        var types = ("@type" in object) ? object["@type"] : ("types" in object) ? object.types : [];
-        return types.indexOf(exports.RDF_CLASS) !== -1;
+            && object.hasType(exports.RDF_CLASS);
     };
     return Factory;
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=ResourceMetadata.js.map
+//# sourceMappingURL=DocumentMetadata.js.map

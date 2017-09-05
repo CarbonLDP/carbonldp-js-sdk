@@ -64,43 +64,23 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				// return carbon.documents.sparql( "/" )
-				// 	.selectAll()
-				// 	.where( ( _ ) => {
-				// 		return [
-				// 			_.resource( "/" )
-				// 				.has( _.var( "p" ), _.var( "o" ) ),
-				// 		];
-				// 	} )
-				// 	.execute();
-				return carbon.documents.createAccessPoint( "7580801781387042137/", {
-					hasMemberRelation: "memberRelation",
-					isMemberOfRelation: "parentRelation",
-				} )
-			} ).then( ( [ result, response ] ) => {
-				console.log( result );
+				fragment = { value: "a name" };
+				resource = { name: fragment };
+				return carbon.documents.createChildAndRetrieve( "/", resource, "posts/" );
+			} ).then( ( [ result ] ) => {
+				console.log( result.name );
+				expect( fragment ).toBe( result.name );
+				fragment = { value: "another name" };
+				result.name = fragment;
+				return result.saveAndRefresh();
+			} ).then( ( [ result ] ) => {
+				expect( fragment ).toBe( result.name );
+				console.log( result.name );
 				done();
 			} ).catch( ( error ) => {
 				console.error( error );
 				done.fail( error );
 			} );
-
-			function saveAndRefresh( persistedDocument ) {
-				let responses = [];
-				return persistedDocument.save().then( ( [ persistedDocument, response ] ) => {
-					responses.push( response );
-					return persistedDocument.refresh();
-				} ).then( ( [ persistedDocument, response ] ) => {
-					responses.push( response );
-					return [ persistedDocument, responses ];
-				} );
-			}
-
-			function removeFragments( persistedDocument ) {
-				for( let fragment of persistedDocument.getFragments() ) {
-					persistedDocument.removeFragment( fragment );
-				}
-			}
 		} );
 	} );
 })();
