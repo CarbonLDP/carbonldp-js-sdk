@@ -19,7 +19,7 @@
     "sparqler": "0.1.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.5.47",
+    "@types/jasmine": "^2.5.54",
     "@types/jasmine-ajax": "^3.1.36",
     "@types/node": "^6.0.87",
     "awesome-typescript-loader": "^3.0.4-rc.0",
@@ -35,7 +35,7 @@
     "gulp-typescript": "^3.2.2",
     "gulp-util": "^3.0.7",
     "jasmine-ajax": "^3.3.1",
-    "jasmine-core": "^2.7.0",
+    "jasmine-core": "^2.8.0",
     "jsonld": "^0.4.11",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.2.0",

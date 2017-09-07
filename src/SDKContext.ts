@@ -1,6 +1,5 @@
 import * as Documents from "./Documents";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
 import * as Context from "./Context";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
@@ -15,6 +14,7 @@ export class Class implements Context.Class {
 	documents:Documents.Class;
 
 	get baseURI():string { return ""; }
+
 	get parentContext():Context.Class { return null; }
 
 	protected settings:Map<string, any>;
@@ -160,8 +160,6 @@ export class Class implements Context.Class {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( BlankNode.SCHEMA );
-
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
@@ -169,12 +167,14 @@ export class Class implements Context.Class {
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 
+		this.extendObjectSchema( LDP.Entry.SCHEMA );
 		this.extendObjectSchema( LDP.Error.RDF_CLASS, LDP.Error.SCHEMA );
 		this.extendObjectSchema( LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA );
 		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
-		this.extendObjectSchema( LDP.ResourceMetadata.RDF_CLASS, LDP.ResourceMetadata.SCHEMA );
+		this.extendObjectSchema( LDP.DocumentMetadata.RDF_CLASS, LDP.DocumentMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
+		this.extendObjectSchema( LDP.Map.RDF_CLASS, LDP.Map.SCHEMA );
 
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );

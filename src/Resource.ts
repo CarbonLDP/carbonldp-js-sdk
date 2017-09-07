@@ -31,7 +31,7 @@ export class Factory {
 		);
 	}
 
-	static is( object:Object ):boolean {
+	static is( object:object ):object is Class {
 		return Pointer.Factory.is( object )
 			&& Factory.hasClassProperties( object );
 	}

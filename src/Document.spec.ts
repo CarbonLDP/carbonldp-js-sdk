@@ -1596,10 +1596,6 @@ describe( module( "Carbon/Document" ), ():void => {
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],
-							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
-								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
 							"@type": [],
@@ -1628,10 +1624,6 @@ describe( module( "Carbon/Document" ), ():void => {
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],
-							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
-								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
 							"@type": [],
@@ -1641,7 +1633,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				beforeEach( ():void => {
-					document.createFragment( { bNodeIdentifier: "cbc92415-5bdd-4a2a-873b-16a165315e7d" }, "_:BlankNode" );
+					document.createFragment( {}, "_:BlankNode" );
 					document.createFragment( "fragment" );
 					document[ "myProperty" ] = "a property";
 					document[ "myDate" ] = new Date( "2016-06-01" );
@@ -1765,10 +1757,6 @@ describe( module( "Carbon/Document" ), ():void => {
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],
-							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
-								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
 							"@type": [],

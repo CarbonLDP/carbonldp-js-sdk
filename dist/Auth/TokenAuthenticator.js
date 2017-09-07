@@ -70,10 +70,15 @@ var Class = (function () {
             var token = tokenResources[0];
             var userDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
-            var responseMetadata = freeResources.getResources().find(function (resource) { return Resource.Util.hasType(resource, LDP.ResponseMetadata.RDF_CLASS); });
-            if (!!responseMetadata)
-                responseMetadata.resourcesMetadata.forEach(function (resourceMetadata) {
-                    resourceMetadata.resource._etag = resourceMetadata.eTag;
+            var responseMetadata = freeResources
+                .getResources()
+                .find(LDP.ResponseMetadata.Factory.is);
+            if (responseMetadata)
+                responseMetadata
+                    .documentsMetadata
+                    .forEach(function (documentMetadata) {
+                    var document = documentMetadata.relatedDocument;
+                    document._etag = documentMetadata.eTag;
                 });
             return [token, response];
         });

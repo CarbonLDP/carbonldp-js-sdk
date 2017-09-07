@@ -88,11 +88,16 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
 			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
-			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
+			const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources
+				.getResources()
+				.find( LDP.ResponseMetadata.Factory.is );
 
-			if( ! ! responseMetadata ) responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
-				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
-			} );
+			if( responseMetadata ) responseMetadata
+				.documentsMetadata
+				.forEach( documentMetadata => {
+					const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
+					document._etag = documentMetadata.eTag;
+				} );
 
 			return [ token, response ];
 		} );

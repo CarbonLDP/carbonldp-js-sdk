@@ -21,6 +21,7 @@ import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
 import Carbon from "./Carbon";
+import * as BlankNode from "./BlankNode";
 import * as Document from "./Document";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
@@ -866,6 +867,105 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
 						done();
 					} );
+				} );
+
+				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/new-resource/",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/new-resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:RawDocument = {
+						blankNode1: {
+							id: "_:1",
+							value: "a value 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							value: "a value 2",
+						},
+					};
+
+					try {
+						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
 				} );
 
 			} );
@@ -2475,6 +2575,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "vocabulary", "http://example.com/ns#" );
 					}
 				}
 
@@ -2501,6 +2602,134 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
 						done();
 					} );
+				} );
+
+				it( "should sync the persisted blank nodes and update document", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/new-resource/",
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/new-resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							},
+							{
+								"@id": "http://example.com/new-resource/",
+								"@graph": [
+									{
+										"@id": "_:new-1",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 1"
+										} ]
+									},
+									{
+										"@id": "_:new-2",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 2"
+										} ]
+									},
+									{
+										"@id": "http://example.com/new-resource/",
+										"http://example.com/ns#blankNode1": [ {
+											"@id": "_:new-1"
+										} ],
+										"http://example.com/ns#blankNode2": [ {
+											"@id": "_:new-2"
+										} ]
+									}
+								]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:RawDocument = {
+						blankNode1: {
+							id: "_:1",
+							value: "a value 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							value: "a value 2",
+						},
+					};
+
+					try {
+						const [ document ] = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
+
+						expect( document.getFragments().length ).toBe( 2 );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
 				} );
 
 			} );
@@ -2615,14 +2844,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						slug: "#namedFragment",
 						property: "Named fragment property",
 					};
-					let blankNode:Object = {
-						property: "BlankNode property",
-						bNodeIdentifier: "12345",
-					};
 					let childObject:Object = {
 						property: "my property",
 						namedFragment: namedFragment,
-						blankNode: blankNode,
 					};
 
 					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
@@ -2638,17 +2862,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								{
 									"@id": "http://example.com/parent-resource/new-child/",
 									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ],
-									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ],
-									"http://example.com/ns#blankNode": [ { "@id": "_:1" } ]
+									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ]
 								},
 								{
 									"@id": "http://example.com/parent-resource/new-child/#namedFragment",
 									"http://example.com/ns#property": [ { "@value": "UPDATED named fragment property" } ]
-								},
-								{
-									"@id": "_:1",
-									"${ NS.C.Predicate.bNodeIdentifier }": [ { "@value": "12345" } ],
-									"http://example.com/ns#property": [ { "@value": "UPDATED blankNode property" } ]
 								}
 							]
 						}`,
@@ -2670,16 +2888,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( childObject[ "namedFragment" ] ).toBe( namedFragment );
 						expect( namedFragment[ "property" ] ).toBe( "UPDATED named fragment property" );
 
-						// Keep reference with the blankNode
-						expect( "blankNode" in childObject ).toBe( true );
-						expect( childObject[ "blankNode" ] ).toBe( blankNode );
-						expect( blankNode[ "property" ] ).toBe( "UPDATED blankNode property" );
-
 						expect( responses ).toEqual( jasmine.any( Array ) );
 						expect( responses.length ).toBe( 1 );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-						expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" );
+						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
 					} );
 				})() );
 
@@ -2960,7 +3173,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocument[ "property" ] ).toBe( "my UPDATED property " + index );
 
 							let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( index );
-							expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" );
+							expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
 						} );
 					} );
 				})() );
@@ -3150,7 +3363,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/resource/",
-						"http://www.w3.org/ns/ldp#contains": []
+						"${ NS.LDP.Predicate.contains }": []
 					} ],
 					"@id": "http://example.com/resource/"
 				} ]`,
@@ -3169,7 +3382,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/resource/",
-						"http://www.w3.org/ns/ldp#contains": [ {
+						"${ NS.LDP.Predicate.contains }": [ {
 							"@id": "http://example.com/resource/pointer-01/"
 						}, {
 							"@id": "http://example.com/resource/pointer-02/"
@@ -3354,10 +3567,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.ResponseMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+						"${ NS.C.Predicate.documentMetadata }": [ {
 							"@id": "_:01"
 						}, {
 							"@id": "_:02"
@@ -3365,33 +3578,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/resource/element-01/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"0987654321\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/resource/element-02/"
 						} ]
 					}, {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#contains": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.contains }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							}, {
 								"@id": "http://example.com/resource/element-02/"
@@ -3401,7 +3614,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/resource/element-01/",
 						"@graph": [ {
 							"@id": "http://example.com/resource/element-01/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 							"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 							"http://example.com/ns#pointer": [
 								{"@id": "http://example.com/resource/element-01/#1"}
@@ -3414,7 +3627,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/resource/element-02/",
 						"@graph": [ {
 							"@id": "http://example.com/resource/element-02/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 							"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 							"http://example.com/ns#pointer": [
 								{"@id": "_:01"}
@@ -5003,8 +5216,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							${ withMembers ? `
 							} ],
@@ -5027,11 +5240,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							} ],
-							"http://www.w3.org/ns/ldp#membershipResource": [{
+							"${ NS.LDP.Predicate.membershipResource }": [{
 								"@id": "http://example.com/members-resource/"
 							} ]
 						} ]
@@ -5039,8 +5252,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/members-resource/",
 						"@graph": [ {
 							"@id": "http://example.com/members-resource/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#another-member"
 							${ withMembers ? `
 							} ],
@@ -5206,10 +5419,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							}, {
 								"@id": "_:02"
@@ -5218,26 +5431,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							} ]
 						},
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"0987654321\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-02/"
 							} ]
 						},
@@ -5245,9 +5458,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@graph": [ {
 								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-									"@id": "http://www.w3.org/ns/ldp#my-member"
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
+									"@id": "$http://example.com/ns#my-member"
 								} ],
 								"http://example.com/ns#my-member": [ {
 									"@id": "http://example.com/resource/element-01/"
@@ -5260,7 +5473,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-01/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "http://example.com/resource/element-01/#1"}
@@ -5274,7 +5487,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-02/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "_:01"}
@@ -5288,9 +5501,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-								"@id": "http://www.w3.org/ns/ldp#my-member"
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
+								"@id": "$http://example.com/ns#my-member"
 							} ]
 						} ]
 					} ]`,
@@ -5304,10 +5517,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							}, {
 								"@id": "_:02"
@@ -5316,26 +5529,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							} ]
 						},
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"0987654321\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-02/"
 							} ]
 						},
@@ -5343,11 +5556,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@graph": [ {
 								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 									"@id": "http://example.com/ns#my-member"
 								} ],
-								"http://www.w3.org/ns/ldp#membershipResource": [{
+								"${ NS.LDP.Predicate.membershipResource }": [{
 									"@id": "http://example.com/members-resource/"
 								} ]
 							} ]
@@ -5355,8 +5568,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/members-resource/",
 							"@graph": [ {
 								"@id": "http://example.com/members-resource/",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 									"@id": "http://example.com/ns#another-member"
 								} ],
 								"http://example.com/ns#my-member": [ {
@@ -5370,7 +5583,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-01/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "http://example.com/resource/element-01/#1"}
@@ -5384,7 +5597,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-02/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "_:01"}
@@ -5398,11 +5611,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							} ],
-							"http://www.w3.org/ns/ldp#membershipResource": [{
+							"${ NS.LDP.Predicate.membershipResource }": [{
 								"@id": "http://example.com/members-resource/"
 							} ]
 						} ]
@@ -6616,6 +6829,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "vocabulary", "http://example.com/ns#" );
 					}
 				}
 
@@ -6642,6 +6856,108 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
 						done();
 					} );
+				} );
+
+				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+						documents.getPointer( "http://example.com/resource/" ), {
+							blankNode1: {
+								id: "_:1",
+								value: "a value 1",
+							},
+							blankNode2: {
+								id: "_:2",
+								value: "a value 2",
+							},
+						}
+					), documents );
+
+					try {
+						const [ document ] = await documents.save<RawDocument>( rawDocument );
+
+						expect( document.getFragments().length ).toBe( 2 );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
 				} );
 
 			} );
@@ -6700,8 +7016,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let context:MockedContext = new MockedContext();
 			let documents:Documents.Class = context.documents;
 
-			expect( documents.refresh ).toBeDefined();
-			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
+			expect( documents.save ).toBeDefined();
+			expect( Utils.isFunction( documents.save ) ).toBe( true );
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
 				status: 200,
@@ -6861,8 +7177,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			let document:PersistedDocument.Class;
 			let fragment:PersistedNamedFragment.Class;
-			let blankNode01:PersistedBlankNode.Class;
-			let blankNode02:PersistedBlankNode.Class;
 
 			// Mock an existent document
 			document = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
@@ -6871,14 +7185,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 			document[ "pointer" ] = fragment = document.createNamedFragment( {
 				string: "NamedFragment 1",
 			}, "#1" );
-			blankNode01 = <PersistedBlankNode.Class> document.createFragment( {
-				string: "Fragment 1",
-				bNodeIdentifier: "UUID fo _:1",
-			}, "_:1" );
-			blankNode02 = <PersistedBlankNode.Class> document.createFragment( {
-				string: "Fragment 1",
-				bNodeIdentifier: "UUID fo _:2",
-			}, "_:2" );
 
 			document._resolved = true;
 			document._etag = `"0123456789"`;
@@ -6888,7 +7194,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			// Add properties that supposed not to be in the server document
 			document[ "new-property" ] = "A new property that will be erased at refresh";
-			document[ "new-pointer" ] = document.createFragment( { id: "_:new-pointer", string: "Pointer that will be erased at refresh" } );
 
 			let promises:Promise<any>[] = [];
 
@@ -6905,32 +7210,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								{
 									"@id": "http://example.com/resource/",
 									"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
-									"http://example.com/ns#pointer": [ {"@id": "_:0001"} ],
 									"http://example.com/ns#pointerSet": [
-										{"@id": "_:0001"},
-										{"@id": "_:2"},
 										{"@id": "http://example.com/resource/#1"},
 										{"@id": "http://example.com/external-resource/"}
 									]
-								},
-								{
-									"@id": "_:1",
-									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
-									"http://example.com/ns#string": [ {"@value": "Old Fragment 2"} ]
-								},
-								{
-									"@id": "_:0001",
-									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
-									"http://example.com/ns#string": [ {"@value": "Changed Fragment 1"} ],
-									"http://example.com/ns#pointerSet": [
-										{"@id": "http://example.com/resource/"},
-										{"@id": "http://example.com/resource/#1"}
-									]
-								},
-								{
-									"@id": "_:2",
-									"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
-									"http://example.com/ns#string": [ {"@value": "New Fragment 2"} ]
 								},
 								{
 									"@id": "http://example.com/resource/#1",
@@ -6957,29 +7240,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( document[ "string" ] ).toBe( "Changed Document Resource" );
 					expect( fragment[ "string" ] ).toBe( "Changed NamedFragment 1" );
 
-					expect( document[ "pointer" ] ).toBe( blankNode01 );
-					expect( document[ "pointer" ][ "string" ] ).toBe( "Changed Fragment 1" );
-					expect( blankNode01[ "string" ] ).toBe( "Changed Fragment 1" );
-					expect( blankNode01.id ).toBe( "_:0001" );
-					expect( blankNode01 ).toBe( document.getFragment<PersistedBlankNode.Class>( "_:0001" ) );
-					expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
-
-					expect( blankNode02.id ).not.toBe( "_:2" );
-					expect( blankNode02 ).not.toBe( document.getFragment<PersistedBlankNode.Class>( "_:2" ) );
-					expect( document[ "pointerSet" ][ 1 ] ).not.toBe( blankNode02 );
-					expect( document[ "pointerSet" ][ 1 ] ).toBe( document.getFragment( "_:2" ) );
-					expect( document.getFragment( "_:2" )[ "string" ] ).toBe( "New Fragment 2" );
-
-					expect( blankNode02.id ).toBe( "_:1" );
-					expect( document.getFragment( "_:1" ) ).toBe( blankNode02 );
-					expect( blankNode02[ "string" ] ).toBe( "Old Fragment 2" );
-
 					expect( document.hasFragment( "#2" ) ).toBe( false );
 					expect( document.hasFragment( "#3" ) ).toBe( true );
 
 					expect( document[ "new-property" ] ).toBeUndefined();
 					expect( document[ "new-pointer" ] ).toBeUndefined();
-					expect( document.hasFragment( "_:new-pointer" ) ).toBe( false );
 
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -7011,6 +7276,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "vocabulary", "http://example.com/ns#" );
 					}
 				}
 
@@ -7037,6 +7303,135 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
 						done();
 					} );
+				} );
+
+				it( "should sync the persisted blank nodes and update document", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							},
+							{
+								"@id": "http://example.com/resource/",
+								"@graph": [
+									{
+										"@id": "_:new-1",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 1"
+										} ]
+									},
+									{
+										"@id": "_:new-2",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 2"
+										} ]
+									},
+									{
+										"@id": "http://example.com/resource/",
+										"http://example.com/ns#blankNode1": [ {
+											"@id": "_:new-1"
+										} ],
+										"http://example.com/ns#blankNode2": [ {
+											"@id": "_:new-2"
+										} ]
+									}
+								]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+						documents.getPointer( "http://example.com/resource/" ), {
+							blankNode1: {
+								id: "_:1",
+								value: "a value 1",
+							},
+							blankNode2: {
+								id: "_:2",
+								value: "a value 2",
+							},
+						}
+					), documents );
+
+					try {
+						const [ document ] = await documents.saveAndRefresh<RawDocument>( rawDocument );
+
+						expect( document.getFragments().length ).toBe( 2 );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
 				} );
 
 			} );
@@ -7170,7 +7565,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( responses.length ).toBe( 1 );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-					expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" );
+					expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
 
 					expect( document ).toBe( _document );
 					expect( "property" in document ).toBe( true );

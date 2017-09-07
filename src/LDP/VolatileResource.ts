@@ -9,16 +9,9 @@ export interface Class extends Resource.Class {
 
 export class Factory {
 
-	static is( object:Object ):boolean {
+	static is( object:object ):object is Class {
 		return Resource.Factory.is( object )
-			&& Factory.hasRDFClass( object );
-	}
-
-	static hasRDFClass( object:Object ):boolean {
-		if( ! object ) return false;
-
-		let types:string[] = ( "@type" in object ) ? object[ "@type" ] : ( "types" in object ) ? (<Resource.Class> object).types : [];
-		return types.indexOf( RDF_CLASS ) !== - 1;
+			&& object.hasType( RDF_CLASS );
 	}
 
 }
