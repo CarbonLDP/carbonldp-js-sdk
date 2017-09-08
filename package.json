@@ -14,6 +14,12 @@
   },
   "main": "./dist/Carbon.js",
   "typings": "./dist/Carbon.d.ts",
+  "browser": {
+    "file-type": false,
+	"url": false,
+	"http": false,
+	"https": false
+  },
   "dependencies": {
     "file-type": "^6.1.0",
     "sparqler": "0.2.0"
