@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import { QueryClause } from "sparqler/Clauses";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
@@ -9,10 +10,10 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
+import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
 import * as SPARQL from "./SPARQL";
 import * as RetrievalPreferences from "./RetrievalPreferences";
-import { QueryClause } from "sparqler/Clauses";
 export interface DocumentDecorator {
     decorator: (object: Object, ...parameters: any[]) => Object;
     parameters?: any[];
@@ -26,13 +27,14 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private context;
     private pointers;
     private documentsBeingResolved;
+    private _subscriptionsMap;
+    private _subscriptionsQueue;
     constructor(context?: Context);
     inScope(pointer: Pointer.Class): boolean;
     inScope(id: string): boolean;
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
-    removePointer(id: Pointer.Class): boolean;
-    removePointer(id: string): boolean;
+    removePointer(idOrPointer: string | Pointer.Class): boolean;
     get<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
@@ -82,6 +84,16 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     sparql(documentURI: string): QueryClause;
+    on(eventType: Messaging.Events | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    off(eventType: Messaging.Events | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    one(eventType: Messaging.Events | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onDocumentCreated(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onChildCreated(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onAccessPointCreated(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onDocumentModified(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onDocumentDeleted(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onMemberAdded(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    onMemberRemoved(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
     _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);

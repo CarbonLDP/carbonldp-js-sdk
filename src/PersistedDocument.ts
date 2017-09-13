@@ -16,10 +16,12 @@ import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as URI from "./RDF/URI";
+import * as DocumentedDocument from "./DocumentedDocument";
+import * as MessagingDocument from "./Messaging/Document";
 
 import { QueryClause } from "sparqler/Clauses";
 
-export interface Class extends PersistedResource.Class, Document.Class {
+export interface Class extends Document.Class, PersistedResource.Class, DocumentedDocument.Class, MessagingDocument.Class {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer.Class;
@@ -28,56 +30,76 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	isMemberOfRelation?:Pointer.Class;
 	contains?:Pointer.Class[];
 
-	_documents:Documents;
 	_etag:string;
 	_fragmentsIndex:Map<string, PersistedFragment.Class>;
 	_savedFragments:PersistedFragment.Class[];
+
 	_syncSavedFragments():void;
 
 	getFragment<T>( slug:string ):T & PersistedFragment.Class;
+
 	getNamedFragment<T>( slug:string ):T & PersistedNamedFragment.Class;
+
 	getFragments():PersistedFragment.Class[];
 
 	createFragment():PersistedFragment.Class;
+
 	createFragment( slug:string ):PersistedFragment.Class;
+
 	createFragment<T>( object:T ):PersistedFragment.Class & T;
+
 	createFragment<T>( object:T, slug:string ):PersistedFragment.Class & T;
 
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
+
 	createNamedFragment<T extends Object>( object:T, slug:string ):PersistedNamedFragment.Class & T;
 
 	refresh<T>():Promise<[ T & Class, HTTP.Response.Class ]>;
+
 	save<T>( requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+
 	saveAndRefresh<T>():Promise<[ T & Class, HTTP.Response.Class[] ]>;
+
 	delete():Promise<HTTP.Response.Class>;
 
 	getDownloadURL():Promise<string>;
 
 	addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+
 	addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
 	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
 
 	createChild<T>( object:T, slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+
 	createChild<T>( object:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+
 	createChild( slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+
 	createChild( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
 
 	createChildren<T>( objects:T[], slugs:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
+
 	createChildren<T>( objects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
 
 	createChildAndRetrieve<T>( object:T, slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
+
 	createChildAndRetrieve<T>( object:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
+
 	createChildAndRetrieve( slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
+
 	createChildAndRetrieve( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
 
 	createChildrenAndRetrieve<T>( objects:T[], slugs:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
+
 	createChildrenAndRetrieve<T>( objects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
 
 	createAccessPoint<T>( accessPoint:T & AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+
 	createAccessPoint<T>( accessPoint:T & AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
 
 	createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
+
 	createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 
 	listChildren():Promise<[ Class[], HTTP.Response.Class ]>;
@@ -87,25 +109,37 @@ export interface Class extends PersistedResource.Class, Document.Class {
 	listMembers( includeNonReadable?:boolean ):Promise<[ Class[], HTTP.Response.Class ]>;
 
 	getMembers<T>( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
 	getMembers<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+
 	removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
 	removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+
 	removeAllMembers():Promise<HTTP.Response.Class>;
 
 	upload( blob:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
 	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
 	upload( blob:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+
 	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+
 	executeASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ boolean, HTTP.Response.Class ]>;
+
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
+
 	executeSELECTQuery<T>( selectQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.SELECTResults.Class<T>, HTTP.Response.Class ]>;
+
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
+
 	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ string, HTTP.Response.Class ]>;
+
 	executeUPDATE( updateQuery:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 
 	sparql():QueryClause;
@@ -156,18 +190,21 @@ function resolveURI( uri:string ):string {
 	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
 	return ObjectSchema.Util.resolveURI( uri, schema );
 }
+
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
 	return function( type:string ):void {
 		type = resolveURI.call( this, type );
 		superFunction.call( this, type );
 	};
 }
+
 function extendHasType( superFunction:( type:string ) => boolean ):( type:string ) => boolean {
 	return function( type:string ):boolean {
 		type = resolveURI.call( this, type );
 		return superFunction.call( this, type );
 	};
 }
+
 function extendRemoveType( superFunction:( type:string ) => void ):( type:string ) => void {
 	return function( type:string ):void {
 		type = resolveURI.call( this, type );
@@ -192,6 +229,7 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 		return fragment;
 	};
 }
+
 function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
 function extendCreateNamedFragment( superFunction:( object:Object, slug:string ) => NamedFragment.Class ):( slug:string, object:Object ) => PersistedNamedFragment.Class;
 function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment.Class ):any {
@@ -204,11 +242,13 @@ function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:stri
 function refresh<T extends Class>():Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.refresh( this );
 }
+
 function save<T extends Class>( requestOptions?:HTTP.Request.Options ):Promise<[ T, HTTP.Response.Class ]> {
 	return this._documents.save( this, requestOptions );
 }
-function saveAndRefresh<T extends Class>( this:T ):Promise<[ T,  HTTP.Response.Class[] ]> {
-	return  this._documents.saveAndRefresh<T>( this );
+
+function saveAndRefresh<T extends Class>( this:T ):Promise<[ T, HTTP.Response.Class[] ]> {
+	return this._documents.saveAndRefresh<T>( this );
 }
 
 function _delete():Promise<HTTP.Response.Class> {
@@ -261,7 +301,7 @@ function createChildAndRetrieve<T>( objectOrSlugOrRequestOptions?:any, slugOrReq
 
 function createChildrenAndRetrieve<T>( objects:T[], slugs:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
 function createChildrenAndRetrieve<T>( objects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
-function createChildrenAndRetrieve<T>( this: T & Class, objects:T[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]> {
+function createChildrenAndRetrieve<T>( this:T & Class, objects:T[], slugsOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]> {
 	return this._documents.createChildrenAndRetrieve<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
@@ -397,9 +437,9 @@ export class Factory {
 			;
 	}
 
-	static is( object:Object ):boolean {
-		return Factory.hasClassProperties( object )
-			&& Document.Factory.is( object );
+	static is( object:Object ):object is Class {
+		return Document.Factory.is( object )
+			&& Factory.hasClassProperties( object );
 	}
 
 	static create( uri:string, documents:Documents, snapshot:Object = {} ):Class {
@@ -416,21 +456,17 @@ export class Factory {
 		return document;
 	}
 
-	static decorate<T extends Object>( document:T, documents:Documents, snapshot:Object = {} ):T & Class {
-		Document.Factory.decorate( document );
-		PersistedResource.Factory.decorate( document, snapshot );
+	static decorate<T extends Object>( object:T, documents:Documents, snapshot:Object = {} ):T & Class {
+		if( Factory.is( object ) ) return object;
 
-		if( Factory.hasClassProperties( document ) ) return <any> document;
+		Document.Factory.decorate( object );
+		PersistedResource.Factory.decorate( object, snapshot );
+		DocumentedDocument.Factory.decorate( <T & Document.Class> object, documents );
+		MessagingDocument.Factory.decorate( <T & DocumentedDocument.Class> object );
 
-		let persistedDocument:Class = <any> document;
+		const persistedDocument:T & Class = <T & Class> object;
 
-		Object.defineProperties( persistedDocument, {
-			"_documents": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: documents,
-			},
+		return Object.defineProperties( persistedDocument, {
 			"_etag": {
 				writable: true,
 				enumerable: false,
@@ -728,8 +764,6 @@ export class Factory {
 				value: extendRevert( persistedDocument.revert ),
 			},
 		} );
-
-		return <any> persistedDocument;
 	}
 }
 

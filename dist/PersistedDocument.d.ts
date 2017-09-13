@@ -11,8 +11,10 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
+import * as DocumentedDocument from "./DocumentedDocument";
+import * as MessagingDocument from "./Messaging/Document";
 import { QueryClause } from "sparqler/Clauses";
-export interface Class extends PersistedResource.Class, Document.Class {
+export interface Class extends Document.Class, PersistedResource.Class, DocumentedDocument.Class, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer.Class;
@@ -20,7 +22,6 @@ export interface Class extends PersistedResource.Class, Document.Class {
     hasMemberRelation?: Pointer.Class;
     isMemberOfRelation?: Pointer.Class;
     contains?: Pointer.Class[];
-    _documents: Documents;
     _etag: string;
     _fragmentsIndex: Map<string, PersistedFragment.Class>;
     _savedFragments: PersistedFragment.Class[];
@@ -82,9 +83,9 @@ export interface Class extends PersistedResource.Class, Document.Class {
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
+    static is(object: Object): object is Class;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): T & Class;
-    static decorate<T extends Object>(document: T, documents: Documents, snapshot?: Object): T & Class;
+    static decorate<T extends Object>(object: T, documents: Documents, snapshot?: Object): T & Class;
 }
 export default Class;

@@ -1,3 +1,4 @@
+import { Client } from "webstomp-client";
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -8,6 +9,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -23,6 +25,17 @@ import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
+declare module "webstomp-client" {
+    interface Client {
+        connected: boolean;
+        connect(headers: ConnectionHeaders, connectCallback: (frame?: Frame) => any, errorCallback?: (error: Frame | CloseEvent) => any): void;
+    }
+    interface Frame {
+        command: string;
+        body: string;
+        headers: ExtendedHeaders;
+    }
+}
 export declare class Class extends AbstractContext.Class {
     static AccessPoint: typeof AccessPoint;
     static Auth: typeof Auth;
@@ -33,6 +46,7 @@ export declare class Class extends AbstractContext.Class {
     static HTTP: typeof HTTP;
     static JSONLD: typeof JSONLD;
     static LDP: typeof LDP;
+    static Messaging: typeof Messaging;
     static NamedFragment: typeof NamedFragment;
     static NS: typeof NS;
     static ObjectSchema: typeof ObjectSchema;
@@ -51,9 +65,14 @@ export declare class Class extends AbstractContext.Class {
     static readonly version: string;
     readonly version: string;
     protected _baseURI: string;
+    protected _messagingOptions?: Messaging.Options;
+    protected _messagingClient?: Client;
+    readonly messagingClient: Client;
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;
+    connectMessaging(options: Messaging.Options, onConnect: () => void, onError?: (error: Error) => void): void;
+    connectMessaging(onConnect: () => void, onError?: (error: Error) => void): void;
     private getDocumentMetadata<T>(metadataSetting);
 }
 export default Class;

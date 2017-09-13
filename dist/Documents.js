@@ -4,6 +4,7 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Utils_1 = require("./Utils");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
 var Document = require("./Document");
@@ -14,6 +15,8 @@ var PersistedFragment = require("./PersistedFragment");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
 var Pointer = require("./Pointer");
+var Messaging = require("./Messaging");
+var utils_1 = require("./Messaging/utils");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
@@ -21,10 +24,8 @@ var SPARQL = require("./SPARQL");
 var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Builder_1 = require("./SPARQL/Builder");
-var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class(context) {
-        if (context === void 0) { context = null; }
         this.context = context;
         this.pointers = new Map();
         this.documentsBeingResolved = new Map();
@@ -49,6 +50,8 @@ var Class = (function () {
             decorators.set(Auth.Credentials.RDF_CLASS, { decorator: Auth.PersistedCredentials.Factory.decorate, parameters: [this] });
         }
         this._documentDecorators = decorators;
+        this._subscriptionsMap = new Map();
+        this._subscriptionsQueue = [];
     }
     Object.defineProperty(Class.prototype, "jsonldConverter", {
         get: function () { return this._jsonldConverter; },
@@ -701,6 +704,96 @@ var Class = (function () {
             });
         }
         return builder;
+    };
+    Class.prototype.on = function (eventType, uriPattern, onEvent, onError) {
+        var _this = this;
+        try {
+            utils_1.validateEventContext(this.context);
+            utils_1.validateEventType(eventType);
+            var destination_1 = utils_1.createDestination(eventType, this.context.resolve(uriPattern), this.context.baseURI || "");
+            var context_1 = this.context;
+            if (!this._subscriptionsMap.has(destination_1))
+                this._subscriptionsMap.set(destination_1, new Map());
+            var callbacksMap = this._subscriptionsMap.get(destination_1);
+            if (callbacksMap.has(onEvent))
+                return;
+            var subscriptionID_1 = Utils_1.UUID.generate();
+            callbacksMap.set(onEvent, subscriptionID_1);
+            var subscribeTo = function () {
+                console.log(destination_1);
+                context_1.messagingClient.subscribe(destination_1, function (message) {
+                    new JSONLD.Parser.Class()
+                        .parse(message.body)
+                        .then(onEvent)
+                        .catch(onError);
+                }, { id: subscriptionID_1 });
+            };
+            if (context_1.messagingClient) {
+                if (context_1.messagingClient.connected)
+                    return subscribeTo();
+            }
+            else {
+                context_1.connectMessaging(function () {
+                    _this._subscriptionsQueue.forEach(function (callback) { return callback(); });
+                    _this._subscriptionsQueue.length = 0;
+                });
+            }
+            this._subscriptionsQueue.push(subscribeTo);
+        }
+        catch (error) {
+            if (!onError)
+                throw error;
+            onError(error);
+        }
+    };
+    Class.prototype.off = function (eventType, uriPattern, onEvent, onError) {
+        try {
+            utils_1.validateEventContext(this.context);
+            utils_1.validateEventType(eventType);
+            var destination = utils_1.createDestination(eventType, this.context.resolve(uriPattern), this.context.baseURI || "");
+            var context = this.context;
+            if (!context.messagingClient ||
+                !this._subscriptionsMap.has(destination) ||
+                !this._subscriptionsMap.get(destination).has(onEvent))
+                return;
+            var callbackMap = this._subscriptionsMap.get(destination);
+            var subscriptionID = callbackMap.get(onEvent);
+            callbackMap.delete(onEvent);
+            context.messagingClient.unsubscribe(subscriptionID);
+        }
+        catch (error) {
+            if (!onError)
+                throw error;
+            onError(error);
+        }
+    };
+    Class.prototype.one = function (eventType, uriPattern, onEvent, onError) {
+        var _this = this;
+        this.on(eventType, uriPattern, function (data) {
+            onEvent(data);
+            _this.off(eventType, uriPattern, onEvent, onError);
+        }, onError);
+    };
+    Class.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.DOCUMENT_CREATED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.CHILD_CREATED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.DOCUMENT_DELETED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.MEMBER_ADDED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Events.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Class.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);

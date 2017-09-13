@@ -50,7 +50,7 @@ function isDate( date:any ):boolean {
 	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
-function isObject( object:any ):boolean {
+function isObject( object:any ):object is object {
 	return typeof object === "object" && ( ! ! object );
 }
 
@@ -63,7 +63,7 @@ function isPlainObject( object:Object ):boolean {
 		&& ! ( Object.prototype.toString.call( object ) === "[object Set]" );
 }
 
-function isFunction( value:any ):boolean {
+function isFunction( value:any ):value is Function {
 	return typeof value === "function";
 }
 

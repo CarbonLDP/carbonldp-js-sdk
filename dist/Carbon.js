@@ -9,7 +9,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var SockJS = require("sockjs-client");
+var webstomp = require("webstomp-client");
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
@@ -20,6 +30,7 @@ var Fragment = require("./Fragment");
 var HTTP = require("./HTTP");
 var JSONLD = require("./JSONLD");
 var LDP = require("./LDP");
+var Messaging = require("./Messaging");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
@@ -57,11 +68,54 @@ var Class = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class.prototype, "messagingClient", {
+        get: function () { return this._messagingClient; },
+        enumerable: true,
+        configurable: true
+    });
     Class.prototype.getPlatformMetadata = function () {
         return this.getDocumentMetadata("system.platform.metadata");
     };
     Class.prototype.getInstanceMetadata = function () {
         return this.getDocumentMetadata("system.instance.metadata");
+    };
+    Class.prototype.connectMessaging = function (optionsOrOnConnect, onConnectOrOnError, onError) {
+        var _this = this;
+        if (!onError)
+            onError = onConnectOrOnError;
+        if (this._messagingClient) {
+            var error = new Errors.IllegalStateError("The messaging service is already connected.");
+            if (onError)
+                onError(error);
+            throw error;
+        }
+        this._messagingOptions = __assign({ maxReconnectAttempts: 10, reconnectDelay: 1000 }, Utils.isObject(optionsOrOnConnect) ? optionsOrOnConnect : {});
+        var onConnect = Utils.isFunction(optionsOrOnConnect) ? optionsOrOnConnect : onConnectOrOnError;
+        onError = onConnectOrOnError ? onConnectOrOnError : function (error) {
+        };
+        var sock = new SockJS(this.resolve("/broker"));
+        this._messagingClient = webstomp.over(sock, {
+            protocols: webstomp.VERSIONS.supportedProtocols(),
+            debug: false,
+            heartbeat: false,
+            binary: false,
+        });
+        this._messagingClient.connect({}, function () {
+            onConnect.call(void 0);
+        }, function (errorFrameOrEvent) {
+            var errorMessage;
+            if (isCloseError(errorFrameOrEvent)) {
+                _this._messagingClient = null;
+                errorMessage = "CloseEventError: " + errorFrameOrEvent.reason;
+            }
+            else if (isFrameError(errorFrameOrEvent)) {
+                errorMessage = errorFrameOrEvent.headers["message"] + ": " + errorFrameOrEvent.body.trim();
+            }
+            else {
+                errorMessage = "Unknown error: " + errorFrameOrEvent;
+            }
+            onError(new Error(errorMessage));
+        });
     };
     Class.prototype.getDocumentMetadata = function (metadataSetting) {
         var _this = this;
@@ -84,6 +138,7 @@ var Class = (function (_super) {
     Class.HTTP = HTTP;
     Class.JSONLD = JSONLD;
     Class.LDP = LDP;
+    Class.Messaging = Messaging;
     Class.NamedFragment = NamedFragment;
     Class.NS = NS;
     Class.ObjectSchema = ObjectSchema;
@@ -102,6 +157,12 @@ var Class = (function (_super) {
     return Class;
 }(AbstractContext.Class));
 exports.Class = Class;
+function isCloseError(object) {
+    return "reason" in object;
+}
+function isFrameError(object) {
+    return "body" in object;
+}
 exports.default = Class;
 
 //# sourceMappingURL=Carbon.js.map
