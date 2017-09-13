@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Carbon_1 = require("../Carbon");
 var Errors_1 = require("../Errors");
 var URI_1 = require("../RDF/URI");
 function validateEventContext(context) {
-    if (!(context instanceof Carbon_1.Class))
-        throw new Errors_1.IllegalStateError("This instance does not support messaging events");
+    if (context &&
+        "connectMessaging" in context &&
+        "messagingClient" in context)
+        return;
+    throw new Errors_1.IllegalStateError("This instance does not support messaging events");
 }
 exports.validateEventContext = validateEventContext;
 function validateEventType(eventType) {
