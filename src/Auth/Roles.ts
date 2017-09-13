@@ -110,7 +110,7 @@ export class Class {
 			const uri:string = this.resolveURI( roleURI );
 			return this.context.documents.executeSELECTQuery( uri, `PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<${ uri }>:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}` );
 		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.Class<AccessPointResult>, HTTP.Response.Class ] ) => {
-			return <Pointer.Class> selectResults.bindings[ 0 ].accessPoint;
+			return selectResults.bindings[ 0 ].accessPoint;
 		} );
 	}
 
