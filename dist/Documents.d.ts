@@ -27,8 +27,6 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private context;
     private pointers;
     private documentsBeingResolved;
-    private _subscriptionsMap;
-    private _subscriptionsQueue;
     constructor(context?: Context);
     inScope(pointer: Pointer.Class): boolean;
     inScope(id: string): boolean;

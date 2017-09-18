@@ -1,4 +1,3 @@
-import { Client } from "webstomp-client";
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -25,17 +24,6 @@ import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
-declare module "webstomp-client" {
-    interface Client {
-        connected: boolean;
-        connect(headers: ConnectionHeaders, connectCallback: (frame?: Frame) => any, errorCallback?: (error: Frame | CloseEvent) => any): void;
-    }
-    interface Frame {
-        command: string;
-        body: string;
-        headers: ExtendedHeaders;
-    }
-}
 export declare class Class extends AbstractContext.Class {
     static AccessPoint: typeof AccessPoint;
     static Auth: typeof Auth;
@@ -65,9 +53,7 @@ export declare class Class extends AbstractContext.Class {
     static readonly version: string;
     readonly version: string;
     protected _baseURI: string;
-    protected _messagingOptions?: Messaging.Options;
-    protected _messagingClient?: Client;
-    readonly messagingClient: Client;
+    _messaging: Messaging.Service;
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;

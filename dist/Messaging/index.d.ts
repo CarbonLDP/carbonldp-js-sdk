@@ -1,4 +1,5 @@
 import * as Document from "./Document";
 import Events from "./Events";
 import Options from "./Options";
-export { Document, Events, Options };
+import Service from "./Service";
+export { Document, Events, Options, Service };

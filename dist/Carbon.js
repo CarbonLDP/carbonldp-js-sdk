@@ -9,17 +9,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var SockJS = require("sockjs-client");
-var webstomp = require("webstomp-client");
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
@@ -56,6 +46,7 @@ var Class = (function (_super) {
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
+        _this._messaging = new Messaging.Service(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {
@@ -68,11 +59,6 @@ var Class = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "messagingClient", {
-        get: function () { return this._messagingClient; },
-        enumerable: true,
-        configurable: true
-    });
     Class.prototype.getPlatformMetadata = function () {
         return this.getDocumentMetadata("system.platform.metadata");
     };
@@ -80,42 +66,13 @@ var Class = (function (_super) {
         return this.getDocumentMetadata("system.instance.metadata");
     };
     Class.prototype.connectMessaging = function (optionsOrOnConnect, onConnectOrOnError, onError) {
-        var _this = this;
-        if (!onError)
-            onError = onConnectOrOnError;
-        if (this._messagingClient) {
-            var error = new Errors.IllegalStateError("The messaging service is already connected.");
-            if (onError)
-                onError(error);
-            throw error;
+        if (Utils.isFunction(optionsOrOnConnect)) {
+            this._messaging.connect(optionsOrOnConnect, onConnectOrOnError);
         }
-        this._messagingOptions = __assign({ maxReconnectAttempts: 10, reconnectDelay: 1000 }, Utils.isObject(optionsOrOnConnect) ? optionsOrOnConnect : {});
-        var onConnect = Utils.isFunction(optionsOrOnConnect) ? optionsOrOnConnect : onConnectOrOnError;
-        onError = onConnectOrOnError ? onConnectOrOnError : function (error) {
-        };
-        var sock = new SockJS(this.resolve("/broker"));
-        this._messagingClient = webstomp.over(sock, {
-            protocols: webstomp.VERSIONS.supportedProtocols(),
-            debug: false,
-            heartbeat: false,
-            binary: false,
-        });
-        this._messagingClient.connect({}, function () {
-            onConnect.call(void 0);
-        }, function (errorFrameOrEvent) {
-            var errorMessage;
-            if (isCloseError(errorFrameOrEvent)) {
-                _this._messagingClient = null;
-                errorMessage = "CloseEventError: " + errorFrameOrEvent.reason;
-            }
-            else if (isFrameError(errorFrameOrEvent)) {
-                errorMessage = errorFrameOrEvent.headers["message"] + ": " + errorFrameOrEvent.body.trim();
-            }
-            else {
-                errorMessage = "Unknown error: " + errorFrameOrEvent;
-            }
-            onError(new Error(errorMessage));
-        });
+        else {
+            this._messaging.setOptions(optionsOrOnConnect);
+            this._messaging.connect(onConnectOrOnError, onError);
+        }
     };
     Class.prototype.getDocumentMetadata = function (metadataSetting) {
         var _this = this;
@@ -157,12 +114,6 @@ var Class = (function (_super) {
     return Class;
 }(AbstractContext.Class));
 exports.Class = Class;
-function isCloseError(object) {
-    return "reason" in object;
-}
-function isFrameError(object) {
-    return "body" in object;
-}
 exports.default = Class;
 
 //# sourceMappingURL=Carbon.js.map

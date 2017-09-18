@@ -1,7 +1,3 @@
-import * as SockJS from "sockjs-client";
-import * as webstomp from "webstomp-client";
-import { Client, Frame } from "webstomp-client";
-
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -28,23 +24,6 @@ import * as Settings from "./Settings";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
-
-// Fix of incorrect webstomp-client typings
-declare module "webstomp-client" {
-	// noinspection TsLint
-	export interface Client {
-		connected:boolean;
-
-		connect( headers:ConnectionHeaders, connectCallback:( frame?:Frame ) => any, errorCallback?:( error:Frame | CloseEvent ) => any ):void;
-	}
-
-	// noinspection TsLint
-	export interface Frame {
-		command:string;
-		body:string;
-		headers:ExtendedHeaders,
-	}
-}
 
 export class Class extends AbstractContext.Class {
 
@@ -84,9 +63,7 @@ export class Class extends AbstractContext.Class {
 
 	protected _baseURI:string;
 
-	protected _messagingOptions?:Messaging.Options;
-	protected _messagingClient?:Client;
-	get messagingClient():Client { return this._messagingClient; }
+	_messaging:Messaging.Service;
 
 	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
 	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
@@ -97,6 +74,8 @@ export class Class extends AbstractContext.Class {
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
+
+		this._messaging = new Messaging.Service( this );
 	}
 
 	/**
@@ -116,46 +95,12 @@ export class Class extends AbstractContext.Class {
 	connectMessaging( options:Messaging.Options, onConnect:() => void, onError?:( error:Error ) => void ):void;
 	connectMessaging( onConnect:() => void, onError?:( error:Error ) => void ):void;
 	connectMessaging( optionsOrOnConnect:Messaging.Options | ( () => void ), onConnectOrOnError?:( () => void ) | ( ( error:Error ) => void ), onError?:( error:Error ) => void ):void {
-		if( ! onError ) onError = onConnectOrOnError;
-		if( this._messagingClient ) {
-			const error:Error = new Errors.IllegalStateError( "The messaging service is already connected." );
-			if( onError ) onError( error );
-			throw error;
+		if( Utils.isFunction( optionsOrOnConnect ) ) {
+			this._messaging.connect( optionsOrOnConnect, onConnectOrOnError );
+		} else {
+			this._messaging.setOptions( optionsOrOnConnect );
+			this._messaging.connect( onConnectOrOnError as () => void, onError );
 		}
-
-		this._messagingOptions = {
-			maxReconnectAttempts: 10,
-			reconnectDelay: 1000,
-			...Utils.isObject( optionsOrOnConnect ) ? optionsOrOnConnect : {},
-		};
-
-		const onConnect:() => void = Utils.isFunction( optionsOrOnConnect ) ? optionsOrOnConnect : onConnectOrOnError as () => void;
-		onError = onConnectOrOnError ? onConnectOrOnError : ( error:Error ):void => {
-			// TODO: Broadcast the error
-		};
-
-		const sock:SockJS.Socket = new SockJS( this.resolve( "/broker" ) );
-		this._messagingClient = webstomp.over( sock, {
-			protocols: webstomp.VERSIONS.supportedProtocols(),
-			debug: false,
-			heartbeat: false,
-			binary: false,
-		} );
-		this._messagingClient.connect( {}, () => {
-			onConnect.call( void 0 );
-		}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
-			let errorMessage:string;
-			if( isCloseError( errorFrameOrEvent ) ) {
-				// TODO: Detect connection error to reconnect messaging
-				this._messagingClient = null;
-				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
-			} else if( isFrameError( errorFrameOrEvent ) ) {
-				errorMessage = `${ errorFrameOrEvent.headers[ "message" ]}: ${ errorFrameOrEvent.body.trim() }`;
-			} else {
-				errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
-			}
-			onError( new Error( errorMessage ) );
-		} );
 	}
 
 	private getDocumentMetadata<T>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {
@@ -167,14 +112,6 @@ export class Class extends AbstractContext.Class {
 			.then( metadataURI => this.documents.get<T>( metadataURI ) )
 			.then( ( [ metadataDocument ] ) => metadataDocument );
 	}
-}
-
-function isCloseError( object:any ):object is CloseEvent {
-	return "reason" in object;
-}
-
-function isFrameError( object:any ):object is Frame {
-	return "body" in object;
 }
 
 export default Class;

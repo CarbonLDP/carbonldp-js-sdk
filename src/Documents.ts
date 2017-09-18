@@ -1,12 +1,11 @@
 import { QueryClause } from "sparqler/Clauses";
-import { Subscription } from "webstomp-client";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
-import { promiseMethod, UUID } from "./Utils";
+import { promiseMethod } from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -21,7 +20,7 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as Messaging from "./Messaging";
-import { createDestination, parseURIPattern, validateEventContext, validateEventType } from "./Messaging/utils";
+import { createDestination, validateEventContext, validateEventType } from "./Messaging/utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
@@ -51,9 +50,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	// Tracks the documents that are being resolved to avoid triggering repeated requests
 	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
 
-	private _subscriptionsMap:Map<string, Map<Function, string>>;
-	private _subscriptionsQueue:Function[];
-
 	constructor( context?:Context ) {
 		this.context = context;
 
@@ -80,8 +76,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 
 		this._documentDecorators = decorators;
-		this._subscriptionsMap = new Map();
-		this._subscriptionsQueue = [];
 	}
 
 	inScope( pointer:Pointer.Class ):boolean;
@@ -809,35 +803,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			validateEventContext( this.context );
 			validateEventType( eventType );
 
-			const destination:string = createDestination( eventType, this.context.resolve( uriPattern ), this.context.baseURI || "" );
-			const context:Carbon = this.context as Carbon;
-
-			if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-			const callbacksMap:Map<Function, string> = this._subscriptionsMap.get( destination );
-
-			if( callbacksMap.has( onEvent ) ) return;
-			const subscriptionID:string = UUID.generate();
-			callbacksMap.set( onEvent, subscriptionID );
-
-			const subscribeTo:() => void = () => {
-				console.log( destination );
-				context.messagingClient.subscribe( destination, message => {
-					new JSONLD.Parser.Class()
-						.parse( message.body )
-						.then( onEvent )
-						.catch( onError );
-				}, { id: subscriptionID } );
-			};
-
-			if( context.messagingClient ) {
-				if( context.messagingClient.connected ) return subscribeTo();
-			} else {
-				context.connectMessaging( () => {
-					this._subscriptionsQueue.forEach( callback => callback() );
-					this._subscriptionsQueue.length = 0;
-				} );
-			}
-			this._subscriptionsQueue.push( subscribeTo );
+			const destination:string = createDestination( eventType, this.context.resolve( uriPattern ), this.context.baseURI );
+			(this.context as Carbon)._messaging.subscribe( destination, onEvent, onError );
 
 		} catch( error ) {
 			if( ! onError ) throw error;
@@ -850,19 +817,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			validateEventContext( this.context );
 			validateEventType( eventType );
 
-			const destination:string = createDestination( eventType, this.context.resolve( uriPattern ), this.context.baseURI || "" );
-			const context:Carbon = this.context as Carbon;
-
-			if( ! context.messagingClient ||
-				! this._subscriptionsMap.has( destination ) ||
-				! this._subscriptionsMap.get( destination ).has( onEvent )
-			) return;
-
-			const callbackMap:Map<Function, string> = this._subscriptionsMap.get( destination );
-			const subscriptionID:string = callbackMap.get( onEvent );
-			callbackMap.delete( onEvent );
-
-			context.messagingClient.unsubscribe( subscriptionID );
+			const destination:string = createDestination( eventType, this.context.resolve( uriPattern ), this.context.baseURI );
+			(this.context as Carbon)._messaging.unsubscribe( destination, onEvent );
 		} catch( error ) {
 			if( ! onError ) throw error;
 			onError( error );

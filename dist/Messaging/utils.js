@@ -2,12 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var URI_1 = require("../RDF/URI");
+var Service_1 = require("./Service");
 function validateEventContext(context) {
-    if (context &&
-        "connectMessaging" in context &&
-        "messagingClient" in context)
-        return;
-    throw new Errors_1.IllegalStateError("This instance does not support messaging events");
+    if (!context && context._messaging instanceof Service_1.default)
+        throw new Errors_1.IllegalStateError("This instance does not support messaging events");
 }
 exports.validateEventContext = validateEventContext;
 function validateEventType(eventType) {
