@@ -9725,42 +9725,43 @@ var Class = (function () {
     };
     Class.prototype.connect = function (onConnect, onError) {
         var _this = this;
-        try {
-            if (this._messagingClient)
-                throw new Errors_1.IllegalStateError("The messaging service is already connect" + (this._messagingClient.connected ? "ed" : "ing") + ".");
-            onError = onError ? onError : function (error) {
-            };
-            var sock = new SockJS(this.context.resolve("/broker"));
-            this._messagingClient = webstomp.over(sock, {
-                protocols: webstomp.VERSIONS.supportedProtocols(),
-                debug: false,
-                heartbeat: false,
-                binary: false,
-            });
-            this._messagingClient.connect({}, function () {
-                _this._subscriptionsQueue.forEach(function (callback) { return callback(); });
-                _this._subscriptionsQueue.length = 0;
-                onConnect();
-            }, function (errorFrameOrEvent) {
-                var errorMessage;
-                if (isCloseError(errorFrameOrEvent)) {
-                    _this._messagingClient = null;
-                    errorMessage = "CloseEventError: " + errorFrameOrEvent.reason;
-                }
-                else if (isFrameError(errorFrameOrEvent)) {
-                    errorMessage = errorFrameOrEvent.headers["message"] + ": " + errorFrameOrEvent.body.trim();
-                }
-                else {
-                    errorMessage = "Unknown error: " + errorFrameOrEvent;
-                }
-                throw new Error(errorMessage);
-            });
-        }
-        catch (error) {
+        if (this._messagingClient) {
+            var error = new Errors_1.IllegalStateError("The messaging service is already connect" + (this._messagingClient.connected ? "ed" : "ing") + ".");
             if (onError)
                 onError(error);
             throw error;
         }
+        onError = onError ? onError : function (error) {
+            _this._subscriptionsMap.forEach(function (callbacksMap) {
+                callbacksMap.forEach(function (subscription) { return subscription.errorCallback(error); });
+            });
+        };
+        var sock = new SockJS(this.context.resolve("/broker"));
+        this._messagingClient = webstomp.over(sock, {
+            protocols: webstomp.VERSIONS.supportedProtocols(),
+            debug: false,
+            heartbeat: false,
+            binary: false,
+        });
+        this._messagingClient.connect({}, function () {
+            _this._subscriptionsQueue.forEach(function (callback) { return callback(); });
+            _this._subscriptionsQueue.length = 0;
+            if (onConnect)
+                onConnect();
+        }, function (errorFrameOrEvent) {
+            var errorMessage;
+            if (isCloseError(errorFrameOrEvent)) {
+                _this._messagingClient = null;
+                errorMessage = "CloseEventError: " + errorFrameOrEvent.reason;
+            }
+            else if (isFrameError(errorFrameOrEvent)) {
+                errorMessage = errorFrameOrEvent.headers["message"] + ": " + errorFrameOrEvent.body.trim();
+            }
+            else {
+                errorMessage = "Unknown error: " + errorFrameOrEvent;
+            }
+            onError(new Error(errorMessage));
+        });
     };
     Class.prototype.subscribe = function (destination, onEvent, onError) {
         var _this = this;
@@ -9770,7 +9771,10 @@ var Class = (function () {
         if (callbacksMap.has(onEvent))
             return;
         var subscriptionID = Utils_1.UUID.generate();
-        callbacksMap.set(onEvent, subscriptionID);
+        callbacksMap.set(onEvent, {
+            id: subscriptionID,
+            errorCallback: onError,
+        });
         var subscribeTo = function () {
             _this._messagingClient.subscribe(destination, function (message) {
                 new Parser_1.default()
@@ -9784,7 +9788,7 @@ var Class = (function () {
                 return subscribeTo();
         }
         else {
-            this.connect(function () { });
+            this.connect();
         }
         this._subscriptionsQueue.push(subscribeTo);
     };
@@ -9794,7 +9798,7 @@ var Class = (function () {
         var callbackMap = this._subscriptionsMap.get(destination);
         if (!callbackMap.has(onEvent))
             return;
-        var subscriptionID = callbackMap.get(onEvent);
+        var subscriptionID = callbackMap.get(onEvent).id;
         callbackMap.delete(onEvent);
         if (callbackMap.size === 0)
             this._subscriptionsMap.delete(destination);

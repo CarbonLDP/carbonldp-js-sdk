@@ -13,6 +13,10 @@ declare module "webstomp-client" {
     }
 }
 export declare const DEFAULT_OPTIONS: Options;
+export interface Subscription {
+    id: string;
+    errorCallback: (error: Error) => void;
+}
 export declare class Class {
     private context;
     private _messagingOptions;
@@ -21,7 +25,7 @@ export declare class Class {
     private _subscriptionsQueue;
     constructor(context: Carbon);
     setOptions(options: Options): void;
-    connect(onConnect: () => void, onError?: (error: Error) => void): void;
+    connect(onConnect?: () => void, onError?: (error: Error) => void): void;
     subscribe(destination: string, onEvent: (data: RDFNode[]) => void, onError: (error: Error) => void): void;
     unsubscribe(destination: string, onEvent: (data: RDFNode[]) => void): void;
 }

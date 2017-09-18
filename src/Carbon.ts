@@ -92,9 +92,9 @@ export class Class extends AbstractContext.Class {
 		return this.getDocumentMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
 	}
 
-	connectMessaging( options:Messaging.Options, onConnect:() => void, onError?:( error:Error ) => void ):void;
-	connectMessaging( onConnect:() => void, onError?:( error:Error ) => void ):void;
-	connectMessaging( optionsOrOnConnect:Messaging.Options | ( () => void ), onConnectOrOnError?:( () => void ) | ( ( error:Error ) => void ), onError?:( error:Error ) => void ):void {
+	connectMessaging( options:Messaging.Options, onConnect:() => void, onError:( error:Error ) => void ):void;
+	connectMessaging( onConnect:() => void, onError:( error:Error ) => void ):void;
+	connectMessaging( optionsOrOnConnect:Messaging.Options | ( () => void ), onConnectOrOnError:( () => void ) | ( ( error:Error ) => void ), onError?:( error:Error ) => void ):void {
 		if( Utils.isFunction( optionsOrOnConnect ) ) {
 			this._messaging.connect( optionsOrOnConnect, onConnectOrOnError );
 		} else {

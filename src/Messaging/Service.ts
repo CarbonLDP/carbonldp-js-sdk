@@ -32,13 +32,18 @@ export const DEFAULT_OPTIONS:Options = {
 	reconnectDelay: 1000,
 };
 
+export interface Subscription {
+	id:string;
+	errorCallback:( error:Error ) => void;
+}
+
 export class Class {
 
 	private context:Carbon;
 
 	private _messagingOptions:Options;
 	private _messagingClient?:Client;
-	private _subscriptionsMap:Map<string, Map<Function, string>>;
+	private _subscriptionsMap:Map<string, Map<Function, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
 	constructor( context:Carbon ) {
@@ -55,52 +60,57 @@ export class Class {
 		};
 	}
 
-	connect( onConnect:() => void, onError?:( error:Error ) => void ):void {
-		try {
-			if( this._messagingClient ) throw new IllegalStateError( `The messaging service is already connect${ this._messagingClient.connected ? "ed" : "ing"}.` );
-
-			onError = onError ? onError : ( error:Error ):void => {
-				// TODO: Broadcast the error
-			};
-
-			const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
-			this._messagingClient = webstomp.over( sock, {
-				protocols: webstomp.VERSIONS.supportedProtocols(),
-				debug: false,
-				heartbeat: false,
-				binary: false,
-			} );
-
-			this._messagingClient.connect( {}, () => {
-				this._subscriptionsQueue.forEach( callback => callback() );
-				this._subscriptionsQueue.length = 0;
-				onConnect();
-			}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
-				let errorMessage:string;
-				if( isCloseError( errorFrameOrEvent ) ) {
-					// TODO: Detect connection error to reconnect messaging
-					this._messagingClient = null;
-					errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
-				} else if( isFrameError( errorFrameOrEvent ) ) {
-					errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
-				} else {
-					errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
-				}
-				throw new Error( errorMessage );
-			} );
-		} catch( error ) {
+	connect( onConnect?:() => void, onError?:( error:Error ) => void ):void {
+		if( this._messagingClient ) {
+			const error:Error = new IllegalStateError( `The messaging service is already connect${ this._messagingClient.connected ? "ed" : "ing"}.` );
 			if( onError ) onError( error );
 			throw error;
 		}
+
+		onError = onError ? onError : ( error:Error ):void => {
+			this._subscriptionsMap.forEach( callbacksMap => {
+				callbacksMap.forEach( subscription => subscription.errorCallback( error ) );
+			} );
+		};
+
+		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
+		this._messagingClient = webstomp.over( sock, {
+			protocols: webstomp.VERSIONS.supportedProtocols(),
+			debug: false,
+			heartbeat: false,
+			binary: false,
+		} );
+
+		this._messagingClient.connect( {}, () => {
+			this._subscriptionsQueue.forEach( callback => callback() );
+			this._subscriptionsQueue.length = 0;
+			if( onConnect ) onConnect();
+
+		}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
+			let errorMessage:string;
+			if( isCloseError( errorFrameOrEvent ) ) {
+				// TODO: Detect connection error to reconnect messaging
+				this._messagingClient = null;
+				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
+			} else if( isFrameError( errorFrameOrEvent ) ) {
+				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
+			} else {
+				errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
+			}
+			onError( new Error( errorMessage ) );
+		} );
 	}
 
 	subscribe( destination:string, onEvent:( data:RDFNode[] ) => void, onError:( error:Error ) => void ):void {
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-		const callbacksMap:Map<Function, string> = this._subscriptionsMap.get( destination );
+		const callbacksMap:Map<Function, Subscription> = this._subscriptionsMap.get( destination );
 
 		if( callbacksMap.has( onEvent ) ) return;
 		const subscriptionID:string = UUID.generate();
-		callbacksMap.set( onEvent, subscriptionID );
+		callbacksMap.set( onEvent, {
+			id: subscriptionID,
+			errorCallback: onError,
+		} );
 
 		const subscribeTo:() => void = () => {
 			this._messagingClient.subscribe( destination, message => {
@@ -114,7 +124,7 @@ export class Class {
 		if( this._messagingClient ) {
 			if( this._messagingClient.connected ) return subscribeTo();
 		} else {
-			this.connect( () => {} );
+			this.connect();
 		}
 		this._subscriptionsQueue.push( subscribeTo );
 	}
@@ -122,10 +132,10 @@ export class Class {
 	unsubscribe( destination:string, onEvent:( data:RDFNode[] ) => void ):void {
 		if( ! this._messagingClient || ! this._subscriptionsMap.has( destination ) ) return;
 
-		const callbackMap:Map<Function, string> = this._subscriptionsMap.get( destination );
+		const callbackMap:Map<Function, Subscription> = this._subscriptionsMap.get( destination );
 		if( ! callbackMap.has( onEvent ) ) return;
 
-		const subscriptionID:string = callbackMap.get( onEvent );
+		const subscriptionID:string = callbackMap.get( onEvent ).id;
 		callbackMap.delete( onEvent );
 
 		if( callbackMap.size === 0 ) this._subscriptionsMap.delete( destination );
