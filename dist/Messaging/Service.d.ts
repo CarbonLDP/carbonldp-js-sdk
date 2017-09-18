@@ -19,14 +19,18 @@ export interface Subscription {
 }
 export declare class Class {
     private context;
-    private _messagingOptions;
-    private _messagingClient?;
+    private _options;
+    private _attempts;
+    private _client?;
     private _subscriptionsMap;
     private _subscriptionsQueue;
     constructor(context: Carbon);
     setOptions(options: Options): void;
     connect(onConnect?: () => void, onError?: (error: Error) => void): void;
+    reconnect(onConnect: () => void, onError: (error: Error) => void): void;
     subscribe(destination: string, onEvent: (data: RDFNode[]) => void, onError: (error: Error) => void): void;
     unsubscribe(destination: string, onEvent: (data: RDFNode[]) => void): void;
+    private makeSubscription(id, destination, eventCallback, errorCallback);
+    private storeSubscriptions();
 }
 export default Class;

@@ -41,58 +41,72 @@ export class Class {
 
 	private context:Carbon;
 
-	private _messagingOptions:Options;
-	private _messagingClient?:Client;
-	private _subscriptionsMap:Map<string, Map<Function, Subscription>>;
+	private _options:Options;
+	private _attempts:number;
+	private _client?:Client;
+	private _subscriptionsMap:Map<string, Map<( data:RDFNode[] ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
 	constructor( context:Carbon ) {
 		this.context = context;
 		this._subscriptionsMap = new Map();
 		this._subscriptionsQueue = [];
-		this._messagingOptions = DEFAULT_OPTIONS;
+		this._options = DEFAULT_OPTIONS;
 	}
 
 	setOptions( options:Options ):void {
-		this._messagingOptions = {
+		this._options = {
 			...DEFAULT_OPTIONS,
 			...options,
 		};
 	}
 
 	connect( onConnect?:() => void, onError?:( error:Error ) => void ):void {
-		if( this._messagingClient ) {
-			const error:Error = new IllegalStateError( `The messaging service is already connect${ this._messagingClient.connected ? "ed" : "ing"}.` );
+		if( this._client ) {
+			const error:Error = new IllegalStateError( `The messaging service is already connect${ this._client.connected ? "ed" : "ing"}.` );
 			if( onError ) onError( error );
 			throw error;
 		}
 
 		onError = onError ? onError : ( error:Error ):void => {
-			this._subscriptionsMap.forEach( callbacksMap => {
-				callbacksMap.forEach( subscription => subscription.errorCallback( error ) );
-			} );
+			this._subscriptionsMap.forEach( callbacksMap => callbacksMap.forEach( subscription => {
+				subscription.errorCallback( error );
+			} ) );
 		};
 
+		this._attempts = 0;
+		this.reconnect( onConnect, onError );
+	}
+
+	reconnect( onConnect:() => void, onError:( error:Error ) => void ):void {
 		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
-		this._messagingClient = webstomp.over( sock, {
+		this._client = webstomp.over( sock, {
 			protocols: webstomp.VERSIONS.supportedProtocols(),
 			debug: false,
 			heartbeat: false,
 			binary: false,
 		} );
 
-		this._messagingClient.connect( {}, () => {
+		this._client.connect( {}, () => {
 			this._subscriptionsQueue.forEach( callback => callback() );
 			this._subscriptionsQueue.length = 0;
+			this._attempts = 0;
 			if( onConnect ) onConnect();
 
 		}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
+			const canReconnect:boolean = this._options.maxReconnectAttempts === null || this._options.maxReconnectAttempts >= this._attempts;
 			let errorMessage:string;
 			if( isCloseError( errorFrameOrEvent ) ) {
-				// TODO: Detect connection error to reconnect messaging
-				this._messagingClient = null;
+				if( canReconnect ) {
+					if( ++ this._attempts === 1 ) this.storeSubscriptions();
+					setTimeout( () => this.reconnect( onConnect, onError ), this._options.reconnectDelay );
+					return;
+				}
+				this._client = null;
+				this._subscriptionsQueue.length = 0;
 				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
 			} else if( isFrameError( errorFrameOrEvent ) ) {
+				if( ! this._client.connected && canReconnect ) return;
 				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
 			} else {
 				errorMessage = `Unknown error: ${ errorFrameOrEvent }`;
@@ -103,7 +117,7 @@ export class Class {
 
 	subscribe( destination:string, onEvent:( data:RDFNode[] ) => void, onError:( error:Error ) => void ):void {
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-		const callbacksMap:Map<Function, Subscription> = this._subscriptionsMap.get( destination );
+		const callbacksMap:Map<( data:RDFNode[] ) => void, Subscription> = this._subscriptionsMap.get( destination );
 
 		if( callbacksMap.has( onEvent ) ) return;
 		const subscriptionID:string = UUID.generate();
@@ -112,27 +126,16 @@ export class Class {
 			errorCallback: onError,
 		} );
 
-		const subscribeTo:() => void = () => {
-			this._messagingClient.subscribe( destination, message => {
-				new JSONLDParser()
-					.parse( message.body )
-					.then( onEvent )
-					.catch( onError );
-			}, { id: subscriptionID } );
-		};
-
-		if( this._messagingClient ) {
-			if( this._messagingClient.connected ) return subscribeTo();
-		} else {
-			this.connect();
-		}
+		const subscribeTo:() => void = this.makeSubscription( subscriptionID, destination, onEvent, onError );
+		if( ! this._client ) this.connect();
+		if( this._client.connected ) return subscribeTo();
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
 	unsubscribe( destination:string, onEvent:( data:RDFNode[] ) => void ):void {
-		if( ! this._messagingClient || ! this._subscriptionsMap.has( destination ) ) return;
+		if( ! this._client || ! this._subscriptionsMap.has( destination ) ) return;
 
-		const callbackMap:Map<Function, Subscription> = this._subscriptionsMap.get( destination );
+		const callbackMap:Map<( data:RDFNode[] ) => void, Subscription> = this._subscriptionsMap.get( destination );
 		if( ! callbackMap.has( onEvent ) ) return;
 
 		const subscriptionID:string = callbackMap.get( onEvent ).id;
@@ -140,7 +143,24 @@ export class Class {
 
 		if( callbackMap.size === 0 ) this._subscriptionsMap.delete( destination );
 
-		this._messagingClient.unsubscribe( subscriptionID );
+		this._client.unsubscribe( subscriptionID );
+	}
+
+	private makeSubscription( id:string, destination:string, eventCallback:( data:RDFNode[] ) => void, errorCallback:( error:Error ) => void ):() => void {
+		return () => this._client.subscribe( destination, message => {
+			new JSONLDParser()
+				.parse( message.body )
+				.then( eventCallback )
+				.catch( errorCallback );
+		}, { id } );
+	}
+
+	private storeSubscriptions():void {
+		if( this._subscriptionsQueue.length ) return;
+		this._subscriptionsMap.forEach( ( callbackMap, destination ) => callbackMap.forEach( ( subscription, eventCallback ) => {
+			const subscribeTo:() => void = this.makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
+			this._subscriptionsQueue.push( subscribeTo );
+		} ) );
 	}
 
 }
