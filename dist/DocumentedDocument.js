@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = require("./Utils");
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (document) {
-        return document.hasOwnProperty("_documents");
+    Factory.hasClassProperties = function (object) {
+        return Utils_1.isObject(object)
+            && object.hasOwnProperty("_documents");
     };
     Factory.decorate = function (document, documents) {
         if (Factory.hasClassProperties(document))

@@ -4,7 +4,7 @@ export interface Class extends Document {
     _documents: Documents;
 }
 export declare class Factory {
-    static hasClassProperties(document: Document): document is Class;
+    static hasClassProperties(object: object): object is Class;
     static decorate<T extends Document>(document: T, documents: Documents): T & Class;
 }
 export default Class;

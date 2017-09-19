@@ -398,8 +398,7 @@ function sparql():QueryClause {
 
 export class Factory {
 	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "_documents" )
-			&& Utils.hasPropertyDefined( object, "_etag" )
+		return Utils.hasPropertyDefined( object, "_etag" )
 
 			&& Utils.hasFunction( object, "refresh" )
 			&& Utils.hasFunction( object, "save" )
@@ -439,7 +438,9 @@ export class Factory {
 
 	static is( object:Object ):object is Class {
 		return Document.Factory.is( object )
-			&& Factory.hasClassProperties( object );
+			&& Factory.hasClassProperties( object )
+			&& MessagingDocument.Factory.hasClassProperties( object )
+		;
 	}
 
 	static create( uri:string, documents:Documents, snapshot:Object = {} ):Class {

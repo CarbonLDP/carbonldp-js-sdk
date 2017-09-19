@@ -4369,8 +4369,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "_documents")
-            && Utils.hasPropertyDefined(object, "_etag")
+        return Utils.hasPropertyDefined(object, "_etag")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
@@ -4403,7 +4402,8 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Document.Factory.is(object)
-            && Factory.hasClassProperties(object);
+            && Factory.hasClassProperties(object)
+            && MessagingDocument.Factory.hasClassProperties(object);
     };
     Factory.create = function (uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
@@ -14208,11 +14208,13 @@ function parsePointer(element) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = __webpack_require__(0);
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (document) {
-        return document.hasOwnProperty("_documents");
+    Factory.hasClassProperties = function (object) {
+        return Utils_1.isObject(object)
+            && object.hasOwnProperty("_documents");
     };
     Factory.decorate = function (document, documents) {
         if (Factory.hasClassProperties(document))
