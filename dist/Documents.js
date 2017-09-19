@@ -703,11 +703,11 @@ var Class = (function () {
         }
         return builder;
     };
-    Class.prototype.on = function (eventType, uriPattern, onEvent, onError) {
+    Class.prototype.on = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(eventType);
-            var destination = utils_1.createDestination(eventType, this.context.resolve(uriPattern), this.context.baseURI);
+            utils_1.validateEventType(event);
+            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
             this.context._messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -716,11 +716,11 @@ var Class = (function () {
             onError(error);
         }
     };
-    Class.prototype.off = function (eventType, uriPattern, onEvent, onError) {
+    Class.prototype.off = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(eventType);
-            var destination = utils_1.createDestination(eventType, this.context.resolve(uriPattern), this.context.baseURI);
+            utils_1.validateEventType(event);
+            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
             this.context._messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -729,33 +729,33 @@ var Class = (function () {
             onError(error);
         }
     };
-    Class.prototype.one = function (eventType, uriPattern, onEvent, onError) {
+    Class.prototype.one = function (event, uriPattern, onEvent, onError) {
         var _this = this;
-        this.on(eventType, uriPattern, function (data) {
+        this.on(event, uriPattern, function (data) {
             onEvent(data);
-            _this.off(eventType, uriPattern, onEvent, onError);
+            _this.off(event, uriPattern, onEvent, onError);
         }, onError);
     };
     Class.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.DOCUMENT_CREATED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError);
     };
     Class.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.CHILD_CREATED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError);
     };
     Class.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
     };
     Class.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
     };
     Class.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.DOCUMENT_DELETED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError);
     };
     Class.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.MEMBER_ADDED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError);
     };
     Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.MEMBER_REMOVED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Class.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);

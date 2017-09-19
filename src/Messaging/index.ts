@@ -1,11 +1,11 @@
 import * as Document from "./Document";
-import Events from "./Events";
+import { Event } from "./Event";
 import Options from "./Options";
 import Service from "./Service";
 
 export {
 	Document,
-	Events,
+	Event,
 	Options,
 	Service,
 };

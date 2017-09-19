@@ -1,4 +1,4 @@
-export enum Events {
+export enum Event {
 	CHILD_CREATED = "child.created",
 	ACCESS_POINT_CREATED = "access-point.created",
 	DOCUMENT_CREATED = "*.created",
@@ -8,4 +8,4 @@ export enum Events {
 	MEMBER_REMOVED = "member.removed",
 }
 
-export default Events;
+export default Event;

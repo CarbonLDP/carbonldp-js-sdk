@@ -1,10 +1,10 @@
 import * as DocumentedDocument from "../DocumentedDocument";
 import * as RDFNode from "../RDF/Node";
-import { Events } from "./Events";
+import { Event } from "./Event";
 export interface Class extends DocumentedDocument.Class {
-    on(eventType: Events | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
-    off(eventType: Events | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
-    one(eventType: Events | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
+    on(event: Event | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
+    off(event: Event | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
+    one(event: Event | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
     onDocumentCreated(onEvent: (data: RDFNode.Class[], onError: (error: Error) => void) => void): void;
     onChildCreated(onEvent: (data: RDFNode.Class[], onError: (error: Error) => void) => void): void;
     onAccessPointCreated(onEvent: (data: RDFNode.Class[], onError: (error: Error) => void) => void): void;

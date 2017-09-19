@@ -798,12 +798,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return builder;
 	}
 
-	on( eventType:Messaging.Events | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	on( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
-			validateEventType( eventType );
+			validateEventType( event );
 
-			const destination:string = createDestination( eventType, this.context.resolve( uriPattern ), this.context.baseURI );
+			const destination:string = createDestination( event, this.context.resolve( uriPattern ), this.context.baseURI );
 			(this.context as Carbon)._messaging.subscribe( destination, onEvent, onError );
 
 		} catch( error ) {
@@ -812,12 +812,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	off( eventType:Messaging.Events | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	off( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
-			validateEventType( eventType );
+			validateEventType( event );
 
-			const destination:string = createDestination( eventType, this.context.resolve( uriPattern ), this.context.baseURI );
+			const destination:string = createDestination( event, this.context.resolve( uriPattern ), this.context.baseURI );
 			(this.context as Carbon)._messaging.unsubscribe( destination, onEvent );
 		} catch( error ) {
 			if( ! onError ) throw error;
@@ -825,39 +825,39 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	one( eventType:Messaging.Events | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		this.on( eventType, uriPattern, data => {
+	one( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		this.on( event, uriPattern, data => {
 			onEvent( data );
-			this.off( eventType, uriPattern, onEvent, onError );
+			this.off( event, uriPattern, onEvent, onError );
 		}, onError );
 	}
 
 	onDocumentCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
 	}
 
 	onChildCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.CHILD_CREATED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError );
 	}
 
 	onAccessPointCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
 	}
 
 	onDocumentModified( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
 	}
 
 	onDocumentDeleted( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
 	}
 
 	onMemberAdded( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.MEMBER_ADDED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError );
 	}
 
 	onMemberRemoved( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		return this.on( Messaging.Events.MEMBER_REMOVED, uriPattern, onEvent, onError );
+		return this.on( Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 	}
 
 	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):T & PersistedDocument.Class {

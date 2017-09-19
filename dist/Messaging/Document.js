@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("../Utils");
-function on(eventType, onEvent, onError) {
-    return this._documents.on(eventType, this.id, onEvent, onError);
+function on(event, onEvent, onError) {
+    return this._documents.on(event, this.id, onEvent, onError);
 }
-function off(eventType, onEvent, onError) {
-    return this._documents.off(eventType, this.id, onEvent, onError);
+function off(event, onEvent, onError) {
+    return this._documents.off(event, this.id, onEvent, onError);
 }
-function one(eventType, onEvent, onError) {
-    return this._documents.one(eventType, this.id, onEvent, onError);
+function one(event, onEvent, onError) {
+    return this._documents.one(event, this.id, onEvent, onError);
 }
 function onDocumentCreated(onEvent, onError) {
     return this._documents.onDocumentCreated(this.id, onEvent, onError);

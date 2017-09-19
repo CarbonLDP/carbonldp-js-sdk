@@ -7506,11 +7506,11 @@ var Class = (function () {
         }
         return builder;
     };
-    Class.prototype.on = function (eventType, uriPattern, onEvent, onError) {
+    Class.prototype.on = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(eventType);
-            var destination = utils_1.createDestination(eventType, this.context.resolve(uriPattern), this.context.baseURI);
+            utils_1.validateEventType(event);
+            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
             this.context._messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -7519,11 +7519,11 @@ var Class = (function () {
             onError(error);
         }
     };
-    Class.prototype.off = function (eventType, uriPattern, onEvent, onError) {
+    Class.prototype.off = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(eventType);
-            var destination = utils_1.createDestination(eventType, this.context.resolve(uriPattern), this.context.baseURI);
+            utils_1.validateEventType(event);
+            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
             this.context._messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -7532,33 +7532,33 @@ var Class = (function () {
             onError(error);
         }
     };
-    Class.prototype.one = function (eventType, uriPattern, onEvent, onError) {
+    Class.prototype.one = function (event, uriPattern, onEvent, onError) {
         var _this = this;
-        this.on(eventType, uriPattern, function (data) {
+        this.on(event, uriPattern, function (data) {
             onEvent(data);
-            _this.off(eventType, uriPattern, onEvent, onError);
+            _this.off(event, uriPattern, onEvent, onError);
         }, onError);
     };
     Class.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.DOCUMENT_CREATED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError);
     };
     Class.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.CHILD_CREATED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError);
     };
     Class.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
     };
     Class.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
     };
     Class.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.DOCUMENT_DELETED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError);
     };
     Class.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.MEMBER_ADDED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError);
     };
     Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Events.MEMBER_REMOVED, uriPattern, onEvent, onError);
+        return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Class.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);
@@ -9338,14 +9338,14 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = __webpack_require__(0);
-function on(eventType, onEvent, onError) {
-    return this._documents.on(eventType, this.id, onEvent, onError);
+function on(event, onEvent, onError) {
+    return this._documents.on(event, this.id, onEvent, onError);
 }
-function off(eventType, onEvent, onError) {
-    return this._documents.off(eventType, this.id, onEvent, onError);
+function off(event, onEvent, onError) {
+    return this._documents.off(event, this.id, onEvent, onError);
 }
-function one(eventType, onEvent, onError) {
-    return this._documents.one(eventType, this.id, onEvent, onError);
+function one(event, onEvent, onError) {
+    return this._documents.one(event, this.id, onEvent, onError);
 }
 function onDocumentCreated(onEvent, onError) {
     return this._documents.onDocumentCreated(this.id, onEvent, onError);
@@ -9683,8 +9683,8 @@ exports.SCHEMA = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __webpack_require__(79);
 exports.Document = Document;
-var Events_1 = __webpack_require__(172);
-exports.Events = Events_1.default;
+var Event_1 = __webpack_require__(172);
+exports.Event = Event_1.Event;
 var Service_1 = __webpack_require__(85);
 exports.Service = Service_1.default;
 
@@ -14677,17 +14677,17 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Events;
-(function (Events) {
-    Events["CHILD_CREATED"] = "child.created";
-    Events["ACCESS_POINT_CREATED"] = "access-point.created";
-    Events["DOCUMENT_CREATED"] = "*.created";
-    Events["DOCUMENT_MODIFIED"] = "document.modified";
-    Events["DOCUMENT_DELETED"] = "document.deleted";
-    Events["MEMBER_ADDED"] = "member.added";
-    Events["MEMBER_REMOVED"] = "member.removed";
-})(Events = exports.Events || (exports.Events = {}));
-exports.default = Events;
+var Event;
+(function (Event) {
+    Event["CHILD_CREATED"] = "child.created";
+    Event["ACCESS_POINT_CREATED"] = "access-point.created";
+    Event["DOCUMENT_CREATED"] = "*.created";
+    Event["DOCUMENT_MODIFIED"] = "document.modified";
+    Event["DOCUMENT_DELETED"] = "document.deleted";
+    Event["MEMBER_ADDED"] = "member.added";
+    Event["MEMBER_REMOVED"] = "member.removed";
+})(Event = exports.Event || (exports.Event = {}));
+exports.default = Event;
 
 
 /***/ }),

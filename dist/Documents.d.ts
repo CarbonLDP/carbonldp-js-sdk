@@ -82,9 +82,9 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     sparql(documentURI: string): QueryClause;
-    on(eventType: Messaging.Events | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
-    off(eventType: Messaging.Events | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
-    one(eventType: Messaging.Events | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    on(event: Messaging.Event | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    off(event: Messaging.Event | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
+    one(event: Messaging.Event | string, uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
     onDocumentCreated(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
     onChildCreated(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
     onAccessPointCreated(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;

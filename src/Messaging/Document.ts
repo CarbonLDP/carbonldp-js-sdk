@@ -1,14 +1,14 @@
 import * as DocumentedDocument from "../DocumentedDocument";
 import * as RDFNode from "../RDF/Node";
 import { hasFunction, isObject } from "../Utils";
-import { Events } from "./Events";
+import { Event } from "./Event";
 
 export interface Class extends DocumentedDocument.Class {
-	on( eventType:Events | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void;
+	on( event:Event | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void;
 
-	off( eventType:Events | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void;
+	off( event:Event | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void;
 
-	one( eventType:Events | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void;
+	one( event:Event | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void;
 
 	onDocumentCreated( onEvent:( data:RDFNode.Class[], onError:( error:Error ) => void ) => void ):void;
 
@@ -25,16 +25,16 @@ export interface Class extends DocumentedDocument.Class {
 	onMemberRemoved( onEvent:( data:RDFNode.Class[], onError:( error:Error ) => void ) => void ):void;
 }
 
-function on( this:Class, eventType:Events | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
-	return this._documents.on( eventType, this.id, onEvent, onError );
+function on( this:Class, event:Event | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
+	return this._documents.on( event, this.id, onEvent, onError );
 }
 
-function off( this:Class, eventType:Events | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
-	return this._documents.off( eventType, this.id, onEvent, onError );
+function off( this:Class, event:Event | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
+	return this._documents.off( event, this.id, onEvent, onError );
 }
 
-function one( this:Class, eventType:Events | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
-	return this._documents.one( eventType, this.id, onEvent, onError );
+function one( this:Class, event:Event | string, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
+	return this._documents.one( event, this.id, onEvent, onError );
 }
 
 function onDocumentCreated( this:Class, onEvent:( data:RDFNode.Class[] ) => void, onError:( error:Error ) => void ):void {
