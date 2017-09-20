@@ -202,7 +202,7 @@ var MarkdownReporter = (() => {
 				break;
 
 			default:
-				name = name.replace( " ", "-" );
+				return null;
 		}
 
 		return parent[ name ] || ( parent[ name ] = suite );
@@ -338,6 +338,8 @@ var MarkdownReporter = (() => {
 		for( let key of Object.keys( specs ) ) {
 			data = parseData( key );
 			container = getContainer( parent, data, true );
+			if( container === null ) continue;
+
 			for( let spec of specs[ key ]._ ) {
 				data = parseData( spec );
 				getContainer( container, data, false );

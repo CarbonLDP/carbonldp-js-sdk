@@ -1,8 +1,8 @@
 import * as Document from "./Document";
 import * as DocumentedDocument from "./DocumentedDocument";
+import DefaultExport from "./DocumentedDocument";
 import * as Documents from "./Documents";
 import { clazz, extendsClass, hasDefaultExport, hasMethod, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "./test/JasmineExtender";
-import DefaultExport from "./DocumentedDocument";
 
 describe( module( "Carbon/DocumentedDocument" ), ():void => {
 
@@ -33,9 +33,13 @@ describe( module( "Carbon/DocumentedDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object has the specific properties of the `Carbon.DocumentedDocument.Class` interface."
+			"Returns true if the object has the specific properties of the `Carbon.DocumentedDocument.Class` interface.",
+			[
+				{ name: "object", type: "object", description: "The object to be tested." },
+			],
+			{ type: "boolean" }
 		), ():void => {
-			expect( DocumentedDocument.Factory.hasClassProperties );
+			expect( DocumentedDocument.Factory.hasClassProperties ).toBeDefined();
 		} );
 
 		it( hasMethod(
@@ -46,9 +50,10 @@ describe( module( "Carbon/DocumentedDocument" ), ():void => {
 			[
 				{ name: "document", type: "T", description: "Document object to decorate." },
 				{ name: "documents", type: "Carbon.Documents.Class", description: "Documents instance where the provided document will belong to." },
-			]
+			],
+			{ type: "T & Carbon.DocumentedDocument.Class" }
 		), ():void => {
-			expect( DocumentedDocument.Factory.decorate );
+			expect( DocumentedDocument.Factory.decorate ).toBeDefined();
 		} );
 
 	} );
