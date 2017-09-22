@@ -7509,8 +7509,7 @@ var Class = (function () {
     Class.prototype.on = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(event);
-            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
+            var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
             this.context._messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -7522,8 +7521,7 @@ var Class = (function () {
     Class.prototype.off = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(event);
-            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
+            var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
             this.context._messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -18448,18 +18446,18 @@ var Errors_1 = __webpack_require__(3);
 var URI_1 = __webpack_require__(17);
 var Service_1 = __webpack_require__(85);
 function validateEventContext(context) {
-    if (!context && context._messaging instanceof Service_1.default)
-        throw new Errors_1.IllegalStateError("This instance does not support messaging events");
+    if (!(context && context._messaging instanceof Service_1.default))
+        throw new Errors_1.IllegalStateError("This instance does not support messaging subscriptions.");
 }
 exports.validateEventContext = validateEventContext;
 function validateEventType(eventType) {
     if (!/(access-point|child|\*\.created|\*)|(document|\*\.modidied|deleted\*)|(member|\*\.added|removed|\*)/.test(eventType))
-        throw new Errors_1.IllegalArgumentError("Provided event type \"" + eventType + "\" is invalid");
+        throw new Errors_1.IllegalArgumentError("Provided event type \"" + eventType + "\" is invalid.");
 }
 exports.validateEventType = validateEventType;
 function parseURIPattern(uriPattern, baseURI) {
     if (!URI_1.Util.isBaseOf(baseURI, uriPattern))
-        throw new Errors_1.IllegalArgumentError("Provided uriPattern \"" + uriPattern + "\" an invalid Carbon URI");
+        throw new Errors_1.IllegalArgumentError("Provided uriPattern \"" + uriPattern + "\" is an invalid for your Carbon instance.");
     if (uriPattern === "/")
         return "";
     uriPattern = URI_1.Util.getRelativeURI(uriPattern, baseURI);
@@ -18470,13 +18468,14 @@ function parseURIPattern(uriPattern, baseURI) {
         if (slug === "**")
             return "#";
         return encodeURIComponent(slug)
-            .replace(".", "^");
+            .replace(/\./g, "^");
     }).join(".");
 }
 exports.parseURIPattern = parseURIPattern;
-function createDestination(eventType, uriPattern, baseURI) {
+function createDestination(event, uriPattern, baseURI) {
+    validateEventType(event);
     uriPattern = parseURIPattern(uriPattern, baseURI);
-    return "/topic/" + eventType + (uriPattern ? "." + uriPattern : uriPattern);
+    return "/topic/" + event + (uriPattern ? "." + uriPattern : uriPattern);
 }
 exports.createDestination = createDestination;
 

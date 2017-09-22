@@ -706,8 +706,7 @@ var Class = (function () {
     Class.prototype.on = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(event);
-            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
+            var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
             this.context._messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -719,8 +718,7 @@ var Class = (function () {
     Class.prototype.off = function (event, uriPattern, onEvent, onError) {
         try {
             utils_1.validateEventContext(this.context);
-            utils_1.validateEventType(event);
-            var destination = utils_1.createDestination(event, this.context.resolve(uriPattern), this.context.baseURI);
+            var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
             this.context._messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {

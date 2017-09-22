@@ -4,18 +4,18 @@ var Errors_1 = require("../Errors");
 var URI_1 = require("../RDF/URI");
 var Service_1 = require("./Service");
 function validateEventContext(context) {
-    if (!context && context._messaging instanceof Service_1.default)
-        throw new Errors_1.IllegalStateError("This instance does not support messaging events");
+    if (!(context && context._messaging instanceof Service_1.default))
+        throw new Errors_1.IllegalStateError("This instance does not support messaging subscriptions.");
 }
 exports.validateEventContext = validateEventContext;
 function validateEventType(eventType) {
     if (!/(access-point|child|\*\.created|\*)|(document|\*\.modidied|deleted\*)|(member|\*\.added|removed|\*)/.test(eventType))
-        throw new Errors_1.IllegalArgumentError("Provided event type \"" + eventType + "\" is invalid");
+        throw new Errors_1.IllegalArgumentError("Provided event type \"" + eventType + "\" is invalid.");
 }
 exports.validateEventType = validateEventType;
 function parseURIPattern(uriPattern, baseURI) {
     if (!URI_1.Util.isBaseOf(baseURI, uriPattern))
-        throw new Errors_1.IllegalArgumentError("Provided uriPattern \"" + uriPattern + "\" an invalid Carbon URI");
+        throw new Errors_1.IllegalArgumentError("Provided uriPattern \"" + uriPattern + "\" is an invalid for your Carbon instance.");
     if (uriPattern === "/")
         return "";
     uriPattern = URI_1.Util.getRelativeURI(uriPattern, baseURI);
@@ -26,13 +26,14 @@ function parseURIPattern(uriPattern, baseURI) {
         if (slug === "**")
             return "#";
         return encodeURIComponent(slug)
-            .replace(".", "^");
+            .replace(/\./g, "^");
     }).join(".");
 }
 exports.parseURIPattern = parseURIPattern;
-function createDestination(eventType, uriPattern, baseURI) {
+function createDestination(event, uriPattern, baseURI) {
+    validateEventType(event);
     uriPattern = parseURIPattern(uriPattern, baseURI);
-    return "/topic/" + eventType + (uriPattern ? "." + uriPattern : uriPattern);
+    return "/topic/" + event + (uriPattern ? "." + uriPattern : uriPattern);
 }
 exports.createDestination = createDestination;
 

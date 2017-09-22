@@ -801,11 +801,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	on( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
-			validateEventType( event );
-
-			const destination:string = createDestination( event, this.context.resolve( uriPattern ), this.context.baseURI );
+			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
 			(this.context as Carbon)._messaging.subscribe( destination, onEvent, onError );
-
 		} catch( error ) {
 			if( ! onError ) throw error;
 			onError( error );
@@ -815,9 +812,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	off( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
-			validateEventType( event );
-
-			const destination:string = createDestination( event, this.context.resolve( uriPattern ), this.context.baseURI );
+			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
 			(this.context as Carbon)._messaging.unsubscribe( destination, onEvent );
 		} catch( error ) {
 			if( ! onError ) throw error;
