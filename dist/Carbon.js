@@ -46,7 +46,7 @@ var Class = (function (_super) {
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
-        _this._messaging = new Messaging.Service(_this);
+        _this._messaging = new Messaging.Service.Class(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {

@@ -63,7 +63,7 @@ export class Class extends AbstractContext.Class {
 
 	protected _baseURI:string;
 
-	_messaging:Messaging.Service;
+	_messaging:Messaging.Service.Class;
 
 	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
 	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
@@ -75,7 +75,7 @@ export class Class extends AbstractContext.Class {
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this._messaging = new Messaging.Service( this );
+		this._messaging = new Messaging.Service.Class( this );
 	}
 
 	/**

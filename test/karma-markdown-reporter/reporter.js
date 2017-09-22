@@ -122,7 +122,14 @@ swag.registerHelpers( Handlebars );
 
 	Handlebars.registerHelper( "toURL", function( str ) {
 		if( typeof str !== "string" ) throw new Error( "toURL: An string was expected but received: " + str );
-		return str.replace( /\./g, "-" ).replace( /\//g, "-" ).replace( /#/g, "+" ).replace( /\(\)/, "" );
+
+		if( str.indexOf( "." ) === - 1 ) str = "Module/" + str;
+
+		return str
+			.replace( /\./g, "-" )
+			.replace( /\//g, "-" )
+			.replace( /#/g, "+" )
+			.replace( /\(\)/, "" );
 	} );
 
 })();

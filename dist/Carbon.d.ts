@@ -53,7 +53,7 @@ export declare class Class extends AbstractContext.Class {
     static readonly version: string;
     readonly version: string;
     protected _baseURI: string;
-    _messaging: Messaging.Service;
+    _messaging: Messaging.Service.Class;
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;

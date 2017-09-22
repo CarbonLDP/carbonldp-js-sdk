@@ -9,7 +9,7 @@ describe( module( "Carbon/Messaging/Event" ), ():void => {
 		expect( MessagingEvent ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( enumeration( "Carbon.Messaging.Event.Event" ), ():void => {
+	describe( enumeration( "Carbon.Messaging.Event" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( MessagingEvent.Event ).toBeDefined();
@@ -53,7 +53,7 @@ describe( module( "Carbon/Messaging/Event" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.Event.Event" ), ():void => {
+	it( hasDefaultExport( "Carbon.Messaging.Event" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( MessagingEvent.Event );
 	} );

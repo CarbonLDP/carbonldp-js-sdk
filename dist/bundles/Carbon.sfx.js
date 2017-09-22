@@ -9685,8 +9685,8 @@ var Document = __webpack_require__(79);
 exports.Document = Document;
 var Event_1 = __webpack_require__(172);
 exports.Event = Event_1.Event;
-var Service_1 = __webpack_require__(85);
-exports.Service = Service_1.default;
+var Service = __webpack_require__(85);
+exports.Service = Service;
 
 
 /***/ }),
@@ -11368,7 +11368,7 @@ var Class = (function (_super) {
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
-        _this._messaging = new Messaging.Service(_this);
+        _this._messaging = new Messaging.Service.Class(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {

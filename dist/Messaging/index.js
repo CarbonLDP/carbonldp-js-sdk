@@ -4,7 +4,7 @@ var Document = require("./Document");
 exports.Document = Document;
 var Event_1 = require("./Event");
 exports.Event = Event_1.Event;
-var Service_1 = require("./Service");
-exports.Service = Service_1.default;
+var Service = require("./Service");
+exports.Service = Service;
 
 //# sourceMappingURL=index.js.map

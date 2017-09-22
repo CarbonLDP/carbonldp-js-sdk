@@ -20,8 +20,8 @@
 {{else}}
 
 	<div class="ui basic inverted {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} segment">
-		<h1 class="ui header doc-header{{#if isModule}} doc-header_main{{/if}}{{#or isClass isInterface}} doc-header_main{{/or}}" id="SDKDocs-{{#if isModule}}Module-{{/if}}{{toURL path}}">
-			<a class="doc-header__link doc-header__main" href="#{{#if isModule}}Module-{{/if}}{{toURL path}}">{{name}}</a>
+		<h1 class="ui header doc-header{{#if isModule}} doc-header_main{{/if}}{{#or isClass isInterface}} doc-header_main{{/or}}" id="SDKDocs-{{toURL path}}">
+			<a class="doc-header__link doc-header__main" href="#{{toURL path}}">{{name}}</a>
 			<div class="doc-header__label">
 				<span class="ui large {{#if isModule}}grey{{/if}}{{#if isClass}}blue{{/if}}{{#if isInterface}}orange{{/if}} horizontal basic label">{{#if isModule}}Module{{/if}}{{#if isClass}}Class{{/if}}{{#if isInterface}}Interface{{/if}}</span>
 			</div>
