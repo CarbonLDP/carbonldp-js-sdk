@@ -20,7 +20,7 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as Messaging from "./Messaging";
-import { createDestination, validateEventContext, validateEventType } from "./Messaging/utils";
+import { createDestination, validateEventContext } from "./Messaging/utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
