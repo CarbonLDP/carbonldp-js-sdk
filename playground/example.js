@@ -66,9 +66,7 @@
 			Promise.resolve().then( () => {
 				fragment = { value: "a name" };
 				resource = { name: fragment };
-				let x;
-				carbon.documents.one( "*.*", "/**", x = ( data ) => {
-					carbon.documents.off( "*.*", "/**", x );
+				carbon.documents.one( "*.*", "/**", ( data ) => {
 					console.log( data );
 				}, ( error ) => {
 					console.error( error );

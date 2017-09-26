@@ -39,6 +39,7 @@ import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
 import * as MessagingUtils from "./Messaging/utils";
 import MessagingEvent from "./Messaging/Event";
+import MessagingService from "./Messaging/Service";
 
 import { QueryClause } from "sparqler/Clauses";
 
@@ -8924,10 +8925,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				const offSpy:jasmine.Spy = spyOn( carbon.documents, "off" );
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" )
-					.and.callFake( ( _event:string, _uriPattern:string, _onEvent:() => void ):void => _onEvent() );
+					.and.callFake( ( _event:string, _uriPattern:string, _onEvent:( data:any ) => void ):void => _onEvent( "I'm calling you!" ) );
 
-				const onEvent:( data:any ) => void = () => {
-					// Spy changes flow to sync, thus the assertions are in the end.
+				const onEvent:( data:any ) => void = ( data:any ) => {
+					expect( data ).toBe( "I'm calling you!" );
+					done();
 				};
 
 				const onError:( error:Error ) => void = () => {
@@ -8939,7 +8941,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 				carbon.documents.one( event, uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalled();
-				expect( offSpy ).toHaveBeenCalledWith( event, uriPattern, onEvent, onError );
+				expect( offSpy ).toHaveBeenCalledWith( event, uriPattern, jasmine.any( Function ), onError );
+			} );
+
+			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const subscribeSpy:jasmine.Spy = spyOn( carbon._messaging, "subscribe" )
+					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon._messaging, "unsubscribe" );
+
+				carbon.documents.one( "*.*", "resource/*", () => void 0, done.fail );
+
+				expect( subscribeSpy ).toHaveBeenCalled();
+				expect( unsubscribeSpy ).toHaveBeenCalled();
+
+				expect( subscribeSpy.calls.first().args )
+					.toEqual( jasmine.arrayContaining( unsubscribeSpy.calls.first().args ) );
 				done();
 			} );
 

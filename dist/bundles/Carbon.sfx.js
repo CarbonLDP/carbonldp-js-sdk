@@ -7338,10 +7338,10 @@ var Class = (function () {
         }
     };
     Class.prototype.one = function (event, uriPattern, onEvent, onError) {
-        var _this = this;
-        this.on(event, uriPattern, function (data) {
+        var self = this;
+        this.on(event, uriPattern, function onEventWrapper(data) {
             onEvent(data);
-            _this.off(event, uriPattern, onEvent, onError);
+            self.off(event, uriPattern, onEventWrapper, onError);
         }, onError);
     };
     Class.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {

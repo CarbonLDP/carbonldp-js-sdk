@@ -821,9 +821,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	one( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
-		this.on( event, uriPattern, data => {
+		const self:Class = this;
+		this.on( event, uriPattern, function onEventWrapper( data:RDF.Node.Class[] ):void {
 			onEvent( data );
-			this.off( event, uriPattern, onEvent, onError );
+			self.off( event, uriPattern, onEventWrapper, onError );
 		}, onError );
 	}
 
