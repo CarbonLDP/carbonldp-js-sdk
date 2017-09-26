@@ -32,7 +32,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"on",
 			"Subscribe to the specified document event notifications.",
 			[
-				{ name: "event", type: "Carbon.Messaging.Event", description: "The event to subscribe for its notifications." },
+				{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for its notifications." },
 				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 			]
@@ -46,7 +46,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"off",
 			"Remove a subscription that contains the document event and onEvent callback provided.",
 			[
-				{ name: "event", type: "Carbon.Messaging.Event", description: "The event of the subscription to remove." },
+				{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event of the subscription to remove." },
 				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 			]
@@ -60,7 +60,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"one",
 			"Subscribe to only one notification to the document event provided",
 			[
-				{ name: "event", type: "Carbon.Messaging.Event", description: "The event to subscribe for one notification." },
+				{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for one notification." },
 				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 			]
