@@ -20,7 +20,6 @@ exports.DEFAULT_OPTIONS = {
 var Class = (function () {
     function Class(context) {
         this.context = context;
-        this._subscriptionsMap = new Map();
         this._subscriptionsQueue = [];
         this._options = exports.DEFAULT_OPTIONS;
     }
@@ -28,23 +27,23 @@ var Class = (function () {
         this._options = __assign({}, exports.DEFAULT_OPTIONS, options);
     };
     Class.prototype.connect = function (onConnect, onError) {
-        var _this = this;
         if (this._client) {
             var error = new Errors_1.IllegalStateError("The messaging service is already connect" + (this._client.connected ? "ed" : "ing") + ".");
             if (onError)
                 onError(error);
             throw error;
         }
-        onError = onError ? onError : function (error) {
-            _this._subscriptionsMap.forEach(function (callbacksMap) { return callbacksMap.forEach(function (subscription) {
-                subscription.errorCallback(error);
-            }); });
-        };
-        this._attempts = 0;
         this.reconnect(onConnect, onError);
     };
     Class.prototype.reconnect = function (onConnect, onError) {
         var _this = this;
+        if (onError === void 0) { onError = this.broadcastError; }
+        if (!this._client)
+            this._attempts = 0;
+        if (!this._subscriptionsMap)
+            this._subscriptionsMap = new Map();
+        else
+            this._subscriptionsMap.clear();
         var sock = new SockJS(this.context.resolve("/broker"));
         this._client = webstomp.over(sock, {
             protocols: webstomp.VERSIONS.supportedProtocols(),
@@ -84,6 +83,8 @@ var Class = (function () {
         });
     };
     Class.prototype.subscribe = function (destination, onEvent, onError) {
+        if (!this._client)
+            this.connect();
         if (!this._subscriptionsMap.has(destination))
             this._subscriptionsMap.set(destination, new Map());
         var callbacksMap = this._subscriptionsMap.get(destination);
@@ -95,14 +96,12 @@ var Class = (function () {
             errorCallback: onError,
         });
         var subscribeTo = this.makeSubscription(subscriptionID, destination, onEvent, onError);
-        if (!this._client)
-            this.connect();
         if (this._client.connected)
             return subscribeTo();
         this._subscriptionsQueue.push(subscribeTo);
     };
     Class.prototype.unsubscribe = function (destination, onEvent) {
-        if (!this._client || !this._subscriptionsMap.has(destination))
+        if (!this._client || !this._subscriptionsMap || !this._subscriptionsMap.has(destination))
             return;
         var callbackMap = this._subscriptionsMap.get(destination);
         if (!callbackMap.has(onEvent))
@@ -112,6 +111,13 @@ var Class = (function () {
         if (callbackMap.size === 0)
             this._subscriptionsMap.delete(destination);
         this._client.unsubscribe(subscriptionID);
+    };
+    Class.prototype.broadcastError = function (error) {
+        if (!this._subscriptionsMap)
+            return;
+        this._subscriptionsMap.forEach(function (callbacksMap) { return callbacksMap.forEach(function (subscription) {
+            subscription.errorCallback(error);
+        }); });
     };
     Class.prototype.makeSubscription = function (id, destination, eventCallback, errorCallback) {
         var _this = this;
@@ -124,7 +130,7 @@ var Class = (function () {
     };
     Class.prototype.storeSubscriptions = function () {
         var _this = this;
-        if (this._subscriptionsQueue.length)
+        if (this._subscriptionsQueue.length || !this._subscriptionsMap)
             return;
         this._subscriptionsMap.forEach(function (callbackMap, destination) { return callbackMap.forEach(function (subscription, eventCallback) {
             var subscribeTo = _this.makeSubscription(subscription.id, destination, eventCallback, subscription.errorCallback);

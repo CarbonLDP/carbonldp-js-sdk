@@ -27,6 +27,11 @@ const webpack = require( "webpack" );
 
 const htmlMinifier = require( "gulp-htmlmin" );
 
+const moduleAlias = require( "module-alias" );
+const webpackStream = require( "webpack-stream" );
+const named = require( "vinyl-named" );
+const merge2 = require( "merge2" );
+
 let config = {
 	source: {
 		typescript: [
@@ -223,11 +228,26 @@ gulp.task( "test:debug", ( done ) => {
 } );
 
 gulp.task( "test:node", () => {
+	process.env.NODE_ENV = "test";
+
+	moduleAlias.addAliases( {
+		"sockjs-client": path.resolve( __dirname, "test/mock-sockjs.js" ),
+		"webstomp-client/src/frame.js": path.resolve( __dirname, "temp/node_modules/frame.js" ),
+	} );
+
+	let babelStream = gulp
+		.src( "node_modules/webstomp-client/src/frame.js" )
+		.pipe( named() )
+		.pipe( webpackStream( {
+			output: { libraryTarget: "umd" },
+		} ) )
+		.pipe( gulp.dest( path.resolve( config.dist.temp, "node_modules" ) ) );
+
 	let tsProject = ts.createProject( "tsconfig.json" );
-	let tsResults = gulp.src( config.source.all )
+	let tsResults = gulp.src( [ config.source.all ] )
 		.pipe( tsProject() );
 
-	let stream =  tsResults.js
+	const stream = merge2( babelStream, tsResults.js )
 		.pipe( gulp.dest( config.dist.temp ) )
 		.pipe( filter( config.source.test ) )
 		.pipe( jasmine( {

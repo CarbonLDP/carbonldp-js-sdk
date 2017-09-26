@@ -32,7 +32,7 @@ export const DEFAULT_OPTIONS:Options = {
 	reconnectDelay: 1000,
 };
 
-export interface Subscription {
+interface Subscription {
 	id:string;
 	errorCallback:( error:Error ) => void;
 }
@@ -49,7 +49,6 @@ export class Class {
 
 	constructor( context:Carbon ) {
 		this.context = context;
-		this._subscriptionsMap = new Map();
 		this._subscriptionsQueue = [];
 		this._options = DEFAULT_OPTIONS;
 	}
@@ -68,17 +67,14 @@ export class Class {
 			throw error;
 		}
 
-		onError = onError ? onError : ( error:Error ):void => {
-			this._subscriptionsMap.forEach( callbacksMap => callbacksMap.forEach( subscription => {
-				subscription.errorCallback( error );
-			} ) );
-		};
-
-		this._attempts = 0;
 		this.reconnect( onConnect, onError );
 	}
 
-	reconnect( onConnect:() => void, onError:( error:Error ) => void ):void {
+	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.broadcastError ):void {
+		if( ! this._client ) this._attempts = 0;
+		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
+		else this._subscriptionsMap.clear();
+
 		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
 		this._client = webstomp.over( sock, {
 			protocols: webstomp.VERSIONS.supportedProtocols(),
@@ -116,6 +112,7 @@ export class Class {
 	}
 
 	subscribe( destination:string, onEvent:( data:RDFNode[] ) => void, onError:( error:Error ) => void ):void {
+		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
 		const callbacksMap:Map<( data:RDFNode[] ) => void, Subscription> = this._subscriptionsMap.get( destination );
 
@@ -127,13 +124,12 @@ export class Class {
 		} );
 
 		const subscribeTo:() => void = this.makeSubscription( subscriptionID, destination, onEvent, onError );
-		if( ! this._client ) this.connect();
 		if( this._client.connected ) return subscribeTo();
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
 	unsubscribe( destination:string, onEvent:( data:RDFNode[] ) => void ):void {
-		if( ! this._client || ! this._subscriptionsMap.has( destination ) ) return;
+		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
 
 		const callbackMap:Map<( data:RDFNode[] ) => void, Subscription> = this._subscriptionsMap.get( destination );
 		if( ! callbackMap.has( onEvent ) ) return;
@@ -146,6 +142,13 @@ export class Class {
 		this._client.unsubscribe( subscriptionID );
 	}
 
+	private broadcastError( error:Error ):void {
+		if( ! this._subscriptionsMap ) return;
+		this._subscriptionsMap.forEach( callbacksMap => callbacksMap.forEach( subscription => {
+			subscription.errorCallback( error );
+		} ) );
+	}
+
 	private makeSubscription( id:string, destination:string, eventCallback:( data:RDFNode[] ) => void, errorCallback:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
@@ -156,7 +159,7 @@ export class Class {
 	}
 
 	private storeSubscriptions():void {
-		if( this._subscriptionsQueue.length ) return;
+		if( this._subscriptionsQueue.length || ! this._subscriptionsMap ) return;
 		this._subscriptionsMap.forEach( ( callbackMap, destination ) => callbackMap.forEach( ( subscription, eventCallback ) => {
 			const subscribeTo:() => void = this.makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
 			this._subscriptionsQueue.push( subscribeTo );

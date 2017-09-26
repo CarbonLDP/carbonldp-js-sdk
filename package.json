@@ -24,14 +24,14 @@
     "file-type": "^6.1.0",
     "sockjs-client": "^1.1.4",
     "sparqler": "0.2.0",
-    "webstomp-client": "^1.0.7"
+    "webstomp-client": "^1.0.8"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.5.54",
+    "@types/jasmine": "^2.6.0",
     "@types/jasmine-ajax": "^3.1.36",
-    "@types/node": "^8.0.28",
+    "@types/node": "^8.0.31",
     "@types/sockjs-client": "^1.0.32",
-    "@types/webpack": "^3.0.10",
+    "@types/webpack": "^3.0.12",
     "@types/webpack-env": "^1.13.1",
     "awesome-typescript-loader": "^3.0.4-rc.0",
     "del": "^3.0.0",
@@ -57,14 +57,19 @@
     "karma-markdown-reporter": "file:test/karma-markdown-reporter",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
-    "nock": "^9.0.14",
-    "run-sequence": "^2.1.0",
+    "merge2": "^1.2.0",
+    "mock-socket": "^7.0.0",
+    "module-alias": "^2.0.1",
+    "nock": "^9.0.21",
+    "run-sequence": "^2.2.0",
     "source-map-loader": "^0.2.1",
     "tslint": "^5.7.0",
     "typescript": "^2.5.2",
     "typings": "^2.1.1",
-    "webpack": "^3.5.6",
-    "webpack-merge": "^4.1.0"
+    "vinyl-named": "^1.1.0",
+    "webpack": "^3.6.0",
+    "webpack-merge": "^4.1.0",
+    "webpack-stream": "^4.0.0"
   },
   "scripts": {
     "start": "./node_modules/.bin/gulp build",

@@ -66,16 +66,13 @@
 			Promise.resolve().then( () => {
 				fragment = { value: "a name" };
 				resource = { name: fragment };
-				return carbon.documents.createChildAndRetrieve( "/", resource, "posts/" );
-			} ).then( ( [ result ] ) => {
-				console.log( result.name );
-				expect( fragment ).toBe( result.name );
-				fragment = { value: "another name" };
-				result.name = fragment;
-				return result.saveAndRefresh();
-			} ).then( ( [ result ] ) => {
-				expect( fragment ).toBe( result.name );
-				console.log( result.name );
+				let x;
+				carbon.documents.one( "*.*", "/**", x = ( data ) => {
+					carbon.documents.off( "*.*", "/**", x );
+					console.log( data );
+				}, ( error ) => {
+					console.error( error );
+				} );
 				done();
 			} ).catch( ( error ) => {
 				console.error( error );
