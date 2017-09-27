@@ -16,7 +16,7 @@ var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
 var Pointer = require("./Pointer");
 var Messaging = require("./Messaging");
-var utils_1 = require("./Messaging/utils");
+var Utils_2 = require("./Messaging/Utils");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
@@ -705,8 +705,8 @@ var Class = (function () {
     };
     Class.prototype.on = function (event, uriPattern, onEvent, onError) {
         try {
-            utils_1.validateEventContext(this.context);
-            var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
+            Utils_2.validateEventContext(this.context);
+            var destination = Utils_2.createDestination(event, uriPattern, this.context.baseURI);
             this.context.messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -717,8 +717,8 @@ var Class = (function () {
     };
     Class.prototype.off = function (event, uriPattern, onEvent, onError) {
         try {
-            utils_1.validateEventContext(this.context);
-            var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
+            Utils_2.validateEventContext(this.context);
+            var destination = Utils_2.createDestination(event, uriPattern, this.context.baseURI);
             this.context.messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {

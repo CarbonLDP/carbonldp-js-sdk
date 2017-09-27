@@ -37,9 +37,8 @@ import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
-import * as MessagingUtils from "./Messaging/utils";
 import MessagingEvent from "./Messaging/Event";
-import MessagingService from "./Messaging/Service";
+import * as MessagingUtils from "./Messaging/Utils";
 
 import { QueryClause } from "sparqler/Clauses";
 
