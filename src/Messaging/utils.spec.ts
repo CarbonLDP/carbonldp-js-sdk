@@ -85,6 +85,20 @@ describe( "validaEventType", ():void => {
 		expect( () => validateEventType( "" ) ).toThrowError( IllegalArgumentError, "Provided event type \"\" is invalid." );
 		expect( () => validateEventType( "invalid" ) ).toThrowError( IllegalArgumentError, "Provided event type \"invalid\" is invalid." );
 		expect( () => validateEventType( "invalid.invalid" ) ).toThrowError( IllegalArgumentError, "Provided event type \"invalid.invalid\" is invalid." );
+
+		expect( () => validateEventType( "access-point" ) ).toThrowError( IllegalArgumentError, "Provided event type \"access-point\" is invalid." );
+		expect( () => validateEventType( "child" ) ).toThrowError( IllegalArgumentError, "Provided event type \"child\" is invalid." );
+		expect( () => validateEventType( "created" ) ).toThrowError( IllegalArgumentError, "Provided event type \"created\" is invalid." );
+		expect( () => validateEventType( "document" ) ).toThrowError( IllegalArgumentError, "Provided event type \"document\" is invalid." );
+		expect( () => validateEventType( "modified" ) ).toThrowError( IllegalArgumentError, "Provided event type \"modified\" is invalid." );
+		expect( () => validateEventType( "deleted" ) ).toThrowError( IllegalArgumentError, "Provided event type \"deleted\" is invalid." );
+		expect( () => validateEventType( "member" ) ).toThrowError( IllegalArgumentError, "Provided event type \"member\" is invalid." );
+		expect( () => validateEventType( "added" ) ).toThrowError( IllegalArgumentError, "Provided event type \"added\" is invalid." );
+		expect( () => validateEventType( "removed" ) ).toThrowError( IllegalArgumentError, "Provided event type \"removed\" is invalid." );
+		expect( () => validateEventType( "*" ) ).toThrowError( IllegalArgumentError, "Provided event type \"*\" is invalid." );
+
+		expect( () => validateEventType( "child.modified" ) ).toThrowError( IllegalArgumentError, "Provided event type \"child.modified\" is invalid." );
+		expect( () => validateEventType( "created.document" ) ).toThrowError( IllegalArgumentError, "Provided event type \"created.document\" is invalid." );
 	} );
 
 } );

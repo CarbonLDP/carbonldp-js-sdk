@@ -18432,7 +18432,7 @@ function validateEventContext(context) {
 }
 exports.validateEventContext = validateEventContext;
 function validateEventType(eventType) {
-    if (!/(access-point|child|\*\.created|\*)|(document|\*\.modidied|deleted\*)|(member|\*\.added|removed|\*)/.test(eventType))
+    if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(eventType))
         throw new Errors_1.IllegalArgumentError("Provided event type \"" + eventType + "\" is invalid.");
 }
 exports.validateEventType = validateEventType;

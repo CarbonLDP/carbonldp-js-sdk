@@ -10,7 +10,7 @@ export function validateEventContext( context:Context ):void {
 }
 
 export function validateEventType( eventType:string ):void {
-	if( ! /(access-point|child|\*\.created|\*)|(document|\*\.modidied|deleted\*)|(member|\*\.added|removed|\*)/.test( eventType ) ) throw new IllegalArgumentError( `Provided event type "${ eventType }" is invalid.` );
+	if( ! /(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test( eventType ) ) throw new IllegalArgumentError( `Provided event type "${ eventType }" is invalid.` );
 }
 
 export function parseURIPattern( uriPattern:string, baseURI:string ):string {
