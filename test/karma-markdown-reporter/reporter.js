@@ -18,7 +18,7 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
-	const classRegex = /Carbon\.[.#a-zA-Z0-9]*/gm;
+	const classRegex = /Carbon[./][./#a-zA-Z0-9]*/gm;
 
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
@@ -37,15 +37,11 @@ swag.registerHelpers( Handlebars );
 		if( noParagraph )
 			str = str.replace( /<p>/gm, "" ).replace( /<\/p>/gm, "" );
 
-		var uris = str.match( classRegex );
-		if( uris !== null )
-			uris = uris.map( uri => uri.replace( /\./g, "-" ).replace( /#/g, "+" ).replace( /\(\)/, "" ) );
-
-		var index = 0;
 		return str.replace( classRegex, ( matched ) => {
+			const uri = toURL( matched );
 			if( isHTML )
-				return `<a href="#${ uris[ index ++ ] }">${ matched }</a>`;
-			return `[${ matched }](#${ uris[ index ++ ] })`;
+				return `<a href="#${ uri }">${ matched }</a>`;
+			return `[${ matched }](#${ uri })`;
 		} );
 	} );
 
@@ -120,11 +116,19 @@ swag.registerHelpers( Handlebars );
 		return response2;
 	} );
 
-	Handlebars.registerHelper( "toURL", function( str ) {
-		if( typeof str !== "string" ) throw new Error( "toURL: An string was expected but received: " + str );
-		return str.replace( /\./g, "-" ).replace( /\//g, "-" ).replace( /#/g, "+" ).replace( /\(\)/, "" );
-	} );
+	Handlebars.registerHelper( "toURL", toURL );
 
+	function toURL( str ) {
+		if( typeof str !== "string" ) throw new Error( "toURL: An string was expected but received: " + str );
+
+		if( str.startsWith( "Carbon/" ) ) str = "Module/" + str;
+
+		return str
+			.replace( /\./g, "-" )
+			.replace( /\//g, "-" )
+			.replace( /#/g, "+" )
+			.replace( /\(\)/, "" );
+	}
 })();
 
 var MarkdownReporter = (() => {
@@ -202,7 +206,7 @@ var MarkdownReporter = (() => {
 				break;
 
 			default:
-				name = name.replace( " ", "-" );
+				return null;
 		}
 
 		return parent[ name ] || ( parent[ name ] = suite );
@@ -338,6 +342,8 @@ var MarkdownReporter = (() => {
 		for( let key of Object.keys( specs ) ) {
 			data = parseData( key );
 			container = getContainer( parent, data, true );
+			if( container === null ) continue;
+
 			for( let spec of specs[ key ]._ ) {
 				data = parseData( spec );
 				getContainer( container, data, false );

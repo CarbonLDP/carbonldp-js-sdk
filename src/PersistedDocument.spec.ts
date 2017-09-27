@@ -33,8 +33,6 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
-import { QueryClause } from "sparqler/Clauses";
-
 import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
 
@@ -50,8 +48,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedResource.Class" ), ():void => {} );
 		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedResource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.ServiceAwareDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Messaging.Document.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -100,13 +100,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"contains",
 			"Carbon.Pointer.Class",
 			"Array with the children of the document."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_documents",
-			"Carbon.Documents.Class",
-			"The Documents instance to which the document belongs."
 		), ():void => {} );
 
 		it( hasProperty(
@@ -676,6 +669,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					this.setSetting( "system.container", ".system/" );
 				}
 			}
+
 			context = new MockedContext();
 		} );
 
@@ -704,7 +698,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				defaultInteractionModel: null,
 				accessPoints: null,
 
-				_documents: null,
 				_etag: null,
 
 				refresh: ():void => {},
@@ -758,10 +751,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.defaultInteractionModel;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( true );
 			document.defaultInteractionModel = null;
-
-			delete document._documents;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document._documents = null;
 
 			delete document._etag;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -943,6 +932,18 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				executeUPDATE: ():void => {},
 
 				sparql: ():void => {},
+
+				// Messaging methods
+				on: ():void => {},
+				off: ():void => {},
+				one: ():void => {},
+				onDocumentCreated: ():void => {},
+				onChildCreated: ():void => {},
+				onAccessPointCreated: ():void => {},
+				onDocumentModified: ():void => {},
+				onDocumentDeleted: ():void => {},
+				onMemberAdded: ():void => {},
+				onMemberRemoved: ():void => {},
 			} );
 			expect( PersistedDocument.Factory.is( object ) ).toBe( true );
 		} );
@@ -986,6 +987,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			}
 
 			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {}
+
 			let persistedDocument:MyPersistedDocument;
 
 			persistedDocument = PersistedDocument.Factory.createFrom<MyObject>( {}, "http://example.com/document/", context.documents );
@@ -1016,10 +1018,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			}
 
 			interface MyDocument extends MyObject, Document.Class {}
+
 			let document:MyDocument;
 
 			interface MyPersistedDocument extends MyObject, PersistedDocument.Class {
 			}
+
 			let persistedDocument:MyPersistedDocument;
 
 			document = Document.Factory.createFrom<MyObject>( {} );
@@ -1378,7 +1382,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
+					interface MyInterface {
+						myProperty?:string;
+						myPointer?:MyInterface;
+					}
 
 					let object:MyInterface;
 					let fragment:PersistedFragment.Class & MyInterface;
@@ -1439,7 +1446,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
+					interface MyInterface {
+						myProperty?:string;
+						myPointer?:MyInterface;
+					}
 
 					let object:MyInterface;
 					let fragment:PersistedFragment.Class & MyInterface;
@@ -1565,7 +1575,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( document.createNamedFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
 
-					interface MyInterface { myProperty?:string; myPointer?:MyInterface; }
+					interface MyInterface {
+						myProperty?:string;
+						myPointer?:MyInterface;
+					}
 
 					let object:MyInterface;
 					let fragment:PersistedFragment.Class & MyInterface;

@@ -141,11 +141,9 @@ var Util = (function () {
         return protocol + path + childURI;
     };
     Util.removeProtocol = function (uri) {
-        if (Utils.S.startsWith(uri, "https://"))
-            return uri.substr(5, uri.length);
-        if (Utils.S.startsWith(uri, "http://"))
-            return uri.substr(4, uri.length);
-        return uri;
+        if (!Util.hasProtocol(uri))
+            return uri;
+        return uri.substring(uri.indexOf("://") + 3);
     };
     Util.prefix = function (uri, prefixOrObjectSchema, prefixURI) {
         if (prefixURI === void 0) { prefixURI = null; }

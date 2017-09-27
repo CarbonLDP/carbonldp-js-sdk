@@ -1,12 +1,14 @@
+import { QueryClause } from "sparqler/Clauses";
+
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
 import Context from "./Context";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import { promiseMethod } from "./Utils";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
 import * as Document from "./Document";
 import * as FreeResources from "./FreeResources";
 import * as JSONLD from "./JSONLD";
@@ -14,20 +16,19 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as Pointer from "./Pointer";
+import * as Messaging from "./Messaging";
+import { createDestination, validateEventContext } from "./Messaging/Utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as LDP from "./LDP";
 import * as SPARQL from "./SPARQL";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
-
 import SparqlBuilder from "./SPARQL/Builder";
-import { QueryClause } from "sparqler/Clauses";
-import { promiseMethod } from "./Utils";
+import Carbon from "./Carbon";
 
 export interface DocumentDecorator {
 	decorator:( object:Object, ...parameters:any[] ) => Object;
@@ -49,7 +50,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	// Tracks the documents that are being resolved to avoid triggering repeated requests
 	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
 
-	constructor( context:Context = null ) {
+	constructor( context?:Context ) {
 		this.context = context;
 
 		this.pointers = new Map<string, Pointer.Class>();
@@ -125,8 +126,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.pointers.get( localID );
 	}
 
-	removePointer( id:Pointer.Class ):boolean;
-	removePointer( id:string ):boolean;
 	removePointer( idOrPointer:string | Pointer.Class ):boolean {
 		let id:string = Utils.isString( idOrPointer ) ? <string> idOrPointer : (<Pointer.Class> idOrPointer).id;
 		let localID:string = this.getPointerID( id );
@@ -797,6 +796,64 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 
 		return builder;
+	}
+
+	on( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		try {
+			validateEventContext( this.context );
+			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
+			(this.context as Carbon).messaging.subscribe( destination, onEvent, onError );
+		} catch( error ) {
+			if( ! onError ) throw error;
+			onError( error );
+		}
+	}
+
+	off( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		try {
+			validateEventContext( this.context );
+			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
+			(this.context as Carbon).messaging.unsubscribe( destination, onEvent );
+		} catch( error ) {
+			if( ! onError ) throw error;
+			onError( error );
+		}
+	}
+
+	one( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		const self:Class = this;
+		this.on( event, uriPattern, function onEventWrapper( data:RDF.Node.Class[] ):void {
+			onEvent( data );
+			self.off( event, uriPattern, onEventWrapper, onError );
+		}, onError );
+	}
+
+	onDocumentCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+	}
+
+	onChildCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError );
+	}
+
+	onAccessPointCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
+	}
+
+	onDocumentModified( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+	}
+
+	onDocumentDeleted( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+	}
+
+	onMemberAdded( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError );
+	}
+
+	onMemberRemoved( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+		return this.on( Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 	}
 
 	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):T & PersistedDocument.Class {

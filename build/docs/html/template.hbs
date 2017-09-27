@@ -42,7 +42,7 @@
 		<div class="ui bottom fixed inverted vertical menu doc-menu">
 			{{#each modules}}
 				<div class="item">
-					<a class="header" href="#Module-{{toURL path}}">{{path}}</a>
+					<a class="header" href="#{{toURL path}}">{{path}}</a>
 					<div class="menu">
 						{{#combineElements this}}
 							<a class="item{{#if isClass}} item-class{{else}} item-interface{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>

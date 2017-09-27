@@ -8,6 +8,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -36,6 +37,7 @@ export class Class extends AbstractContext.Class {
 	static HTTP:typeof HTTP = HTTP;
 	static JSONLD:typeof JSONLD = JSONLD;
 	static LDP:typeof LDP = LDP;
+	static Messaging:typeof Messaging = Messaging;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static NS:typeof NS = NS;
 	static ObjectSchema:typeof ObjectSchema = ObjectSchema;
@@ -51,6 +53,7 @@ export class Class extends AbstractContext.Class {
 	static SPARQL:typeof SPARQL = SPARQL;
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
+
 	/* tslint:enable: variable-name */
 
 	static get version():string { return "1.0.0-alpha.1"; }
@@ -60,15 +63,18 @@ export class Class extends AbstractContext.Class {
 
 	protected _baseURI:string;
 
-	constructor( domain:string, ssl?:boolean, settings?:Settings.Class );
+	messaging:Messaging.Service.Class;
+
 	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
 		super();
-		domain = RDF.URI.Util.hasProtocol( domain ) ? RDF.URI.Util.removeProtocol( domain ) : domain;
-		domain = Utils.S.endsWith( domain,  "/" ) ? domain : domain + "/";
+		domain = RDF.URI.Util.removeProtocol( domain );
+		if( ! domain.endsWith( "/" ) ) domain = domain + "/";
 		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
+
+		this.messaging = new Messaging.Service.Class( this );
 	}
 
 	/**

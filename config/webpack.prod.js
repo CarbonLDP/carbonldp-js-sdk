@@ -7,7 +7,9 @@ const DIST_DIR = path.resolve( __dirname, "../dist" );
 const SRC_DIR = path.resolve( __dirname, "../build" );
 const commonConfig = require( "./webpack.common.js" );
 
-module.exports = function( options ) {
+module.exports = function( options = {} ) {
+	Object.assign( options, { env: "prod" } );
+
 	return webpackMerge( commonConfig( options ), {
 		entry: {
 			"Carbon.sfx": path.resolve( SRC_DIR, "sfx.ts" ),
