@@ -33,8 +33,6 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
 
-import { QueryClause } from "sparqler/Clauses";
-
 import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
 
@@ -52,7 +50,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
 		it( extendsClass( "Carbon.PersistedResource.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.DocumentedDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.ServiceAwareDocument.Class" ), ():void => {} );
 		it( extendsClass( "Carbon.Messaging.Document.Class" ), ():void => {} );
 
 		it( hasProperty(

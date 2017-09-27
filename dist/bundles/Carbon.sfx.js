@@ -3972,16 +3972,16 @@ Utils.forEachOwnProperty(DataType, function (key, value) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __webpack_require__(17);
 var HTTP = __webpack_require__(12);
+var MessagingDocument = __webpack_require__(77);
 var ObjectSchema = __webpack_require__(14);
-var PersistedResource = __webpack_require__(51);
 var PersistedFragment = __webpack_require__(36);
-var PersistedNamedFragment = __webpack_require__(77);
+var PersistedNamedFragment = __webpack_require__(78);
+var PersistedResource = __webpack_require__(51);
 var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(7);
-var Utils = __webpack_require__(0);
 var URI = __webpack_require__(16);
-var DocumentedDocument = __webpack_require__(164);
-var MessagingDocument = __webpack_require__(78);
+var ServiceAwareDocument = __webpack_require__(164);
+var Utils = __webpack_require__(0);
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);
@@ -4229,7 +4229,7 @@ var Factory = (function () {
             return object;
         Document.Factory.decorate(object);
         PersistedResource.Factory.decorate(object, snapshot);
-        DocumentedDocument.Factory.decorate(object, documents);
+        ServiceAwareDocument.Factory.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
@@ -9119,27 +9119,6 @@ function changeEnabled(enabled, requestOptions) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedFragment = __webpack_require__(36);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.decorate = function (fragment, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        PersistedFragment.Factory.decorate(fragment, snapshot);
-        return fragment;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 78 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = __webpack_require__(0);
 function on(event, onEvent, onError) {
     return this._documents.on(event, this.id, onEvent, onError);
@@ -9252,6 +9231,27 @@ var Factory = (function () {
                 value: onMemberRemoved,
             },
         });
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PersistedFragment = __webpack_require__(36);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.decorate = function (fragment, snapshot) {
+        if (snapshot === void 0) { snapshot = {}; }
+        PersistedFragment.Factory.decorate(fragment, snapshot);
+        return fragment;
     };
     return Factory;
 }());
@@ -9484,7 +9484,7 @@ exports.SCHEMA = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(78);
+var Document = __webpack_require__(77);
 exports.Document = Document;
 var Event_1 = __webpack_require__(171);
 exports.Event = Event_1.Event;
@@ -11154,7 +11154,7 @@ var NS = __webpack_require__(1);
 var ObjectSchema = __webpack_require__(14);
 var PersistedDocument = __webpack_require__(35);
 var PersistedFragment = __webpack_require__(36);
-var PersistedNamedFragment = __webpack_require__(77);
+var PersistedNamedFragment = __webpack_require__(78);
 var PersistedResource = __webpack_require__(51);
 var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(7);

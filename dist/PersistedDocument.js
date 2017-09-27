@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document = require("./Document");
 var HTTP = require("./HTTP");
+var MessagingDocument = require("./Messaging/Document");
 var ObjectSchema = require("./ObjectSchema");
-var PersistedResource = require("./PersistedResource");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
+var PersistedResource = require("./PersistedResource");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
-var Utils = require("./Utils");
 var URI = require("./RDF/URI");
-var DocumentedDocument = require("./DocumentedDocument");
-var MessagingDocument = require("./Messaging/Document");
+var ServiceAwareDocument = require("./ServiceAwareDocument");
+var Utils = require("./Utils");
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);
@@ -259,7 +259,7 @@ var Factory = (function () {
             return object;
         Document.Factory.decorate(object);
         PersistedResource.Factory.decorate(object, snapshot);
-        DocumentedDocument.Factory.decorate(object, documents);
+        ServiceAwareDocument.Factory.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {

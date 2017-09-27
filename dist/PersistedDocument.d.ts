@@ -1,20 +1,20 @@
 /// <reference types="node" />
+import { QueryClause } from "sparqler/Clauses";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
+import * as MessagingDocument from "./Messaging/Document";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
-import * as DocumentedDocument from "./DocumentedDocument";
-import * as MessagingDocument from "./Messaging/Document";
-import { QueryClause } from "sparqler/Clauses";
-export interface Class extends Document.Class, PersistedResource.Class, DocumentedDocument.Class, MessagingDocument.Class {
+export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer.Class;

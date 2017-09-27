@@ -1,27 +1,27 @@
+import { QueryClause } from "sparqler/Clauses";
+
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
+import * as MessagingDocument from "./Messaging/Document";
 import * as NamedFragment from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
-import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as RDF from "./RDF";
+import * as URI from "./RDF/URI";
+import * as RetrievalPreferences from "./RetrievalPreferences";
+import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
-import * as URI from "./RDF/URI";
-import * as DocumentedDocument from "./DocumentedDocument";
-import * as MessagingDocument from "./Messaging/Document";
 
-import { QueryClause } from "sparqler/Clauses";
-
-export interface Class extends Document.Class, PersistedResource.Class, DocumentedDocument.Class, MessagingDocument.Class {
+export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer.Class;
@@ -440,7 +440,7 @@ export class Factory {
 		return Document.Factory.is( object )
 			&& Factory.hasClassProperties( object )
 			&& MessagingDocument.Factory.hasClassProperties( object )
-		;
+			;
 	}
 
 	static create( uri:string, documents:Documents, snapshot:Object = {} ):Class {
@@ -462,8 +462,8 @@ export class Factory {
 
 		Document.Factory.decorate( object );
 		PersistedResource.Factory.decorate( object, snapshot );
-		DocumentedDocument.Factory.decorate( <T & Document.Class> object, documents );
-		MessagingDocument.Factory.decorate( <T & DocumentedDocument.Class> object );
+		ServiceAwareDocument.Factory.decorate( <T & Document.Class> object, documents );
+		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument.Class> object );
 
 		const persistedDocument:T & Class = <T & Class> object;
 

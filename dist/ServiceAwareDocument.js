@@ -24,4 +24,4 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=DocumentedDocument.js.map
+//# sourceMappingURL=ServiceAwareDocument.js.map

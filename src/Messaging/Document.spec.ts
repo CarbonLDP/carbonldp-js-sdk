@@ -1,6 +1,6 @@
 import * as Document from "../Document";
-import * as DocumentedDocument from "../DocumentedDocument";
 import * as Documents from "../Documents";
+import * as ServiceAwareDocument from "../ServiceAwareDocument";
 import { clazz, extendsClass, hasDefaultExport, hasMethod, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
 import * as MessagingDocument from "./Document";
 import DefaultExport from "./Document";
@@ -22,8 +22,8 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.DocumentedDocument.Class" ), ():void => {
-			const target:DocumentedDocument.Class = {} as MessagingDocument.Class;
+		it( extendsClass( "Carbon.ServiceAwareDocument.Class" ), ():void => {
+			const target:ServiceAwareDocument.Class = {} as MessagingDocument.Class;
 			expect( target ).toBeDefined();
 		} );
 
@@ -176,7 +176,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			[ "T extends Carbon.DocumentedDocument.Class" ],
+			[ "T extends Carbon.ServiceAwareDocument.Class" ],
 			"Decorates the provided document with the properties od the `Carbon.Messaging.Document.Class` interface",
 			[
 				{ name: "object", type: "T", description: "Object to be decorated" },
@@ -205,8 +205,8 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 	describe( "hasClassProperties", ():void => {
 
 		it( "should exists", ():void => {
-			expect( DocumentedDocument.Factory.hasClassProperties ).toBeDefined();
-			expect( DocumentedDocument.Factory.hasClassProperties ).toEqual( jasmine.any( Function ) );
+			expect( ServiceAwareDocument.Factory.hasClassProperties ).toBeDefined();
+			expect( ServiceAwareDocument.Factory.hasClassProperties ).toEqual( jasmine.any( Function ) );
 		} );
 
 		it( "should return false if falsy is provided", ():void => {
@@ -282,7 +282,7 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 
 		it( "should return the same reference of the object provided", ():void => {
 			const documents:Documents.Class = new Documents.Class();
-			const base:DocumentedDocument.Class = DocumentedDocument.Factory.decorate( Document.Factory.create(), documents );
+			const base:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( Document.Factory.create(), documents );
 
 			const target:MessagingDocument.Class = MessagingDocument.Factory.decorate( base );
 			expect( base ).toBe( target );
@@ -292,7 +292,7 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 			const documents:Documents.Class = new Documents.Class();
 
 			const methodsFunction:() => void = () => {};
-			const base:DocumentedDocument.Class = DocumentedDocument.Factory.decorate( Document.Factory.createFrom( {
+			const base:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( Document.Factory.createFrom( {
 				on: methodsFunction,
 				off: methodsFunction,
 				one: methodsFunction,
@@ -322,7 +322,7 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 
 		it( "should add the new properties", ():void => {
 			const documents:Documents.Class = new Documents.Class();
-			const base:DocumentedDocument.Class = DocumentedDocument.Factory.decorate( Document.Factory.create(), documents );
+			const base:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( Document.Factory.create(), documents );
 
 			const target:MessagingDocument.Class = MessagingDocument.Factory.decorate( base );
 			expect( target ).toEqual( jasmine.objectContaining( {

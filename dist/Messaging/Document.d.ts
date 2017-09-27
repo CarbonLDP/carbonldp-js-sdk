@@ -1,7 +1,7 @@
-import * as DocumentedDocument from "../DocumentedDocument";
 import * as RDFNode from "../RDF/Node";
+import * as ServiceAwareDocument from "../ServiceAwareDocument";
 import { Event } from "./Event";
-export interface Class extends DocumentedDocument.Class {
+export interface Class extends ServiceAwareDocument.Class {
     on(event: Event | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
     off(event: Event | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
     one(event: Event | string, onEvent: (data: RDFNode.Class[]) => void, onError: (error: Error) => void): void;
@@ -15,6 +15,6 @@ export interface Class extends DocumentedDocument.Class {
 }
 export declare class Factory {
     static hasClassProperties(object: object): object is Class;
-    static decorate<T extends DocumentedDocument.Class>(object: T): T & Class;
+    static decorate<T extends ServiceAwareDocument.Class>(object: T): T & Class;
 }
 export default Class;
