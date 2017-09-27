@@ -47,7 +47,7 @@ var Class = (function (_super) {
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
-        _this._messaging = new Messaging.Service.Class(_this);
+        _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {
@@ -65,15 +65,6 @@ var Class = (function (_super) {
     };
     Class.prototype.getInstanceMetadata = function () {
         return this.getDocumentMetadata("system.instance.metadata");
-    };
-    Class.prototype.connectMessaging = function (optionsOrOnConnect, onConnectOrOnError, onError) {
-        if (Utils.isFunction(optionsOrOnConnect)) {
-            this._messaging.connect(optionsOrOnConnect, onConnectOrOnError);
-        }
-        else {
-            this._messaging.setOptions(optionsOrOnConnect);
-            this._messaging.connect(onConnectOrOnError, onError);
-        }
     };
     Class.prototype.getDocumentMetadata = function (metadataSetting) {
         var _this = this;

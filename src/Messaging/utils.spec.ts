@@ -22,13 +22,13 @@ describe( "validateEventContext", ():void => {
 	it( "should throw error if messaging service does not exists in the context", ():void => {
 		const carbon:Carbon = new Carbon( "http://example.com" );
 
-		delete carbon._messaging;
+		delete carbon.messaging;
 		expect( () => validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
 
-		carbon._messaging = null;
+		carbon.messaging = null;
 		expect( () => validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
 
-		carbon._messaging = void 0;
+		carbon.messaging = void 0;
 		expect( () => validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
 	} );
 

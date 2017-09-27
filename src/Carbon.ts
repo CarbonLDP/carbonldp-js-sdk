@@ -63,7 +63,7 @@ export class Class extends AbstractContext.Class {
 
 	protected _baseURI:string;
 
-	_messaging:Messaging.Service.Class;
+	messaging:Messaging.Service.Class;
 
 	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
 		super();
@@ -74,7 +74,7 @@ export class Class extends AbstractContext.Class {
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
 		Utils.M.extend( this.settings, Utils.M.from( settings ) );
 
-		this._messaging = new Messaging.Service.Class( this );
+		this.messaging = new Messaging.Service.Class( this );
 	}
 
 	/**
@@ -89,17 +89,6 @@ export class Class extends AbstractContext.Class {
 	 */
 	getInstanceMetadata():Promise<System.InstanceMetadata.Class> {
 		return this.getDocumentMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
-	}
-
-	connectMessaging( options:Messaging.Options, onConnect:() => void, onError:( error:Error ) => void ):void;
-	connectMessaging( onConnect:() => void, onError:( error:Error ) => void ):void;
-	connectMessaging( optionsOrOnConnect:Messaging.Options | ( () => void ), onConnectOrOnError:( () => void ) | ( ( error:Error ) => void ), onError?:( error:Error ) => void ):void {
-		if( Utils.isFunction( optionsOrOnConnect ) ) {
-			this._messaging.connect( optionsOrOnConnect, onConnectOrOnError );
-		} else {
-			this._messaging.setOptions( optionsOrOnConnect );
-			this._messaging.connect( onConnectOrOnError as () => void, onError );
-		}
 	}
 
 	private getDocumentMetadata<T>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {

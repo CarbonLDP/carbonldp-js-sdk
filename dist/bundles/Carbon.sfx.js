@@ -7315,7 +7315,7 @@ var Class = (function () {
         try {
             utils_1.validateEventContext(this.context);
             var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
-            this.context._messaging.subscribe(destination, onEvent, onError);
+            this.context.messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
             if (!onError)
@@ -7327,7 +7327,7 @@ var Class = (function () {
         try {
             utils_1.validateEventContext(this.context);
             var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
-            this.context._messaging.unsubscribe(destination, onEvent);
+            this.context.messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
             if (!onError)
@@ -11175,7 +11175,7 @@ var Class = (function (_super) {
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
-        _this._messaging = new Messaging.Service.Class(_this);
+        _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {
@@ -11193,15 +11193,6 @@ var Class = (function (_super) {
     };
     Class.prototype.getInstanceMetadata = function () {
         return this.getDocumentMetadata("system.instance.metadata");
-    };
-    Class.prototype.connectMessaging = function (optionsOrOnConnect, onConnectOrOnError, onError) {
-        if (Utils.isFunction(optionsOrOnConnect)) {
-            this._messaging.connect(optionsOrOnConnect, onConnectOrOnError);
-        }
-        else {
-            this._messaging.setOptions(optionsOrOnConnect);
-            this._messaging.connect(onConnectOrOnError, onError);
-        }
     };
     Class.prototype.getDocumentMetadata = function (metadataSetting) {
         var _this = this;
@@ -18436,7 +18427,7 @@ var Errors_1 = __webpack_require__(3);
 var URI_1 = __webpack_require__(16);
 var Service_1 = __webpack_require__(84);
 function validateEventContext(context) {
-    if (!(context && context._messaging instanceof Service_1.default))
+    if (!(context && context.messaging instanceof Service_1.default))
         throw new Errors_1.IllegalStateError("This instance does not support messaging subscriptions.");
 }
 exports.validateEventContext = validateEventContext;

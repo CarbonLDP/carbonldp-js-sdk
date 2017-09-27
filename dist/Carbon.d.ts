@@ -53,12 +53,10 @@ export declare class Class extends AbstractContext.Class {
     static readonly version: string;
     readonly version: string;
     protected _baseURI: string;
-    _messaging: Messaging.Service.Class;
+    messaging: Messaging.Service.Class;
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;
-    connectMessaging(options: Messaging.Options, onConnect: () => void, onError: (error: Error) => void): void;
-    connectMessaging(onConnect: () => void, onError: (error: Error) => void): void;
     private getDocumentMetadata<T>(metadataSetting);
 }
 export default Class;

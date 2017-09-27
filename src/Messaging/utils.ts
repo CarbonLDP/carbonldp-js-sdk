@@ -5,7 +5,7 @@ import { Util as URIUtils } from "../RDF/URI";
 import Service from "./Service";
 
 export function validateEventContext( context:Context ):void {
-	if( ! ( context && (context as Carbon)._messaging instanceof Service ) )
+	if( ! ( context && (context as Carbon).messaging instanceof Service ) )
 		throw new IllegalStateError( "This instance does not support messaging subscriptions." );
 }
 

@@ -122,6 +122,16 @@ describe( module( "Carbon" ), ():void => {
 			expect( myCarbon.baseURI ).toMatch( "http://my-carbonldp.example.com/" );
 		} );
 
+		it( hasProperty(
+			INSTANCE,
+			"messaging",
+			"Carbon.Messaging.Service.Class",
+			"Service that contains the RAW methods to manage the messaging/real-time features."
+		), ():void => {
+			expect( carbon.messaging ).toBeDefined();
+			expect( carbon.messaging ).toEqual( jasmine.any( Messaging.Service.Class ) );
+		} );
+
 		it( reexports(
 			STATIC,
 			"AccessPoint",
@@ -555,8 +565,7 @@ describe( module( "Carbon" ), ():void => {
 						}, {
 							"@id": "${ NS.CS.Class.AllOrigins }"
 						} ]
-					}
-					],
+					} ],
 					"@id": "https://example.com/.system/instance/"
 				} ]`,
 				} );
@@ -585,62 +594,6 @@ describe( module( "Carbon" ), ():void => {
 
 					done();
 				} ).catch( done.fail );
-			} );
-
-		} );
-
-		describe( method(
-			INSTANCE,
-			"connectMessaging"
-		), ():void => {
-
-			it( hasSignature(
-				"Connect and configure the messaging service.",
-				[
-					{ name: "options", type: "Carbon.Messaging.Options", description: "Options to configure the service." },
-					{ name: "onConnect", type: "() => void", description: "Callback to be invoked when the connection has been established." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback to be invoked in any connection or subscription error." },
-				] ), ():void => {
-			} );
-
-			it( hasSignature(
-				"Connect the messaging service using the default configuration.",
-				[
-					{ name: "onConnect", type: "() => void", description: "Callback to be invoked when the connection has been established." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback to be invoked in any connection or subscription error." },
-				] ), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( carbon.connectMessaging ).toBeDefined();
-				expect( carbon.connectMessaging ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should call the connect method of the service", ( done:DoneFn ):void => {
-				const connectSpy:jasmine.Spy = spyOn( carbon._messaging, "connect" );
-
-				const onConnect:() => void = () => done.fail( "Should not reach here." );
-				const onError:( error:Error ) => void = error => done.fail( error );
-
-				carbon.connectMessaging( onConnect, onError );
-
-				expect( connectSpy ).toHaveBeenCalledWith( onConnect, onError );
-				done();
-			} );
-
-			it( "should call the options configuration and the connect method of the service", ( done:DoneFn ):void => {
-				const connectSpy:jasmine.Spy = spyOn( carbon._messaging, "connect" );
-				const optionsSpy:jasmine.Spy = spyOn( carbon._messaging, "setOptions" );
-
-				const options:Messaging.Options = {};
-				const onConnect:() => void = () => done.fail( "Should not reach here." );
-				const onError:( error:Error ) => void = error => done.fail( error );
-
-				carbon.connectMessaging( options, onConnect, onError );
-
-				expect( optionsSpy ).toHaveBeenCalledWith( options );
-				expect( connectSpy ).toHaveBeenCalledWith( onConnect, onError );
-				done();
 			} );
 
 		} );

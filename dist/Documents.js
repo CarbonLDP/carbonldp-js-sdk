@@ -707,7 +707,7 @@ var Class = (function () {
         try {
             utils_1.validateEventContext(this.context);
             var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
-            this.context._messaging.subscribe(destination, onEvent, onError);
+            this.context.messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
             if (!onError)
@@ -719,7 +719,7 @@ var Class = (function () {
         try {
             utils_1.validateEventContext(this.context);
             var destination = utils_1.createDestination(event, uriPattern, this.context.baseURI);
-            this.context._messaging.unsubscribe(destination, onEvent);
+            this.context.messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
             if (!onError)

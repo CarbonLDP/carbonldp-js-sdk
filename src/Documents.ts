@@ -802,7 +802,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
-			(this.context as Carbon)._messaging.subscribe( destination, onEvent, onError );
+			(this.context as Carbon).messaging.subscribe( destination, onEvent, onError );
 		} catch( error ) {
 			if( ! onError ) throw error;
 			onError( error );
@@ -813,7 +813,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
-			(this.context as Carbon)._messaging.unsubscribe( destination, onEvent );
+			(this.context as Carbon).messaging.unsubscribe( destination, onEvent );
 		} catch( error ) {
 			if( ! onError ) throw error;
 			onError( error );

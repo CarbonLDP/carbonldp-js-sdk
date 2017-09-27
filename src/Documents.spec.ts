@@ -8738,7 +8738,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
 				const carbon:Carbon = new Carbon( "example.com", true );
-				spyOn( carbon._messaging, "subscribe" );
+				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
 
@@ -8760,7 +8760,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				const carbon:Carbon = new Carbon( "example.com", true );
 
-				const subscribeSpy:jasmine.Spy = spyOn( carbon._messaging, "subscribe" );
+				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" );
 
 				const onEvent:( data:any ) => void = () => {
 					done.fail( "Should not enter here." );
@@ -8841,7 +8841,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
 				const carbon:Carbon = new Carbon( "example.com", true );
-				spyOn( carbon._messaging, "subscribe" );
+				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
 
@@ -8863,7 +8863,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				const carbon:Carbon = new Carbon( "example.com", true );
 
-				const unsubscribeSpy:jasmine.Spy = spyOn( carbon._messaging, "unsubscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
 
 				const onEvent:( data:any ) => void = () => {
 					done.fail( "Should not enter here." );
@@ -8947,9 +8947,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
 				const carbon:Carbon = new Carbon( "example.com", true );
 
-				const subscribeSpy:jasmine.Spy = spyOn( carbon._messaging, "subscribe" )
+				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" )
 					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
-				const unsubscribeSpy:jasmine.Spy = spyOn( carbon._messaging, "unsubscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
 
 				carbon.documents.one( "*.*", "resource/*", () => void 0, done.fail );
 
