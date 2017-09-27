@@ -8,9 +8,9 @@ function validateEventContext(context) {
         throw new Errors_1.IllegalStateError("This instance does not support messaging subscriptions.");
 }
 exports.validateEventContext = validateEventContext;
-function validateEventType(eventType) {
-    if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(eventType))
-        throw new Errors_1.IllegalArgumentError("Provided event type \"" + eventType + "\" is invalid.");
+function validateEventType(event) {
+    if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(event))
+        throw new Errors_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
 }
 exports.validateEventType = validateEventType;
 function parseURIPattern(uriPattern, baseURI) {
@@ -37,4 +37,4 @@ function createDestination(event, uriPattern, baseURI) {
 }
 exports.createDestination = createDestination;
 
-//# sourceMappingURL=utils.js.map
+//# sourceMappingURL=Utils.js.map

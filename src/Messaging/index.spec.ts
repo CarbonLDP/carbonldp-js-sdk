@@ -4,6 +4,7 @@ import { Event } from "./Event";
 import * as Messaging from "./index";
 import { Options } from "./Options";
 import * as Service from "./Service";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/Messaging" ), ():void => {
 
@@ -46,6 +47,15 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	), ():void => {
 		expect( Messaging.Service ).toBeDefined();
 		expect( Messaging.Service ).toBe( Service );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Utils",
+		"Carbon/Messaging/Utils"
+	), ():void => {
+		expect( Messaging.Utils ).toBeDefined();
+		expect( Messaging.Utils ).toBe( Utils );
 	} );
 
 } );
