@@ -372,7 +372,7 @@ describe( module(
 			expect( C.Predicate.entryKey ).toBeDefined();
 			expect( Utils.isString( C.Predicate.entryKey ) ).toBe( true );
 
-			expect( C.Predicate.entryKey ).toBe( "https://carbonldp.com/ns/v1/platform#entryKey" );
+			expect( C.Predicate.entryKey ).toBe( "https://carbonldp.com/ns/v1/platform#key" );
 		} );
 
 		it( hasProperty(
@@ -506,7 +506,7 @@ describe( module(
 			expect( C.Predicate.entryValue ).toBeDefined();
 			expect( Utils.isString( C.Predicate.entryValue ) ).toBe( true );
 
-			expect( C.Predicate.entryValue ).toBe( "https://carbonldp.com/ns/v1/platform#entryValue" );
+			expect( C.Predicate.entryValue ).toBe( "https://carbonldp.com/ns/v1/platform#value" );
 		} );
 
 		it( hasProperty(

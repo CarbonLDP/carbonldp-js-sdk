@@ -69,7 +69,7 @@ export class Predicate {
 
 	static get httpStatusCode():string { return namespace + "httpStatusCode"; }
 
-	static get entryKey():string { return namespace + "entryKey"; }
+	static get entryKey():string { return namespace + "key"; }
 
 	static get mediaType():string { return namespace + "mediaType"; }
 
@@ -85,7 +85,7 @@ export class Predicate {
 
 	static get targetMember():string { return namespace + "targetMember"; }
 
-	static get entryValue():string { return namespace + "entryValue"; }
+	static get entryValue():string { return namespace + "value"; }
 
 	static get version():string { return namespace + "version"; }
 }

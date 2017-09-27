@@ -176,7 +176,7 @@ var Predicate = (function () {
         configurable: true
     });
     Object.defineProperty(Predicate, "entryKey", {
-        get: function () { return exports.namespace + "entryKey"; },
+        get: function () { return exports.namespace + "key"; },
         enumerable: true,
         configurable: true
     });
@@ -216,7 +216,7 @@ var Predicate = (function () {
         configurable: true
     });
     Object.defineProperty(Predicate, "entryValue", {
-        get: function () { return exports.namespace + "entryValue"; },
+        get: function () { return exports.namespace + "value"; },
         enumerable: true,
         configurable: true
     });
