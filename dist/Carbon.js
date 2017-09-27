@@ -41,8 +41,9 @@ var Class = (function (_super) {
     function Class(domain, ssl, settings) {
         if (ssl === void 0) { ssl = true; }
         var _this = _super.call(this) || this;
-        domain = RDF.URI.Util.hasProtocol(domain) ? domain.substring(domain.indexOf("://") + 3) : domain;
-        domain = Utils.S.endsWith(domain, "/") ? domain : domain + "/";
+        domain = RDF.URI.Util.removeProtocol(domain);
+        if (!domain.endsWith("/"))
+            domain = domain + "/";
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
