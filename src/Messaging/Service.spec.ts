@@ -293,7 +293,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 			it( "should still reconnect on maxReconnectAttempts", ( done:DoneFn ):void => {
 				const maxAttempts:number = 5;
 				service.setOptions( {
-					reconnectDelay: 500,
+					reconnectDelay: 1,
 					maxReconnectAttempts: maxAttempts,
 				} );
 				let mockServer:any;
@@ -339,7 +339,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 			it( "should throw error if surpassed the maxReconnectAttempts", ( done:DoneFn ):void => {
 				const maxAttempts:number = 5;
 				service.setOptions( {
-					reconnectDelay: 500,
+					reconnectDelay: 1,
 					maxReconnectAttempts: maxAttempts,
 				} );
 				let mockServer:any;
