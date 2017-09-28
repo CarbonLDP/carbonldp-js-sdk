@@ -53,8 +53,6 @@ export class Predicate {
 
 	static get buildDate():string { return namespace + "buildDate"; }
 
-	static get carbonCode():string { return namespace + "carbonCode"; }
-
 	static get created():string { return namespace + "created"; }
 
 	static get documentMetadata():string { return namespace + "documentMetadata"; }
@@ -65,6 +63,12 @@ export class Predicate {
 
 	static get error():string { return namespace + "error"; }
 
+	static get errorCode():string { return namespace + "errorCode"; }
+
+	static get errorMessage():string { return namespace + "errorMessage"; }
+
+	static get errorParameters():string { return namespace + "errorParameters"; }
+
 	static get eTag():string { return namespace + "eTag"; }
 
 	static get httpStatusCode():string { return namespace + "httpStatusCode"; }
@@ -72,8 +76,6 @@ export class Predicate {
 	static get entryKey():string { return namespace + "key"; }
 
 	static get mediaType():string { return namespace + "mediaType"; }
-
-	static get message():string { return namespace + "message"; }
 
 	static get modified():string { return namespace + "modified"; }
 

@@ -4,6 +4,7 @@ import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 import * as VolatileResource from "./VolatileResource";
 import * as Map from "./Map";
+import BlankNode from "./../BlankNode";
 
 export const RDF_CLASS:string = NS.C.Class.DocumentMetadata;
 
@@ -25,7 +26,7 @@ export const SCHEMA:ObjectSchema.Class = {
 export interface Class extends VolatileResource.Class {
 	relatedDocument:Pointer.Class;
 	eTag?:string;
-	bNodesMap?:Map.Class;
+	bNodesMap?:Map.Class<BlankNode, BlankNode>;
 }
 
 export class Factory {

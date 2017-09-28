@@ -64,22 +64,16 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				fragment = { value: "a name" };
-				resource = { name: fragment };
-				return carbon.documents.createChildAndRetrieve( "/", resource, "posts/" );
+				return carbon.documents.get( "404/" );
 			} ).then( ( [ result ] ) => {
-				console.log( result.name );
-				expect( fragment ).toBe( result.name );
-				fragment = { value: "another name" };
-				result.name = fragment;
+				delete result.created;
 				return result.saveAndRefresh();
-			} ).then( ( [ result ] ) => {
-				expect( fragment ).toBe( result.name );
-				console.log( result.name );
-				done();
+			} ).then( () => {
+				done.fail( "Should fail the saving." );
 			} ).catch( ( error ) => {
 				console.error( error );
-				done.fail( error );
+				console.error( { error } );
+				done();
 			} );
 		} );
 	} );

@@ -80,7 +80,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bNodesMap",
-			"Carbon.LDP.Map.Class",
+			"Carbon.LDP.Map.Class<Carbon.BlankNode.Class, Carbon.BlankNode.Class>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
 		), ():void => {} );
 

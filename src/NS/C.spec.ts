@@ -284,7 +284,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 21 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 22 );
 		} );
 
 		it( hasProperty(
@@ -434,6 +434,39 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"errorCode",
+			"string"
+		), ():void => {
+			expect( C.Predicate.errorCode ).toBeDefined();
+			expect( Utils.isString( C.Predicate.errorCode ) ).toBe( true );
+
+			expect( C.Predicate.errorCode ).toBe( "https://carbonldp.com/ns/v1/platform#errorCode" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"errorMessage",
+			"string"
+		), ():void => {
+			expect( C.Predicate.errorMessage ).toBeDefined();
+			expect( Utils.isString( C.Predicate.errorMessage ) ).toBe( true );
+
+			expect( C.Predicate.errorMessage ).toBe( "https://carbonldp.com/ns/v1/platform#errorMessage" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"errorParameters",
+			"string"
+		), ():void => {
+			expect( C.Predicate.errorParameters ).toBeDefined();
+			expect( Utils.isString( C.Predicate.errorParameters ) ).toBe( true );
+
+			expect( C.Predicate.errorParameters ).toBe( "https://carbonldp.com/ns/v1/platform#errorParameters" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"httpStatusCode",
 			"string"
 		), ():void => {
@@ -441,28 +474,6 @@ describe( module(
 			expect( Utils.isString( C.Predicate.httpStatusCode ) ).toBe( true );
 
 			expect( C.Predicate.httpStatusCode ).toBe( "https://carbonldp.com/ns/v1/platform#httpStatusCode" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"carbonCode",
-			"string"
-		), ():void => {
-			expect( C.Predicate.carbonCode ).toBeDefined();
-			expect( Utils.isString( C.Predicate.carbonCode ) ).toBe( true );
-
-			expect( C.Predicate.carbonCode ).toBe( "https://carbonldp.com/ns/v1/platform#carbonCode" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"message",
-			"string"
-		), ():void => {
-			expect( C.Predicate.message ).toBeDefined();
-			expect( Utils.isString( C.Predicate.message ) ).toBe( true );
-
-			expect( C.Predicate.message ).toBe( "https://carbonldp.com/ns/v1/platform#message" );
 		} );
 
 		it( hasProperty(

@@ -33,48 +33,46 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 		expect( Utils.isObject( Entry.SCHEMA ) ).toBe( true );
 
 		expect( Entry.SCHEMA as { [key:string]:object } ).toEqual( {
-			key: jasmine.any( Object ),
-			value: jasmine.any( Object ),
+			entryKey: jasmine.any( Object ),
+			entryValue: jasmine.any( Object ),
 		} );
 
-		expect( Entry.SCHEMA[ "key" ] ).toEqual( {
+		expect( Entry.SCHEMA[ "entryKey" ] ).toEqual( {
 			"@id": NS.C.Predicate.entryKey,
-			"@type": "@id",
 		} );
 
-		expect( Entry.SCHEMA[ "value" ] ).toEqual( {
+		expect( Entry.SCHEMA[ "entryValue" ] ).toEqual( {
 			"@id": NS.C.Predicate.entryValue,
-			"@type": "@id",
 		} );
-
 	} );
 
 	describe( interfaze(
 		"Carbon.LDP.Entry.Class",
-		"Entries of the `Carbon.LDP.Map` with the previous and new BNodes ID."
+		[ "K", "V" ],
+		"Entries of the `Carbon.LDP.Map.Class` with the key/value pair."
 	), ():void => {
 
 		it( extendsClass( "Carbon.BlankNode.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"key",
-			"Carbon.BlankNode.Class",
-			"The previous BNode ID."
+			"entryKey",
+			"K",
+			"The key element of the entry's pair."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"entries",
-			"Carbon.BlankNode.Class",
-			"The new BNode ID."
+			"entryValue",
+			"V",
+			"The value element of the entry's pair."
 		), ():void => {} );
 
 	} );
 
 	it( hasDefaultExport( "Carbon.LDP.Entry.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Entry.Class;
+		let defaultExport:DefaultExport<any, any> = <any> {};
+		let defaultTarget:Entry.Class<any, any>;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
