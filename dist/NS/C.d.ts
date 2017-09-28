@@ -22,6 +22,7 @@ export declare class Class {
     static readonly ErrorResponse: string;
     static readonly Error: string;
     static readonly ResponseMetadata: string;
+    static readonly ValidationError: string;
 }
 export declare class Predicate {
     static readonly accessPoint: string;
@@ -33,6 +34,7 @@ export declare class Predicate {
     static readonly entry: string;
     static readonly error: string;
     static readonly errorCode: string;
+    static readonly errorDetails: string;
     static readonly errorMessage: string;
     static readonly errorParameters: string;
     static readonly eTag: string;

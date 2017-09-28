@@ -44,6 +44,8 @@ export class Class {
 	static get Error():string { return namespace + "Error"; }
 
 	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
+
+	static get ValidationError():string { return namespace + "ValidationError"; }
 }
 
 export class Predicate {
@@ -64,6 +66,8 @@ export class Predicate {
 	static get error():string { return namespace + "error"; }
 
 	static get errorCode():string { return namespace + "errorCode"; }
+
+	static get errorDetails():string { return namespace + "errorDetails"; }
 
 	static get errorMessage():string { return namespace + "errorMessage"; }
 

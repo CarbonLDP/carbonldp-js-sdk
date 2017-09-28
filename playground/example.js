@@ -64,7 +64,7 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				return carbon.documents.get( "404/" );
+				return carbon.documents.get( "posts/" );
 			} ).then( ( [ result ] ) => {
 				delete result.created;
 				return result.saveAndRefresh();

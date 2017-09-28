@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 22 );
+			expect( Object.keys( C.Class ).length ).toBe( 23 );
 		} );
 
 		it( hasProperty(
@@ -273,6 +273,17 @@ describe( module(
 			expect( C.Class.ResponseMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetadata" );
 		} );
 
+		it( hasProperty(
+			STATIC,
+			"ValidationError",
+			"string"
+		), ():void => {
+			expect( C.Class.ValidationError ).toBeDefined();
+			expect( Utils.isString( C.Class.ValidationError ) ).toBe( true );
+
+			expect( C.Class.ValidationError ).toBe( "https://carbonldp.com/ns/v1/platform#ValidationError" );
+		} );
+
 	} );
 
 	describe( clazz(
@@ -284,7 +295,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 22 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 23 );
 		} );
 
 		it( hasProperty(
@@ -441,6 +452,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.errorCode ) ).toBe( true );
 
 			expect( C.Predicate.errorCode ).toBe( "https://carbonldp.com/ns/v1/platform#errorCode" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"errorDetails",
+			"string"
+		), ():void => {
+			expect( C.Predicate.errorDetails ).toBeDefined();
+			expect( Utils.isString( C.Predicate.errorDetails ) ).toBe( true );
+
+			expect( C.Predicate.errorDetails ).toBe( "https://carbonldp.com/ns/v1/platform#errorDetails" );
 		} );
 
 		it( hasProperty(
