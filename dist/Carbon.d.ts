@@ -8,6 +8,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -34,6 +35,7 @@ export declare class Class extends AbstractContext.Class {
     static HTTP: typeof HTTP;
     static JSONLD: typeof JSONLD;
     static LDP: typeof LDP;
+    static Messaging: typeof Messaging;
     static NamedFragment: typeof NamedFragment;
     static NS: typeof NS;
     static ObjectSchema: typeof ObjectSchema;
@@ -53,6 +55,7 @@ export declare class Class extends AbstractContext.Class {
     static readonly version: string;
     readonly version: string;
     protected _baseURI: string;
+    messaging: Messaging.Service.Class;
     constructor(domain: string, ssl?: boolean, settings?: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;

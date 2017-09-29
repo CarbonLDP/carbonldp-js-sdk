@@ -26,6 +26,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
@@ -122,6 +123,16 @@ describe( module( "Carbon" ), ():void => {
 			expect( myCarbon.baseURI ).toMatch( "http://my-carbonldp.example.com/" );
 		} );
 
+		it( hasProperty(
+			INSTANCE,
+			"messaging",
+			"Carbon.Messaging.Service.Class",
+			"Service that contains the RAW methods to manage the messaging/real-time features."
+		), ():void => {
+			expect( carbon.messaging ).toBeDefined();
+			expect( carbon.messaging ).toEqual( jasmine.any( Messaging.Service.Class ) );
+		} );
+
 		it( reexports(
 			STATIC,
 			"AccessPoint",
@@ -201,6 +212,15 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.LDP ).toBeDefined();
 			expect( Carbon.Class.LDP ).toBe( LDP );
+		} );
+
+		it( reexports(
+			STATIC,
+			"Messaging",
+			"Carbon/Messaging"
+		), ():void => {
+			expect( Carbon.Class.Messaging ).toBeDefined();
+			expect( Carbon.Class.Messaging ).toBe( Messaging );
 		} );
 
 		it( reexports(
@@ -555,8 +575,7 @@ describe( module( "Carbon" ), ():void => {
 						}, {
 							"@id": "${ NS.CS.Class.AllOrigins }"
 						} ]
-					}
-					],
+					} ],
 					"@id": "https://example.com/.system/instance/"
 				} ]`,
 				} );

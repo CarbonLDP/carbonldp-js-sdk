@@ -30,7 +30,6 @@ import * as JSONLD from "./JSONLD";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
@@ -38,6 +37,8 @@ import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
+import MessagingEvent from "./Messaging/Event";
+import * as MessagingUtils from "./Messaging/Utils";
 
 import { QueryClause } from "sparqler/Clauses";
 
@@ -8669,6 +8670,583 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( "vocab" in queryBuilder ).toBe( true );
 				expect( "prefix" in queryBuilder ).toBe( true );
 			})();
+		} );
+
+		describe( method(
+			INSTANCE,
+			"on"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to an event notification in any specified URI pattern.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.on ).toBeDefined();
+				expect( documents.on ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return error when does not have context", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				documents.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( () => documents.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				documents.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				expect( () => documents.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+				spyOn( carbon.messaging, "subscribe" );
+
+				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.on( event, uriPattern, () => {
+					done.fail( "Should not enter here." );
+				}, () => {
+					done.fail( "Should not enter here." );
+				} );
+
+				expect( createDestinationSpy ).toHaveBeenCalledWith( event, uriPattern, carbon.baseURI );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service", ( done:DoneFn ):void => {
+				const destinationString:string = "destination/*";
+				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
+
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				carbon.documents.on( "*.*", "resource/*", onEvent, onError );
+
+				expect( subscribeSpy ).toHaveBeenCalledWith( destinationString, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"off"
+		), ():void => {
+
+			it( hasSignature(
+				"Remove the subscription of the URI pattern event specified that have the exact onEvent callback provided.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.off ).toBeDefined();
+				expect( documents.off ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return error when does not have context", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				documents.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( () => documents.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				documents.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				expect( () => documents.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+				spyOn( carbon.messaging, "subscribe" );
+
+				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.off( event, uriPattern, () => {
+					done.fail( "Should not enter here." );
+				}, () => {
+					done.fail( "Should not enter here." );
+				} );
+
+				expect( createDestinationSpy ).toHaveBeenCalledWith( event, uriPattern, carbon.baseURI );
+				done();
+			} );
+
+			it( "should unsubscribe with the Messaging Service", ( done:DoneFn ):void => {
+				const destinationString:string = "destination/*";
+				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
+
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				carbon.documents.off( "*.*", "resource/*", onEvent, onError );
+
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( destinationString, onEvent );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"one"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to only one event notification in any specified URI pattern.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.one ).toBeDefined();
+				expect( documents.one ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.one( event, uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( event, uriPattern, jasmine.any( Function ), onError );
+				done();
+			} );
+
+			it( "should call the `off` method when the notification has been resolved", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const offSpy:jasmine.Spy = spyOn( carbon.documents, "off" );
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" )
+					.and.callFake( ( _event:string, _uriPattern:string, _onEvent:( data:any ) => void ):void => _onEvent( "I'm calling you!" ) );
+
+				const onEvent:( data:any ) => void = ( data:any ) => {
+					expect( data ).toBe( "I'm calling you!" );
+					done();
+				};
+
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.one( event, uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalled();
+				expect( offSpy ).toHaveBeenCalledWith( event, uriPattern, jasmine.any( Function ), onError );
+			} );
+
+			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" )
+					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
+
+				carbon.documents.one( "*.*", "resource/*", () => void 0, done.fail );
+
+				expect( subscribeSpy ).toHaveBeenCalled();
+				expect( unsubscribeSpy ).toHaveBeenCalled();
+
+				expect( subscribeSpy.calls.first().args )
+					.toEqual( jasmine.arrayContaining( unsubscribeSpy.calls.first().args ) );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onDocumentCreated"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onDocumentCreated ).toBeDefined();
+				expect( documents.onDocumentCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onDocumentCreated( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onChildCreated"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onChildCreated ).toBeDefined();
+				expect( documents.onChildCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onChildCreated( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.CHILD_CREATED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onAccessPointCreated"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onAccessPointCreated ).toBeDefined();
+				expect( documents.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onAccessPointCreated( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onDocumentModified"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onDocumentModified ).toBeDefined();
+				expect( documents.onDocumentModified ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onDocumentModified( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onDocumentDeleted"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_DELETED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onDocumentDeleted ).toBeDefined();
+				expect( documents.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onDocumentDeleted( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onMemberAdded"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.MEMBER_ADDED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onMemberAdded ).toBeDefined();
+				expect( documents.onMemberAdded ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onMemberAdded( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_ADDED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onMemberRemoved"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.MEMBER_REMOVED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onMemberRemoved ).toBeDefined();
+				expect( documents.onMemberRemoved ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onMemberRemoved( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_REMOVED, uriPattern, onEvent, onError );
+				done();
+			} );
+
 		} );
 
 	} );

@@ -21,22 +21,27 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 2. `lint`: Same as `npm lint`. Run TSLint over the source code to perform static code analysis.
 
 ## File structure
-- **build**: Build related scripts.
+- **build**: Build related scripts
     - **documentation**: Files used to generate documentation
         - **html**: Files used for html based documentation
         - **markdown**: Files used for markdown based documentation
-    - **license.js**: Contains the license to append to the build.
-    - **sfx.ts**: Main file that feeds the SFX building process. Requires Carbon and exports its entire content as a module.
-- **dist**: Compiled files.
-    - **bundles**: Contains different versions of Carbon, bundled for simplicity.
-        **Carbon.sfx.js**: Bundle that contains Carbon and all of its dependencies. Carbon is exposed in the global environment.
-    - **js**: The whole -non bundled- library. Useful for JSPM based applications.
+    - **license.js**: Contains the license to append to the build
+        - **sfx.ts**: Main file that feeds the SFX building process. Requires Carbon and exports its entire content as a module
+- **config**: Configuration files used for building and testing the SDK 
+	- **karma.conf.js**: Actual Karma test runner configuration file, used by the karma file in the base path
+	- **webpack.common.js**: Base Webpack configuration used by every by the specific environment webpack configuration files
+	- **webpack.prod.js**: Webpack configuration used for generate the bundle files
+	- **webpack.test.js**: Webpack configuration used by **karma.conf.js**
+- **dist**: Compiled files
+    - **bundles**: Contains different versions of Carbon, bundled for simplicity
+        - **Carbon.sfx.js**: Bundle that contains Carbon and all of its dependencies. Carbon is exposed in the global environment
+        - **Carbon.sfx.min.js**: Minimized version of the bundle
 - **documentation**: JS SDK's API documentation
 - **node_modules**: npm dependencies (don't touch them)
 - **playground**: Informal testing ground (TODO: Clean directory)
 - **scripts**: Scripts that aid in the workflow
-    - **copy-hooks.js**: Copies `pre-commit` to .git when `npm install` is called.
-    - **pre-commit**: Builds Carbon and adds the dist folder to the commit. Makes sure there's a fresh build in each commit.
+	- **copy-hooks.js**: Copies `pre-commit` to .git when `npm install` is called
+    - **pre-commit**: Builds Carbon and adds the dist folder to the commit. Makes sure there's a fresh build in each commit
 - **src**: Source files
 - **test**: Test framework related files (not the real tests)
 - **typings**: TypeScript definition files (See [typings](https://github.com/typings/typings))
@@ -58,7 +63,7 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 
 ## License
 
-	Copyright (c) 2015-present, Base22 Technology Group, LLC.
+	Copyright (c) 2015-present, Base22 Technology Group, LLC
 	All rights reserved.
 
 	This source code is licensed under the BSD-style license found in the

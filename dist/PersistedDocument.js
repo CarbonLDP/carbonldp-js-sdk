@@ -2,14 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document = require("./Document");
 var HTTP = require("./HTTP");
+var MessagingDocument = require("./Messaging/Document");
 var ObjectSchema = require("./ObjectSchema");
-var PersistedResource = require("./PersistedResource");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
+var PersistedResource = require("./PersistedResource");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
-var Utils = require("./Utils");
 var URI = require("./RDF/URI");
+var ServiceAwareDocument = require("./ServiceAwareDocument");
+var Utils = require("./Utils");
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);
@@ -203,8 +205,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "_documents")
-            && Utils.hasPropertyDefined(object, "_etag")
+        return Utils.hasPropertyDefined(object, "_etag")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
@@ -236,8 +237,9 @@ var Factory = (function () {
             && Utils.hasFunction(object, "sparql");
     };
     Factory.is = function (object) {
-        return Factory.hasClassProperties(object)
-            && Document.Factory.is(object);
+        return Document.Factory.is(object)
+            && Factory.hasClassProperties(object)
+            && MessagingDocument.Factory.hasClassProperties(object);
     };
     Factory.create = function (uri, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
@@ -251,20 +253,16 @@ var Factory = (function () {
         document.id = uri;
         return document;
     };
-    Factory.decorate = function (document, documents, snapshot) {
+    Factory.decorate = function (object, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        Document.Factory.decorate(document);
-        PersistedResource.Factory.decorate(document, snapshot);
-        if (Factory.hasClassProperties(document))
-            return document;
-        var persistedDocument = document;
-        Object.defineProperties(persistedDocument, {
-            "_documents": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: documents,
-            },
+        if (Factory.is(object))
+            return object;
+        Document.Factory.decorate(object);
+        PersistedResource.Factory.decorate(object, snapshot);
+        ServiceAwareDocument.Factory.decorate(object, documents);
+        MessagingDocument.Factory.decorate(object);
+        var persistedDocument = object;
+        return Object.defineProperties(persistedDocument, {
             "_etag": {
                 writable: true,
                 enumerable: false,
@@ -550,7 +548,6 @@ var Factory = (function () {
                 value: extendRevert(persistedDocument.revert),
             },
         });
-        return persistedDocument;
     };
     return Factory;
 }());

@@ -5,7 +5,7 @@ export interface Class {
     "@graph": Node.Class[];
 }
 export declare class Factory {
-    static is(object: Object): boolean;
+    static is(object: Object): object is Class;
     static create(resources: Node.Class[], uri?: string): Class;
 }
 export declare class Util {

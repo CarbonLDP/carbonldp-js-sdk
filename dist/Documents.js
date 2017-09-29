@@ -4,6 +4,7 @@ var Errors = require("./Errors");
 var HTTP = require("./HTTP");
 var RDF = require("./RDF");
 var Utils = require("./Utils");
+var Utils_1 = require("./Utils");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
 var Document = require("./Document");
@@ -14,6 +15,8 @@ var PersistedFragment = require("./PersistedFragment");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
 var ProtectedDocument = require("./ProtectedDocument");
 var Pointer = require("./Pointer");
+var Messaging = require("./Messaging");
+var Utils_2 = require("./Messaging/Utils");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
 var LDP = require("./LDP");
@@ -21,10 +24,8 @@ var SPARQL = require("./SPARQL");
 var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var Builder_1 = require("./SPARQL/Builder");
-var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class(context) {
-        if (context === void 0) { context = null; }
         this.context = context;
         this.pointers = new Map();
         this.documentsBeingResolved = new Map();
@@ -701,6 +702,58 @@ var Class = (function () {
             });
         }
         return builder;
+    };
+    Class.prototype.on = function (event, uriPattern, onEvent, onError) {
+        try {
+            Utils_2.validateEventContext(this.context);
+            var destination = Utils_2.createDestination(event, uriPattern, this.context.baseURI);
+            this.context.messaging.subscribe(destination, onEvent, onError);
+        }
+        catch (error) {
+            if (!onError)
+                throw error;
+            onError(error);
+        }
+    };
+    Class.prototype.off = function (event, uriPattern, onEvent, onError) {
+        try {
+            Utils_2.validateEventContext(this.context);
+            var destination = Utils_2.createDestination(event, uriPattern, this.context.baseURI);
+            this.context.messaging.unsubscribe(destination, onEvent);
+        }
+        catch (error) {
+            if (!onError)
+                throw error;
+            onError(error);
+        }
+    };
+    Class.prototype.one = function (event, uriPattern, onEvent, onError) {
+        var self = this;
+        this.on(event, uriPattern, function onEventWrapper(data) {
+            onEvent(data);
+            self.off(event, uriPattern, onEventWrapper, onError);
+        }, onError);
+    };
+    Class.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError);
+    };
+    Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
+        return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Class.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResource = this.getDocumentResource(rdfDocument, response);

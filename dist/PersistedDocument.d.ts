@@ -1,18 +1,20 @@
 /// <reference types="node" />
+import { QueryClause } from "sparqler/Clauses";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
+import * as MessagingDocument from "./Messaging/Document";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedResource from "./PersistedResource";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
-import { QueryClause } from "sparqler/Clauses";
-export interface Class extends PersistedResource.Class, Document.Class {
+export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer.Class;
@@ -20,7 +22,6 @@ export interface Class extends PersistedResource.Class, Document.Class {
     hasMemberRelation?: Pointer.Class;
     isMemberOfRelation?: Pointer.Class;
     contains?: Pointer.Class[];
-    _documents: Documents;
     _etag: string;
     _fragmentsIndex: Map<string, PersistedFragment.Class>;
     _savedFragments: PersistedFragment.Class[];
@@ -82,9 +83,9 @@ export interface Class extends PersistedResource.Class, Document.Class {
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
+    static is(object: Object): object is Class;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): T & Class;
-    static decorate<T extends Object>(document: T, documents: Documents, snapshot?: Object): T & Class;
+    static decorate<T extends Object>(object: T, documents: Documents, snapshot?: Object): T & Class;
 }
 export default Class;

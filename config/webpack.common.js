@@ -23,6 +23,12 @@ module.exports = function( options ) {
 
 		plugins: [
 			new webpack.IgnorePlugin( /file-type/ ),
+
+			new webpack.DefinePlugin( {
+				"process.env": {
+					"NODE_ENV": JSON.stringify( options.env ),
+				},
+			} ),
 		],
 
 		module: {
