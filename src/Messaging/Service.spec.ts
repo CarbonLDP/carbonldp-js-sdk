@@ -504,8 +504,45 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				addSubscription( 1 );
 				expect( service[ "_client" ].connected ).toBe( false );
 
-				addSubscription( 1 );
+				addSubscription( 2 );
 				expect( service[ "_client" ].connected ).toBe( false );
+			} );
+
+			it( "should receive broadcasted errors", ( done:DoneFn ):void => {
+				const mockServer:any = new Server( "https://example.com/broker" );
+				mockServer.on( "connection", server => {
+					server.send( Frame.marshall( "CONNECTED", {
+						"server": "MockSocket-Server/**",
+						"session": "session-1",
+						"heart-beat": "0,0",
+						"version": "1.2",
+					} ) );
+				} );
+				mockServer.on( "message", ( framesString:string ) => {
+					const frames:Frame[] = Frame.unmarshall( framesString ).frames;
+					frames.forEach( frame => {
+						if( frame.command !== "SUBSCRIBE" ) return;
+						mockServer.send( Frame.marshall( "ERROR", {
+							"message": "Connection closed.",
+							"content-length": 0,
+						} ) );
+					} );
+				} );
+
+				function addSubscription( index:number ):void {
+					service.subscribe( `/topic/*.*.destination-${ index }/`, () => {
+						done.fail( "Should not receive successfully any data." );
+					}, ( error ) => {
+						expect( error ).toEqual( jasmine.any( Error ) );
+						expect( error.message ).toContain( "Connection closed" );
+
+						if( ++ receivedData === 2 ) mockServer.stop( done );
+					} );
+				}
+
+				let receivedData:number = 0;
+				addSubscription( 1 );
+				addSubscription( 2 );
 			} );
 
 		} );

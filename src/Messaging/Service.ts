@@ -70,7 +70,7 @@ export class Class {
 		this.reconnect( onConnect, onError );
 	}
 
-	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.broadcastError ):void {
+	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.broadcastError.bind( this ) ):void {
 		if( ! this._client ) this._attempts = 0;
 		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
 		else this._subscriptionsMap.clear();

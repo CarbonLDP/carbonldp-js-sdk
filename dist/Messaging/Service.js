@@ -37,7 +37,7 @@ var Class = (function () {
     };
     Class.prototype.reconnect = function (onConnect, onError) {
         var _this = this;
-        if (onError === void 0) { onError = this.broadcastError; }
+        if (onError === void 0) { onError = this.broadcastError.bind(this); }
         if (!this._client)
             this._attempts = 0;
         if (!this._subscriptionsMap)
