@@ -4,12 +4,12 @@ import Options from "./Options";
 declare module "webstomp-client" {
     interface Client {
         connected: boolean;
-        connect(headers: ConnectionHeaders, connectCallback: (frame?: Frame) => any, errorCallback?: (error: Frame | CloseEvent) => any): void;
+        connect(headers: any, connectCallback: (frame?: Frame) => any, errorCallback?: (error: Frame | CloseEvent) => any): void;
     }
     interface Frame {
         command: string;
         body: string;
-        headers: ExtendedHeaders;
+        headers: any;
     }
 }
 export declare const DEFAULT_OPTIONS: Options;
