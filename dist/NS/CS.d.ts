@@ -2,33 +2,31 @@ declare const namespace: string;
 declare class Class {
     static readonly AccessControlEntry: string;
     static readonly AccessControlList: string;
-    static readonly AddMember: string;
-    static readonly Agent: string;
     static readonly AllOrigins: string;
-    static readonly Application: string;
-    static readonly AppRole: string;
     static readonly CreateAccessPoint: string;
     static readonly CreateChild: string;
+    static readonly Credentials: string;
     static readonly Delete: string;
     static readonly Download: string;
     static readonly Extend: string;
     static readonly ManageSecurity: string;
-    static readonly PlatformRole: string;
     static readonly ProtectedDocument: string;
     static readonly Read: string;
     static readonly RemoveMember: string;
+    static readonly Role: string;
     static readonly Ticket: string;
     static readonly Token: string;
     static readonly Update: string;
     static readonly Upload: string;
+    static readonly User: string;
 }
 declare class Predicate {
     static readonly accessControlEntry: string;
     static readonly accessControlList: string;
     static readonly accessTo: string;
-    static readonly agent: string;
     static readonly allowsOrigin: string;
     static readonly childRole: string;
+    static readonly credentials: string;
     static readonly credentialsOf: string;
     static readonly description: string;
     static readonly enabled: string;
@@ -40,11 +38,11 @@ declare class Predicate {
     static readonly parentRole: string;
     static readonly password: string;
     static readonly permission: string;
-    static readonly platformRole: string;
     static readonly rootContainer: string;
     static readonly subject: string;
     static readonly subjectClass: string;
     static readonly ticketKey: string;
     static readonly tokenKey: string;
+    static readonly user: string;
 }
 export { namespace, Class, Predicate };

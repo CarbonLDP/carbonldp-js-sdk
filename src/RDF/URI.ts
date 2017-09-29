@@ -131,19 +131,19 @@ export class Util {
 	}
 
 	static resolve( parentURI:string, childURI:string ):string {
-		if( Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
+		if( ! parentURI || Util.isAbsolute( childURI ) || Util.isBNodeID( childURI ) || Util.isPrefixed( childURI ) )
 			return childURI;
 
 		let protocol:string = parentURI.substr( 0, parentURI.indexOf( "://" ) + 3 );
-		let path:string = parentURI.substr( parentURI.indexOf( "://" ) + 3,  parentURI.length - 1 );
-		if( path.lastIndexOf( "/" ) === -1 ) path += "/";
+		let path:string = parentURI.substr( parentURI.indexOf( "://" ) + 3, parentURI.length - 1 );
+		if( path.lastIndexOf( "/" ) === - 1 ) path += "/";
 
 		if( Utils.S.startsWith( childURI, "?" ) || Utils.S.startsWith( childURI, "#" ) ) {
 			if( Util.hasQuery( path ) ) path = path.substr( 0, path.indexOf( "?" ) );
 			if( Util.hasFragment( path ) && ( ! Utils.S.startsWith( childURI, "?" ) || Utils.S.endsWith( path, "#" ) ) ) path = Util.getDocumentURI( path );
 		} else {
 			path = path.substr( 0, path.lastIndexOf( "/" ) + 1 );
-			if( ! Utils.S.endsWith( path, "?" ) && ! Utils.S.endsWith( path, "#" )  && ! Utils.S.endsWith( path, "/" ) ) path += "/";
+			if( ! Utils.S.endsWith( path, "?" ) && ! Utils.S.endsWith( path, "#" ) && ! Utils.S.endsWith( path, "/" ) ) path += "/";
 		}
 
 		if( Utils.S.startsWith( childURI, "/" ) ) {
@@ -154,9 +154,8 @@ export class Util {
 	}
 
 	static removeProtocol( uri:string ):string {
-		if( Utils.S.startsWith( uri, "https://" ) ) return uri.substr( 5, uri.length );
-		if( Utils.S.startsWith( uri, "http://" ) ) return uri.substr( 4, uri.length );
-		return uri;
+		if( ! Util.hasProtocol( uri ) ) return uri;
+		return uri.substring( uri.indexOf( "://" ) + 3 );
 	}
 
 	static prefix( uri:string, prefix:string, prefixURI:string ):string;

@@ -10,7 +10,7 @@ export interface Class {
 }
 
 export class Factory {
-	static is( object:Object ):boolean {
+	static is( object:Object ):object is Class {
 		return Utils.hasProperty( object, "@graph" )
 			&& Utils.isArray( object[ "@graph" ] );
 	}

@@ -118,7 +118,7 @@ var Util = (function () {
         return parameters;
     };
     Util.resolve = function (parentURI, childURI) {
-        if (Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
+        if (!parentURI || Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
             return childURI;
         var protocol = parentURI.substr(0, parentURI.indexOf("://") + 3);
         var path = parentURI.substr(parentURI.indexOf("://") + 3, parentURI.length - 1);
@@ -141,11 +141,9 @@ var Util = (function () {
         return protocol + path + childURI;
     };
     Util.removeProtocol = function (uri) {
-        if (Utils.S.startsWith(uri, "https://"))
-            return uri.substr(5, uri.length);
-        if (Utils.S.startsWith(uri, "http://"))
-            return uri.substr(4, uri.length);
-        return uri;
+        if (!Util.hasProtocol(uri))
+            return uri;
+        return uri.substring(uri.indexOf("://") + 3);
     };
     Util.prefix = function (uri, prefixOrObjectSchema, prefixURI) {
         if (prefixURI === void 0) { prefixURI = null; }

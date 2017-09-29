@@ -1,81 +1,81 @@
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import * as Agent from "./Auth/Agent";
-import * as Agents from "./Auth/Agents";
-import AuthenticationToken from "./Auth/AuthenticationToken";
 import Authenticator from "./Auth/Authenticator";
 import BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as Credentials from "./Auth/Credentials";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedAgent from "./Auth/PersistedAgent";
+import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
+import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
-import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as Ticket from "./Auth/Ticket";
 import * as Token from "./Auth/Token";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as User from "./Auth/User";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import Credentials from "./Auth/Credentials";
+import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import * as Users from "./Auth/Users";
 
 import Context from "./Context";
-import * as ObjectSchema from "./ObjectSchema";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
-import * as JSONLD from "./JSONLD";
 import * as HTTP from "./HTTP";
+import * as JSONLD from "./JSONLD";
 import * as NS from "./NS";
-import * as Resource from "./Resource";
+import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
+import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
 export {
 	ACE,
 	ACL,
-	Agent,
-	Agents,
-	AuthenticationToken,
+	User,
+	Users,
 	Authenticator,
 	BasicAuthenticator,
+	Credentials,
 	PersistedACE,
 	PersistedACL,
-	PersistedAgent,
+	PersistedCredentials,
 	PersistedRole,
+	PersistedUser,
 	Role,
 	Roles,
 	Ticket,
 	Token,
 	TokenAuthenticator,
 	UsernameAndPasswordToken
-}
+};
 
 export enum Method {
 	BASIC,
-	TOKEN
+	TOKEN,
 }
 
 export class Class {
-	// TODO: Make the agents property an abstract property.
-	public agents:Agents.Class;
+	public users:Users.Class;
 	public roles:Roles.Class;
 
-	protected _authenticatedAgent:PersistedAgent.Class;
+	protected _authenticatedUser:PersistedUser.Class;
 
 	private context:Context;
-	private authenticators:Array<Authenticator<AuthenticationToken>>;
-	private authenticator:Authenticator<AuthenticationToken>;
+	private authenticators:Authenticator<Object, Object>[];
+	private authenticator:Authenticator<Object, Object>;
 
-	public get authenticatedAgent():PersistedAgent.Class {
-		if( ! this._authenticatedAgent ) {
-			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedAgent;
+	public get authenticatedUser():PersistedUser.Class {
+		if( ! this._authenticatedUser ) {
+			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedUser;
 			return null;
 		}
-		return this._authenticatedAgent;
+		return this._authenticatedUser;
 	}
 
 	constructor( context:Context ) {
-		this.roles = null;
-		this.agents = null;
+		this.roles = new Roles.Class( this.context );
+		this.users = new Users.Class( this.context );
 
 		this.context = context;
 
@@ -97,14 +97,8 @@ export class Class {
 
 	authenticateUsing( method:"BASIC", username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
 	authenticateUsing( method:"TOKEN", username:string, password:string ):Promise<Token.Class>;
-
 	authenticateUsing( method:"TOKEN", token:Token.Class ):Promise<Token.Class>;
-
-	// TODO remove non-specific overloads. Reference https://github.com/Microsoft/TypeScript/pull/6278, seems to be added for 1.9
-	authenticateUsing( method:string, username:string, password:string ):Promise<Credentials>;
-	authenticateUsing( method:string, token:Credentials ):Promise<Credentials>;
-
-	authenticateUsing( method:string, userOrTokenOrCredentials:any, password?:string ):Promise<any> {
+	authenticateUsing( method:string, userOrTokenOrCredentials:any, password?:string ):Promise<UsernameAndPasswordCredentials | Token.Class> {
 		switch( method ) {
 			case "BASIC":
 				return this.authenticateWithBasic( userOrTokenOrCredentials, password );
@@ -130,12 +124,11 @@ export class Class {
 
 		this.authenticator.clearAuthentication();
 		this.authenticator = null;
-		this._authenticatedAgent = null;
+		this._authenticatedUser = null;
 	}
 
 	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
 		let resourceURI:string = this.context.resolve( uri );
-		let containerURI:string = this.context.resolve( Ticket.TICKETS_CONTAINER );
 
 		let freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
 		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
@@ -145,7 +138,10 @@ export class Class {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return Promise.resolve().then( () => {
+			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
+			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() );
+		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
@@ -160,7 +156,7 @@ export class Class {
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
-			return [ ticket, response ] as [ Ticket.Class, HTTP.Response.Class ];
+			return [ ticket, response ];
 		} );
 	}
 
@@ -185,9 +181,9 @@ export class Class {
 		let credentials:UsernameAndPasswordCredentials;
 		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
 			credentials = _credentials;
-			return this.getAuthenticatedAgent( authenticator );
-		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
-			this._authenticatedAgent = persistedAgent;
+			return this.getAuthenticatedUser( authenticator );
+		} ).then( ( persistedUser:PersistedUser.Class ) => {
+			this._authenticatedUser = persistedUser;
 			this.authenticator = authenticator;
 			return credentials;
 		} );
@@ -212,24 +208,24 @@ export class Class {
 		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
 			credentials = _credentials;
 
-			if( PersistedAgent.Factory.is( credentials.agent ) ) return credentials.agent;
-			return this.getAuthenticatedAgent( authenticator );
+			if( PersistedUser.Factory.is( credentials.user ) ) return credentials.user;
+			return this.getAuthenticatedUser( authenticator );
 
-		} ).then( ( persistedAgent:PersistedAgent.Class ) => {
-			this._authenticatedAgent = persistedAgent;
-			credentials.agent = persistedAgent;
+		} ).then( ( persistedUser:PersistedUser.Class ) => {
+			this._authenticatedUser = persistedUser;
+			credentials.user = persistedUser;
 
 			this.authenticator = authenticator;
 			return credentials;
 		} );
 	}
 
-	private getAuthenticatedAgent( authenticator:Authenticator<any> ):Promise<PersistedAgent.Class> {
+	private getAuthenticatedUser( authenticator:Authenticator<Object, Object> ):Promise<PersistedUser.Class> {
 		let requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
 
-		return this.context.documents.get<PersistedAgent.Class>( "agents/me/", requestOptions ).then(
-			( [ agentDocument, response ]:[ PersistedAgent.Class, HTTP.Response.Class ] ) => agentDocument
+		return this.context.documents.get<PersistedUser.Class>( "users/me/", requestOptions ).then(
+			( [ userDocument, response ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => userDocument
 		);
 	}
 

@@ -1,5 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Value = (function () {
+    function Value(value) {
+        this.value = value;
+    }
+    Value.prototype.toString = function () {
+        return this.value;
+    };
+    return Value;
+}());
+exports.Value = Value;
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];
@@ -27,16 +37,6 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
-var Value = (function () {
-    function Value(value) {
-        this.value = value;
-    }
-    Value.prototype.toString = function () {
-        return this.value;
-    };
-    return Value;
-}());
-exports.Value = Value;
 var Util = (function () {
     function Util() {
     }

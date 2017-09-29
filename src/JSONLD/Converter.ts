@@ -9,7 +9,7 @@ import * as Utils from "./../Utils";
 export class Class {
 	private _literalSerializers:Map<string, RDF.Literal.Serializer>;
 
-	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; };
+	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; }
 
 	private static getDefaultSerializers():Map<string, RDF.Literal.Serializer> {
 		let literalSerializers:Map<string, RDF.Literal.Serializer> = new Map<string, RDF.Literal.Serializer>();

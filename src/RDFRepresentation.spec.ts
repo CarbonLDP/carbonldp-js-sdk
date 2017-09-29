@@ -151,8 +151,12 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 			let context:AbstractContext = new MockedContext();

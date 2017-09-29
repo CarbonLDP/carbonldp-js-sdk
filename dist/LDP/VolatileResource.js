@@ -8,13 +8,7 @@ var Factory = (function () {
     }
     Factory.is = function (object) {
         return Resource.Factory.is(object)
-            && Factory.hasRDFClass(object);
-    };
-    Factory.hasRDFClass = function (object) {
-        if (!object)
-            return false;
-        var types = ("@type" in object) ? object["@type"] : ("types" in object) ? object.types : [];
-        return types.indexOf(exports.RDF_CLASS) !== -1;
+            && object.hasType(exports.RDF_CLASS);
     };
     return Factory;
 }());

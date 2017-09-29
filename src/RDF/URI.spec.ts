@@ -485,6 +485,9 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( "resolve" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.resolve ) ).toBe( true );
 
+			expect( URI.Util.resolve( "", "http://example.com/resource/" ) ).toEqual( "http://example.com/resource/" );
+			expect( URI.Util.resolve( "", "child/" ) ).toEqual( "child/" );
+
 			expect( URI.Util.resolve( "http://example.com/resource/", "/child/" ) ).toEqual( "http://example.com/resource/child/" );
 			expect( URI.Util.resolve( "http://example.com/resource", "/child/" ) ).toEqual( "http://example.com/child/" );
 
@@ -532,17 +535,12 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 			expect( "removeProtocol" in URI.Util ).toBe( true );
 			expect( Utils.isFunction( URI.Util.removeProtocol ) ).toBe( true );
 
-			let URI1:string = "http://example.com/resource";
-			let URI2:string = "https://example.com/resource";
-			let URI3:string = "resource/child/";
-			let resultURI:string = "://example.com/resource";
-			let prefixURI:string = "prefix:resource/";
+			expect( URI.Util.removeProtocol( "http://example.com/resource" ) ).toEqual( "example.com/resource" );
+			expect( URI.Util.removeProtocol( "https://example.com/resource" ) ).toEqual( "example.com/resource" );
 
-			expect( URI.Util.removeProtocol( URI1 ) ).toEqual( resultURI );
-			expect( URI.Util.removeProtocol( URI2 ) ).toEqual( resultURI );
-			expect( URI.Util.removeProtocol( URI3 ) ).toEqual( URI3 );
-			expect( URI.Util.removeProtocol( resultURI ) ).toEqual( resultURI );
-			expect( URI.Util.removeProtocol( prefixURI ) ).toEqual( prefixURI );
+			expect( URI.Util.removeProtocol( "://example.com/resource" ) ).toEqual( "://example.com/resource" );
+			expect( URI.Util.removeProtocol( "example.com/resource" ) ).toEqual( "example.com/resource" );
+			expect( URI.Util.removeProtocol( "prefix:resource" ) ).toEqual( "prefix:resource" );
 		} );
 
 		describe( method(

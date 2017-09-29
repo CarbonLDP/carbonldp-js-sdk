@@ -4,9 +4,7 @@
 		it( "something else", ( done ) => {
 			"use strict";
 
-			let carbon = new Carbon();
-			carbon.setSetting( "domain", "localhost:8083" );
-			carbon.setSetting( "http.ssl", false );
+			let carbon = new Carbon( "localhost:8083", false );
 
 			carbon.extendObjectSchema( {
 				"acl": "http://www.w3.org/ns/auth/acl#",
@@ -61,47 +59,23 @@
 				}
 			} );
 
-			let appContext;
 			let resource;
 			let fragment;
 
-			carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( function() {
-				return carbon.apps.getContext( "test-app/" );
-			} ).then( ( _appContext ) => {
-				appContext = _appContext;
-				return appContext.documents.sparql( "posts/" )
-					.selectAll()
-					.where( ( _ ) => {
-						return [
-							_.resource( "posts/" )
-								.has( _.var( "p" ), _.var( "o" ) ),
-						];
-					} )
-					.execute();
-			} ).then( ( [ result, response ] ) => {
-				console.log( result );
+			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
+			Promise.resolve().then( () => {
+				fragment = { value: "a name" };
+				resource = { name: fragment };
+				carbon.documents.one( "*.*", "/**", ( data ) => {
+					console.log( data );
+				}, ( error ) => {
+					console.error( error );
+				} );
 				done();
 			} ).catch( ( error ) => {
 				console.error( error );
 				done.fail( error );
 			} );
-
-			function saveAndRefresh( persistedDocument ) {
-				let responses = [];
-				return persistedDocument.save().then( ( [ persistedDocument, response ] ) => {
-					responses.push( response );
-					return persistedDocument.refresh();
-				} ).then( ( [ persistedDocument, response ] ) => {
-					responses.push( response );
-					return [ persistedDocument, responses ];
-				} );
-			}
-
-			function removeFragments( persistedDocument ) {
-				for( let fragment of persistedDocument.getFragments() ) {
-					persistedDocument.removeFragment( fragment );
-				}
-			}
 		} );
 	} );
 })();

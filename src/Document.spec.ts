@@ -1596,10 +1596,6 @@ describe( module( "Carbon/Document" ), ():void => {
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],
-							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
-								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
 							"@type": [],
@@ -1628,10 +1624,6 @@ describe( module( "Carbon/Document" ), ():void => {
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],
-							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
-								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
 							"@type": [],
@@ -1641,7 +1633,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				} );
 
 				beforeEach( ():void => {
-					document.createFragment( { bNodeIdentifier: "cbc92415-5bdd-4a2a-873b-16a165315e7d" }, "_:BlankNode" );
+					document.createFragment( {}, "_:BlankNode" );
 					document.createFragment( "fragment" );
 					document[ "myProperty" ] = "a property";
 					document[ "myDate" ] = new Date( "2016-06-01" );
@@ -1659,8 +1651,12 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 					let context:AbstractContext = new MockedContext();
@@ -1702,8 +1698,12 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 					let context:AbstractContext = new MockedContext();
@@ -1741,15 +1741,15 @@ describe( module( "Carbon/Document" ), ():void => {
 						"@graph": [ {
 							"@id": "http://example.com/document/",
 							"@type": [],
-							"vocabulary/#myProperty": [ {
+							"http://example.com/vocabulary/#myProperty": [ {
 								"@value": "a property",
 								"@type": "http://www.w3.org/2001/XMLSchema#string",
 							} ],
-							"vocabulary/#myDate": [ {
+							"http://example.com/vocabulary/#myDate": [ {
 								"@value": "2016-06-01T00:00:00.000Z",
 								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							} ],
-							"vocabulary/#myFragment": [ {
+							"http://example.com/vocabulary/#myFragment": [ {
 								"@id": "_:BlankNode",
 							}, {
 								"@id": "http://example.com/document/#fragment",
@@ -1757,10 +1757,6 @@ describe( module( "Carbon/Document" ), ():void => {
 						}, {
 							"@id": "_:BlankNode",
 							"@type": [],
-							"https://carbonldp.com/ns/v1/platform#bNodeIdentifier": [ {
-								"@value": "cbc92415-5bdd-4a2a-873b-16a165315e7d",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
 						}, {
 							"@id": "http://example.com/document/#fragment",
 							"@type": [],

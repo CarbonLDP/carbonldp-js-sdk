@@ -37,10 +37,11 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"authenticate",
+			[ "T extends Object", "W extends Object" ],
 			"Performs an authentication and stores the credentials for future use.", [
 				{ name: "authenticationToken", type: "T", description: "The token that will be used to perform the authentication." },
 			],
-			{ type: "Promise<Carbon.Auth.Credentials.Class>", description: "Promise that contains the authentication credentials if the request is successful." }
+			{ type: "W", description: "Promise that contains the authentication credentials if the request is successful." }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -53,7 +54,7 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			OBLIGATORY,
 			"addAuthentication",
 			"If the authenticator is authenticated, it adds an authentication header in the request options object provided.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "The request options object where to add the authentication header." }
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "The request options object where to add the authentication header." },
 			],
 			{ type: "Carbon.HTTP.Request.Options", description: "The request options object provided after adding the authentication header." }
 		), ():void => {} );
@@ -61,8 +62,8 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 	} );
 
 	it( hasDefaultExport( "Carbon.Auth.Authenticator.Class" ), ():void => {
-		let defaultExport:DefaultExport<any> = <any> {};
-		let module:Authenticator.Class<any>;
+		let defaultExport:DefaultExport<Object, Object> = <any> {};
+		let module:Authenticator.Class<Object, Object>;
 
 		module = defaultExport;
 		expect( module ).toEqual( jasmine.any( Object ) );

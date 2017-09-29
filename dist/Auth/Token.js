@@ -13,7 +13,7 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.expirationTime,
         "@type": NS.XSD.DataType.dateTime,
     },
-    "agent": {
+    "user": {
         "@id": NS.CS.Predicate.credentialsOf,
         "@type": "@id",
     },
@@ -28,7 +28,7 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return (Utils.hasPropertyDefined(object, "key")
             && Utils.hasPropertyDefined(object, "expirationTime")
-            && Utils.hasPropertyDefined(object, "agent"));
+            && Utils.hasPropertyDefined(object, "user"));
     };
     Factory.hasRequiredValues = function (object) {
         return (Utils.hasProperty(object, "key")

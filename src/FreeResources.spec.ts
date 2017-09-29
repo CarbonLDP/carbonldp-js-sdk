@@ -311,8 +311,12 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 				context = new MockedContext();
@@ -458,7 +462,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				resource00 = freeResources.createResourceFrom( resourceObject00 );
 				expect( resource00 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource00.id ) ).toBe( true );
-				expect( resource00 ).toEqual( resourceObject00 );
+				expect( resource00 ).toEqual( resourceObject00 as Resource.Class );
 
 				let resourceObject01:Object = {};
 				let resource01:Resource.Class;
@@ -466,7 +470,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				expect( resource01 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
-				expect( resource01 ).toEqual( resourceObject01 );
+				expect( resource01 ).toEqual( resourceObject01 as Resource.Class );
 
 				let resourceObject02:Object = {};
 				let resource02:Resource.Class;
@@ -474,7 +478,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				expect( resource02 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource02.id ) ).toBe( true );
 				expect( resource02.id ).toBe( "_:some" );
-				expect( resource02 ).toEqual( resourceObject02 );
+				expect( resource02 ).toEqual( resourceObject02 as Resource.Class );
 
 				expect( () => freeResources.createResourceFrom( {}, "no-valid-id" ) ).toThrowError( Errors.IllegalArgumentError );
 				expect( () => freeResources.createResourceFrom( {}, "_:some" ) ).toThrowError( Errors.IDAlreadyInUseError );
@@ -518,7 +522,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				let pointer:Pointer.Class = freeResources.getPointer( "_:another" );
 				expect( pointer ).toBeTruthy();
 				expect( pointer.id ).toBe( "_:another" );
-				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer );
+				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as Resource.Class );
 
 				pointer = freeResources.getPointer( "http://example.com/some/" );
 				expect( pointer ).toBeTruthy();

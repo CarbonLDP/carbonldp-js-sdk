@@ -10,14 +10,19 @@ declare function isNumber(value: any): boolean;
 declare function isInteger(value: any): boolean;
 declare function isDouble(value: any): boolean;
 declare function isDate(date: any): boolean;
-declare function isObject(object: any): boolean;
+declare function isObject(object: any): object is object;
 declare function isPlainObject(object: Object): boolean;
-declare function isFunction(value: any): boolean;
+declare function isFunction(value: any): value is Function;
 declare function isMap(value: any): boolean;
 declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
 export declare function promiseMethod<T>(fn: () => T | Promise<T>): Promise<T>;
+declare class A {
+    static from<T>(iterator: Iterator<T>): Array<T>;
+    static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
+    static indexOf<T, W>(array: Array<T>, searchedElement: W, comparator?: (element: T, searchedElement: W) => boolean): number;
+}
 declare class O {
     static extend<T extends Object, W extends Object>(target: T, source: W, config?: {
         arrays?: boolean;
@@ -37,17 +42,13 @@ declare class O {
     }, ignore?: {
         [key: string]: boolean;
     }): boolean;
+    static shallowUpdate<T extends object>(target: object, source: T): T;
     static areShallowlyEqual(object1: Object, object2: Object): boolean;
 }
 declare class S {
     static startsWith(str: string, substring: string): boolean;
     static endsWith(str: string, substring: string): boolean;
     static contains(str: string, substring: string): boolean;
-}
-declare class A {
-    static from<T>(iterator: Iterator<T>): Array<T>;
-    static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
-    static indexOf<T, W>(array: Array<T>, searchedElement: W, comparator?: (element: T, searchedElement: W) => boolean): number;
 }
 declare class M {
     static from<V>(object: Object): Map<string, V>;

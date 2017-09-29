@@ -12,8 +12,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
-var App = require("./App");
-var Apps = require("./Apps");
 var Auth = require("./Auth");
 var Document = require("./Document");
 var Documents = require("./Documents");
@@ -22,34 +20,38 @@ var Fragment = require("./Fragment");
 var HTTP = require("./HTTP");
 var JSONLD = require("./JSONLD");
 var LDP = require("./LDP");
+var Messaging = require("./Messaging");
 var NamedFragment = require("./NamedFragment");
 var NS = require("./NS");
 var ObjectSchema = require("./ObjectSchema");
-var PersistedApp = require("./PersistedApp");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedNamedFragment = require("./PersistedNamedFragment");
 var PersistedResource = require("./PersistedResource");
-var Platform = require("./Platform");
 var Pointer = require("./Pointer");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
 var SDKContext = require("./SDKContext");
 var Settings = require("./Settings");
 var SPARQL = require("./SPARQL");
+var System = require("./System");
 var Utils = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
-    function Class(settings) {
+    function Class(domain, ssl, settings) {
+        if (ssl === void 0) { ssl = true; }
         var _this = _super.call(this) || this;
-        _this.auth = new Platform.Auth.Class(_this);
+        domain = RDF.URI.Util.removeProtocol(domain);
+        if (!domain.endsWith("/"))
+            domain = domain + "/";
+        _this._baseURI = (ssl ? "https://" : "http://") + domain;
         settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
         Utils.M.extend(_this.settings, Utils.M.from(settings));
-        _this.apps = new Apps.Class(_this);
+        _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
     Object.defineProperty(Class, "version", {
-        get: function () { return "0.42.0"; },
+        get: function () { return "1.0.0-alpha.1"; },
         enumerable: true,
         configurable: true
     });
@@ -58,22 +60,25 @@ var Class = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Class.prototype.resolve = function (uri) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        var finalURI = this.settings.get("http.ssl") ? "https://" : "http://";
-        finalURI += this.settings.get("domain") + "/" + this.getSetting("platform.container");
-        return RDF.URI.Util.resolve(finalURI, uri);
+    Class.prototype.getPlatformMetadata = function () {
+        return this.getDocumentMetadata("system.platform.metadata");
     };
-    Class.prototype.getAPIDescription = function () {
-        return this.documents.get("api/").then(function (_a) {
-            var description = _a[0], response = _a[1];
-            return description;
+    Class.prototype.getInstanceMetadata = function () {
+        return this.getDocumentMetadata("system.instance.metadata");
+    };
+    Class.prototype.getDocumentMetadata = function (metadataSetting) {
+        var _this = this;
+        if (!this.hasSetting(metadataSetting))
+            return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));
+        return Promise.resolve()
+            .then(function () { return _this.resolveSystemURI(_this.getSetting(metadataSetting)); })
+            .then(function (metadataURI) { return _this.documents.get(metadataURI); })
+            .then(function (_a) {
+            var metadataDocument = _a[0];
+            return metadataDocument;
         });
     };
     Class.AccessPoint = AccessPoint;
-    Class.App = App;
-    Class.Apps = Apps;
     Class.Auth = Auth;
     Class.Document = Document;
     Class.Documents = Documents;
@@ -82,21 +87,21 @@ var Class = (function (_super) {
     Class.HTTP = HTTP;
     Class.JSONLD = JSONLD;
     Class.LDP = LDP;
+    Class.Messaging = Messaging;
     Class.NamedFragment = NamedFragment;
     Class.NS = NS;
     Class.ObjectSchema = ObjectSchema;
-    Class.PersistedApp = PersistedApp;
     Class.PersistedDocument = PersistedDocument;
     Class.PersistedFragment = PersistedFragment;
     Class.PersistedNamedFragment = PersistedNamedFragment;
     Class.PersistedResource = PersistedResource;
-    Class.Platform = Platform;
     Class.Pointer = Pointer;
     Class.RDF = RDF;
     Class.Resource = Resource;
     Class.SDKContext = SDKContext;
     Class.Settings = Settings;
     Class.SPARQL = SPARQL;
+    Class.System = System;
     Class.Utils = Utils;
     return Class;
 }(AbstractContext.Class));

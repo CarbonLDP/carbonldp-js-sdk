@@ -1,7 +1,10 @@
 "use strict";
 
 const fs = require( "fs" );
+const path = require( "path" );
+
 const del = require( "del" );
+const filter = require( 'gulp-filter' );
 
 const gulp = require( "gulp" );
 const util = require( "gulp-util" );
@@ -13,26 +16,32 @@ const karma = require( "karma" );
 const sourcemaps = require( "gulp-sourcemaps" );
 const ts = require( "gulp-typescript" );
 
-const tslint = require( "gulp-tslint" );
+const tslint = require( "tslint" );
+const gulpTslint = require( "gulp-tslint" );
 
 const jeditor = require( "gulp-json-editor" );
 
 const jasmine = require( "gulp-jasmine" );
 
-const Builder = require( "jspm" ).Builder;
+const webpack = require( "webpack" );
 
 const htmlMinifier = require( "gulp-htmlmin" );
+
+const moduleAlias = require( "module-alias" );
+const webpackStream = require( "webpack-stream" );
+const named = require( "vinyl-named" );
+const merge2 = require( "merge2" );
 
 let config = {
 	source: {
 		typescript: [
 			"src/**/*.ts",
 			"!src/**/*.spec.ts",
-			"!src/test/**"
+			"!src/test/**",
 		],
 		all: "src/**/*.ts",
-		test: "/**/*.spec.js",
-		main: "src/Carbon.ts"
+		test: "**/*.spec.js",
+		main: "src/Carbon.ts",
 	},
 	dist: {
 		sfxBundle: "dist/bundles/Carbon.sfx.js",
@@ -72,26 +81,15 @@ gulp.task( "finish", () => {
 } );
 
 gulp.task( "bundle:sfx", ( done ) => {
-	let builder = new Builder();
-	builder.buildStatic( "build/sfx.js", config.dist.sfxBundle, {
-		"sourceMaps": "inline",
-		"mangle": false,
-		"lowResSourceMaps": false,
-		"removeComments": true,
-	} ).then( () => {
-		done();
-	} ).catch( ( error ) => {
-		util.log( error );
-		done( error );
+	let compiler = webpack( require( "./webpack.config.js" ) );
+	compiler.run( ( error ) => {
+		if( error ) done( error );
+		else done();
 	} );
 } );
 
 gulp.task( "clean:dist", ( done ) => {
 	return del( [ config.dist.all, config.dist.doc ], done );
-} );
-
-gulp.task( "clean:temp", () => {
-	del.sync( config.dist.temp );
 } );
 
 gulp.task( "compile:documentation", [ "compile:documentation:html" ] );
@@ -163,11 +161,13 @@ gulp.task( "compile:typescript", () => {
 gulp.task( "lint", [ "lint:typescript" ] );
 
 gulp.task( "lint:typescript", () => {
+	let program = tslint.Linter.createProgram( "./tsconfig.json" );
 	return gulp.src( config.source.typescript )
-		.pipe( tslint( {
-			tslint: require( "tslint" )
+		.pipe( gulpTslint( {
+			formatter: "prose",
+			program,
 		} ) )
-		.pipe( tslint.report( "prose" ) )
+		.pipe( gulpTslint.report() )
 		;
 } );
 
@@ -197,10 +197,6 @@ gulp.task( "prepare:npm-package|copy:package-json", () => {
 			json.main = json.main.replace( "dist/", "" );
 			json.typings = json.typings.replace( "dist/", "" );
 
-			json.jspm = {
-				map: json.jspm.map,
-			};
-
 			return json;
 		} ) )
 		.pipe( gulp.dest( config.dist.tsOutput ) );
@@ -209,7 +205,8 @@ gulp.task( "prepare:npm-package|copy:package-json", () => {
 
 gulp.task( "test", ( done ) => {
 	runSequence(
-		[ "test:browser", "test:node" ],
+		"test:node",
+		"test:browser",
 		"finish",
 		done
 	);
@@ -230,26 +227,39 @@ gulp.task( "test:debug", ( done ) => {
 	}, done ).start();
 } );
 
-gulp.task( "test:node", ( done ) => {
-	runSequence(
-		"test:node|exec",
-		"clean:temp",
-		done
-	);
-} );
+gulp.task( "test:node", () => {
+	process.env.NODE_ENV = "test";
 
-gulp.task( "test:node|compile", [ "clean:temp" ], () => {
+	moduleAlias.addAliases( {
+		"sockjs-client": path.resolve( __dirname, "test/mock-sockjs.js" ),
+		"webstomp-client/src/frame.js": path.resolve( __dirname, "temp/node_modules/frame.js" ),
+	} );
+
+	let babelStream = gulp
+		.src( "node_modules/webstomp-client/src/frame.js" )
+		.pipe( named() )
+		.pipe( webpackStream( {
+			output: { libraryTarget: "umd" },
+		} ) )
+		.pipe( gulp.dest( path.resolve( config.dist.temp, "node_modules" ) ) );
+
 	let tsProject = ts.createProject( "tsconfig.json" );
-	let tsResults = gulp.src( config.source.all )
+	let tsResults = gulp.src( [ config.source.all ] )
 		.pipe( tsProject() );
 
-	return tsResults.js
-		.pipe( gulp.dest( config.dist.temp ) );
+	const stream = merge2( babelStream, tsResults.js )
+		.pipe( gulp.dest( config.dist.temp ) )
+		.pipe( filter( config.source.test ) )
+		.pipe( jasmine( {
+			includeStackTrace: true,
+		} ) );
+
+	stream.on( "jasmineDone", deleteTmpDir );
+	stream.on( "error", deleteTmpDir );
+
+	return stream;
 } );
 
-gulp.task( "test:node|exec", [ "test:node|compile" ], () => {
-	return gulp.src( config.dist.temp + config.source.test )
-		.pipe( jasmine( {
-			includeStackTrace: true
-		} ) );
-} );
+function deleteTmpDir() {
+	del.sync( config.dist.temp );
+}

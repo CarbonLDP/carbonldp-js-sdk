@@ -50,7 +50,7 @@ function isDate( date:any ):boolean {
 	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
-function isObject( object:any ):boolean {
+function isObject( object:any ):object is object {
 	return typeof object === "object" && ( ! ! object );
 }
 
@@ -63,7 +63,7 @@ function isPlainObject( object:Object ):boolean {
 		&& ! ( Object.prototype.toString.call( object ) === "[object Set]" );
 }
 
-function isFunction( value:any ):boolean {
+function isFunction( value:any ):value is Function {
 	return typeof value === "function";
 }
 
@@ -132,6 +132,39 @@ export function promiseMethod<T>( fn:() => T | Promise<T> ):Promise<T> {
 	return new Promise<T>( resolve => resolve( fn() ) );
 }
 
+class A {
+	static from<T>( iterator:Iterator<T> ):Array<T> {
+		let array:Array<T> = [];
+		let next:IteratorResult<T> = iterator.next();
+		while( ! next.done ) {
+			array.push( next.value );
+			next = iterator.next();
+		}
+		return array;
+	}
+
+	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
+		let result:Array<T> = arrays[ 0 ].slice();
+
+		for( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
+			result = result.concat( arrays[ i ].filter( function( item:T ):boolean {
+				return result.indexOf( item ) < 0;
+			} ) );
+		}
+
+		return result;
+	}
+
+	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
+		if( ! array ) return - 1;
+
+		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
+			if( comparator( array[ i ], searchedElement ) ) return i;
+		}
+		return - 1;
+	}
+}
+
 class O {
 
 	static extend<T extends Object, W extends Object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):T & W {
@@ -168,6 +201,20 @@ class O {
 
 	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
 		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
+	}
+
+	static shallowUpdate<T extends object>( target:object, source:T ):T {
+		let keys:string[] = A.joinWithoutDuplicates( Object.keys( source ), Object.keys( target ) );
+
+		for( let key of keys ) {
+			if( hasProperty( source, key ) ) {
+				target[ key ] = source[ key ];
+			} else {
+				delete target[ key ];
+			}
+		}
+
+		return target as T;
 	}
 
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
@@ -248,39 +295,6 @@ class S {
 
 	static contains( str:string, substring:string ):boolean {
 		return str.indexOf( substring ) !== - 1;
-	}
-}
-
-class A {
-	static from<T>( iterator:Iterator<T> ):Array<T> {
-		let array:Array<T> = [];
-		let next:IteratorResult<T> = iterator.next();
-		while( ! next.done ) {
-			array.push( next.value );
-			next = iterator.next();
-		}
-		return array;
-	}
-
-	static joinWithoutDuplicates<T>( ...arrays:Array<Array<T>> ):Array<T> {
-		let result:Array<T> = arrays[ 0 ].slice();
-
-		for( let i:number = 1, length:number = arrays.length; i < length; i ++ ) {
-			result = result.concat( arrays[ i ].filter( function( item:T ):boolean {
-				return result.indexOf( item ) < 0;
-			} ) );
-		}
-
-		return result;
-	}
-
-	static indexOf<T, W>( array:Array<T>, searchedElement:W, comparator:( element:T, searchedElement:W ) => boolean = ( a:T, b:W ) => <any> a === <any> b ):number {
-		if( ! array ) return - 1;
-
-		for( let i:number = 0, length:number = array.length; i < length; ++ i ) {
-			if( comparator( array[ i ], searchedElement ) ) return i;
-		}
-		return - 1;
 	}
 }
 

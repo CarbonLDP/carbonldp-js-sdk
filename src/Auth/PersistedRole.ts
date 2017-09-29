@@ -1,37 +1,43 @@
-import * as HTTP from "./../HTTP";
+import * as Context from "./../Context";
+import * as Documents from "./../Documents";
 import * as Errors from "./../Errors";
+import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
 import * as RetrievalPreferences from "./../RetrievalPreferences";
+import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
-import * as Utils from "./../Utils";
 
 export interface Class extends PersistedProtectedDocument.Class {
 	_roles:Roles.Class;
 
 	name?:string;
 	description?:string;
-	agents?:Pointer.Class[];
+
+	parentRole?:Pointer.Class;
+	childRoles?:Pointer.Class[];
+
+	users?:Pointer.Class[];
 
 	createChild<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
 	createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
-	listAgents( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	listUsers( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
 
-	getAgents<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
+	getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
 
-	getAgents<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
+	getUsers<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
 
-	addAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	addUser( user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 
-	addAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	addUsers( users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 
-	removeAgent( agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	removeUser( user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 
-	removeAgents( agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	removeUsers( users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 }
 
 export class Factory {
@@ -39,12 +45,12 @@ export class Factory {
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "_roles" )
 			&& Utils.hasFunction( object, "createChild" )
-			&& Utils.hasFunction( object, "listAgents" )
-			&& Utils.hasFunction( object, "getAgents" )
-			&& Utils.hasFunction( object, "addAgent" )
-			&& Utils.hasFunction( object, "addAgents" )
-			&& Utils.hasFunction( object, "removeAgent" )
-			&& Utils.hasFunction( object, "removeAgents" )
+			&& Utils.hasFunction( object, "listUsers" )
+			&& Utils.hasFunction( object, "getUsers" )
+			&& Utils.hasFunction( object, "addUser" )
+			&& Utils.hasFunction( object, "addUsers" )
+			&& Utils.hasFunction( object, "removeUser" )
+			&& Utils.hasFunction( object, "removeUsers" )
 			;
 	}
 
@@ -53,13 +59,17 @@ export class Factory {
 			&& PersistedProtectedDocument.Factory.is( object );
 	}
 
-	static decorate<T extends PersistedDocument.Class>( object:T, roles:Roles.Class ):T & Class {
-		let role:Class & T = <any> object;
+	static decorate<T extends object>( object:T, documents:Documents.Class ):T & Class {
+		let persistedRole:Class & T = <T & Class> object;
+		if( Factory.hasClassProperties( persistedRole ) ) return persistedRole;
 
-		if( Factory.hasClassProperties( role ) ) return role;
-		if( ! PersistedProtectedDocument.Factory.hasClassProperties( role ) ) PersistedProtectedDocument.Factory.decorate( role );
+		PersistedProtectedDocument.Factory.decorate( persistedRole, documents );
 
-		Object.defineProperties( role, {
+		// TODO: Fix
+		const context:Context.Class = (documents as any as { context:Context.Class }).context;
+		const roles:Roles.Class = context ? context.auth.roles : null;
+
+		Object.defineProperties( persistedRole, {
 			"_roles": {
 				writable: false,
 				enumerable: false,
@@ -72,45 +82,45 @@ export class Factory {
 				configurable: true,
 				value: createChild,
 			},
-			"listAgents": {
+			"listUsers": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: listAgents,
+				value: listUsers,
 			},
-			"getAgents": {
+			"getUsers": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: getAgents,
+				value: getUsers,
 			},
-			"addAgent": {
+			"addUser": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: addAgent,
+				value: addUser,
 			},
-			"addAgents": {
+			"addUsers": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: addAgents,
+				value: addUsers,
 			},
-			"removeAgent": {
+			"removeUser": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: removeAgent,
+				value: removeUser,
 			},
-			"removeAgents": {
+			"removeUsers": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: removeAgents,
+				value: removeUsers,
 			},
 		} );
 
-		return role;
+		return persistedRole;
 	}
 
 }
@@ -122,40 +132,40 @@ function createChild<T>( this:Class, role:T & Role.Class, slugOrRequestOptions?:
 	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
 }
 
-function listAgents( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+function listUsers( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 	checkState( this );
-	return this._roles.listAgents( this.id, requestOptions );
+	return this._roles.listUsers( this.id, requestOptions );
 }
 
-function getAgents<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
-function getAgents<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
-function getAgents<T>( this:Class, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]> {
+function getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
+function getUsers<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
+function getUsers<T>( this:Class, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]> {
 	checkState( this );
-	return this._roles.getAgents( this.id, retrievalPreferencesOrRequestOptions, requestOptions );
+	return this._roles.getUsers( this.id, retrievalPreferencesOrRequestOptions, requestOptions );
 }
 
-function addAgent( this:Class, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+function addUser( this:Class, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
 	checkState( this );
-	return this._roles.addAgents( this.id, [ agent ], requestOptions );
+	return this._roles.addUsers( this.id, [ user ], requestOptions );
 }
 
-function addAgents( this:Class, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+function addUsers( this:Class, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
 	checkState( this );
-	return this._roles.addAgents( this.id, agents, requestOptions );
+	return this._roles.addUsers( this.id, users, requestOptions );
 }
 
-function removeAgent( this:Class, agent:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+function removeUser( this:Class, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
 	checkState( this );
-	return this._roles.removeAgents( this.id, [ agent ], requestOptions );
+	return this._roles.removeUsers( this.id, [ user ], requestOptions );
 }
 
-function removeAgents( this:Class, agents:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+function removeUsers( this:Class, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
 	checkState( this );
-	return this._roles.removeAgents( this.id, agents, requestOptions );
+	return this._roles.removeUsers( this.id, users, requestOptions );
 }
 
-function checkState( self:Class ):void {
-	if( ! self._roles ) throw new Errors.IllegalStateError( "The context of the current role, does not support roles management." );
+function checkState( role:Class ):void {
+	if( ! role._roles ) throw new Errors.IllegalStateError( "The context of the current role, does not support roles management." );
 }
 
 export default Class;

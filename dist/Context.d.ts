@@ -4,9 +4,10 @@ import * as ObjectSchema from "./ObjectSchema";
 export interface Class {
     auth: Auth;
     documents: Documents;
-    parentContext: Class;
-    getBaseURI(): string;
+    readonly baseURI: string;
+    readonly parentContext: Class;
     resolve(relativeURI: string): string;
+    resolveSystemURI(relativeURI: string): string;
     hasSetting(name: string): boolean;
     getSetting(name: string): any;
     setSetting(name: string, value: any): any;

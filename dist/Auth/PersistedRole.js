@@ -9,24 +9,25 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_roles")
             && Utils.hasFunction(object, "createChild")
-            && Utils.hasFunction(object, "listAgents")
-            && Utils.hasFunction(object, "getAgents")
-            && Utils.hasFunction(object, "addAgent")
-            && Utils.hasFunction(object, "addAgents")
-            && Utils.hasFunction(object, "removeAgent")
-            && Utils.hasFunction(object, "removeAgents");
+            && Utils.hasFunction(object, "listUsers")
+            && Utils.hasFunction(object, "getUsers")
+            && Utils.hasFunction(object, "addUser")
+            && Utils.hasFunction(object, "addUsers")
+            && Utils.hasFunction(object, "removeUser")
+            && Utils.hasFunction(object, "removeUsers");
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
             && PersistedProtectedDocument.Factory.is(object);
     };
-    Factory.decorate = function (object, roles) {
-        var role = object;
-        if (Factory.hasClassProperties(role))
-            return role;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(role))
-            PersistedProtectedDocument.Factory.decorate(role);
-        Object.defineProperties(role, {
+    Factory.decorate = function (object, documents) {
+        var persistedRole = object;
+        if (Factory.hasClassProperties(persistedRole))
+            return persistedRole;
+        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
+        var context = documents.context;
+        var roles = context ? context.auth.roles : null;
+        Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,
                 enumerable: false,
@@ -39,44 +40,44 @@ var Factory = (function () {
                 configurable: true,
                 value: createChild,
             },
-            "listAgents": {
+            "listUsers": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: listAgents,
+                value: listUsers,
             },
-            "getAgents": {
+            "getUsers": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: getAgents,
+                value: getUsers,
             },
-            "addAgent": {
+            "addUser": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: addAgent,
+                value: addUser,
             },
-            "addAgents": {
+            "addUsers": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: addAgents,
+                value: addUsers,
             },
-            "removeAgent": {
+            "removeUser": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: removeAgent,
+                value: removeUser,
             },
-            "removeAgents": {
+            "removeUsers": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: removeAgents,
+                value: removeUsers,
             },
         });
-        return role;
+        return persistedRole;
     };
     return Factory;
 }());
@@ -85,32 +86,32 @@ function createChild(role, slugOrRequestOptions, requestOptions) {
     checkState(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
 }
-function listAgents(requestOptions) {
+function listUsers(requestOptions) {
     checkState(this);
-    return this._roles.listAgents(this.id, requestOptions);
+    return this._roles.listUsers(this.id, requestOptions);
 }
-function getAgents(retrievalPreferencesOrRequestOptions, requestOptions) {
+function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
     checkState(this);
-    return this._roles.getAgents(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
+    return this._roles.getUsers(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
 }
-function addAgent(agent, requestOptions) {
+function addUser(user, requestOptions) {
     checkState(this);
-    return this._roles.addAgents(this.id, [agent], requestOptions);
+    return this._roles.addUsers(this.id, [user], requestOptions);
 }
-function addAgents(agents, requestOptions) {
+function addUsers(users, requestOptions) {
     checkState(this);
-    return this._roles.addAgents(this.id, agents, requestOptions);
+    return this._roles.addUsers(this.id, users, requestOptions);
 }
-function removeAgent(agent, requestOptions) {
+function removeUser(user, requestOptions) {
     checkState(this);
-    return this._roles.removeAgents(this.id, [agent], requestOptions);
+    return this._roles.removeUsers(this.id, [user], requestOptions);
 }
-function removeAgents(agents, requestOptions) {
+function removeUsers(users, requestOptions) {
     checkState(this);
-    return this._roles.removeAgents(this.id, agents, requestOptions);
+    return this._roles.removeUsers(this.id, users, requestOptions);
 }
-function checkState(self) {
-    if (!self._roles)
+function checkState(role) {
+    if (!role._roles)
         throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
 }
 

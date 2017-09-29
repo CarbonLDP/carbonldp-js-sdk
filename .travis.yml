@@ -3,20 +3,10 @@ language: node_js
 node_js:
   - "6"
 
-before_script:
-  # Make Chrome available in Travis CI
-  - export CHROME_BIN=chromium-browser
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-
-  - npm install -g gulp
-
-  - npm install -g jspm@beta
-  - jspm install
-
-  - npm install -g typings
-  - typings install
+dist: trusty
+addons:
+  chrome: stable
 
 script:
-  - gulp test
-  - gulp
+  - npm test
+  - npm start

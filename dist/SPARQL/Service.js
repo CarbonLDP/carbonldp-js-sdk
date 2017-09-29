@@ -17,7 +17,9 @@ var Class = (function () {
     };
     Class.executeASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
-        return Class.executeRawASKQuery(url, askQuery, options).then(function (_a) {
+        return Class
+            .executeRawASKQuery(url, askQuery, options)
+            .then(function (_a) {
             var rawResults = _a[0], response = _a[1];
             return [rawResults.boolean, response];
         });
@@ -31,7 +33,9 @@ var Class = (function () {
     };
     Class.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
         if (options === void 0) { options = {}; }
-        return Class.executeRawSELECTQuery(url, selectQuery, options).then(function (_a) {
+        return Class
+            .executeRawSELECTQuery(url, selectQuery, options)
+            .then(function (_a) {
             var rawResults = _a[0], response = _a[1];
             var rawBindings = rawResults.results.bindings;
             var bindings = [];

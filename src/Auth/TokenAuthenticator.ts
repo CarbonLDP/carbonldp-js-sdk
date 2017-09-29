@@ -10,12 +10,13 @@ import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Token from "./Token";
+import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Utils from "./../Utils";
 
-export class Class implements Authenticator<UsernameAndPasswordToken> {
-	private static TOKEN_CONTAINER:string = "auth-tokens/";
+export const TOKEN_CONTAINER:string = "auth-tokens/";
+
+export class Class implements Authenticator<UsernameAndPasswordToken.Class, Token.Class> {
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
@@ -32,10 +33,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		return ! ! this._credentials && this._credentials.expirationTime > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<Token.Class>;
+	authenticate( authenticationToken:UsernameAndPasswordToken.Class ):Promise<Token.Class>;
 	authenticate( credentials:Token.Class ):Promise<Token.Class>;
-	authenticate( authenticationOrCredentials:any ):Promise<Token.Class> {
-		if( authenticationOrCredentials instanceof UsernameAndPasswordToken ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
+	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
+		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
 			return this.createToken();
 		} ).then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
 			this.basicAuthenticator.clearAuthentication();
@@ -64,7 +65,6 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 	}
 
 	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
-		let uri:string = this.context.resolve( Class.TOKEN_CONTAINER );
 		let requestOptions:HTTP.Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
@@ -72,7 +72,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return HTTP.Request.Service.post( uri, null, requestOptions, new JSONLD.Parser.Class() ).then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		return Promise.resolve().then( () => {
+			const tokensURI:string = this.context.resolveSystemURI( TOKEN_CONTAINER );
+			return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
+		} ).then<[ Token.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
@@ -82,16 +85,21 @@ export class Class implements Authenticator<UsernameAndPasswordToken> {
 			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
 			let token:Token.Class = tokenResources[ 0 ];
 
-			let agentDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.agent.id );
-			agentDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
+			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
+			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
-			let responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( resource => Resource.Util.hasType( resource, LDP.ResponseMetadata.RDF_CLASS ) );
+			const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources
+				.getResources()
+				.find( LDP.ResponseMetadata.Factory.is );
 
-			if( ! ! responseMetadata ) responseMetadata.resourcesMetadata.forEach( ( resourceMetadata:LDP.ResourceMetadata.Class ) => {
-				(<PersistedDocument.Class> resourceMetadata.resource)._etag = resourceMetadata.eTag;
-			} );
+			if( responseMetadata ) responseMetadata
+				.documentsMetadata
+				.forEach( documentMetadata => {
+					const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
+					document._etag = documentMetadata.eTag;
+				} );
 
-			return [ token, response ] as [ Token.Class, HTTP.Response.Class ];
+			return [ token, response ];
 		} );
 	}
 

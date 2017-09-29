@@ -15,7 +15,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    ;
     Class.getDefaultSerializers = function () {
         var literalSerializers = new Map();
         literalSerializers.set(NS.XSD.DataType.date, RDF.Literal.Serializers.XSD.dateSerializer);

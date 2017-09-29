@@ -14,21 +14,21 @@ import {
 	hasMethod,
 	hasSignature,
 	hasProperty,
+	hasDefaultExport,
 } from "./test/JasmineExtender";
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
 import Carbon from "./Carbon";
+import * as BlankNode from "./BlankNode";
 import * as Document from "./Document";
-import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
-import * as JSONLD from "./JSONLD";
 import * as HTTP from "./HTTP";
+import * as JSONLD from "./JSONLD";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
@@ -36,12 +36,21 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
-import * as URI from "./RDF/URI";
 import * as Utils from "./Utils";
+import MessagingEvent from "./Messaging/Event";
+import * as MessagingUtils from "./Messaging/Utils";
 
 import { QueryClause } from "sparqler/Clauses";
 
+import * as Documents from "./Documents";
+import DefaultExport from "./Documents";
+
 describe( module( "Carbon/Documents" ), ():void => {
+
+	it( isDefined(), ():void => {
+		expect( Documents ).toBeDefined();
+		expect( Documents ).toEqual( jasmine.any( Object ) );
+	} );
 
 	describe( interfaze( "Carbon.Documents.DocumentDecorator", "Interface that describes the properties needed to decorate a document when requested" ), ():void => {
 
@@ -79,28 +88,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( isDefined(), ():void => {
-			expect( Documents ).toBeDefined();
-			expect( Utils.isFunction( Documents ) ).toBe( true );
+			expect( Documents.Class ).toBeDefined();
+			expect( Utils.isFunction( Documents.Class ) ).toBe( true );
 		} );
 
 		it( hasConstructor( [
 			{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
 
-			let documents:Documents = new Documents( context );
+			let documents:Documents.Class = new Documents.Class( context );
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents ).toBe( true );
+			expect( documents instanceof Documents.Class ).toBe( true );
 
-			documents = new Documents();
+			documents = new Documents.Class();
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents ).toBe( true );
+			expect( documents instanceof Documents.Class ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -110,13 +123,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
 			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
@@ -129,24 +146,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.documentDecorators ).toBeDefined();
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
 
 			// Has default decorators
+			expect( documents.documentDecorators.size ).toBe( 5 );
 			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
 			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.Agent ) ).toBe( true );
-
-			// This is set at `Carbon.App.Context.Class`
-			expect( documents.documentDecorators.has( NS.CS.Class.AppRole ) ).toBe( false );
+			expect( documents.documentDecorators.has( NS.CS.Class.User ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Role ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Class.Credentials ) ).toBe( true );
 		} );
 
 		describe( method(
@@ -156,13 +177,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.inScope ).toBeDefined();
 				expect( Utils.isFunction( documents.inScope ) ).toBe( true );
@@ -175,13 +200,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "boolean" }
 			), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				let pointer:Pointer.Class;
 
@@ -214,13 +243,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "boolean" }
 			), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.inScope( "http://example.com/document/" ) ).toBe( true );
 				expect( documents.inScope( "http://example.com/document/child/" ) ).toBe( true );
@@ -247,11 +280,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -294,11 +331,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
@@ -348,13 +389,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
 				const context:MockedContext = new MockedContext();
-				const documents:Documents = context.documents;
+				const documents:Documents.Class = context.documents;
 
 				const spyGet:jasmine.Spy = spyOn( HTTP.Request.Service, "get" );
 
@@ -393,7 +437,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should reject promise if URI is a BNode", ( done:DoneFn ):void => {
-				let promise:Promise<any> = new Documents().get( "_:a-blank-node" );
+				let promise:Promise<any> = new Documents.Class().get( "_:a-blank-node" );
 				promise.then( () => {
 					done.fail( "Should not resolve promise." );
 				} ).catch( error => {
@@ -403,15 +447,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -425,7 +468,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -443,10 +486,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -486,13 +529,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			let responseBody:string = JSON.stringify( {
 				"@id": "http://example.com/resource/",
@@ -642,15 +689,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "exists", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -664,7 +710,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -682,10 +728,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -724,13 +770,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let promises:Promise<any>[] = [];
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			let spies:any = {
 				exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
@@ -784,15 +834,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "createChild", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -806,7 +855,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -821,13 +870,112 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/new-resource/",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/new-resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:RawDocument = {
+						blankNode1: {
+							id: "_:1",
+							value: "a value 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							value: "a value 2",
+						},
+					};
+
+					try {
+						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -875,13 +1023,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -954,7 +1106,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
 					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
-					promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ Document.Class, HTTP.Response.Class ] ):void => {
+					promises.push( documents.createChild( "http://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
 						expect( document ).toBe( childObject );
@@ -984,13 +1136,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1060,7 +1216,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( document ).toBe( childDocument );
+						expect( document ).toBe( childDocument as (typeof childDocument & PersistedDocument.Class) );
 						expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 						expect( document.isResolved() ).toBe( false );
 						expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
@@ -1088,13 +1244,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1163,7 +1323,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 						fail: ():void => {},
 					};
 					let spySuccess:jasmine.Spy = spyOn( spy, "success" ).and.callThrough();
-					let spyFail:jasmine.Spy = spyOn( spy, "fail" ).and.callThrough();
 
 					promises.push( documents.createChild( "http://example.com/parent-resource-error/", childDocument ).catch( error => {
 						expect( error ).toEqual( jasmine.any( Error ) );
@@ -1173,7 +1332,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( document ).toBe( childDocument );
+						expect( document ).toBe( childDocument as (typeof childDocument & PersistedDocument.Class) );
 						expect( document.id ).toBe( "http://example.com/parent-resource-ok/new-resource/" );
 						expect( document.isResolved() ).toBe( false );
 						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
@@ -1208,13 +1367,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1315,13 +1478,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1391,7 +1558,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promises.push( documents.createChild( "http://example.com/parent-resource/", childDocument, "child-document" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( document ).toBe( childDocument );
+						expect( document ).toBe( childDocument as (typeof childDocument & PersistedDocument.Class) );
 						expect( document.id ).toBe( "http://example.com/parent-resource/new-resource/" );
 						expect( document.isResolved() ).toBe( false );
 						expect( documents.hasPointer( "parent-resource/new-resource/" ) ).toBe( true );
@@ -1423,15 +1590,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "createChildren", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -1445,7 +1611,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -1463,10 +1629,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -1500,13 +1666,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.createChildren ).toBeDefined();
 				expect( Utils.isFunction( documents.createChildren ) ).toBe( true );
@@ -1528,13 +1698,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1638,7 +1812,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/without-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -1686,13 +1860,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1801,7 +1979,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/with-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -1871,13 +2049,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -1982,7 +2164,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/without-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -2045,13 +2227,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -2149,7 +2335,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 6 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/null-slugs/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -2185,13 +2371,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					let promises:Promise<any>[] = [];
 
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let objectSchema:ObjectSchema.Class = {
 						"ex": "http://example.com/ns#",
@@ -2301,7 +2491,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocuments ).toEqual( jasmine.any( Array ) );
 							expect( persistedDocuments.length ).toBe( 3 );
 							persistedDocuments.forEach( ( document:PersistedDocument.Class, index:number ) => {
-								expect( document ).toBe( childrenObjects[ index ] );
+								expect( document ).toBe( childrenObjects[ index ] as PersistedDocument.Class );
 								expect( (<any> document).index ).toBe( index );
 								expect( document.id ).toBe( "http://example.com/parent-resource/with-options/new-resource/" );
 								expect( document.isResolved() ).toBe( false );
@@ -2378,15 +2568,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "createChildAndRetrieve", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "vocabulary", "http://example.com/ns#" );
 					}
 				}
 
@@ -2400,7 +2590,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -2415,13 +2605,141 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should sync the persisted blank nodes and update document", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/new-resource/",
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/new-resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							},
+							{
+								"@id": "http://example.com/new-resource/",
+								"@graph": [
+									{
+										"@id": "_:new-1",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 1"
+										} ]
+									},
+									{
+										"@id": "_:new-2",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 2"
+										} ]
+									},
+									{
+										"@id": "http://example.com/new-resource/",
+										"http://example.com/ns#blankNode1": [ {
+											"@id": "_:new-1"
+										} ],
+										"http://example.com/ns#blankNode2": [ {
+											"@id": "_:new-2"
+										} ]
+									}
+								]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:RawDocument = {
+						blankNode1: {
+							id: "_:1",
+							value: "a value 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							value: "a value 2",
+						},
+					};
+
+					try {
+						const [ document ] = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
+
+						expect( document.getFragments().length ).toBe( 2 );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
+				} );
+
 			} );
 
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+			describe( "When Documents.Class does not have a context", ():void => {
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2467,13 +2785,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// Two request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let mockCreateResponse:any = { val: "Mock Save Response" };
 					let mockRetrieveResponse:any = { val: "Mock Save Response" };
@@ -2504,14 +2826,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// One request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
 					context.setSetting( "vocabulary", "http://example.com/ns#" );
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let options:HTTP.Request.Options = { timeout: 50550 };
 
@@ -2519,14 +2845,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						slug: "#namedFragment",
 						property: "Named fragment property",
 					};
-					let blankNode:Object = {
-						property: "BlankNode property",
-						bNodeIdentifier: "12345",
-					};
 					let childObject:Object = {
 						property: "my property",
 						namedFragment: namedFragment,
-						blankNode: blankNode,
 					};
 
 					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
@@ -2542,17 +2863,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								{
 									"@id": "http://example.com/parent-resource/new-child/",
 									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ],
-									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ],
-									"http://example.com/ns#blankNode": [ { "@id": "_:1" } ]
+									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ]
 								},
 								{
 									"@id": "http://example.com/parent-resource/new-child/#namedFragment",
 									"http://example.com/ns#property": [ { "@value": "UPDATED named fragment property" } ]
-								},
-								{
-									"@id": "_:1",
-									"${ NS.C.Predicate.bNodeIdentifier }": [ { "@value": "12345" } ],
-									"http://example.com/ns#property": [ { "@value": "UPDATED blankNode property" } ]
 								}
 							]
 						}`,
@@ -2574,16 +2889,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( childObject[ "namedFragment" ] ).toBe( namedFragment );
 						expect( namedFragment[ "property" ] ).toBe( "UPDATED named fragment property" );
 
-						// Keep reference with the blankNode
-						expect( "blankNode" in childObject ).toBe( true );
-						expect( childObject[ "blankNode" ] ).toBe( blankNode );
-						expect( blankNode[ "property" ] ).toBe( "UPDATED blankNode property" );
-
 						expect( responses ).toEqual( jasmine.any( Array ) );
 						expect( responses.length ).toBe( 1 );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-						expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" );
+						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
 					} );
 				})() );
 
@@ -2601,13 +2911,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				let mockCreateResponse:any = { val: "Mock Save Response" };
 				let mockRetrieveResponse:any = { val: "Mock Save Response" };
@@ -2643,15 +2957,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "createChildrenAndRetrieve", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -2665,7 +2978,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -2683,10 +2996,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2720,13 +3033,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.createChildrenAndRetrieve ).toBeDefined();
 				expect( Utils.isFunction( documents.createChildrenAndRetrieve ) ).toBe( true );
@@ -2746,13 +3063,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// Two request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let mockCreateResponse:any[] = [ { index: 0, val: "Create response" }, { index: 1, val: "Create response" } ];
 					let mockRetrieveResponse:any[] = [ { index: 0, val: "Resolve response" }, { index: 1, val: "Resolve response" } ];
@@ -2788,7 +3109,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( createResponses.length ).toBe( 2 );
 						expect( retrieveResponses.length ).toBe( 2 );
 						for( let index:number = 0; index < 2; ++ index ) {
-							expect( persistedDocuments ).toContain( childrenObjects[ index ] );
+							expect( persistedDocuments ).toContain( childrenObjects[ index ] as PersistedDocument.Class );
 							expect( createResponses ).toContain( mockCreateResponse[ index ] );
 							expect( retrieveResponses ).toContain( mockRetrieveResponse[ index ] );
 						}
@@ -2798,14 +3119,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				// One request behaviour
 				finalPromises.push( (():Promise<any> => {
 					class MockedContext extends AbstractContext {
-						resolve( uri:string ):string {
-							return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
 						}
 					}
 
 					let context:MockedContext = new MockedContext();
 					context.setSetting( "vocabulary", "http://example.com/ns#" );
-					let documents:Documents = context.documents;
+					let documents:Documents.Class = context.documents;
 
 					let options:HTTP.Request.Options = { timeout: 50550 };
 					let childrenObjects:{ index:number; property:string; }[] = [ { index: 0, property: "My property" }, { index: 1, property: "My property" } ];
@@ -2849,7 +3174,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocument[ "property" ] ).toBe( "my UPDATED property " + index );
 
 							let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( index );
-							expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" );
+							expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
 						} );
 					} );
 				})() );
@@ -2870,13 +3195,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				let mockCreateResponse:any[] = [ { index: 0, val: "Create response" }, { index: 1, val: "Create response" } ];
 				let mockRetrieveResponse:any[] = [ { index: 0, val: "Resolve response" }, { index: 1, val: "Resolve response" } ];
@@ -2918,7 +3247,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( createResponses.length ).toBe( 2 );
 					expect( retrieveResponses.length ).toBe( 2 );
 					for( let index:number = 0; index < 2; ++ index ) {
-						expect( persistedDocuments ).toContain( childrenObjects[ index ] );
+						expect( persistedDocuments ).toContain( childrenObjects[ index ] as PersistedDocument.Class );
 						expect( createResponses ).toContain( mockCreateResponse[ index ] );
 						expect( retrieveResponses ).toContain( mockRetrieveResponse[ index ] );
 					}
@@ -2932,15 +3261,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "listChildren", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -2954,7 +3282,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -2972,10 +3300,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3012,13 +3340,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.listChildren ).toBeDefined();
 			expect( Utils.isFunction( documents.listChildren ) ).toBe( true );
@@ -3032,7 +3364,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/resource/",
-						"http://www.w3.org/ns/ldp#contains": []
+						"${ NS.LDP.Predicate.contains }": []
 					} ],
 					"@id": "http://example.com/resource/"
 				} ]`,
@@ -3051,7 +3383,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				responseText: `[ {
 					"@graph": [ {
 						"@id": "http://example.com/resource/",
-						"http://www.w3.org/ns/ldp#contains": [ {
+						"${ NS.LDP.Predicate.contains }": [ {
 							"@id": "http://example.com/resource/pointer-01/"
 						}, {
 							"@id": "http://example.com/resource/pointer-02/"
@@ -3121,15 +3453,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "getChildren", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -3143,7 +3474,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -3161,10 +3492,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3196,12 +3527,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"getChildren",
 			"Retrieves and resolves all the children of a specified document."
 		), () => {
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -3233,10 +3568,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.ResponseMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+						"${ NS.C.Predicate.documentMetadata }": [ {
 							"@id": "_:01"
 						}, {
 							"@id": "_:02"
@@ -3244,33 +3579,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/resource/element-01/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-							"https://carbonldp.com/ns/v1/platform#VolatileResource"
+							"${ NS.C.Class.DocumentMetadata }",
+							"${ NS.C.Class.VolatileResource }"
 						],
-						"https://carbonldp.com/ns/v1/platform#eTag": [ {
+						"${ NS.C.Predicate.eTag }": [ {
 							"@value": "\\"0987654321\\""
 						} ],
-						"https://carbonldp.com/ns/v1/platform#resource": [ {
+						"${ NS.C.Predicate.relatedDocument }": [ {
 							"@id": "http://example.com/resource/element-02/"
 						} ]
 					}, {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#contains": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.contains }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							}, {
 								"@id": "http://example.com/resource/element-02/"
@@ -3280,7 +3615,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/resource/element-01/",
 						"@graph": [ {
 							"@id": "http://example.com/resource/element-01/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 							"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 							"http://example.com/ns#pointer": [
 								{"@id": "http://example.com/resource/element-01/#1"}
@@ -3293,7 +3628,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/resource/element-02/",
 						"@graph": [ {
 							"@id": "http://example.com/resource/element-02/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 							"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 							"http://example.com/ns#pointer": [
 								{"@id": "_:01"}
@@ -3589,15 +3924,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "createAccessPoint", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -3612,7 +3946,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -3631,10 +3965,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3681,13 +4015,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 				let spy:any = {
 					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
@@ -3780,13 +4118,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 				let spy:any = {
 					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
 						expect( pointer.id ).toBe( "http://example.com/parent-resource/access-point/" );
@@ -3870,15 +4212,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "createAccessPoints", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -3893,7 +4234,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -3912,10 +4253,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3951,13 +4292,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( isDefined(), ():void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return URI.Util.isRelative( uri ) ? "http://example.com/" + uri : uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.createAccessPoints ).toBeDefined();
 				expect( Utils.isFunction( documents.createAccessPoints ) ).toBe( true );
@@ -3974,24 +4319,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					let newAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						newAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return newAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -4007,7 +4356,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let accessPoints:AccessPoint.Class[];
 				let requestOptions:HTTP.Request.Options;
 
-				let createSpy:jasmine.Spy = spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+				spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
 					expect( documentURI ).toBe( "http://example.com/parent-resource/" );
 					checkRequestState( accessPoint, slug, options );
 
@@ -4133,24 +4482,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				function createAccessPoint( total:number ):AccessPoint.Class[] {
-					let accessPoints:({ index:number } & AccessPoint.Class)[] = [];
+					let newAccessPoints:({ index:number } & AccessPoint.Class)[] = [];
 					for( let index:number = 0; index < total; ++ index ) {
-						accessPoints.push( {
+						newAccessPoints.push( {
 							index: index,
 							hasMemberRelation: "http://example.com/myNamespace#some-relation",
 							isMemberOfRelation: "http://example.com/myNamespace#some-inverted-relation",
 						} );
 					}
-					return accessPoints;
+					return newAccessPoints;
 				}
 
 				class MockResponse extends HTTP.Response.Class {
@@ -4165,7 +4518,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let accessPoints:AccessPoint.Class[];
 				let requestOptions:HTTP.Request.Options;
 
-				let createSpy:jasmine.Spy = spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
+				spyOn( documents, "createAccessPoint" ).and.callFake( ( documentURI:string, accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
 					expect( documentURI ).toBe( "http://example.com/parent-resource/" );
 					checkRequestState( accessPoint, slug, options );
 
@@ -4210,7 +4563,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 					// Without request options
 					accessPoints = createAccessPoint( 3 );
 					checkRequestState = ( accessPoint:AccessPoint.Class, slug:string, options:HTTP.Request.Options ) => {
-						let index:number = (<any> accessPoint).index;
 						expect( slug ).toBeNull();
 						expect( options ).toEqual( {} );
 					};
@@ -4236,15 +4588,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "upload", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -4262,7 +4613,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -4284,10 +4635,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -4338,13 +4689,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -4394,13 +4749,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -4449,13 +4808,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -4505,13 +4868,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.upload ).toBeDefined();
 				expect( Utils.isFunction( documents.upload ) ).toBe( true );
@@ -4554,15 +4921,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "listMembers", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -4576,7 +4942,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -4594,10 +4960,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -4625,12 +4991,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "listMembers" ), () => {
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -4847,8 +5217,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							${ withMembers ? `
 							} ],
@@ -4871,11 +5241,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							} ],
-							"http://www.w3.org/ns/ldp#membershipResource": [{
+							"${ NS.LDP.Predicate.membershipResource }": [{
 								"@id": "http://example.com/members-resource/"
 							} ]
 						} ]
@@ -4883,8 +5253,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/members-resource/",
 						"@graph": [ {
 							"@id": "http://example.com/members-resource/",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#another-member"
 							${ withMembers ? `
 							} ],
@@ -4934,15 +5304,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "getMembers", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -4956,7 +5325,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -4974,10 +5343,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -5009,12 +5378,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"getMembers",
 			"Retrieves and resolve all the members of a specified document."
 		), () => {
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( () => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
@@ -5047,10 +5420,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							}, {
 								"@id": "_:02"
@@ -5059,26 +5432,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							} ]
 						},
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"0987654321\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-02/"
 							} ]
 						},
@@ -5086,9 +5459,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@graph": [ {
 								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-									"@id": "http://www.w3.org/ns/ldp#my-member"
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
+									"@id": "$http://example.com/ns#my-member"
 								} ],
 								"http://example.com/ns#my-member": [ {
 									"@id": "http://example.com/resource/element-01/"
@@ -5101,7 +5474,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-01/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "http://example.com/resource/element-01/#1"}
@@ -5115,7 +5488,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-02/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "_:01"}
@@ -5129,9 +5502,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-								"@id": "http://www.w3.org/ns/ldp#my-member"
+							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
+								"@id": "$http://example.com/ns#my-member"
 							} ]
 						} ]
 					} ]`,
@@ -5145,10 +5518,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:00",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResponseMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#resourceMetadata": [ {
+							"${ NS.C.Predicate.documentMetadata }": [ {
 								"@id": "_:01"
 							}, {
 								"@id": "_:02"
@@ -5157,26 +5530,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-01/"
 							} ]
 						},
 						{
 							"@id": "_:02",
 							"@type": [
-								"https://carbonldp.com/ns/v1/platform#ResourceMetadata",
-								"https://carbonldp.com/ns/v1/platform#VolatileResource"
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
 							],
-							"https://carbonldp.com/ns/v1/platform#eTag": [ {
+							"${ NS.C.Predicate.eTag }": [ {
 								"@value": "\\"0987654321\\""
 							} ],
-							"https://carbonldp.com/ns/v1/platform#resource": [ {
+							"${ NS.C.Predicate.relatedDocument }": [ {
 								"@id": "http://example.com/resource/element-02/"
 							} ]
 						},
@@ -5184,11 +5557,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/${ resource }",
 							"@graph": [ {
 								"@id": "http://example.com/${ resource }",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 									"@id": "http://example.com/ns#my-member"
 								} ],
-								"http://www.w3.org/ns/ldp#membershipResource": [{
+								"${ NS.LDP.Predicate.membershipResource }": [{
 									"@id": "http://example.com/members-resource/"
 								} ]
 							} ]
@@ -5196,8 +5569,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/members-resource/",
 							"@graph": [ {
 								"@id": "http://example.com/members-resource/",
-								"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-								"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 									"@id": "http://example.com/ns#another-member"
 								} ],
 								"http://example.com/ns#my-member": [ {
@@ -5211,7 +5584,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-01/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "http://example.com/resource/element-01/#1"}
@@ -5225,7 +5598,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "http://example.com/resource/element-02/",
 							"@graph": [ {
 								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "http://www.w3.org/ns/ldp#BasicContainer" ],
+								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
 								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
 								"http://example.com/ns#pointer": [
 									{"@id": "_:01"}
@@ -5239,11 +5612,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@id": "http://example.com/${ resource }",
 						"@graph": [ {
 							"@id": "http://example.com/${ resource }",
-							"@type": [ "http://www.w3.org/ns/ldp#DirectContainer" ],
-							"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
+							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
+							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
 								"@id": "http://example.com/ns#my-member"
 							} ],
-							"http://www.w3.org/ns/ldp#membershipResource": [{
+							"${ NS.LDP.Predicate.membershipResource }": [{
 								"@id": "http://example.com/members-resource/"
 							} ]
 						} ]
@@ -5705,15 +6078,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "addMember", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -5727,7 +6099,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -5745,10 +6117,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -5801,13 +6173,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -5854,15 +6230,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "addMembers", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -5876,7 +6251,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -5894,10 +6269,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -5955,13 +6330,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.addMembers ).toBeDefined();
 			expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
@@ -6007,15 +6386,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "removeMember", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -6029,7 +6407,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -6047,10 +6425,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6103,13 +6481,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext;
-			let documents:Documents;
+			let documents:Documents.Class;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -6156,15 +6538,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "removeMembers", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -6178,7 +6559,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -6196,10 +6577,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6257,13 +6638,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.removeMembers ).toBeDefined();
 			expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
@@ -6309,15 +6694,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "removeAllMembers", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -6331,7 +6715,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -6349,10 +6733,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6389,13 +6773,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.removeAllMembers ).toBeDefined();
 			expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
@@ -6434,15 +6822,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "save", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "vocabulary", "http://example.com/ns#" );
 					}
 				}
 
@@ -6456,7 +6844,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -6471,13 +6859,115 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+						documents.getPointer( "http://example.com/resource/" ), {
+							blankNode1: {
+								id: "_:1",
+								value: "a value 1",
+							},
+							blankNode2: {
+								id: "_:2",
+								value: "a value 2",
+							},
+						}
+					), documents );
+
+					try {
+						const [ document ] = await documents.save<RawDocument>( rawDocument );
+
+						expect( document.getFragments().length ).toBe( 2 );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6515,16 +7005,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
-			expect( documents.refresh ).toBeDefined();
-			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
+			expect( documents.save ).toBeDefined();
+			expect( Utils.isFunction( documents.save ) ).toBe( true );
 
 			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
 				status: 200,
@@ -6545,15 +7039,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "refresh", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -6567,7 +7060,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -6585,10 +7078,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6626,13 +7119,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.refresh ).toBeDefined();
 			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
@@ -6681,8 +7178,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			let document:PersistedDocument.Class;
 			let fragment:PersistedNamedFragment.Class;
-			let blankNode01:PersistedBlankNode.Class;
-			let blankNode02:PersistedBlankNode.Class;
 
 			// Mock an existent document
 			document = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
@@ -6691,14 +7186,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 			document[ "pointer" ] = fragment = document.createNamedFragment( {
 				string: "NamedFragment 1",
 			}, "#1" );
-			blankNode01 = <PersistedBlankNode.Class> document.createFragment( {
-				string: "Fragment 1",
-				bNodeIdentifier: "UUID fo _:1",
-			}, "_:1" );
-			blankNode02 = <PersistedBlankNode.Class> document.createFragment( {
-				string: "Fragment 1",
-				bNodeIdentifier: "UUID fo _:2",
-			}, "_:2" );
 
 			document._resolved = true;
 			document._etag = `"0123456789"`;
@@ -6708,7 +7195,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			// Add properties that supposed not to be in the server document
 			document[ "new-property" ] = "A new property that will be erased at refresh";
-			document[ "new-pointer" ] = document.createFragment( { id: "_:new-pointer", string: "Pointer that will be erased at refresh" } );
 
 			let promises:Promise<any>[] = [];
 
@@ -6725,32 +7211,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								{
 									"@id": "http://example.com/resource/",
 									"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
-									"http://example.com/ns#pointer": [ {"@id": "_:0001"} ],
 									"http://example.com/ns#pointerSet": [
-										{"@id": "_:0001"},
-										{"@id": "_:2"},
 										{"@id": "http://example.com/resource/#1"},
 										{"@id": "http://example.com/external-resource/"}
 									]
-								},
-								{
-									"@id": "_:1",
-									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:2",
-									"http://example.com/ns#string": [ {"@value": "Old Fragment 2"} ]
-								},
-								{
-									"@id": "_:0001",
-									"${NS.C.Predicate.bNodeIdentifier}": "UUID fo _:1",
-									"http://example.com/ns#string": [ {"@value": "Changed Fragment 1"} ],
-									"http://example.com/ns#pointerSet": [
-										{"@id": "http://example.com/resource/"},
-										{"@id": "http://example.com/resource/#1"}
-									]
-								},
-								{
-									"@id": "_:2",
-									"${NS.C.Predicate.bNodeIdentifier}": "NOT the UUID fo _:2",
-									"http://example.com/ns#string": [ {"@value": "New Fragment 2"} ]
 								},
 								{
 									"@id": "http://example.com/resource/#1",
@@ -6767,39 +7231,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const promise:Promise<any> = documents.refresh( document );
-					expect( promise instanceof Promise ).toBe( true );
+					const refreshPromise:Promise<any> = documents.refresh( document );
+					expect( refreshPromise instanceof Promise ).toBe( true );
 
-					return promise.then( spies.success );
+					return refreshPromise.then( spies.success );
 				},
 				success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
 					expect( persistedDoc ).toBe( document );
 					expect( document[ "string" ] ).toBe( "Changed Document Resource" );
 					expect( fragment[ "string" ] ).toBe( "Changed NamedFragment 1" );
 
-					expect( document[ "pointer" ] ).toBe( blankNode01 );
-					expect( document[ "pointer" ][ "string" ] ).toBe( "Changed Fragment 1" );
-					expect( blankNode01[ "string" ] ).toBe( "Changed Fragment 1" );
-					expect( blankNode01.id ).toBe( "_:0001" );
-					expect( blankNode01 ).toBe( document.getFragment( "_:0001" ) );
-					expect( document[ "pointerSet" ][ 0 ] ).toBe( blankNode01 );
-
-					expect( blankNode02.id ).not.toBe( "_:2" );
-					expect( blankNode02 ).not.toBe( document.getFragment( "_:2" ) );
-					expect( document[ "pointerSet" ][ 1 ] ).not.toBe( blankNode02 );
-					expect( document[ "pointerSet" ][ 1 ] ).toBe( document.getFragment( "_:2" ) );
-					expect( document.getFragment( "_:2" )[ "string" ] ).toBe( "New Fragment 2" );
-
-					expect( blankNode02.id ).toBe( "_:1" );
-					expect( document.getFragment( "_:1" ) ).toBe( blankNode02 );
-					expect( blankNode02[ "string" ] ).toBe( "Old Fragment 2" );
-
 					expect( document.hasFragment( "#2" ) ).toBe( false );
 					expect( document.hasFragment( "#3" ) ).toBe( true );
 
 					expect( document[ "new-property" ] ).toBeUndefined();
 					expect( document[ "new-pointer" ] ).toBeUndefined();
-					expect( document.hasFragment( "_:new-pointer" ) ).toBe( false );
 
 					expect( response ).toBeDefined();
 					expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -6823,15 +7269,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "saveAndRefresh", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "vocabulary", "http://example.com/ns#" );
 					}
 				}
 
@@ -6845,7 +7291,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -6860,13 +7306,142 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should sync the persisted blank nodes and update document", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							},
+							{
+								"@id": "http://example.com/resource/",
+								"@graph": [
+									{
+										"@id": "_:new-1",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 1"
+										} ]
+									},
+									{
+										"@id": "_:new-2",
+										"http://example.com/ns#value": [ {
+											"@value": "a new value 2"
+										} ]
+									},
+									{
+										"@id": "http://example.com/resource/",
+										"http://example.com/ns#blankNode1": [ {
+											"@id": "_:new-1"
+										} ],
+										"http://example.com/ns#blankNode2": [ {
+											"@id": "_:new-2"
+										} ]
+									}
+								]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+						documents.getPointer( "http://example.com/resource/" ), {
+							blankNode1: {
+								id: "_:1",
+								value: "a value 1",
+							},
+							blankNode2: {
+								id: "_:2",
+								value: "a value 2",
+							},
+						}
+					), documents );
+
+					try {
+						const [ document ] = await documents.saveAndRefresh<RawDocument>( rawDocument );
+
+						expect( document.getFragments().length ).toBe( 2 );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a new value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6908,13 +7483,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// Two request behaviour
 			finalPromises.push( (():Promise<any> => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
@@ -6927,7 +7506,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
 				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
 
-				return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+				return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
 					expect( spySave ).toHaveBeenCalledWith( document, options );
 					expect( spyRefresh ).toHaveBeenCalledWith( document );
 
@@ -6940,14 +7519,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 			// One request behaviour
 			finalPromises.push( (():Promise<any> => {
 				class MockedContext extends AbstractContext {
-					resolve( uri:string ):string {
-						return uri;
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
 				let context:MockedContext = new MockedContext();
 				context.setSetting( "vocabulary", "http://example.com/ns#" );
-				let documents:Documents = context.documents;
+				let documents:Documents.Class = context.documents;
 
 				expect( documents.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
@@ -6974,7 +7557,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.callThrough();
 				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.callThrough();
 
-				return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+				return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
 					expect( spySave ).toHaveBeenCalledTimes( 1 );
 					expect( spySave ).toHaveBeenCalledWith( document, options );
 					expect( spyRefresh ).not.toHaveBeenCalled();
@@ -6983,7 +7566,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( responses.length ).toBe( 1 );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-					expect( request.requestHeaders[ "prefer" ] ).toContain( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" );
+					expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
 
 					expect( document ).toBe( _document );
 					expect( "property" in document ).toBe( true );
@@ -7000,15 +7583,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "delete", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7022,7 +7604,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7040,10 +7622,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7080,13 +7662,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.delete ).toBeDefined();
 			expect( Utils.isFunction( documents.delete ) ).toBe( true );
@@ -7135,17 +7721,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "getDownloadURL", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
 					auth:Auth.Class = new Auth.Class( this );
 
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7159,7 +7744,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7177,10 +7762,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject any request", ( done:DoneFn ):void => {
@@ -7209,18 +7794,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 			class MockedAuth extends Auth.Class {}
 
 			class MockedContext extends AbstractContext {
+				protected _baseURI:string;
+
 				constructor() {
 					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 					this.auth = new MockedAuth( this );
-				}
-
-				resolve( uri:string ):string {
-					return uri;
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			expect( documents.getDownloadURL ).toBeDefined();
 			expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
@@ -7236,15 +7821,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeRawASKQuery", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7258,7 +7842,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7276,10 +7860,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7314,13 +7898,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -7350,15 +7938,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeASKQuery", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7372,7 +7959,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7390,10 +7977,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7428,13 +8015,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
-				}
+				protected _baseURI:string = "http://example.com/";
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -7464,15 +8049,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeRawSELECTQuery", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7486,7 +8070,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7504,10 +8088,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7542,13 +8126,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -7580,15 +8168,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeSELECTQuery", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7602,7 +8189,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7620,10 +8207,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7659,13 +8246,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
-				}
+				protected _baseURI:string = "http://example.com/";
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -7697,15 +8282,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeRawCONSTRUCTQuery", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7719,7 +8303,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7737,10 +8321,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7775,13 +8359,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -7813,15 +8401,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeRawDESCRIBEQuery", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7835,7 +8422,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7853,10 +8440,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7891,13 +8478,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -7929,15 +8520,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 		describe( "executeUPDATE", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				class MockedContext extends AbstractContext {
-					getBaseURI():string {
-						return "http://example.com";
-					}
+					protected _baseURI:string;
 
-					resolve( uri:string ):string {
-						return uri;
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
 					}
 				}
 
@@ -7951,7 +8541,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The provided URI "http://not-example.com" is not a valid URI for the current context.` );
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
 						done();
 					} );
 				} );
@@ -7969,10 +8559,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
+				let documents:Documents.Class;
 
 				beforeEach( () => {
-					documents = new Documents();
+					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8007,13 +8597,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			], { type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -8051,13 +8645,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "SPARQLER/Clauses/QueryClause" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
 				}
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents = context.documents;
+			let documents:Documents.Class = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -8074,6 +8672,588 @@ describe( module( "Carbon/Documents" ), ():void => {
 			})();
 		} );
 
+		describe( method(
+			INSTANCE,
+			"on"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to an event notification in any specified URI pattern.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.on ).toBeDefined();
+				expect( documents.on ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return error when does not have context", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				documents.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( () => documents.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				documents.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				expect( () => documents.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+				spyOn( carbon.messaging, "subscribe" );
+
+				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.on( event, uriPattern, () => {
+					done.fail( "Should not enter here." );
+				}, () => {
+					done.fail( "Should not enter here." );
+				} );
+
+				expect( createDestinationSpy ).toHaveBeenCalledWith( event, uriPattern, carbon.baseURI );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service", ( done:DoneFn ):void => {
+				const destinationString:string = "destination/*";
+				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
+
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				carbon.documents.on( "*.*", "resource/*", onEvent, onError );
+
+				expect( subscribeSpy ).toHaveBeenCalledWith( destinationString, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"off"
+		), ():void => {
+
+			it( hasSignature(
+				"Remove the subscription of the URI pattern event specified that have the exact onEvent callback provided.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.off ).toBeDefined();
+				expect( documents.off ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return error when does not have context", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				documents.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( () => documents.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				documents.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
+					expect( error.message ).toBe( "This instance does not support messaging subscriptions." );
+					done();
+				} );
+			} );
+
+			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
+				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+					_baseURI:string = "https://example.com";
+				} );
+
+				expect( () => documents.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
+				done();
+			} );
+
+			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+				spyOn( carbon.messaging, "subscribe" );
+
+				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.off( event, uriPattern, () => {
+					done.fail( "Should not enter here." );
+				}, () => {
+					done.fail( "Should not enter here." );
+				} );
+
+				expect( createDestinationSpy ).toHaveBeenCalledWith( event, uriPattern, carbon.baseURI );
+				done();
+			} );
+
+			it( "should unsubscribe with the Messaging Service", ( done:DoneFn ):void => {
+				const destinationString:string = "destination/*";
+				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
+
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				carbon.documents.off( "*.*", "resource/*", onEvent, onError );
+
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( destinationString, onEvent );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"one"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to only one event notification in any specified URI pattern.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.one ).toBeDefined();
+				expect( documents.one ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.one( event, uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( event, uriPattern, jasmine.any( Function ), onError );
+				done();
+			} );
+
+			it( "should call the `off` method when the notification has been resolved", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const offSpy:jasmine.Spy = spyOn( carbon.documents, "off" );
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" )
+					.and.callFake( ( _event:string, _uriPattern:string, _onEvent:( data:any ) => void ):void => _onEvent( "I'm calling you!" ) );
+
+				const onEvent:( data:any ) => void = ( data:any ) => {
+					expect( data ).toBe( "I'm calling you!" );
+					done();
+				};
+
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const event:string = "*.*";
+				const uriPattern:string = "resource/*";
+				carbon.documents.one( event, uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalled();
+				expect( offSpy ).toHaveBeenCalledWith( event, uriPattern, jasmine.any( Function ), onError );
+			} );
+
+			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" )
+					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
+				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
+
+				carbon.documents.one( "*.*", "resource/*", () => void 0, done.fail );
+
+				expect( subscribeSpy ).toHaveBeenCalled();
+				expect( unsubscribeSpy ).toHaveBeenCalled();
+
+				expect( subscribeSpy.calls.first().args )
+					.toEqual( jasmine.arrayContaining( unsubscribeSpy.calls.first().args ) );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onDocumentCreated"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onDocumentCreated ).toBeDefined();
+				expect( documents.onDocumentCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onDocumentCreated( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onChildCreated"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onChildCreated ).toBeDefined();
+				expect( documents.onChildCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onChildCreated( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.CHILD_CREATED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onAccessPointCreated"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onAccessPointCreated ).toBeDefined();
+				expect( documents.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onAccessPointCreated( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onDocumentModified"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onDocumentModified ).toBeDefined();
+				expect( documents.onDocumentModified ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onDocumentModified( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onDocumentDeleted"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_DELETED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onDocumentDeleted ).toBeDefined();
+				expect( documents.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onDocumentDeleted( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onMemberAdded"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.MEMBER_ADDED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onMemberAdded ).toBeDefined();
+				expect( documents.onMemberAdded ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onMemberAdded( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_ADDED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"onMemberRemoved"
+		), ():void => {
+
+			it( hasSignature(
+				"Subscribe to the `Carbon.Messaging.Event.MEMBER_REMOVED` event notifications for the specified URI pattern.",
+				[
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
+					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notifications event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.onMemberRemoved ).toBeDefined();
+				expect( documents.onMemberRemoved ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call the `on` method", ( done:DoneFn ):void => {
+				const carbon:Carbon = new Carbon( "example.com", true );
+
+				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
+
+				const onEvent:( data:any ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+				const onError:( error:Error ) => void = () => {
+					done.fail( "Should not enter here." );
+				};
+
+				const uriPattern:string = "resource/*";
+				carbon.documents.onMemberRemoved( uriPattern, onEvent, onError );
+
+				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_REMOVED, uriPattern, onEvent, onError );
+				done();
+			} );
+
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Documents.Class" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( Documents.Class );
 	} );
 
 } );

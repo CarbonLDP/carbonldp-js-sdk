@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils = require("./../Utils");
 var Document = require("./../Document");
-var NS = require("./../NS");
 var IllegalArgumentError_1 = require("./../Errors/IllegalArgumentError");
+var NS = require("./../NS");
+var Utils = require("./../Utils");
+exports.RDF_CLASS = NS.CS.Class.Role;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.Predicate.namae,
@@ -13,8 +14,17 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.description,
         "@type": NS.XSD.DataType.string,
     },
-    "agents": {
-        "@id": NS.CS.Predicate.agent,
+    "parentRole": {
+        "@id": NS.CS.Predicate.parentRole,
+        "@type": "@id",
+    },
+    "childRoles": {
+        "@id": NS.CS.Predicate.childRole,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "users": {
+        "@id": NS.CS.Predicate.user,
         "@type": "@id",
         "@container": "@set",
     },

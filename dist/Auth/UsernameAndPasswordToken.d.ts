@@ -1,5 +1,4 @@
-import AuthenticationToken from "./AuthenticationToken";
-export declare class Class implements AuthenticationToken {
+export declare class Class {
     private _username;
     private _password;
     constructor(username: string, password: string);

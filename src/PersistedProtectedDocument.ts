@@ -2,6 +2,7 @@ import * as HTTP from "./HTTP";
 import * as Auth from "./Auth";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
+import * as Documents from "./Documents";
 import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
 import SELECTResults from "./SPARQL/SELECTResults";
@@ -27,12 +28,13 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
-		if( Factory.hasClassProperties( document ) ) return <any> document;
+	static decorate<T extends object>( document:T, documents:Documents.Class ):T & Class {
+		const persistedProtectedDocument:T & Class = document as T & Class;
 
-		let rdfSource:T & Class = <any> document;
+		if( Factory.hasClassProperties( document ) ) return persistedProtectedDocument;
+		PersistedDocument.Factory.decorate( document, documents );
 
-		Object.defineProperties( rdfSource, {
+		Object.defineProperties( persistedProtectedDocument, {
 			"getACL": {
 				writable: false,
 				enumerable: false,
@@ -41,7 +43,7 @@ export class Factory {
 			},
 		} );
 
-		return rdfSource;
+		return persistedProtectedDocument;
 	}
 
 }
@@ -67,9 +69,9 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 
 	return aclPromise.then( ( acl:Pointer.Class ) => {
 		return protectedDocument._documents.get( acl.id, requestOptions );
-	} ).then( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
+	} ).then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
 		if( ! Resource.Util.hasType( acl, Auth.ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
-		return [ acl, response ] as [ Auth.PersistedACL.Class, HTTP.Response.Class ];
+		return [ acl, response ];
 	} );
 }
 

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 20 );
+			expect( Object.keys( C.Class ).length ).toBe( 22 );
 		} );
 
 		it( hasProperty(
@@ -55,13 +55,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"API",
+			"AddMemberAction",
 			"string"
 		), ():void => {
-			expect( C.Class.API ).toBeDefined();
-			expect( Utils.isString( C.Class.API ) ).toBe( true );
+			expect( C.Class.AddMemberAction ).toBeDefined();
+			expect( Utils.isString( C.Class.AddMemberAction ) ).toBe( true );
 
-			expect( C.Class.API ).toBe( "https://carbonldp.com/ns/v1/platform#API" );
+			expect( C.Class.AddMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#AddMemberAction" );
 		} );
 
 		it( hasProperty(
@@ -88,6 +88,39 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"DocumentMetadata",
+			"string"
+		), ():void => {
+			expect( C.Class.DocumentMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.DocumentMetadata ) ).toBe( true );
+
+			expect( C.Class.DocumentMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentMetadata" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Instance",
+			"string"
+		), ():void => {
+			expect( C.Class.Instance ).toBeDefined();
+			expect( Utils.isString( C.Class.Instance ) ).toBe( true );
+
+			expect( C.Class.Instance ).toBe( "https://carbonldp.com/ns/v1/platform#Instance" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Map",
+			"string"
+		), ():void => {
+			expect( C.Class.Map ).toBeDefined();
+			expect( Utils.isString( C.Class.Map ) ).toBe( true );
+
+			expect( C.Class.Map ).toBe( "https://carbonldp.com/ns/v1/platform#Map" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"ModifiedResource",
 			"string"
 		), ():void => {
@@ -106,6 +139,17 @@ describe( module(
 			expect( Utils.isString( C.Class.NonReadableMembershipResourceTriples ) ).toBe( true );
 
 			expect( C.Class.NonReadableMembershipResourceTriples ).toBe( "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Platform",
+			"string"
+		), ():void => {
+			expect( C.Class.Platform ).toBeDefined();
+			expect( Utils.isString( C.Class.Platform ) ).toBe( true );
+
+			expect( C.Class.Platform ).toBe( "https://carbonldp.com/ns/v1/platform#Platform" );
 		} );
 
 		it( hasProperty(
@@ -187,17 +231,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"AddMemberAction",
-			"string"
-		), ():void => {
-			expect( C.Class.AddMemberAction ).toBeDefined();
-			expect( Utils.isString( C.Class.AddMemberAction ) ).toBe( true );
-
-			expect( C.Class.AddMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#AddMemberAction" );
-		} );
-
-		it( hasProperty(
-			STATIC,
 			"RemoveMemberAction",
 			"string"
 		), ():void => {
@@ -240,17 +273,6 @@ describe( module(
 			expect( C.Class.ResponseMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResponseMetadata" );
 		} );
 
-		it( hasProperty(
-			STATIC,
-			"ResourceMetadata",
-			"string"
-		), ():void => {
-			expect( C.Class.ResourceMetadata ).toBeDefined();
-			expect( Utils.isString( C.Class.ResourceMetadata ) ).toBe( true );
-
-			expect( C.Class.ResourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#ResourceMetadata" );
-		} );
-
 	} );
 
 	describe( clazz(
@@ -278,24 +300,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"appRoleMap",
+			"bNodesMap",
 			"string"
 		), ():void => {
-			expect( C.Predicate.appRoleMap ).toBeDefined();
-			expect( Utils.isString( C.Predicate.appRoleMap ) ).toBe( true );
+			expect( C.Predicate.bNodesMap ).toBeDefined();
+			expect( Utils.isString( C.Predicate.bNodesMap ) ).toBe( true );
 
-			expect( C.Predicate.appRoleMap ).toBe( "https://carbonldp.com/ns/v1/platform#appRoleMap" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"bNodeIdentifier",
-			"string"
-		), ():void => {
-			expect( C.Predicate.bNodeIdentifier ).toBeDefined();
-			expect( Utils.isString( C.Predicate.bNodeIdentifier ) ).toBe( true );
-
-			expect( C.Predicate.bNodeIdentifier ).toBe( "https://carbonldp.com/ns/v1/platform#bNodeIdentifier" );
+			expect( C.Predicate.bNodesMap ).toBe( "https://carbonldp.com/ns/v1/platform#bNodesMap" );
 		} );
 
 		it( hasProperty(
@@ -322,6 +333,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"documentMetadata",
+			"string"
+		), ():void => {
+			expect( C.Predicate.documentMetadata ).toBeDefined();
+			expect( Utils.isString( C.Predicate.documentMetadata ) ).toBe( true );
+
+			expect( C.Predicate.documentMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#documentMetadata" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"defaultInteractionModel",
 			"string"
 		), ():void => {
@@ -344,13 +366,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"key",
+			"entryKey",
 			"string"
 		), ():void => {
-			expect( C.Predicate.key ).toBeDefined();
-			expect( Utils.isString( C.Predicate.key ) ).toBe( true );
+			expect( C.Predicate.entryKey ).toBeDefined();
+			expect( Utils.isString( C.Predicate.entryKey ) ).toBe( true );
 
-			expect( C.Predicate.key ).toBe( "https://carbonldp.com/ns/v1/platform#key" );
+			expect( C.Predicate.entryKey ).toBe( "https://carbonldp.com/ns/v1/platform#entryKey" );
 		} );
 
 		it( hasProperty(
@@ -362,17 +384,6 @@ describe( module(
 			expect( Utils.isString( C.Predicate.modified ) ).toBe( true );
 
 			expect( C.Predicate.modified ).toBe( "https://carbonldp.com/ns/v1/platform#modified" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"version",
-			"string"
-		), ():void => {
-			expect( C.Predicate.version ).toBeDefined();
-			expect( Utils.isString( C.Predicate.version ) ).toBe( true );
-
-			expect( C.Predicate.version ).toBe( "https://carbonldp.com/ns/v1/platform#version" );
 		} );
 
 
@@ -456,24 +467,13 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"resourceMetadata",
+			"relatedDocument",
 			"string"
 		), ():void => {
-			expect( C.Predicate.resourceMetadata ).toBeDefined();
-			expect( Utils.isString( C.Predicate.resourceMetadata ) ).toBe( true );
+			expect( C.Predicate.relatedDocument ).toBeDefined();
+			expect( Utils.isString( C.Predicate.relatedDocument ) ).toBe( true );
 
-			expect( C.Predicate.resourceMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#resourceMetadata" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"resource",
-			"string"
-		), ():void => {
-			expect( C.Predicate.resource ).toBeDefined();
-			expect( Utils.isString( C.Predicate.resource ) ).toBe( true );
-
-			expect( C.Predicate.resource ).toBe( "https://carbonldp.com/ns/v1/platform#resource" );
+			expect( C.Predicate.relatedDocument ).toBe( "https://carbonldp.com/ns/v1/platform#relatedDocument" );
 		} );
 
 		it( hasProperty(
@@ -496,6 +496,28 @@ describe( module(
 			expect( Utils.isString( C.Predicate.requestID ) ).toBe( true );
 
 			expect( C.Predicate.requestID ).toBe( "https://carbonldp.com/ns/v1/platform#requestID" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"entryValue",
+			"string"
+		), ():void => {
+			expect( C.Predicate.entryValue ).toBeDefined();
+			expect( Utils.isString( C.Predicate.entryValue ) ).toBe( true );
+
+			expect( C.Predicate.entryValue ).toBe( "https://carbonldp.com/ns/v1/platform#entryValue" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"version",
+			"string"
+		), ():void => {
+			expect( C.Predicate.version ).toBeDefined();
+			expect( Utils.isString( C.Predicate.version ) ).toBe( true );
+
+			expect( C.Predicate.version ).toBe( "https://carbonldp.com/ns/v1/platform#version" );
 		} );
 
 	} );

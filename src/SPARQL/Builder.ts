@@ -45,6 +45,6 @@ queryPrototype.initInterfaces = function():void {
 
 export {
 	SPARQLER as Class
-}
+};
 
 export default SPARQLER;

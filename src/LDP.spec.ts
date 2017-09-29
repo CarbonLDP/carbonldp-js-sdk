@@ -9,13 +9,15 @@ import {
 import * as Utils from "./Utils";
 
 import * as AddMemberAction from "./LDP/AddMemberAction";
+import * as Map from "./LDP/Map";
 import * as DirectContainer from "./LDP/DirectContainer";
+import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
 import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 import * as ErrorResponse from "./LDP/ErrorResponse";
 import * as ResponseMetadata from "./LDP/ResponseMetadata";
-import * as ResourceMetadata from "./LDP/ResourceMetadata";
+import * as DocumentMetadata from "./LDP/DocumentMetadata";
 
 import * as LDP from "./LDP";
 
@@ -37,11 +39,29 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"Map",
+		"Carbon/LDP/Map"
+	), ():void => {
+		expect( LDP.Map ).toBeDefined();
+		expect( LDP.Map ).toBe( Map );
+	} );
+
+	it( reexports(
+		STATIC,
 		"DirectContainer",
 		"Carbon/LDP/DirectContainer"
 	), ():void => {
 		expect( LDP.DirectContainer ).toBeDefined();
 		expect( LDP.DirectContainer ).toBe( DirectContainer );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Entry",
+		"Carbon/LDP/Entry"
+	), ():void => {
+		expect( LDP.Entry ).toBeDefined();
+		expect( LDP.Entry ).toBe( Entry );
 	} );
 
 	it( reexports(
@@ -91,11 +111,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"ResourceMetadata",
-		"Carbon/LDP/ResourceMetadata"
+		"DocumentMetadata",
+		"Carbon/LDP/DocumentMetadata"
 	), ():void => {
-		expect( LDP.ResourceMetadata ).toBeDefined();
-		expect( LDP.ResourceMetadata ).toBe( ResourceMetadata );
+		expect( LDP.DocumentMetadata ).toBeDefined();
+		expect( LDP.DocumentMetadata ).toBe( DocumentMetadata );
 	} );
 
 } );

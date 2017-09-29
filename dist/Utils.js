@@ -140,6 +140,44 @@ function promiseMethod(fn) {
     return new Promise(function (resolve) { return resolve(fn()); });
 }
 exports.promiseMethod = promiseMethod;
+var A = (function () {
+    function A() {
+    }
+    A.from = function (iterator) {
+        var array = [];
+        var next = iterator.next();
+        while (!next.done) {
+            array.push(next.value);
+            next = iterator.next();
+        }
+        return array;
+    };
+    A.joinWithoutDuplicates = function () {
+        var arrays = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            arrays[_i] = arguments[_i];
+        }
+        var result = arrays[0].slice();
+        for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
+            result = result.concat(arrays[i].filter(function (item) {
+                return result.indexOf(item) < 0;
+            }));
+        }
+        return result;
+    };
+    A.indexOf = function (array, searchedElement, comparator) {
+        if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
+        if (!array)
+            return -1;
+        for (var i = 0, length_2 = array.length; i < length_2; ++i) {
+            if (comparator(array[i], searchedElement))
+                return i;
+        }
+        return -1;
+    };
+    return A;
+}());
+exports.A = A;
 var O = (function () {
     function O() {
     }
@@ -179,6 +217,19 @@ var O = (function () {
         if (config === void 0) { config = { arrays: false, objects: false }; }
         if (ignore === void 0) { ignore = {}; }
         return internalAreEqual(object1, object2, config, [object1], [object2], ignore);
+    };
+    O.shallowUpdate = function (target, source) {
+        var keys = A.joinWithoutDuplicates(Object.keys(source), Object.keys(target));
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (hasProperty(source, key)) {
+                target[key] = source[key];
+            }
+            else {
+                delete target[key];
+            }
+        }
+        return target;
     };
     O.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
@@ -221,8 +272,8 @@ function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
     if (isDate(object1))
         return object1.getTime() === object2.getTime();
     var keys = A.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
-    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-        var key = keys_1[_i];
+    for (var _i = 0, keys_2 = keys; _i < keys_2.length; _i++) {
+        var key = keys_2[_i];
         if (!(key in object1) || !(key in object2))
             return false;
         if (typeof object1 !== typeof object2)
@@ -273,44 +324,6 @@ var S = (function () {
     return S;
 }());
 exports.S = S;
-var A = (function () {
-    function A() {
-    }
-    A.from = function (iterator) {
-        var array = [];
-        var next = iterator.next();
-        while (!next.done) {
-            array.push(next.value);
-            next = iterator.next();
-        }
-        return array;
-    };
-    A.joinWithoutDuplicates = function () {
-        var arrays = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            arrays[_i] = arguments[_i];
-        }
-        var result = arrays[0].slice();
-        for (var i = 1, length_1 = arrays.length; i < length_1; i++) {
-            result = result.concat(arrays[i].filter(function (item) {
-                return result.indexOf(item) < 0;
-            }));
-        }
-        return result;
-    };
-    A.indexOf = function (array, searchedElement, comparator) {
-        if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
-        if (!array)
-            return -1;
-        for (var i = 0, length_2 = array.length; i < length_2; ++i) {
-            if (comparator(array[i], searchedElement))
-                return i;
-        }
-        return -1;
-    };
-    return A;
-}());
-exports.A = A;
 var M = (function () {
     function M() {
     }
