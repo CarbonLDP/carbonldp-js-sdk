@@ -38,6 +38,7 @@ import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
+import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
@@ -308,6 +309,15 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.Settings ).toBeDefined();
 			expect( Carbon.Class.Settings ).toBe( Settings );
+		} );
+
+		it( reexports(
+			STATIC,
+			"SHACL",
+			"Carbon/SHACL"
+		), ():void => {
+			expect( Carbon.Class.SHACL ).toBeDefined();
+			expect( Carbon.Class.SHACL ).toBe( SHACL );
 		} );
 
 		it( reexports(

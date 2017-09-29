@@ -9,6 +9,7 @@ var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
 var RDFRepresentation = require("./RDFRepresentation");
 var System = require("./System");
+var SHACL = require("./SHACL");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -159,6 +160,7 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationReport.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))

@@ -20,6 +20,7 @@ import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
+import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
@@ -48,6 +49,7 @@ export class Class extends AbstractContext.Class {
 	static Resource:typeof Resource = Resource;
 	static SDKContext:typeof SDKContext = SDKContext;
 	static Settings:typeof Settings = Settings;
+	static SHACL:typeof SHACL = SHACL;
 	static SPARQL:typeof SPARQL = SPARQL;
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
@@ -64,7 +66,7 @@ export class Class extends AbstractContext.Class {
 	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
 		super();
 		domain = RDF.URI.Util.hasProtocol( domain ) ? RDF.URI.Util.removeProtocol( domain ) : domain;
-		domain = Utils.S.endsWith( domain,  "/" ) ? domain : domain + "/";
+		domain = Utils.S.endsWith( domain, "/" ) ? domain : domain + "/";
 		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
 		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;

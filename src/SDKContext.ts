@@ -8,6 +8,7 @@ import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
 import * as System from "./System";
+import * as SHACL from "./SHACL";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -184,6 +185,9 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+
+		// TODO: carbonldp-platform.private#198
+		this.extendObjectSchema( /*SHACL.ValidationReport.RDF_CLASS,*/ SHACL.ValidationReport.SCHEMA );
 	}
 
 	private resolveTypeURI( uri:string ):string {
