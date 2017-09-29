@@ -3136,6 +3136,7 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationReport.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
         if (RDF.URI.Util.isAbsolute(uri))
@@ -7609,6 +7610,8 @@ exports.InstanceMetadata = InstanceMetadata;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ValidationReport = __webpack_require__(155);
 exports.ValidationReport = ValidationReport;
+var ValidationResult = __webpack_require__(156);
+exports.ValidationResult = ValidationResult;
 
 
 /***/ }),
@@ -7659,7 +7662,7 @@ var Pointer = __webpack_require__(8);
 var RDF = __webpack_require__(4);
 var Resource = __webpack_require__(5);
 var SDKContext = __webpack_require__(27);
-var Settings = __webpack_require__(156);
+var Settings = __webpack_require__(157);
 var SHACL = __webpack_require__(72);
 var SPARQL = __webpack_require__(64);
 var System = __webpack_require__(71);
@@ -9861,6 +9864,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ValidationResult", {
+        get: function () { return exports.namespace + "ValidationResult"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -9872,13 +9880,53 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "detail", {
+        get: function () { return exports.namespace + "detail"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "focusNode", {
+        get: function () { return exports.namespace + "focusNode"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "result", {
         get: function () { return exports.namespace + "result"; },
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "resultMessage", {
+        get: function () { return exports.namespace + "resultMessage"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resultPath", {
+        get: function () { return exports.namespace + "resultPath"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resultSeverity", {
+        get: function () { return exports.namespace + "resultSeverity"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "shapesGraphWellFormed", {
         get: function () { return exports.namespace + "shapesGraphWellFormed"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "sourceConstraintComponent", {
+        get: function () { return exports.namespace + "sourceConstraintComponent"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "sourceShape", {
+        get: function () { return exports.namespace + "sourceShape"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "value", {
+        get: function () { return exports.namespace + "value"; },
         enumerable: true,
         configurable: true
     });
@@ -12103,6 +12151,50 @@ exports.SCHEMA = {
 
 /***/ }),
 /* 156 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+exports.RDF_CLASS = NS.SHACL.Class.ValidationResult;
+exports.SCHEMA = {
+    "focusNode": {
+        "@id": NS.SHACL.Predicate.focusNode,
+        "@type": "@id",
+    },
+    "resultPath": {
+        "@id": NS.SHACL.Predicate.resultPath,
+        "@type": "@id",
+    },
+    "value": {
+        "@id": NS.SHACL.Predicate.value,
+    },
+    "sourceShape": {
+        "@id": NS.SHACL.Predicate.sourceShape,
+        "@type": "@id",
+    },
+    "sourceConstraintComponent": {
+        "@id": NS.SHACL.Predicate.sourceConstraintComponent,
+        "@type": "@id",
+    },
+    "detail": {
+        "@id": NS.SHACL.Predicate.detail,
+        "@type": "@id",
+    },
+    "resultMessage": {
+        "@id": NS.SHACL.Predicate.resultMessage,
+        "@type": NS.XSD.DataType.string,
+    },
+    "resultSeverity": {
+        "@id": NS.SHACL.Predicate.resultSeverity,
+        "@type": "@id",
+    },
+};
+
+
+/***/ }),
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
