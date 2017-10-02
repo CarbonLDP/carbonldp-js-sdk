@@ -13,6 +13,7 @@ var webstomp = require("webstomp-client");
 var Errors_1 = require("../Errors");
 var Parser_1 = require("../JSONLD/Parser");
 var Utils_1 = require("../Utils");
+var Message = require("./Message");
 exports.DEFAULT_OPTIONS = {
     maxReconnectAttempts: 10,
     reconnectDelay: 1000,
@@ -126,6 +127,10 @@ var Class = (function () {
         return function () { return _this._client.subscribe(destination, function (message) {
             new Parser_1.default()
                 .parse(message.body)
+                .then(function (data) {
+                var freeResources = _this.context.documents._getFreeResources(data);
+                return freeResources.getResources().find(Message.Factory.hasClassProperties);
+            })
                 .then(eventCallback)
                 .catch(errorCallback);
         }, { id: id }); };

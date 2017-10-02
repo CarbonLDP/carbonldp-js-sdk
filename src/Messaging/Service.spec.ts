@@ -3,8 +3,10 @@ import Frame from "webstomp-client/src/frame.js";
 
 import Carbon from "../Carbon";
 import { IllegalStateError } from "../Errors";
-import RDFNode from "../RDF/Node";
 import { clazz, constructor, hasDefaultExport, hasProperty, hasSignature, INSTANCE, isDefined, method, module, STATIC } from "../test/JasmineExtender";
+import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
+import * as Message from "./Message";
 
 import * as MessagingService from "./Service";
 import DefaultExport from "./Service";
@@ -439,7 +441,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Subscribe to an event described by the destination provided.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the event to subscribe for." },
-					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", optional: true, description: "Callback to be invoked in every notification event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
 					{ name: "onError", type: "( error:Error ) => void", optional: true, description: "Callback to be invoked when a error has occurred in the subscription." },
 				]
 			), ():void => {} );
@@ -479,16 +481,19 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 					} );
 				} );
 
-				service.subscribe( "destination/", ( data:RDFNode[] ) => {
+				service.subscribe( "destination/", ( message:Message.Class ) => {
 					expect( service[ "_client" ].connected ).toBe( true );
 
-					expect( data ).toEqual( [ {
-						"@id": "_:1",
-						"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
-						"https://carbonldp.com/ns/v1/platform#target": [ {
-							"@id": "https://example.com/created-child/",
-						} ],
-					} as RDFNode ] );
+					expect( message ).toEqual( {
+						target: jasmine.any( Object ),
+					} as any );
+
+					expect( Resource.Factory.is( message ) ).toBe( true );
+					expect( message.id ).toBe( "_:1" );
+					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
+
+					expect( Pointer.Factory.is( message.target ) ).toBe( true );
+					expect( message.target.id ).toBe( "https://example.com/created-child/" );
 
 					mockServer.stop( done );
 				}, ( error ) => {
@@ -527,16 +532,19 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				} );
 
 				function addSubscription( index:number ):void {
-					service.subscribe( `/topic/*.*.destination-${ index }/`, ( data:RDFNode[] ) => {
+					service.subscribe( `/topic/*.*.destination-${ index }/`, ( message:Message.Class ) => {
 						expect( service[ "_client" ].connected ).toBe( true );
 
-						expect( data ).toEqual( [ {
-							"@id": "_:1",
-							"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
-							"https://carbonldp.com/ns/v1/platform#target": [ {
-								"@id": `https://example.com/created-child-${ index }/`,
-							} ],
-						} as RDFNode ] );
+						expect( message ).toEqual( {
+							target: jasmine.any( Object ),
+						} as any );
+
+						expect( Resource.Factory.is( message ) ).toBe( true );
+						expect( message.id ).toBe( "_:1" );
+						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
+
+						expect( Pointer.Factory.is( message.target ) ).toBe( true );
+						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ receivedData === 2 ) mockServer.stop( done );
 					}, ( error ) => {
@@ -600,7 +608,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Remove the subscription set for the specific destination and onEvent callback.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the subscription to be removed." },
-					{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", optional: true, description: "Callback of the subscription to be be removed." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", optional: true, description: "Callback of the subscription to be be removed." },
 				]
 			), ():void => {} );
 
@@ -656,18 +664,21 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				let finishCallback:Function;
 				let responded:number = 0;
 
-				function addSubscription( index:number ):( data:RDFNode[] ) => void {
-					let callback:( data:RDFNode[] ) => void;
-					service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( data:RDFNode[] ) => {
+				function addSubscription( index:number ):( message:Message.Class ) => void {
+					let callback:( message:Message.Class ) => void;
+					service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( message:Message.Class ) => {
 						expect( service[ "_client" ].connected ).toBe( true );
 
-						expect( data ).toEqual( [ {
-							"@id": "_:1",
-							"@type": [ "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ],
-							"https://carbonldp.com/ns/v1/platform#target": [ {
-								"@id": `https://example.com/created-child-${ index }/`,
-							} ],
-						} as RDFNode ] );
+						expect( message ).toEqual( {
+							target: jasmine.any( Object ),
+						} as any );
+
+						expect( Resource.Factory.is( message ) ).toBe( true );
+						expect( message.id ).toBe( "_:1" );
+						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
+
+						expect( Pointer.Factory.is( message.target ) ).toBe( true );
+						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ responded === 3 ) finishCallback();
 					}, ( error ) => {
@@ -678,7 +689,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				}
 
 				addSubscription( 1 );
-				const secondCallback:( data:RDFNode[] ) => void = addSubscription( 2 );
+				const secondCallback:( message:Message.Class ) => void = addSubscription( 2 );
 				addSubscription( 3 );
 
 				finishCallback = () => {

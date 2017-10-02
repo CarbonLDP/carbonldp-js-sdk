@@ -33,7 +33,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"Subscribe to the specified document event notifications.",
 			[
 				{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for its notifications." },
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -47,7 +47,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"Remove a subscription that contains the document event and onEvent callback provided.",
 			[
 				{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event of the subscription to remove." },
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 			]
 		), ():void => {
@@ -61,7 +61,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"Subscribe to only one notification to the document event provided",
 			[
 				{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for one notification." },
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -74,7 +74,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onDocumentCreated",
 			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -86,7 +86,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onChildCreated",
 			"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -98,7 +98,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onAccessPointCreated",
 			"Subscribe to the `Carbon.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -110,7 +110,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onDocumentModified",
 			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -122,7 +122,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onDocumentDeleted",
 			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_DELETED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -134,7 +134,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onMemberAdded",
 			"Subscribe to the `Carbon.Messaging.Event.MEMBER_ADDED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
@@ -146,7 +146,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 			"onMemberRemoved",
 			"Subscribe to the `Carbon.Messaging.Event.MEMBER_REMOVED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( data:Carbon.RDF.Node.Class[] ) => void", description: "Callback that receives the data from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {

@@ -8,6 +8,7 @@ import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
 import * as System from "./System";
+import * as Messaging from "./Messaging";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -183,6 +184,14 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+
+		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
+		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );
+		this.extendObjectSchema( Messaging.DocumentDeleted.RDF_CLASS, Messaging.DocumentDeleted.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberAdded.RDF_CLASS, Messaging.MemberAdded.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberAddedDetails.RDF_CLASS, Messaging.MemberAddedDetails.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA );
 	}
 
 	private resolveTypeURI( uri:string ):string {

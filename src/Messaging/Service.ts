@@ -7,6 +7,8 @@ import { IllegalStateError } from "../Errors";
 import JSONLDParser from "../JSONLD/Parser";
 import RDFNode from "../RDF/Node";
 import { UUID } from "../Utils";
+import * as FreeResources from "./../FreeResources";
+import * as Message from "./Message";
 import Options from "./Options";
 
 // Fix of incorrect webstomp-client typings
@@ -46,7 +48,7 @@ export class Class {
 	private _options:Options;
 	private _attempts:number;
 	private _client?:Client;
-	private _subscriptionsMap:Map<string, Map<( data:RDFNode[] ) => void, Subscription>>;
+	private _subscriptionsMap:Map<string, Map<( data:Message.Class ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
 	constructor( context:Carbon ) {
@@ -114,10 +116,10 @@ export class Class {
 		} );
 	}
 
-	subscribe( destination:string, onEvent:( data:RDFNode[] ) => void, onError:( error:Error ) => void ):void {
+	subscribe( destination:string, onEvent:( data:Message.Class ) => void, onError:( error:Error ) => void ):void {
 		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-		const callbacksMap:Map<( data:RDFNode[] ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbacksMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
 
 		if( callbacksMap.has( onEvent ) ) return;
 		const subscriptionID:string = UUID.generate();
@@ -131,10 +133,10 @@ export class Class {
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
-	unsubscribe( destination:string, onEvent:( data:RDFNode[] ) => void ):void {
+	unsubscribe( destination:string, onEvent:( data:Message.Class ) => void ):void {
 		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
 
-		const callbackMap:Map<( data:RDFNode[] ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbackMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
 		if( ! callbackMap.has( onEvent ) ) return;
 
 		const subscriptionID:string = callbackMap.get( onEvent ).id;
@@ -152,10 +154,14 @@ export class Class {
 		} ) );
 	}
 
-	private makeSubscription( id:string, destination:string, eventCallback:( data:RDFNode[] ) => void, errorCallback:( error:Error ) => void ):() => void {
+	private makeSubscription( id:string, destination:string, eventCallback:( data:Message.Class ) => void, errorCallback:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
+				.then( ( data:RDFNode[] ) => {
+					const freeResources:FreeResources.Class = this.context.documents._getFreeResources( data );
+					return freeResources.getResources().find( Message.Factory.hasClassProperties );
+				} )
 				.then( eventCallback )
 				.catch( errorCallback );
 		}, { id } );

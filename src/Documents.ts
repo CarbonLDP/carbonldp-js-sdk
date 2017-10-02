@@ -798,7 +798,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return builder;
 	}
 
-	on( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	on( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
@@ -809,7 +809,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	off( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	off( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
@@ -820,39 +820,39 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	one( event:Messaging.Event | string, uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	one( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		const self:Class = this;
-		this.on( event, uriPattern, function onEventWrapper( data:RDF.Node.Class[] ):void {
-			onEvent( data );
+		this.on( event, uriPattern, function onEventWrapper( message:Messaging.Message.Class ):void {
+			onEvent( message );
 			self.off( event, uriPattern, onEventWrapper, onError );
 		}, onError );
 	}
 
-	onDocumentCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onDocumentCreated( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
 	}
 
-	onChildCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onChildCreated( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError );
 	}
 
-	onAccessPointCreated( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onAccessPointCreated( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
 	}
 
-	onDocumentModified( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onDocumentModified( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
 	}
 
-	onDocumentDeleted( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onDocumentDeleted( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
 	}
 
-	onMemberAdded( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onMemberAdded( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError );
 	}
 
-	onMemberRemoved( uriPattern:string, onEvent:( data:RDF.Node.Class[] ) => void, onError:( error:Error ) => void ):void {
+	onMemberRemoved( uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		return this.on( Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 	}
 
