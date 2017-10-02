@@ -9534,6 +9534,8 @@ var Class = (function () {
                 onError(error);
             throw error;
         }
+        if (this._subscriptionsMap)
+            this._subscriptionsMap.clear();
         this.reconnect(onConnect, onError);
     };
     Class.prototype.reconnect = function (onConnect, onError) {
@@ -9541,10 +9543,10 @@ var Class = (function () {
         if (onError === void 0) { onError = this.broadcastError.bind(this); }
         if (!this._client)
             this._attempts = 0;
+        else if (this._client.connected)
+            this._client.disconnect();
         if (!this._subscriptionsMap)
             this._subscriptionsMap = new Map();
-        else
-            this._subscriptionsMap.clear();
         var sock = new SockJS(this.context.resolve("/broker"));
         this._client = webstomp.over(sock, {
             protocols: webstomp.VERSIONS.supportedProtocols(),

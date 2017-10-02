@@ -236,6 +236,21 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				expect( service.reconnect ).toEqual( jasmine.any( Function ) );
 			} );
 
+			it( "should not change the subscription map", ( done:DoneFn ):void => {
+				const mockServer:any = new Server( "https://example.com/broker" );
+
+				expect( service[ "_subscriptionsMap" ] ).toBeUndefined();
+
+				service.reconnect();
+				expect( service[ "_subscriptionsMap" ] ).toEqual( new Map() );
+
+				service[ "_subscriptionsMap" ].set( "/topic/*.*", new Map() );
+				service.reconnect();
+				expect( service[ "_subscriptionsMap" ] ).toEqual( new Map( [ [ "/topic/*.*", new Map() ] ] ) );
+
+				mockServer.stop( done );
+			} );
+
 			it( "should connect to the broker", ( done:DoneFn ):void => {
 				const mockServer:any = new Server( "https://example.com/broker" );
 				mockServer.on( "connection", server => {
@@ -381,6 +396,35 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				}, ( error ) => {
 					expect( error ).toEqual( jasmine.any( Error ) );
 					mockServer.stop( done );
+				} );
+			} );
+
+			it( "should disconnect if already connected", ( done:DoneFn ):void => {
+				const mockServer:any = new Server( "https://example.com/broker" );
+				mockServer.on( "connection", server => {
+					server.send( Frame.marshall( "CONNECTED", {
+						"server": "MockSocket-Server/**",
+						"session": "session-1",
+						"heart-beat": "0,0",
+						"version": "1.2",
+					} ) );
+				} );
+				mockServer.on( "message", ( framesString:string ) => {
+					const frame:Frame = Frame.unmarshallSingle( framesString );
+					if( frame.command === "CONNECT" ) return;
+
+					expect( frame.command ).toBe( "DISCONNECT" );
+				} );
+
+				service.reconnect( () => {
+					const previousClient:any = service[ "_client" ];
+					expect( service[ "_client" ].connected ).toBe( true );
+					service.reconnect( () => {
+						expect( previousClient ).not.toBe( service[ "_client" ] );
+						mockServer.stop( done );
+					} );
+				}, ( error ) => {
+					done.fail( error );
 				} );
 			} );
 

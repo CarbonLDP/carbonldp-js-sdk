@@ -17,6 +17,8 @@ declare module "webstomp-client" {
 		connected:boolean;
 
 		connect( headers:ConnectionHeaders, connectCallback:( frame?:Frame ) => any, errorCallback?:( error:Frame | CloseEvent ) => any ):void;
+
+		disconnect( disconnectCallback?:() => any, headers?:any ):void;
 	}
 
 	// noinspection TsLint
@@ -67,13 +69,14 @@ export class Class {
 			throw error;
 		}
 
+		if( this._subscriptionsMap ) this._subscriptionsMap.clear();
 		this.reconnect( onConnect, onError );
 	}
 
 	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.broadcastError.bind( this ) ):void {
 		if( ! this._client ) this._attempts = 0;
+		else if( this._client.connected ) this._client.disconnect();
 		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
-		else this._subscriptionsMap.clear();
 
 		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
 		this._client = webstomp.over( sock, {
