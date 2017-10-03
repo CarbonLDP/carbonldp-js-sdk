@@ -50,7 +50,7 @@ describe( module( "Carbon/Messaging/MemberRemoved" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.MemberRemoved.Class",
-		"Interface with the base properties of the data received in a subscription event."
+		"Interface with the properties of the data received in a member removed event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

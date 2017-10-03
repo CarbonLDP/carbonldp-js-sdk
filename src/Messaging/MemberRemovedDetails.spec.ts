@@ -44,8 +44,8 @@ describe( module( "Carbon/Messaging/MemberRemovedDetails" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.MemberDetails.Class",
-		"Interface with the base properties of the details in a member related event message."
+		"Carbon.Messaging.MemberRemovedDetails.Class",
+		"Interface with the properties of the details in a member removed event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

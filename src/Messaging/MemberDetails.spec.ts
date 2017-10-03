@@ -34,7 +34,7 @@ describe( module( "Carbon/Messaging/MemberDetails" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.MemberDetails.Class",
-		"Interface with the base properties of the details in a member related event message."
+		"Interface with the base properties of the details in a member related event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

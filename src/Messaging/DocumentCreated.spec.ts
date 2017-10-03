@@ -39,7 +39,7 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.DocumentCreated.Class",
-		"Interface with the base properties of the data received in any document creation event."
+		"Interface with the base properties of the data received in any document created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

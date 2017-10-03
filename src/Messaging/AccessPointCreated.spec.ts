@@ -50,7 +50,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.AccessPointCreated.Class",
-		"Interface with the base properties of the data received in a subscription event."
+		"Interface with the properties of the data received in a access point created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

@@ -45,7 +45,7 @@ describe( module( "Carbon/Messaging/DocumentCreatedDetails" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.DocumentCreatedDetails.Class",
-		"Interface with the properties of the details in a document creation event message."
+		"Interface with the properties of the details in a document created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

@@ -44,7 +44,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.DocumentDeleted.Class",
-		"Interface with the base properties of the data received in a subscription event."
+		"Interface with the properties of the data received in a document deleted event."
 	), ():void => {
 
 		it( isDefined(), ():void => {

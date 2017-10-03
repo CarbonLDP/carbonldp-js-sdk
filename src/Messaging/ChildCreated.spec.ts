@@ -50,7 +50,7 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Messaging.ChildCreated.Class",
-		"Interface with the base properties of the data received in a subscription event."
+		"Interface with the properties of the data received in a child created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
