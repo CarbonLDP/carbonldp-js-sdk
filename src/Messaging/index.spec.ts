@@ -3,6 +3,8 @@ import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
 import * as AccessPointCreated from "./AccessPointCreated";
 import * as ChildCreated from "./ChildCreated";
 import * as Document from "./Document";
+import * as DocumentCreated from "./DocumentCreated";
+import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
 import * as DocumentDeleted from "./DocumentDeleted";
 import * as DocumentModified from "./DocumentModified";
 import { Event } from "./Event";
@@ -50,6 +52,24 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	), ():void => {
 		expect( Messaging.Document ).toBeDefined();
 		expect( Messaging.Document ).toBe( Document );
+	} );
+
+	it( reexports(
+		STATIC,
+		"DocumentCreated",
+		"Carbon/Messaging/DocumentCreated"
+	), ():void => {
+		expect( Messaging.DocumentCreated ).toBeDefined();
+		expect( Messaging.DocumentCreated ).toBe( DocumentCreated );
+	} );
+
+	it( reexports(
+		STATIC,
+		"DocumentCreatedDetails",
+		"Carbon/Messaging/DocumentCreatedDetails"
+	), ():void => {
+		expect( Messaging.DocumentCreatedDetails ).toBeDefined();
+		expect( Messaging.DocumentCreatedDetails ).toBe( DocumentCreatedDetails );
 	} );
 
 	it( reexports(

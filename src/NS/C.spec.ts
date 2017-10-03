@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 30 );
+			expect( Object.keys( C.Class ).length ).toBe( 31 );
 		} );
 
 		it( hasProperty(
@@ -106,6 +106,17 @@ describe( module(
 			expect( Utils.isString( C.Class.Document ) ).toBe( true );
 
 			expect( C.Class.Document ).toBe( "https://carbonldp.com/ns/v1/platform#Document" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"DocumentCreatedDetails",
+			"string"
+		), ():void => {
+			expect( C.Class.DocumentCreatedDetails ).toBeDefined();
+			expect( Utils.isString( C.Class.DocumentCreatedDetails ) ).toBe( true );
+
+			expect( C.Class.DocumentCreatedDetails ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails" );
 		} );
 
 		it( hasProperty(
@@ -372,7 +383,7 @@ describe( module(
 			expect( C.Predicate ).toBeDefined();
 			expect( Utils.isFunction( C.Predicate ) ).toBe( true );
 
-			expect( Object.keys( C.Predicate ).length ).toBe( 24 );
+			expect( Object.keys( C.Predicate ).length ).toBe( 25 );
 		} );
 
 		it( hasProperty(
@@ -417,6 +428,17 @@ describe( module(
 			expect( Utils.isString( C.Predicate.created ) ).toBe( true );
 
 			expect( C.Predicate.created ).toBe( "https://carbonldp.com/ns/v1/platform#created" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"createdDocument",
+			"string"
+		), ():void => {
+			expect( C.Predicate.createdDocument ).toBeDefined();
+			expect( Utils.isString( C.Predicate.createdDocument ) ).toBe( true );
+
+			expect( C.Predicate.createdDocument ).toBe( "https://carbonldp.com/ns/v1/platform#createdDocument" );
 		} );
 
 		it( hasProperty(

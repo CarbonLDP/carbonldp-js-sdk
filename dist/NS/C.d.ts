@@ -6,6 +6,7 @@ export declare class Class {
     static readonly ChildCreated: string;
     static readonly CreatedResource: string;
     static readonly Document: string;
+    static readonly DocumentCreatedDetails: string;
     static readonly DocumentDeleted: string;
     static readonly DocumentMetadata: string;
     static readonly DocumentModified: string;
@@ -37,6 +38,7 @@ export declare class Predicate {
     static readonly buildDate: string;
     static readonly carbonCode: string;
     static readonly created: string;
+    static readonly createdDocument: string;
     static readonly details: string;
     static readonly defaultInteractionModel: string;
     static readonly documentMetadata: string;

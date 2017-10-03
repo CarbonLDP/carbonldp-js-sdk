@@ -74,9 +74,7 @@
 
 				return new Promise( resolve => setTimeout( resolve, 3000 ) );
 			} ).then( () => {
-				return carbon.documents.addMember( "posts/", "a-member/" );
-			} ).then( () => {
-				return carbon.documents.removeMember( "posts/", "a-member/" );
+				return carbon.documents.createChild( "posts/", {} );
 			} ).then( () => {
 				done();
 			} ).catch( ( error ) => {

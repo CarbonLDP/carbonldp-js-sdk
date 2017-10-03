@@ -34,10 +34,16 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 
 		expect( AccessPointCreated.SCHEMA as {} ).toEqual( {
 			"target": jasmine.any( Object ),
+			"details": jasmine.any( Object ),
 		} );
 
 		expect( AccessPointCreated.SCHEMA[ "target" ] ).toEqual( {
 			"@id": NS.C.Predicate.target,
+			"@type": "@id",
+		} );
+
+		expect( AccessPointCreated.SCHEMA[ "details" ] ).toEqual( {
+			"@id": NS.C.Predicate.details,
 			"@type": "@id",
 		} );
 	} );
@@ -52,8 +58,8 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.Message.Class" ), ():void => {
-			const target:Messaging.Message.Class = {} as AccessPointCreated.Class;
+		it( extendsClass( "Carbon.Messaging.DocumentCreated.Class" ), ():void => {
+			const target:Messaging.DocumentCreated.Class = {} as AccessPointCreated.Class;
 			expect( target ).toBeDefined();
 		} );
 

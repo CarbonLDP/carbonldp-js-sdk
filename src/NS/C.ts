@@ -13,6 +13,8 @@ export class Class {
 
 	static get Document():string { return namespace + "Document"; }
 
+	static get DocumentCreatedDetails():string { return namespace + "DocumentCreatedEventDetails"; }
+
 	static get DocumentDeleted():string { return namespace + "DocumentDeleted"; }
 
 	static get DocumentMetadata():string { return namespace + "DocumentMetadata"; }
@@ -72,6 +74,8 @@ export class Predicate {
 	static get carbonCode():string { return namespace + "carbonCode"; }
 
 	static get created():string { return namespace + "created"; }
+
+	static get createdDocument():string { return namespace + "createdDocument"; }
 
 	static get details():string { return namespace + "details"; }
 

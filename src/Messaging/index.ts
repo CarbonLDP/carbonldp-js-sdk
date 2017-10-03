@@ -1,6 +1,8 @@
 import * as AccessPointCreated from "./AccessPointCreated";
 import * as ChildCreated from "./ChildCreated";
 import * as Document from "./Document";
+import * as DocumentCreated from "./DocumentCreated";
+import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
 import * as DocumentDeleted from "./DocumentDeleted";
 import * as DocumentModified from "./DocumentModified";
 import { Event } from "./Event";
@@ -18,6 +20,8 @@ export {
 	AccessPointCreated,
 	ChildCreated,
 	Document,
+	DocumentCreated,
+	DocumentCreatedDetails,
 	DocumentDeleted,
 	DocumentModified,
 	Event,

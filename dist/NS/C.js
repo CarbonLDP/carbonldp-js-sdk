@@ -34,6 +34,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "DocumentCreatedDetails", {
+        get: function () { return exports.namespace + "DocumentCreatedEventDetails"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "DocumentDeleted", {
         get: function () { return exports.namespace + "DocumentDeleted"; },
         enumerable: true,
@@ -182,6 +187,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "created", {
         get: function () { return exports.namespace + "created"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "createdDocument", {
+        get: function () { return exports.namespace + "createdDocument"; },
         enumerable: true,
         configurable: true
     });

@@ -34,10 +34,16 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 
 		expect( ChildCreated.SCHEMA as {} ).toEqual( {
 			"target": jasmine.any( Object ),
+			"details": jasmine.any( Object ),
 		} );
 
 		expect( ChildCreated.SCHEMA[ "target" ] ).toEqual( {
 			"@id": NS.C.Predicate.target,
+			"@type": "@id",
+		} );
+
+		expect( ChildCreated.SCHEMA[ "details" ] ).toEqual( {
+			"@id": NS.C.Predicate.details,
 			"@type": "@id",
 		} );
 	} );
@@ -52,8 +58,8 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.Message.Class" ), ():void => {
-			const target:Messaging.Message.Class = {} as ChildCreated.Class;
+		it( extendsClass( "Carbon.Messaging.DocumentCreated.Class" ), ():void => {
+			const target:Messaging.DocumentCreated.Class = {} as ChildCreated.Class;
 			expect( target ).toBeDefined();
 		} );
 
