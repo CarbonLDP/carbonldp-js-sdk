@@ -4931,7 +4931,7 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
-        this.extendObjectSchema(SHACL.ValidationReport.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {

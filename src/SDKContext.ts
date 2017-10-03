@@ -186,8 +186,7 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 
-		// TODO: carbonldp-platform.private#198
-		this.extendObjectSchema( /*SHACL.ValidationReport.RDF_CLASS,*/ SHACL.ValidationReport.SCHEMA );
+		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
 		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
 	}
 
