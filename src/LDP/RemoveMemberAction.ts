@@ -1,8 +1,7 @@
-import * as Document from "./../Document";
-import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = NS.C.Class.RemoveMemberAction;
@@ -15,7 +14,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Fragment.Class {
+export interface Class extends Resource.Class {
 	targetMembers:Pointer.Class[];
 }
 
@@ -24,13 +23,11 @@ export class Factory {
 		return Utils.hasPropertyDefined( object, "targetMembers" );
 	}
 
-	static createDocument( targetMembers:Pointer.Class[] ):Document.Class {
-		let document:Document.Class = Document.Factory.create();
-
-		let fragment:Class = document.createFragment( {targetMembers: targetMembers} );
-		fragment.types.push( RDF_CLASS );
-
-		return document;
+	static create( targetMembers:Pointer.Class[] ):Class {
+		return Resource.Factory.createFrom( {
+			types: [ RDF_CLASS ],
+			targetMembers,
+		} );
 	}
 }
 

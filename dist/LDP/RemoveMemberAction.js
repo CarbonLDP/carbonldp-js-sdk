@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = require("./../Document");
 var NS = require("./../NS");
+var Resource = require("./../Resource");
 var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.C.Class.RemoveMemberAction;
 exports.SCHEMA = {
@@ -17,11 +17,11 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "targetMembers");
     };
-    Factory.createDocument = function (targetMembers) {
-        var document = Document.Factory.create();
-        var fragment = document.createFragment({ targetMembers: targetMembers });
-        fragment.types.push(exports.RDF_CLASS);
-        return document;
+    Factory.create = function (targetMembers) {
+        return Resource.Factory.createFrom({
+            types: [exports.RDF_CLASS],
+            targetMembers: targetMembers,
+        });
     };
     return Factory;
 }());
