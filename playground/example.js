@@ -66,11 +66,18 @@
 			Promise.resolve().then( () => {
 				fragment = { value: "a name" };
 				resource = { name: fragment };
-				carbon.documents.one( "*.*", "/**", ( data ) => {
+				carbon.documents.on( "*.*", "/**", ( data ) => {
 					console.log( data );
 				}, ( error ) => {
 					console.error( error );
 				} );
+
+				return new Promise( resolve => setTimeout( resolve, 3000 ) );
+			} ).then( () => {
+				return carbon.documents.addMember( "posts/", "a-member/" );
+			} ).then( () => {
+				return carbon.documents.removeMember( "posts/", "a-member/" );
+			} ).then( () => {
 				done();
 			} ).catch( ( error ) => {
 				console.error( error );
