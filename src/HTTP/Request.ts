@@ -7,6 +7,10 @@ import Parser from "./Parser";
 import Response from "./Response";
 import * as ErrorResponse from "./../LDP/ErrorResponse";
 import HTTPError from "./Errors/HTTPError";
+import * as FreeResources from "./../FreeResources";
+import JSONLDParser from "./../JSONLD/Parser";
+import * as RDFNode from "./../RDF/Node";
+import SDKContext from "./../SDKContext";
 
 import * as Utils from "./../Utils";
 
@@ -26,8 +30,9 @@ export interface ContainerRetrievalPreferences {
 }
 
 interface Reject {
-	( error:HTTPErrors.Error ):void;
+	( error:Error ):void;
 }
+
 interface Resolve {
 	( response:Response ):void;
 }
@@ -55,9 +60,17 @@ function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
 			reject( error );
 		}
 
-		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
-		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
-			error.message = ErrorResponse.Util.getMessage( errorResponse );
+		const parser:JSONLDParser = new JSONLDParser();
+		parser.parse( response.data ).then( ( freeNodes:RDFNode.Class[] ) => {
+			const freeResources:FreeResources.Class = SDKContext.documents._getFreeResources( freeNodes );
+			const errorResponses:ErrorResponse.Class[] = freeResources
+				.getResources()
+				.filter( ( resource ):resource is ErrorResponse.Class => resource.hasType( ErrorResponse.RDF_CLASS ) );
+			if( errorResponses.length === 0 ) return reject( new Errors.IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
+			if( errorResponses.length > 1 ) return reject( new Errors.IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
+
+			Object.assign( error, errorResponses[ 0 ] );
+			error.message = ErrorResponse.Util.getMessage( error );
 			reject( error );
 
 		} ).catch( () => {
@@ -151,9 +164,6 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 	} );
 }
 
-function isBody( data:string ):boolean;
-function isBody( data:Blob ):boolean;
-function isBody( data:Buffer ):boolean;
 function isBody( data:string | Blob | Buffer ):boolean {
 	return Utils.isString( data )
 		|| typeof Blob !== "undefined" && data instanceof Blob
@@ -222,11 +232,11 @@ export class Service {
 	}
 
 	static post( url:string, body:Buffer, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post( url:string, body:Blob, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
 		return Service.send( Method.POST, url, bodyOrOptions, options, parser );
 	}
