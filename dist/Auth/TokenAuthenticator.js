@@ -81,7 +81,7 @@ var Class = (function () {
                     document._etag = documentMetadata.eTag;
                 });
             return [token, response];
-        });
+        }, function (response) { return _this.context.documents._parseErrorResponse(response); });
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {
         if (headers.has("authorization"))

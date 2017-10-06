@@ -2,13 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var Header = require("./Header");
-var HTTPErrors = require("./Errors");
 var Method_1 = require("./Method");
 var NS = require("./../NS");
 var Response_1 = require("./Response");
-var ErrorResponse = require("./../LDP/ErrorResponse");
-var Parser_1 = require("./../JSONLD/Parser");
-var SDKContext_1 = require("./../SDKContext");
 var Utils = require("./../Utils");
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
@@ -24,32 +20,8 @@ function onResolve(resolve, reject, response) {
     if (response.status >= 200 && response.status <= 299) {
         resolve(response);
     }
-    else if (response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has(response.status)) {
-        var errorClass = HTTPErrors.statusCodeMap.get(response.status);
-        var error_1 = new errorClass("", response);
-        if (!response.data) {
-            reject(error_1);
-        }
-        var parser = new Parser_1.default();
-        parser.parse(response.data).then(function (freeNodes) {
-            var freeResources = SDKContext_1.default.documents._getFreeResources(freeNodes);
-            var errorResponses = freeResources
-                .getResources()
-                .filter(function (resource) { return resource.hasType(ErrorResponse.RDF_CLASS); });
-            if (errorResponses.length === 0)
-                return reject(new Errors.IllegalArgumentError("The response string does not contains a c:ErrorResponse."));
-            if (errorResponses.length > 1)
-                return reject(new Errors.IllegalArgumentError("The response string contains multiple c:ErrorResponse."));
-            Object.assign(error_1, errorResponses[0]);
-            error_1.message = ErrorResponse.Util.getMessage(error_1);
-            reject(error_1);
-        }).catch(function () {
-            error_1.message = response.data;
-            reject(error_1);
-        });
-    }
     else {
-        reject(new HTTPErrors.UnknownError(response.data, response));
+        reject(response);
     }
 }
 function sendWithBrowser(method, url, body, options) {

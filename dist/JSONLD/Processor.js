@@ -129,13 +129,22 @@ var Class = (function () {
             });
         }
         var promises = [];
-        for (var url in contextToResolved) {
+        var _loop_1 = function (url) {
             if (url in contextsRequested)
-                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected."));
+                return { value: Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected.")) };
             var requestOptions = { sendCredentialsOnCORS: false };
             HTTP.Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
-            var promise = HTTP.Request.Service.get(url, requestOptions, new HTTP.JSONParser.Class());
+            var promise = HTTP.Request.Service
+                .get(url, requestOptions, new HTTP.JSONParser.Class())
+                .catch(function (response) {
+                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Code: " + response.status));
+            });
             promises.push(resolved(url, promise));
+        };
+        for (var url in contextToResolved) {
+            var state_1 = _loop_1(url);
+            if (typeof state_1 === "object")
+                return state_1.value;
         }
         return Promise.all(promises).then(function () {
             Class.findContextURLs(input, contextToResolved, base, true);
