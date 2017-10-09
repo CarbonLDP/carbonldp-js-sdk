@@ -1,10 +1,16 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
 var Header = require("./Header");
 var HTTPErrors = require("./Errors");
 var Method_1 = require("./Method");
-var NS = require("./../NS");
 var Response_1 = require("./Response");
 var ErrorResponse = require("./../LDP/ErrorResponse");
 var Utils = require("./../Utils");
@@ -234,20 +240,9 @@ var Util = (function () {
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
-    Util.setPreferredRetrievalResource = function (typeOfRequest, requestOptions) {
+    Util.setPreferredRetrievalResource = function (requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        var preferType;
-        switch (typeOfRequest) {
-            case "Created":
-                preferType = NS.C.Class.CreatedResource;
-                break;
-            case "Modified":
-                preferType = NS.C.Class.ModifiedResource;
-                break;
-            default:
-                throw new Errors.IllegalArgumentError("Invalid type of request: '" + typeOfRequest + "'.");
-        }
-        prefer.values.push(new Header.Value("return=representation; " + preferType));
+        prefer.values.push(new Header.Value("return=representation"));
         return requestOptions;
     };
     Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
@@ -273,6 +268,14 @@ var Util = (function () {
             || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
             || Utils.hasPropertyDefined(object, "timeout")
             || Utils.hasPropertyDefined(object, "request");
+    };
+    Util.cloneOptions = function (options) {
+        var clone = __assign({}, options);
+        if (options.headers) {
+            clone.headers = new Map();
+            options.headers.forEach(function (value, key) { return clone.headers.set(key, new Header.Class(value.values.concat())); });
+        }
+        return clone;
     };
     return Util;
 }());

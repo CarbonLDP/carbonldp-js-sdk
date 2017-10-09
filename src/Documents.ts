@@ -222,8 +222,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return Promise.all<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>( childrenObjects.map( ( childObject:T, index:number ) => {
 			let slug:string = (slugs !== null && index < slugs.length && ! ! slugs[ index ]) ? slugs[ index ] : null;
 
-			let options:HTTP.Request.Options = Object.assign( {}, requestOptions );
-			if( requestOptions.headers ) options.headers = Utils.M.extend( new Map(), requestOptions.headers );
+			const options:HTTP.Request.Options = HTTP.Request.Util.cloneOptions( requestOptions );
 			return this.createChild<T>( parentURI, childObject, slug, options );
 
 		} ) ).then<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>( ( requestResponses:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ][] ) => {
@@ -240,7 +239,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		let responses:HTTP.Response.Class[] = [];
 
 		let options:HTTP.Request.Options = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
-		HTTP.Request.Util.setPreferredRetrievalResource( "Created", options );
+		HTTP.Request.Util.setPreferredRetrievalResource( options );
 
 		return this.createChild( parentURI, childObject, slugOrRequestOptions, requestOptions ).then<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>( ( [ document, createResponse ]:[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ] ) => {
 			if( document.isResolved() ) return [ document, createResponse ];
@@ -260,7 +259,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		let responses:HTTP.Response.Class[][] = [];
 
 		let options:HTTP.Request.Options = HTTP.Request.Util.isOptions( slugsOrRequestOptions ) ? slugsOrRequestOptions : requestOptions;
-		HTTP.Request.Util.setPreferredRetrievalResource( "Created", options );
+		HTTP.Request.Util.setPreferredRetrievalResource( options );
 
 		return this.createChildren( parentURI, childrenObjects, slugsOrRequestOptions, requestOptions ).then<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>( ( [ documents, creationResponses ]:[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ] ) => {
 			responses.push( creationResponses );
@@ -371,8 +370,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return Promise.all<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>( accessPoints.map( ( accessPoint:T & AccessPoint.Class, index:number ) => {
 			let slug:string = (slugs !== null && index < slugs.length && ! ! slugs[ index ]) ? slugs[ index ] : null;
 
-			let options:HTTP.Request.Options = Object.assign( {}, requestOptions );
-			if( requestOptions.headers ) options.headers = Utils.M.extend( new Map(), requestOptions.headers );
+			const options:HTTP.Request.Options = HTTP.Request.Util.cloneOptions( requestOptions );
 			return this.createAccessPoint<T>( documentURI, accessPoint, slug, options );
 
 		} ) ).then<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>( ( requestResponses:[ T & PersistedAccessPoint.Class, HTTP.Response.Class ][] ) => {
@@ -658,7 +656,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const previousETag:string = persistedDocument._etag;
 
 		return Utils.promiseMethod( () => {
-			HTTP.Request.Util.setPreferredRetrievalResource( "Modified", requestOptions );
+			HTTP.Request.Util.setPreferredRetrievalResource( requestOptions );
 			return this.save<T>( persistedDocument, requestOptions );
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ document, saveResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
 			if( document._etag !== previousETag ) return [ document, saveResponse ];

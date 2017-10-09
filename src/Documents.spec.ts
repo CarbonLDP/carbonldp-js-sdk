@@ -2893,7 +2893,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( responses.length ).toBe( 1 );
 
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
+						expect( request.requestHeaders[ "prefer" ].split( ", " ) ).toContain( `return=representation` );
 					} );
 				})() );
 
@@ -3174,7 +3174,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( persistedDocument[ "property" ] ).toBe( "my UPDATED property " + index );
 
 							let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( index );
-							expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
+							expect( request.requestHeaders[ "prefer" ].split( ", " ) ).toContain( `return=representation` );
 						} );
 					} );
 				})() );
@@ -7566,7 +7566,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					expect( responses.length ).toBe( 1 );
 
 					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-					expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
+					expect( request.requestHeaders[ "prefer" ].split( ", " ) ).toContain( `return=representation` );
 
 					expect( document ).toBe( _document );
 					expect( "property" in document ).toBe( true );

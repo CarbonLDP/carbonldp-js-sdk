@@ -14,11 +14,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "CreatedResource", {
-        get: function () { return exports.namespace + "CreatedResource"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "Document", {
         get: function () { return exports.namespace + "Document"; },
         enumerable: true,
@@ -36,11 +31,6 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "Map", {
         get: function () { return exports.namespace + "Map"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ModifiedResource", {
-        get: function () { return exports.namespace + "ModifiedResource"; },
         enumerable: true,
         configurable: true
     });

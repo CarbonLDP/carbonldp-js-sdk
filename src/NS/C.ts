@@ -5,8 +5,6 @@ export class Class {
 
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
 
-	static get CreatedResource():string { return namespace + "CreatedResource"; }
-
 	static get Document():string { return namespace + "Document"; }
 
 	static get DocumentMetadata():string { return namespace + "DocumentMetadata"; }
@@ -14,8 +12,6 @@ export class Class {
 	static get Instance():string { return namespace + "Instance"; }
 
 	static get Map():string { return namespace + "Map"; }
-
-	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
 
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
 
