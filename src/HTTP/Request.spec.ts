@@ -1128,7 +1128,6 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			STATIC,
 			"setPreferredRetrievalResource",
 			"Set a Prefer header which indicates to the platform to retrieve the server resource in the same request.", [
-				{ name: "typeOfRequest", type: `"Created" | "Modified"`, description: "The type of the request, where to retrieve the resource, is been made." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
 			{ type: "Carbon.HTTP.Request.Options" }
@@ -1137,15 +1136,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setPreferredRetrievalResource ) ).toBe( true );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrievalResource( "Created", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
+			options = Request.Util.setPreferredRetrievalResource( options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation" ) );
 
-			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" ) );
-
-			optionsWithHeaders = Request.Util.setPreferredRetrievalResource( "Created", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
+			optionsWithHeaders = Request.Util.setPreferredRetrievalResource( optionsWithHeaders );
+			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "return=representation" ) );
 			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
 
 
@@ -1153,11 +1148,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				headers: new Map()
 					.set( "prefer", new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
 			};
-			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
+			options = Request.Util.setPreferredRetrievalResource( options );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual(
 				new Header.Class(
 					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
-					"return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource"
+					"return=representation"
 				)
 			);
 		} );

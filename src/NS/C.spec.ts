@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 22 );
+			expect( Object.keys( C.Class ).length ).toBe( 20 );
 		} );
 
 		it( hasProperty(
@@ -62,17 +62,6 @@ describe( module(
 			expect( Utils.isString( C.Class.AddMemberAction ) ).toBe( true );
 
 			expect( C.Class.AddMemberAction ).toBe( "https://carbonldp.com/ns/v1/platform#AddMemberAction" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"CreatedResource",
-			"string"
-		), ():void => {
-			expect( C.Class.CreatedResource ).toBeDefined();
-			expect( Utils.isString( C.Class.CreatedResource ) ).toBe( true );
-
-			expect( C.Class.CreatedResource ).toBe( "https://carbonldp.com/ns/v1/platform#CreatedResource" );
 		} );
 
 		it( hasProperty(
@@ -117,17 +106,6 @@ describe( module(
 			expect( Utils.isString( C.Class.Map ) ).toBe( true );
 
 			expect( C.Class.Map ).toBe( "https://carbonldp.com/ns/v1/platform#Map" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"ModifiedResource",
-			"string"
-		), ():void => {
-			expect( C.Class.ModifiedResource ).toBeDefined();
-			expect( Utils.isString( C.Class.ModifiedResource ) ).toBe( true );
-
-			expect( C.Class.ModifiedResource ).toBe( "https://carbonldp.com/ns/v1/platform#ModifiedResource" );
 		} );
 
 		it( hasProperty(

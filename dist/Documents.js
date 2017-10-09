@@ -191,9 +191,7 @@ var Class = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Promise.all(childrenObjects.map(function (childObject, index) {
             var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
-            var options = Object.assign({}, requestOptions);
-            if (requestOptions.headers)
-                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
+            var options = HTTP.Request.Util.cloneOptions(requestOptions);
             return _this.createChild(parentURI, childObject, slug, options);
         })).then(function (requestResponses) {
             var persistedDocuments = requestResponses.map(function (response) { return response[0]; });
@@ -206,7 +204,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
         var options = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
+        HTTP.Request.Util.setPreferredRetrievalResource(options);
         return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
             var document = _a[0], createResponse = _a[1];
             if (document.isResolved())
@@ -223,7 +221,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
         var options = HTTP.Request.Util.isOptions(slugsOrRequestOptions) ? slugsOrRequestOptions : requestOptions;
-        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
+        HTTP.Request.Util.setPreferredRetrievalResource(options);
         return this.createChildren(parentURI, childrenObjects, slugsOrRequestOptions, requestOptions).then(function (_a) {
             var documents = _a[0], creationResponses = _a[1];
             responses.push(creationResponses);
@@ -324,9 +322,7 @@ var Class = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Promise.all(accessPoints.map(function (accessPoint, index) {
             var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
-            var options = Object.assign({}, requestOptions);
-            if (requestOptions.headers)
-                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
+            var options = HTTP.Request.Util.cloneOptions(requestOptions);
             return _this.createAccessPoint(documentURI, accessPoint, slug, options);
         })).then(function (requestResponses) {
             var persistedAccessPoints = requestResponses.map(function (response) { return response[0]; });
@@ -568,7 +564,7 @@ var Class = (function () {
         var responses = [];
         var previousETag = persistedDocument._etag;
         return Utils.promiseMethod(function () {
-            HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
+            HTTP.Request.Util.setPreferredRetrievalResource(requestOptions);
             return _this.save(persistedDocument, requestOptions);
         }).then(function (_a) {
             var document = _a[0], saveResponse = _a[1];

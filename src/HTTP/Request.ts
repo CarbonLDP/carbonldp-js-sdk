@@ -28,6 +28,7 @@ export interface ContainerRetrievalPreferences {
 interface Reject {
 	( error:HTTPErrors.Error ):void;
 }
+
 interface Resolve {
 	( response:Response ):void;
 }
@@ -222,11 +223,11 @@ export class Service {
 	}
 
 	static post( url:string, body:Buffer, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post( url:string, body:Blob, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
 		return Service.send( Method.POST, url, bodyOrOptions, options, parser );
 	}
@@ -298,22 +299,9 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setPreferredRetrievalResource( typeOfRequest:"Created" | "Modified", requestOptions:Options ):Options {
+	static setPreferredRetrievalResource( requestOptions:Options ):Options {
 		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
-
-		let preferType:string;
-		switch( typeOfRequest ) {
-			case "Created":
-				preferType = NS.C.Class.CreatedResource;
-				break;
-			case "Modified":
-				preferType = NS.C.Class.ModifiedResource;
-				break;
-			default:
-				throw new Errors.IllegalArgumentError( `Invalid type of request: '${ typeOfRequest }'.` );
-		}
-
-		prefer.values.push( new Header.Value( `return=representation; ${ preferType }` ) );
+		prefer.values.push( new Header.Value( `return=representation` ) );
 		return requestOptions;
 	}
 
@@ -343,6 +331,16 @@ export class Util {
 			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
 			|| Utils.hasPropertyDefined( object, "timeout" )
 			|| Utils.hasPropertyDefined( object, "request" );
+	}
+
+	static cloneOptions( options:Options ):Options {
+		const clone:Options = { ...options };
+		if( options.headers ) {
+			clone.headers = new Map();
+			options.headers.forEach( ( value, key ) => clone.headers.set( key, new Header.Class( value.values.concat() ) ) );
+		}
+
+		return clone;
 	}
 
 }

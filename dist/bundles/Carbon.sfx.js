@@ -6799,9 +6799,7 @@ var Class = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Promise.all(childrenObjects.map(function (childObject, index) {
             var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
-            var options = Object.assign({}, requestOptions);
-            if (requestOptions.headers)
-                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
+            var options = HTTP.Request.Util.cloneOptions(requestOptions);
             return _this.createChild(parentURI, childObject, slug, options);
         })).then(function (requestResponses) {
             var persistedDocuments = requestResponses.map(function (response) { return response[0]; });
@@ -6814,7 +6812,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
         var options = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
+        HTTP.Request.Util.setPreferredRetrievalResource(options);
         return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
             var document = _a[0], createResponse = _a[1];
             if (document.isResolved())
@@ -6831,7 +6829,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
         var options = HTTP.Request.Util.isOptions(slugsOrRequestOptions) ? slugsOrRequestOptions : requestOptions;
-        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
+        HTTP.Request.Util.setPreferredRetrievalResource(options);
         return this.createChildren(parentURI, childrenObjects, slugsOrRequestOptions, requestOptions).then(function (_a) {
             var documents = _a[0], creationResponses = _a[1];
             responses.push(creationResponses);
@@ -6932,9 +6930,7 @@ var Class = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Promise.all(accessPoints.map(function (accessPoint, index) {
             var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
-            var options = Object.assign({}, requestOptions);
-            if (requestOptions.headers)
-                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
+            var options = HTTP.Request.Util.cloneOptions(requestOptions);
             return _this.createAccessPoint(documentURI, accessPoint, slug, options);
         })).then(function (requestResponses) {
             var persistedAccessPoints = requestResponses.map(function (response) { return response[0]; });
@@ -7176,7 +7172,7 @@ var Class = (function () {
         var responses = [];
         var previousETag = persistedDocument._etag;
         return Utils.promiseMethod(function () {
-            HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
+            HTTP.Request.Util.setPreferredRetrievalResource(requestOptions);
             return _this.save(persistedDocument, requestOptions);
         }).then(function (_a) {
             var document = _a[0], saveResponse = _a[1];
@@ -12433,12 +12429,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 "use strict";
 
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(3);
 var Header = __webpack_require__(42);
 var HTTPErrors = __webpack_require__(62);
 var Method_1 = __webpack_require__(63);
-var NS = __webpack_require__(1);
 var Response_1 = __webpack_require__(64);
 var ErrorResponse = __webpack_require__(65);
 var Utils = __webpack_require__(0);
@@ -12668,20 +12670,9 @@ var Util = (function () {
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
-    Util.setPreferredRetrievalResource = function (typeOfRequest, requestOptions) {
+    Util.setPreferredRetrievalResource = function (requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        var preferType;
-        switch (typeOfRequest) {
-            case "Created":
-                preferType = NS.C.Class.CreatedResource;
-                break;
-            case "Modified":
-                preferType = NS.C.Class.ModifiedResource;
-                break;
-            default:
-                throw new Errors.IllegalArgumentError("Invalid type of request: '" + typeOfRequest + "'.");
-        }
-        prefer.values.push(new Header.Value("return=representation; " + preferType));
+        prefer.values.push(new Header.Value("return=representation"));
         return requestOptions;
     };
     Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
@@ -12707,6 +12698,14 @@ var Util = (function () {
             || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
             || Utils.hasPropertyDefined(object, "timeout")
             || Utils.hasPropertyDefined(object, "request");
+    };
+    Util.cloneOptions = function (options) {
+        var clone = __assign({}, options);
+        if (options.headers) {
+            clone.headers = new Map();
+            options.headers.forEach(function (value, key) { return clone.headers.set(key, new Header.Class(value.values.concat())); });
+        }
+        return clone;
     };
     return Util;
 }());
@@ -12734,11 +12733,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "CreatedResource", {
-        get: function () { return exports.namespace + "CreatedResource"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "Document", {
         get: function () { return exports.namespace + "Document"; },
         enumerable: true,
@@ -12756,11 +12750,6 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "Map", {
         get: function () { return exports.namespace + "Map"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ModifiedResource", {
-        get: function () { return exports.namespace + "ModifiedResource"; },
         enumerable: true,
         configurable: true
     });
