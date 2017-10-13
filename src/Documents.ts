@@ -1,34 +1,33 @@
 import { QueryClause } from "sparqler/Clauses";
 
-import * as Errors from "./Errors";
-import * as HTTP from "./HTTP";
-import Context from "./Context";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
-import { promiseMethod } from "./Utils";
-
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
+import Carbon from "./Carbon";
+import Context from "./Context";
 import * as Document from "./Document";
+import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
+import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
+import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
+import { createDestination, validateEventContext } from "./Messaging/Utils";
+import * as NS from "./NS";
+import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
-import * as ProtectedDocument from "./ProtectedDocument";
 import * as Pointer from "./Pointer";
-import * as Messaging from "./Messaging";
-import { createDestination, validateEventContext } from "./Messaging/Utils";
-import * as NS from "./NS";
-import * as ObjectSchema from "./ObjectSchema";
-import * as LDP from "./LDP";
-import * as SPARQL from "./SPARQL";
+import * as ProtectedDocument from "./ProtectedDocument";
+import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
-import Carbon from "./Carbon";
+import * as Utils from "./Utils";
+import { promiseMethod } from "./Utils";
 
 export interface DocumentDecorator {
 	decorator:( object:Object, ...parameters:any[] ) => Object;
@@ -154,7 +153,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 
-			const promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> = HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			const promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 				let eTag:string = HTTP.Response.Util.getETag( response );
 				if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
@@ -189,7 +188,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
-			return HTTP.Request.Service.head( documentURI, requestOptions );
+			return this.sendRequest( HTTP.Method.HEAD, documentURI, requestOptions );
 		} ).then<[ boolean, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 			return [ true, response ];
 		} ).catch<[ boolean, HTTP.Response.Class ]>( ( error:HTTP.Errors.Error ) => {
@@ -292,7 +291,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			};
 			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-			return HTTP.Request.Service.get( parentURI, requestOptions, new RDF.Document.Parser() );
+			return this.sendRequest( HTTP.Method.GET, parentURI, requestOptions, null, new RDF.Document.Parser() );
 		} ).then<[ PersistedDocument.Class[], HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( parentURI, rdfDocuments, response );
 			if( rdfDocument === null ) return [ [], response ];
@@ -332,7 +331,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			};
 			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-			return HTTP.Request.Service.get( parentURI, requestOptions, new JSONLD.Parser.Class() );
+			return this.sendRequest( HTTP.Method.GET, parentURI, requestOptions, null, new JSONLD.Parser.Class() );
 		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( document => document[ "@id" ] !== containerURI );
@@ -383,10 +382,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	upload( parentURI:string, data:Buffer, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Buffer, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Blob, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Blob, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( parentURI:string, data:Blob | Buffer, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
+	upload( parentURI:string, data:Blob | Buffer, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 	upload( parentURI:string, data:Blob | Buffer, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
@@ -409,7 +406,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
-			return HTTP.Request.Service.post( parentURI, <any> data, requestOptions );
+			return this.sendRequest( HTTP.Method.POST, parentURI, requestOptions, data );
 		} ).then<[ Pointer.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
@@ -452,7 +449,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			}
 			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-			return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() );
+			return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() );
 		} ).then<[ PersistedDocument.Class[], HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
@@ -506,7 +503,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			}
 			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-			return HTTP.Request.Service.get( uri, requestOptions, new JSONLD.Parser.Class() );
+			return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new JSONLD.Parser.Class() );
 		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
@@ -547,7 +544,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
 			freeResources.createResourceFrom( LDP.AddMemberAction.Factory.create( pointers ) );
 
-			return HTTP.Request.Service.put( documentURI, freeResources.toJSON(), requestOptions );
+			return this.sendRequest( HTTP.Method.PUT, documentURI, requestOptions, freeResources.toJSON() );
 		} );
 	}
 
@@ -574,7 +571,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
 			freeResources.createResourceFrom( LDP.RemoveMemberAction.Factory.create( pointers ) );
 
-			return HTTP.Request.Service.delete( documentURI, freeResources.toJSON(), requestOptions );
+			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON() );
 		} );
 	}
 
@@ -596,7 +593,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			};
 			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
-			return HTTP.Request.Service.delete( documentURI, requestOptions );
+			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions );
 		} );
 	}
 
@@ -617,7 +614,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			persistedDocument._normalize();
 			const body:string = persistedDocument.toJSON( this, this.jsonldConverter );
 
-			return HTTP.Request.Service.put( uri, body, requestOptions );
+			return this.sendRequest( HTTP.Method.PUT, uri, requestOptions, body );
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 			return this.applyResponseData( persistedDocument, response );
 		} );
@@ -632,7 +629,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			// Add header to check id the document has been modified
 			HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
-			return HTTP.Request.Service.get( uri, requestOptions, new RDF.Document.Parser() );
+			return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() );
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
@@ -676,7 +673,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
-			return HTTP.Request.Service.delete( documentURI, requestOptions );
+			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions );
 		} ).then( ( response:HTTP.Response.Class ) => {
 			let pointerID:string = this.getPointerID( documentURI );
 			this.pointers.delete( pointerID );
@@ -713,7 +710,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions );
+			return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -723,7 +721,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeASKQuery( documentURI, askQuery, requestOptions );
+			return SPARQL.Service.executeASKQuery( documentURI, askQuery, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -733,7 +732,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions );
+			return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -743,7 +743,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeSELECTQuery<T>( documentURI, selectQuery, this, requestOptions );
+			return SPARQL.Service.executeSELECTQuery<T>( documentURI, selectQuery, this, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -753,7 +754,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions );
+			return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -763,7 +765,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions );
+			return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -773,7 +776,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions );
+			return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions )
+				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
@@ -883,6 +887,29 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return freeResourcesDocument;
 	}
 
+	_parseErrorResponse<T>( response:HTTP.Response.Class ):any {
+		if( ! ( response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has( response.status ) ) )
+			return Promise.reject( new HTTP.Errors.UnknownError( response.data, response ) );
+
+		const error:HTTP.Errors.Error = new (HTTP.Errors.statusCodeMap.get( response.status ))( response.data, response );
+		if( ! response.data || ! this.context ) return Promise.reject( error );
+
+		return new JSONLD.Parser.Class().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
+			const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
+			const errorResponses:LDP.ErrorResponse.Class[] = freeResources
+				.getResources()
+				.filter( ( resource ):resource is LDP.ErrorResponse.Class => resource.hasType( LDP.ErrorResponse.RDF_CLASS ) );
+			if( errorResponses.length === 0 ) return Promise.reject( new Errors.IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
+			if( errorResponses.length > 1 ) return Promise.reject( new Errors.IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
+
+			Object.assign( error, errorResponses[ 0 ] );
+			error.message = LDP.ErrorResponse.Util.getMessage( error );
+			return Promise.reject( error );
+		}, () => {
+			return Promise.reject( error );
+		} );
+	}
+
 	private persistDocument<T extends Document.Class, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {
 		parentURI = this.getRequestURI( parentURI );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
@@ -916,7 +943,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			persistedDocument.getFragments().forEach( PersistedFragment.Factory.decorate );
 
 			return this.applyResponseData( persistedDocument, response );
-		} ).catch( ( error ) => {
+		}, this._parseErrorResponse.bind( this ) ).catch( ( error ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 			return Promise.reject( error );
 		} );
@@ -1187,15 +1214,22 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
 			const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
-			for( const { key: keyBNode, value: valueBNode } of documentMetadata.bNodesMap.entries ) {
-				const originalBNode:PersistedBlankNode.Class = document.getFragment( keyBNode.id );
-				originalBNode.id = valueBNode.id;
+			for( const { entryKey, entryValue } of documentMetadata.bNodesMap.entries ) {
+				const originalBNode:PersistedBlankNode.Class = document.getFragment( entryKey.id );
+				originalBNode.id = entryValue.id;
 
-				document._fragmentsIndex.delete( keyBNode.id );
-				document._fragmentsIndex.set( valueBNode.id, originalBNode );
+				document._fragmentsIndex.delete( entryKey.id );
+				document._fragmentsIndex.set( entryValue.id, originalBNode );
 			}
 			document._syncSavedFragments();
 		}
+	}
+
+	private sendRequest( method:HTTP.Method, uri:string, options:HTTP.Request.Options, body?:string | Blob | Buffer ):Promise<HTTP.Response.Class>;
+	private sendRequest<T>( method:HTTP.Method, uri:string, options:HTTP.Request.Options, body?:string | Blob | Buffer, parser?:HTTP.Parser.Class<T> ):Promise<[ T, HTTP.Response.Class ]>;
+	private sendRequest( method:HTTP.Method, uri:string, options:HTTP.Request.Options, body?:string | Blob | Buffer, parser?:HTTP.Parser.Class<any> ):any {
+		return HTTP.Request.Service.send( method, uri, body, options, parser )
+			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }
 

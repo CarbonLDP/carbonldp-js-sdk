@@ -171,8 +171,8 @@ describe( module(
 					expect( error instanceof Error ).toBe( true );
 				},
 			};
-			let success:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let error:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+			let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+			let errorSpy:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
 
@@ -181,8 +181,8 @@ describe( module(
 			promises.push( parser.parse( errorString ).then( spies.success, spies.error ) );
 
 			Promise.all( promises ).then( ():void => {
-				expect( success.calls.count() ).toBe( 1 );
-				expect( error.calls.count() ).toBe( 2 );
+				expect( successSpy.calls.count() ).toBe( 1 );
+				expect( errorSpy.calls.count() ).toBe( 2 );
 				done();
 			}, done.fail );
 		} );

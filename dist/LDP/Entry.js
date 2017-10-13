@@ -2,13 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 exports.SCHEMA = {
-    "key": {
+    "entryKey": {
         "@id": NS.C.Predicate.entryKey,
-        "@type": "@id",
     },
-    "value": {
+    "entryValue": {
         "@id": NS.C.Predicate.entryValue,
-        "@type": "@id",
     },
 };
 

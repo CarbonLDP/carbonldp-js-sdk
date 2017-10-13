@@ -15,15 +15,11 @@ export interface ContainerRetrievalPreferences {
 }
 export declare class Service {
     private static defaultOptions;
-    static send(method: (Method | string), url: string, body: Blob, options?: Options): Promise<Response>;
-    static send<T>(method: (Method | string), url: string, body: Blob, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
-    static send(method: (Method | string), url: string, body: Buffer, options?: Options): Promise<Response>;
-    static send<T>(method: (Method | string), url: string, body: Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
-    static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
-    static send(method: (Method | string), url: string, body: string, options?: Options): Promise<Response>;
+    static send(method: (Method | string), url: string, body: string | Blob | Buffer, options?: Options): Promise<Response>;
+    static send(method: (Method | string), url: string, body: string | Blob | Buffer, options?: Options): Promise<Response>;
     static send<T>(method: (Method | string), url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
-    static send<T>(method: (Method | string), url: string, body: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static send<T>(method: (Method | string), url: string, body: string | Blob | Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static options(url: string, options?: Options): Promise<Response>;
     static head(url: string, options?: Options): Promise<Response>;
     static get(url: string, options?: Options): Promise<Response>;

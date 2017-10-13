@@ -1,19 +1,19 @@
 /// <reference types="node" />
 import { QueryClause } from "sparqler/Clauses";
-import * as HTTP from "./HTTP";
-import Context from "./Context";
-import * as RDF from "./RDF";
 import * as AccessPoint from "./AccessPoint";
+import Context from "./Context";
 import * as FreeResources from "./FreeResources";
+import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
+import * as Messaging from "./Messaging";
+import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
-import * as Messaging from "./Messaging";
-import * as ObjectSchema from "./ObjectSchema";
-import * as SPARQL from "./SPARQL";
+import * as RDF from "./RDF";
 import * as RetrievalPreferences from "./RetrievalPreferences";
+import * as SPARQL from "./SPARQL";
 export interface DocumentDecorator {
     decorator: (object: Object, ...parameters: any[]) => Object;
     parameters?: any[];
@@ -50,10 +50,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     createAccessPoint<T>(documentURI: string, accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T>(documentURI: string, accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T>(documentURI: string, accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    upload(parentURI: string, data: Buffer, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(parentURI: string, data: Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(parentURI: string, data: Blob, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(parentURI: string, data: Blob, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(parentURI: string, data: Blob | Buffer, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
+    upload(parentURI: string, data: Blob | Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     listMembers(uri: string, includeNonReadable?: boolean, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     listMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getMembers<T>(uri: string, includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
@@ -94,6 +92,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     onMemberRemoved(uriPattern: string, onEvent: (data: RDF.Node.Class[]) => void, onError: (error: Error) => void): void;
     _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
+    _parseErrorResponse<T>(response: HTTP.Response.Class): any;
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);
@@ -117,5 +116,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private _parseMembers(pointers);
     private applyResponseData<T>(persistedProtectedDocument, response);
     private applyNodeMap(freeNodes);
+    private sendRequest(method, uri, options, body?);
+    private sendRequest<T>(method, uri, options, body?, parser?);
 }
 export default Class;

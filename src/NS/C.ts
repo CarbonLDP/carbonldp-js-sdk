@@ -44,6 +44,8 @@ export class Class {
 	static get Error():string { return namespace + "Error"; }
 
 	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
+
+	static get ValidationError():string { return namespace + "ValidationError"; }
 }
 
 export class Predicate {
@@ -52,8 +54,6 @@ export class Predicate {
 	static get bNodesMap():string { return namespace + "bNodesMap"; }
 
 	static get buildDate():string { return namespace + "buildDate"; }
-
-	static get carbonCode():string { return namespace + "carbonCode"; }
 
 	static get created():string { return namespace + "created"; }
 
@@ -65,15 +65,21 @@ export class Predicate {
 
 	static get error():string { return namespace + "error"; }
 
+	static get errorCode():string { return namespace + "errorCode"; }
+
+	static get errorDetails():string { return namespace + "errorDetails"; }
+
+	static get errorMessage():string { return namespace + "errorMessage"; }
+
+	static get errorParameters():string { return namespace + "errorParameters"; }
+
 	static get eTag():string { return namespace + "eTag"; }
 
 	static get httpStatusCode():string { return namespace + "httpStatusCode"; }
 
-	static get entryKey():string { return namespace + "entryKey"; }
+	static get entryKey():string { return namespace + "key"; }
 
 	static get mediaType():string { return namespace + "mediaType"; }
-
-	static get message():string { return namespace + "message"; }
 
 	static get modified():string { return namespace + "modified"; }
 
@@ -85,7 +91,7 @@ export class Predicate {
 
 	static get targetMember():string { return namespace + "targetMember"; }
 
-	static get entryValue():string { return namespace + "entryValue"; }
+	static get entryValue():string { return namespace + "value"; }
 
 	static get version():string { return namespace + "version"; }
 }

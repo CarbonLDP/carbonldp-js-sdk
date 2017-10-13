@@ -11,7 +11,7 @@ const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
 export class Class {
 	static expand( input:Object ):Promise<Array<Object>> {
 		// Find and resolve context URLs
-		return this.retrieveContexts( input, <{[ index:string ]:boolean}> Object.create( null ), "" ).then( () => {
+		return this.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
 			let expanded:any = Class.process( new ObjectSchema.DigestedObjectSchema(), input );
 
@@ -39,7 +39,7 @@ export class Class {
 			let params:string = match[ 2 ];
 			let rParams:RegExp = /(.*?)=(?:(?:"([^"]*?)")|([^"]*?))\s*(?:(?:;\s*)|$)/g;
 
-			let result:{[ key:string ]:string} = {};
+			let result:{ [ key:string ]:string } = {};
 			while( true ) {
 				match = rParams.exec( params );
 				if( ! match ) break;
@@ -51,7 +51,7 @@ export class Class {
 		return null;
 	}
 
-	private static findContextURLs( input:Object, contexts:{[ index:string ]:Object}, base:string, replace:boolean = false ):boolean {
+	private static findContextURLs( input:Object, contexts:{ [ index:string ]:Object }, base:string, replace:boolean = false ):boolean {
 		let previousContexts:number = Object.keys( contexts ).length;
 
 		if( Utils.isArray( input ) ) {
@@ -101,15 +101,15 @@ export class Class {
 		return previousContexts < Object.keys( contexts ).length;
 	}
 
-	private static retrieveContexts( input:Object, contextsRequested:{[ index:string ]:boolean}, base:string ):Promise<void> {
+	private static retrieveContexts( input:Object, contextsRequested:{ [ index:string ]:boolean }, base:string ):Promise<void> {
 		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new Error( "Maximum number of @context URLs exceeded." ) );
 
-		let contextToResolved:{[ index:string ]:Object} = Object.create( null );
+		let contextToResolved:{ [ index:string ]:Object } = Object.create( null );
 		if( ! Class.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
 
 		function resolved( url:string, promise:Promise<[ any, HTTP.Response.Class ]> ):Promise<void> {
 			return promise.then( ( [ object, response ]:[ any, HTTP.Response.Class ] ) => {
-				let _contextsRequested:{[ index:string ]:boolean} = Utils.O.clone<{[ index:string ]:boolean}>( contextsRequested );
+				let _contextsRequested:{ [ index:string ]:boolean } = Utils.O.clone<{ [ index:string ]:boolean }>( contextsRequested );
 				_contextsRequested[ url ] = true;
 
 				let contextWrapper:Object = { "@context": {} };
@@ -136,7 +136,11 @@ export class Class {
 			let requestOptions:HTTP.Request.Options = { sendCredentialsOnCORS: false };
 			HTTP.Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
 
-			let promise:Promise<[ any, HTTP.Response.Class ]> = HTTP.Request.Service.get( url, requestOptions, new HTTP.JSONParser.Class() );
+			let promise:Promise<[ any, HTTP.Response.Class ]> = HTTP.Request.Service
+				.get( url, requestOptions, new HTTP.JSONParser.Class() )
+				.catch( ( response:HTTP.Response.Class ) =>
+					Promise.reject( new Error( `Unable to resolve context from "${ url }". Code: ${ response.status }` ) )
+				);
 			promises.push( resolved( url, promise ) );
 		}
 
@@ -242,7 +246,7 @@ export class Class {
 		if( context.properties.has( propertyName ) ) definition = context.properties.get( propertyName );
 
 		if( definition.literal === false || ( propertyName === "@graph" && Utils.isString( value ) ) ) {
-			let options:{base:boolean, vocab?:boolean} = { base: true };
+			let options:{ base:boolean, vocab?:boolean } = { base: true };
 			if( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
 
 			return { "@id": Class.expandURI( context, value, options ) };
@@ -337,7 +341,7 @@ export class Class {
 				let nextActiveProperty:string = key;
 
 				let isList:boolean = uri === "@list";
-				if( isList || uri === "@set") {
+				if( isList || uri === "@set" ) {
 					nextActiveProperty = activeProperty;
 					if( isList && activeProperty === "@graph" ) nextActiveProperty = null;
 				}
