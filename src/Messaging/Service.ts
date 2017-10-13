@@ -9,24 +9,6 @@ import RDFNode from "../RDF/Node";
 import { UUID } from "../Utils";
 import Options from "./Options";
 
-// TODO: Fix of incorrect webstomp-client typings JSteunou/webstomp-client#54
-declare module "webstomp-client" {
-
-	// noinspection TsLint
-	export interface Client {
-		connected:boolean;
-
-		connect( headers:any, connectCallback:( frame?:Frame ) => any, errorCallback?:( error:Frame | CloseEvent ) => any ):void;
-	}
-
-	// noinspection TsLint
-	export interface Frame {
-		command:string;
-		body:string;
-		headers:any;
-	}
-}
-
 export const DEFAULT_OPTIONS:Options = {
 	maxReconnectAttempts: 10,
 	reconnectDelay: 1000,
@@ -77,10 +59,8 @@ export class Class {
 
 		const sock:SockJS.Socket = new SockJS( this.context.resolve( "/broker" ) );
 		this._client = webstomp.over( sock, {
-			protocols: webstomp.VERSIONS.supportedProtocols(),
 			debug: false,
 			heartbeat: false,
-			binary: false,
 		} );
 
 		this._client.connect( {}, () => {
