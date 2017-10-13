@@ -384,7 +384,476 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( pointer ).toBe( anotherPointer );
 		} );
 
-		describe( "get", ():void => {
+		describe( method(
+			INSTANCE,
+			"_parseErrorResponse"
+		), ():void => {
+			let documents:Documents.Class;
+
+			describe( "When Documents has a specified context", ():void => {
+
+				beforeEach( () => {
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string = "http://example.com/";
+					};
+					documents = context.documents;
+				} );
+
+				it( "should generate an HTTP error when status code is not 2xx", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+						status: 500,
+						responseText: `[ {
+							"@id": "_:1",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [ {
+								"@id": "_:2"
+							}, {
+								"@id": "_:3"
+							} ],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "${ NS.XSD.DataType.int }",
+								"@value": "500"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@value": "code-01"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@value": "Message 01"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
+								"@value": "code-02"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
+								"@value": "Message 02"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:6"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:5",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:7",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						} ]`,
+					} );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( ( error:HTTP.Errors.Error ) => {
+						expect( error ).toBeDefined();
+						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
+
+						expect( error.message ).toBe( "Message 01, Message 02" );
+						expect( error.statusCode ).toBe( 500 );
+						expect( error.errors ).toBeDefined();
+						expect( error.errors.length ).toBe( 2 );
+						error.errors.forEach( ( error, index ) => {
+							expect( error.errorCode ).toBe( `code-0${ index + 1 }` );
+							expect( error.errorMessage ).toBe( `Message 0${ index + 1 }` );
+
+							expect( error.errorParameters.entries ).toBeDefined();
+							error.errorParameters.entries.forEach( entry => {
+								expect( entry.entryKey ).toBe( "document" );
+								expect( entry.entryValue.id ).toEqual( "https://example.com/target-document/" );
+							} );
+						} );
+						done();
+					} );
+				} );
+
+				it( "should generate an error when multiple c:ErrorResponse in the response", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+						status: 500,
+						responseText: `[ {
+							"@id": "_:1",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "http://www.w3.org/2001/XMLSchema#int",
+								"@value": "1234567890"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "http://www.w3.org/2001/XMLSchema#int",
+								"@value": "0987654321"
+							} ]
+						} ]`,
+					} );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( ( error:Error ) => {
+						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+						expect( error.message ).toBe( "The response string contains multiple c:ErrorResponse." );
+						done();
+					} );
+				} );
+
+				it( "should generate an error when no c:ErrorResponse in the response", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+						status: 500,
+						responseText: `[ {
+							"@id": "_:3",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@value": "code-02"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@value": "Message 02"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+								"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:5",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						} ]`,
+					} );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( ( error:Error ) => {
+						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
+						expect( error.message ).toBe( "The response string does not contains a c:ErrorResponse." );
+						done();
+					} );
+				} );
+
+				it( "should generate an HTTP error with the body if no JSON-LD is provided", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+						status: 500,
+						responseText: `An error message.`,
+					} );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( ( error:Error ) => {
+						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
+						expect( error.message ).toBe( "An error message." );
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should generate an HTTP error with empty ErrorResponse properties", ( done:DoneFn ):void => {
+					const responseText:string = `[ {
+							"@id": "_:1",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [ {
+								"@id": "_:2"
+							}, {
+								"@id": "_:3"
+							} ],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "${ NS.XSD.DataType.int }",
+								"@value": "500"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@value": "code-01"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@value": "Message 01"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
+								"@value": "code-02"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
+								"@value": "Message 02"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:6"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:5",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:7",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						} ]`;
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+						status: 500,
+						responseText,
+					} );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( ( error:HTTP.Errors.Error ) => {
+						expect( error ).toBeDefined();
+						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
+						expect( error.message ).toBe( responseText );
+
+						expect( error.statusCode ).toBe( 500 );
+						expect( error.requestID ).toBeNull();
+						expect( error.errors ).toBeDefined();
+						expect( error.errors.length ).toBe( 0 );
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"get"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.", [
+					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+			), ( done:DoneFn ):void => {
+				let promises:Promise<any>[] = [];
+
+				class MockedContext extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
+					}
+				}
+
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				let responseBody:string = JSON.stringify( {
+					"@id": "http://example.com/resource/",
+					"@graph": [
+						{
+							"@id": "http://example.com/resource/",
+							"http://example.com/ns#string": [ { "@value": "Document Resource" } ],
+							"http://example.com/ns#pointerSet": [
+								{ "@id": "_:1" },
+								{ "@id": "_:2" },
+								{ "@id": "http://example.com/resource/#1" },
+								{ "@id": "http://example.com/external-resource/" },
+							],
+						},
+						{
+							"@id": "_:1",
+							"http://example.com/ns#string": [ { "@value": "Fragment 1" } ],
+							"http://example.com/ns#pointerSet": [
+								{ "@id": "http://example.com/resource/" },
+								{ "@id": "http://example.com/resource/#1" },
+							],
+						},
+						{
+							"@id": "_:2",
+							"http://example.com/ns#string": [ { "@value": "Fragment 2" } ],
+						},
+						{
+							"@id": "http://example.com/resource/#1",
+							"http://example.com/ns#string": [ { "@value": "NamedFragment 1" } ],
+						},
+						{
+							"@id": "http://example.com/resource/#2",
+							"http://example.com/ns#string": [ { "@value": "NamedFragment 2" } ],
+						},
+					],
+				} );
+
+				let objectSchema:ObjectSchema.Class = {
+					"ex": "http://example.com/ns#",
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"string": {
+						"@id": "ex:string",
+						"@type": "xsd:string",
+					},
+					"date": {
+						"@id": "ex:date",
+						"@type": "xsd:dateTime",
+					},
+					"numberList": {
+						"@id": "ex:numberList",
+						"@type": "xsd:integer",
+						"@container": "@list",
+					},
+					"languageMap": {
+						"@id": "ex:languageMap",
+						"@container": "@language",
+					},
+					"pointer": {
+						"@id": "ex:pointer",
+						"@type": "@id",
+					},
+					"pointerList": {
+						"@id": "ex:pointerList",
+						"@type": "@id",
+						"@container": "@list",
+					},
+					"pointerSet": {
+						"@id": "ex:pointerSet",
+						"@type": "@id",
+						"@container": "@set",
+					},
+				};
+
+				context.extendObjectSchema( objectSchema );
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": "162458126348712643",
+					},
+					responseText: responseBody,
+				} );
+
+				promises.push( documents.get( "http://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
+					expect( document ).toBeDefined();
+					expect( Utils.isObject( document ) ).toEqual( true );
+
+					expect( response ).toBeDefined();
+					expect( Utils.isObject( response ) ).toEqual( true );
+
+					expect( document[ "string" ] ).toBe( "Document Resource" );
+
+					(function documentResource():void {
+						expect( document[ "pointerSet" ].length ).toBe( 4 );
+						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
+						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
+						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
+						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/external-resource/" );
+					})();
+
+					(function documentFragments():void {
+
+						let fragment:Fragment.Class;
+						expect( document.getFragments().length ).toBe( 4 );
+
+						(function documentBlankNode_1():void {
+							fragment = document.getFragment( "_:1" );
+							expect( fragment ).toBeTruthy();
+							expect( fragment[ "string" ] ).toBe( "Fragment 1" );
+							expect( fragment[ "pointerSet" ].length ).toBe( 2 );
+							expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/" );
+							expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
+							expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/" ) ).toBe( document );
+							expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
+						})();
+
+						(function documentBlankNode_2():void {
+							fragment = document.getFragment( "_:2" );
+							expect( fragment ).toBeTruthy();
+							expect( fragment[ "string" ] ).toBe( "Fragment 2" );
+						})();
+
+						(function documentNamedFragment_1():void {
+							fragment = document.getFragment( "1" );
+							expect( fragment ).toBeTruthy();
+							expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
+						})();
+
+						(function documentNamedFragment_1():void {
+							fragment = document.getFragment( "2" );
+							expect( fragment ).toBeTruthy();
+							expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
+						})();
+
+					})();
+
+				} ) );
+
+				Promise.all( promises ).then( ():void => {
+					done();
+				}, ( error:Error ):void => {
+					error = ! ! error ? error : new Error( "Unknown error" );
+					done.fail( error );
+				} );
+			} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
 
@@ -400,10 +869,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const context:MockedContext = new MockedContext();
 				const documents:Documents.Class = context.documents;
 
-				const spyGet:jasmine.Spy = spyOn( HTTP.Request.Service, "get" );
+				const spySend:jasmine.Spy = spyOn( HTTP.Request.Service, "send" );
 
 				// First failed request
-				spyGet.and.returnValue( Promise.reject( new Error( "A error in the GET request." ) ) );
+				spySend.and.returnValue( Promise.reject( new HTTP.Response.Class( {} as any, "A error in the GET request." ) ) );
 				documents.get( "resource/" )
 					.then( () => {
 						done.fail( "Should not have been resolved." );
@@ -412,7 +881,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( error ).toEqual( new Error( "A error in the GET request." ) );
 
 						// Second correct request
-						spyGet.and.returnValue( Promise.resolve( [
+						spySend.and.returnValue( Promise.resolve( [
 							[ { "@id": "http://example.com/resource/", "@graph": [ { "@id": "http://example.com/resource/" } ] } ],
 							new HTTP.Response.Class( <any> null, "", <any> {
 								headers: {
@@ -449,17 +918,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class MockedContext extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -479,6 +946,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -512,184 +1000,44 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"get",
-			[ "T" ],
-			"Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.", [
-				{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
-		), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
-			let promises:Promise<any>[] = [];
+			"exists"
+		), ():void => {
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			let responseBody:string = JSON.stringify( {
-				"@id": "http://example.com/resource/",
-				"@graph": [
-					{
-						"@id": "http://example.com/resource/",
-						"http://example.com/ns#string": [ { "@value": "Document Resource" } ],
-						"http://example.com/ns#pointerSet": [
-							{ "@id": "_:1" },
-							{ "@id": "_:2" },
-							{ "@id": "http://example.com/resource/#1" },
-							{ "@id": "http://example.com/external-resource/" },
-						],
-					},
-					{
-						"@id": "_:1",
-						"http://example.com/ns#string": [ { "@value": "Fragment 1" } ],
-						"http://example.com/ns#pointerSet": [
-							{ "@id": "http://example.com/resource/" },
-							{ "@id": "http://example.com/resource/#1" },
-						],
-					},
-					{
-						"@id": "_:2",
-						"http://example.com/ns#string": [ { "@value": "Fragment 2" } ],
-					},
-					{
-						"@id": "http://example.com/resource/#1",
-						"http://example.com/ns#string": [ { "@value": "NamedFragment 1" } ],
-					},
-					{
-						"@id": "http://example.com/resource/#2",
-						"http://example.com/ns#string": [ { "@value": "NamedFragment 2" } ],
-					},
+			it( hasSignature(
+				"Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.", [
+					{ name: "documentURI", type: "string", description: "The URI to verify if it exists." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-			} );
-
-			let objectSchema:ObjectSchema.Class = {
-				"ex": "http://example.com/ns#",
-				"xsd": "http://www.w3.org/2001/XMLSchema#",
-				"string": {
-					"@id": "ex:string",
-					"@type": "xsd:string",
-				},
-				"date": {
-					"@id": "ex:date",
-					"@type": "xsd:dateTime",
-				},
-				"numberList": {
-					"@id": "ex:numberList",
-					"@type": "xsd:integer",
-					"@container": "@list",
-				},
-				"languageMap": {
-					"@id": "ex:languageMap",
-					"@container": "@language",
-				},
-				"pointer": {
-					"@id": "ex:pointer",
-					"@type": "@id",
-				},
-				"pointerList": {
-					"@id": "ex:pointerList",
-					"@type": "@id",
-					"@container": "@list",
-				},
-				"pointerSet": {
-					"@id": "ex:pointerSet",
-					"@type": "@id",
-					"@container": "@set",
-				},
-			};
-
-			context.extendObjectSchema( objectSchema );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"ETag": "162458126348712643",
-				},
-				responseText: responseBody,
-			} );
-
-			promises.push( documents.get( "http://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
-				expect( document ).toBeDefined();
-				expect( Utils.isObject( document ) ).toEqual( true );
-
-				expect( response ).toBeDefined();
-				expect( Utils.isObject( response ) ).toEqual( true );
-
-				expect( document[ "string" ] ).toBe( "Document Resource" );
-
-				(function documentResource():void {
-					expect( document[ "pointerSet" ].length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
-					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
-					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
-					expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/external-resource/" );
-				})();
-
-				(function documentFragments():void {
-
-					let fragment:Fragment.Class;
-					expect( document.getFragments().length ).toBe( 4 );
-
-					(function documentBlankNode_1():void {
-						fragment = document.getFragment( "_:1" );
-						expect( fragment ).toBeTruthy();
-						expect( fragment[ "string" ] ).toBe( "Fragment 1" );
-						expect( fragment[ "pointerSet" ].length ).toBe( 2 );
-						expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/" );
-						expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
-						expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/" ) ).toBe( document );
-						expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
-					})();
-
-					(function documentBlankNode_2():void {
-						fragment = document.getFragment( "_:2" );
-						expect( fragment ).toBeTruthy();
-						expect( fragment[ "string" ] ).toBe( "Fragment 2" );
-					})();
-
-					(function documentNamedFragment_1():void {
-						fragment = document.getFragment( "1" );
-						expect( fragment ).toBeTruthy();
-						expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
-					})();
-
-					(function documentNamedFragment_1():void {
-						fragment = document.getFragment( "2" );
-						expect( fragment ).toBeTruthy();
-						expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
-					})();
-
-				})();
-
-			} ) );
-
-			Promise.all( promises ).then( ():void => {
-				done();
-			}, ( error:Error ):void => {
-				error = ! ! error ? error : new Error( "Unknown error" );
-				done.fail( error );
-			} );
-		} );
-
-		describe( "exists", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+			), ( done:DoneFn ):void => {
+				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -697,11 +1045,74 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				let spies:any = {
+					exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+						expect( exists ).toBe( true );
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					notExists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+						expect( exists ).toBe( false );
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					fail: ( error:HTTP.Errors.Error ):void => {
+						expect( error instanceof HTTP.Errors.Error ).toBe( true );
+					},
+				};
+				let spyExists:jasmine.Spy = spyOn( spies, "exists" ).and.callThrough();
+				let spyNotExists:jasmine.Spy = spyOn( spies, "notExists" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
+					status: 200,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
+					status: 404,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/resource/error/", null, "HEAD" ).andReturn( {
+					status: 500,
+				} );
+
+				let promise:Promise<any>;
+
+				promise = documents.exists( "http://example.com/resource/exists/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.exists ) );
+
+				promise = documents.exists( "http://example.com/resource/not-exists/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.notExists ) );
+
+				promise = documents.exists( "http://example.com/resource/error/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spies.fail ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spyExists ).toHaveBeenCalledTimes( 1 );
+					expect( spyNotExists ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					done();
+				}, done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -721,6 +1132,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.exists( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -754,246 +1186,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
-
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"exists",
-			"Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.", [
-				{ name: "documentURI", type: "string", description: "The URI to verify if it exists." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			let promises:Promise<any>[] = [];
-
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			let spies:any = {
-				exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
-					expect( exists ).toBe( true );
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				notExists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
-					expect( exists ).toBe( false );
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				fail: ( error:HTTP.Errors.Error ):void => {
-					expect( error instanceof HTTP.Errors.Error ).toBe( true );
-				},
-			};
-			let spyExists:jasmine.Spy = spyOn( spies, "exists" ).and.callThrough();
-			let spyNotExists:jasmine.Spy = spyOn( spies, "notExists" ).and.callThrough();
-			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
-				status: 200,
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
-				status: 404,
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/resource/error/", null, "HEAD" ).andReturn( {
-				status: 500,
-			} );
-
-			let promise:Promise<any>;
-
-			promise = documents.exists( "http://example.com/resource/exists/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.exists ) );
-
-			promise = documents.exists( "http://example.com/resource/not-exists/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.notExists ) );
-
-			promise = documents.exists( "http://example.com/resource/error/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.catch( spies.fail ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( spyExists ).toHaveBeenCalledTimes( 1 );
-				expect( spyNotExists ).toHaveBeenCalledTimes( 1 );
-				expect( spyFail ).toHaveBeenCalledTimes( 1 );
-				done();
-			}, done.fail );
-		} );
-
-		describe( "createChild", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
-				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
-					documents = context.documents;
-				} );
-
-				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChild( "http://not-example.com", {} );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
-						done();
-					} );
-				} );
-
-				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChild( "prefix:the-uri", {} );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
-						done();
-					} );
-				} );
-
-				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
-					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
-						status: 201,
-						responseHeaders: {
-							"Location": "http://example.com/new-resource/",
-							"ETag": '"1234567890"',
-						},
-						responseText: `[
-							{
-								"@id": "_:responseMetadata",
-								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
-								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
-									"@id": "_:documentMetadata"
-								} ]
-							},
-							{
-								"@id": "_:documentMetadata",
-								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
-								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
-									"@id": "http://example.com/new-resource/"
-								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
-									"@id": "_:map"
-								} ]
-							},
-							{
-								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
-									{ "@id": "_:entry-1" },
-									{ "@id": "_:entry-2" }
-								]
-							},
-							{
-								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
-								    "@id": "_:1"
-							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
-									"@id": "_:new-1"
-								} ]
-							},
-							{
-								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
-									"@id": "_:2"
-								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
-									"@id": "_:new-2"
-								} ]
-							}
-						]`,
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					interface RawDocument {
-						blankNode1:RawBlankNode;
-						blankNode2:RawBlankNode;
-					}
+					documents.exists( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
 
-					const rawDocument:RawDocument = {
-						blankNode1: {
-							id: "_:1",
-							value: "a value 1",
-						},
-						blankNode2: {
-							id: "_:2",
-							value: "a value 2",
-						},
-					};
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
 
-					try {
-						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
-
-						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
-						expect( document.blankNode1.id ).toBe( "_:new-1" );
-						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
-							value: "a value 1",
-						} ) );
-
-						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
-						expect( document.blankNode2.id ).toBe( "_:new-2" );
-						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
-							value: "a value 2",
-						} ) );
-
-						done();
-					} catch( e ) {
-						done.fail( e );
-					}
-				} );
-
-			} );
-
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
-
-				beforeEach( () => {
-					documents = new Documents.Class();
-				} );
-
-				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChild( "relative-uri/", {} );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
-						done();
-					} );
-				} );
-
-				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChild( "prefix:the-uri", {} );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
 						done();
 					} );
 				} );
@@ -1001,6 +1210,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 		} );
+
 
 		describe( method(
 			INSTANCE,
@@ -1015,7 +1225,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let finishPromises:Promise<void>[] = [];
 
 				// Send a plain object
@@ -1359,7 +1569,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let finishPromises:Promise<void>[] = [];
 
 				// Send a plain object
@@ -1585,29 +1795,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				Promise.all( finishPromises ).then( done ).catch( done.fail );
 			} );
-		} );
-
-		describe( "createChildren", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildren( "http://not-example.com", [ {} ] );
+					const promise:Promise<any> = documents.createChild( "http://not-example.com", {} );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -1617,11 +1822,131 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildren( "prefix:the-uri", [ {} ] );
+					const promise:Promise<any> = documents.createChild( "prefix:the-uri", {} );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/new-resource/",
+							"ETag": '"1234567890"',
+						},
+						responseText: `[
+							{
+								"@id": "_:responseMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.ResponseMetadata }"
+								],
+								"${ NS.C.Predicate.documentMetadata }": [ {
+									"@id": "_:documentMetadata"
+								} ]
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [
+						            "${ NS.C.Class.VolatileResource }",
+						            "${ NS.C.Class.DocumentMetadata }"
+								],
+								"${ NS.C.Predicate.relatedDocument }": [ {
+									"@id": "http://example.com/new-resource/"
+								} ],
+								"${ NS.C.Predicate.bNodesMap }": [ {
+									"@id": "_:map"
+								} ]
+							},
+							{
+								"@id": "_:map",
+								"@type": [ "${ NS.C.Class.Map }" ],
+								"${ NS.C.Predicate.entry }": [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" }
+								]
+							},
+							{
+								"@id": "_:entry-1",
+								"${ NS.C.Predicate.entryKey }": [ {
+								    "@id": "_:1"
+							    } ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-1"
+								} ]
+							},
+							{
+								"@id": "_:entry-2",
+								"${ NS.C.Predicate.entryKey }": [ {
+									"@id": "_:2"
+								} ],
+								"${ NS.C.Predicate.entryValue }": [ {
+									"@id": "_:new-2"
+								} ]
+							}
+						]`,
+					} );
+
+					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+
+					interface RawDocument {
+						blankNode1:RawBlankNode;
+						blankNode2:RawBlankNode;
+					}
+
+					const rawDocument:RawDocument = {
+						blankNode1: {
+							id: "_:1",
+							value: "a value 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							value: "a value 2",
+						},
+					};
+
+					try {
+						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
+
+						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
+						expect( document.blankNode1.id ).toBe( "_:new-1" );
+						expect( document.blankNode1 ).toEqual( jasmine.objectContaining( {
+							value: "a value 1",
+						} ) );
+
+						expect( document.blankNode2 ).toBe( rawDocument.blankNode2 );
+						expect( document.blankNode2.id ).toBe( "_:new-2" );
+						expect( document.blankNode2 ).toEqual( jasmine.objectContaining( {
+							value: "a value 2",
+						} ) );
+
+						done();
+					} catch( e ) {
+						done.fail( e );
+					}
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChild( "http://example.com/", {} ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -1636,7 +1961,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildren( "relative-uri/", [ {} ] );
+					const promise:Promise<any> = documents.createChild( "relative-uri/", {} );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -1646,11 +1971,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildren( "prefix:the-uri", [ {} ] );
+					const promise:Promise<any> = documents.createChild( "prefix:the-uri", {} );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChild( "http://example.com/", {} ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -1690,7 +2036,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
-			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let finishPromises:Promise<void>[] = [];
 
 				// No request options
@@ -2041,7 +2387,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
-			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let finishPromises:Promise<void>[] = [];
 
 				// With slugs but no request options
@@ -2563,25 +2909,315 @@ describe( module( "Carbon/Documents" ), ():void => {
 				Promise.all( finishPromises ).then( done ).catch( done.fail );
 			} );
 
-		} );
-
-		describe( "createChildAndRetrieve", ():void => {
-
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
+				beforeEach( () => {
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "http://not-example.com", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChildren( "http://example.com/", [ {} ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "relative-uri/", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildren( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChildren( "http://example.com/", [ {} ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"createChildAndRetrieve"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists JavaScript object as a child document for the respective parent source and retrieves the updated data from the server.", [
+					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
+					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+			), ( done:DoneFn ):void => {
+				let finalPromises:Promise<any>[] = [];
+
+				// Two request behaviour
+				finalPromises.push( (():Promise<any> => {
+					class MockedContext extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents.Class = context.documents;
+
+					let mockCreateResponse:any = { val: "Mock Save Response" };
+					let mockRetrieveResponse:any = { val: "Mock Save Response" };
+					let options:HTTP.Request.Options = { timeout: 50550 };
+
+					let childObject:Object = { property: "My property" };
+
+					let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
+						let document:Document.Class = Document.Factory.createFrom( childObject );
+						document.id = "http://example.com/parent-resource/new-child/";
+						return Promise.resolve<any>( [ document, mockCreateResponse ] );
+					} );
+					let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
+						let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
+						return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+					} );
+
+					return documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+						expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, {} );
+						expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/new-child/" );
+
+						expect( childObject ).toBe( _document );
+						expect( createResponse ).toBe( mockCreateResponse );
+						expect( retrieveResponse ).toBe( mockRetrieveResponse );
+					} );
+				})() );
+
+				// One request behaviour
+				finalPromises.push( (():Promise<any> => {
+					class MockedContext extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					context.setSetting( "vocabulary", "http://example.com/ns#" );
+					let documents:Documents.Class = context.documents;
+
+					let options:HTTP.Request.Options = { timeout: 50550 };
+
+					let namedFragment:Object = {
+						slug: "#namedFragment",
+						property: "Named fragment property",
+					};
+					let childObject:Object = {
+						property: "my property",
+						namedFragment: namedFragment,
+					};
+
+					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
+						status: 201,
+						responseHeaders: {
+							"Location": "http://example.com/parent-resource/new-child/",
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `{
+							"@id": "http://example.com/parent-resource/new-child/",
+							"@graph": [
+								{
+									"@id": "http://example.com/parent-resource/new-child/",
+									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ],
+									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ]
+								},
+								{
+									"@id": "http://example.com/parent-resource/new-child/#namedFragment",
+									"http://example.com/ns#property": [ { "@value": "UPDATED named fragment property" } ]
+								}
+							]
+						}`,
+					} );
+					let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
+					let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callThrough();
+
+
+					return documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, responses ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+						expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, {} );
+						expect( spyRetrieve ).not.toHaveBeenCalled();
+
+						expect( childObject ).toBe( _document );
+						expect( "property" in childObject ).toBe( true );
+						expect( childObject[ "property" ] ).toBe( "my UPDATED property" );
+
+						// Keep reference with the fragment
+						expect( "namedFragment" in childObject ).toBe( true );
+						expect( childObject[ "namedFragment" ] ).toBe( namedFragment );
+						expect( namedFragment[ "property" ] ).toBe( "UPDATED named fragment property" );
+
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 1 );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
+					} );
+				})() );
+
+				Promise.all( finalPromises ).then( done ).catch( done.fail );
+			} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Persists JavaScript object as a child document for the respective parent source and retrieves the updated data from the server.", [
+					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
+					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
+					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "vocabulary", "http://example.com/ns#" );
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				let mockCreateResponse:any = { val: "Mock Save Response" };
+				let mockRetrieveResponse:any = { val: "Mock Save Response" };
+				let options:HTTP.Request.Options = { timeout: 50550 };
+
+				let childObject:Object = { property: "My property" };
+
+				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
+					let document:Document.Class = Document.Factory.createFrom( childObject );
+					document.id = "http://example.com/parent-resource/child-document/";
+					return Promise.resolve<any>( [ document, mockCreateResponse ] );
+				} );
+				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
+					let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
+					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+				} );
+
+				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, "child-document", options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
+					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, "child-document", options );
+					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/child-document/" );
+
+					expect( childObject ).toBe( _document );
+					expect( createResponse ).toBe( mockCreateResponse );
+					expect( retrieveResponse ).toBe( mockRetrieveResponse );
+
+					done();
+				} ).catch( done.fail );
+
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "vocabulary", "http://example.com/ns#" );
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -2733,6 +3369,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChildAndRetrieve( "http://example.com/", {} ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents.Class does not have a context", ():void => {
@@ -2762,262 +3419,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
-
-		} );
-
-		describe( method(
-			INSTANCE,
-			"createChildAndRetrieve"
-		), ():void => {
-
-			it( hasSignature(
-				[ "T" ],
-				"Persists JavaScript object as a child document for the respective parent source and retrieves the updated data from the server.", [
-					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
-					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				let finalPromises:Promise<any>[] = [];
-
-				// Two request behaviour
-				finalPromises.push( (():Promise<any> => {
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
-
-					let context:MockedContext = new MockedContext();
-					let documents:Documents.Class = context.documents;
-
-					let mockCreateResponse:any = { val: "Mock Save Response" };
-					let mockRetrieveResponse:any = { val: "Mock Save Response" };
-					let options:HTTP.Request.Options = { timeout: 50550 };
-
-					let childObject:Object = { property: "My property" };
-
-					let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
-						let document:Document.Class = Document.Factory.createFrom( childObject );
-						document.id = "http://example.com/parent-resource/new-child/";
-						return Promise.resolve<any>( [ document, mockCreateResponse ] );
-					} );
-					let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
-						let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
-						return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
 					} );
 
-					return documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
-						expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, {} );
-						expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/new-child/" );
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-						expect( childObject ).toBe( _document );
-						expect( createResponse ).toBe( mockCreateResponse );
-						expect( retrieveResponse ).toBe( mockRetrieveResponse );
-					} );
-				})() );
+					documents.createChildAndRetrieve( "http://example.com/", {} ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
 
-				// One request behaviour
-				finalPromises.push( (():Promise<any> => {
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
 
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
-
-					let context:MockedContext = new MockedContext();
-					context.setSetting( "vocabulary", "http://example.com/ns#" );
-					let documents:Documents.Class = context.documents;
-
-					let options:HTTP.Request.Options = { timeout: 50550 };
-
-					let namedFragment:Object = {
-						slug: "#namedFragment",
-						property: "Named fragment property",
-					};
-					let childObject:Object = {
-						property: "my property",
-						namedFragment: namedFragment,
-					};
-
-					jasmine.Ajax.stubRequest( "http://example.com/parent-resource/", null, "POST" ).andReturn( {
-						status: 201,
-						responseHeaders: {
-							"Location": "http://example.com/parent-resource/new-child/",
-							"Preference-Applied": "return=representation",
-							"ETag": '"1234567890"',
-						},
-						responseText: `{
-							"@id": "http://example.com/parent-resource/new-child/",
-							"@graph": [
-								{
-									"@id": "http://example.com/parent-resource/new-child/",
-									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ],
-									"http://example.com/ns#namedFragment": [ { "@id": "http://example.com/parent-resource/new-child/#namedFragment" } ]
-								},
-								{
-									"@id": "http://example.com/parent-resource/new-child/#namedFragment",
-									"http://example.com/ns#property": [ { "@value": "UPDATED named fragment property" } ]
-								}
-							]
-						}`,
-					} );
-					let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
-					let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callThrough();
-
-
-					return documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, options ).then( ( [ _document, responses ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
-						expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, options, {} );
-						expect( spyRetrieve ).not.toHaveBeenCalled();
-
-						expect( childObject ).toBe( _document );
-						expect( "property" in childObject ).toBe( true );
-						expect( childObject[ "property" ] ).toBe( "my UPDATED property" );
-
-						// Keep reference with the fragment
-						expect( "namedFragment" in childObject ).toBe( true );
-						expect( childObject[ "namedFragment" ] ).toBe( namedFragment );
-						expect( namedFragment[ "property" ] ).toBe( "UPDATED named fragment property" );
-
-						expect( responses ).toEqual( jasmine.any( Array ) );
-						expect( responses.length ).toBe( 1 );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.CreatedResource }` );
-					} );
-				})() );
-
-				Promise.all( finalPromises ).then( done ).catch( done.fail );
-			} );
-
-			it( hasSignature(
-				[ "T" ],
-				"Persists JavaScript object as a child document for the respective parent source and retrieves the updated data from the server.", [
-					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
-					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
-					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
-
-				let mockCreateResponse:any = { val: "Mock Save Response" };
-				let mockRetrieveResponse:any = { val: "Mock Save Response" };
-				let options:HTTP.Request.Options = { timeout: 50550 };
-
-				let childObject:Object = { property: "My property" };
-
-				let spyCreateChild:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callFake( () => {
-					let document:Document.Class = Document.Factory.createFrom( childObject );
-					document.id = "http://example.com/parent-resource/child-document/";
-					return Promise.resolve<any>( [ document, mockCreateResponse ] );
-				} );
-				let spyRetrieve:jasmine.Spy = spyOn( context.documents, "get" ).and.callFake( () => {
-					let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( childObject, documents );
-					return Promise.resolve<any>( [ persistedDocument, mockRetrieveResponse ] );
-				} );
-
-				documents.createChildAndRetrieve( "http://example.com/parent-resource/", childObject, "child-document", options ).then( ( [ _document, [ createResponse, retrieveResponse ] ]:[ Document.Class, HTTP.Response.Class[] ] ) => {
-					expect( spyCreateChild ).toHaveBeenCalledWith( "http://example.com/parent-resource/", childObject, "child-document", options );
-					expect( spyRetrieve ).toHaveBeenCalledWith( "http://example.com/parent-resource/child-document/" );
-
-					expect( childObject ).toBe( _document );
-					expect( createResponse ).toBe( mockCreateResponse );
-					expect( retrieveResponse ).toBe( mockRetrieveResponse );
-
-					done();
-				} ).catch( done.fail );
-
-			} );
-
-		} );
-
-		describe( "createChildrenAndRetrieve", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
-				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
-					documents = context.documents;
-				} );
-
-				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildrenAndRetrieve( "http://not-example.com", [ {} ] );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
-						done();
-					} );
-				} );
-
-				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildrenAndRetrieve( "prefix:the-uri", [ {} ] );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
-						done();
-					} );
-				} );
-
-			} );
-
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
-
-				beforeEach( () => {
-					documents = new Documents.Class();
-				} );
-
-				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildrenAndRetrieve( "relative-uri/", [ {} ] );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
-						done();
-					} );
-				} );
-
-				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.createChildrenAndRetrieve( "prefix:the-uri", [ {} ] );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
 						done();
 					} );
 				} );
@@ -3057,7 +3475,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let finalPromises:Promise<any>[] = [];
 
 				// Two request behaviour
@@ -3193,7 +3611,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
@@ -3256,24 +3674,251 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} ).catch( done.fail );
 			} );
 
-		} );
-
-		describe( "listChildren", ():void => {
-
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
+				beforeEach( () => {
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "http://not-example.com", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChildrenAndRetrieve( "http://example.com/", [ {} ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+				let documents:Documents.Class;
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "relative-uri/", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.createChildrenAndRetrieve( "prefix:the-uri", [ {} ] );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createChildrenAndRetrieve( "http://example.com/", [ {} ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"listChildren"
+		), ():void => {
+
+			it( hasSignature(
+				"Retrieves an array of unresolved persisted documents that refers to the children of the container specified.", [
+					{ name: "parentURI", type: "string", description: "URI of the document container where to look for its children." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.listChildren ).toBeDefined();
+				expect( Utils.isFunction( documents.listChildren ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/empty-resource/", null, "GET" ).andReturn( {
+					status: 200,
+					responseText: "[]",
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/another-empty-resource/", null, "GET" ).andReturn( {
+					status: 200,
+					responseText: `[ {
+					"@graph": [ {
+						"@id": "http://example.com/resource/",
+						"${ NS.LDP.Predicate.contains }": []
+					} ],
+					"@id": "http://example.com/resource/"
+				} ]`,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/another-another-empty-resource/", null, "GET" ).andReturn( {
+					status: 200,
+					responseText: `[ {
+					"@graph": [ {
+						"@id": "http://example.com/resource/"
+					} ],
+					"@id": "http://example.com/resource/"
+				} ]`,
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+					status: 200,
+					responseText: `[ {
+					"@graph": [ {
+						"@id": "http://example.com/resource/",
+						"${ NS.LDP.Predicate.contains }": [ {
+							"@id": "http://example.com/resource/pointer-01/"
+						}, {
+							"@id": "http://example.com/resource/pointer-02/"
+						} ]
+					} ],
+					"@id": "http://example.com/resource/"
+				} ]`,
+				} );
+
+				let spies:any = {
+					success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
+						expect( pointers ).toBeDefined();
+						expect( Utils.isArray( pointers ) ).toBe( true );
+						expect( pointers.length ).toBe( 2 );
+						expect( Pointer.Factory.is( pointers[ 0 ] ) ).toBe( true );
+						expect( pointers[ 0 ].id ).toBe( "http://example.com/resource/pointer-01/" );
+						expect( Pointer.Factory.is( pointers[ 1 ] ) ).toBe( true );
+						expect( pointers[ 1 ].id ).toBe( "http://example.com/resource/pointer-02/" );
+
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					successEmpty: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
+						expect( pointers ).toBeDefined();
+						expect( Utils.isArray( pointers ) ).toBe( true );
+						expect( pointers.length ).toBe( 0 );
+
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					fail: ( error:Error ):void => {
+						expect( error ).toBeDefined();
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					},
+				};
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyEmpty:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+
+				promise = documents.listChildren( "resource/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
+
+				promise = documents.listChildren( "empty-resource/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.successEmpty ) );
+
+				promise = documents.listChildren( "another-empty-resource/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.successEmpty ) );
+
+				promise = documents.listChildren( "another-another-empty-resource/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.successEmpty ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spyEmpty ).toHaveBeenCalledTimes( 3 );
+					expect( spyFail ).not.toHaveBeenCalled();
+					done();
+				} ).catch( done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
@@ -3293,6 +3938,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.listChildren( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -3326,194 +3992,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
-
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"listChildren",
-			"Retrieves an array of unresolved persisted documents that refers to the children of the container specified.", [
-				{ name: "parentURI", type: "string", description: "URI of the document container where to look for its children." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.listChildren ).toBeDefined();
-			expect( Utils.isFunction( documents.listChildren ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/empty-resource/", null, "GET" ).andReturn( {
-				status: 200,
-				responseText: "[]",
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/another-empty-resource/", null, "GET" ).andReturn( {
-				status: 200,
-				responseText: `[ {
-					"@graph": [ {
-						"@id": "http://example.com/resource/",
-						"${ NS.LDP.Predicate.contains }": []
-					} ],
-					"@id": "http://example.com/resource/"
-				} ]`,
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/another-another-empty-resource/", null, "GET" ).andReturn( {
-				status: 200,
-				responseText: `[ {
-					"@graph": [ {
-						"@id": "http://example.com/resource/"
-					} ],
-					"@id": "http://example.com/resource/"
-				} ]`,
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
-				status: 200,
-				responseText: `[ {
-					"@graph": [ {
-						"@id": "http://example.com/resource/",
-						"${ NS.LDP.Predicate.contains }": [ {
-							"@id": "http://example.com/resource/pointer-01/"
-						}, {
-							"@id": "http://example.com/resource/pointer-02/"
-						} ]
-					} ],
-					"@id": "http://example.com/resource/"
-				} ]`,
-			} );
-
-			let spies:any = {
-				success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
-					expect( pointers ).toBeDefined();
-					expect( Utils.isArray( pointers ) ).toBe( true );
-					expect( pointers.length ).toBe( 2 );
-					expect( Pointer.Factory.is( pointers[ 0 ] ) ).toBe( true );
-					expect( pointers[ 0 ].id ).toBe( "http://example.com/resource/pointer-01/" );
-					expect( Pointer.Factory.is( pointers[ 1 ] ) ).toBe( true );
-					expect( pointers[ 1 ].id ).toBe( "http://example.com/resource/pointer-02/" );
-
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				successEmpty: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
-					expect( pointers ).toBeDefined();
-					expect( Utils.isArray( pointers ) ).toBe( true );
-					expect( pointers.length ).toBe( 0 );
-
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				fail: ( error:Error ):void => {
-					expect( error ).toBeDefined();
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				},
-			};
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let spyEmpty:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
-			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-
-			promise = documents.listChildren( "resource/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
-
-			promise = documents.listChildren( "empty-resource/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.successEmpty ) );
-
-			promise = documents.listChildren( "another-empty-resource/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.successEmpty ) );
-
-			promise = documents.listChildren( "another-another-empty-resource/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.successEmpty ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
-				expect( spyEmpty ).toHaveBeenCalledTimes( 3 );
-				expect( spyFail ).not.toHaveBeenCalled();
-				done();
-			} ).catch( done.fail );
-		} );
-
-		describe( "getChildren", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
-				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
-					documents = context.documents;
-				} );
-
-				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getChildren( "http://not-example.com" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
-						done();
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
 					} );
-				} );
 
-				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getChildren( "prefix:the-uri" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
-						done();
-					} );
-				} );
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-			} );
+					documents.listChildren( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
 
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
 
-				beforeEach( () => {
-					documents = new Documents.Class();
-				} );
-
-				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getChildren( "relative-uri/" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
-						done();
-					} );
-				} );
-
-				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getChildren( "prefix:the-uri" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
 						done();
 					} );
 				} );
@@ -3708,7 +4203,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -3831,7 +4326,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -3919,30 +4414,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
-		} );
-
-		describe( "createAccessPoint", ():void => {
-
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
 
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoint( "http://not-example.com", accessPoint );
+					const promise:Promise<any> = documents.getChildren( "http://not-example.com" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -3952,8 +4439,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
+					const promise:Promise<any> = documents.getChildren( "prefix:the-uri" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -3962,18 +4448,37 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.getChildren( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
 
 				beforeEach( () => {
 					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoint( "relative-uri/", accessPoint );
+					const promise:Promise<any> = documents.getChildren( "relative-uri/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -3983,12 +4488,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
+					const promise:Promise<any> = documents.getChildren( "prefix:the-uri" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.getChildren( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -4011,7 +4536,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
@@ -4113,7 +4638,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:(() => void) & { fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 
 				let promises:Promise<any>[] = [];
 
@@ -4207,30 +4732,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 					done();
 				}, done.fail );
 			} );
-		} );
-
-		describe( "createAccessPoints", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
 					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoints( "http://not-example.com", [ accessPoint ] );
+					const promise:Promise<any> = documents.createAccessPoint( "http://not-example.com", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -4241,11 +4761,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
 					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
+					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createAccessPoint( "http://example.com/", { hasMemberRelation: "memberRelation" } ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -4261,7 +4802,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
 					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoints( "relative-uri/", [ accessPoint ] );
+					const promise:Promise<any> = documents.createAccessPoint( "relative-uri/", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -4272,11 +4813,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
 					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
+					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createAccessPoint( "http://example.com/", { hasMemberRelation: "memberRelation" } ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -4317,7 +4879,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
-			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
@@ -4480,7 +5042,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
-			), ( done:{ ():void, fail:( error?:any ) => void } ):void => {
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
@@ -4583,33 +5145,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				promise.then( done, done.fail );
 			} );
-		} );
-
-		describe( "upload", ():void => {
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
-						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
-						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
-					;
-					const promise:Promise<any> = documents.upload( "http://not-example.com", <any>data );
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "http://not-example.com", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -4619,15 +5173,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
-						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
-						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
-					;
-					const promise:Promise<any> = documents.upload( "prefix:the-uri", <any>data );
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createAccessPoints( "http://example.com/", [ { hasMemberRelation: "memberRelation" } ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -4642,11 +5214,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
-						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
-						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
-					;
-					const promise:Promise<any> = documents.upload( "relative-uri/", <any>data );
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "relative-uri/", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -4656,15 +5225,33 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
-						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
-						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
-					;
-					const promise:Promise<any> = documents.upload( "prefix:the-uri", <any>data );
+					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.createAccessPoints( "http://example.com/", [ { hasMemberRelation: "memberRelation" } ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -4685,7 +5272,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
@@ -4745,7 +5332,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
@@ -4804,7 +5391,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
@@ -4864,7 +5451,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
 				class MockedContext extends AbstractContext {
@@ -4916,29 +5503,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} else { done(); }
 			} );
 
-		} );
-
-		describe( "listMembers", ():void => {
-
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.listMembers( "http://not-example.com" );
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "http://not-example.com", <any>data );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -4948,11 +5533,40 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "prefix:the-uri", <any>data );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const data:Blob | Buffer = typeof Blob !== "undefined"
+						? new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+						: new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+
+					documents.upload( "http://example.com/", data ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -4967,7 +5581,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.listMembers( "relative-uri/" );
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "relative-uri/", <any>data );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -4977,11 +5595,40 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
+					const data:Buffer | Blob = ( typeof Buffer !== "undefined" )
+						? new Buffer( JSON.stringify( { "some content": "for the buffer." } ) )
+						: new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+					;
+					const promise:Promise<any> = documents.upload( "prefix:the-uri", <any>data );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const data:Blob | Buffer = typeof Blob !== "undefined"
+						? new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } )
+						: new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
+
+					documents.upload( "http://example.com/", data ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -5020,7 +5667,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -5120,7 +5767,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -5299,29 +5946,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( includes ).toContain( NS.C.Class.NonReadableMembershipResourceTriples );
 			}
 
-		} );
-
-		describe( "getMembers", ():void => {
-
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
 
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getMembers( "http://not-example.com" );
+					const promise:Promise<any> = documents.listMembers( "http://not-example.com" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -5331,7 +5971,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -5340,17 +5980,37 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.listMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
 
 				beforeEach( () => {
 					documents = new Documents.Class();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getMembers( "relative-uri/" );
+					const promise:Promise<any> = documents.listMembers( "relative-uri/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -5360,11 +6020,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.listMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -5702,7 +6383,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -5816,7 +6497,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -5902,7 +6583,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -5965,7 +6646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ) => {
+			), ( done:DoneFn ) => {
 				let promises:Promise<any> [] = [];
 
 				(() => {
@@ -6073,24 +6754,185 @@ describe( module( "Carbon/Documents" ), ():void => {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
-		} );
-
-		describe( "addMember", ():void => {
-
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
 
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.getMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.getMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+			} );
+
+		} );
+
+		describe( method(
+			INSTANCE,
+			"addMember"
+		), ():void => {
+
+			class MockedContext extends AbstractContext {
+				protected _baseURI:string;
+
+				constructor() {
+					super();
+					this._baseURI = "http://example.com/";
+					this.setSetting( "system.container", ".system/" );
+				}
+			}
+
+			let context:AbstractContext;
+			let documents:Documents.Class;
+
+			beforeEach( ():void => {
+				context = new MockedContext();
+				documents = context.documents;
+			} );
+
+			it( hasSignature(
+				"Add a member relation to the resource Pointer in the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
+					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( documents.addMember ).toBeDefined();
+				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
+
+				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
+
+				let pointer:Pointer.Class = documents.getPointer( "new-member/" );
+				// noinspection JSIgnoredPromiseFromCall
+				documents.addMember( "resource/", pointer );
+				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
+			} );
+
+			it( hasSignature(
+				"Add a member relation to the resource URI in the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
+					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( documents.addMember ).toBeDefined();
+				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
+
+				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
+
+				// noinspection JSIgnoredPromiseFromCall
+				documents.addMember( "resource/", "new-member/" );
+				expect( spy ).toHaveBeenCalledWith( "resource/", [ "new-member/" ], {} );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+
+				beforeEach( () => {
+					context = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
@@ -6114,10 +6956,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.addMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
 
 				beforeEach( () => {
 					documents = new Documents.Class();
@@ -6163,86 +7025,110 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.addMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
 		describe( method(
 			INSTANCE,
-			"addMember"
+			"addMembers"
 		), ():void => {
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext;
-			let documents:Documents.Class;
-
-			beforeEach( ():void => {
-				context = new MockedContext();
-				documents = context.documents;
-			} );
-
 			it( hasSignature(
-				"Add a member relation to the resource Pointer in the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+				"Add a member relation to every resource URI or Pointer provided in the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be added." },
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
-			), ():void => {
-				expect( documents.addMember ).toBeDefined();
-				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
-
-				let pointer:Pointer.Class = documents.getPointer( "new-member/" );
-				documents.addMember( "resource/", pointer );
-				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
-			} );
-
-			it( hasSignature(
-				"Add a member relation to the resource URI in the document container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
-					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
-			), ():void => {
-				expect( documents.addMember ).toBeDefined();
-				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
-
-				documents.addMember( "resource/", "new-member/" );
-				expect( spy ).toHaveBeenCalledWith( "resource/", [ "new-member/" ], {} );
-			} );
-
-		} );
-
-		describe( "addMembers", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.addMembers ).toBeDefined();
+				expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+					status: 200,
+				} );
+
+				let spies:any = {
+					success: ( response:any ):void => {
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					fail: ( error:Error ):void => {
+						expect( error ).toBeDefined();
+						expect( error instanceof Errors.IllegalArgumentError );
+					},
+				};
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+				let members:(Pointer.Class | string)[];
+
+				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/" ];
+				promise = documents.addMembers( "resource/", members );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
+
+				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
+				promise = documents.addMembers( "resource/", members );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spies.fail ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					done();
+				}, done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -6262,6 +7148,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.addMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -6315,20 +7222,36 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.addMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"addMembers",
-			"Add a member relation to every resource URI or Pointer provided in the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be added." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
+			"removeMember"
+		), ():void => {
+
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
 
@@ -6339,66 +7262,62 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 			}
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let context:AbstractContext;
+			let documents:Documents.Class;
 
-			expect( documents.addMembers ).toBeDefined();
-			expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
-				status: 200,
+			beforeEach( ():void => {
+				context = new MockedContext();
+				documents = context.documents;
 			} );
 
-			let spies:any = {
-				success: ( response:any ):void => {
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				fail: ( error:Error ):void => {
-					expect( error ).toBeDefined();
-					expect( error instanceof Errors.IllegalArgumentError );
-				},
-			};
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+			it( hasSignature(
+				"Remove the member relation between the Pointer and the resource container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
+					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( documents.removeMember ).toBeDefined();
+				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
 
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-			let members:(Pointer.Class | string)[];
+				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
 
-			members = [ documents.getPointer( "new-member-01/" ), "new-member-02/" ];
-			promise = documents.addMembers( "resource/", members );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
+				let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
+				// noinspection JSIgnoredPromiseFromCall
+				documents.removeMember( "resource/", pointer );
+				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
+			} );
 
-			members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
-			promise = documents.addMembers( "resource/", members );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.catch( spies.fail ) );
+			it( hasSignature(
+				"Remove the member relation between the resource URI and the resource container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
+					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {
+				expect( documents.removeMember ).toBeDefined();
+				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
 
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
-				expect( spyFail ).toHaveBeenCalledTimes( 1 );
-				done();
-			}, done.fail );
-		} );
+				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
 
-		describe( "removeMember", ():void => {
+				// noinspection JSIgnoredPromiseFromCall
+				documents.removeMember( "resource/", "remove-member/" );
+				expect( spy ).toHaveBeenCalledWith( "resource/", [ "remove-member/" ], {} );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
 
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					context = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
@@ -6422,10 +7341,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.removeMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
 
 				beforeEach( () => {
 					documents = new Documents.Class();
@@ -6471,86 +7410,110 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.removeMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
 		describe( method(
 			INSTANCE,
-			"removeMember"
+			"removeMembers"
 		), ():void => {
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext;
-			let documents:Documents.Class;
-
-			beforeEach( ():void => {
-				context = new MockedContext();
-				documents = context.documents;
-			} );
-
 			it( hasSignature(
-				"Remove the member relation between the Pointer and the resource container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+				"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
+					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
-			), ():void => {
-				expect( documents.removeMember ).toBeDefined();
-				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
-
-				let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
-				documents.removeMember( "resource/", pointer );
-				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
-			} );
-
-			it( hasSignature(
-				"Remove the member relation between the resource URI and the resource container specified.", [
-					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
-					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
-			), ():void => {
-				expect( documents.removeMember ).toBeDefined();
-				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
-
-				documents.removeMember( "resource/", "remove-member/" );
-				expect( spy ).toHaveBeenCalledWith( "resource/", [ "remove-member/" ], {} );
-			} );
-
-		} );
-
-		describe( "removeMembers", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.removeMembers ).toBeDefined();
+				expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+					status: 200,
+				} );
+
+				let spies:any = {
+					success: ( response:any ):void => {
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					fail: ( error:Error ):void => {
+						expect( error ).toBeDefined();
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					},
+				};
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+				let members:(Pointer.Class | string)[];
+
+				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
+				promise = documents.removeMembers( "resource/", members );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
+
+				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
+				promise = documents.removeMembers( "resource/", members );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.catch( spies.fail ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					done();
+				}, done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -6570,6 +7533,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.removeMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -6623,90 +7607,102 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.removeMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"removeMembers",
-			"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+			"removeAllMembers"
+		), ():void => {
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.removeMembers ).toBeDefined();
-			expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
-				status: 200,
-			} );
-
-			let spies:any = {
-				success: ( response:any ):void => {
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				fail: ( error:Error ):void => {
-					expect( error ).toBeDefined();
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				},
-			};
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-			let members:(Pointer.Class | string)[];
-
-			members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
-			promise = documents.removeMembers( "resource/", members );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
-
-			members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
-			promise = documents.removeMembers( "resource/", members );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.catch( spies.fail ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
-				expect( spyFail ).toHaveBeenCalledTimes( 1 );
-				done();
-			}, done.fail );
-		} );
-
-		describe( "removeAllMembers", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
+			it( hasSignature(
+				"Remove all the member relations from the document container specified.", [
+					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.removeAllMembers ).toBeDefined();
+				expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+					status: 200,
+				} );
+
+				let spies:any = {
+					success: ( response:any ):void => {
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+					fail: ( error:Error ):void => {
+						expect( error ).toBeDefined();
+						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+					},
+				};
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
+
+				promise = documents.removeAllMembers( "resource/" );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.success ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).not.toHaveBeenCalled();
+					done();
+				} ).catch( done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -6726,6 +7722,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.removeAllMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -6759,83 +7776,89 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.removeAllMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"removeAllMembers",
-			"Remove all the member relations from the document container specified.", [
-				{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+			"save"
+		), ():void => {
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.removeAllMembers ).toBeDefined();
-			expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
-				status: 200,
-			} );
-
-			let spies:any = {
-				success: ( response:any ):void => {
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-				fail: ( error:Error ):void => {
-					expect( error ).toBeDefined();
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				},
-			};
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-
-			promise = documents.removeAllMembers( "resource/" );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
-				expect( spyFail ).not.toHaveBeenCalled();
-				done();
-			} ).catch( done.fail );
-		} );
-
-		describe( "save", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
+			it( hasSignature(
+				[ "T" ],
+				"Update the data of the document provided in the server.", [
+					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document with the data to update in the server." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "vocabulary", "http://example.com/ns#" );
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.save ).toBeDefined();
+				expect( Utils.isFunction( documents.save ) ).toBe( true );
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"ETag": `"0123456789"`,
+					},
+				} );
+				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+
+				documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+					expect( _document ).toBe( persistedDocument );
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+					done();
+				} ).catch( done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "vocabulary", "http://example.com/ns#" );
+						}
+					};
 					documents = context.documents;
 				} );
 
@@ -6961,6 +7984,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					documents.save( document ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -6990,68 +8035,205 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					documents.save( document ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"save",
-			[ "T" ],
-			"Update the data of the document provided in the server.", [
-				{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document with the data to update in the server." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request." },
-			],
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+			"refresh"
+		), ():void => {
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.save ).toBeDefined();
-			expect( Utils.isFunction( documents.save ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
-				status: 200,
-				responseHeaders: {
-					"ETag": `"0123456789"`,
-				},
-			} );
-			let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
-
-			documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
-				expect( _document ).toBe( persistedDocument );
-				expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
-
-				done();
-			} ).catch( done.fail );
-		} );
-
-		describe( "refresh", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
-
+			it( hasSignature(
+				[ "T" ],
+				"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
+					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document to update." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.refresh ).toBeDefined();
+				expect( Utils.isFunction( documents.refresh ) ).toBe( true );
+
+				let objectSchema:ObjectSchema.Class = {
+					"ex": "http://example.com/ns#",
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"string": {
+						"@id": "ex:string",
+						"@type": "xsd:string",
+					},
+					"date": {
+						"@id": "ex:date",
+						"@type": "xsd:dateTime",
+					},
+					"numberList": {
+						"@id": "ex:numberList",
+						"@type": "xsd:integer",
+						"@container": "@list",
+					},
+					"languageMap": {
+						"@id": "ex:languageMap",
+						"@container": "@language",
+					},
+					"pointer": {
+						"@id": "ex:pointer",
+						"@type": "@id",
+					},
+					"pointerList": {
+						"@id": "ex:pointerList",
+						"@type": "@id",
+						"@container": "@list",
+					},
+					"pointerSet": {
+						"@id": "ex:pointerSet",
+						"@type": "@id",
+						"@container": "@set",
+					},
+				};
+
+				context.extendObjectSchema( objectSchema );
+
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+					status: 304,
+				} );
+
+				let document:PersistedDocument.Class;
+				let fragment:PersistedNamedFragment.Class;
+
+				// Mock an existent document
+				document = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
+				document[ "string" ] = "Document Resource";
+
+				document[ "pointer" ] = fragment = document.createNamedFragment( {
+					string: "NamedFragment 1",
+				}, "#1" );
+
+				document._resolved = true;
+				document._etag = `"0123456789"`;
+				document.getFragments().forEach( documentFragment => documentFragment._syncSnapshot() );
+				document._syncSavedFragments();
+				document._syncSnapshot();
+
+				// Add properties that supposed not to be in the server document
+				document[ "new-property" ] = "A new property that will be erased at refresh";
+
+				let promises:Promise<any>[] = [];
+
+				let spies:any = {
+					same: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
+						expect( persistedDoc ).toBe( document );
+						expect( response ).toBeNull();
+
+						jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
+							status: 200,
+							responseText: `[ {
+							"@id": "http://example.com/resource/",
+							"@graph": [
+								{
+									"@id": "http://example.com/resource/",
+									"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
+									"http://example.com/ns#pointerSet": [
+										{"@id": "http://example.com/resource/#1"},
+										{"@id": "http://example.com/external-resource/"}
+									]
+								},
+								{
+									"@id": "http://example.com/resource/#1",
+									"http://example.com/ns#string": [ {"@value": "Changed NamedFragment 1"} ]
+								},
+								{
+									"@id": "http://example.com/resource/#3",
+									"http://example.com/ns#string": [ {"@value": "NamedFragment 3"} ]
+								}
+							]
+						} ]`,
+							responseHeaders: {
+								"ETag": `"dif0123456789"`,
+							},
+						} );
+
+						const refreshPromise:Promise<any> = documents.refresh( document );
+						expect( refreshPromise instanceof Promise ).toBe( true );
+
+						return refreshPromise.then( spies.success );
+					},
+					success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
+						expect( persistedDoc ).toBe( document );
+						expect( document[ "string" ] ).toBe( "Changed Document Resource" );
+						expect( fragment[ "string" ] ).toBe( "Changed NamedFragment 1" );
+
+						expect( document.hasFragment( "#2" ) ).toBe( false );
+						expect( document.hasFragment( "#3" ) ).toBe( true );
+
+						expect( document[ "new-property" ] ).toBeUndefined();
+						expect( document[ "new-pointer" ] ).toBeUndefined();
+
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
+					},
+				};
+
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spySame:jasmine.Spy = spyOn( spies, "same" ).and.callThrough();
+
+				const promise:Promise<any> = documents.refresh( document );
+				expect( promise instanceof Promise ).toBe( true );
+				promises.push( promise.then( spies.same ) );
+
+				Promise.all( promises ).then( ():void => {
+					expect( spySame ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					done();
+				} ).catch( done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
 				} );
 
@@ -7071,6 +8253,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					documents.refresh( document ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -7104,185 +8308,160 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
-
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"refresh",
-			[ "T" ],
-			"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
-				{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document to update." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.refresh ).toBeDefined();
-			expect( Utils.isFunction( documents.refresh ) ).toBe( true );
-
-			let objectSchema:ObjectSchema.Class = {
-				"ex": "http://example.com/ns#",
-				"xsd": "http://www.w3.org/2001/XMLSchema#",
-				"string": {
-					"@id": "ex:string",
-					"@type": "xsd:string",
-				},
-				"date": {
-					"@id": "ex:date",
-					"@type": "xsd:dateTime",
-				},
-				"numberList": {
-					"@id": "ex:numberList",
-					"@type": "xsd:integer",
-					"@container": "@list",
-				},
-				"languageMap": {
-					"@id": "ex:languageMap",
-					"@container": "@language",
-				},
-				"pointer": {
-					"@id": "ex:pointer",
-					"@type": "@id",
-				},
-				"pointerList": {
-					"@id": "ex:pointerList",
-					"@type": "@id",
-					"@container": "@list",
-				},
-				"pointerSet": {
-					"@id": "ex:pointerSet",
-					"@type": "@id",
-					"@container": "@set",
-				},
-			};
-
-			context.extendObjectSchema( objectSchema );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
-				status: 304,
-			} );
-
-			let document:PersistedDocument.Class;
-			let fragment:PersistedNamedFragment.Class;
-
-			// Mock an existent document
-			document = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
-			document[ "string" ] = "Document Resource";
-
-			document[ "pointer" ] = fragment = document.createNamedFragment( {
-				string: "NamedFragment 1",
-			}, "#1" );
-
-			document._resolved = true;
-			document._etag = `"0123456789"`;
-			document.getFragments().forEach( documentFragment => documentFragment._syncSnapshot() );
-			document._syncSavedFragments();
-			document._syncSnapshot();
-
-			// Add properties that supposed not to be in the server document
-			document[ "new-property" ] = "A new property that will be erased at refresh";
-
-			let promises:Promise<any>[] = [];
-
-			let spies:any = {
-				same: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
-					expect( persistedDoc ).toBe( document );
-					expect( response ).toBeNull();
-
-					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
-						status: 200,
-						responseText: `[ {
-							"@id": "http://example.com/resource/",
-							"@graph": [
-								{
-									"@id": "http://example.com/resource/",
-									"http://example.com/ns#string": [ {"@value": "Changed Document Resource"} ],
-									"http://example.com/ns#pointerSet": [
-										{"@id": "http://example.com/resource/#1"},
-										{"@id": "http://example.com/external-resource/"}
-									]
-								},
-								{
-									"@id": "http://example.com/resource/#1",
-									"http://example.com/ns#string": [ {"@value": "Changed NamedFragment 1"} ]
-								},
-								{
-									"@id": "http://example.com/resource/#3",
-									"http://example.com/ns#string": [ {"@value": "NamedFragment 3"} ]
-								}
-							]
-						} ]`,
-						responseHeaders: {
-							"ETag": `"dif0123456789"`,
-						},
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
 					} );
 
-					const refreshPromise:Promise<any> = documents.refresh( document );
-					expect( refreshPromise instanceof Promise ).toBe( true );
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					return refreshPromise.then( spies.success );
-				},
-				success: ( [ persistedDoc, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):any => {
-					expect( persistedDoc ).toBe( document );
-					expect( document[ "string" ] ).toBe( "Changed Document Resource" );
-					expect( fragment[ "string" ] ).toBe( "Changed NamedFragment 1" );
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					documents.refresh( document ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
 
-					expect( document.hasFragment( "#2" ) ).toBe( false );
-					expect( document.hasFragment( "#3" ) ).toBe( true );
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
 
-					expect( document[ "new-property" ] ).toBeUndefined();
-					expect( document[ "new-pointer" ] ).toBeUndefined();
+						done();
+					} );
+				} );
 
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-			};
+			} );
 
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let spySame:jasmine.Spy = spyOn( spies, "same" ).and.callThrough();
-
-			const promise:Promise<any> = documents.refresh( document );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.same ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( spySame ).toHaveBeenCalledTimes( 1 );
-				expect( spySuccess ).toHaveBeenCalledTimes( 1 );
-				done();
-			} ).catch( done.fail );
 		} );
 
-		describe( "saveAndRefresh", ():void => {
+		describe( method(
+			INSTANCE,
+			"saveAndRefresh"
+		), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Save and refresh the PersistedDocument specified.", [
+					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persistedDocument to save and refresh." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
+			), ( done:DoneFn ):void => {
+				let finalPromises:Promise<any>[] = [];
+
+				// Two request behaviour
+				finalPromises.push( (():Promise<any> => {
+					class MockedContext extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					let documents:Documents.Class = context.documents;
+
+					expect( documents.saveAndRefresh ).toBeDefined();
+					expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
+
+					let mockSaveResponse:HTTP.Response.Class = new HTTP.Response.Class( <any> {}, "Mock Save Response", <any> {} );
+					let mockRefreshResponse:HTTP.Response.Class = new HTTP.Response.Class( <any> {}, "Mock Save Response", <any> {} );
+					let document:PersistedDocument.Class = PersistedDocument.Factory.create( "", documents );
+					let options:HTTP.Request.Options = { timeout: 50500 };
+
+					let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
+					let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
+
+					return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
+						expect( spySave ).toHaveBeenCalledWith( document, options );
+						expect( spyRefresh ).toHaveBeenCalledWith( document );
+
+						expect( document ).toBe( _document );
+						expect( saveResponse ).toBe( mockSaveResponse );
+						expect( refreshResponse ).toBe( mockRefreshResponse );
+					} );
+				})() );
+
+				// One request behaviour
+				finalPromises.push( (():Promise<any> => {
+					class MockedContext extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
+						}
+					}
+
+					let context:MockedContext = new MockedContext();
+					context.setSetting( "vocabulary", "http://example.com/ns#" );
+					let documents:Documents.Class = context.documents;
+
+					expect( documents.saveAndRefresh ).toBeDefined();
+					expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
+
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `{
+						"@id": "http://example.com/resource/",
+						"@graph": [
+							{
+								"@id": "http://example.com/resource/",
+								"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ]
+							}
+						]
+					}`,
+					} );
+					let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
+					let options:HTTP.Request.Options = { timeout: 50500 };
+
+					let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.callThrough();
+					let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.callThrough();
+
+					return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
+						expect( spySave ).toHaveBeenCalledTimes( 1 );
+						expect( spySave ).toHaveBeenCalledWith( document, options );
+						expect( spyRefresh ).not.toHaveBeenCalled();
+
+						expect( responses ).toEqual( jasmine.any( Array ) );
+						expect( responses.length ).toBe( 1 );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
+
+						expect( document ).toBe( _document );
+						expect( "property" in document ).toBe( true );
+						expect( document[ "property" ] ).toBe( "my UPDATED property" );
+
+					} );
+				})() );
+
+				expect( finalPromises.length ).toBe( 2 );
+				expect( finalPromises.every( promise => promise instanceof Promise ) ).toBe( true );
+				Promise.all( finalPromises ).then( done ).catch( done.fail );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "vocabulary", "http://example.com/ns#" );
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "vocabulary", "http://example.com/ns#" );
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -7435,6 +8614,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 					}
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					documents.saveAndRefresh( document ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -7464,24 +8665,44 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					documents.saveAndRefresh( document ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"saveAndRefresh",
-			[ "T" ],
-			"Save and refresh the PersistedDocument specified.", [
-				{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persistedDocument to save and refresh." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			let finalPromises:Promise<any>[] = [];
+			"delete"
+		), ():void => {
 
-			// Two request behaviour
-			finalPromises.push( (():Promise<any> => {
+			it( hasSignature(
+				"Delete the resource from the CarbonLDP server referred by the URI provided.", [
+					{ name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
 
@@ -7495,107 +8716,62 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let context:MockedContext = new MockedContext();
 				let documents:Documents.Class = context.documents;
 
-				expect( documents.saveAndRefresh ).toBeDefined();
-				expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
+				expect( documents.delete ).toBeDefined();
+				expect( Utils.isFunction( documents.delete ) ).toBe( true );
 
-				let mockSaveResponse:HTTP.Response.Class = new HTTP.Response.Class( <any> {}, "Mock Save Response", <any> {} );
-				let mockRefreshResponse:HTTP.Response.Class = new HTTP.Response.Class( <any> {}, "Mock Save Response", <any> {} );
-				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "", documents );
-				let options:HTTP.Request.Options = { timeout: 50500 };
-
-				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
-				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
-
-				return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
-					expect( spySave ).toHaveBeenCalledWith( document, options );
-					expect( spyRefresh ).toHaveBeenCalledWith( document );
-
-					expect( document ).toBe( _document );
-					expect( saveResponse ).toBe( mockSaveResponse );
-					expect( refreshResponse ).toBe( mockRefreshResponse );
-				} );
-			})() );
-
-			// One request behaviour
-			finalPromises.push( (():Promise<any> => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
-				context.setSetting( "vocabulary", "http://example.com/ns#" );
-				let documents:Documents.Class = context.documents;
-
-				expect( documents.saveAndRefresh ).toBeDefined();
-				expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
-
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
 					status: 200,
-					responseHeaders: {
-						"Preference-Applied": "return=representation",
-						"ETag": '"1234567890"',
+				} );
+				jasmine.Ajax.stubRequest( "http://example.com/a-document/", null, "DELETE" ).andReturn( {
+					status: 200,
+				} );
+
+				let spies:any = {
+					success: ( response:any ):void => {
+						expect( response ).toBeDefined();
+						expect( response instanceof HTTP.Response.Class ).toBe( true );
 					},
-					responseText: `{
-						"@id": "http://example.com/resource/",
-						"@graph": [
-							{
-								"@id": "http://example.com/resource/",
-								"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ]
-							}
-						]
-					}`,
-				} );
-				let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
-				let options:HTTP.Request.Options = { timeout: 50500 };
+				};
+				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 
-				let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.callThrough();
-				let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.callThrough();
+				let promises:Promise<any>[] = [];
+				let promise:Promise<any>;
 
-				return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
-					expect( spySave ).toHaveBeenCalledTimes( 1 );
-					expect( spySave ).toHaveBeenCalledWith( document, options );
-					expect( spyRefresh ).not.toHaveBeenCalled();
+				// Proper execution
+				promise = documents.delete( "http://example.com/resource/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promises.push( promise.then( spies.success ) );
 
-					expect( responses ).toEqual( jasmine.any( Array ) );
-					expect( responses.length ).toBe( 1 );
+				// Relative URI
+				promise = documents.delete( "resource/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promises.push( promise.then( spies.success ) );
 
-					let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-					expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
+				// Remove pointer from cache
+				documents.getPointer( "http://example.com/a-document/" );
+				promise = documents.delete( "http://example.com/a-document/" );
+				expect( promise ).toEqual( jasmine.any( Promise ) );
+				promises.push( promise.then( spies.success ) );
 
-					expect( document ).toBe( _document );
-					expect( "property" in document ).toBe( true );
-					expect( document[ "property" ] ).toBe( "my UPDATED property" );
-
-				} );
-			})() );
-
-			expect( finalPromises.length ).toBe( 2 );
-			expect( finalPromises.every( promise => promise instanceof Promise ) ).toBe( true );
-			Promise.all( finalPromises ).then( done ).catch( done.fail );
-		} );
-
-		describe( "delete", ():void => {
+				Promise.all( promises ).then( ():void => {
+					expect( spySuccess ).toHaveBeenCalledTimes( 3 );
+					expect( documents.hasPointer( "http://example.com/a-document/" ) ).toBe( false );
+					done();
+				}, done.fail );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -7615,6 +8791,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.delete( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -7648,94 +8845,85 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.delete( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"delete",
-			"Delete the resource from the CarbonLDP server referred by the URI provided.", [
-				{ name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+			"getDownloadURL"
+		), ():void => {
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.delete ).toBeDefined();
-			expect( Utils.isFunction( documents.delete ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
-				status: 200,
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/a-document/", null, "DELETE" ).andReturn( {
-				status: 200,
-			} );
-
-			let spies:any = {
-				success: ( response:any ):void => {
-					expect( response ).toBeDefined();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
-				},
-			};
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-
-			// Proper execution
-			promise = documents.delete( "http://example.com/resource/" );
-			expect( promise ).toEqual( jasmine.any( Promise ) );
-			promises.push( promise.then( spies.success ) );
-
-			// Relative URI
-			promise = documents.delete( "resource/" );
-			expect( promise ).toEqual( jasmine.any( Promise ) );
-			promises.push( promise.then( spies.success ) );
-
-			// Remove pointer from cache
-			documents.getPointer( "http://example.com/a-document/" );
-			promise = documents.delete( "http://example.com/a-document/" );
-			expect( promise ).toEqual( jasmine.any( Promise ) );
-			promises.push( promise.then( spies.success ) );
-
-			Promise.all( promises ).then( ():void => {
-				expect( spySuccess ).toHaveBeenCalledTimes( 3 );
-				expect( documents.hasPointer( "http://example.com/a-document/" ) ).toBe( false );
-				done();
-			}, done.fail );
-		} );
-
-		describe( "getDownloadURL", ():void => {
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+			it( hasSignature(
+				"Add to the URI provided the necessary properties for a single download request.", [
+					{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				],
+				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ( done:DoneFn ):void => {
+				class MockedAuth extends Auth.Class {}
 
 				class MockedContext extends AbstractContext {
-					auth:Auth.Class = new Auth.Class( this );
-
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
+						this.setSetting( "system.container", ".system/" );
+						this.auth = new MockedAuth( this );
 					}
 				}
 
+				let context:MockedContext = new MockedContext();
+				let documents:Documents.Class = context.documents;
+
+				expect( documents.getDownloadURL ).toBeDefined();
+				expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
+
+				spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "http://example.com/resource/?ticket=1234567890" ) );
+
+				documents.getDownloadURL( "http://example.com/resource/" ).then( ( downloadURL:string ) => {
+					expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
+					done();
+				} ).catch( done.fail );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+				let documents:Documents.Class;
+
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						auth:Auth.Class = new Auth.Class( this );
+
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+							this.setSetting( "system.container", ".system/" );
+						}
+					}();
 					documents = context.documents;
 				} );
 
@@ -7755,6 +8943,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
 						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( new RegExp( "http://example.com/" ) ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.getDownloadURL( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
 						done();
 					} );
 				} );
@@ -7782,59 +8991,56 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
-		it( hasMethod(
+		describe( method(
 			INSTANCE,
-			"getDownloadURL",
-			"Add to the URI provided the necessary properties for a single download request.", [
-				{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			class MockedAuth extends Auth.Class {}
+			"executeRawASKQuery"
+		), ():void => {
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+			it( hasSignature(
+				"Executes an ASK query on a document and returns a raw application/sparql-results+json object.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-					this.auth = new MockedAuth( this );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			expect( documents.getDownloadURL ).toBeDefined();
-			expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
-
-			spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "http://example.com/resource/?ticket=1234567890" ) );
-
-			documents.getDownloadURL( "http://example.com/resource/" ).then( ( downloadURL:string ) => {
-				expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
-				done();
-			} ).catch( done.fail );
-		} );
-
-		describe( "executeRawASKQuery", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeRawASKQuery ).toBeDefined();
+				expect( documents.executeRawASKQuery ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -7857,6 +9063,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( response => Promise.reject( error ) );
+
+					documents.executeRawASKQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -7864,6 +9091,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7886,72 +9122,81 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawASKQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod( INSTANCE, "executeRawASKQuery",
-			"Executes an ASK query on a document and returns a raw application/sparql-results+json object.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+		describe( method(
+			INSTANCE,
+			"executeASKQuery"
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
+			it( hasSignature(
+				"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			// Property Integrity
-			(() => {
-				expect( "executeRawASKQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeRawASKQuery ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" );
-
-			// Proper execution
-			(function ProperExecution():void {
-				documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-				documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-		} );
-
-		describe( "executeASKQuery", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeASKQuery ).toBeDefined();
+				expect( documents.executeASKQuery ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					let context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -7974,6 +9219,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeASKQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -7981,6 +9247,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8003,66 +9278,81 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeASKQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod( INSTANCE, "executeASKQuery",
-			"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+		describe( method(
+			INSTANCE,
+			"executeRawSELECTQuery"
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string = "http://example.com/";
-			}
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			it( hasSignature(
+				"Executes a SELECT query on a document and returns a raw application/sparql-results+json object.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
-			// Property Integrity
-			(() => {
-				expect( "executeASKQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeASKQuery ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" );
-
-			// Proper execution
-			(function ProperExecution():void {
-				documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-				documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-		} );
-
-		describe( "executeRawSELECTQuery", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeRawSELECTQuery ).toBeDefined();
+				expect( documents.executeRawSELECTQuery ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					};
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -8085,6 +9375,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawSELECTQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -8092,6 +9403,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8114,74 +9434,82 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawSELECTQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod( INSTANCE, "executeRawSELECTQuery",
-			"Executes a SELECT query on a document and returns a raw application/sparql-results+json object.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+		describe( method(
+			INSTANCE,
+			"executeSELECTQuery"
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
+			it( hasSignature(
+				[ "T" ],
+				"Executes a SELECT query on a document and returns a parsed response object.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			// Property Integrity
-			(() => {
-				expect( "executeRawSELECTQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeRawSELECTQuery ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" );
-
-			// Proper execution
-			(function ProperExecution():void {
-
-				documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-
-				documents.executeRawSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-		} );
-
-		describe( "executeSELECTQuery", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeSELECTQuery ).toBeDefined();
+				expect( documents.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -8204,6 +9532,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeSELECTQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -8211,6 +9560,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8233,69 +9591,81 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeSELECTQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod( INSTANCE, "executeSELECTQuery",
-			[ "T" ],
-			"Executes a SELECT query on a document and returns a parsed response object.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+		describe( method(
+			INSTANCE,
+			"executeRawCONSTRUCTQuery"
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string = "http://example.com/";
-			}
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			it( hasSignature(
+				"Executes a CONSTRUCT query on a document and returns a string with the resulting model.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
-			// Property Integrity
-			(() => {
-				expect( "executeSELECTQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeSELECTQuery ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" );
-
-			// Proper execution
-			(function ProperExecution():void {
-
-				documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-
-				documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-		} );
-
-		describe( "executeRawCONSTRUCTQuery", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeRawCONSTRUCTQuery ).toBeDefined();
+				expect( documents.executeRawCONSTRUCTQuery ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -8318,6 +9688,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawCONSTRUCTQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -8325,6 +9716,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8347,74 +9747,81 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawCONSTRUCTQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod( INSTANCE, "executeRawCONSTRUCTQuery",
-			"Executes a CONSTRUCT query on a document and returns a string with the resulting model.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+		describe( method(
+			INSTANCE,
+			"executeRawDESCRIBEQuery"
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
+			it( hasSignature(
+				"Executes a DESCRIBE query and returns a string with the resulting model.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			// Property Integrity
-			(() => {
-				expect( "executeRawCONSTRUCTQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeRawCONSTRUCTQuery ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" );
-
-			// Proper execution
-			(function ProperExecution():void {
-
-				documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-
-				documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-		} );
-
-		describe( "executeRawDESCRIBEQuery", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeRawDESCRIBEQuery ).toBeDefined();
+				expect( documents.executeRawDESCRIBEQuery ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -8437,6 +9844,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawDESCRIBEQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -8444,6 +9872,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8466,74 +9903,81 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeRawDESCRIBEQuery( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 		} );
 
-		it( hasMethod( INSTANCE, "executeRawDESCRIBEQuery",
-			"Executes a DESCRIBE query and returns a string with the resulting model.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+		describe( method(
+			INSTANCE,
+			"executeUPDATE"
 		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
+			it( hasSignature(
+				"Executes a DESCRIBE query and returns a string with the resulting model.", [
+					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<Carbon.HTTP.Response.Class>" }
+			), ():void => {} );
 
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			// Property Integrity
-			(() => {
-				expect( "executeRawDESCRIBEQuery" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeRawDESCRIBEQuery ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" );
-
-			// Proper execution
-			(function ProperExecution():void {
-
-				documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-
-				documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-		} );
-
-		describe( "executeUPDATE", ():void => {
+			it( "should exists", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				expect( documents.executeUPDATE ).toBeDefined();
+				expect( documents.executeUPDATE ).toEqual( jasmine.any( Function ) );
+			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-					}
-				}
-
 				beforeEach( () => {
-					let context:MockedContext = new MockedContext();
+					const context:AbstractContext = new class extends AbstractContext {
+						protected _baseURI:string;
+
+						constructor() {
+							super();
+							this._baseURI = "http://example.com/";
+						}
+					}();
 					documents = context.documents;
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
+				} );
+
+				it( "should resolve relative URIs", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -8556,6 +10000,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeUPDATE( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -8563,6 +10028,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				beforeEach( () => {
 					documents = new Documents.Class();
+				} );
+
+				it( "should use SPARQL service", ():void => {
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+
+					// noinspection JSIgnoredPromiseFromCall
+					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+
+					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8585,55 +10059,29 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.executeUPDATE( "http://example.com/", "" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
 			} );
 
-		} );
-
-		it( hasMethod( INSTANCE, "executeUPDATE",
-			"Executes a DESCRIBE query and returns a string with the resulting model.", [
-				{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
-				{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-			], { type: "Promise<Carbon.HTTP.Response.Class>" }
-		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
-
-			// Property Integrity
-			(() => {
-				expect( "executeUPDATE" in documents ).toEqual( true );
-				expect( Utils.isFunction( documents.executeUPDATE ) ).toEqual( true );
-			})();
-
-			let spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" );
-
-			// Proper execution
-			(function ProperExecution():void {
-
-				documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
-
-			// Relative URI
-			(function RelativeURI():void {
-
-				documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
-
-				expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
-				spyService.calls.reset();
-			})();
 		} );
 
 		it( hasMethod(
@@ -9256,5 +10704,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 		expect( DefaultExport ).toBe( Documents.Class );
 	} );
 
-} );
+} )
+;
 
