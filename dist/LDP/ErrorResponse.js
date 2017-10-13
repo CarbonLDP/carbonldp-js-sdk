@@ -21,12 +21,10 @@ var Util = (function () {
     function Util() {
     }
     Util.getMessage = function (errorResponse) {
-        var messages = [];
-        for (var _i = 0, _a = errorResponse.errors; _i < _a.length; _i++) {
-            var error = _a[_i];
-            messages.push(error.message);
-        }
-        return messages.join(", ");
+        return errorResponse
+            .errors
+            .map(function (error) { return error.errorMessage; })
+            .join(", ");
     };
     return Util;
 }());

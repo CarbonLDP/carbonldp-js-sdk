@@ -15,6 +15,7 @@ import * as LDP from "./NS/LDP";
 import * as RDF from "./NS/RDF";
 import * as XSD from "./NS/XSD";
 import * as VCARD from "./NS/VCARD";
+import * as SHACL from "./NS/SHACL";
 
 import * as NS from "./NS";
 
@@ -63,6 +64,15 @@ describe( module( "Carbon/NS" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"SHACL",
+		"Carbon/NS/SHACL"
+	), ():void => {
+		expect( NS.SHACL ).toBeDefined();
+		expect( NS.SHACL ).toBe( SHACL );
+	} );
+
+	it( reexports(
+		STATIC,
 		"RDF",
 		"Carbon/NS/RDF"
 	), ():void => {
@@ -72,20 +82,20 @@ describe( module( "Carbon/NS" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"XSD",
-		"Carbon/NS/XSD"
-	), ():void => {
-		expect( NS.XSD ).toBeDefined();
-		expect( NS.XSD ).toBe( XSD );
-	} );
-
-	it( reexports(
-		STATIC,
 		"VCARD",
 		"Carbon/NS/VCARD"
 	), ():void => {
 		expect( NS.VCARD ).toBeDefined();
 		expect( NS.VCARD ).toBe( VCARD );
+	} );
+
+	it( reexports(
+		STATIC,
+		"XSD",
+		"Carbon/NS/XSD"
+	), ():void => {
+		expect( NS.XSD ).toBeDefined();
+		expect( NS.XSD ).toBe( XSD );
 	} );
 
 } );

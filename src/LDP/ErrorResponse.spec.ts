@@ -124,8 +124,8 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				statusCode: 1234567890,
 				errors: [
 					{
-						carbonCode: "code-01",
-						message: "Message 01",
+						errorCode: "code-01",
+						errorMessage: "Message 01",
 					},
 				],
 			};
@@ -137,12 +137,12 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				statusCode: 1234567890,
 				errors: [
 					{
-						carbonCode: "code-01",
-						message: "Message 01",
+						errorCode: "code-01",
+						errorMessage: "Message 01",
 					},
 					{
-						carbonCode: "code-02",
-						message: "Message 02",
+						errorCode: "code-02",
+						errorMessage: "Message 02",
 					},
 				],
 			};

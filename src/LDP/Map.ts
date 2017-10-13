@@ -13,13 +13,13 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export interface Class extends Resource {
-	entries:Entry[];
+export interface Class<K, V> extends Resource {
+	entries:Entry<K, V>[];
 }
 
 export class Factory {
 
-	static is( object:object ):object is Class {
+	static is( object:object ):object is Class<any, any> {
 		return ResourceFactory.is( object )
 			&& object.hasType( RDF_CLASS )
 			&& object.hasOwnProperty( "entries" );

@@ -1,0 +1,1 @@
+{"version":3,"sources":["SHACL/index.ts"],"names":[],"mappings":";;AAAA,qDAAuD;AAItD,4CAAgB;AAHjB,qDAAuD;AAItD,4CAAgB","file":"index.js","sourcesContent":["import * as ValidationReport from \"./ValidationReport\";\nimport * as ValidationResult from \"./ValidationResult\";\n\nexport {\n\tValidationReport,\n\tValidationResult,\n};\n"]}

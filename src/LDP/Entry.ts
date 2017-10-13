@@ -3,19 +3,17 @@ import * as NS from "./../NS";
 import { Class as ObjectSchema } from "./../ObjectSchema";
 
 export const SCHEMA:ObjectSchema = {
-	"key": {
+	"entryKey": {
 		"@id": NS.C.Predicate.entryKey,
-		"@type": "@id",
 	},
-	"value": {
+	"entryValue": {
 		"@id": NS.C.Predicate.entryValue,
-		"@type": "@id",
 	},
 };
 
-export interface Class extends BlankNode {
-	key:BlankNode;
-	value:BlankNode;
+export interface Class<K, V> extends BlankNode {
+	entryKey:K;
+	entryValue:V;
 }
 
 export default Class;
