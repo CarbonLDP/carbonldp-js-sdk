@@ -78,8 +78,8 @@
 			} ).then( () => {
 				done();
 			} ).catch( ( error ) => {
-				console.error( error );
-				done.fail( error );
+				console.error( { error } );
+				done();
 			} );
 		} );
 	} );

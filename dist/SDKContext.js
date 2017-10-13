@@ -1,15 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Documents = require("./Documents");
 var Auth = require("./Auth");
+var Documents = require("./Documents");
 var Errors = require("./Errors");
 var LDP = require("./LDP");
+var Messaging = require("./Messaging");
 var ObjectSchema = require("./ObjectSchema");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
 var RDFRepresentation = require("./RDFRepresentation");
+var SHACL = require("./SHACL");
 var System = require("./System");
-var Messaging = require("./Messaging");
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -152,6 +153,7 @@ var Class = (function () {
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.Map.RDF_CLASS, LDP.Map.SCHEMA);
+        this.extendObjectSchema(LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
@@ -159,6 +161,8 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
         this.extendObjectSchema(Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA);
         this.extendObjectSchema(Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA);
         this.extendObjectSchema(Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA);

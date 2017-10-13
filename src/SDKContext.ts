@@ -1,14 +1,15 @@
-import * as Documents from "./Documents";
 import * as Auth from "./Auth";
 import * as Context from "./Context";
+import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as SHACL from "./SHACL";
 import * as System from "./System";
-import * as Messaging from "./Messaging";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -176,6 +177,7 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.Map.RDF_CLASS, LDP.Map.SCHEMA );
+		this.extendObjectSchema( LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA );
 
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
@@ -184,6 +186,9 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
+
+		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
+		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
 
 		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
 		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );

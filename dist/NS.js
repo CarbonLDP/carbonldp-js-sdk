@@ -10,9 +10,11 @@ var LDP = require("./NS/LDP");
 exports.LDP = LDP;
 var RDF = require("./NS/RDF");
 exports.RDF = RDF;
-var XSD = require("./NS/XSD");
-exports.XSD = XSD;
+var SHACL = require("./NS/SHACL");
+exports.SHACL = SHACL;
 var VCARD = require("./NS/VCARD");
 exports.VCARD = VCARD;
+var XSD = require("./NS/XSD");
+exports.XSD = XSD;
 
 //# sourceMappingURL=NS.js.map

@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 111);
+/******/ 	return __webpack_require__(__webpack_require__.s = 112);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -462,20 +462,22 @@ exports.UUID = UUID;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var C = __webpack_require__(142);
+var C = __webpack_require__(115);
 exports.C = C;
-var CP = __webpack_require__(143);
+var CP = __webpack_require__(116);
 exports.CP = CP;
-var CS = __webpack_require__(144);
+var CS = __webpack_require__(117);
 exports.CS = CS;
-var LDP = __webpack_require__(145);
+var LDP = __webpack_require__(118);
 exports.LDP = LDP;
-var RDF = __webpack_require__(146);
+var RDF = __webpack_require__(119);
 exports.RDF = RDF;
-var XSD = __webpack_require__(35);
-exports.XSD = XSD;
-var VCARD = __webpack_require__(147);
+var SHACL = __webpack_require__(120);
+exports.SHACL = SHACL;
+var VCARD = __webpack_require__(121);
 exports.VCARD = VCARD;
+var XSD = __webpack_require__(34);
+exports.XSD = XSD;
 
 
 /***/ }),
@@ -514,17 +516,17 @@ if (typeof Object.create === 'function') {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var IDAlreadyInUseError_1 = __webpack_require__(114);
+var IDAlreadyInUseError_1 = __webpack_require__(122);
 exports.IDAlreadyInUseError = IDAlreadyInUseError_1.default;
-var IllegalActionError_1 = __webpack_require__(115);
+var IllegalActionError_1 = __webpack_require__(123);
 exports.IllegalActionError = IllegalActionError_1.default;
-var IllegalArgumentError_1 = __webpack_require__(34);
+var IllegalArgumentError_1 = __webpack_require__(35);
 exports.IllegalArgumentError = IllegalArgumentError_1.default;
-var IllegalStateError_1 = __webpack_require__(116);
+var IllegalStateError_1 = __webpack_require__(124);
 exports.IllegalStateError = IllegalStateError_1.default;
-var InvalidJSONLDSyntaxError_1 = __webpack_require__(65);
+var InvalidJSONLDSyntaxError_1 = __webpack_require__(66);
 exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError_1.default;
-var NotImplementedError_1 = __webpack_require__(117);
+var NotImplementedError_1 = __webpack_require__(125);
 exports.NotImplementedError = NotImplementedError_1.default;
 
 
@@ -612,7 +614,7 @@ module.exports = g;
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(192);
+exports = module.exports = __webpack_require__(195);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -792,7 +794,7 @@ function localstorage() {
   } catch (e) {}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(191)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(194)))
 
 /***/ }),
 /* 7 */
@@ -803,7 +805,7 @@ function localstorage() {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Literal = __webpack_require__(47);
 exports.Literal = Literal;
-var Document = __webpack_require__(70);
+var Document = __webpack_require__(72);
 exports.Document = Document;
 var List = __webpack_require__(50);
 exports.List = List;
@@ -811,7 +813,7 @@ var Node = __webpack_require__(49);
 exports.Node = Node;
 var URI = __webpack_require__(16);
 exports.URI = URI;
-var Value = __webpack_require__(72);
+var Value = __webpack_require__(74);
 exports.Value = Value;
 
 
@@ -886,7 +888,7 @@ module.exports.EventEmitter = EventEmitter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var Utils = __webpack_require__(0);
 function addType(type) {
     this.types.push(type);
@@ -1101,33 +1103,6 @@ exports.FILTER = new Identifier_1.Identifier("FILTER");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(66);
-exports.Errors = Errors;
-var Header = __webpack_require__(43);
-exports.Header = Header;
-var JSONParser = __webpack_require__(44);
-exports.JSONParser = JSONParser;
-var Method_1 = __webpack_require__(67);
-exports.Method = Method_1.default;
-var Parser = __webpack_require__(140);
-exports.Parser = Parser;
-var Request = __webpack_require__(141);
-exports.Request = Request;
-var Response = __webpack_require__(68);
-exports.Response = Response;
-var StatusCode_1 = __webpack_require__(153);
-exports.StatusCode = StatusCode_1.default;
-var StringParser = __webpack_require__(154);
-exports.StringParser = StringParser;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var Utils = __webpack_require__(0);
 var Factory = (function () {
@@ -1230,6 +1205,33 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = __webpack_require__(68);
+exports.Errors = Errors;
+var Header = __webpack_require__(43);
+exports.Header = Header;
+var JSONParser = __webpack_require__(44);
+exports.JSONParser = JSONParser;
+var Method_1 = __webpack_require__(69);
+exports.Method = Method_1.default;
+var Parser = __webpack_require__(148);
+exports.Parser = Parser;
+var Request = __webpack_require__(149);
+exports.Request = Request;
+var Response = __webpack_require__(70);
+exports.Response = Response;
+var StatusCode_1 = __webpack_require__(155);
+exports.StatusCode = StatusCode_1.default;
+var StringParser = __webpack_require__(156);
+exports.StringParser = StringParser;
 
 
 /***/ }),
@@ -1479,7 +1481,7 @@ exports.Util = Util;
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
   // strict `define` check is necessary for compatibility with `r.js`.
-  var isLoader = "function" === "function" && __webpack_require__(200);
+  var isLoader = "function" === "function" && __webpack_require__(203);
 
   // A set of types used to distinguish objects from primitives.
   var objectTypes = {
@@ -2379,7 +2381,7 @@ exports.Util = Util;
   }
 }).call(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(199)(module), __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(202)(module), __webpack_require__(5)))
 
 /***/ }),
 /* 16 */
@@ -2570,13 +2572,13 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var BlankNode = __webpack_require__(156);
+var BlankNode = __webpack_require__(158);
 var Errors = __webpack_require__(3);
 var Converter_1 = __webpack_require__(46);
-var NamedFragment = __webpack_require__(74);
+var NamedFragment = __webpack_require__(76);
 var NS = __webpack_require__(1);
 var ObjectSchema = __webpack_require__(14);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var RDF = __webpack_require__(7);
 var Resource = __webpack_require__(9);
 var Utils = __webpack_require__(0);
@@ -3180,7 +3182,7 @@ exports.default = StringLiteral;
 
 
 /* global crypto:true */
-var crypto = __webpack_require__(188);
+var crypto = __webpack_require__(191);
 
 // This string has length 32, a power of 2, so the modulus doesn't introduce a
 // bias.
@@ -3344,88 +3346,44 @@ exports.default = NewLineSymbol;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Converter = __webpack_require__(46);
-exports.Converter = Converter;
-var Parser = __webpack_require__(48);
-exports.Parser = Parser;
-var Processor = __webpack_require__(71);
-exports.Processor = Processor;
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var AddMemberAction = __webpack_require__(155);
-exports.AddMemberAction = AddMemberAction;
-var Map = __webpack_require__(157);
-exports.Map = Map;
-var DirectContainer = __webpack_require__(158);
-exports.DirectContainer = DirectContainer;
-var Entry = __webpack_require__(159);
-exports.Entry = Entry;
-var Error = __webpack_require__(160);
-exports.Error = Error;
-var ErrorResponse = __webpack_require__(69);
-exports.ErrorResponse = ErrorResponse;
-var IndirectContainer = __webpack_require__(161);
-exports.IndirectContainer = IndirectContainer;
-var RemoveMemberAction = __webpack_require__(162);
-exports.RemoveMemberAction = RemoveMemberAction;
-var DocumentMetadata = __webpack_require__(163);
-exports.DocumentMetadata = DocumentMetadata;
-var ResponseMetadata = __webpack_require__(164);
-exports.ResponseMetadata = ResponseMetadata;
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var ACE = __webpack_require__(76);
+var ACE = __webpack_require__(64);
 exports.ACE = ACE;
-var ACL = __webpack_require__(77);
+var ACL = __webpack_require__(65);
 exports.ACL = ACL;
-var BasicAuthenticator_1 = __webpack_require__(78);
+var BasicAuthenticator_1 = __webpack_require__(67);
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
-var Credentials = __webpack_require__(79);
+var Credentials = __webpack_require__(75);
 exports.Credentials = Credentials;
-var PersistedACE = __webpack_require__(166);
+var PersistedACE = __webpack_require__(159);
 exports.PersistedACE = PersistedACE;
-var PersistedACL = __webpack_require__(167);
+var PersistedACL = __webpack_require__(160);
 exports.PersistedACL = PersistedACL;
-var PersistedCredentials = __webpack_require__(80);
+var PersistedCredentials = __webpack_require__(77);
 exports.PersistedCredentials = PersistedCredentials;
-var PersistedRole = __webpack_require__(83);
+var PersistedRole = __webpack_require__(80);
 exports.PersistedRole = PersistedRole;
 var PersistedUser = __webpack_require__(53);
 exports.PersistedUser = PersistedUser;
-var Role = __webpack_require__(169);
+var Role = __webpack_require__(162);
 exports.Role = Role;
-var Roles = __webpack_require__(170);
+var Roles = __webpack_require__(163);
 exports.Roles = Roles;
-var Ticket = __webpack_require__(171);
+var Ticket = __webpack_require__(164);
 exports.Ticket = Ticket;
-var Token = __webpack_require__(84);
+var Token = __webpack_require__(81);
 exports.Token = Token;
-var TokenAuthenticator_1 = __webpack_require__(172);
+var TokenAuthenticator_1 = __webpack_require__(165);
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
-var User = __webpack_require__(173);
+var User = __webpack_require__(176);
 exports.User = User;
-var UsernameAndPasswordToken_1 = __webpack_require__(85);
+var UsernameAndPasswordToken_1 = __webpack_require__(83);
 exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
-var Users = __webpack_require__(174);
+var Users = __webpack_require__(177);
 exports.Users = Users;
 var Errors = __webpack_require__(3);
 var FreeResources = __webpack_require__(45);
-var HTTP = __webpack_require__(12);
-var JSONLD = __webpack_require__(27);
+var HTTP = __webpack_require__(13);
+var JSONLD = __webpack_require__(28);
 var NS = __webpack_require__(1);
 var RDF = __webpack_require__(7);
 var Resource = __webpack_require__(9);
@@ -3588,14 +3546,29 @@ exports.default = Class;
 
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTP = __webpack_require__(12);
-var Auth = __webpack_require__(29);
+var Converter = __webpack_require__(46);
+exports.Converter = Converter;
+var Parser = __webpack_require__(48);
+exports.Parser = Parser;
+var Processor = __webpack_require__(73);
+exports.Processor = Processor;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTP = __webpack_require__(13);
+var Auth = __webpack_require__(27);
 var NS = __webpack_require__(1);
 var PersistedDocument = __webpack_require__(36);
 var Resource = __webpack_require__(9);
@@ -3650,6 +3623,37 @@ function getACL(requestOptions) {
         return [acl, response];
     });
 }
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var AddMemberAction = __webpack_require__(166);
+exports.AddMemberAction = AddMemberAction;
+var DirectContainer = __webpack_require__(167);
+exports.DirectContainer = DirectContainer;
+var DocumentMetadata = __webpack_require__(168);
+exports.DocumentMetadata = DocumentMetadata;
+var Entry = __webpack_require__(169);
+exports.Entry = Entry;
+var Error = __webpack_require__(170);
+exports.Error = Error;
+var ErrorResponse = __webpack_require__(71);
+exports.ErrorResponse = ErrorResponse;
+var IndirectContainer = __webpack_require__(171);
+exports.IndirectContainer = IndirectContainer;
+var Map = __webpack_require__(172);
+exports.Map = Map;
+var RemoveMemberAction = __webpack_require__(173);
+exports.RemoveMemberAction = RemoveMemberAction;
+var ResponseMetadata = __webpack_require__(174);
+exports.ResponseMetadata = ResponseMetadata;
+var ValidationError = __webpack_require__(175);
+exports.ValidationError = ValidationError;
 
 
 /***/ }),
@@ -3911,42 +3915,6 @@ if (global.document) {
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return "IllegalArgumentError"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __webpack_require__(0);
 exports.namespace = "http://www.w3.org/2001/XMLSchema#";
@@ -3990,6 +3958,42 @@ Utils.forEachOwnProperty(DataType, function (key, value) {
 
 
 /***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractError_1 = __webpack_require__(20);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return "IllegalArgumentError"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(AbstractError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
 /* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3997,16 +4001,16 @@ Utils.forEachOwnProperty(DataType, function (key, value) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __webpack_require__(17);
-var HTTP = __webpack_require__(12);
-var MessagingDocument = __webpack_require__(81);
+var HTTP = __webpack_require__(13);
+var MessagingDocument = __webpack_require__(78);
 var ObjectSchema = __webpack_require__(14);
 var PersistedFragment = __webpack_require__(37);
-var PersistedNamedFragment = __webpack_require__(82);
+var PersistedNamedFragment = __webpack_require__(79);
 var PersistedResource = __webpack_require__(52);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var RDF = __webpack_require__(7);
 var URI = __webpack_require__(16);
-var ServiceAwareDocument = __webpack_require__(168);
+var ServiceAwareDocument = __webpack_require__(161);
 var Utils = __webpack_require__(0);
 function extendIsDirty(superFunction) {
     return function () {
@@ -4754,7 +4758,7 @@ exports.default = Operator;
 
 "use strict";
 
-var XSD = __webpack_require__(222);
+var XSD = __webpack_require__(225);
 var StringLiteral_1 = __webpack_require__(22);
 var Tokens_1 = __webpack_require__(11);
 var PatternBuilder_1 = __webpack_require__(107);
@@ -4793,16 +4797,17 @@ exports.addType = addType;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Documents = __webpack_require__(64);
-var Auth = __webpack_require__(29);
+var Auth = __webpack_require__(27);
+var Documents = __webpack_require__(84);
 var Errors = __webpack_require__(3);
-var LDP = __webpack_require__(28);
+var LDP = __webpack_require__(30);
+var Messaging = __webpack_require__(54);
 var ObjectSchema = __webpack_require__(14);
 var ProtectedDocument = __webpack_require__(86);
 var RDF = __webpack_require__(7);
-var RDFRepresentation = __webpack_require__(233);
-var System = __webpack_require__(110);
-var Messaging = __webpack_require__(54);
+var RDFRepresentation = __webpack_require__(236);
+var SHACL = __webpack_require__(110);
+var System = __webpack_require__(111);
 var Class = (function () {
     function Class() {
         this.settings = new Map();
@@ -4945,6 +4950,7 @@ var Class = (function () {
         this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
         this.extendObjectSchema(LDP.Map.RDF_CLASS, LDP.Map.SCHEMA);
+        this.extendObjectSchema(LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
@@ -4952,6 +4958,8 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
+        this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
         this.extendObjectSchema(Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA);
         this.extendObjectSchema(Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA);
         this.extendObjectSchema(Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA);
@@ -5095,7 +5103,7 @@ exports.default = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var Converter_1 = __webpack_require__(46);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var RDF = __webpack_require__(7);
 var Resource = __webpack_require__(9);
 var Utils = __webpack_require__(0);
@@ -5269,7 +5277,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var ObjectSchema = __webpack_require__(14);
 var NS = __webpack_require__(1);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var RDF = __webpack_require__(7);
 var Utils = __webpack_require__(0);
 var Class = (function () {
@@ -5678,9 +5686,9 @@ exports.default = Class;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __webpack_require__(0);
-var XSD = __webpack_require__(35);
+var XSD = __webpack_require__(34);
 var Errors = __webpack_require__(3);
-var Serializers = __webpack_require__(148);
+var Serializers = __webpack_require__(150);
 exports.Serializers = Serializers;
 var Factory = (function () {
     function Factory() {
@@ -5813,7 +5821,7 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var JSONParser_1 = __webpack_require__(44);
-var Processor_1 = __webpack_require__(71);
+var Processor_1 = __webpack_require__(73);
 var Class = (function () {
     function Class() {
     }
@@ -5837,11 +5845,11 @@ exports.default = Class;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __webpack_require__(0);
-var Document = __webpack_require__(70);
+var Document = __webpack_require__(72);
 var List = __webpack_require__(50);
 var Literal = __webpack_require__(47);
-var Value = __webpack_require__(72);
-var XSD = __webpack_require__(35);
+var Value = __webpack_require__(74);
+var XSD = __webpack_require__(34);
 var Factory = (function () {
     function Factory() {
     }
@@ -6215,9 +6223,9 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var PersistedProtectedDocument = __webpack_require__(30);
+var PersistedProtectedDocument = __webpack_require__(29);
 var Utils = __webpack_require__(0);
-var PersistedCredentials = __webpack_require__(80);
+var PersistedCredentials = __webpack_require__(77);
 var Factory = (function () {
     function Factory() {
     }
@@ -6292,31 +6300,31 @@ function obtainCredentials(user) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var AccessPointCreated = __webpack_require__(175);
+var AccessPointCreated = __webpack_require__(178);
 exports.AccessPointCreated = AccessPointCreated;
-var ChildCreated = __webpack_require__(176);
+var ChildCreated = __webpack_require__(179);
 exports.ChildCreated = ChildCreated;
-var Document = __webpack_require__(81);
+var Document = __webpack_require__(78);
 exports.Document = Document;
 var DocumentCreated = __webpack_require__(55);
 exports.DocumentCreated = DocumentCreated;
-var DocumentCreatedDetails = __webpack_require__(177);
+var DocumentCreatedDetails = __webpack_require__(180);
 exports.DocumentCreatedDetails = DocumentCreatedDetails;
-var DocumentDeleted = __webpack_require__(178);
+var DocumentDeleted = __webpack_require__(181);
 exports.DocumentDeleted = DocumentDeleted;
-var DocumentModified = __webpack_require__(179);
+var DocumentModified = __webpack_require__(182);
 exports.DocumentModified = DocumentModified;
-var Event_1 = __webpack_require__(180);
+var Event_1 = __webpack_require__(183);
 exports.Event = Event_1.Event;
-var MemberAdded = __webpack_require__(181);
+var MemberAdded = __webpack_require__(184);
 exports.MemberAdded = MemberAdded;
-var MemberAddedDetails = __webpack_require__(182);
+var MemberAddedDetails = __webpack_require__(185);
 exports.MemberAddedDetails = MemberAddedDetails;
 var MemberDetails = __webpack_require__(56);
 exports.MemberDetails = MemberDetails;
-var MemberRemoved = __webpack_require__(183);
+var MemberRemoved = __webpack_require__(186);
 exports.MemberRemoved = MemberRemoved;
-var MemberRemovedDetails = __webpack_require__(184);
+var MemberRemovedDetails = __webpack_require__(187);
 exports.MemberRemovedDetails = MemberRemovedDetails;
 var Message = __webpack_require__(21);
 exports.Message = Message;
@@ -6725,29 +6733,1781 @@ exports.default = TriplesPattern;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.CS.Class.AccessControlEntry;
+exports.SCHEMA = {
+    "granting": {
+        "@id": NS.CS.Predicate.granting,
+        "@type": NS.XSD.DataType.boolean,
+    },
+    "permissions": {
+        "@id": NS.CS.Predicate.permission,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "subjects": {
+        "@id": NS.CS.Predicate.subject,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "subjectsClass": {
+        "@id": NS.CS.Predicate.subjectClass,
+        "@type": "@id",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "granting")
+            && Utils.hasPropertyDefined(object, "permissions")
+            && Utils.hasPropertyDefined(object, "subjects")
+            && Utils.hasPropertyDefined(object, "subjectsClass");
+    };
+    Factory.createFrom = function (object, granting, subjects, subjectClass, permissions) {
+        var ace = object;
+        if (!ace.types)
+            ace.types = [];
+        ace.types.push(exports.RDF_CLASS);
+        ace.granting = granting;
+        ace.subjects = subjects;
+        ace.subjectsClass = subjectClass;
+        ace.permissions = permissions;
+        return ace;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ACE = __webpack_require__(64);
+var NS = __webpack_require__(1);
+var Pointer = __webpack_require__(12);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.CS.Class.AccessControlList;
+exports.SCHEMA = {
+    "entries": {
+        "@id": NS.CS.Predicate.accessControlEntry,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "accessTo": {
+        "@id": NS.CS.Predicate.accessTo,
+        "@type": "@id",
+    },
+    "inheritableEntries": {
+        "@id": NS.CS.Predicate.inheritableEntry,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "accessTo")
+            && Utils.hasFunction(object, "_parsePointer")
+            && Utils.hasFunction(object, "grant")
+            && Utils.hasFunction(object, "deny")
+            && Utils.hasFunction(object, "configureChildInheritance")
+            && Utils.hasFunction(object, "grants")
+            && Utils.hasFunction(object, "denies")
+            && Utils.hasFunction(object, "getChildInheritance")
+            && Utils.hasFunction(object, "remove")
+            && Utils.hasFunction(object, "removeChildInheritance");
+    };
+    Factory.decorate = function (object) {
+        var acl = object;
+        if (Factory.hasClassProperties(acl))
+            return acl;
+        Object.defineProperties(acl, {
+            "_parsePointer": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: parsePointer,
+            },
+            "grant": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: grant,
+            },
+            "deny": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: deny,
+            },
+            "configureChildInheritance": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: configureChildInheritance,
+            },
+            "grants": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: grants,
+            },
+            "denies": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: denies,
+            },
+            "getChildInheritance": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: getChildInheritance,
+            },
+            "remove": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: remove,
+            },
+            "removeChildInheritance": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeChildInheritance,
+            },
+        });
+        return acl;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+function parsePointer(element) {
+    return Pointer.Factory.is(element) ? element : Pointer.Factory.create(element);
+}
+function parsePointers(elements) {
+    var _this = this;
+    var elementsArray = Utils.isArray(elements) ? elements : [elements];
+    return elementsArray.map(function (element) { return _this._parsePointer(element); });
+}
+function configACE(granting, subject, subjectClass, permissions, aces) {
+    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual(ace.subjects[0], subject); });
+    var ace;
+    if (subjectACEs.length === 0) {
+        ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
+        aces.push(ace);
+    }
+    else {
+        ace = subjectACEs[0];
+    }
+    Array.prototype.push.apply(ace.permissions, permissions);
+    return ace;
+}
+function configACEs(granting, subjects, subjectsClass, permissions, aces) {
+    var subjectPointers = parsePointers.call(this, subjects);
+    var subjectClassPointer = this._parsePointer(subjectsClass);
+    var permissionPointers = parsePointers.call(this, permissions);
+    for (var _i = 0, subjectPointers_1 = subjectPointers; _i < subjectPointers_1.length; _i++) {
+        var subject = subjectPointers_1[_i];
+        removePermissionsFrom.call(this, subject, permissionPointers, aces);
+        configACE.call(this, granting, subject, subjectClassPointer, permissionPointers, aces);
+    }
+}
+function grant(subjects, subjectsClass, permissions) {
+    var acl = this;
+    acl.entries = acl.entries || [];
+    configACEs.call(this, true, subjects, subjectsClass, permissions, acl.entries);
+}
+function deny(subjects, subjectsClass, permissions) {
+    var acl = this;
+    acl.entries = acl.entries || [];
+    configACEs.call(this, false, subjects, subjectsClass, permissions, acl.entries);
+}
+function configureChildInheritance(granting, subjects, subjectsClass, permissions) {
+    var acl = this;
+    acl.inheritableEntries = acl.inheritableEntries || [];
+    configACEs.call(this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries);
+}
+function grantingFrom(subject, permission, aces) {
+    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
+    for (var _i = 0, subjectACEs_1 = subjectACEs; _i < subjectACEs_1.length; _i++) {
+        var ace = subjectACEs_1[_i];
+        if (Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual) !== -1)
+            return ace.granting;
+    }
+    return null;
+}
+function getGranting(subject, permission, aces) {
+    if (!aces)
+        return null;
+    var subjectPointer = this._parsePointer(subject);
+    var permissionPointer = this._parsePointer(permission);
+    return grantingFrom(subjectPointer, permissionPointer, aces);
+}
+function grants(subject, permission) {
+    var acl = this;
+    return getGranting.call(this, subject, permission, acl.entries);
+}
+function denies(subject, permission) {
+    var acl = this;
+    var granting = getGranting.call(this, subject, permission, acl.entries);
+    return granting === null ? null : !granting;
+}
+function getChildInheritance(subject, permission) {
+    var acl = this;
+    return getGranting.call(this, subject, permission, acl.inheritableEntries);
+}
+function removePermissionsFrom(subject, permissions, aces) {
+    if (!aces)
+        return;
+    var acl = this;
+    var opposedAces = acl.entries === aces ? acl.inheritableEntries : acl.entries;
+    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
+    for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
+        var ace = subjectACEs_2[_i];
+        if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer.Util.areEqual) !== -1) {
+            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
+            var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
+            subjectACEs.push(newACE);
+            continue;
+        }
+        if (ace.subjects.length > 1) {
+            ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual), 1);
+            var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
+            subjectACEs.push(newACE);
+            continue;
+        }
+        for (var _a = 0, permissions_1 = permissions; _a < permissions_1.length; _a++) {
+            var permission = permissions_1[_a];
+            var index = Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual);
+            if (index === -1)
+                continue;
+            ace.permissions.splice(index, 1);
+        }
+        if (ace.permissions.length === 0) {
+            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
+            acl._removeFragment(ace);
+        }
+    }
+}
+function removePermissions(subject, permissions, aces) {
+    var subjectPointer = this._parsePointer(subject);
+    var permissionPointers = parsePointers.call(this, permissions);
+    removePermissionsFrom.call(this, subjectPointer, permissionPointers, aces);
+}
+function remove(subject, permissions) {
+    var acl = this;
+    removePermissions.call(this, subject, permissions, acl.entries);
+}
+function removeChildInheritance(subject, permissions) {
+    var acl = this;
+    removePermissions.call(this, subject, permissions, acl.inheritableEntries);
+}
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractError_1 = __webpack_require__(20);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return "InvalidJSONLDSyntaxError"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(AbstractError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var HTTP = __webpack_require__(12);
+var HTTP = __webpack_require__(13);
+var UsernameAndPasswordCredentials = __webpack_require__(157);
+var Class = (function () {
+    function Class() {
+    }
+    Class.prototype.isAuthenticated = function () {
+        return !!this.credentials;
+    };
+    Class.prototype.authenticate = function (authenticationToken) {
+        var _this = this;
+        if (authenticationToken === null)
+            throw new Errors.IllegalArgumentError("The authenticationToken cannot be null.");
+        return new Promise(function (resolve, reject) {
+            if (!authenticationToken.username)
+                throw new Errors.IllegalArgumentError("The username cannot be empty.");
+            if (!authenticationToken.password)
+                throw new Errors.IllegalArgumentError("The password cannot be empty.");
+            _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
+            resolve(_this.credentials);
+        });
+    };
+    Class.prototype.addAuthentication = function (requestOptions) {
+        if (!this.isAuthenticated())
+            throw new Errors.IllegalStateError("The authenticator isn't authenticated.");
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        this.addBasicAuthenticationHeader(headers);
+        return requestOptions;
+    };
+    Class.prototype.clearAuthentication = function () {
+        this.credentials = null;
+    };
+    Class.prototype.addBasicAuthenticationHeader = function (headers) {
+        if (headers.has("authorization"))
+            return;
+        var header = new HTTP.Header.Class();
+        headers.set("authorization", header);
+        var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
+        header.values.push(new HTTP.Header.Value(authorization));
+    };
+    return Class;
+}());
+exports.Class = Class;
+function toB64(str) {
+    return (typeof btoa !== "undefined") ? btoa(str) : new Buffer(str).toString("base64");
+}
+exports.default = Class;
+
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+exports.Error = HTTPError_1.default;
+var BadRequestError_1 = __webpack_require__(126);
+exports.BadRequestError = BadRequestError_1.default;
+var ConflictError_1 = __webpack_require__(127);
+exports.ConflictError = ConflictError_1.default;
+var ForbiddenError_1 = __webpack_require__(128);
+exports.ForbiddenError = ForbiddenError_1.default;
+var MethodNotAllowedError_1 = __webpack_require__(129);
+exports.MethodNotAllowedError = MethodNotAllowedError_1.default;
+var NotAcceptableError_1 = __webpack_require__(130);
+exports.NotAcceptableError = NotAcceptableError_1.default;
+var NotFoundError_1 = __webpack_require__(131);
+exports.NotFoundError = NotFoundError_1.default;
+var PreconditionFailedError_1 = __webpack_require__(132);
+exports.PreconditionFailedError = PreconditionFailedError_1.default;
+var PreconditionRequiredError_1 = __webpack_require__(133);
+exports.PreconditionRequiredError = PreconditionRequiredError_1.default;
+var RequestEntityTooLargeError_1 = __webpack_require__(134);
+exports.RequestEntityTooLargeError = RequestEntityTooLargeError_1.default;
+var RequestHeaderFieldsTooLargeError_1 = __webpack_require__(135);
+exports.RequestHeaderFieldsTooLargeError = RequestHeaderFieldsTooLargeError_1.default;
+var RequestURITooLongError_1 = __webpack_require__(136);
+exports.RequestURITooLongError = RequestURITooLongError_1.default;
+var TooManyRequestsError_1 = __webpack_require__(137);
+exports.TooManyRequestsError = TooManyRequestsError_1.default;
+var UnauthorizedError_1 = __webpack_require__(138);
+exports.UnauthorizedError = UnauthorizedError_1.default;
+var UnsupportedMediaTypeError_1 = __webpack_require__(139);
+exports.UnsupportedMediaTypeError = UnsupportedMediaTypeError_1.default;
+var BadResponseError_1 = __webpack_require__(140);
+exports.BadResponseError = BadResponseError_1.default;
+var BadGatewayError_1 = __webpack_require__(141);
+exports.BadGatewayError = BadGatewayError_1.default;
+var GatewayTimeoutError_1 = __webpack_require__(142);
+exports.GatewayTimeoutError = GatewayTimeoutError_1.default;
+var HTTPVersionNotSupportedError_1 = __webpack_require__(143);
+exports.HTTPVersionNotSupportedError = HTTPVersionNotSupportedError_1.default;
+var InternalServerErrorError_1 = __webpack_require__(144);
+exports.InternalServerErrorError = InternalServerErrorError_1.default;
+var NotImplementedError_1 = __webpack_require__(145);
+exports.NotImplementedError = NotImplementedError_1.default;
+var ServiceUnavailableError_1 = __webpack_require__(146);
+exports.ServiceUnavailableError = ServiceUnavailableError_1.default;
+var UnknownError_1 = __webpack_require__(147);
+exports.UnknownError = UnknownError_1.default;
+var client = [];
+exports.client = client;
+client.push(BadRequestError_1.default);
+client.push(ConflictError_1.default);
+client.push(ForbiddenError_1.default);
+client.push(MethodNotAllowedError_1.default);
+client.push(NotAcceptableError_1.default);
+client.push(NotFoundError_1.default);
+client.push(PreconditionFailedError_1.default);
+client.push(PreconditionRequiredError_1.default);
+client.push(RequestEntityTooLargeError_1.default);
+client.push(RequestHeaderFieldsTooLargeError_1.default);
+client.push(RequestURITooLongError_1.default);
+client.push(TooManyRequestsError_1.default);
+client.push(UnauthorizedError_1.default);
+client.push(UnsupportedMediaTypeError_1.default);
+var server = [];
+exports.server = server;
+server.push(BadResponseError_1.default);
+server.push(BadGatewayError_1.default);
+server.push(GatewayTimeoutError_1.default);
+server.push(HTTPVersionNotSupportedError_1.default);
+server.push(InternalServerErrorError_1.default);
+server.push(NotImplementedError_1.default);
+server.push(ServiceUnavailableError_1.default);
+var statusCodeMap = new Map();
+exports.statusCodeMap = statusCodeMap;
+for (var i = 0, length_1 = client.length; i < length_1; i++) {
+    statusCodeMap.set(client[i].statusCode, client[i]);
+}
+for (var i = 0, length_2 = server.length; i < length_2; i++) {
+    statusCodeMap.set(server[i].statusCode, server[i]);
+}
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Method;
+(function (Method) {
+    Method[Method["OPTIONS"] = 0] = "OPTIONS";
+    Method[Method["HEAD"] = 1] = "HEAD";
+    Method[Method["GET"] = 2] = "GET";
+    Method[Method["POST"] = 3] = "POST";
+    Method[Method["PUT"] = 4] = "PUT";
+    Method[Method["PATCH"] = 5] = "PATCH";
+    Method[Method["DELETE"] = 6] = "DELETE";
+})(Method = exports.Method || (exports.Method = {}));
+exports.default = Method;
+
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Header = __webpack_require__(43);
+var Utils_1 = __webpack_require__(0);
+var Class = (function () {
+    function Class(request, data, response) {
+        if (response === void 0) { response = {}; }
+        if (typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest) {
+            var res = request;
+            this.status = res.status;
+            this.data = res.responseText;
+            this.setHeaders(res.getAllResponseHeaders());
+        }
+        else {
+            this.status = response.statusCode;
+            this.data = data || "";
+            this.setHeaders(response.headers);
+        }
+        this.request = request;
+    }
+    Class.prototype.getHeader = function (name) {
+        name = name.toLowerCase();
+        return this.headers.get(name) || null;
+    };
+    Class.prototype.setHeaders = function (headers) {
+        if (Utils_1.isString(headers)) {
+            this.headers = Header.Util.parseHeaders(headers);
+        }
+        else {
+            this.headers = new Map();
+            if (Utils_1.isObject(headers)) {
+                for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
+                    var name_1 = _a[_i];
+                    this.headers.set(name_1.toLowerCase(), new Header.Class(headers[name_1]));
+                }
+            }
+        }
+    };
+    return Class;
+}());
+exports.Class = Class;
+var Util = (function () {
+    function Util() {
+    }
+    Util.getETag = function (response) {
+        if (!response || !response.headers)
+            return null;
+        var etagHeader = response.getHeader("ETag");
+        if (!etagHeader)
+            return null;
+        if (!etagHeader.values.length)
+            return null;
+        if (etagHeader.values.length > 1)
+            console.warn("The response contains more than one ETag. Response: %o", response);
+        return etagHeader.values[0].toString();
+    };
+    return Util;
+}());
+exports.Util = Util;
+exports.default = Class;
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var FreeResources = __webpack_require__(45);
+var Parser_1 = __webpack_require__(48);
+var NS = __webpack_require__(1);
+var RDF = __webpack_require__(7);
+var SDKContext_1 = __webpack_require__(42);
+var IllegalArgumentError_1 = __webpack_require__(35);
+exports.RDF_CLASS = NS.C.Class.ErrorResponse;
+exports.SCHEMA = {
+    "errors": {
+        "@id": NS.C.Predicate.error,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "requestID": {
+        "@id": NS.C.Predicate.requestID,
+        "@type": NS.XSD.DataType.string,
+    },
+    "statusCode": {
+        "@id": NS.C.Predicate.httpStatusCode,
+        "@type": NS.XSD.DataType.int,
+    },
+};
+var Util = (function () {
+    function Util() {
+    }
+    Util.getMessage = function (errorResponse) {
+        return errorResponse
+            .errors
+            .map(function (error) { return error.errorMessage; })
+            .join(", ");
+    };
+    return Util;
+}());
+exports.Util = Util;
+var Parser = (function () {
+    function Parser() {
+    }
+    Parser.prototype.parse = function (input, errorResponse) {
+        if (errorResponse === void 0) { errorResponse = {}; }
+        var documents = SDKContext_1.default.documents;
+        var parser = new Parser_1.default();
+        return parser.parse(input).then(function (freeNodes) {
+            var freeResources = FreeResources.Factory.create(documents);
+            for (var _i = 0, freeNodes_1 = freeNodes; _i < freeNodes_1.length; _i++) {
+                var node = freeNodes_1[_i];
+                var resource = void 0;
+                var errorResponseFound = false;
+                if (RDF.Node.Util.hasType(node, exports.RDF_CLASS)) {
+                    if (errorResponseFound)
+                        throw new IllegalArgumentError_1.default("The input string contains more than once c:ErrorResponse.");
+                    resource = freeResources.createResourceFrom(errorResponse);
+                    errorResponseFound = true;
+                }
+                else {
+                    resource = freeResources.getPointer(node["@id"]);
+                }
+                documents.jsonldConverter.compact(node, resource, documents.getSchemaFor(node), freeResources);
+            }
+            if (!errorResponse)
+                throw new IllegalArgumentError_1.default("The input string does not contains a c:ErrorResponse.");
+            return errorResponse;
+        });
+    };
+    return Parser;
+}());
+exports.Parser = Parser;
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var JSONLD = __webpack_require__(28);
+var Node = __webpack_require__(49);
+var Utils = __webpack_require__(0);
+var URI = __webpack_require__(16);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.is = function (object) {
+        return Utils.hasProperty(object, "@graph")
+            && Utils.isArray(object["@graph"]);
+    };
+    Factory.create = function (resources, uri) {
+        var document = uri ? Node.Factory.create(uri) : {};
+        document["@graph"] = resources;
+        return document;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+var Util = (function () {
+    function Util() {
+    }
+    Util.getDocuments = function (value) {
+        if (Utils.isArray(value)) {
+            var array = value;
+            return array.filter(function (element) { return Factory.is(element); });
+        }
+        else if (Utils.isObject(value)) {
+            if (Factory.is(value))
+                return [value];
+        }
+        return [];
+    };
+    Util.getResources = function (value) {
+        var freeNodes = Node.Util.getFreeNodes(value);
+        var documents = Util.getDocuments(value);
+        var resources = [].concat(freeNodes);
+        for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
+            var document_1 = documents_1[_i];
+            resources = resources.concat(document_1["@graph"]);
+        }
+        return resources;
+    };
+    Util.getDocumentResources = function (document) {
+        var resources = Util.getResources(document);
+        var documentResources = [];
+        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
+            var resource = resources[i];
+            var uri = resource["@id"];
+            if (!uri)
+                continue;
+            if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
+                documentResources.push(resource);
+        }
+        return documentResources;
+    };
+    Util.getFragmentResources = function (document, documentResource) {
+        var resources = Util.getResources(document);
+        var documentURIToMatch = null;
+        if (documentResource) {
+            if (Utils.isString(documentResource)) {
+                documentURIToMatch = documentResource;
+            }
+            else
+                documentURIToMatch = documentResource["@id"];
+        }
+        var fragmentResources = [];
+        for (var i = 0, length_2 = resources.length; i < length_2; i++) {
+            var resource = resources[i];
+            var uri = resource["@id"];
+            if (!uri)
+                continue;
+            if (!URI.Util.hasFragment(uri))
+                continue;
+            if (!documentURIToMatch) {
+                fragmentResources.push(resource);
+            }
+            else {
+                var documentURI = URI.Util.getDocumentURI(uri);
+                if (documentURI === documentURIToMatch)
+                    fragmentResources.push(resource);
+            }
+        }
+        return fragmentResources;
+    };
+    Util.getBNodeResources = function (document) {
+        var resources = Util.getResources(document);
+        var bnodes = [];
+        for (var i = 0, length_3 = resources.length; i < length_3; i++) {
+            var resource = resources[i];
+            if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
+                bnodes.push(resource);
+        }
+        return bnodes;
+    };
+    return Util;
+}());
+exports.Util = Util;
+var Parser = (function () {
+    function Parser() {
+    }
+    Parser.prototype.parse = function (input) {
+        var jsonLDParser = new JSONLD.Parser.Class();
+        return jsonLDParser.parse(input).then(function (expandedResult) {
+            return Util.getDocuments(expandedResult);
+        });
+    };
+    return Parser;
+}());
+exports.Parser = Parser;
+
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var InvalidJSONLDSyntaxError_1 = __webpack_require__(66);
+var Errors = __webpack_require__(3);
+var HTTP = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(14);
+var RDF = __webpack_require__(7);
+var Utils = __webpack_require__(0);
+var MAX_CONTEXT_URLS = 10;
+var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
+var Class = (function () {
+    function Class() {
+    }
+    Class.expand = function (input) {
+        return this.retrieveContexts(input, Object.create(null), "").then(function () {
+            var expanded = Class.process(new ObjectSchema.DigestedObjectSchema(), input);
+            if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
+                expanded = expanded["@graph"];
+            }
+            else if (expanded === null) {
+                expanded = [];
+            }
+            if (!Utils.isArray(expanded))
+                expanded = [expanded];
+            return expanded;
+        });
+    };
+    Class.getTargetFromLinkHeader = function (header) {
+        var rLinkHeader = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
+        for (var _i = 0, _a = header.values; _i < _a.length; _i++) {
+            var value = _a[_i];
+            var match = value.toString().match(rLinkHeader);
+            if (!match)
+                continue;
+            var target = match[1];
+            var params = match[2];
+            var rParams = /(.*?)=(?:(?:"([^"]*?)")|([^"]*?))\s*(?:(?:;\s*)|$)/g;
+            var result = {};
+            while (true) {
+                match = rParams.exec(params);
+                if (!match)
+                    break;
+                result[match[1]] = (match[2] === undefined) ? match[3] : match[2];
+            }
+            if (result["rel"] === LINK_HEADER_REL)
+                return target;
+        }
+        return null;
+    };
+    Class.findContextURLs = function (input, contexts, base, replace) {
+        if (replace === void 0) { replace = false; }
+        var previousContexts = Object.keys(contexts).length;
+        if (Utils.isArray(input)) {
+            for (var _i = 0, _a = input; _i < _a.length; _i++) {
+                var element = _a[_i];
+                Class.findContextURLs(element, contexts, base);
+            }
+        }
+        else if (Utils.isPlainObject(input)) {
+            for (var key in input) {
+                if ("@context" !== key) {
+                    Class.findContextURLs(input[key], contexts, base);
+                    continue;
+                }
+                var urlOrArrayOrContext = input[key];
+                if (Utils.isArray(urlOrArrayOrContext)) {
+                    var contextArray = urlOrArrayOrContext;
+                    for (var index = 0, length_1 = contextArray.length; index < length_1; ++index) {
+                        var urlOrContext = contextArray[index];
+                        if (!Utils.isString(urlOrContext))
+                            continue;
+                        var url = urlOrContext;
+                        url = RDF.URI.Util.resolve(base, url);
+                        if (replace) {
+                            if (Utils.isArray(contexts[url])) {
+                                Array.prototype.splice.apply(contextArray, [index, 1].concat(contexts[url]));
+                                index += contexts[url].length - 1;
+                                length_1 = contextArray.length;
+                            }
+                            else {
+                                contextArray[index] = contexts[url];
+                            }
+                        }
+                        else if (!(url in contexts)) {
+                            contexts[url] = true;
+                        }
+                    }
+                }
+                else if (Utils.isString(urlOrArrayOrContext)) {
+                    var url = urlOrArrayOrContext;
+                    url = RDF.URI.Util.resolve(base, url);
+                    if (replace) {
+                        input[key] = contexts[url];
+                    }
+                    else if (!(url in contexts)) {
+                        contexts[url] = null;
+                    }
+                }
+            }
+        }
+        return previousContexts < Object.keys(contexts).length;
+    };
+    Class.retrieveContexts = function (input, contextsRequested, base) {
+        if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
+            return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Maximum number of @context URLs exceeded."));
+        var contextToResolved = Object.create(null);
+        if (!Class.findContextURLs(input, contextToResolved, base))
+            return Promise.resolve();
+        function resolved(url, promise) {
+            return promise.then(function (_a) {
+                var object = _a[0], response = _a[1];
+                var _contextsRequested = Utils.O.clone(contextsRequested);
+                _contextsRequested[url] = true;
+                var contextWrapper = { "@context": {} };
+                var header = response.getHeader("Content-Type");
+                if (!Utils.S.contains(header.toString(), "application/ld+json")) {
+                    header = response.getHeader("Link");
+                    var link = void 0;
+                    if (!!header)
+                        link = Class.getTargetFromLinkHeader(header);
+                    if (!!link)
+                        contextWrapper["@context"] = link;
+                }
+                else {
+                    contextWrapper["@context"] = ("@context" in object) ? object["@context"] : {};
+                }
+                contextToResolved[url] = contextWrapper["@context"];
+                return Class.retrieveContexts(contextWrapper, _contextsRequested, url);
+            });
+        }
+        var promises = [];
+        for (var url in contextToResolved) {
+            if (url in contextsRequested)
+                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected."));
+            var requestOptions = { sendCredentialsOnCORS: false };
+            HTTP.Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
+            var promise = HTTP.Request.Service.get(url, requestOptions, new HTTP.JSONParser.Class());
+            promises.push(resolved(url, promise));
+        }
+        return Promise.all(promises).then(function () {
+            Class.findContextURLs(input, contextToResolved, base, true);
+        });
+    };
+    Class.isKeyword = function (value) {
+        if (!Utils.isString(value))
+            return false;
+        switch (value) {
+            case "@base":
+            case "@context":
+            case "@container":
+            case "@default":
+            case "@embed":
+            case "@explicit":
+            case "@graph":
+            case "@id":
+            case "@index":
+            case "@language":
+            case "@list":
+            case "@omitDefault":
+            case "@preserve":
+            case "@requireAll":
+            case "@reverse":
+            case "@set":
+            case "@type":
+            case "@value":
+            case "@vocab":
+                return true;
+            default:
+                return false;
+        }
+    };
+    Class.isValidType = function (value) {
+        if (Utils.isString(value))
+            return true;
+        if (!Utils.isArray(value))
+            return false;
+        for (var _i = 0, _a = value; _i < _a.length; _i++) {
+            var element = _a[_i];
+            if (!Utils.isString(element))
+                return false;
+        }
+        return true;
+    };
+    Class.expandURI = function (schema, uri, relativeTo) {
+        if (relativeTo === void 0) { relativeTo = {}; }
+        if (uri === null || Class.isKeyword(uri) || RDF.URI.Util.isAbsolute(uri))
+            return uri;
+        if (schema.properties.has(uri))
+            return schema.properties.get(uri).uri.stringValue;
+        if (RDF.URI.Util.isPrefixed(uri))
+            return ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
+        if (schema.prefixes.has(uri))
+            return schema.prefixes.get(uri).stringValue;
+        if (relativeTo.vocab) {
+            if (schema.vocab === null)
+                return null;
+            return schema.vocab + uri;
+        }
+        if (relativeTo.base)
+            RDF.URI.Util.resolve(schema.base, uri);
+        return uri;
+    };
+    Class.expandLanguageMap = function (languageMap) {
+        var expandedLanguage = [];
+        var keys = Object.keys(languageMap).sort();
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            var values = languageMap[key];
+            if (!Utils.isArray(values))
+                values = [values];
+            for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+                var item = values_1[_a];
+                if (item === null)
+                    continue;
+                if (!Utils.isString(item))
+                    throw new InvalidJSONLDSyntaxError_1.default("Language map values must be strings.");
+                expandedLanguage.push({
+                    "@value": item,
+                    "@language": key.toLowerCase(),
+                });
+            }
+        }
+        return expandedLanguage;
+    };
+    Class.getContainer = function (context, property) {
+        if (context.properties.has(property))
+            return context.properties.get(property).containerType;
+        return undefined;
+    };
+    Class.expandValue = function (context, value, propertyName) {
+        if (Utils.isNull(value) || !Utils.isDefined(value))
+            return null;
+        if (propertyName === "@id") {
+            return Class.expandURI(context, value, { base: true });
+        }
+        else if (propertyName === "@type") {
+            return Class.expandURI(context, value, { vocab: true, base: true });
+        }
+        var definition = new ObjectSchema.DigestedPropertyDefinition();
+        if (context.properties.has(propertyName))
+            definition = context.properties.get(propertyName);
+        if (definition.literal === false || (propertyName === "@graph" && Utils.isString(value))) {
+            var options = { base: true };
+            if (definition.pointerType === ObjectSchema.PointerType.VOCAB)
+                options.vocab = true;
+            return { "@id": Class.expandURI(context, value, options) };
+        }
+        if (Class.isKeyword(propertyName))
+            return value;
+        var expandedValue = {};
+        if (!!definition.literalType) {
+            expandedValue["@type"] = definition.literalType.stringValue;
+        }
+        else if (Utils.isString(value)) {
+            var language = Utils.isDefined(definition.language) ? definition.language : context.language;
+            if (language !== null)
+                expandedValue["@language"] = language;
+        }
+        if (["boolean", "number", "string"].indexOf(typeof value) === -1)
+            value = value.toString();
+        expandedValue["@value"] = value;
+        return expandedValue;
+    };
+    Class.process = function (context, element, activeProperty, insideList) {
+        if (Utils.isNull(element) || !Utils.isDefined(element))
+            return null;
+        if (!Utils.isArray(element) && !Utils.isObject(element)) {
+            if (!insideList && (activeProperty === null || activeProperty === "@graph"))
+                return null;
+            return Class.expandValue(context, element, activeProperty);
+        }
+        if (Utils.isArray(element)) {
+            var container = Class.getContainer(context, activeProperty);
+            insideList = insideList || container === ObjectSchema.ContainerType.LIST;
+            var expandedElement_1 = [];
+            for (var _i = 0, _a = element; _i < _a.length; _i++) {
+                var item = _a[_i];
+                var expandedItem = Class.process(context, item, activeProperty);
+                if (expandedItem === null)
+                    continue;
+                if (insideList && (Utils.isArray(expandedItem) || RDF.List.Factory.is(expandedItem)))
+                    throw new InvalidJSONLDSyntaxError_1.default("Lists of lists are not permitted.");
+                if (!Utils.isArray(expandedItem))
+                    expandedItem = [expandedItem];
+                Array.prototype.push.apply(expandedElement_1, expandedItem);
+            }
+            return expandedElement_1;
+        }
+        if ("@context" in element) {
+            context = ObjectSchema.Digester.combineDigestedObjectSchemas([
+                ObjectSchema.Digester.digestSchema(element["@context"]),
+                context,
+            ]);
+        }
+        var expandedElement = {};
+        var keys = Object.keys(element);
+        for (var _b = 0, keys_2 = keys; _b < keys_2.length; _b++) {
+            var key = keys_2[_b];
+            if (key === "@context")
+                continue;
+            var uri = Class.expandURI(context, key, { vocab: true });
+            if (!uri || !(RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri) || Class.isKeyword(uri)))
+                continue;
+            var value = element[key];
+            if (Class.isKeyword(uri)) {
+                if (uri === "@id" && !Utils.isString(value))
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@id\" value must a string.");
+                if (uri === "@type" && !Class.isValidType(value))
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@type\" value must a string, an array of strings.");
+                if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@graph\" value must not be an object or an array.");
+                if (uri === "@value" && (Utils.isObject(value) || Utils.isArray(value)))
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@value\" value must not be an object or an array.");
+                if (uri === "@language") {
+                    if (value === null)
+                        continue;
+                    if (!Utils.isString(value))
+                        throw new InvalidJSONLDSyntaxError_1.default("\"@language\" value must be a string.");
+                    value = value.toLowerCase();
+                }
+                if (uri === "@index" && !Utils.isString(value))
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@index\" value must be a string.");
+                if (uri === "@reverse" && !Utils.isObject(value))
+                    throw new InvalidJSONLDSyntaxError_1.default("\"@reverse\" value must be an object.");
+                if (uri === "@index" || uri === "@reverse")
+                    throw new Errors.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
+            }
+            var expandedValue = void 0;
+            var container = Class.getContainer(context, key);
+            if (container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject(value)) {
+                expandedValue = Class.expandLanguageMap(value);
+            }
+            else {
+                var nextActiveProperty = key;
+                var isList = uri === "@list";
+                if (isList || uri === "@set") {
+                    nextActiveProperty = activeProperty;
+                    if (isList && activeProperty === "@graph")
+                        nextActiveProperty = null;
+                }
+                expandedValue = Class.process(context, value, nextActiveProperty, isList);
+            }
+            if (expandedValue === null && uri !== "@value")
+                continue;
+            if (uri !== "@list" && !RDF.List.Factory.is(expandedValue) && container === ObjectSchema.ContainerType.LIST) {
+                if (!Utils.isArray(expandedValue))
+                    expandedValue = [expandedValue];
+                expandedValue = { "@list": expandedValue };
+            }
+            var useArray = ["@type", "@id", "@value", "@language"].indexOf(uri) === -1;
+            Class.addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
+        }
+        if ("@value" in expandedElement) {
+            if (expandedElement["@value"] === null)
+                expandedElement = null;
+        }
+        else if ("@type" in expandedElement) {
+            if (!Utils.isArray(expandedElement["@type"]))
+                expandedElement["@type"] = [expandedElement["@type"]];
+        }
+        else if ("@set" in expandedElement) {
+            expandedElement = expandedElement["@set"];
+        }
+        return expandedElement;
+    };
+    Class.addValue = function (element, propertyName, value, options) {
+        if (Utils.isArray(value)) {
+            var values = value;
+            if (values.length === 0 && options.propertyIsArray && !Utils.hasProperty(element, propertyName))
+                element[propertyName] = [];
+            for (var _i = 0, values_2 = values; _i < values_2.length; _i++) {
+                var item = values_2[_i];
+                Class.addValue(element, propertyName, item, options);
+            }
+        }
+        else if (propertyName in element) {
+            if (!Class.hasValue(element, propertyName, value)) {
+                var items = element[propertyName];
+                if (!Utils.isArray(items))
+                    items = element[propertyName] = [items];
+                items.push(value);
+            }
+        }
+        else {
+            element[propertyName] = options.propertyIsArray ? [value] : value;
+        }
+    };
+    Class.hasProperty = function (element, propertyName) {
+        if (propertyName in element) {
+            var item = element[propertyName];
+            return !Utils.isArray(item) || item.length > 0;
+        }
+        return false;
+    };
+    Class.compareValues = function (value1, value2) {
+        if (value1 === value2)
+            return true;
+        if (Utils.isObject(value1) && Utils.isObject(value2)) {
+            if ("@value" in value1
+                && value1["@value"] === value2["@value"]
+                && value1["@type"] === value2["@type"]
+                && value1["@language"] === value2["@language"]
+                && value1["@index"] === value2["@index"])
+                return true;
+            if ("@id" in value1)
+                return value1["@id"] === value2["@id"];
+        }
+        return false;
+    };
+    Class.hasValue = function (element, propertyName, value) {
+        if (Class.hasProperty(element, propertyName)) {
+            var item = element[propertyName];
+            var isList = RDF.List.Factory.is(item);
+            if (isList || Utils.isArray(item)) {
+                var items = isList ? item["@list"] : item;
+                for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+                    var entry = items_1[_i];
+                    if (Class.compareValues(entry, value))
+                        return true;
+                }
+            }
+            else if (!Utils.isArray(value)) {
+                return Class.compareValues(item, value);
+            }
+        }
+        return false;
+    };
+    return Class;
+}());
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var List = __webpack_require__(50);
+var Literal = __webpack_require__(47);
+var RDFNode = __webpack_require__(49);
+var Util = (function () {
+    function Util() {
+    }
+    Util.parseValue = function (propertyValue, pointerLibrary) {
+        if (Literal.Factory.is(propertyValue)) {
+            return Literal.Factory.parse(propertyValue);
+        }
+        else if (RDFNode.Factory.is(propertyValue)) {
+            return pointerLibrary.getPointer(propertyValue["@id"]);
+        }
+        else if (List.Factory.is(propertyValue)) {
+            var parsedValue = [];
+            var listValues = propertyValue["@list"];
+            for (var _i = 0, listValues_1 = listValues; _i < listValues_1.length; _i++) {
+                var listValue = listValues_1[_i];
+                parsedValue.push(Util.parseValue(listValue, pointerLibrary));
+            }
+            return parsedValue;
+        }
+        else {
+        }
+        return null;
+    };
+    return Util;
+}());
+exports.Util = Util;
+
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Document = __webpack_require__(17);
+var NS = __webpack_require__(1);
+var Errors_1 = __webpack_require__(3);
+exports.RDF_CLASS = NS.CS.Class.Credentials;
+exports.SCHEMA = {
+    "email": {
+        "@id": NS.VCARD.Predicate.email,
+        "@type": NS.XSD.DataType.string,
+    },
+    "password": {
+        "@id": NS.CS.Predicate.password,
+        "@type": NS.XSD.DataType.string,
+    },
+    "enabled": {
+        "@id": NS.CS.Predicate.enabled,
+        "@type": NS.XSD.DataType.boolean,
+    },
+    "user": {
+        "@id": NS.CS.Predicate.credentialsOf,
+        "@type": "@id",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.create = function (email, password) {
+        return Factory.createFrom({}, email, password);
+    };
+    Factory.createFrom = function (object, email, password) {
+        var credentials = Document.Factory.createFrom(object);
+        if (!email)
+            throw new Errors_1.IllegalArgumentError("The email cannot be empty.");
+        if (!password)
+            throw new Errors_1.IllegalArgumentError("The password cannot be empty.");
+        credentials.addType(exports.RDF_CLASS);
+        credentials.email = email;
+        credentials.password = password;
+        return credentials;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Fragment = __webpack_require__(51);
+var RDF = __webpack_require__(7);
+var Utils = __webpack_require__(0);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "slug"));
+    };
+    Factory.create = function (slug, document) {
+        return this.createFrom({}, slug, document);
+    };
+    Factory.createFrom = function (object, slug, document) {
+        var uri = document.id + "#" + slug;
+        var fragment = Fragment.Factory.createFrom(object, uri, document);
+        if (this.hasClassProperties(fragment))
+            return fragment;
+        Object.defineProperties(fragment, {
+            "slug": {
+                enumerable: false,
+                configurable: true,
+                get: function () {
+                    return RDF.URI.Util.getFragment(fragment.id);
+                },
+                set: function (value) {
+                    this.id = this.document.id + "#" + value;
+                },
+            },
+        });
+        return fragment;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PersistedProtectedDocument = __webpack_require__(29);
+var Utils = __webpack_require__(0);
+var PersistedUser = __webpack_require__(53);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.isObject(object)
+            && Utils.hasFunction(object, "enable")
+            && Utils.hasFunction(object, "disable");
+    };
+    Factory.decorate = function (persistedDocument, documents) {
+        var persistedCredentials = persistedDocument;
+        if (Factory.hasClassProperties(persistedDocument))
+            return persistedCredentials;
+        PersistedProtectedDocument.Factory.decorate(persistedCredentials, documents);
+        Object.defineProperties(persistedCredentials, {
+            "enable": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: changeEnabled.bind(persistedCredentials, true),
+            },
+            "disable": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: changeEnabled.bind(persistedCredentials, false),
+            },
+        });
+        if (persistedCredentials.user) {
+            PersistedUser.Factory.decorate(persistedCredentials.user, documents);
+            persistedCredentials.user.credentials = persistedCredentials;
+        }
+        return persistedCredentials;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+function changeEnabled(enabled, requestOptions) {
+    var _this = this;
+    var responses = [];
+    var promise = this.isResolved() ? Promise.resolve([]) : this.resolve();
+    return promise.then(function (_a) {
+        var _credentials = _a[0], response = _a[1];
+        if (response)
+            responses.push(response);
+        _this.enabled = enabled;
+        return _this.save(requestOptions);
+    }).then(function (_a) {
+        var _credentials = _a[0], response = _a[1];
+        if (response)
+            responses.push(response);
+        return [_this, responses];
+    });
+}
+
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = __webpack_require__(0);
+function on(event, onEvent, onError) {
+    return this._documents.on(event, this.id, onEvent, onError);
+}
+function off(event, onEvent, onError) {
+    return this._documents.off(event, this.id, onEvent, onError);
+}
+function one(event, onEvent, onError) {
+    return this._documents.one(event, this.id, onEvent, onError);
+}
+function onDocumentCreated(onEvent, onError) {
+    return this._documents.onDocumentCreated(this.id, onEvent, onError);
+}
+function onChildCreated(onEvent, onError) {
+    return this._documents.onChildCreated(this.id, onEvent, onError);
+}
+function onAccessPointCreated(onEvent, onError) {
+    return this._documents.onAccessPointCreated(this.id, onEvent, onError);
+}
+function onDocumentModified(onEvent, onError) {
+    return this._documents.onDocumentModified(this.id, onEvent, onError);
+}
+function onDocumentDeleted(onEvent, onError) {
+    return this._documents.onDocumentDeleted(this.id, onEvent, onError);
+}
+function onMemberAdded(onEvent, onError) {
+    return this._documents.onMemberAdded(this.id, onEvent, onError);
+}
+function onMemberRemoved(onEvent, onError) {
+    return this._documents.onMemberRemoved(this.id, onEvent, onError);
+}
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils_1.isObject(object)
+            && Utils_1.hasFunction(object, "on")
+            && Utils_1.hasFunction(object, "off")
+            && Utils_1.hasFunction(object, "one")
+            && Utils_1.hasFunction(object, "onDocumentCreated")
+            && Utils_1.hasFunction(object, "onChildCreated")
+            && Utils_1.hasFunction(object, "onAccessPointCreated")
+            && Utils_1.hasFunction(object, "onDocumentModified")
+            && Utils_1.hasFunction(object, "onDocumentDeleted")
+            && Utils_1.hasFunction(object, "onMemberAdded")
+            && Utils_1.hasFunction(object, "onMemberRemoved");
+    };
+    Factory.decorate = function (object) {
+        if (Factory.hasClassProperties(object))
+            return object;
+        return Object.defineProperties(object, {
+            "on": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: on,
+            },
+            "off": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: off,
+            },
+            "one": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: one,
+            },
+            "onDocumentCreated": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onDocumentCreated,
+            },
+            "onChildCreated": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onChildCreated,
+            },
+            "onAccessPointCreated": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onAccessPointCreated,
+            },
+            "onDocumentModified": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onDocumentModified,
+            },
+            "onDocumentDeleted": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onDocumentDeleted,
+            },
+            "onMemberAdded": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onMemberAdded,
+            },
+            "onMemberRemoved": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: onMemberRemoved,
+            },
+        });
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PersistedFragment = __webpack_require__(37);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.decorate = function (fragment, snapshot) {
+        if (snapshot === void 0) { snapshot = {}; }
+        PersistedFragment.Factory.decorate(fragment, snapshot);
+        return fragment;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = __webpack_require__(3);
+var PersistedProtectedDocument = __webpack_require__(29);
+var Utils = __webpack_require__(0);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "_roles")
+            && Utils.hasFunction(object, "createChild")
+            && Utils.hasFunction(object, "listUsers")
+            && Utils.hasFunction(object, "getUsers")
+            && Utils.hasFunction(object, "addUser")
+            && Utils.hasFunction(object, "addUsers")
+            && Utils.hasFunction(object, "removeUser")
+            && Utils.hasFunction(object, "removeUsers");
+    };
+    Factory.is = function (object) {
+        return Factory.hasClassProperties(object)
+            && PersistedProtectedDocument.Factory.is(object);
+    };
+    Factory.decorate = function (object, documents) {
+        var persistedRole = object;
+        if (Factory.hasClassProperties(persistedRole))
+            return persistedRole;
+        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
+        var context = documents.context;
+        var roles = context ? context.auth.roles : null;
+        Object.defineProperties(persistedRole, {
+            "_roles": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: roles,
+            },
+            "createChild": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: createChild,
+            },
+            "listUsers": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: listUsers,
+            },
+            "getUsers": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: getUsers,
+            },
+            "addUser": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: addUser,
+            },
+            "addUsers": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: addUsers,
+            },
+            "removeUser": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeUser,
+            },
+            "removeUsers": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: removeUsers,
+            },
+        });
+        return persistedRole;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+function createChild(role, slugOrRequestOptions, requestOptions) {
+    checkState(this);
+    return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
+}
+function listUsers(requestOptions) {
+    checkState(this);
+    return this._roles.listUsers(this.id, requestOptions);
+}
+function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
+    checkState(this);
+    return this._roles.getUsers(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
+}
+function addUser(user, requestOptions) {
+    checkState(this);
+    return this._roles.addUsers(this.id, [user], requestOptions);
+}
+function addUsers(users, requestOptions) {
+    checkState(this);
+    return this._roles.addUsers(this.id, users, requestOptions);
+}
+function removeUser(user, requestOptions) {
+    checkState(this);
+    return this._roles.removeUsers(this.id, [user], requestOptions);
+}
+function removeUsers(users, requestOptions) {
+    checkState(this);
+    return this._roles.removeUsers(this.id, users, requestOptions);
+}
+function checkState(role) {
+    if (!role._roles)
+        throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
+}
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Resource = __webpack_require__(9);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.CS.Class.Token;
+exports.SCHEMA = {
+    "key": {
+        "@id": NS.CS.Predicate.tokenKey,
+        "@type": NS.XSD.DataType.string,
+    },
+    "expirationTime": {
+        "@id": NS.CS.Predicate.expirationTime,
+        "@type": NS.XSD.DataType.dateTime,
+    },
+    "user": {
+        "@id": NS.CS.Predicate.credentialsOf,
+        "@type": "@id",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.is = function (value) {
+        return (Resource.Factory.is(value)
+            && Factory.hasClassProperties(value));
+    };
+    Factory.hasClassProperties = function (object) {
+        return (Utils.hasPropertyDefined(object, "key")
+            && Utils.hasPropertyDefined(object, "expirationTime")
+            && Utils.hasPropertyDefined(object, "user"));
+    };
+    Factory.hasRequiredValues = function (object) {
+        return (Utils.hasProperty(object, "key")
+            && Utils.hasProperty(object, "expirationTime"));
+    };
+    Factory.decorate = function (object) {
+        if (this.hasClassProperties(object))
+            return object;
+        return object;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Resource = __webpack_require__(9);
+exports.RDF_CLASS = NS.C.Class.VolatileResource;
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.is = function (object) {
+        return Resource.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS);
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Class = (function () {
+    function Class(username, password) {
+        this._username = username;
+        this._password = password;
+    }
+    Object.defineProperty(Class.prototype, "username", {
+        get: function () { return this._username; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "password", {
+        get: function () { return this._password; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}());
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = __webpack_require__(3);
+var HTTP = __webpack_require__(13);
 var RDF = __webpack_require__(7);
 var Utils = __webpack_require__(0);
 var Utils_1 = __webpack_require__(0);
-var AccessPoint = __webpack_require__(73);
-var Auth = __webpack_require__(29);
+var AccessPoint = __webpack_require__(85);
+var Auth = __webpack_require__(27);
 var Document = __webpack_require__(17);
 var FreeResources = __webpack_require__(45);
-var JSONLD = __webpack_require__(27);
+var JSONLD = __webpack_require__(28);
 var PersistedDocument = __webpack_require__(36);
 var PersistedFragment = __webpack_require__(37);
-var PersistedProtectedDocument = __webpack_require__(30);
+var PersistedProtectedDocument = __webpack_require__(29);
 var ProtectedDocument = __webpack_require__(86);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var Messaging = __webpack_require__(54);
 var Utils_2 = __webpack_require__(102);
 var NS = __webpack_require__(1);
 var ObjectSchema = __webpack_require__(14);
-var LDP = __webpack_require__(28);
+var LDP = __webpack_require__(30);
 var SPARQL = __webpack_require__(103);
 var Resource = __webpack_require__(9);
-var RetrievalPreferences = __webpack_require__(232);
+var RetrievalPreferences = __webpack_require__(235);
 var Builder_1 = __webpack_require__(104);
 var Class = (function () {
     function Class(context) {
@@ -7780,11 +9540,11 @@ var Class = (function () {
             var documentMetadata = _a[_i];
             var document_1 = documentMetadata.relatedDocument;
             for (var _b = 0, _c = documentMetadata.bNodesMap.entries; _b < _c.length; _b++) {
-                var _d = _c[_b], keyBNode = _d.key, valueBNode = _d.value;
-                var originalBNode = document_1.getFragment(keyBNode.id);
-                originalBNode.id = valueBNode.id;
-                document_1._fragmentsIndex.delete(keyBNode.id);
-                document_1._fragmentsIndex.set(valueBNode.id, originalBNode);
+                var _d = _c[_b], entryKey = _d.entryKey, entryValue = _d.entryValue;
+                var originalBNode = document_1.getFragment(entryKey.id);
+                originalBNode.id = entryValue.id;
+                document_1._fragmentsIndex.delete(entryKey.id);
+                document_1._fragmentsIndex.set(entryValue.id, originalBNode);
             }
             document_1._syncSavedFragments();
         }
@@ -7797,896 +9557,13 @@ exports.default = Class;
 
 
 /***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return "InvalidJSONLDSyntaxError"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 66 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-exports.Error = HTTPError_1.default;
-var BadRequestError_1 = __webpack_require__(118);
-exports.BadRequestError = BadRequestError_1.default;
-var ConflictError_1 = __webpack_require__(119);
-exports.ConflictError = ConflictError_1.default;
-var ForbiddenError_1 = __webpack_require__(120);
-exports.ForbiddenError = ForbiddenError_1.default;
-var MethodNotAllowedError_1 = __webpack_require__(121);
-exports.MethodNotAllowedError = MethodNotAllowedError_1.default;
-var NotAcceptableError_1 = __webpack_require__(122);
-exports.NotAcceptableError = NotAcceptableError_1.default;
-var NotFoundError_1 = __webpack_require__(123);
-exports.NotFoundError = NotFoundError_1.default;
-var PreconditionFailedError_1 = __webpack_require__(124);
-exports.PreconditionFailedError = PreconditionFailedError_1.default;
-var PreconditionRequiredError_1 = __webpack_require__(125);
-exports.PreconditionRequiredError = PreconditionRequiredError_1.default;
-var RequestEntityTooLargeError_1 = __webpack_require__(126);
-exports.RequestEntityTooLargeError = RequestEntityTooLargeError_1.default;
-var RequestHeaderFieldsTooLargeError_1 = __webpack_require__(127);
-exports.RequestHeaderFieldsTooLargeError = RequestHeaderFieldsTooLargeError_1.default;
-var RequestURITooLongError_1 = __webpack_require__(128);
-exports.RequestURITooLongError = RequestURITooLongError_1.default;
-var TooManyRequestsError_1 = __webpack_require__(129);
-exports.TooManyRequestsError = TooManyRequestsError_1.default;
-var UnauthorizedError_1 = __webpack_require__(130);
-exports.UnauthorizedError = UnauthorizedError_1.default;
-var UnsupportedMediaTypeError_1 = __webpack_require__(131);
-exports.UnsupportedMediaTypeError = UnsupportedMediaTypeError_1.default;
-var BadResponseError_1 = __webpack_require__(132);
-exports.BadResponseError = BadResponseError_1.default;
-var BadGatewayError_1 = __webpack_require__(133);
-exports.BadGatewayError = BadGatewayError_1.default;
-var GatewayTimeoutError_1 = __webpack_require__(134);
-exports.GatewayTimeoutError = GatewayTimeoutError_1.default;
-var HTTPVersionNotSupportedError_1 = __webpack_require__(135);
-exports.HTTPVersionNotSupportedError = HTTPVersionNotSupportedError_1.default;
-var InternalServerErrorError_1 = __webpack_require__(136);
-exports.InternalServerErrorError = InternalServerErrorError_1.default;
-var NotImplementedError_1 = __webpack_require__(137);
-exports.NotImplementedError = NotImplementedError_1.default;
-var ServiceUnavailableError_1 = __webpack_require__(138);
-exports.ServiceUnavailableError = ServiceUnavailableError_1.default;
-var UnknownError_1 = __webpack_require__(139);
-exports.UnknownError = UnknownError_1.default;
-var client = [];
-exports.client = client;
-client.push(BadRequestError_1.default);
-client.push(ConflictError_1.default);
-client.push(ForbiddenError_1.default);
-client.push(MethodNotAllowedError_1.default);
-client.push(NotAcceptableError_1.default);
-client.push(NotFoundError_1.default);
-client.push(PreconditionFailedError_1.default);
-client.push(PreconditionRequiredError_1.default);
-client.push(RequestEntityTooLargeError_1.default);
-client.push(RequestHeaderFieldsTooLargeError_1.default);
-client.push(RequestURITooLongError_1.default);
-client.push(TooManyRequestsError_1.default);
-client.push(UnauthorizedError_1.default);
-client.push(UnsupportedMediaTypeError_1.default);
-var server = [];
-exports.server = server;
-server.push(BadResponseError_1.default);
-server.push(BadGatewayError_1.default);
-server.push(GatewayTimeoutError_1.default);
-server.push(HTTPVersionNotSupportedError_1.default);
-server.push(InternalServerErrorError_1.default);
-server.push(NotImplementedError_1.default);
-server.push(ServiceUnavailableError_1.default);
-var statusCodeMap = new Map();
-exports.statusCodeMap = statusCodeMap;
-for (var i = 0, length_1 = client.length; i < length_1; i++) {
-    statusCodeMap.set(client[i].statusCode, client[i]);
-}
-for (var i = 0, length_2 = server.length; i < length_2; i++) {
-    statusCodeMap.set(server[i].statusCode, server[i]);
-}
-
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Method;
-(function (Method) {
-    Method[Method["OPTIONS"] = 0] = "OPTIONS";
-    Method[Method["HEAD"] = 1] = "HEAD";
-    Method[Method["GET"] = 2] = "GET";
-    Method[Method["POST"] = 3] = "POST";
-    Method[Method["PUT"] = 4] = "PUT";
-    Method[Method["PATCH"] = 5] = "PATCH";
-    Method[Method["DELETE"] = 6] = "DELETE";
-})(Method = exports.Method || (exports.Method = {}));
-exports.default = Method;
-
-
-/***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Header = __webpack_require__(43);
-var Utils_1 = __webpack_require__(0);
-var Class = (function () {
-    function Class(request, data, response) {
-        if (response === void 0) { response = {}; }
-        if (typeof XMLHttpRequest !== "undefined" && request instanceof XMLHttpRequest) {
-            var res = request;
-            this.status = res.status;
-            this.data = res.responseText;
-            this.setHeaders(res.getAllResponseHeaders());
-        }
-        else {
-            this.status = response.statusCode;
-            this.data = data || "";
-            this.setHeaders(response.headers);
-        }
-        this.request = request;
-    }
-    Class.prototype.getHeader = function (name) {
-        name = name.toLowerCase();
-        return this.headers.get(name) || null;
-    };
-    Class.prototype.setHeaders = function (headers) {
-        if (Utils_1.isString(headers)) {
-            this.headers = Header.Util.parseHeaders(headers);
-        }
-        else {
-            this.headers = new Map();
-            if (Utils_1.isObject(headers)) {
-                for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
-                    var name_1 = _a[_i];
-                    this.headers.set(name_1.toLowerCase(), new Header.Class(headers[name_1]));
-                }
-            }
-        }
-    };
-    return Class;
-}());
-exports.Class = Class;
-var Util = (function () {
-    function Util() {
-    }
-    Util.getETag = function (response) {
-        if (!response || !response.headers)
-            return null;
-        var etagHeader = response.getHeader("ETag");
-        if (!etagHeader)
-            return null;
-        if (!etagHeader.values.length)
-            return null;
-        if (etagHeader.values.length > 1)
-            console.warn("The response contains more than one ETag. Response: %o", response);
-        return etagHeader.values[0].toString();
-    };
-    return Util;
-}());
-exports.Util = Util;
-exports.default = Class;
-
-
-/***/ }),
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var FreeResources = __webpack_require__(45);
-var Parser_1 = __webpack_require__(48);
-var NS = __webpack_require__(1);
-var RDF = __webpack_require__(7);
-var SDKContext_1 = __webpack_require__(42);
-var IllegalArgumentError_1 = __webpack_require__(34);
-exports.RDF_CLASS = NS.C.Class.ErrorResponse;
-exports.SCHEMA = {
-    "errors": {
-        "@id": NS.C.Predicate.error,
-        "@type": "@id",
-        "@container": "@set",
-    },
-    "requestID": {
-        "@id": NS.C.Predicate.requestID,
-        "@type": NS.XSD.DataType.string,
-    },
-    "statusCode": {
-        "@id": NS.C.Predicate.httpStatusCode,
-        "@type": NS.XSD.DataType.int,
-    },
-};
-var Util = (function () {
-    function Util() {
-    }
-    Util.getMessage = function (errorResponse) {
-        var messages = [];
-        for (var _i = 0, _a = errorResponse.errors; _i < _a.length; _i++) {
-            var error = _a[_i];
-            messages.push(error.message);
-        }
-        return messages.join(", ");
-    };
-    return Util;
-}());
-exports.Util = Util;
-var Parser = (function () {
-    function Parser() {
-    }
-    Parser.prototype.parse = function (input, errorResponse) {
-        if (errorResponse === void 0) { errorResponse = {}; }
-        var documents = SDKContext_1.default.documents;
-        var parser = new Parser_1.default();
-        return parser.parse(input).then(function (freeNodes) {
-            var freeResources = FreeResources.Factory.create(documents);
-            for (var _i = 0, freeNodes_1 = freeNodes; _i < freeNodes_1.length; _i++) {
-                var node = freeNodes_1[_i];
-                var resource = void 0;
-                var errorResponseFound = false;
-                if (RDF.Node.Util.hasType(node, exports.RDF_CLASS)) {
-                    if (errorResponseFound)
-                        throw new IllegalArgumentError_1.default("The input string contains more than once c:ErrorResponse.");
-                    resource = freeResources.createResourceFrom(errorResponse);
-                    errorResponseFound = true;
-                }
-                else {
-                    resource = freeResources.getPointer(node["@id"]);
-                }
-                documents.jsonldConverter.compact(node, resource, documents.getSchemaFor(node), freeResources);
-            }
-            if (!errorResponse)
-                throw new IllegalArgumentError_1.default("The input string does not contains a c:ErrorResponse.");
-            return errorResponse;
-        });
-    };
-    return Parser;
-}());
-exports.Parser = Parser;
-
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var JSONLD = __webpack_require__(27);
-var Node = __webpack_require__(49);
-var Utils = __webpack_require__(0);
-var URI = __webpack_require__(16);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return Utils.hasProperty(object, "@graph")
-            && Utils.isArray(object["@graph"]);
-    };
-    Factory.create = function (resources, uri) {
-        var document = uri ? Node.Factory.create(uri) : {};
-        document["@graph"] = resources;
-        return document;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.getDocuments = function (value) {
-        if (Utils.isArray(value)) {
-            var array = value;
-            return array.filter(function (element) { return Factory.is(element); });
-        }
-        else if (Utils.isObject(value)) {
-            if (Factory.is(value))
-                return [value];
-        }
-        return [];
-    };
-    Util.getResources = function (value) {
-        var freeNodes = Node.Util.getFreeNodes(value);
-        var documents = Util.getDocuments(value);
-        var resources = [].concat(freeNodes);
-        for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
-            var document_1 = documents_1[_i];
-            resources = resources.concat(document_1["@graph"]);
-        }
-        return resources;
-    };
-    Util.getDocumentResources = function (document) {
-        var resources = Util.getResources(document);
-        var documentResources = [];
-        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-            var resource = resources[i];
-            var uri = resource["@id"];
-            if (!uri)
-                continue;
-            if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
-                documentResources.push(resource);
-        }
-        return documentResources;
-    };
-    Util.getFragmentResources = function (document, documentResource) {
-        var resources = Util.getResources(document);
-        var documentURIToMatch = null;
-        if (documentResource) {
-            if (Utils.isString(documentResource)) {
-                documentURIToMatch = documentResource;
-            }
-            else
-                documentURIToMatch = documentResource["@id"];
-        }
-        var fragmentResources = [];
-        for (var i = 0, length_2 = resources.length; i < length_2; i++) {
-            var resource = resources[i];
-            var uri = resource["@id"];
-            if (!uri)
-                continue;
-            if (!URI.Util.hasFragment(uri))
-                continue;
-            if (!documentURIToMatch) {
-                fragmentResources.push(resource);
-            }
-            else {
-                var documentURI = URI.Util.getDocumentURI(uri);
-                if (documentURI === documentURIToMatch)
-                    fragmentResources.push(resource);
-            }
-        }
-        return fragmentResources;
-    };
-    Util.getBNodeResources = function (document) {
-        var resources = Util.getResources(document);
-        var bnodes = [];
-        for (var i = 0, length_3 = resources.length; i < length_3; i++) {
-            var resource = resources[i];
-            if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
-                bnodes.push(resource);
-        }
-        return bnodes;
-    };
-    return Util;
-}());
-exports.Util = Util;
-var Parser = (function () {
-    function Parser() {
-    }
-    Parser.prototype.parse = function (input) {
-        var jsonLDParser = new JSONLD.Parser.Class();
-        return jsonLDParser.parse(input).then(function (expandedResult) {
-            return Util.getDocuments(expandedResult);
-        });
-    };
-    return Parser;
-}());
-exports.Parser = Parser;
-
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var InvalidJSONLDSyntaxError_1 = __webpack_require__(65);
-var Errors = __webpack_require__(3);
-var HTTP = __webpack_require__(12);
-var ObjectSchema = __webpack_require__(14);
-var RDF = __webpack_require__(7);
-var Utils = __webpack_require__(0);
-var MAX_CONTEXT_URLS = 10;
-var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
-var Class = (function () {
-    function Class() {
-    }
-    Class.expand = function (input) {
-        return this.retrieveContexts(input, Object.create(null), "").then(function () {
-            var expanded = Class.process(new ObjectSchema.DigestedObjectSchema(), input);
-            if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
-                expanded = expanded["@graph"];
-            }
-            else if (expanded === null) {
-                expanded = [];
-            }
-            if (!Utils.isArray(expanded))
-                expanded = [expanded];
-            return expanded;
-        });
-    };
-    Class.getTargetFromLinkHeader = function (header) {
-        var rLinkHeader = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
-        for (var _i = 0, _a = header.values; _i < _a.length; _i++) {
-            var value = _a[_i];
-            var match = value.toString().match(rLinkHeader);
-            if (!match)
-                continue;
-            var target = match[1];
-            var params = match[2];
-            var rParams = /(.*?)=(?:(?:"([^"]*?)")|([^"]*?))\s*(?:(?:;\s*)|$)/g;
-            var result = {};
-            while (true) {
-                match = rParams.exec(params);
-                if (!match)
-                    break;
-                result[match[1]] = (match[2] === undefined) ? match[3] : match[2];
-            }
-            if (result["rel"] === LINK_HEADER_REL)
-                return target;
-        }
-        return null;
-    };
-    Class.findContextURLs = function (input, contexts, base, replace) {
-        if (replace === void 0) { replace = false; }
-        var previousContexts = Object.keys(contexts).length;
-        if (Utils.isArray(input)) {
-            for (var _i = 0, _a = input; _i < _a.length; _i++) {
-                var element = _a[_i];
-                Class.findContextURLs(element, contexts, base);
-            }
-        }
-        else if (Utils.isPlainObject(input)) {
-            for (var key in input) {
-                if ("@context" !== key) {
-                    Class.findContextURLs(input[key], contexts, base);
-                    continue;
-                }
-                var urlOrArrayOrContext = input[key];
-                if (Utils.isArray(urlOrArrayOrContext)) {
-                    var contextArray = urlOrArrayOrContext;
-                    for (var index = 0, length_1 = contextArray.length; index < length_1; ++index) {
-                        var urlOrContext = contextArray[index];
-                        if (!Utils.isString(urlOrContext))
-                            continue;
-                        var url = urlOrContext;
-                        url = RDF.URI.Util.resolve(base, url);
-                        if (replace) {
-                            if (Utils.isArray(contexts[url])) {
-                                Array.prototype.splice.apply(contextArray, [index, 1].concat(contexts[url]));
-                                index += contexts[url].length - 1;
-                                length_1 = contextArray.length;
-                            }
-                            else {
-                                contextArray[index] = contexts[url];
-                            }
-                        }
-                        else if (!(url in contexts)) {
-                            contexts[url] = true;
-                        }
-                    }
-                }
-                else if (Utils.isString(urlOrArrayOrContext)) {
-                    var url = urlOrArrayOrContext;
-                    url = RDF.URI.Util.resolve(base, url);
-                    if (replace) {
-                        input[key] = contexts[url];
-                    }
-                    else if (!(url in contexts)) {
-                        contexts[url] = null;
-                    }
-                }
-            }
-        }
-        return previousContexts < Object.keys(contexts).length;
-    };
-    Class.retrieveContexts = function (input, contextsRequested, base) {
-        if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
-            return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Maximum number of @context URLs exceeded."));
-        var contextToResolved = Object.create(null);
-        if (!Class.findContextURLs(input, contextToResolved, base))
-            return Promise.resolve();
-        function resolved(url, promise) {
-            return promise.then(function (_a) {
-                var object = _a[0], response = _a[1];
-                var _contextsRequested = Utils.O.clone(contextsRequested);
-                _contextsRequested[url] = true;
-                var contextWrapper = { "@context": {} };
-                var header = response.getHeader("Content-Type");
-                if (!Utils.S.contains(header.toString(), "application/ld+json")) {
-                    header = response.getHeader("Link");
-                    var link = void 0;
-                    if (!!header)
-                        link = Class.getTargetFromLinkHeader(header);
-                    if (!!link)
-                        contextWrapper["@context"] = link;
-                }
-                else {
-                    contextWrapper["@context"] = ("@context" in object) ? object["@context"] : {};
-                }
-                contextToResolved[url] = contextWrapper["@context"];
-                return Class.retrieveContexts(contextWrapper, _contextsRequested, url);
-            });
-        }
-        var promises = [];
-        for (var url in contextToResolved) {
-            if (url in contextsRequested)
-                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected."));
-            var requestOptions = { sendCredentialsOnCORS: false };
-            HTTP.Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
-            var promise = HTTP.Request.Service.get(url, requestOptions, new HTTP.JSONParser.Class());
-            promises.push(resolved(url, promise));
-        }
-        return Promise.all(promises).then(function () {
-            Class.findContextURLs(input, contextToResolved, base, true);
-        });
-    };
-    Class.isKeyword = function (value) {
-        if (!Utils.isString(value))
-            return false;
-        switch (value) {
-            case "@base":
-            case "@context":
-            case "@container":
-            case "@default":
-            case "@embed":
-            case "@explicit":
-            case "@graph":
-            case "@id":
-            case "@index":
-            case "@language":
-            case "@list":
-            case "@omitDefault":
-            case "@preserve":
-            case "@requireAll":
-            case "@reverse":
-            case "@set":
-            case "@type":
-            case "@value":
-            case "@vocab":
-                return true;
-            default:
-                return false;
-        }
-    };
-    Class.isValidType = function (value) {
-        if (Utils.isString(value))
-            return true;
-        if (!Utils.isArray(value))
-            return false;
-        for (var _i = 0, _a = value; _i < _a.length; _i++) {
-            var element = _a[_i];
-            if (!Utils.isString(element))
-                return false;
-        }
-        return true;
-    };
-    Class.expandURI = function (schema, uri, relativeTo) {
-        if (relativeTo === void 0) { relativeTo = {}; }
-        if (uri === null || Class.isKeyword(uri) || RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        if (schema.properties.has(uri))
-            return schema.properties.get(uri).uri.stringValue;
-        if (RDF.URI.Util.isPrefixed(uri))
-            return ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
-        if (schema.prefixes.has(uri))
-            return schema.prefixes.get(uri).stringValue;
-        if (relativeTo.vocab) {
-            if (schema.vocab === null)
-                return null;
-            return schema.vocab + uri;
-        }
-        if (relativeTo.base)
-            RDF.URI.Util.resolve(schema.base, uri);
-        return uri;
-    };
-    Class.expandLanguageMap = function (languageMap) {
-        var expandedLanguage = [];
-        var keys = Object.keys(languageMap).sort();
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            var values = languageMap[key];
-            if (!Utils.isArray(values))
-                values = [values];
-            for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
-                var item = values_1[_a];
-                if (item === null)
-                    continue;
-                if (!Utils.isString(item))
-                    throw new InvalidJSONLDSyntaxError_1.default("Language map values must be strings.");
-                expandedLanguage.push({
-                    "@value": item,
-                    "@language": key.toLowerCase(),
-                });
-            }
-        }
-        return expandedLanguage;
-    };
-    Class.getContainer = function (context, property) {
-        if (context.properties.has(property))
-            return context.properties.get(property).containerType;
-        return undefined;
-    };
-    Class.expandValue = function (context, value, propertyName) {
-        if (Utils.isNull(value) || !Utils.isDefined(value))
-            return null;
-        if (propertyName === "@id") {
-            return Class.expandURI(context, value, { base: true });
-        }
-        else if (propertyName === "@type") {
-            return Class.expandURI(context, value, { vocab: true, base: true });
-        }
-        var definition = new ObjectSchema.DigestedPropertyDefinition();
-        if (context.properties.has(propertyName))
-            definition = context.properties.get(propertyName);
-        if (definition.literal === false || (propertyName === "@graph" && Utils.isString(value))) {
-            var options = { base: true };
-            if (definition.pointerType === ObjectSchema.PointerType.VOCAB)
-                options.vocab = true;
-            return { "@id": Class.expandURI(context, value, options) };
-        }
-        if (Class.isKeyword(propertyName))
-            return value;
-        var expandedValue = {};
-        if (!!definition.literalType) {
-            expandedValue["@type"] = definition.literalType.stringValue;
-        }
-        else if (Utils.isString(value)) {
-            var language = Utils.isDefined(definition.language) ? definition.language : context.language;
-            if (language !== null)
-                expandedValue["@language"] = language;
-        }
-        if (["boolean", "number", "string"].indexOf(typeof value) === -1)
-            value = value.toString();
-        expandedValue["@value"] = value;
-        return expandedValue;
-    };
-    Class.process = function (context, element, activeProperty, insideList) {
-        if (Utils.isNull(element) || !Utils.isDefined(element))
-            return null;
-        if (!Utils.isArray(element) && !Utils.isObject(element)) {
-            if (!insideList && (activeProperty === null || activeProperty === "@graph"))
-                return null;
-            return Class.expandValue(context, element, activeProperty);
-        }
-        if (Utils.isArray(element)) {
-            var container = Class.getContainer(context, activeProperty);
-            insideList = insideList || container === ObjectSchema.ContainerType.LIST;
-            var expandedElement_1 = [];
-            for (var _i = 0, _a = element; _i < _a.length; _i++) {
-                var item = _a[_i];
-                var expandedItem = Class.process(context, item, activeProperty);
-                if (expandedItem === null)
-                    continue;
-                if (insideList && (Utils.isArray(expandedItem) || RDF.List.Factory.is(expandedItem)))
-                    throw new InvalidJSONLDSyntaxError_1.default("Lists of lists are not permitted.");
-                if (!Utils.isArray(expandedItem))
-                    expandedItem = [expandedItem];
-                Array.prototype.push.apply(expandedElement_1, expandedItem);
-            }
-            return expandedElement_1;
-        }
-        if ("@context" in element) {
-            context = ObjectSchema.Digester.combineDigestedObjectSchemas([
-                ObjectSchema.Digester.digestSchema(element["@context"]),
-                context,
-            ]);
-        }
-        var expandedElement = {};
-        var keys = Object.keys(element);
-        for (var _b = 0, keys_2 = keys; _b < keys_2.length; _b++) {
-            var key = keys_2[_b];
-            if (key === "@context")
-                continue;
-            var uri = Class.expandURI(context, key, { vocab: true });
-            if (!uri || !(RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri) || Class.isKeyword(uri)))
-                continue;
-            var value = element[key];
-            if (Class.isKeyword(uri)) {
-                if (uri === "@id" && !Utils.isString(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@id\" value must a string.");
-                if (uri === "@type" && !Class.isValidType(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@type\" value must a string, an array of strings.");
-                if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@graph\" value must not be an object or an array.");
-                if (uri === "@value" && (Utils.isObject(value) || Utils.isArray(value)))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@value\" value must not be an object or an array.");
-                if (uri === "@language") {
-                    if (value === null)
-                        continue;
-                    if (!Utils.isString(value))
-                        throw new InvalidJSONLDSyntaxError_1.default("\"@language\" value must be a string.");
-                    value = value.toLowerCase();
-                }
-                if (uri === "@index" && !Utils.isString(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@index\" value must be a string.");
-                if (uri === "@reverse" && !Utils.isObject(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@reverse\" value must be an object.");
-                if (uri === "@index" || uri === "@reverse")
-                    throw new Errors.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
-            }
-            var expandedValue = void 0;
-            var container = Class.getContainer(context, key);
-            if (container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject(value)) {
-                expandedValue = Class.expandLanguageMap(value);
-            }
-            else {
-                var nextActiveProperty = key;
-                var isList = uri === "@list";
-                if (isList || uri === "@set") {
-                    nextActiveProperty = activeProperty;
-                    if (isList && activeProperty === "@graph")
-                        nextActiveProperty = null;
-                }
-                expandedValue = Class.process(context, value, nextActiveProperty, isList);
-            }
-            if (expandedValue === null && uri !== "@value")
-                continue;
-            if (uri !== "@list" && !RDF.List.Factory.is(expandedValue) && container === ObjectSchema.ContainerType.LIST) {
-                if (!Utils.isArray(expandedValue))
-                    expandedValue = [expandedValue];
-                expandedValue = { "@list": expandedValue };
-            }
-            var useArray = ["@type", "@id", "@value", "@language"].indexOf(uri) === -1;
-            Class.addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
-        }
-        if ("@value" in expandedElement) {
-            if (expandedElement["@value"] === null)
-                expandedElement = null;
-        }
-        else if ("@type" in expandedElement) {
-            if (!Utils.isArray(expandedElement["@type"]))
-                expandedElement["@type"] = [expandedElement["@type"]];
-        }
-        else if ("@set" in expandedElement) {
-            expandedElement = expandedElement["@set"];
-        }
-        return expandedElement;
-    };
-    Class.addValue = function (element, propertyName, value, options) {
-        if (Utils.isArray(value)) {
-            var values = value;
-            if (values.length === 0 && options.propertyIsArray && !Utils.hasProperty(element, propertyName))
-                element[propertyName] = [];
-            for (var _i = 0, values_2 = values; _i < values_2.length; _i++) {
-                var item = values_2[_i];
-                Class.addValue(element, propertyName, item, options);
-            }
-        }
-        else if (propertyName in element) {
-            if (!Class.hasValue(element, propertyName, value)) {
-                var items = element[propertyName];
-                if (!Utils.isArray(items))
-                    items = element[propertyName] = [items];
-                items.push(value);
-            }
-        }
-        else {
-            element[propertyName] = options.propertyIsArray ? [value] : value;
-        }
-    };
-    Class.hasProperty = function (element, propertyName) {
-        if (propertyName in element) {
-            var item = element[propertyName];
-            return !Utils.isArray(item) || item.length > 0;
-        }
-        return false;
-    };
-    Class.compareValues = function (value1, value2) {
-        if (value1 === value2)
-            return true;
-        if (Utils.isObject(value1) && Utils.isObject(value2)) {
-            if ("@value" in value1
-                && value1["@value"] === value2["@value"]
-                && value1["@type"] === value2["@type"]
-                && value1["@language"] === value2["@language"]
-                && value1["@index"] === value2["@index"])
-                return true;
-            if ("@id" in value1)
-                return value1["@id"] === value2["@id"];
-        }
-        return false;
-    };
-    Class.hasValue = function (element, propertyName, value) {
-        if (Class.hasProperty(element, propertyName)) {
-            var item = element[propertyName];
-            var isList = RDF.List.Factory.is(item);
-            if (isList || Utils.isArray(item)) {
-                var items = isList ? item["@list"] : item;
-                for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
-                    var entry = items_1[_i];
-                    if (Class.compareValues(entry, value))
-                        return true;
-                }
-            }
-            else if (!Utils.isArray(value)) {
-                return Class.compareValues(item, value);
-            }
-        }
-        return false;
-    };
-    return Class;
-}());
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var List = __webpack_require__(50);
-var Literal = __webpack_require__(47);
-var RDFNode = __webpack_require__(49);
-var Util = (function () {
-    function Util() {
-    }
-    Util.parseValue = function (propertyValue, pointerLibrary) {
-        if (Literal.Factory.is(propertyValue)) {
-            return Literal.Factory.parse(propertyValue);
-        }
-        else if (RDFNode.Factory.is(propertyValue)) {
-            return pointerLibrary.getPointer(propertyValue["@id"]);
-        }
-        else if (List.Factory.is(propertyValue)) {
-            var parsedValue = [];
-            var listValues = propertyValue["@list"];
-            for (var _i = 0, listValues_1 = listValues; _i < listValues_1.length; _i++) {
-                var listValue = listValues_1[_i];
-                parsedValue.push(Util.parseValue(listValue, pointerLibrary));
-            }
-            return parsedValue;
-        }
-        else {
-        }
-        return null;
-    };
-    return Util;
-}());
-exports.Util = Util;
-
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var LDP = __webpack_require__(28);
+var LDP = __webpack_require__(30);
 var NS = __webpack_require__(1);
 exports.RDF_CLASS = NS.C.Class.AccessPoint;
 var Factory = (function () {
@@ -8704,877 +9581,6 @@ var Factory = (function () {
     return Factory;
 }());
 exports.Factory = Factory;
-
-
-/***/ }),
-/* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __webpack_require__(51);
-var RDF = __webpack_require__(7);
-var Utils = __webpack_require__(0);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "slug"));
-    };
-    Factory.create = function (slug, document) {
-        return this.createFrom({}, slug, document);
-    };
-    Factory.createFrom = function (object, slug, document) {
-        var uri = document.id + "#" + slug;
-        var fragment = Fragment.Factory.createFrom(object, uri, document);
-        if (this.hasClassProperties(fragment))
-            return fragment;
-        Object.defineProperties(fragment, {
-            "slug": {
-                enumerable: false,
-                configurable: true,
-                get: function () {
-                    return RDF.URI.Util.getFragment(fragment.id);
-                },
-                set: function (value) {
-                    this.id = this.document.id + "#" + value;
-                },
-            },
-        });
-        return fragment;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Resource = __webpack_require__(9);
-exports.RDF_CLASS = NS.C.Class.VolatileResource;
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return Resource.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.CS.Class.AccessControlEntry;
-exports.SCHEMA = {
-    "granting": {
-        "@id": NS.CS.Predicate.granting,
-        "@type": NS.XSD.DataType.boolean,
-    },
-    "permissions": {
-        "@id": NS.CS.Predicate.permission,
-        "@type": "@id",
-        "@container": "@set",
-    },
-    "subjects": {
-        "@id": NS.CS.Predicate.subject,
-        "@type": "@id",
-        "@container": "@set",
-    },
-    "subjectsClass": {
-        "@id": NS.CS.Predicate.subjectClass,
-        "@type": "@id",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "granting")
-            && Utils.hasPropertyDefined(object, "permissions")
-            && Utils.hasPropertyDefined(object, "subjects")
-            && Utils.hasPropertyDefined(object, "subjectsClass");
-    };
-    Factory.createFrom = function (object, granting, subjects, subjectClass, permissions) {
-        var ace = object;
-        if (!ace.types)
-            ace.types = [];
-        ace.types.push(exports.RDF_CLASS);
-        ace.granting = granting;
-        ace.subjects = subjects;
-        ace.subjectsClass = subjectClass;
-        ace.permissions = permissions;
-        return ace;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var ACE = __webpack_require__(76);
-var NS = __webpack_require__(1);
-var Pointer = __webpack_require__(13);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.CS.Class.AccessControlList;
-exports.SCHEMA = {
-    "entries": {
-        "@id": NS.CS.Predicate.accessControlEntry,
-        "@type": "@id",
-        "@container": "@set",
-    },
-    "accessTo": {
-        "@id": NS.CS.Predicate.accessTo,
-        "@type": "@id",
-    },
-    "inheritableEntries": {
-        "@id": NS.CS.Predicate.inheritableEntry,
-        "@type": "@id",
-        "@container": "@set",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "accessTo")
-            && Utils.hasFunction(object, "_parsePointer")
-            && Utils.hasFunction(object, "grant")
-            && Utils.hasFunction(object, "deny")
-            && Utils.hasFunction(object, "configureChildInheritance")
-            && Utils.hasFunction(object, "grants")
-            && Utils.hasFunction(object, "denies")
-            && Utils.hasFunction(object, "getChildInheritance")
-            && Utils.hasFunction(object, "remove")
-            && Utils.hasFunction(object, "removeChildInheritance");
-    };
-    Factory.decorate = function (object) {
-        var acl = object;
-        if (Factory.hasClassProperties(acl))
-            return acl;
-        Object.defineProperties(acl, {
-            "_parsePointer": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: parsePointer,
-            },
-            "grant": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: grant,
-            },
-            "deny": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: deny,
-            },
-            "configureChildInheritance": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: configureChildInheritance,
-            },
-            "grants": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: grants,
-            },
-            "denies": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: denies,
-            },
-            "getChildInheritance": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: getChildInheritance,
-            },
-            "remove": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: remove,
-            },
-            "removeChildInheritance": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: removeChildInheritance,
-            },
-        });
-        return acl;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-function parsePointer(element) {
-    return Pointer.Factory.is(element) ? element : Pointer.Factory.create(element);
-}
-function parsePointers(elements) {
-    var _this = this;
-    var elementsArray = Utils.isArray(elements) ? elements : [elements];
-    return elementsArray.map(function (element) { return _this._parsePointer(element); });
-}
-function configACE(granting, subject, subjectClass, permissions, aces) {
-    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual(ace.subjects[0], subject); });
-    var ace;
-    if (subjectACEs.length === 0) {
-        ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
-        aces.push(ace);
-    }
-    else {
-        ace = subjectACEs[0];
-    }
-    Array.prototype.push.apply(ace.permissions, permissions);
-    return ace;
-}
-function configACEs(granting, subjects, subjectsClass, permissions, aces) {
-    var subjectPointers = parsePointers.call(this, subjects);
-    var subjectClassPointer = this._parsePointer(subjectsClass);
-    var permissionPointers = parsePointers.call(this, permissions);
-    for (var _i = 0, subjectPointers_1 = subjectPointers; _i < subjectPointers_1.length; _i++) {
-        var subject = subjectPointers_1[_i];
-        removePermissionsFrom.call(this, subject, permissionPointers, aces);
-        configACE.call(this, granting, subject, subjectClassPointer, permissionPointers, aces);
-    }
-}
-function grant(subjects, subjectsClass, permissions) {
-    var acl = this;
-    acl.entries = acl.entries || [];
-    configACEs.call(this, true, subjects, subjectsClass, permissions, acl.entries);
-}
-function deny(subjects, subjectsClass, permissions) {
-    var acl = this;
-    acl.entries = acl.entries || [];
-    configACEs.call(this, false, subjects, subjectsClass, permissions, acl.entries);
-}
-function configureChildInheritance(granting, subjects, subjectsClass, permissions) {
-    var acl = this;
-    acl.inheritableEntries = acl.inheritableEntries || [];
-    configACEs.call(this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries);
-}
-function grantingFrom(subject, permission, aces) {
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
-    for (var _i = 0, subjectACEs_1 = subjectACEs; _i < subjectACEs_1.length; _i++) {
-        var ace = subjectACEs_1[_i];
-        if (Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual) !== -1)
-            return ace.granting;
-    }
-    return null;
-}
-function getGranting(subject, permission, aces) {
-    if (!aces)
-        return null;
-    var subjectPointer = this._parsePointer(subject);
-    var permissionPointer = this._parsePointer(permission);
-    return grantingFrom(subjectPointer, permissionPointer, aces);
-}
-function grants(subject, permission) {
-    var acl = this;
-    return getGranting.call(this, subject, permission, acl.entries);
-}
-function denies(subject, permission) {
-    var acl = this;
-    var granting = getGranting.call(this, subject, permission, acl.entries);
-    return granting === null ? null : !granting;
-}
-function getChildInheritance(subject, permission) {
-    var acl = this;
-    return getGranting.call(this, subject, permission, acl.inheritableEntries);
-}
-function removePermissionsFrom(subject, permissions, aces) {
-    if (!aces)
-        return;
-    var acl = this;
-    var opposedAces = acl.entries === aces ? acl.inheritableEntries : acl.entries;
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
-    for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
-        var ace = subjectACEs_2[_i];
-        if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer.Util.areEqual) !== -1) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
-            var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
-            subjectACEs.push(newACE);
-            continue;
-        }
-        if (ace.subjects.length > 1) {
-            ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual), 1);
-            var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
-            subjectACEs.push(newACE);
-            continue;
-        }
-        for (var _a = 0, permissions_1 = permissions; _a < permissions_1.length; _a++) {
-            var permission = permissions_1[_a];
-            var index = Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual);
-            if (index === -1)
-                continue;
-            ace.permissions.splice(index, 1);
-        }
-        if (ace.permissions.length === 0) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
-            acl._removeFragment(ace);
-        }
-    }
-}
-function removePermissions(subject, permissions, aces) {
-    var subjectPointer = this._parsePointer(subject);
-    var permissionPointers = parsePointers.call(this, permissions);
-    removePermissionsFrom.call(this, subjectPointer, permissionPointers, aces);
-}
-function remove(subject, permissions) {
-    var acl = this;
-    removePermissions.call(this, subject, permissions, acl.entries);
-}
-function removeChildInheritance(subject, permissions) {
-    var acl = this;
-    removePermissions.call(this, subject, permissions, acl.inheritableEntries);
-}
-
-
-/***/ }),
-/* 78 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(3);
-var HTTP = __webpack_require__(12);
-var UsernameAndPasswordCredentials = __webpack_require__(165);
-var Class = (function () {
-    function Class() {
-    }
-    Class.prototype.isAuthenticated = function () {
-        return !!this.credentials;
-    };
-    Class.prototype.authenticate = function (authenticationToken) {
-        var _this = this;
-        if (authenticationToken === null)
-            throw new Errors.IllegalArgumentError("The authenticationToken cannot be null.");
-        return new Promise(function (resolve, reject) {
-            if (!authenticationToken.username)
-                throw new Errors.IllegalArgumentError("The username cannot be empty.");
-            if (!authenticationToken.password)
-                throw new Errors.IllegalArgumentError("The password cannot be empty.");
-            _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
-            resolve(_this.credentials);
-        });
-    };
-    Class.prototype.addAuthentication = function (requestOptions) {
-        if (!this.isAuthenticated())
-            throw new Errors.IllegalStateError("The authenticator isn't authenticated.");
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        this.addBasicAuthenticationHeader(headers);
-        return requestOptions;
-    };
-    Class.prototype.clearAuthentication = function () {
-        this.credentials = null;
-    };
-    Class.prototype.addBasicAuthenticationHeader = function (headers) {
-        if (headers.has("authorization"))
-            return;
-        var header = new HTTP.Header.Class();
-        headers.set("authorization", header);
-        var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
-        header.values.push(new HTTP.Header.Value(authorization));
-    };
-    return Class;
-}());
-exports.Class = Class;
-function toB64(str) {
-    return (typeof btoa !== "undefined") ? btoa(str) : new Buffer(str).toString("base64");
-}
-exports.default = Class;
-
-
-/***/ }),
-/* 79 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(17);
-var NS = __webpack_require__(1);
-var Errors_1 = __webpack_require__(3);
-exports.RDF_CLASS = NS.CS.Class.Credentials;
-exports.SCHEMA = {
-    "email": {
-        "@id": NS.VCARD.Predicate.email,
-        "@type": NS.XSD.DataType.string,
-    },
-    "password": {
-        "@id": NS.CS.Predicate.password,
-        "@type": NS.XSD.DataType.string,
-    },
-    "enabled": {
-        "@id": NS.CS.Predicate.enabled,
-        "@type": NS.XSD.DataType.boolean,
-    },
-    "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
-        "@type": "@id",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.create = function (email, password) {
-        return Factory.createFrom({}, email, password);
-    };
-    Factory.createFrom = function (object, email, password) {
-        var credentials = Document.Factory.createFrom(object);
-        if (!email)
-            throw new Errors_1.IllegalArgumentError("The email cannot be empty.");
-        if (!password)
-            throw new Errors_1.IllegalArgumentError("The password cannot be empty.");
-        credentials.addType(exports.RDF_CLASS);
-        credentials.email = email;
-        credentials.password = password;
-        return credentials;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 80 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument = __webpack_require__(30);
-var Utils = __webpack_require__(0);
-var PersistedUser = __webpack_require__(53);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.isObject(object)
-            && Utils.hasFunction(object, "enable")
-            && Utils.hasFunction(object, "disable");
-    };
-    Factory.decorate = function (persistedDocument, documents) {
-        var persistedCredentials = persistedDocument;
-        if (Factory.hasClassProperties(persistedDocument))
-            return persistedCredentials;
-        PersistedProtectedDocument.Factory.decorate(persistedCredentials, documents);
-        Object.defineProperties(persistedCredentials, {
-            "enable": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: changeEnabled.bind(persistedCredentials, true),
-            },
-            "disable": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: changeEnabled.bind(persistedCredentials, false),
-            },
-        });
-        if (persistedCredentials.user) {
-            PersistedUser.Factory.decorate(persistedCredentials.user, documents);
-            persistedCredentials.user.credentials = persistedCredentials;
-        }
-        return persistedCredentials;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-function changeEnabled(enabled, requestOptions) {
-    var _this = this;
-    var responses = [];
-    var promise = this.isResolved() ? Promise.resolve([]) : this.resolve();
-    return promise.then(function (_a) {
-        var _credentials = _a[0], response = _a[1];
-        if (response)
-            responses.push(response);
-        _this.enabled = enabled;
-        return _this.save(requestOptions);
-    }).then(function (_a) {
-        var _credentials = _a[0], response = _a[1];
-        if (response)
-            responses.push(response);
-        return [_this, responses];
-    });
-}
-
-
-/***/ }),
-/* 81 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Utils_1 = __webpack_require__(0);
-function on(event, onEvent, onError) {
-    return this._documents.on(event, this.id, onEvent, onError);
-}
-function off(event, onEvent, onError) {
-    return this._documents.off(event, this.id, onEvent, onError);
-}
-function one(event, onEvent, onError) {
-    return this._documents.one(event, this.id, onEvent, onError);
-}
-function onDocumentCreated(onEvent, onError) {
-    return this._documents.onDocumentCreated(this.id, onEvent, onError);
-}
-function onChildCreated(onEvent, onError) {
-    return this._documents.onChildCreated(this.id, onEvent, onError);
-}
-function onAccessPointCreated(onEvent, onError) {
-    return this._documents.onAccessPointCreated(this.id, onEvent, onError);
-}
-function onDocumentModified(onEvent, onError) {
-    return this._documents.onDocumentModified(this.id, onEvent, onError);
-}
-function onDocumentDeleted(onEvent, onError) {
-    return this._documents.onDocumentDeleted(this.id, onEvent, onError);
-}
-function onMemberAdded(onEvent, onError) {
-    return this._documents.onMemberAdded(this.id, onEvent, onError);
-}
-function onMemberRemoved(onEvent, onError) {
-    return this._documents.onMemberRemoved(this.id, onEvent, onError);
-}
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils_1.isObject(object)
-            && Utils_1.hasFunction(object, "on")
-            && Utils_1.hasFunction(object, "off")
-            && Utils_1.hasFunction(object, "one")
-            && Utils_1.hasFunction(object, "onDocumentCreated")
-            && Utils_1.hasFunction(object, "onChildCreated")
-            && Utils_1.hasFunction(object, "onAccessPointCreated")
-            && Utils_1.hasFunction(object, "onDocumentModified")
-            && Utils_1.hasFunction(object, "onDocumentDeleted")
-            && Utils_1.hasFunction(object, "onMemberAdded")
-            && Utils_1.hasFunction(object, "onMemberRemoved");
-    };
-    Factory.decorate = function (object) {
-        if (Factory.hasClassProperties(object))
-            return object;
-        return Object.defineProperties(object, {
-            "on": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: on,
-            },
-            "off": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: off,
-            },
-            "one": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: one,
-            },
-            "onDocumentCreated": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onDocumentCreated,
-            },
-            "onChildCreated": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onChildCreated,
-            },
-            "onAccessPointCreated": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onAccessPointCreated,
-            },
-            "onDocumentModified": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onDocumentModified,
-            },
-            "onDocumentDeleted": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onDocumentDeleted,
-            },
-            "onMemberAdded": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onMemberAdded,
-            },
-            "onMemberRemoved": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: onMemberRemoved,
-            },
-        });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 82 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedFragment = __webpack_require__(37);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.decorate = function (fragment, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        PersistedFragment.Factory.decorate(fragment, snapshot);
-        return fragment;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 83 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(3);
-var PersistedProtectedDocument = __webpack_require__(30);
-var Utils = __webpack_require__(0);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "_roles")
-            && Utils.hasFunction(object, "createChild")
-            && Utils.hasFunction(object, "listUsers")
-            && Utils.hasFunction(object, "getUsers")
-            && Utils.hasFunction(object, "addUser")
-            && Utils.hasFunction(object, "addUsers")
-            && Utils.hasFunction(object, "removeUser")
-            && Utils.hasFunction(object, "removeUsers");
-    };
-    Factory.is = function (object) {
-        return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument.Factory.is(object);
-    };
-    Factory.decorate = function (object, documents) {
-        var persistedRole = object;
-        if (Factory.hasClassProperties(persistedRole))
-            return persistedRole;
-        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
-        var context = documents.context;
-        var roles = context ? context.auth.roles : null;
-        Object.defineProperties(persistedRole, {
-            "_roles": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: roles,
-            },
-            "createChild": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: createChild,
-            },
-            "listUsers": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: listUsers,
-            },
-            "getUsers": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: getUsers,
-            },
-            "addUser": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: addUser,
-            },
-            "addUsers": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: addUsers,
-            },
-            "removeUser": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: removeUser,
-            },
-            "removeUsers": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: removeUsers,
-            },
-        });
-        return persistedRole;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-function createChild(role, slugOrRequestOptions, requestOptions) {
-    checkState(this);
-    return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
-}
-function listUsers(requestOptions) {
-    checkState(this);
-    return this._roles.listUsers(this.id, requestOptions);
-}
-function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
-    checkState(this);
-    return this._roles.getUsers(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
-}
-function addUser(user, requestOptions) {
-    checkState(this);
-    return this._roles.addUsers(this.id, [user], requestOptions);
-}
-function addUsers(users, requestOptions) {
-    checkState(this);
-    return this._roles.addUsers(this.id, users, requestOptions);
-}
-function removeUser(user, requestOptions) {
-    checkState(this);
-    return this._roles.removeUsers(this.id, [user], requestOptions);
-}
-function removeUsers(users, requestOptions) {
-    checkState(this);
-    return this._roles.removeUsers(this.id, users, requestOptions);
-}
-function checkState(role) {
-    if (!role._roles)
-        throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
-}
-
-
-/***/ }),
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Resource = __webpack_require__(9);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.CS.Class.Token;
-exports.SCHEMA = {
-    "key": {
-        "@id": NS.CS.Predicate.tokenKey,
-        "@type": NS.XSD.DataType.string,
-    },
-    "expirationTime": {
-        "@id": NS.CS.Predicate.expirationTime,
-        "@type": NS.XSD.DataType.dateTime,
-    },
-    "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
-        "@type": "@id",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (value) {
-        return (Resource.Factory.is(value)
-            && Factory.hasClassProperties(value));
-    };
-    Factory.hasClassProperties = function (object) {
-        return (Utils.hasPropertyDefined(object, "key")
-            && Utils.hasPropertyDefined(object, "expirationTime")
-            && Utils.hasPropertyDefined(object, "user"));
-    };
-    Factory.hasRequiredValues = function (object) {
-        return (Utils.hasProperty(object, "key")
-            && Utils.hasProperty(object, "expirationTime"));
-    };
-    Factory.decorate = function (object) {
-        if (this.hasClassProperties(object))
-            return object;
-        return object;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Class = (function () {
-    function Class(username, password) {
-        this._username = username;
-        this._password = password;
-    }
-    Object.defineProperty(Class.prototype, "username", {
-        get: function () { return this._username; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "password", {
-        get: function () { return this._password; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}());
-exports.Class = Class;
-exports.default = Class;
 
 
 /***/ }),
@@ -9609,8 +9615,8 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var SockJS = __webpack_require__(185);
-var webstomp = __webpack_require__(218);
+var SockJS = __webpack_require__(188);
+var webstomp = __webpack_require__(221);
 var Errors_1 = __webpack_require__(3);
 var Parser_1 = __webpack_require__(48);
 var Utils_1 = __webpack_require__(0);
@@ -9764,8 +9770,8 @@ exports.default = Class;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var required = __webpack_require__(189)
-  , qs = __webpack_require__(190)
+var required = __webpack_require__(192)
+  , qs = __webpack_require__(193)
   , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\S\s]*)/i
   , slashes = /^[A-Za-z][A-Za-z0-9+-.]*:\/\//;
 
@@ -10250,8 +10256,8 @@ module.exports = EventTarget;
 
 var inherits = __webpack_require__(2)
   , urlUtils = __webpack_require__(10)
-  , BufferedSender = __webpack_require__(196)
-  , Polling = __webpack_require__(197)
+  , BufferedSender = __webpack_require__(199)
+  , Polling = __webpack_require__(200)
   ;
 
 var debug = function() {};
@@ -10542,7 +10548,7 @@ module.exports = XdrStreamingTransport;
 
 var inherits = __webpack_require__(2)
   , AjaxBasedTransport = __webpack_require__(24)
-  , EventSourceReceiver = __webpack_require__(198)
+  , EventSourceReceiver = __webpack_require__(201)
   , XHRCorsObject = __webpack_require__(39)
   , EventSourceDriver = __webpack_require__(94)
   ;
@@ -10738,7 +10744,7 @@ module.exports = '1.1.4';
 
 
 var inherits = __webpack_require__(2)
-  , HtmlfileReceiver = __webpack_require__(201)
+  , HtmlfileReceiver = __webpack_require__(204)
   , XHRLocalObject = __webpack_require__(31)
   , AjaxBasedTransport = __webpack_require__(24)
   ;
@@ -10970,13 +10976,13 @@ exports.createDestination = createDestination;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Builder = __webpack_require__(104);
 exports.Builder = Builder;
-var RawResults = __webpack_require__(229);
+var RawResults = __webpack_require__(232);
 exports.RawResults = RawResults;
 var RawResultsParser = __webpack_require__(109);
 exports.RawResultsParser = RawResultsParser;
-var Service_1 = __webpack_require__(230);
+var Service_1 = __webpack_require__(233);
 exports.Service = Service_1.default;
-var SELECTResults = __webpack_require__(231);
+var SELECTResults = __webpack_require__(234);
 exports.SELECTResults = SELECTResults;
 
 
@@ -10987,7 +10993,7 @@ exports.SELECTResults = SELECTResults;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var sparqler_1 = __webpack_require__(219);
+var sparqler_1 = __webpack_require__(222);
 exports.Class = sparqler_1.default;
 var queryPrototype = sparqler_1.default.prototype;
 var superInit = queryPrototype.initInterfaces;
@@ -11092,15 +11098,15 @@ exports.isMultiLine = isMultiLine;
 
 "use strict";
 
-var Literals_1 = __webpack_require__(221);
-var Resource_1 = __webpack_require__(223);
-var Variable_1 = __webpack_require__(224);
-var BlankNode_1 = __webpack_require__(225);
-var Collection_1 = __webpack_require__(226);
+var Literals_1 = __webpack_require__(224);
+var Resource_1 = __webpack_require__(226);
+var Variable_1 = __webpack_require__(227);
+var BlankNode_1 = __webpack_require__(228);
+var Collection_1 = __webpack_require__(229);
 var NotTriplesPattern_1 = __webpack_require__(108);
 var Tokens_1 = __webpack_require__(11);
 var Utils = __webpack_require__(106);
-var ValuesPattern_1 = __webpack_require__(227);
+var ValuesPattern_1 = __webpack_require__(230);
 var StringLiteral_1 = __webpack_require__(22);
 var PatternBuilder = (function () {
     function PatternBuilder(resolver) {
@@ -11259,10 +11265,10 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PlatformMetadata = __webpack_require__(234);
-exports.PlatformMetadata = PlatformMetadata;
-var InstanceMetadata = __webpack_require__(235);
-exports.InstanceMetadata = InstanceMetadata;
+var ValidationReport = __webpack_require__(237);
+exports.ValidationReport = ValidationReport;
+var ValidationResult = __webpack_require__(238);
+exports.ValidationResult = ValidationResult;
 
 
 /***/ }),
@@ -11271,12 +11277,25 @@ exports.InstanceMetadata = InstanceMetadata;
 
 "use strict";
 
-var Carbon_1 = __webpack_require__(112);
-module.exports = Carbon_1.default;
+Object.defineProperty(exports, "__esModule", { value: true });
+var PlatformMetadata = __webpack_require__(239);
+exports.PlatformMetadata = PlatformMetadata;
+var InstanceMetadata = __webpack_require__(240);
+exports.InstanceMetadata = InstanceMetadata;
 
 
 /***/ }),
 /* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Carbon_1 = __webpack_require__(113);
+module.exports = Carbon_1.default;
+
+
+/***/ }),
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11292,31 +11311,32 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractContext = __webpack_require__(113);
-var AccessPoint = __webpack_require__(73);
-var Auth = __webpack_require__(29);
+var AbstractContext = __webpack_require__(114);
+var AccessPoint = __webpack_require__(85);
+var Auth = __webpack_require__(27);
 var Document = __webpack_require__(17);
-var Documents = __webpack_require__(64);
+var Documents = __webpack_require__(84);
 var Errors = __webpack_require__(3);
 var Fragment = __webpack_require__(51);
-var HTTP = __webpack_require__(12);
-var JSONLD = __webpack_require__(27);
-var LDP = __webpack_require__(28);
+var HTTP = __webpack_require__(13);
+var JSONLD = __webpack_require__(28);
+var LDP = __webpack_require__(30);
 var Messaging = __webpack_require__(54);
-var NamedFragment = __webpack_require__(74);
+var NamedFragment = __webpack_require__(76);
 var NS = __webpack_require__(1);
 var ObjectSchema = __webpack_require__(14);
 var PersistedDocument = __webpack_require__(36);
 var PersistedFragment = __webpack_require__(37);
-var PersistedNamedFragment = __webpack_require__(82);
+var PersistedNamedFragment = __webpack_require__(79);
 var PersistedResource = __webpack_require__(52);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var RDF = __webpack_require__(7);
 var Resource = __webpack_require__(9);
 var SDKContext = __webpack_require__(42);
-var Settings = __webpack_require__(236);
+var Settings = __webpack_require__(241);
+var SHACL = __webpack_require__(110);
 var SPARQL = __webpack_require__(103);
-var System = __webpack_require__(110);
+var System = __webpack_require__(111);
 var Utils = __webpack_require__(0);
 var Class = (function (_super) {
     __extends(Class, _super);
@@ -11382,6 +11402,7 @@ var Class = (function (_super) {
     Class.Resource = Resource;
     Class.SDKContext = SDKContext;
     Class.Settings = Settings;
+    Class.SHACL = SHACL;
     Class.SPARQL = SPARQL;
     Class.System = System;
     Class.Utils = Utils;
@@ -11392,7 +11413,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11440,1388 +11461,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 114 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return "IDAlreadyInUseError"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
 /* 115 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return "IllegalActionError"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 116 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        if (message === void 0) { message = ""; }
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return "IllegalStateError"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        if (message === void 0) { message = ""; }
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return "NotImplementedError"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "BadRequestError";
-var statusCode = 400;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "ConflictError";
-var statusCode = 409;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "ForbiddenError";
-var statusCode = 403;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "MethodNotAllowedError";
-var statusCode = 405;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "NotAcceptableError";
-var statusCode = 406;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "NotFoundError";
-var statusCode = 404;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 124 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "PreconditionFailedError";
-var statusCode = 412;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 125 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "PreconditionRequiredError";
-var statusCode = 428;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "RequestEntityTooLargeError";
-var statusCode = 413;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 127 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "RequestHeaderFieldsTooLargeError";
-var statusCode = 431;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "RequestURITooLongError";
-var statusCode = 414;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "TooManyRequestsError";
-var statusCode = 429;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "UnauthorizedError";
-var statusCode = 401;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 131 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "UnsupportedMediaTypeError";
-var statusCode = 415;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 132 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "BadResponseError";
-var statusCode = 0;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 133 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "BadGatewayError";
-var statusCode = 502;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 134 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "GatewayTimeoutError";
-var statusCode = 504;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 135 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "HTTPVersionNotSupportedError";
-var statusCode = 505;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 136 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "InternalServerErrorError";
-var statusCode = 500;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 137 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "NotImplementedError";
-var statusCode = 501;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 138 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "ServiceUnavailableError";
-var statusCode = 503;
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class, "statusCode", {
-        get: function () { return statusCode; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 139 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __webpack_require__(4);
-var name = "UnknownError";
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
-    }
-    Object.defineProperty(Class.prototype, "name", {
-        get: function () { return name; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 140 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-
-
-/***/ }),
-/* 141 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(3);
-var Header = __webpack_require__(43);
-var HTTPErrors = __webpack_require__(66);
-var Method_1 = __webpack_require__(67);
-var NS = __webpack_require__(1);
-var Response_1 = __webpack_require__(68);
-var ErrorResponse = __webpack_require__(69);
-var Utils = __webpack_require__(0);
-function forEachHeaders(headers, setHeader) {
-    var namesIterator = headers.keys();
-    var next = namesIterator.next();
-    while (!next.done) {
-        var name_1 = next.value;
-        var value = headers.get(name_1);
-        setHeader(name_1, value.toString());
-        next = namesIterator.next();
-    }
-}
-function onResolve(resolve, reject, response) {
-    if (response.status >= 200 && response.status <= 299) {
-        resolve(response);
-    }
-    else if (response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has(response.status)) {
-        var errorClass = HTTPErrors.statusCodeMap.get(response.status);
-        var error_1 = new errorClass("", response);
-        if (!response.data) {
-            reject(error_1);
-        }
-        var parser = new ErrorResponse.Parser();
-        parser.parse(response.data, error_1).then(function (errorResponse) {
-            error_1.message = ErrorResponse.Util.getMessage(errorResponse);
-            reject(error_1);
-        }).catch(function () {
-            error_1.message = response.data;
-            reject(error_1);
-        });
-    }
-    else {
-        reject(new HTTPErrors.UnknownError(response.data, response));
-    }
-}
-function sendWithBrowser(method, url, body, options) {
-    return new Promise(function (resolve, reject) {
-        var request = options.request ? options.request : new XMLHttpRequest();
-        request.open(method, url, true);
-        if (options.headers)
-            forEachHeaders(options.headers, function (name, value) { return request.setRequestHeader(name, value); });
-        request.withCredentials = options.sendCredentialsOnCORS;
-        if (options.timeout)
-            request.timeout = options.timeout;
-        request.onload = request.onerror = function () {
-            var response = new Response_1.default(request);
-            onResolve(resolve, reject, response);
-        };
-        if (body) {
-            request.send(body);
-        }
-        else {
-            request.send();
-        }
-    });
-}
-function sendWithNode(method, url, body, options) {
-    return new Promise(function (resolve, reject) {
-        var URL = __webpack_require__(150);
-        function returnResponse(request, res) {
-            var rawData = [];
-            res.on("data", function (chunk) {
-                if (typeof chunk === "string")
-                    chunk = Buffer.from(chunk, "utf-8");
-                rawData.push(chunk);
-            }).on("end", function () {
-                var data = Buffer.concat(rawData).toString("utf8");
-                var response = new Response_1.default(request, data, res);
-                onResolve(resolve, reject, response);
-            });
-        }
-        var numberOfRedirects = 0;
-        function sendRequest(_url) {
-            var parsedURL = URL.parse(_url);
-            var HTTP = parsedURL.protocol === "http:" ? __webpack_require__(151) : __webpack_require__(152);
-            var requestOptions = {
-                protocol: parsedURL.protocol,
-                host: parsedURL.host,
-                hostname: parsedURL.hostname,
-                port: parseFloat(parsedURL.port),
-                path: parsedURL.path,
-                method: method,
-                headers: {},
-                withCredentials: options.sendCredentialsOnCORS,
-            };
-            if (options.headers)
-                forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
-            var request = HTTP.request(requestOptions);
-            if (options.timeout)
-                request.setTimeout(options.timeout);
-            request.on("response", function (res) {
-                if (res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers) {
-                    if (++numberOfRedirects < 10)
-                        return sendRequest(URL.resolve(_url, res.headers.location));
-                }
-                returnResponse(request, res);
-            });
-            request.on("error", function (error) {
-                var response = new Response_1.default(request, error.message);
-                onResolve(resolve, reject, response);
-            });
-            request.end(body);
-        }
-        sendRequest(url);
-    });
-}
-function isBody(data) {
-    return Utils.isString(data)
-        || typeof Blob !== "undefined" && data instanceof Blob
-        || typeof Buffer !== "undefined" && data instanceof Buffer;
-}
-var Service = (function () {
-    function Service() {
-    }
-    Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
-        if (parser === void 0) { parser = null; }
-        var body = null;
-        var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
-        parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
-        if (isBody(bodyOrOptions)) {
-            body = bodyOrOptions;
-        }
-        else {
-            options = bodyOrOptions ? bodyOrOptions : options;
-        }
-        options = Utils.extend({}, Service.defaultOptions, options);
-        if (Utils.isNumber(method))
-            method = Method_1.default[method];
-        var requestPromise;
-        if (typeof XMLHttpRequest !== "undefined") {
-            requestPromise = sendWithBrowser(method, url, body, options);
-        }
-        else {
-            requestPromise = sendWithNode(method, url, body, options);
-        }
-        if (parser === null)
-            return requestPromise;
-        return requestPromise.then(function (response) {
-            return parser.parse(response.data).then(function (parsedBody) {
-                return [parsedBody, response];
-            });
-        });
-    };
-    Service.options = function (url, options) {
-        if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.OPTIONS, url, options);
-    };
-    Service.head = function (url, options) {
-        if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.HEAD, url, options);
-    };
-    Service.get = function (url, options, parser) {
-        if (options === void 0) { options = Service.defaultOptions; }
-        if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.GET, url, null, options, parser);
-    };
-    Service.post = function (url, bodyOrOptions, options, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
-        if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
-    };
-    Service.put = function (url, bodyOrOptions, options, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
-        if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.PUT, url, bodyOrOptions, options, parser);
-    };
-    Service.patch = function (url, bodyOrOptions, options, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
-        if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
-    };
-    Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
-        if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
-    };
-    Service.defaultOptions = {
-        sendCredentialsOnCORS: true,
-    };
-    return Service;
-}());
-exports.Service = Service;
-var Util = (function () {
-    function Util() {
-    }
-    Util.getHeader = function (headerName, requestOptions, initialize) {
-        if (initialize === void 0) { initialize = false; }
-        headerName = headerName.toLowerCase();
-        if (initialize) {
-            var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-            if (!headers.has(headerName))
-                headers.set(headerName, new Header.Class());
-        }
-        if (!requestOptions.headers)
-            return undefined;
-        return requestOptions.headers.get(headerName);
-    };
-    Util.setAcceptHeader = function (accept, requestOptions) {
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("accept", new Header.Class(accept));
-        return requestOptions;
-    };
-    Util.setContentTypeHeader = function (contentType, requestOptions) {
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("content-type", new Header.Class(contentType));
-        return requestOptions;
-    };
-    Util.setIfMatchHeader = function (etag, requestOptions) {
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("if-match", new Header.Class(etag));
-        return requestOptions;
-    };
-    Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("if-none-match", new Header.Class(eTag));
-        return requestOptions;
-    };
-    Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
-        var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
-        return requestOptions;
-    };
-    Util.setPreferredRetrievalResource = function (typeOfRequest, requestOptions) {
-        var prefer = Util.getHeader("prefer", requestOptions, true);
-        var preferType;
-        switch (typeOfRequest) {
-            case "Created":
-                preferType = NS.C.Class.CreatedResource;
-                break;
-            case "Modified":
-                preferType = NS.C.Class.ModifiedResource;
-                break;
-            default:
-                throw new Errors.IllegalArgumentError("Invalid type of request: '" + typeOfRequest + "'.");
-        }
-        prefer.values.push(new Header.Value("return=representation; " + preferType));
-        return requestOptions;
-    };
-    Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
-        if (returnRepresentation === void 0) { returnRepresentation = true; }
-        var prefer = Util.getHeader("prefer", requestOptions, true);
-        var representation = returnRepresentation ? "return=representation; " : "";
-        var keys = ["include", "omit"];
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            if (key in preferences && preferences[key].length > 0) {
-                prefer.values.push(new Header.Value("" + representation + key + "=\"" + preferences[key].join(" ") + "\""));
-            }
-        }
-        return requestOptions;
-    };
-    Util.setSlug = function (slug, requestOptions) {
-        var slugHeader = Util.getHeader("slug", requestOptions, true);
-        slugHeader.values.push(new Header.Value(slug));
-        return requestOptions;
-    };
-    Util.isOptions = function (object) {
-        return Utils.hasPropertyDefined(object, "headers")
-            || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
-            || Utils.hasPropertyDefined(object, "timeout")
-            || Utils.hasPropertyDefined(object, "request");
-    };
-    return Util;
-}());
-exports.Util = Util;
-
-
-/***/ }),
-/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12986,6 +11626,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ValidationError", {
+        get: function () { return exports.namespace + "ValidationError"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -13004,11 +11649,6 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "buildDate", {
         get: function () { return exports.namespace + "buildDate"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "carbonCode", {
-        get: function () { return exports.namespace + "carbonCode"; },
         enumerable: true,
         configurable: true
     });
@@ -13047,6 +11687,26 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "errorCode", {
+        get: function () { return exports.namespace + "errorCode"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "errorDetails", {
+        get: function () { return exports.namespace + "errorDetails"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "errorMessage", {
+        get: function () { return exports.namespace + "errorMessage"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "errorParameters", {
+        get: function () { return exports.namespace + "errorParameters"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "eTag", {
         get: function () { return exports.namespace + "eTag"; },
         enumerable: true,
@@ -13058,7 +11718,7 @@ var Predicate = (function () {
         configurable: true
     });
     Object.defineProperty(Predicate, "entryKey", {
-        get: function () { return exports.namespace + "entryKey"; },
+        get: function () { return exports.namespace + "key"; },
         enumerable: true,
         configurable: true
     });
@@ -13069,11 +11729,6 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "member", {
         get: function () { return exports.namespace + "member"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "message", {
-        get: function () { return exports.namespace + "message"; },
         enumerable: true,
         configurable: true
     });
@@ -13108,7 +11763,7 @@ var Predicate = (function () {
         configurable: true
     });
     Object.defineProperty(Predicate, "entryValue", {
-        get: function () { return exports.namespace + "entryValue"; },
+        get: function () { return exports.namespace + "value"; },
         enumerable: true,
         configurable: true
     });
@@ -13123,7 +11778,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 143 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13143,7 +11798,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 144 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13376,7 +12031,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 145 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13534,7 +12189,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 146 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13552,7 +12207,94 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 147 */
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.namespace = "http://www.w3.org/ns/shacl#";
+var Class = (function () {
+    function Class() {
+    }
+    Object.defineProperty(Class, "ValidationReport", {
+        get: function () { return exports.namespace + "ValidationReport"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ValidationResult", {
+        get: function () { return exports.namespace + "ValidationResult"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}());
+exports.Class = Class;
+var Predicate = (function () {
+    function Predicate() {
+    }
+    Object.defineProperty(Predicate, "conforms", {
+        get: function () { return exports.namespace + "conforms"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "detail", {
+        get: function () { return exports.namespace + "detail"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "focusNode", {
+        get: function () { return exports.namespace + "focusNode"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "result", {
+        get: function () { return exports.namespace + "result"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resultMessage", {
+        get: function () { return exports.namespace + "resultMessage"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resultPath", {
+        get: function () { return exports.namespace + "resultPath"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "resultSeverity", {
+        get: function () { return exports.namespace + "resultSeverity"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "shapesGraphWellFormed", {
+        get: function () { return exports.namespace + "shapesGraphWellFormed"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "sourceConstraintComponent", {
+        get: function () { return exports.namespace + "sourceConstraintComponent"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "sourceShape", {
+        get: function () { return exports.namespace + "sourceShape"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "value", {
+        get: function () { return exports.namespace + "value"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Predicate;
+}());
+exports.Predicate = Predicate;
+
+
+/***/ }),
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13573,18 +12315,1399 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractError_1 = __webpack_require__(20);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return "IDAlreadyInUseError"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(AbstractError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractError_1 = __webpack_require__(20);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return "IllegalActionError"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(AbstractError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractError_1 = __webpack_require__(20);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
+        if (message === void 0) { message = ""; }
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return "IllegalStateError"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(AbstractError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractError_1 = __webpack_require__(20);
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message) {
+        if (message === void 0) { message = ""; }
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return "NotImplementedError"; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(AbstractError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 126 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "BadRequestError";
+var statusCode = 400;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "ConflictError";
+var statusCode = 409;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "ForbiddenError";
+var statusCode = 403;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "MethodNotAllowedError";
+var statusCode = 405;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "NotAcceptableError";
+var statusCode = 406;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "NotFoundError";
+var statusCode = 404;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "PreconditionFailedError";
+var statusCode = 412;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "PreconditionRequiredError";
+var statusCode = 428;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 134 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "RequestEntityTooLargeError";
+var statusCode = 413;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "RequestHeaderFieldsTooLargeError";
+var statusCode = 431;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "RequestURITooLongError";
+var statusCode = 414;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "TooManyRequestsError";
+var statusCode = 429;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "UnauthorizedError";
+var statusCode = 401;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 139 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "UnsupportedMediaTypeError";
+var statusCode = 415;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "BadResponseError";
+var statusCode = 0;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 141 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "BadGatewayError";
+var statusCode = 502;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 142 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "GatewayTimeoutError";
+var statusCode = 504;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "HTTPVersionNotSupportedError";
+var statusCode = 505;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 144 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "InternalServerErrorError";
+var statusCode = 500;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "NotImplementedError";
+var statusCode = 501;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "ServiceUnavailableError";
+var statusCode = 503;
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class, "statusCode", {
+        get: function () { return statusCode; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPError_1 = __webpack_require__(4);
+var name = "UnknownError";
+var Class = (function (_super) {
+    __extends(Class, _super);
+    function Class(message, response) {
+        var _this = _super.call(this, message, response) || this;
+        Object.setPrototypeOf(_this, Class.prototype);
+        return _this;
+    }
+    Object.defineProperty(Class.prototype, "name", {
+        get: function () { return name; },
+        enumerable: true,
+        configurable: true
+    });
+    return Class;
+}(HTTPError_1.default));
+exports.Class = Class;
+exports.default = Class;
+
+
+/***/ }),
 /* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD = __webpack_require__(149);
-exports.XSD = XSD;
 
 
 /***/ }),
 /* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = __webpack_require__(3);
+var Header = __webpack_require__(43);
+var HTTPErrors = __webpack_require__(68);
+var Method_1 = __webpack_require__(69);
+var NS = __webpack_require__(1);
+var Response_1 = __webpack_require__(70);
+var ErrorResponse = __webpack_require__(71);
+var Utils = __webpack_require__(0);
+function forEachHeaders(headers, setHeader) {
+    var namesIterator = headers.keys();
+    var next = namesIterator.next();
+    while (!next.done) {
+        var name_1 = next.value;
+        var value = headers.get(name_1);
+        setHeader(name_1, value.toString());
+        next = namesIterator.next();
+    }
+}
+function onResolve(resolve, reject, response) {
+    if (response.status >= 200 && response.status <= 299) {
+        resolve(response);
+    }
+    else if (response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has(response.status)) {
+        var errorClass = HTTPErrors.statusCodeMap.get(response.status);
+        var error_1 = new errorClass("", response);
+        if (!response.data) {
+            reject(error_1);
+        }
+        var parser = new ErrorResponse.Parser();
+        parser.parse(response.data, error_1).then(function (errorResponse) {
+            error_1.message = ErrorResponse.Util.getMessage(errorResponse);
+            reject(error_1);
+        }).catch(function () {
+            error_1.message = response.data;
+            reject(error_1);
+        });
+    }
+    else {
+        reject(new HTTPErrors.UnknownError(response.data, response));
+    }
+}
+function sendWithBrowser(method, url, body, options) {
+    return new Promise(function (resolve, reject) {
+        var request = options.request ? options.request : new XMLHttpRequest();
+        request.open(method, url, true);
+        if (options.headers)
+            forEachHeaders(options.headers, function (name, value) { return request.setRequestHeader(name, value); });
+        request.withCredentials = options.sendCredentialsOnCORS;
+        if (options.timeout)
+            request.timeout = options.timeout;
+        request.onload = request.onerror = function () {
+            var response = new Response_1.default(request);
+            onResolve(resolve, reject, response);
+        };
+        if (body) {
+            request.send(body);
+        }
+        else {
+            request.send();
+        }
+    });
+}
+function sendWithNode(method, url, body, options) {
+    return new Promise(function (resolve, reject) {
+        var URL = __webpack_require__(152);
+        function returnResponse(request, res) {
+            var rawData = [];
+            res.on("data", function (chunk) {
+                if (typeof chunk === "string")
+                    chunk = Buffer.from(chunk, "utf-8");
+                rawData.push(chunk);
+            }).on("end", function () {
+                var data = Buffer.concat(rawData).toString("utf8");
+                var response = new Response_1.default(request, data, res);
+                onResolve(resolve, reject, response);
+            });
+        }
+        var numberOfRedirects = 0;
+        function sendRequest(_url) {
+            var parsedURL = URL.parse(_url);
+            var HTTP = parsedURL.protocol === "http:" ? __webpack_require__(153) : __webpack_require__(154);
+            var requestOptions = {
+                protocol: parsedURL.protocol,
+                host: parsedURL.host,
+                hostname: parsedURL.hostname,
+                port: parseFloat(parsedURL.port),
+                path: parsedURL.path,
+                method: method,
+                headers: {},
+                withCredentials: options.sendCredentialsOnCORS,
+            };
+            if (options.headers)
+                forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
+            var request = HTTP.request(requestOptions);
+            if (options.timeout)
+                request.setTimeout(options.timeout);
+            request.on("response", function (res) {
+                if (res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers) {
+                    if (++numberOfRedirects < 10)
+                        return sendRequest(URL.resolve(_url, res.headers.location));
+                }
+                returnResponse(request, res);
+            });
+            request.on("error", function (error) {
+                var response = new Response_1.default(request, error.message);
+                onResolve(resolve, reject, response);
+            });
+            request.end(body);
+        }
+        sendRequest(url);
+    });
+}
+function isBody(data) {
+    return Utils.isString(data)
+        || typeof Blob !== "undefined" && data instanceof Blob
+        || typeof Buffer !== "undefined" && data instanceof Buffer;
+}
+var Service = (function () {
+    function Service() {
+    }
+    Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
+        var body = null;
+        var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
+        parser = Utils.hasProperty(optionsOrParser, "parse") ? optionsOrParser : parser;
+        if (isBody(bodyOrOptions)) {
+            body = bodyOrOptions;
+        }
+        else {
+            options = bodyOrOptions ? bodyOrOptions : options;
+        }
+        options = Utils.extend({}, Service.defaultOptions, options);
+        if (Utils.isNumber(method))
+            method = Method_1.default[method];
+        var requestPromise;
+        if (typeof XMLHttpRequest !== "undefined") {
+            requestPromise = sendWithBrowser(method, url, body, options);
+        }
+        else {
+            requestPromise = sendWithNode(method, url, body, options);
+        }
+        if (parser === null)
+            return requestPromise;
+        return requestPromise.then(function (response) {
+            return parser.parse(response.data).then(function (parsedBody) {
+                return [parsedBody, response];
+            });
+        });
+    };
+    Service.options = function (url, options) {
+        if (options === void 0) { options = Service.defaultOptions; }
+        return Service.send(Method_1.default.OPTIONS, url, options);
+    };
+    Service.head = function (url, options) {
+        if (options === void 0) { options = Service.defaultOptions; }
+        return Service.send(Method_1.default.HEAD, url, options);
+    };
+    Service.get = function (url, options, parser) {
+        if (options === void 0) { options = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.GET, url, null, options, parser);
+    };
+    Service.post = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+        if (options === void 0) { options = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
+    };
+    Service.put = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+        if (options === void 0) { options = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.PUT, url, bodyOrOptions, options, parser);
+    };
+    Service.patch = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+        if (options === void 0) { options = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
+    };
+    Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
+        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
+        if (parser === void 0) { parser = null; }
+        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+    };
+    Service.defaultOptions = {
+        sendCredentialsOnCORS: true,
+    };
+    return Service;
+}());
+exports.Service = Service;
+var Util = (function () {
+    function Util() {
+    }
+    Util.getHeader = function (headerName, requestOptions, initialize) {
+        if (initialize === void 0) { initialize = false; }
+        headerName = headerName.toLowerCase();
+        if (initialize) {
+            var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+            if (!headers.has(headerName))
+                headers.set(headerName, new Header.Class());
+        }
+        if (!requestOptions.headers)
+            return undefined;
+        return requestOptions.headers.get(headerName);
+    };
+    Util.setAcceptHeader = function (accept, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("accept", new Header.Class(accept));
+        return requestOptions;
+    };
+    Util.setContentTypeHeader = function (contentType, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("content-type", new Header.Class(contentType));
+        return requestOptions;
+    };
+    Util.setIfMatchHeader = function (etag, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("if-match", new Header.Class(etag));
+        return requestOptions;
+    };
+    Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
+        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
+        headers.set("if-none-match", new Header.Class(eTag));
+        return requestOptions;
+    };
+    Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
+        var prefer = Util.getHeader("prefer", requestOptions, true);
+        prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+        return requestOptions;
+    };
+    Util.setPreferredRetrievalResource = function (typeOfRequest, requestOptions) {
+        var prefer = Util.getHeader("prefer", requestOptions, true);
+        var preferType;
+        switch (typeOfRequest) {
+            case "Created":
+                preferType = NS.C.Class.CreatedResource;
+                break;
+            case "Modified":
+                preferType = NS.C.Class.ModifiedResource;
+                break;
+            default:
+                throw new Errors.IllegalArgumentError("Invalid type of request: '" + typeOfRequest + "'.");
+        }
+        prefer.values.push(new Header.Value("return=representation; " + preferType));
+        return requestOptions;
+    };
+    Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
+        if (returnRepresentation === void 0) { returnRepresentation = true; }
+        var prefer = Util.getHeader("prefer", requestOptions, true);
+        var representation = returnRepresentation ? "return=representation; " : "";
+        var keys = ["include", "omit"];
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (key in preferences && preferences[key].length > 0) {
+                prefer.values.push(new Header.Value("" + representation + key + "=\"" + preferences[key].join(" ") + "\""));
+            }
+        }
+        return requestOptions;
+    };
+    Util.setSlug = function (slug, requestOptions) {
+        var slugHeader = Util.getHeader("slug", requestOptions, true);
+        slugHeader.values.push(new Header.Value(slug));
+        return requestOptions;
+    };
+    Util.isOptions = function (object) {
+        return Utils.hasPropertyDefined(object, "headers")
+            || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
+            || Utils.hasPropertyDefined(object, "timeout")
+            || Utils.hasPropertyDefined(object, "request");
+    };
+    return Util;
+}());
+exports.Util = Util;
+
+
+/***/ }),
+/* 150 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var XSD = __webpack_require__(151);
+exports.XSD = XSD;
+
+
+/***/ }),
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13738,18 +13861,6 @@ exports.stringSerializer = new StringSerializer();
 
 
 /***/ }),
-/* 150 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 151 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
 /* 152 */
 /***/ (function(module, exports) {
 
@@ -13757,6 +13868,18 @@ exports.stringSerializer = new StringSerializer();
 
 /***/ }),
 /* 153 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 154 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13809,7 +13932,7 @@ exports.default = StatusCode;
 
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13830,314 +13953,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 155 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(17);
-var NS = __webpack_require__(1);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.C.Class.AddMemberAction;
-exports.SCHEMA = {
-    "targetMembers": {
-        "@id": NS.C.Predicate.targetMember,
-        "@type": "@id",
-        "@container": "@set",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "targetMembers");
-    };
-    Factory.createDocument = function (targetMembers) {
-        var document = Document.Factory.create();
-        var fragment = document.createFragment({ targetMembers: targetMembers });
-        fragment.types.push(exports.RDF_CLASS);
-        return document;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 156 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __webpack_require__(51);
-var RDF = __webpack_require__(7);
-var Utils = __webpack_require__(0);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.createFrom = function (object, idOrDocument, document) {
-        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
-        document = document || idOrDocument;
-        return Fragment.Factory.createFrom(object, id, document);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
 /* 157 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Resource_1 = __webpack_require__(9);
-exports.RDF_CLASS = NS.C.Class.Map;
-exports.SCHEMA = {
-    "entries": {
-        "@id": NS.C.Predicate.entry,
-        "@type": "@id",
-        "@container": "@set",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return Resource_1.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS)
-            && object.hasOwnProperty("entries");
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 158 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(17);
-var Errors = __webpack_require__(3);
-var NS = __webpack_require__(1);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "membershipResource"));
-    };
-    Factory.is = function (object) {
-        return (Factory.hasClassProperties(object)
-            && Document.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS));
-    };
-    Factory.create = function (membershipResource, hasMemberRelation, isMemberOfRelation) {
-        return Factory.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
-    };
-    Factory.createFrom = function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
-        if (Factory.is(object))
-            throw new Errors.IllegalArgumentError("The base object is already a DirectContainer.");
-        if (!membershipResource)
-            throw new Errors.IllegalArgumentError("The property membershipResource cannot be null.");
-        if (!hasMemberRelation)
-            throw new Errors.IllegalArgumentError("The property hasMemberRelation cannot be empty.");
-        if (!isMemberOfRelation && Utils.isDefined(isMemberOfRelation))
-            throw new Errors.IllegalArgumentError("The property isMemberOfRelation cannot be empty.");
-        var container = object;
-        if (!Document.Factory.is(object))
-            container = Document.Factory.createFrom(object);
-        container.types.push(NS.LDP.Class.Container);
-        container.types.push(NS.LDP.Class.DirectContainer);
-        container.membershipResource = membershipResource;
-        container.hasMemberRelation = hasMemberRelation;
-        container.isMemberOfRelation = isMemberOfRelation;
-        return container;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 159 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-exports.SCHEMA = {
-    "key": {
-        "@id": NS.C.Predicate.entryKey,
-        "@type": "@id",
-    },
-    "value": {
-        "@id": NS.C.Predicate.entryValue,
-        "@type": "@id",
-    },
-};
-
-
-/***/ }),
-/* 160 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-exports.RDF_CLASS = NS.C.Class.Error;
-exports.SCHEMA = {
-    "carbonCode": {
-        "@id": NS.C.Predicate.carbonCode,
-        "@type": NS.XSD.DataType.string,
-    },
-    "message": {
-        "@id": NS.C.Predicate.message,
-        "@type": NS.XSD.DataType.string,
-    },
-};
-
-
-/***/ }),
-/* 161 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.LDP.Class.IndirectContainer;
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "insertedContentRelation"));
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 162 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(17);
-var NS = __webpack_require__(1);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.C.Class.RemoveMemberAction;
-exports.SCHEMA = {
-    "targetMembers": {
-        "@id": NS.C.Predicate.targetMember,
-        "@type": "@id",
-        "@container": "@set",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "targetMembers");
-    };
-    Factory.createDocument = function (targetMembers) {
-        var document = Document.Factory.create();
-        var fragment = document.createFragment({ targetMembers: targetMembers });
-        fragment.types.push(exports.RDF_CLASS);
-        return document;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 163 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Utils = __webpack_require__(0);
-var VolatileResource = __webpack_require__(75);
-exports.RDF_CLASS = NS.C.Class.DocumentMetadata;
-exports.SCHEMA = {
-    "relatedDocument": {
-        "@id": NS.C.Predicate.relatedDocument,
-        "@type": "@id",
-    },
-    "eTag": {
-        "@id": NS.C.Predicate.eTag,
-        "@type": NS.XSD.DataType.string,
-    },
-    "bNodesMap": {
-        "@id": NS.C.Predicate.bNodesMap,
-        "@type": "@id",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "relatedDocument");
-    };
-    Factory.is = function (object) {
-        return VolatileResource.Factory.is(object)
-            && Factory.hasClassProperties(object)
-            && object.hasType(exports.RDF_CLASS);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 164 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var VolatileResource = __webpack_require__(75);
-var Utils = __webpack_require__(0);
-exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
-exports.SCHEMA = {
-    "documentsMetadata": {
-        "@id": NS.C.Predicate.documentMetadata,
-        "@type": "@id",
-        "@container": "@set",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return VolatileResource.Factory.is(object)
-            && Utils.hasProperty(object, "documentsMetadata")
-            && object.hasType(exports.RDF_CLASS);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14165,7 +13981,30 @@ exports.default = Class;
 
 
 /***/ }),
-/* 166 */
+/* 158 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Fragment = __webpack_require__(51);
+var RDF = __webpack_require__(7);
+var Utils = __webpack_require__(0);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.createFrom = function (object, idOrDocument, document) {
+        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
+        document = document || idOrDocument;
+        return Fragment.Factory.createFrom(object, id, document);
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14174,14 +14013,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 /***/ }),
-/* 167 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACL = __webpack_require__(77);
-var Pointer = __webpack_require__(13);
+var ACL = __webpack_require__(65);
+var Pointer = __webpack_require__(12);
 var Utils = __webpack_require__(0);
 var Factory = (function () {
     function Factory() {
@@ -14219,7 +14058,7 @@ function parsePointer(element) {
 
 
 /***/ }),
-/* 168 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14251,14 +14090,14 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 169 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __webpack_require__(17);
-var IllegalArgumentError_1 = __webpack_require__(34);
+var IllegalArgumentError_1 = __webpack_require__(35);
 var NS = __webpack_require__(1);
 var Utils = __webpack_require__(0);
 exports.RDF_CLASS = NS.CS.Class.Role;
@@ -14315,17 +14154,17 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 170 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var HTTP = __webpack_require__(12);
-var PersistedProtectedDocument = __webpack_require__(30);
+var HTTP = __webpack_require__(13);
+var PersistedProtectedDocument = __webpack_require__(29);
 var URI = __webpack_require__(16);
-var PersistedRole = __webpack_require__(83);
+var PersistedRole = __webpack_require__(80);
 var Utils = __webpack_require__(0);
 var Class = (function () {
     function Class(context) {
@@ -14428,14 +14267,14 @@ exports.default = Class;
 
 
 /***/ }),
-/* 171 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Pointer = __webpack_require__(13);
+var Pointer = __webpack_require__(12);
 var Resource = __webpack_require__(9);
 var URI = __webpack_require__(16);
 exports.TICKETS_CONTAINER = "auth-tickets/";
@@ -14472,22 +14311,22 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 172 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var HTTP = __webpack_require__(12);
-var JSONLD = __webpack_require__(27);
-var LDP = __webpack_require__(28);
+var HTTP = __webpack_require__(13);
+var JSONLD = __webpack_require__(28);
+var LDP = __webpack_require__(30);
 var NS = __webpack_require__(1);
 var RDF = __webpack_require__(7);
 var Resource = __webpack_require__(9);
-var BasicAuthenticator_1 = __webpack_require__(78);
-var Token = __webpack_require__(84);
-var UsernameAndPasswordToken = __webpack_require__(85);
+var BasicAuthenticator_1 = __webpack_require__(67);
+var Token = __webpack_require__(81);
+var UsernameAndPasswordToken = __webpack_require__(83);
 var Utils = __webpack_require__(0);
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
@@ -14576,7 +14415,310 @@ exports.default = Class;
 
 
 /***/ }),
+/* 166 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Document = __webpack_require__(17);
+var NS = __webpack_require__(1);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.C.Class.AddMemberAction;
+exports.SCHEMA = {
+    "targetMembers": {
+        "@id": NS.C.Predicate.targetMember,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "targetMembers");
+    };
+    Factory.createDocument = function (targetMembers) {
+        var document = Document.Factory.create();
+        var fragment = document.createFragment({ targetMembers: targetMembers });
+        fragment.types.push(exports.RDF_CLASS);
+        return document;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 167 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Document = __webpack_require__(17);
+var Errors = __webpack_require__(3);
+var NS = __webpack_require__(1);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "membershipResource"));
+    };
+    Factory.is = function (object) {
+        return (Factory.hasClassProperties(object)
+            && Document.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS));
+    };
+    Factory.create = function (membershipResource, hasMemberRelation, isMemberOfRelation) {
+        return Factory.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
+    };
+    Factory.createFrom = function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
+        if (Factory.is(object))
+            throw new Errors.IllegalArgumentError("The base object is already a DirectContainer.");
+        if (!membershipResource)
+            throw new Errors.IllegalArgumentError("The property membershipResource cannot be null.");
+        if (!hasMemberRelation)
+            throw new Errors.IllegalArgumentError("The property hasMemberRelation cannot be empty.");
+        if (!isMemberOfRelation && Utils.isDefined(isMemberOfRelation))
+            throw new Errors.IllegalArgumentError("The property isMemberOfRelation cannot be empty.");
+        var container = object;
+        if (!Document.Factory.is(object))
+            container = Document.Factory.createFrom(object);
+        container.types.push(NS.LDP.Class.Container);
+        container.types.push(NS.LDP.Class.DirectContainer);
+        container.membershipResource = membershipResource;
+        container.hasMemberRelation = hasMemberRelation;
+        container.isMemberOfRelation = isMemberOfRelation;
+        return container;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 168 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Utils = __webpack_require__(0);
+var VolatileResource = __webpack_require__(82);
+exports.RDF_CLASS = NS.C.Class.DocumentMetadata;
+exports.SCHEMA = {
+    "relatedDocument": {
+        "@id": NS.C.Predicate.relatedDocument,
+        "@type": "@id",
+    },
+    "eTag": {
+        "@id": NS.C.Predicate.eTag,
+        "@type": NS.XSD.DataType.string,
+    },
+    "bNodesMap": {
+        "@id": NS.C.Predicate.bNodesMap,
+        "@type": "@id",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "relatedDocument");
+    };
+    Factory.is = function (object) {
+        return VolatileResource.Factory.is(object)
+            && Factory.hasClassProperties(object)
+            && object.hasType(exports.RDF_CLASS);
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 169 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+exports.SCHEMA = {
+    "entryKey": {
+        "@id": NS.C.Predicate.entryKey,
+    },
+    "entryValue": {
+        "@id": NS.C.Predicate.entryValue,
+    },
+};
+
+
+/***/ }),
+/* 170 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+exports.RDF_CLASS = NS.C.Class.Error;
+exports.SCHEMA = {
+    "errorCode": {
+        "@id": NS.C.Predicate.errorCode,
+        "@type": NS.XSD.DataType.string,
+    },
+    "errorMessage": {
+        "@id": NS.C.Predicate.errorMessage,
+        "@language": "en",
+    },
+    "errorParameters": {
+        "@id": NS.C.Predicate.errorParameters,
+        "@type": "@id",
+    },
+};
+
+
+/***/ }),
+/* 171 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.LDP.Class.IndirectContainer;
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (resource) {
+        return (Utils.hasPropertyDefined(resource, "insertedContentRelation"));
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 172 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Resource_1 = __webpack_require__(9);
+exports.RDF_CLASS = NS.C.Class.Map;
+exports.SCHEMA = {
+    "entries": {
+        "@id": NS.C.Predicate.entry,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.is = function (object) {
+        return Resource_1.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS)
+            && object.hasOwnProperty("entries");
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
 /* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Document = __webpack_require__(17);
+var NS = __webpack_require__(1);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.C.Class.RemoveMemberAction;
+exports.SCHEMA = {
+    "targetMembers": {
+        "@id": NS.C.Predicate.targetMember,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils.hasPropertyDefined(object, "targetMembers");
+    };
+    Factory.createDocument = function (targetMembers) {
+        var document = Document.Factory.create();
+        var fragment = document.createFragment({ targetMembers: targetMembers });
+        fragment.types.push(exports.RDF_CLASS);
+        return document;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 174 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var VolatileResource = __webpack_require__(82);
+var Utils = __webpack_require__(0);
+exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
+exports.SCHEMA = {
+    "documentsMetadata": {
+        "@id": NS.C.Predicate.documentMetadata,
+        "@type": "@id",
+        "@container": "@set",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.is = function (object) {
+        return VolatileResource.Factory.is(object)
+            && Utils.hasProperty(object, "documentsMetadata")
+            && object.hasType(exports.RDF_CLASS);
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+
+
+/***/ }),
+/* 175 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+exports.RDF_CLASS = NS.C.Class.ValidationError;
+exports.SCHEMA = {
+    "errorDetails": {
+        "@id": NS.C.Predicate.errorDetails,
+        "@type": "@id",
+    },
+};
+
+
+/***/ }),
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14607,7 +14749,7 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 174 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14615,7 +14757,7 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var URI = __webpack_require__(16);
-var Credentials = __webpack_require__(79);
+var Credentials = __webpack_require__(75);
 var PersistedUser = __webpack_require__(53);
 var Class = (function () {
     function Class(context) {
@@ -14688,7 +14830,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 175 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14701,7 +14843,7 @@ exports.SCHEMA = DocumentCreated.SCHEMA;
 
 
 /***/ }),
-/* 176 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14714,7 +14856,7 @@ exports.SCHEMA = DocumentCreated.SCHEMA;
 
 
 /***/ }),
-/* 177 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14732,7 +14874,7 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 178 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14745,7 +14887,7 @@ exports.SCHEMA = Message.SCHEMA;
 
 
 /***/ }),
-/* 179 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14758,7 +14900,7 @@ exports.SCHEMA = Message.SCHEMA;
 
 
 /***/ }),
-/* 180 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14778,7 +14920,7 @@ exports.default = Event;
 
 
 /***/ }),
-/* 181 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14802,7 +14944,7 @@ exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
 
 
 /***/ }),
-/* 182 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14815,7 +14957,7 @@ exports.SCHEMA = MemberDetails.SCHEMA;
 
 
 /***/ }),
-/* 183 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14839,7 +14981,7 @@ exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
 
 
 /***/ }),
-/* 184 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14852,15 +14994,15 @@ exports.SCHEMA = MemberDetails.SCHEMA;
 
 
 /***/ }),
-/* 185 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var transportList = __webpack_require__(186);
+var transportList = __webpack_require__(189);
 
-module.exports = __webpack_require__(206)(transportList);
+module.exports = __webpack_require__(209)(transportList);
 
 // TODO can't get rid of this until all servers do
 if ('_sockjs_onload' in global) {
@@ -14870,7 +15012,7 @@ if ('_sockjs_onload' in global) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 186 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14878,8 +15020,8 @@ if ('_sockjs_onload' in global) {
 
 module.exports = [
   // streaming transports
-  __webpack_require__(187)
-, __webpack_require__(195)
+  __webpack_require__(190)
+, __webpack_require__(198)
 , __webpack_require__(92)
 , __webpack_require__(93)
 , __webpack_require__(58)(__webpack_require__(93))
@@ -14888,14 +15030,14 @@ module.exports = [
 , __webpack_require__(97)
 , __webpack_require__(58)(__webpack_require__(97))
 , __webpack_require__(98)
-, __webpack_require__(202)
+, __webpack_require__(205)
 , __webpack_require__(58)(__webpack_require__(98))
-, __webpack_require__(203)
+, __webpack_require__(206)
 ];
 
 
 /***/ }),
-/* 187 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14905,7 +15047,7 @@ var utils = __webpack_require__(18)
   , urlUtils = __webpack_require__(10)
   , inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(8).EventEmitter
-  , WebsocketDriver = __webpack_require__(194)
+  , WebsocketDriver = __webpack_require__(197)
   ;
 
 var debug = function() {};
@@ -15001,7 +15143,7 @@ module.exports = WebSocketTransport;
 
 
 /***/ }),
-/* 188 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15026,7 +15168,7 @@ if (global.crypto && global.crypto.getRandomValues) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 189 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15071,7 +15213,7 @@ module.exports = function required(port, protocol) {
 
 
 /***/ }),
-/* 190 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15150,7 +15292,7 @@ exports.parse = querystring;
 
 
 /***/ }),
-/* 191 */
+/* 194 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -15340,7 +15482,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 192 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -15356,7 +15498,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(193);
+exports.humanize = __webpack_require__(196);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -15548,7 +15690,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 193 */
+/* 196 */
 /***/ (function(module, exports) {
 
 /**
@@ -15706,7 +15848,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 194 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15724,7 +15866,7 @@ if (Driver) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 195 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15773,7 +15915,7 @@ module.exports = XhrStreamingTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 196 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15867,7 +16009,7 @@ module.exports = BufferedSender;
 
 
 /***/ }),
-/* 197 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15931,7 +16073,7 @@ module.exports = Polling;
 
 
 /***/ }),
-/* 198 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16001,7 +16143,7 @@ module.exports = EventSourceReceiver;
 
 
 /***/ }),
-/* 199 */
+/* 202 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -16029,7 +16171,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 200 */
+/* 203 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -16038,7 +16180,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 201 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16133,7 +16275,7 @@ module.exports = HtmlfileReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 202 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16163,7 +16305,7 @@ module.exports = XdrPollingTransport;
 
 
 /***/ }),
-/* 203 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16179,8 +16321,8 @@ module.exports = XdrPollingTransport;
 
 var inherits = __webpack_require__(2)
   , SenderReceiver = __webpack_require__(90)
-  , JsonpReceiver = __webpack_require__(204)
-  , jsonpSender = __webpack_require__(205)
+  , JsonpReceiver = __webpack_require__(207)
+  , jsonpSender = __webpack_require__(208)
   ;
 
 function JsonPTransport(transUrl) {
@@ -16205,7 +16347,7 @@ module.exports = JsonPTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 204 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16396,7 +16538,7 @@ module.exports = JsonpReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 205 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16503,31 +16645,31 @@ module.exports = function(url, payload, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 206 */
+/* 209 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-__webpack_require__(207);
+__webpack_require__(210);
 
 var URL = __webpack_require__(88)
   , inherits = __webpack_require__(2)
   , JSON3 = __webpack_require__(15)
   , random = __webpack_require__(23)
-  , escape = __webpack_require__(208)
+  , escape = __webpack_require__(211)
   , urlUtils = __webpack_require__(10)
   , eventUtils = __webpack_require__(18)
-  , transport = __webpack_require__(209)
+  , transport = __webpack_require__(212)
   , objectUtils = __webpack_require__(59)
   , browser = __webpack_require__(32)
-  , log = __webpack_require__(210)
+  , log = __webpack_require__(213)
   , Event = __webpack_require__(60)
   , EventTarget = __webpack_require__(89)
   , loc = __webpack_require__(99)
-  , CloseEvent = __webpack_require__(211)
-  , TransportMessageEvent = __webpack_require__(212)
-  , InfoReceiver = __webpack_require__(213)
+  , CloseEvent = __webpack_require__(214)
+  , TransportMessageEvent = __webpack_require__(215)
+  , InfoReceiver = __webpack_require__(216)
   ;
 
 var debug = function() {};
@@ -16885,14 +17027,14 @@ SockJS.prototype.countRTO = function(rtt) {
 
 module.exports = function(availableTransports) {
   transports = transport(availableTransports);
-  __webpack_require__(216)(SockJS, availableTransports);
+  __webpack_require__(219)(SockJS, availableTransports);
   return SockJS;
 };
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 207 */
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17351,7 +17493,7 @@ defineProperties(StringPrototype, {
 
 
 /***/ }),
-/* 208 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17408,7 +17550,7 @@ module.exports = {
 
 
 /***/ }),
-/* 209 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17465,7 +17607,7 @@ module.exports = function(availableTransports) {
 
 
 /***/ }),
-/* 210 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17491,7 +17633,7 @@ module.exports = logObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 211 */
+/* 214 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17515,7 +17657,7 @@ module.exports = CloseEvent;
 
 
 /***/ }),
-/* 212 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17537,7 +17679,7 @@ module.exports = TransportMessageEvent;
 
 
 /***/ }),
-/* 213 */
+/* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17549,8 +17691,8 @@ var EventEmitter = __webpack_require__(8).EventEmitter
   , XDR = __webpack_require__(57)
   , XHRCors = __webpack_require__(39)
   , XHRLocal = __webpack_require__(31)
-  , XHRFake = __webpack_require__(214)
-  , InfoIframe = __webpack_require__(215)
+  , XHRFake = __webpack_require__(217)
+  , InfoIframe = __webpack_require__(218)
   , InfoAjax = __webpack_require__(101)
   ;
 
@@ -17633,7 +17775,7 @@ module.exports = InfoReceiver;
 
 
 /***/ }),
-/* 214 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17664,7 +17806,7 @@ module.exports = XHRFake;
 
 
 /***/ }),
-/* 215 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17741,7 +17883,7 @@ module.exports = InfoIframe;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 216 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17750,7 +17892,7 @@ module.exports = InfoIframe;
 var urlUtils = __webpack_require__(10)
   , eventUtils = __webpack_require__(18)
   , JSON3 = __webpack_require__(15)
-  , FacadeJS = __webpack_require__(217)
+  , FacadeJS = __webpack_require__(220)
   , InfoIframeReceiver = __webpack_require__(100)
   , iframeUtils = __webpack_require__(33)
   , loc = __webpack_require__(99)
@@ -17850,7 +17992,7 @@ module.exports = function(SockJS, availableTransports) {
 
 
 /***/ }),
-/* 217 */
+/* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17884,7 +18026,7 @@ module.exports = FacadeJS;
 
 
 /***/ }),
-/* 218 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -18780,17 +18922,17 @@ module.exports = exports['default'];
 });
 
 /***/ }),
-/* 219 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var IRIUtils = __webpack_require__(220);
+var IRIUtils = __webpack_require__(223);
 var PatternsUtils = __webpack_require__(106);
 var PatternBuilder_1 = __webpack_require__(107);
 var Token_1 = __webpack_require__(19);
 var StringLiteral_1 = __webpack_require__(22);
-var NumberLiteral_1 = __webpack_require__(228);
+var NumberLiteral_1 = __webpack_require__(231);
 var Tokens_1 = __webpack_require__(11);
 var NewLineSymbol_1 = __webpack_require__(26);
 var SPARQLER = (function () {
@@ -19098,7 +19240,7 @@ exports.default = SPARQLER;
 
 
 /***/ }),
-/* 220 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19154,7 +19296,7 @@ exports.resolve = resolve;
 
 
 /***/ }),
-/* 221 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19224,7 +19366,7 @@ exports.BooleanLiteral = BooleanLiteral;
 
 
 /***/ }),
-/* 222 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19240,7 +19382,7 @@ exports.string = exports.NAMESPACE + "string";
 
 
 /***/ }),
-/* 223 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19268,7 +19410,7 @@ exports.default = Resource;
 
 
 /***/ }),
-/* 224 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19298,7 +19440,7 @@ exports.default = Variable;
 
 
 /***/ }),
-/* 225 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19338,7 +19480,7 @@ exports.default = BlankNode;
 
 
 /***/ }),
-/* 226 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19391,7 +19533,7 @@ exports.default = Collection;
 
 
 /***/ }),
-/* 227 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19475,7 +19617,7 @@ exports.default = ValuesPattern;
 
 
 /***/ }),
-/* 228 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19516,7 +19658,7 @@ exports.default = NumberLiteral;
 
 
 /***/ }),
-/* 229 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19560,14 +19702,14 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 230 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var HTTP = __webpack_require__(12);
+var HTTP = __webpack_require__(13);
 var RDF = __webpack_require__(7);
 var Utils = __webpack_require__(0);
 var RawResultsParser_1 = __webpack_require__(109);
@@ -19674,7 +19816,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 231 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19683,15 +19825,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 /***/ }),
-/* 232 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var IllegalArgumentError_1 = __webpack_require__(34);
+var IllegalArgumentError_1 = __webpack_require__(35);
 var ObjectSchema = __webpack_require__(14);
-var XSD = __webpack_require__(35);
+var XSD = __webpack_require__(34);
 var URI = __webpack_require__(16);
 var Utils = __webpack_require__(0);
 var allowedTypes = ["numeric", "string", "boolean", "dateTime"];
@@ -19761,7 +19903,7 @@ exports.Util = Util;
 
 
 /***/ }),
-/* 233 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19799,7 +19941,77 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 234 */
+/* 237 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+exports.RDF_CLASS = NS.SHACL.Class.ValidationReport;
+exports.SCHEMA = {
+    "conforms": {
+        "@id": NS.SHACL.Predicate.conforms,
+        "@type": NS.XSD.DataType.boolean,
+    },
+    "results": {
+        "@id": NS.SHACL.Predicate.result,
+        "@type": "@id",
+        "@container": "@set",
+    },
+    "shapesGraphWellFormed": {
+        "@id": NS.SHACL.Predicate.shapesGraphWellFormed,
+        "@type": NS.XSD.DataType.boolean,
+    },
+};
+
+
+/***/ }),
+/* 238 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+exports.RDF_CLASS = NS.SHACL.Class.ValidationResult;
+exports.SCHEMA = {
+    "focusNode": {
+        "@id": NS.SHACL.Predicate.focusNode,
+        "@type": "@id",
+    },
+    "resultPath": {
+        "@id": NS.SHACL.Predicate.resultPath,
+        "@type": "@id",
+    },
+    "value": {
+        "@id": NS.SHACL.Predicate.value,
+    },
+    "sourceShape": {
+        "@id": NS.SHACL.Predicate.sourceShape,
+        "@type": "@id",
+    },
+    "sourceConstraintComponent": {
+        "@id": NS.SHACL.Predicate.sourceConstraintComponent,
+        "@type": "@id",
+    },
+    "detail": {
+        "@id": NS.SHACL.Predicate.detail,
+        "@type": "@id",
+    },
+    "resultMessage": {
+        "@id": NS.SHACL.Predicate.resultMessage,
+        "@type": NS.XSD.DataType.string,
+    },
+    "resultSeverity": {
+        "@id": NS.SHACL.Predicate.resultSeverity,
+        "@type": "@id",
+    },
+};
+
+
+/***/ }),
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19820,7 +20032,7 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 235 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19845,13 +20057,13 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 236 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __webpack_require__(29);
+var Auth = __webpack_require__(27);
 exports.defaultSettings = {
     "auth.method": Auth.Method.TOKEN,
     "system.container": ".system/",
