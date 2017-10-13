@@ -60,7 +60,8 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.LDP.Map.Class",
-		"Interface that contains a list of entries that indicates the BNodes the platform has changed it ID."
+		[ "K", "V" ],
+		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
 
 		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
@@ -68,8 +69,8 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"entries",
-			"Carbon.LDP.Entry.Class[]",
-			"An array of entries of the BNodes mapped."
+			"Carbon.LDP.Entry.Class<K,V>[]",
+			"An array of entries' pair relations."
 		), ():void => {} );
 
 	} );
@@ -95,7 +96,7 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 			expect( Map.Factory.is ).toBeDefined();
 			expect( Utils.isFunction( Map.Factory.is ) ).toBe( true );
 
-			let object:Map.Class = void 0;
+			let object:Map.Class<any, any> = void 0;
 			expect( Map.Factory.is( object ) ).toBe( false );
 			object = null;
 			expect( Map.Factory.is( object ) ).toBe( false );
@@ -120,8 +121,8 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 	} );
 
 	it( hasDefaultExport( "Carbon.LDP.Map.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Map.Class;
+		let defaultExport:DefaultExport<any, any> = <any> {};
+		let defaultTarget:Map.Class<any, any>;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

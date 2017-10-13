@@ -36,11 +36,10 @@ export interface Class extends Resource {
 
 export class Util {
 	static getMessage( errorResponse:Class ):string {
-		let messages:string[] = [];
-		for( let error of errorResponse.errors ) {
-			messages.push( error.message );
-		}
-		return messages.join( ", " );
+		return errorResponse
+			.errors
+			.map( error => error.errorMessage )
+			.join( ", " );
 	}
 }
 

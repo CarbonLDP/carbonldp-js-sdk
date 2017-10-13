@@ -1055,11 +1055,11 @@ var Class = (function () {
             var documentMetadata = _a[_i];
             var document_1 = documentMetadata.relatedDocument;
             for (var _b = 0, _c = documentMetadata.bNodesMap.entries; _b < _c.length; _b++) {
-                var _d = _c[_b], keyBNode = _d.key, valueBNode = _d.value;
-                var originalBNode = document_1.getFragment(keyBNode.id);
-                originalBNode.id = valueBNode.id;
-                document_1._fragmentsIndex.delete(keyBNode.id);
-                document_1._fragmentsIndex.set(valueBNode.id, originalBNode);
+                var _d = _c[_b], entryKey = _d.entryKey, entryValue = _d.entryValue;
+                var originalBNode = document_1.getFragment(entryKey.id);
+                originalBNode.id = entryValue.id;
+                document_1._fragmentsIndex.delete(entryKey.id);
+                document_1._fragmentsIndex.set(entryValue.id, originalBNode);
             }
             document_1._syncSavedFragments();
         }

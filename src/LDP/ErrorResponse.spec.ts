@@ -138,73 +138,94 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 					expect( errorResponse.statusCode ).toBe( 1234567890 );
 					expect( errorResponse.errors ).toBeDefined();
 					expect( errorResponse.errors.length ).toBe( 2 );
-					expect( errorResponse.errors[ 0 ].carbonCode ).toBe( "code-01" );
-					expect( errorResponse.errors[ 1 ].carbonCode ).toBe( "code-02" );
+					errorResponse.errors.forEach( ( error, index ) => {
+						expect( error.errorCode ).toBe( `code-0${ index + 1 }` );
+						expect( error.errorMessage ).toBe( `Message 0${ index + 1 }` );
+
+						expect( error.errorParameters.entries ).toBeDefined();
+						error.errorParameters.entries.forEach( entry => {
+							expect( entry.entryKey ).toBe( "document" );
+							expect( entry.entryValue.id ).toEqual( "https://example.com/target-document/" );
+						} );
+					} );
 				},
 				fail: ( error:Error ):void => {
-					expect( error instanceof Error ).toBe( true );
+					expect( error ).toEqual( jasmine.any( Error ) );
 				},
 				failData: ( error:Error ):void => {
-					expect( error instanceof IllegalArgumentError ).toBe( true );
+					expect( error ).toEqual( jasmine.any( IllegalArgumentError ) );
 				},
 			};
 			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
-			data = `[
-				{
-					"@id": "_:1",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#ErrorResponse"
-					],
-					"https://carbonldp.com/ns/v1/platform#error": [
-						{
-							"@id": "_:2"
-						},
-						{
-							"@id": "_:3"
-						}
-					],
-					"https://carbonldp.com/ns/v1/platform#httpStatusCode": [
-						{
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "1234567890"
-						}
-					]
-				},
-				{
-					"@id": "_:2",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#Error"
-					],
-					"https://carbonldp.com/ns/v1/platform#carbonCode": [
-						{
-							"@value": "code-01"
-						}
-					],
-					"https://carbonldp.com/ns/v1/platform#message": [
-						{
-							"@value": "Message 01"
-						}
-					]
-				},
-				{
-					"@id": "_:3",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#Error"
-					],
-					"https://carbonldp.com/ns/v1/platform#carbonCode": [
-						{
-							"@value": "code-02"
-						}
-					],
-					"https://carbonldp.com/ns/v1/platform#message": [
-						{
-							"@value": "Message 02"
-						}
-					]
-				}
-			]`;
+			data = `[ {
+				"@id": "_:1",
+				"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+				"${ NS.C.Predicate.error }": [ {
+					"@id": "_:2"
+				}, {
+					"@id": "_:3"
+				} ],
+				"${ NS.C.Predicate.httpStatusCode }": [ {
+					"@type": "${ NS.XSD.DataType.int }",
+					"@value": "1234567890"
+				} ]
+			}, {
+				"@id": "_:2",
+				"@type": [ "${ NS.C.Class.Error }" ],
+				"${ NS.C.Predicate.errorCode }": [ {
+					"@value": "code-01"
+				} ],
+				"${ NS.C.Predicate.errorMessage }": [ {
+					"@value": "Message 01"
+				} ],
+				"${ NS.C.Predicate.errorParameters }": [ {
+						"@id": "_:4"
+				} ]
+			}, {
+				"@id": "_:3",
+				"@type": [ "${ NS.C.Class.Error }" ],
+				"${ NS.C.Predicate.errorCode }": [ {
+					"@language": "en",
+					"@value": "code-02"
+				} ],
+				"${ NS.C.Predicate.errorMessage }": [ {
+					"@language": "en",
+					"@value": "Message 02"
+				} ],
+				"${ NS.C.Predicate.errorParameters }": [ {
+						"@id": "_:6"
+				} ]
+			}, {
+				"@id": "_:4",
+				"@type": [ "${ NS.C.Class.Map }" ],
+				"${ NS.C.Predicate.entry }": [ {
+					"@id": "_:5"
+				} ]
+			}, {
+				"@id": "_:5",
+				"${ NS.C.Predicate.entryKey }": [ {
+					"@value": "document"
+				} ],
+				"${ NS.C.Predicate.entryValue }": [ {
+					"@id": "https://example.com/target-document/"
+				} ]
+			}, {
+				"@id": "_:6",
+				"@type": [ "${ NS.C.Class.Map }" ],
+				"${ NS.C.Predicate.entry }": [ {
+					"@id": "_:7"
+				} ]
+			}, {
+				"@id": "_:7",
+				"${ NS.C.Predicate.entryKey }": [ {
+					"@value": "document"
+				} ],
+				"${ NS.C.Predicate.entryValue }": [ {
+					"@id": "https://example.com/target-document/"
+				} ]
+			} ]`;
 
 			promise = parser.parse( data );
 			expect( promise instanceof Promise ).toBe( true );
@@ -218,52 +239,53 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( spies.fail ) );
 
-			data = `[
-				{
-					"@id": "_:1",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#ErrorResponse"
-					],
-					"https://carbonldp.com/ns/v1/platform#error": [],
-					"https://carbonldp.com/ns/v1/platform#httpStatusCode": [
-						{
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "1234567890"
-						}
-					]
-				}, {
-					"@id": "_:2",
-					"@type": [
-						"https://carbonldp.com/ns/v1/platform#ErrorResponse"
-					],
-					"https://carbonldp.com/ns/v1/platform#error": [],
-					"https://carbonldp.com/ns/v1/platform#httpStatusCode": [
-						{
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "0987654321"
-						}
-					]
-				}
-			]`;
+			data = `[ {
+				"@id": "_:1",
+				"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+				"${ NS.C.Predicate.error }": [],
+				"${ NS.C.Predicate.httpStatusCode }": [ {
+					"@type": "http://www.w3.org/2001/XMLSchema#int",
+					"@value": "1234567890"
+				} ]
+			}, {
+				"@id": "_:2",
+				"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+				"${ NS.C.Predicate.error }": [],
+				"${ NS.C.Predicate.httpStatusCode }": [ {
+					"@type": "http://www.w3.org/2001/XMLSchema#int",
+					"@value": "0987654321"
+				} ]
+			} ]`;
 			promise = parser.parse( data );
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.catch( spies.failData ) );
 
 			data = `[ {
 				"@id": "_:3",
-				"@type": [
-					"https://carbonldp.com/ns/v1/platform#Error"
-				],
-				"https://carbonldp.com/ns/v1/platform#carbonCode": [
-					{
-						"@value": "code-02"
-					}
-				],
-				"https://carbonldp.com/ns/v1/platform#message": [
-					{
-						"@value": "Message 02"
-					}
-				]
+				"@type": [ "${ NS.C.Class.Error }" ],
+				"${ NS.C.Predicate.errorCode }": [ {
+					"@value": "code-02"
+				} ],
+				"${ NS.C.Predicate.errorMessage }": [ {
+					"@value": "Message 02"
+				} ],
+				"${ NS.C.Predicate.errorParameters }": [ {
+					"@id": "_:4"
+				} ]
+			}, {
+				"@id": "_:4",
+				"@type": [ "${ NS.C.Class.Map }" ],
+				"${ NS.C.Predicate.entry }": [ {
+					"@id": "_:5"
+				} ]
+			}, {
+				"@id": "_:5",
+				"${ NS.C.Predicate.entryKey }": [ {
+					"@value": "document"
+				} ],
+				"${ NS.C.Predicate.entryValue }": [ {
+					"@id": "https://example.com/target-document/"
+				} ]
 			} ]`;
 			promise = parser.parse( data );
 			expect( promise instanceof Promise ).toBe( true );
@@ -306,8 +328,8 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				statusCode: 1234567890,
 				errors: [
 					{
-						carbonCode: "code-01",
-						message: "Message 01",
+						errorCode: "code-01",
+						errorMessage: "Message 01",
 					},
 				],
 			};
@@ -319,12 +341,12 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 				statusCode: 1234567890,
 				errors: [
 					{
-						carbonCode: "code-01",
-						message: "Message 01",
+						errorCode: "code-01",
+						errorMessage: "Message 01",
 					},
 					{
-						carbonCode: "code-02",
-						message: "Message 02",
+						errorCode: "code-02",
+						errorMessage: "Message 02",
 					},
 				],
 			};

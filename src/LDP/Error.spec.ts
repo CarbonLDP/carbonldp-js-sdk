@@ -38,16 +38,22 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Error.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Error.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( Error.SCHEMA, "carbonCode" ) ).toBe( true );
-		expect( Error.SCHEMA[ "carbonCode" ] ).toEqual( {
-			"@id": NS.C.Predicate.carbonCode,
+		expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
+		expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
+			"@id": NS.C.Predicate.errorCode,
 			"@type": NS.XSD.DataType.string,
 		} );
 
-		expect( Utils.hasProperty( Error.SCHEMA, "message" ) ).toBe( true );
-		expect( Error.SCHEMA[ "message" ] ).toEqual( {
-			"@id": NS.C.Predicate.message,
-			"@type": NS.XSD.DataType.string,
+		expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );
+		expect( Error.SCHEMA[ "errorMessage" ] ).toEqual( {
+			"@id": NS.C.Predicate.errorMessage,
+			"@language": "en",
+		} );
+
+		expect( Utils.hasProperty( Error.SCHEMA, "errorParameters" ) ).toBe( true );
+		expect( Error.SCHEMA[ "errorParameters" ] ).toEqual( {
+			"@id": NS.C.Predicate.errorParameters,
+			"@type": "@id",
 		} );
 	} );
 
@@ -60,16 +66,23 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"carbonCode",
+			"errorCode",
 			"string",
-			"An specific code that indicates the type of carbon error the current object is."
+			"An specific code that indicates the type of error the current object is."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"message",
+			"errorMessage",
 			"string",
 			"Message that explains the error occurred in the server."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"errorParameters",
+			"Carbon.LDP.Map.Class<string, any>",
+			"Map that contains the specific elements that make the error been thrown."
 		), ():void => {} );
 
 	} );

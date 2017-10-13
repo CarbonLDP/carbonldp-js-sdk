@@ -18,6 +18,7 @@ import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 import * as ErrorResponse from "./LDP/ErrorResponse";
 import * as ResponseMetadata from "./LDP/ResponseMetadata";
 import * as DocumentMetadata from "./LDP/DocumentMetadata";
+import * as ValidationError from "./LDP/ValidationError";
 
 import * as LDP from "./LDP";
 
@@ -116,6 +117,15 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.DocumentMetadata ).toBeDefined();
 		expect( LDP.DocumentMetadata ).toBe( DocumentMetadata );
+	} );
+
+	it( reexports(
+		STATIC,
+		"ValidationError",
+		"Carbon/LDP/ValidationError"
+	), ():void => {
+		expect( LDP.ValidationError ).toBeDefined();
+		expect( LDP.ValidationError ).toBe( ValidationError );
 	} );
 
 } );

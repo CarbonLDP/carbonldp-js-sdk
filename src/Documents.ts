@@ -1188,12 +1188,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
 			const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
-			for( const { key: keyBNode, value: valueBNode } of documentMetadata.bNodesMap.entries ) {
-				const originalBNode:PersistedBlankNode.Class = document.getFragment( keyBNode.id );
-				originalBNode.id = valueBNode.id;
+			for( const { entryKey, entryValue } of documentMetadata.bNodesMap.entries ) {
+				const originalBNode:PersistedBlankNode.Class = document.getFragment( entryKey.id );
+				originalBNode.id = entryValue.id;
 
-				document._fragmentsIndex.delete( keyBNode.id );
-				document._fragmentsIndex.set( valueBNode.id, originalBNode );
+				document._fragmentsIndex.delete( entryKey.id );
+				document._fragmentsIndex.set( entryValue.id, originalBNode );
 			}
 			document._syncSavedFragments();
 		}
