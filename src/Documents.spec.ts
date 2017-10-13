@@ -403,36 +403,72 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `[ {
-						"@id": "_:1",
-						"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-						"${ NS.C.Predicate.error }": [ {
-							"@id": "_:2"
+							"@id": "_:1",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [ {
+								"@id": "_:2"
+							}, {
+								"@id": "_:3"
+							} ],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "${ NS.XSD.DataType.int }",
+								"@value": "500"
+							} ]
 						}, {
-							"@id": "_:3"
-						} ],
-						"${ NS.C.Predicate.httpStatusCode }": [ {
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "500"
-						} ]
-					}, {
-						"@id": "_:2",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-01"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 01"
-						} ]
-					}, {
-						"@id": "_:3",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-02"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 02"
-						} ]
-					} ]`,
+							"@id": "_:2",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@value": "code-01"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@value": "Message 01"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
+								"@value": "code-02"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
+								"@value": "Message 02"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:6"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:5",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:7",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						} ]`,
 					} );
 
 					documents.get( "http://example.com/" ).then( () => {
@@ -440,13 +476,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).catch( ( error:HTTP.Errors.Error ) => {
 						expect( error ).toBeDefined();
 						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
-						expect( error.message ).toBe( "Message 01, Message 02" );
 
+						expect( error.message ).toBe( "Message 01, Message 02" );
 						expect( error.statusCode ).toBe( 500 );
 						expect( error.errors ).toBeDefined();
 						expect( error.errors.length ).toBe( 2 );
-						expect( error.errors[ 0 ].carbonCode ).toBe( "code-01" );
-						expect( error.errors[ 1 ].carbonCode ).toBe( "code-02" );
+						error.errors.forEach( ( error, index ) => {
+							expect( error.errorCode ).toBe( `code-0${ index + 1 }` );
+							expect( error.errorMessage ).toBe( `Message 0${ index + 1 }` );
+
+							expect( error.errorParameters.entries ).toBeDefined();
+							error.errorParameters.entries.forEach( entry => {
+								expect( entry.entryKey ).toBe( "document" );
+								expect( entry.entryValue.id ).toEqual( "https://example.com/target-document/" );
+							} );
+						} );
 						done();
 					} );
 				} );
@@ -455,44 +499,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `[ {
-						"@id": "_:1",
-						"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-						"${ NS.C.Predicate.error }": [ {
-							"@id": "_:2"
-						} ],
-						"${ NS.C.Predicate.httpStatusCode }": [ {
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "500"
-						} ]
-					}, {
-						"@id": "_:3",
-						"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-						"${ NS.C.Predicate.error }": [ {
-							"@id": "_:4"
-						} ],
-						"${ NS.C.Predicate.httpStatusCode }": [ {
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "500"
-						} ]
-					}, {
-						"@id": "_:2",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-01"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 01"
-						} ]
-					}, {
-						"@id": "_:4",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-02"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 02"
-						} ]
-					} ]`,
+							"@id": "_:1",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "http://www.w3.org/2001/XMLSchema#int",
+								"@value": "1234567890"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "http://www.w3.org/2001/XMLSchema#int",
+								"@value": "0987654321"
+							} ]
+						} ]`,
 					} );
 
 					documents.get( "http://example.com/" ).then( () => {
@@ -508,15 +530,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `[ {
-						"@id": "_:1",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-01"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 01"
-						} ]
-					} ]`,
+							"@id": "_:3",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@value": "code-02"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@value": "Message 02"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+								"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:5",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						} ]`,
 					} );
 
 					documents.get( "http://example.com/" ).then( () => {
@@ -553,36 +592,72 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				it( "should generate an HTTP error with empty ErrorResponse properties", ( done:DoneFn ):void => {
 					const responseText:string = `[ {
-						"@id": "_:1",
-						"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-						"${ NS.C.Predicate.error }": [ {
-							"@id": "_:2"
+							"@id": "_:1",
+							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
+							"${ NS.C.Predicate.error }": [ {
+								"@id": "_:2"
+							}, {
+								"@id": "_:3"
+							} ],
+							"${ NS.C.Predicate.httpStatusCode }": [ {
+								"@type": "${ NS.XSD.DataType.int }",
+								"@value": "500"
+							} ]
 						}, {
-							"@id": "_:3"
-						} ],
-						"${ NS.C.Predicate.httpStatusCode }": [ {
-							"@type": "http://www.w3.org/2001/XMLSchema#int",
-							"@value": "500"
-						} ]
-					}, {
-						"@id": "_:2",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-01"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 01"
-						} ]
-					}, {
-						"@id": "_:3",
-						"@type": [ "${ NS.C.Class.Error }" ],
-						"${ NS.C.Predicate.carbonCode }": [ {
-							"@value": "code-02"
-						} ],
-						"${ NS.C.Predicate.message }": [ {
-							"@value": "Message 02"
-						} ]
-					} ]`;
+							"@id": "_:2",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@value": "code-01"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@value": "Message 01"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [ "${ NS.C.Class.Error }" ],
+							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
+								"@value": "code-02"
+							} ],
+							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
+								"@value": "Message 02"
+							} ],
+							"${ NS.C.Predicate.errorParameters }": [ {
+									"@id": "_:6"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:5",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [ "${ NS.C.Class.Map }" ],
+							"${ NS.C.Predicate.entry }": [ {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:7",
+							"${ NS.C.Predicate.entryKey }": [ {
+								"@value": "document"
+							} ],
+							"${ NS.C.Predicate.entryValue }": [ {
+								"@id": "https://example.com/target-document/"
+							} ]
+						} ]`;
 					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText,
