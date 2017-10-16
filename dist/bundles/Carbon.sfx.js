@@ -9417,10 +9417,8 @@ var Class = (function () {
             this._subscriptionsMap.clear();
         var sock = new SockJS(this.context.resolve("/broker"));
         this._client = webstomp.over(sock, {
-            protocols: webstomp.VERSIONS.supportedProtocols(),
             debug: false,
             heartbeat: false,
-            binary: false,
         });
         this._client.connect({}, function () {
             _this._subscriptionsQueue.forEach(function (callback) { return callback(); });
@@ -17794,6 +17792,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.unicodeStringToTypedArray = unicodeStringToTypedArray;
 exports.typedArrayToUnicodeString = typedArrayToUnicodeString;
 exports.sizeOfUTF8 = sizeOfUTF8;
+exports.createId = createId;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -17855,6 +17854,12 @@ function sizeOfUTF8(s) {
     return encodeURIComponent(s).match(/%..|./g).length;
 }
 
+function createId() {
+    var ts = new Date().getTime();
+    var rand = Math.floor(Math.random() * 1000);
+    return ts + '-' + rand;
+}
+
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -17903,8 +17908,6 @@ var Client = function () {
         this.ws.binaryType = 'arraybuffer';
         this.isBinary = !!binary;
         this.hasDebug = !!debug;
-        // used to index subscribers
-        this.counter = 0;
         this.connected = false;
         // Heartbeat properties of the client
         // outgoing: send heartbeat every 10s by default (value is in ms)
@@ -17926,7 +17929,7 @@ var Client = function () {
     // This method is called for every actual transmission of the STOMP frames over the
     // WebSocket.
     //
-    // It is possible to set a `debug(message)` method
+    // It is possible to set a `debug(message, data)` method
     // on a client instance to handle differently the debug messages:
     //
     //     client.debug = function(str) {
@@ -18042,10 +18045,10 @@ var Client = function () {
                     }
                 });
             };
-            this.ws.onclose = function (ev) {
-                _this.debug('Whoops! Lost connection to ' + _this.ws.url + ':', ev);
+            this.ws.onclose = function (event) {
+                _this.debug('Whoops! Lost connection to ' + _this.ws.url + ':', { event: event });
                 _this._cleanUp();
-                if (errorCallback) errorCallback(ev);
+                if (errorCallback) errorCallback(event);
             };
             this.ws.onopen = function () {
                 _this.debug('Web Socket Opened...');
@@ -18085,8 +18088,9 @@ var Client = function () {
             var body = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
             var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-            headers.destination = destination;
-            this._transmit('SEND', headers, body);
+            var hdrs = Object.assign({}, headers);
+            hdrs.destination = destination;
+            this._transmit('SEND', hdrs, body);
         }
 
         // [BEGIN Frame](http://stomp.github.com/stomp-specification-1.1.html#BEGIN)
@@ -18096,7 +18100,7 @@ var Client = function () {
     }, {
         key: 'begin',
         value: function begin() {
-            var transaction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'tx-' + this.counter++;
+            var transaction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'tx-' + (0, _utils.createId)();
 
             this._transmit('BEGIN', { transaction: transaction });
             return {
@@ -18161,11 +18165,12 @@ var Client = function () {
         value: function ack(messageID, subscription) {
             var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
+            var hdrs = Object.assign({}, headers);
             // 1.2 change id header name from message-id to id
             var idAttr = this.version === _utils.VERSIONS.V1_2 ? 'id' : 'message-id';
-            headers[idAttr] = messageID;
-            headers.subscription = subscription;
-            this._transmit('ACK', headers);
+            hdrs[idAttr] = messageID;
+            hdrs.subscription = subscription;
+            this._transmit('ACK', hdrs);
         }
 
         // [NACK Frame](http://stomp.github.com/stomp-specification-1.1.html#NACK)
@@ -18189,11 +18194,12 @@ var Client = function () {
         value: function nack(messageID, subscription) {
             var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
+            var hdrs = Object.assign({}, headers);
             // 1.2 change id header name from message-id to id
             var idAttr = this.version === _utils.VERSIONS.V1_2 ? 'id' : 'message-id';
-            headers[idAttr] = messageID;
-            headers.subscription = subscription;
-            this._transmit('NACK', headers);
+            hdrs[idAttr] = messageID;
+            hdrs.subscription = subscription;
+            this._transmit('NACK', hdrs);
         }
 
         // [SUBSCRIBE Frame](http://stomp.github.com/stomp-specification-1.1.html#SUBSCRIBE)
@@ -18203,15 +18209,16 @@ var Client = function () {
         value: function subscribe(destination, callback) {
             var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
+            var hdrs = Object.assign({}, headers);
             // for convenience if the `id` header is not set, we create a new one for this client
             // that will be returned to be able to unsubscribe this subscription
-            if (!headers.id) headers.id = 'sub-' + this.counter++;
-            headers.destination = destination;
-            this.subscriptions[headers.id] = callback;
-            this._transmit('SUBSCRIBE', headers);
+            if (!hdrs.id) hdrs.id = 'sub-' + (0, _utils.createId)();
+            hdrs.destination = destination;
+            this.subscriptions[hdrs.id] = callback;
+            this._transmit('SUBSCRIBE', hdrs);
             return {
-                id: headers.id,
-                unsubscribe: this.unsubscribe.bind(this, headers.id)
+                id: hdrs.id,
+                unsubscribe: this.unsubscribe.bind(this, hdrs.id)
             };
         }
 
@@ -18231,9 +18238,10 @@ var Client = function () {
         value: function unsubscribe(id) {
             var headers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+            var hdrs = Object.assign({}, headers);
             delete this.subscriptions[id];
-            headers.id = id;
-            this._transmit('UNSUBSCRIBE', headers);
+            hdrs.id = id;
+            this._transmit('UNSUBSCRIBE', hdrs);
         }
 
         // Clean up client resources when it is disconnected or the server did not
@@ -18253,7 +18261,7 @@ var Client = function () {
         key: '_transmit',
         value: function _transmit(command, headers, body) {
             var out = _frame2.default.marshall(command, headers, body);
-            this.debug('>>> ' + out);
+            this.debug('>>> ' + out, { frame: { command: command, headers: headers, body: body } });
             this._wsSend(out);
         }
     }, {
@@ -18571,9 +18579,9 @@ var webstomp = {
     // This method creates a WebSocket client that is connected to
     // the STOMP server located at the url.
     client: function client(url) {
-        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { protocols: _utils.VERSIONS.supportedProtocols() };
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-        var ws = new WebSocket(url, options.protocols);
+        var ws = new WebSocket(url, options.protocols || _utils.VERSIONS.supportedProtocols());
         return new _client2.default(ws, options);
     },
     // This method is an alternative to `webstomp.client()` to let the user

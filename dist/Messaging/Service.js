@@ -46,10 +46,8 @@ var Class = (function () {
             this._subscriptionsMap.clear();
         var sock = new SockJS(this.context.resolve("/broker"));
         this._client = webstomp.over(sock, {
-            protocols: webstomp.VERSIONS.supportedProtocols(),
             debug: false,
             heartbeat: false,
-            binary: false,
         });
         this._client.connect({}, function () {
             _this._subscriptionsQueue.forEach(function (callback) { return callback(); });
