@@ -140,7 +140,8 @@ export class Class {
 
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
-			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() );
+			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() )
+				.catch( response => this.context.documents._parseErrorResponse( response ) );
 		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 

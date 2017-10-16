@@ -13,10 +13,9 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as Document from "./../Document";
-import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as RemoveMemberAction from "./RemoveMemberAction";
@@ -62,7 +61,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -109,28 +108,24 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"createDocument",
-			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.RemoveMemberAction.Class` fragment for the specified targetMembers.", [
+			"create",
+			"Creates a `Carbon.LDP.RemoveMemberAction.Class` resource for the specified targetMembers.", [
 				{name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action."},
 			],
-			{type: "Carbon.Document.Class"}
+			{type: "Carbon.LDP.RemoveMemberAction.Class"}
 		), ():void => {
-			expect( RemoveMemberAction.Factory.createDocument ).toBeDefined();
-			expect( Utils.isFunction( RemoveMemberAction.Factory.createDocument ) ).toBe( true );
+			expect( RemoveMemberAction.Factory.create ).toBeDefined();
+			expect( Utils.isFunction( RemoveMemberAction.Factory.create ) ).toBe( true );
 
-			let pointers:Pointer.Class[] = [];
+			const pointers:Pointer.Class[] = [];
 			pointers.push( Pointer.Factory.create( "the-pointer/" ) );
-			let document:Document.Class = RemoveMemberAction.Factory.createDocument( pointers );
 
-			expect( Document.Factory.is( document ) ).toBe( true );
+			const removeMemberAction:RemoveMemberAction.Class = RemoveMemberAction.Factory.create( pointers );
 
-			let fragments:Fragment.Class[] = document.getFragments();
-			expect( fragments.length ).toBe( 1 );
-
-			let addMemberAction:RemoveMemberAction.Class = <RemoveMemberAction.Class> fragments[ 0 ];
-			expect( RemoveMemberAction.Factory.hasClassProperties( addMemberAction ) ).toBe( true );
-			expect( addMemberAction.targetMembers ).toEqual( pointers );
-			expect( addMemberAction.types ).toContain( RemoveMemberAction.RDF_CLASS );
+			expect( Resource.Factory.is( removeMemberAction ) ).toBe( true );
+			expect( RemoveMemberAction.Factory.hasClassProperties( removeMemberAction ) ).toBe( true );
+			expect( removeMemberAction.targetMembers ).toEqual( pointers );
+			expect( removeMemberAction.types ).toContain( RemoveMemberAction.RDF_CLASS );
 		} );
 
 	} );

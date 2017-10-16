@@ -1,18 +1,6 @@
 import Carbon from "../Carbon";
 import * as Message from "./Message";
 import Options from "./Options";
-declare module "webstomp-client" {
-    interface Client {
-        connected: boolean;
-        connect(headers: ConnectionHeaders, connectCallback: (frame?: Frame) => any, errorCallback?: (error: Frame | CloseEvent) => any): void;
-        disconnect(disconnectCallback?: () => any, headers?: any): void;
-    }
-    interface Frame {
-        command: string;
-        body: string;
-        headers: ExtendedHeaders;
-    }
-}
 export declare const DEFAULT_OPTIONS: Options;
 export declare class Class {
     private context;

@@ -100,7 +100,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 				} );
 
 			return [ token, response ];
-		} );
+		}, response => this.context.documents._parseErrorResponse( response ) );
 	}
 
 	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
