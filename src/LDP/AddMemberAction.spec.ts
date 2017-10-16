@@ -13,10 +13,9 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as Document from "./../Document";
-import * as Fragment from "./../Fragment";
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as AddMemberAction from "./AddMemberAction";
@@ -62,7 +61,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -109,25 +108,21 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"createDocument",
-			"Creates and returns a `Carbon.Document.Class` object with a `Carbon.LDP.AddMemberAction.Class` fragment for the specified targetMembers.", [
+			"create",
+			"Creates `Carbon.LDP.AddMemberAction.Class` resource for the specified targetMembers.", [
 				{ name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request." },
 			],
-			{ type: "Carbon.Document.Class" }
+			{ type: "Carbon.LDP.AddMemberAction.Class" }
 		), ():void => {
-			expect( AddMemberAction.Factory.createDocument ).toBeDefined();
-			expect( Utils.isFunction( AddMemberAction.Factory.createDocument ) ).toBe( true );
+			expect( AddMemberAction.Factory.create ).toBeDefined();
+			expect( Utils.isFunction( AddMemberAction.Factory.create ) ).toBe( true );
 
-			let pointers:Pointer.Class[] = [];
+			const pointers:Pointer.Class[] = [];
 			pointers.push( Pointer.Factory.create( "the-pointer/" ) );
-			let document:Document.Class = AddMemberAction.Factory.createDocument( pointers );
 
-			expect( Document.Factory.is( document ) ).toBe( true );
+			const addMemberAction:AddMemberAction.Class = AddMemberAction.Factory.create( pointers );
 
-			let fragments:Fragment.Class[] = document.getFragments();
-			expect( fragments.length ).toBe( 1 );
-
-			let addMemberAction:AddMemberAction.Class = <AddMemberAction.Class> fragments[ 0 ];
+			expect( Resource.Factory.is( addMemberAction ) ).toBe( true );
 			expect( AddMemberAction.Factory.hasClassProperties( addMemberAction ) ).toBe( true );
 			expect( addMemberAction.targetMembers ).toEqual( pointers );
 			expect( addMemberAction.types ).toContain( AddMemberAction.RDF_CLASS );

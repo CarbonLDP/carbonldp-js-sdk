@@ -471,9 +471,9 @@ var Class = (function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-            var document = LDP.AddMemberAction.Factory.createDocument(pointers);
-            var body = document.toJSON(_this, _this.jsonldConverter);
-            return _this.sendRequest(HTTP.Method.PUT, documentURI, requestOptions, body);
+            var freeResources = FreeResources.Factory.create(_this);
+            freeResources.createResourceFrom(LDP.AddMemberAction.Factory.create(pointers));
+            return _this.sendRequest(HTTP.Method.PUT, documentURI, requestOptions, freeResources.toJSON());
         });
     };
     Class.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
@@ -488,14 +488,14 @@ var Class = (function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-            var document = LDP.RemoveMemberAction.Factory.createDocument(pointers);
             var containerRetrievalPreferences = {
                 include: [NS.C.Class.PreferSelectedMembershipTriples],
                 omit: [NS.C.Class.PreferMembershipTriples],
             };
             HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
-            var body = document.toJSON(_this, _this.jsonldConverter);
-            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, body);
+            var freeResources = FreeResources.Factory.create(_this);
+            freeResources.createResourceFrom(LDP.RemoveMemberAction.Factory.create(pointers));
+            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON());
         });
     };
     Class.prototype.removeAllMembers = function (documentURI, requestOptions) {

@@ -541,11 +541,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
-			let document:Document.Class = LDP.AddMemberAction.Factory.createDocument( pointers );
+			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
+			freeResources.createResourceFrom( LDP.AddMemberAction.Factory.create( pointers ) );
 
-			let body:string = document.toJSON( this, this.jsonldConverter );
-
-			return this.sendRequest( HTTP.Method.PUT, documentURI, requestOptions, body );
+			return this.sendRequest( HTTP.Method.PUT, documentURI, requestOptions, freeResources.toJSON() );
 		} );
 	}
 
@@ -563,16 +562,16 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
-			let document:Document.Class = LDP.RemoveMemberAction.Factory.createDocument( pointers );
 			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
 				include: [ NS.C.Class.PreferSelectedMembershipTriples ],
 				omit: [ NS.C.Class.PreferMembershipTriples ],
 			};
 			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
-			let body:string = document.toJSON( this, this.jsonldConverter );
+			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
+			freeResources.createResourceFrom( LDP.RemoveMemberAction.Factory.create( pointers ) );
 
-			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions, body );
+			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON() );
 		} );
 	}
 
