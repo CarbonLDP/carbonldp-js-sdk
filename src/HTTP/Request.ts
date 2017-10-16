@@ -1,12 +1,9 @@
 import * as Errors from "./../Errors";
 import * as Header from "./Header";
-import * as HTTPErrors from "./Errors";
 import Method from "./Method";
 import * as NS from "./../NS";
 import Parser from "./Parser";
 import Response from "./Response";
-import * as ErrorResponse from "./../LDP/ErrorResponse";
-import HTTPError from "./Errors/HTTPError";
 
 import * as Utils from "./../Utils";
 
@@ -25,10 +22,7 @@ export interface ContainerRetrievalPreferences {
 	omit?:string[];
 }
 
-interface Reject {
-	( error:HTTPErrors.Error ):void;
-}
-interface Resolve {
+interface ResponseCallback {
 	( response:Response ):void;
 }
 
@@ -43,36 +37,16 @@ function forEachHeaders( headers:Map<string, Header.Class>, setHeader:( name:str
 	}
 }
 
-function onResolve( resolve:Resolve, reject:Reject, response:Response ):void {
+function onResolve( resolve:ResponseCallback, reject:ResponseCallback, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
-
-	} else if( response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has( response.status ) ) {
-		let errorClass:typeof HTTPError = HTTPErrors.statusCodeMap.get( response.status );
-		let error:HTTPError = new errorClass( "", response );
-
-		if( ! response.data ) {
-			reject( error );
-		}
-
-		let parser:ErrorResponse.Parser = new ErrorResponse.Parser();
-		parser.parse( response.data, error ).then( ( errorResponse:ErrorResponse.Class ) => {
-			error.message = ErrorResponse.Util.getMessage( errorResponse );
-			reject( error );
-
-		} ).catch( () => {
-			error.message = response.data;
-			reject( error );
-		} );
-
 	} else {
-		reject( new HTTPErrors.UnknownError( response.data, response ) );
-
+		reject( response );
 	}
 }
 
 function sendWithBrowser( method:string, url:string, body:string | Blob, options:Options ):Promise<Response> {
-	return new Promise<Response>( ( resolve:Resolve, reject:Reject ):void => {
+	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
 		let request:XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();
 		request.open( method, url, true );
 
@@ -94,7 +68,7 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 }
 
 function sendWithNode( method:string, url:string, body:string | Buffer, options:Options ):Promise<Response> {
-	return new Promise<Response>( ( resolve:Resolve, reject:Reject ):void => {
+	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
 		let URL:any = require( "url" );
 
 		function returnResponse( request:ClientRequest, res:IncomingMessage ):void {
@@ -151,9 +125,6 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 	} );
 }
 
-function isBody( data:string ):boolean;
-function isBody( data:Blob ):boolean;
-function isBody( data:Buffer ):boolean;
 function isBody( data:string | Blob | Buffer ):boolean {
 	return Utils.isString( data )
 		|| typeof Blob !== "undefined" && data instanceof Blob
@@ -166,16 +137,11 @@ export class Service {
 		sendCredentialsOnCORS: true,
 	};
 
-	static send( method:(Method | string), url:string, body:Blob, options?:Options ):Promise<Response>;
-	static send<T>( method:(Method | string), url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static send( method:(Method | string), url:string, body:Buffer, options?:Options ):Promise<Response>;
-	static send<T>( method:(Method | string), url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-
 	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
-	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
-	static send( method:(Method | string), url:string, body:string, options?:Options ):Promise<Response>;
+	static send( method:(Method | string), url:string, body:string | Blob | Buffer, options?:Options ):Promise<Response>;
+	static send( method:(Method | string), url:string, body:string | Blob | Buffer, options?:Options ):Promise<Response>;
 	static send<T>( method:(Method | string), url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static send<T>( method:(Method | string), url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static send<T>( method:(Method | string), url:string, body:string | Blob | Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string | Blob | Buffer = null;
 		let options:Options = Utils.hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
@@ -222,11 +188,11 @@ export class Service {
 	}
 
 	static post( url:string, body:Buffer, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post( url:string, body:Blob, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:Blob, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
-	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ] >;
+	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
 		return Service.send( Method.POST, url, bodyOrOptions, options, parser );
 	}

@@ -114,6 +114,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ValidationError", {
+        get: function () { return exports.namespace + "ValidationError"; },
+        enumerable: true,
+        configurable: true
+    });
     return Class;
 }());
 exports.Class = Class;
@@ -132,11 +137,6 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "buildDate", {
         get: function () { return exports.namespace + "buildDate"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "carbonCode", {
-        get: function () { return exports.namespace + "carbonCode"; },
         enumerable: true,
         configurable: true
     });
@@ -165,6 +165,26 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Predicate, "errorCode", {
+        get: function () { return exports.namespace + "errorCode"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "errorDetails", {
+        get: function () { return exports.namespace + "errorDetails"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "errorMessage", {
+        get: function () { return exports.namespace + "errorMessage"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "errorParameters", {
+        get: function () { return exports.namespace + "errorParameters"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Predicate, "eTag", {
         get: function () { return exports.namespace + "eTag"; },
         enumerable: true,
@@ -176,17 +196,12 @@ var Predicate = (function () {
         configurable: true
     });
     Object.defineProperty(Predicate, "entryKey", {
-        get: function () { return exports.namespace + "entryKey"; },
+        get: function () { return exports.namespace + "key"; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Predicate, "mediaType", {
         get: function () { return exports.namespace + "mediaType"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "message", {
-        get: function () { return exports.namespace + "message"; },
         enumerable: true,
         configurable: true
     });
@@ -216,7 +231,7 @@ var Predicate = (function () {
         configurable: true
     });
     Object.defineProperty(Predicate, "entryValue", {
-        get: function () { return exports.namespace + "entryValue"; },
+        get: function () { return exports.namespace + "value"; },
         enumerable: true,
         configurable: true
     });

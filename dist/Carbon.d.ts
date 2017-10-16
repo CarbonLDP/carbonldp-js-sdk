@@ -21,6 +21,7 @@ import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
+import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
@@ -47,6 +48,7 @@ export declare class Class extends AbstractContext.Class {
     static Resource: typeof Resource;
     static SDKContext: typeof SDKContext;
     static Settings: typeof Settings;
+    static SHACL: typeof SHACL;
     static SPARQL: typeof SPARQL;
     static System: typeof System;
     static Utils: typeof Utils;
