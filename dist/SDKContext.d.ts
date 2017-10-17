@@ -1,6 +1,6 @@
-import * as Documents from "./Documents";
 import * as Auth from "./Auth";
 import * as Context from "./Context";
+import * as Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 export declare class Class implements Context.Class {
     auth: Auth.Class;

@@ -64,14 +64,20 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				return carbon.documents.get( "posts/" );
-			} ).then( ( [ result ] ) => {
-				delete result.created;
-				return result.saveAndRefresh();
+				fragment = { value: "a name" };
+				resource = { name: fragment };
+				carbon.documents.on( "*.*", "/**", ( data ) => {
+					console.log( data );
+				}, ( error ) => {
+					console.error( error );
+				} );
+
+				return new Promise( resolve => setTimeout( resolve, 3000 ) );
 			} ).then( () => {
-				done.fail( "Should fail the saving." );
+				return carbon.documents.createChild( "posts/", {} );
+			} ).then( () => {
+				done();
 			} ).catch( ( error ) => {
-				console.error( error );
 				console.error( { error } );
 				done();
 			} );
