@@ -11232,7 +11232,7 @@ var Class = (function (_super) {
         return _this;
     }
     Object.defineProperty(Class, "version", {
-        get: function () { return "1.0.0-alpha.1"; },
+        get: function () { return "1.0.0-alpha.5"; },
         enumerable: true,
         configurable: true
     });
