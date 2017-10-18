@@ -1,32 +1,20 @@
-import {
-	INSTANCE,
-	OBLIGATORY,
-	OPTIONAL,
-
-	module,
-
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasSignature,
-	hasProperty,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
+import { QueryClause } from "sparqler/Clauses";
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
-import Carbon from "./Carbon";
 import * as BlankNode from "./BlankNode";
+import Carbon from "./Carbon";
 import * as Document from "./Document";
+
+import * as Documents from "./Documents";
+import DefaultExport from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
+import MessagingEvent from "./Messaging/Event";
+import * as MessagingUtils from "./Messaging/Utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -36,14 +24,8 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
+import { clazz, hasConstructor, hasDefaultExport, hasMethod, hasProperty, hasSignature, INSTANCE, interfaze, isDefined, method, module, OBLIGATORY, OPTIONAL, } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import MessagingEvent from "./Messaging/Event";
-import * as MessagingUtils from "./Messaging/Utils";
-
-import { QueryClause } from "sparqler/Clauses";
-
-import * as Documents from "./Documents";
-import DefaultExport from "./Documents";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -10419,7 +10401,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -10460,7 +10442,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -10501,7 +10483,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -10542,7 +10524,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -10583,7 +10565,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_DELETED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -10624,7 +10606,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.MEMBER_ADDED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -10665,7 +10647,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Subscribe to the `Carbon.Messaging.Event.MEMBER_REMOVED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );

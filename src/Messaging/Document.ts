@@ -1,5 +1,6 @@
 import * as ServiceAwareDocument from "../ServiceAwareDocument";
 import { hasFunction, isObject } from "../Utils";
+import * as Messaging from "./../Messaging";
 import { Event } from "./Event";
 import * as Message from "./Message";
 
@@ -10,19 +11,19 @@ export interface Class extends ServiceAwareDocument.Class {
 
 	one( event:Event | string, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void;
 
-	onDocumentCreated( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onAccessPointCreated( onEvent:( message:Messaging.AccessPointCreated.Class, onError:( error:Error ) => void ) => void ):void;
 
-	onChildCreated( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onChildCreated( onEvent:( message:Messaging.ChildCreated.Class, onError:( error:Error ) => void ) => void ):void;
 
-	onAccessPointCreated( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onDocumentCreated( onEvent:( message:Messaging.DocumentCreated.Class, onError:( error:Error ) => void ) => void ):void;
 
-	onDocumentModified( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onDocumentModified( onEvent:( message:Messaging.DocumentModified.Class, onError:( error:Error ) => void ) => void ):void;
 
-	onDocumentDeleted( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onDocumentDeleted( onEvent:( message:Messaging.DocumentDeleted.Class, onError:( error:Error ) => void ) => void ):void;
 
-	onMemberAdded( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onMemberAdded( onEvent:( message:Messaging.MemberAdded.Class, onError:( error:Error ) => void ) => void ):void;
 
-	onMemberRemoved( onEvent:( message:Message.Class, onError:( error:Error ) => void ) => void ):void;
+	onMemberRemoved( onEvent:( message:Messaging.MemberRemoved.Class, onError:( error:Error ) => void ) => void ):void;
 }
 
 function on( this:Class, event:Event | string, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
@@ -37,31 +38,31 @@ function one( this:Class, event:Event | string, onEvent:( message:Message.Class 
 	return this._documents.one( event, this.id, onEvent, onError );
 }
 
-function onDocumentCreated( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
-	return this._documents.onDocumentCreated( this.id, onEvent, onError );
-}
-
-function onChildCreated( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
-	return this._documents.onChildCreated( this.id, onEvent, onError );
-}
-
-function onAccessPointCreated( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
+function onAccessPointCreated( this:Class, onEvent:( message:Messaging.AccessPointCreated.Class ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onAccessPointCreated( this.id, onEvent, onError );
 }
 
-function onDocumentModified( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
+function onChildCreated( this:Class, onEvent:( message:Messaging.ChildCreated.Class ) => void, onError:( error:Error ) => void ):void {
+	return this._documents.onChildCreated( this.id, onEvent, onError );
+}
+
+function onDocumentCreated( this:Class, onEvent:( message:Messaging.DocumentCreated.Class ) => void, onError:( error:Error ) => void ):void {
+	return this._documents.onDocumentCreated( this.id, onEvent, onError );
+}
+
+function onDocumentModified( this:Class, onEvent:( message:Messaging.DocumentModified.Class ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onDocumentModified( this.id, onEvent, onError );
 }
 
-function onDocumentDeleted( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
+function onDocumentDeleted( this:Class, onEvent:( message:Messaging.DocumentDeleted.Class ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onDocumentDeleted( this.id, onEvent, onError );
 }
 
-function onMemberAdded( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
+function onMemberAdded( this:Class, onEvent:( message:Messaging.MemberAdded.Class ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onMemberAdded( this.id, onEvent, onError );
 }
 
-function onMemberRemoved( this:Class, onEvent:( message:Message.Class ) => void, onError:( error:Error ) => void ):void {
+function onMemberRemoved( this:Class, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onMemberRemoved( this.id, onEvent, onError );
 }
 

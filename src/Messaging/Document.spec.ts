@@ -71,82 +71,88 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"onDocumentCreated",
-			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the document.",
-			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
-				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-			]
-		), ():void => {
-			const target:MessagingDocument.Class[ "onDocumentCreated" ] = ( ...params:any[] ) => void 0;
-			expect( target ).toBeDefined();
-		} );
-		it( hasMethod(
-			OBLIGATORY,
-			"onChildCreated",
-			"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the document.",
-			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
-				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-			]
-		), ():void => {
-			const target:MessagingDocument.Class[ "onChildCreated" ] = ( ...params:any[] ) => void 0;
-			expect( target ).toBeDefined();
-		} );
-		it( hasMethod(
-			OBLIGATORY,
 			"onAccessPointCreated",
 			"Subscribe to the `Carbon.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
 			const target:MessagingDocument.Class[ "onAccessPointCreated" ] = ( ...params:any[] ) => void 0;
 			expect( target ).toBeDefined();
 		} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"onChildCreated",
+			"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the document.",
+			[
+				{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
+			]
+		), ():void => {
+			const target:MessagingDocument.Class[ "onChildCreated" ] = ( ...params:any[] ) => void 0;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"onDocumentCreated",
+			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the document.",
+			[
+				{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
+			]
+		), ():void => {
+			const target:MessagingDocument.Class[ "onDocumentCreated" ] = ( ...params:any[] ) => void 0;
+			expect( target ).toBeDefined();
+		} );
+
 		it( hasMethod(
 			OBLIGATORY,
 			"onDocumentModified",
 			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
 			const target:MessagingDocument.Class[ "onDocumentModified" ] = ( ...params:any[] ) => void 0;
 			expect( target ).toBeDefined();
 		} );
+
 		it( hasMethod(
 			OBLIGATORY,
 			"onDocumentDeleted",
 			"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_DELETED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
 			const target:MessagingDocument.Class[ "onDocumentDeleted" ] = ( ...params:any[] ) => void 0;
 			expect( target ).toBeDefined();
 		} );
+
 		it( hasMethod(
 			OBLIGATORY,
 			"onMemberAdded",
 			"Subscribe to the `Carbon.Messaging.Event.MEMBER_ADDED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
 			const target:MessagingDocument.Class[ "onMemberAdded" ] = ( ...params:any[] ) => void 0;
 			expect( target ).toBeDefined();
 		} );
+
 		it( hasMethod(
 			OBLIGATORY,
 			"onMemberRemoved",
 			"Subscribe to the `Carbon.Messaging.Event.MEMBER_REMOVED` event notifications for the document.",
 			[
-				{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+				{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notification event." },
 				{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
 			]
 		), ():void => {
