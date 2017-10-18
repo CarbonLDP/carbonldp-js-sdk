@@ -13,6 +13,7 @@ var webstomp = require("webstomp-client");
 var Errors_1 = require("../Errors");
 var Parser_1 = require("../JSONLD/Parser");
 var Utils_1 = require("../Utils");
+var Message = require("./Message");
 exports.DEFAULT_OPTIONS = {
     maxReconnectAttempts: 10,
     reconnectDelay: 1000,
@@ -33,17 +34,19 @@ var Class = (function () {
                 onError(error);
             throw error;
         }
+        if (this._subscriptionsMap)
+            this._subscriptionsMap.clear();
         this.reconnect(onConnect, onError);
     };
     Class.prototype.reconnect = function (onConnect, onError) {
         var _this = this;
-        if (onError === void 0) { onError = this.broadcastError; }
+        if (onError === void 0) { onError = this.broadcastError.bind(this); }
         if (!this._client)
             this._attempts = 0;
+        else if (this._client.connected)
+            this._client.disconnect();
         if (!this._subscriptionsMap)
             this._subscriptionsMap = new Map();
-        else
-            this._subscriptionsMap.clear();
         var sock = new SockJS(this.context.resolve("/broker"));
         this._client = webstomp.over(sock, {
             debug: false,
@@ -122,6 +125,10 @@ var Class = (function () {
         return function () { return _this._client.subscribe(destination, function (message) {
             new Parser_1.default()
                 .parse(message.body)
+                .then(function (data) {
+                var freeResources = _this.context.documents._getFreeResources(data);
+                return freeResources.getResources().find(Message.Factory.hasClassProperties);
+            })
                 .then(eventCallback)
                 .catch(errorCallback);
         }, { id: id }); };

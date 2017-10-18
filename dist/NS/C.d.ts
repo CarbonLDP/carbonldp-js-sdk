@@ -1,12 +1,21 @@
 export declare let namespace: string;
 export declare class Class {
     static readonly AccessPoint: string;
+    static readonly AccessPointCreated: string;
     static readonly AddMemberAction: string;
+    static readonly ChildCreated: string;
     static readonly CreatedResource: string;
     static readonly Document: string;
+    static readonly DocumentCreatedDetails: string;
+    static readonly DocumentDeleted: string;
     static readonly DocumentMetadata: string;
+    static readonly DocumentModified: string;
     static readonly Instance: string;
     static readonly Map: string;
+    static readonly MemberAdded: string;
+    static readonly MemberAddedDetails: string;
+    static readonly MemberRemoved: string;
+    static readonly MemberRemovedDetails: string;
     static readonly ModifiedResource: string;
     static readonly NonReadableMembershipResourceTriples: string;
     static readonly Platform: string;
@@ -29,8 +38,10 @@ export declare class Predicate {
     static readonly bNodesMap: string;
     static readonly buildDate: string;
     static readonly created: string;
-    static readonly documentMetadata: string;
+    static readonly createdDocument: string;
+    static readonly details: string;
     static readonly defaultInteractionModel: string;
+    static readonly documentMetadata: string;
     static readonly entry: string;
     static readonly error: string;
     static readonly errorCode: string;
@@ -41,10 +52,12 @@ export declare class Predicate {
     static readonly httpStatusCode: string;
     static readonly entryKey: string;
     static readonly mediaType: string;
+    static readonly member: string;
     static readonly modified: string;
     static readonly requestID: string;
     static readonly relatedDocument: string;
     static readonly size: string;
+    static readonly target: string;
     static readonly targetMember: string;
     static readonly entryValue: string;
     static readonly version: string;

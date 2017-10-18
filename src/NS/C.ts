@@ -3,17 +3,35 @@ export let namespace:string = "https://carbonldp.com/ns/v1/platform#";
 export class Class {
 	static get AccessPoint():string { return namespace + "AccessPoint"; }
 
+	static get AccessPointCreated():string { return namespace + "AccessPointCreated"; }
+
 	static get AddMemberAction():string { return namespace + "AddMemberAction"; }
+
+	static get ChildCreated():string { return namespace + "ChildCreatedEvent"; }
 
 	static get CreatedResource():string { return namespace + "CreatedResource"; }
 
 	static get Document():string { return namespace + "Document"; }
 
+	static get DocumentCreatedDetails():string { return namespace + "DocumentCreatedEventDetails"; }
+
+	static get DocumentDeleted():string { return namespace + "DocumentDeleted"; }
+
 	static get DocumentMetadata():string { return namespace + "DocumentMetadata"; }
+
+	static get DocumentModified():string { return namespace + "DocumentModified"; }
 
 	static get Instance():string { return namespace + "Instance"; }
 
 	static get Map():string { return namespace + "Map"; }
+
+	static get MemberAdded():string { return namespace + "MemberAddedEvent"; }
+
+	static get MemberAddedDetails():string { return namespace + "MemberAddedEventDetails"; }
+
+	static get MemberRemoved():string { return namespace + "MemberRemovedEvent"; }
+
+	static get MemberRemovedDetails():string { return namespace + "MemberRemovedEventDetails"; }
 
 	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
 
@@ -57,9 +75,13 @@ export class Predicate {
 
 	static get created():string { return namespace + "created"; }
 
-	static get documentMetadata():string { return namespace + "documentMetadata"; }
+	static get createdDocument():string { return namespace + "createdDocument"; }
+
+	static get details():string { return namespace + "details"; }
 
 	static get defaultInteractionModel():string { return namespace + "defaultInteractionModel"; }
+
+	static get documentMetadata():string { return namespace + "documentMetadata"; }
 
 	static get entry():string { return namespace + "entry"; }
 
@@ -81,6 +103,8 @@ export class Predicate {
 
 	static get mediaType():string { return namespace + "mediaType"; }
 
+	static get member():string { return namespace + "member"; }
+
 	static get modified():string { return namespace + "modified"; }
 
 	static get requestID():string { return namespace + "requestID"; }
@@ -88,6 +112,8 @@ export class Predicate {
 	static get relatedDocument():string { return namespace + "relatedDocument"; }
 
 	static get size():string { return namespace + "size"; }
+
+	static get target():string { return namespace + "target"; }
 
 	static get targetMember():string { return namespace + "targetMember"; }
 

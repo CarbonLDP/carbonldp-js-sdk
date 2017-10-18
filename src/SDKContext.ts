@@ -1,14 +1,15 @@
-import * as Documents from "./Documents";
 import * as Auth from "./Auth";
 import * as Context from "./Context";
+import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
+import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
-import * as System from "./System";
 import * as SHACL from "./SHACL";
+import * as System from "./System";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -188,6 +189,16 @@ export class Class implements Context.Class {
 
 		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
 		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
+
+		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
+		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );
+		this.extendObjectSchema( Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA );
+		this.extendObjectSchema( Messaging.DocumentDeleted.RDF_CLASS, Messaging.DocumentDeleted.SCHEMA );
+		this.extendObjectSchema( Messaging.DocumentModified.RDF_CLASS, Messaging.DocumentModified.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberAdded.RDF_CLASS, Messaging.MemberAdded.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberAddedDetails.RDF_CLASS, Messaging.MemberAddedDetails.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA );
+		this.extendObjectSchema( Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA );
 	}
 
 	private resolveTypeURI( uri:string ):string {

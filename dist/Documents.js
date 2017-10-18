@@ -736,8 +736,8 @@ var Class = (function () {
     };
     Class.prototype.one = function (event, uriPattern, onEvent, onError) {
         var self = this;
-        this.on(event, uriPattern, function onEventWrapper(data) {
-            onEvent(data);
+        this.on(event, uriPattern, function onEventWrapper(message) {
+            onEvent(message);
             self.off(event, uriPattern, onEventWrapper, onError);
         }, onError);
     };
