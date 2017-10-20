@@ -781,20 +781,18 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	sparql( documentURI:string ):QueryClause {
-		let sparqlBuilder:SparqlBuilder = new SparqlBuilder();
-		sparqlBuilder._documents = this;
-		sparqlBuilder._entryPoint = documentURI;
-
-		let builder:QueryClause = sparqlBuilder.base( documentURI );
+	sparql( documentURI:string ):QueryClause<SPARQL.Builder.ExecuteSelect> {
+		let builder:QueryClause<SPARQL.Builder.ExecuteSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
 
 		if( ! ! this.context ) {
-			builder.base( this.context.baseURI );
-			if( this.context.hasSetting( "vocabulary" ) ) builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
+			builder = builder.base( this.context.baseURI );
+			if( this.context.hasSetting( "vocabulary" ) ) {
+				builder = builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
+			}
 
 			let schema:ObjectSchema.DigestedObjectSchema = this.context.getObjectSchema();
 			schema.prefixes.forEach( ( uri:RDF.URI.Class, prefix:string ) => {
-				builder.prefix( prefix, uri.stringValue );
+				builder = builder.prefix( prefix, uri.stringValue );
 			} );
 		}
 

@@ -481,12 +481,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( error.statusCode ).toBe( 500 );
 						expect( error.errors ).toBeDefined();
 						expect( error.errors.length ).toBe( 2 );
-						error.errors.forEach( ( error, index ) => {
-							expect( error.errorCode ).toBe( `code-0${ index + 1 }` );
-							expect( error.errorMessage ).toBe( `Message 0${ index + 1 }` );
+						error.errors.forEach( ( platformError, index ) => {
+							expect( platformError.errorCode ).toBe( `code-0${ index + 1 }` );
+							expect( platformError.errorMessage ).toBe( `Message 0${ index + 1 }` );
 
-							expect( error.errorParameters.entries ).toBeDefined();
-							error.errorParameters.entries.forEach( entry => {
+							expect( platformError.errorParameters.entries ).toBeDefined();
+							platformError.errorParameters.entries.forEach( entry => {
 								expect( entry.entryKey ).toBe( "document" );
 								expect( entry.entryValue.id ).toEqual( "https://example.com/target-document/" );
 							} );
@@ -10117,6 +10117,37 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( "base" in queryBuilder ).toBe( true );
 				expect( "vocab" in queryBuilder ).toBe( true );
 				expect( "prefix" in queryBuilder ).toBe( true );
+			})();
+
+			// Returns a ExecuteSelect
+			(() => {
+				context.extendObjectSchema( {
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"ex": "http://example.com/",
+				} );
+
+				let queryBuilder:SPARQL.Builder.ExecuteSelect = documents
+					.sparql( "http://example.com/resource/" )
+					.select( "a" )
+					.where( _ =>
+						_.var( "a" )
+							.has( _.resource( "ex:property" ), _.literal( "value" ) )
+					);
+
+				expect( queryBuilder ).toEqual( jasmine.objectContaining( {
+					toPrettyString: jasmine.any( Function ),
+					toCompactString: jasmine.any( Function ),
+					execute: jasmine.any( Function ),
+					executeRaw: jasmine.any( Function ),
+				} ) );
+
+				expect( queryBuilder.toPrettyString() ).toBe( "" +
+					"BASE <http://example.com/>\n" +
+					"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>\n" +
+					"PREFIX ex:<http://example.com/>\n" +
+					"SELECT ?a\n" +
+					"WHERE { ?a ex:property \"value\" }"
+				);
 			})();
 		} );
 

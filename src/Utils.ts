@@ -28,11 +28,11 @@ function isString( value:any ):value is string {
 	return typeof value === "string" || value instanceof String;
 }
 
-function isBoolean( value:any ):boolean {
+function isBoolean( value:any ):value is boolean {
 	return typeof value === "boolean";
 }
 
-function isNumber( value:any ):boolean {
+function isNumber( value:any ):value is number {
 	return typeof value === "number" || value instanceof Number;
 }
 
@@ -46,7 +46,7 @@ function isDouble( value:any ):boolean {
 	return value % 1 !== 0;
 }
 
-function isDate( date:any ):boolean {
+function isDate( date:any ):date is Date {
 	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
