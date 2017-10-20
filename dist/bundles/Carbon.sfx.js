@@ -6572,15 +6572,14 @@ function isIRI(iri) {
     return hasProtocol(iri) || !isAbsolute(iri);
 }
 exports.isIRI = isIRI;
-var BN_LABEL_REGEX = /^_:[A-Za-z0-9_]([A-Za-z0-9_\-.]*[A-Za-z0-9_\-])?$/;
 function isBNodeLabel(label) {
-    return BN_LABEL_REGEX.test(label);
+    return /^_:/.test(label);
 }
 exports.isBNodeLabel = isBNodeLabel;
 var prefixRegex = /([A-Za-z](([A-Za-z_\-0-9]|\.)*[A-Za-z_\-0-9])?)?:/;
 var prefixNormalizeRegex = /([_~.\-!$&'|()*+,;=/?#@%])/g;
 function isPrefixed(iri) {
-    return iri.includes(":") && !hasProtocol(iri);
+    return /^(?!_:)[^]*?:/.test(iri) && !hasProtocol(iri);
 }
 exports.isPrefixed = isPrefixed;
 function getPrefixedParts(iri) {
@@ -20064,11 +20063,14 @@ exports.default = NumberLiteral;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var LABEL_REGEX = /^_:[A-Za-z0-9_]([A-Za-z0-9_\-.]*[A-Za-z0-9_\-])?$/;
 var BlankNodeToken = (function () {
     function BlankNodeToken(label) {
         this.token = "blankNode";
         if (!label)
             return;
+        if (!LABEL_REGEX.test(label))
+            throw new Error("Invalid blank node label.");
         this.label = label;
     }
     BlankNodeToken.prototype.toString = function () {
