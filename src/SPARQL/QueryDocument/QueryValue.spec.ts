@@ -1,4 +1,4 @@
-import { LiteralToken } from "sparqler/tokens";
+import { IRIToken, LiteralToken } from "sparqler/tokens";
 import AbstractContext from "../../AbstractContext";
 import * as XSD from "../../NS/XSD";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
@@ -78,7 +78,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 					const spy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setType" );
 
 					queryValue.withType( type );
-					expect( spy ).toHaveBeenCalledWith( XSD.DataType[ type ] );
+					expect( spy ).toHaveBeenCalledWith( new IRIToken( XSD.DataType[ type ] ) );
 				};
 
 				helper( "string", "value" );

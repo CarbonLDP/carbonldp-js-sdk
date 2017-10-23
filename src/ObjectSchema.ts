@@ -16,6 +16,7 @@ export interface Class {
 	"@index"?:Object;
 	"@language"?:string;
 	"@reverse"?:Object;
+
 	[ name:string ]:(string | PropertyDefinition);
 }
 
@@ -59,6 +60,7 @@ export class DigestedPropertyDefinition {
 
 export interface Resolver {
 	getGeneralSchema():DigestedObjectSchema;
+
 	getSchemaFor( object:Object ):DigestedObjectSchema;
 }
 
@@ -93,6 +95,62 @@ export class Digester {
 		Digester.resolvePrefixedURIs( combinedSchema );
 
 		return combinedSchema;
+	}
+
+	static digestPropertyDefinition( digestedSchema:DigestedObjectSchema, propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
+		const digestedDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+
+		if( "@id" in propertyDefinition ) {
+			if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
+
+			if( ! Utils.isString( propertyDefinition[ "@id" ] ) ) throw new Errors.IllegalArgumentError( "@id needs to point to a string" );
+			digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyDefinition[ "@id" ] ), digestedSchema );
+		} else if( RDF.URI.Util.isPrefixed( propertyName ) ) {
+			digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyName ), digestedSchema );
+		} else if( digestedSchema.vocab !== null ) {
+			digestedDefinition.uri = new RDF.URI.Class( digestedSchema.vocab + <string> propertyName );
+		}
+
+		if( "@type" in propertyDefinition ) {
+			if( ! Utils.isString( propertyDefinition[ "@type" ] ) ) throw new Errors.IllegalArgumentError( "@type needs to point to a string" );
+
+			if( propertyDefinition[ "@type" ] === "@id" || propertyDefinition[ "@type" ] === "@vocab" ) {
+				digestedDefinition.literal = false;
+				digestedDefinition.pointerType = ( propertyDefinition[ "@type" ] === "@id" ) ? PointerType.ID : PointerType.VOCAB;
+			} else {
+				digestedDefinition.literal = true;
+
+				let type:RDF.URI.Class = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyDefinition[ "@type" ] ), digestedSchema );
+				if( RDF.URI.Util.isRelative( type.stringValue ) && type.stringValue in NS.XSD.DataType ) type.stringValue = NS.XSD.DataType[ type.stringValue ];
+
+				digestedDefinition.literalType = type;
+			}
+		}
+
+		if( "@language" in propertyDefinition ) {
+			let language:string = propertyDefinition[ "@language" ];
+			if( language !== null && ! Utils.isString( language ) ) throw new Errors.IllegalArgumentError( "@language needs to point to a string or null." );
+			digestedDefinition.language = language;
+		}
+
+		if( "@container" in propertyDefinition ) {
+			switch( propertyDefinition[ "@container" ] ) {
+				case "@set":
+					digestedDefinition.containerType = ContainerType.SET;
+					break;
+				case "@list":
+					digestedDefinition.containerType = ContainerType.LIST;
+					break;
+				case "@language":
+					if( Utils.isString( digestedDefinition.language ) ) throw new Errors.IllegalArgumentError( "@container cannot be set to @language when the property definition already contains an @language tag." );
+					digestedDefinition.containerType = ContainerType.LANGUAGE;
+					break;
+				default:
+					throw new Errors.IllegalArgumentError( "@container needs to be equal to '@list', '@set', or '@language'" );
+			}
+		}
+
+		return digestedDefinition;
 	}
 
 	public static resolvePrefixedURI( uri:string, digestedSchema:DigestedObjectSchema ):string {
@@ -162,59 +220,7 @@ export class Digester {
 
 				digestedSchema.prefixes.set( propertyName, uri );
 			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
-				let schemaDefinition:PropertyDefinition = <PropertyDefinition> propertyValue;
-				let digestedDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
-
-				if( "@id" in schemaDefinition ) {
-					if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
-
-					if( ! Utils.isString( schemaDefinition[ "@id" ] ) ) throw new Errors.IllegalArgumentError( "@id needs to point to a string" );
-					digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@id" ] ), digestedSchema );
-				} else if( RDF.URI.Util.isPrefixed( propertyName ) ) {
-					digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyName ), digestedSchema );
-				} else if( digestedSchema.vocab !== null ) {
-					digestedDefinition.uri = new RDF.URI.Class( digestedSchema.vocab + <string> propertyName );
-				}
-
-				if( "@type" in schemaDefinition ) {
-					if( ! Utils.isString( schemaDefinition[ "@type" ] ) ) throw new Errors.IllegalArgumentError( "@type needs to point to a string" );
-
-					if( schemaDefinition[ "@type" ] === "@id" || schemaDefinition[ "@type" ] === "@vocab" ) {
-						digestedDefinition.literal = false;
-						digestedDefinition.pointerType = ( schemaDefinition[ "@type" ] === "@id" ) ? PointerType.ID : PointerType.VOCAB;
-					} else {
-						digestedDefinition.literal = true;
-
-						let type:RDF.URI.Class = Digester._resolvePrefixedURI( new RDF.URI.Class( schemaDefinition[ "@type" ] ), digestedSchema );
-						if( RDF.URI.Util.isRelative( type.stringValue ) && type.stringValue in NS.XSD.DataType ) type.stringValue = NS.XSD.DataType[ type.stringValue ];
-
-						digestedDefinition.literalType = type;
-					}
-				}
-
-				if( "@language" in schemaDefinition ) {
-					let language:string = schemaDefinition[ "@language" ];
-					if( language !== null && ! Utils.isString( language ) ) throw new Errors.IllegalArgumentError( "@language needs to point to a string or null." );
-					digestedDefinition.language = language;
-				}
-
-				if( "@container" in schemaDefinition ) {
-					switch( schemaDefinition[ "@container" ] ) {
-						case "@set":
-							digestedDefinition.containerType = ContainerType.SET;
-							break;
-						case "@list":
-							digestedDefinition.containerType = ContainerType.LIST;
-							break;
-						case "@language":
-							if( Utils.isString( digestedDefinition.language ) ) throw new Errors.IllegalArgumentError( "@container cannot be set to @language when the property definition already contains an @language tag." );
-							digestedDefinition.containerType = ContainerType.LANGUAGE;
-							break;
-						default:
-							throw new Errors.IllegalArgumentError( "@container needs to be equal to '@list', '@set', or '@language'" );
-					}
-				}
-
+				const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( digestedSchema, propertyName, propertyValue );
 				digestedSchema.properties.set( propertyName, digestedDefinition );
 			} else {
 				throw new Errors.IllegalArgumentError( "ObjectSchema Properties can only have string values or object values." );

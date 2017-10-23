@@ -1,4 +1,4 @@
-import { isBNodeLabel, isPrefixed } from "sparqler/iri";
+import { isBNodeLabel } from "sparqler/iri";
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import * as Pointer from "../../Pointer";
@@ -12,10 +12,7 @@ export class Class {
 	constructor( context:QueryContext.Class, object:Pointer.Class | string ) {
 		this._context = context;
 		const id:string = isString( object ) ? object : object.id;
-		const shortID:string = this._context.compactIRI( id );
-
-		this._resource = isPrefixed( shortID ) ? new PrefixedNameToken( shortID ) :
-			isBNodeLabel( shortID ) ? new BlankNodeToken( shortID ) : new IRIToken( shortID );
+		this._resource = isBNodeLabel( id ) ? new BlankNodeToken( id ) : this._context.compactIRI( id );
 	}
 
 	toString():string {

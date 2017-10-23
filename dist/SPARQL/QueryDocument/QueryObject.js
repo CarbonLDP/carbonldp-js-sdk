@@ -7,9 +7,7 @@ var Class = (function () {
     function Class(context, object) {
         this._context = context;
         var id = Utils_1.isString(object) ? object : object.id;
-        var shortID = this._context.compactIRI(id);
-        this._resource = iri_1.isPrefixed(shortID) ? new tokens_1.PrefixedNameToken(shortID) :
-            iri_1.isBNodeLabel(shortID) ? new tokens_1.BlankNodeToken(shortID) : new tokens_1.IRIToken(shortID);
+        this._resource = iri_1.isBNodeLabel(id) ? new tokens_1.BlankNodeToken(id) : this._context.compactIRI(id);
     }
     Class.prototype.toString = function () {
         return "" + this._resource;

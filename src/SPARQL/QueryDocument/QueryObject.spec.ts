@@ -65,6 +65,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 
 				helper( "http://example.com/resource/" );
 				helper( "ex:resource" );
+			} );
+
+			it( "should no call the compactIRI when blank node", ():void => {
+				const spy:jasmine.Spy = spyOn( queryContext, "compactIRI" ).and.callThrough();
+
+				const helper:( iri:string ) => void = iri => {
+					new QueryObject( queryContext, iri );
+					expect( spy ).not.toHaveBeenCalled();
+				};
+
 				helper( "_:resource" );
 			} );
 

@@ -1,5 +1,7 @@
 import AbstractContext from "../../AbstractContext";
+import { DigestedPropertyDefinition } from "../../ObjectSchema";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import * as URI from "./../../RDF/URI";
 import * as Module from "./QueryContext";
 import { Class as QueryContext } from "./QueryContext";
 import QueryProperty from "./QueryProperty";
@@ -103,16 +105,41 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( "should return the stored property", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
 
-				const nameProperty:QueryProperty = new QueryProperty( queryContext, "name" );
+				const nameProperty:QueryProperty = new QueryProperty( queryContext, "name", null );
 				queryContext[ "_propertiesMap" ].set( "name", nameProperty );
 
-				const subDocumentProperty:QueryProperty = new QueryProperty( queryContext, "document.property" );
+				const subDocumentProperty:QueryProperty = new QueryProperty( queryContext, "document.property", null );
 				queryContext[ "_propertiesMap" ].set( "document.property", subDocumentProperty );
 
 				const helper:( name:string ) => QueryProperty = ( name:string ) => queryContext.getProperty( name );
 
 				expect( helper( "name" ) ).toBe( nameProperty );
 				expect( helper( "document.property" ) ).toBe( subDocumentProperty );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "addProperty" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.addProperty ).toBeDefined();
+				expect( QueryContext.prototype.addProperty ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should add property to the properties map", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+
+				queryContext.addProperty( "name", null );
+				expect( queryContext[ "_propertiesMap" ] ).toEqual( jasmine.objectContaining( new Map( [ [
+					"name",
+					new QueryProperty( queryContext, "name", null ),
+				] ] ) ) );
+
+				queryContext.addProperty( "document.property", null );
+				expect( queryContext[ "_propertiesMap" ] ).toEqual( jasmine.objectContaining( new Map( [ [
+					"document.property",
+					new QueryProperty( queryContext, "document.property", null ),
+				] ] ) ) );
 			} );
 
 		} );
@@ -146,6 +173,79 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 				queryContext.serializeLiteral( "xsd:string", "value" );
 				expect( spy ).toHaveBeenCalledWith( "xsd:string" );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "getInheritTypeDefinition" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.getInheritTypeDefinition ).toBeDefined();
+				expect( QueryContext.prototype.getInheritTypeDefinition ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should find definition in types schemas", ():void => {
+				context.extendObjectSchema( "ex:aType", {
+					"ex": "http://example.com/ns#",
+					"property": {
+						"@id": "ex:type-property",
+					},
+				} );
+
+				const queryContext:QueryContext = new QueryContext( context );
+				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( "property" );
+				expect( definition ).toEqual( jasmine.objectContaining( {
+					uri: new URI.Class( "http://example.com/ns#type-property" ),
+				} ) );
+			} );
+
+			it( "should match URI if provided", ():void => {
+				context.extendObjectSchema( "ex:Type", {
+					"ex": "http://example.com/ns#",
+					"property": {
+						"@id": "ex:type-1-property",
+					},
+				} );
+				context.extendObjectSchema( "ex:AnotherType", {
+					"ex": "http://example.com/ns#",
+					"property": {
+						"@id": "ex:type-2-property",
+						"@type": "@id",
+					},
+				} );
+
+				const queryContext:QueryContext = new QueryContext( context );
+				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( "property", "http://example.com/ns#type-2-property" );
+				expect( definition ).toEqual( jasmine.objectContaining( {
+					uri: new URI.Class( "http://example.com/ns#type-2-property" ),
+					literal: false,
+				} ) );
+			} );
+
+			it( "should find in parent context", ():void => {
+				context.parentContext.extendObjectSchema( "ex:Type", {
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"ex": "http://example.com/ns#",
+					"property": {
+						"@id": "ex:type-1-property",
+						"@type": "xsd:string",
+					},
+				} );
+				context.extendObjectSchema( "ex:AnotherType", {
+					"ex": "http://example.com/ns#",
+					"property": {
+						"@id": "ex:type-2-property",
+						"@type": "@id",
+					},
+				} );
+
+				const queryContext:QueryContext = new QueryContext( context );
+				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( "property", "http://example.com/ns#type-1-property" );
+				expect( definition ).toEqual( jasmine.objectContaining( {
+					uri: new URI.Class( "http://example.com/ns#type-1-property" ),
+					literal: true,
+					literalType: new URI.Class( "http://www.w3.org/2001/XMLSchema#string" ),
+				} ) );
 			} );
 
 		} );

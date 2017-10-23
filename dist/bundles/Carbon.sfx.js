@@ -1066,6 +1066,11 @@ __export(__webpack_require__(115));
 __export(__webpack_require__(116));
 __export(__webpack_require__(249));
 __export(__webpack_require__(117));
+__export(__webpack_require__(251));
+__export(__webpack_require__(252));
+__export(__webpack_require__(253));
+__export(__webpack_require__(254));
+__export(__webpack_require__(255));
 
 //# sourceMappingURL=index.js.map
 
@@ -1329,15 +1334,15 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(109));
-__export(__webpack_require__(251));
+__export(__webpack_require__(256));
 __export(__webpack_require__(118));
-__export(__webpack_require__(252));
-__export(__webpack_require__(253));
-__export(__webpack_require__(254));
+__export(__webpack_require__(257));
+__export(__webpack_require__(258));
 __export(__webpack_require__(259));
-__export(__webpack_require__(260));
-__export(__webpack_require__(261));
-__export(__webpack_require__(262));
+__export(__webpack_require__(264));
+__export(__webpack_require__(265));
+__export(__webpack_require__(266));
+__export(__webpack_require__(267));
 
 //# sourceMappingURL=index.js.map
 
@@ -1416,6 +1421,61 @@ var Digester = (function () {
         Digester.resolvePrefixedURIs(combinedSchema);
         return combinedSchema;
     };
+    Digester.digestPropertyDefinition = function (digestedSchema, propertyName, propertyDefinition) {
+        var digestedDefinition = new DigestedPropertyDefinition();
+        if ("@id" in propertyDefinition) {
+            if (RDF.URI.Util.isPrefixed(propertyName))
+                throw new Errors.IllegalArgumentError("A prefixed property cannot have assigned another URI.");
+            if (!Utils.isString(propertyDefinition["@id"]))
+                throw new Errors.IllegalArgumentError("@id needs to point to a string");
+            digestedDefinition.uri = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyDefinition["@id"]), digestedSchema);
+        }
+        else if (RDF.URI.Util.isPrefixed(propertyName)) {
+            digestedDefinition.uri = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyName), digestedSchema);
+        }
+        else if (digestedSchema.vocab !== null) {
+            digestedDefinition.uri = new RDF.URI.Class(digestedSchema.vocab + propertyName);
+        }
+        if ("@type" in propertyDefinition) {
+            if (!Utils.isString(propertyDefinition["@type"]))
+                throw new Errors.IllegalArgumentError("@type needs to point to a string");
+            if (propertyDefinition["@type"] === "@id" || propertyDefinition["@type"] === "@vocab") {
+                digestedDefinition.literal = false;
+                digestedDefinition.pointerType = (propertyDefinition["@type"] === "@id") ? PointerType.ID : PointerType.VOCAB;
+            }
+            else {
+                digestedDefinition.literal = true;
+                var type = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyDefinition["@type"]), digestedSchema);
+                if (RDF.URI.Util.isRelative(type.stringValue) && type.stringValue in NS.XSD.DataType)
+                    type.stringValue = NS.XSD.DataType[type.stringValue];
+                digestedDefinition.literalType = type;
+            }
+        }
+        if ("@language" in propertyDefinition) {
+            var language = propertyDefinition["@language"];
+            if (language !== null && !Utils.isString(language))
+                throw new Errors.IllegalArgumentError("@language needs to point to a string or null.");
+            digestedDefinition.language = language;
+        }
+        if ("@container" in propertyDefinition) {
+            switch (propertyDefinition["@container"]) {
+                case "@set":
+                    digestedDefinition.containerType = ContainerType.SET;
+                    break;
+                case "@list":
+                    digestedDefinition.containerType = ContainerType.LIST;
+                    break;
+                case "@language":
+                    if (Utils.isString(digestedDefinition.language))
+                        throw new Errors.IllegalArgumentError("@container cannot be set to @language when the property definition already contains an @language tag.");
+                    digestedDefinition.containerType = ContainerType.LANGUAGE;
+                    break;
+                default:
+                    throw new Errors.IllegalArgumentError("@container needs to be equal to '@list', '@set', or '@language'");
+            }
+        }
+        return digestedDefinition;
+    };
     Digester.resolvePrefixedURI = function (uri, digestedSchema) {
         if (uri === null)
             return null;
@@ -1484,59 +1544,7 @@ var Digester = (function () {
                 digestedSchema.prefixes.set(propertyName, uri);
             }
             else if (!!propertyValue && Utils.isObject(propertyValue)) {
-                var schemaDefinition = propertyValue;
-                var digestedDefinition = new DigestedPropertyDefinition();
-                if ("@id" in schemaDefinition) {
-                    if (RDF.URI.Util.isPrefixed(propertyName))
-                        throw new Errors.IllegalArgumentError("A prefixed property cannot have assigned another URI.");
-                    if (!Utils.isString(schemaDefinition["@id"]))
-                        throw new Errors.IllegalArgumentError("@id needs to point to a string");
-                    digestedDefinition.uri = Digester._resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@id"]), digestedSchema);
-                }
-                else if (RDF.URI.Util.isPrefixed(propertyName)) {
-                    digestedDefinition.uri = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyName), digestedSchema);
-                }
-                else if (digestedSchema.vocab !== null) {
-                    digestedDefinition.uri = new RDF.URI.Class(digestedSchema.vocab + propertyName);
-                }
-                if ("@type" in schemaDefinition) {
-                    if (!Utils.isString(schemaDefinition["@type"]))
-                        throw new Errors.IllegalArgumentError("@type needs to point to a string");
-                    if (schemaDefinition["@type"] === "@id" || schemaDefinition["@type"] === "@vocab") {
-                        digestedDefinition.literal = false;
-                        digestedDefinition.pointerType = (schemaDefinition["@type"] === "@id") ? PointerType.ID : PointerType.VOCAB;
-                    }
-                    else {
-                        digestedDefinition.literal = true;
-                        var type = Digester._resolvePrefixedURI(new RDF.URI.Class(schemaDefinition["@type"]), digestedSchema);
-                        if (RDF.URI.Util.isRelative(type.stringValue) && type.stringValue in NS.XSD.DataType)
-                            type.stringValue = NS.XSD.DataType[type.stringValue];
-                        digestedDefinition.literalType = type;
-                    }
-                }
-                if ("@language" in schemaDefinition) {
-                    var language = schemaDefinition["@language"];
-                    if (language !== null && !Utils.isString(language))
-                        throw new Errors.IllegalArgumentError("@language needs to point to a string or null.");
-                    digestedDefinition.language = language;
-                }
-                if ("@container" in schemaDefinition) {
-                    switch (schemaDefinition["@container"]) {
-                        case "@set":
-                            digestedDefinition.containerType = ContainerType.SET;
-                            break;
-                        case "@list":
-                            digestedDefinition.containerType = ContainerType.LIST;
-                            break;
-                        case "@language":
-                            if (Utils.isString(digestedDefinition.language))
-                                throw new Errors.IllegalArgumentError("@container cannot be set to @language when the property definition already contains an @language tag.");
-                            digestedDefinition.containerType = ContainerType.LANGUAGE;
-                            break;
-                        default:
-                            throw new Errors.IllegalArgumentError("@container needs to be equal to '@list', '@set', or '@language'");
-                    }
-                }
+                var digestedDefinition = Digester.digestPropertyDefinition(digestedSchema, propertyName, propertyValue);
                 digestedSchema.properties.set(propertyName, digestedDefinition);
             }
             else {
@@ -4043,7 +4051,7 @@ exports.default = StringLiteral;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD = __webpack_require__(257);
+var XSD = __webpack_require__(262);
 var StringLiteral_1 = __webpack_require__(37);
 var tokens_1 = __webpack_require__(5);
 var PatternBuilder_1 = __webpack_require__(120);
@@ -6623,7 +6631,7 @@ var Messaging = __webpack_require__(57);
 var ObjectSchema = __webpack_require__(18);
 var ProtectedDocument = __webpack_require__(106);
 var RDF = __webpack_require__(8);
-var RDFRepresentation = __webpack_require__(266);
+var RDFRepresentation = __webpack_require__(271);
 var SHACL = __webpack_require__(130);
 var System = __webpack_require__(131);
 var Class = (function () {
@@ -11133,13 +11141,13 @@ exports.SCHEMA = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Builder = __webpack_require__(108);
 exports.Builder = Builder;
-var RawResults = __webpack_require__(263);
+var RawResults = __webpack_require__(268);
 exports.RawResults = RawResults;
 var RawResultsParser = __webpack_require__(129);
 exports.RawResultsParser = RawResultsParser;
-var Service_1 = __webpack_require__(264);
+var Service_1 = __webpack_require__(269);
 exports.Service = Service_1.default;
-var SELECTResults = __webpack_require__(265);
+var SELECTResults = __webpack_require__(270);
 exports.SELECTResults = SELECTResults;
 
 
@@ -11737,7 +11745,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var _1 = __webpack_require__(256);
+var _1 = __webpack_require__(261);
 var tokens_1 = __webpack_require__(5);
 var ObjectPattern_1 = __webpack_require__(38);
 var ValuesPattern = (function (_super) {
@@ -12135,9 +12143,9 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ValidationReport = __webpack_require__(267);
+var ValidationReport = __webpack_require__(272);
 exports.ValidationReport = ValidationReport;
-var ValidationResult = __webpack_require__(268);
+var ValidationResult = __webpack_require__(273);
 exports.ValidationResult = ValidationResult;
 
 
@@ -12148,9 +12156,9 @@ exports.ValidationResult = ValidationResult;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PlatformMetadata = __webpack_require__(269);
+var PlatformMetadata = __webpack_require__(274);
 exports.PlatformMetadata = PlatformMetadata;
-var InstanceMetadata = __webpack_require__(270);
+var InstanceMetadata = __webpack_require__(275);
 exports.InstanceMetadata = InstanceMetadata;
 
 
@@ -12203,7 +12211,7 @@ var Pointer = __webpack_require__(14);
 var RDF = __webpack_require__(8);
 var Resource = __webpack_require__(9);
 var SDKContext = __webpack_require__(67);
-var Settings = __webpack_require__(271);
+var Settings = __webpack_require__(276);
 var SHACL = __webpack_require__(130);
 var SPARQL = __webpack_require__(107);
 var System = __webpack_require__(131);
@@ -20143,7 +20151,8 @@ var LiteralToken = (function () {
             throw new Error("Must set a value before a type.");
         if (this.value.token !== "string")
             this.value = new StringToken_1.StringToken("" + this.value);
-        this.type = iri_1.isPrefixed(type) ? new PrefixedNameToken_1.PrefixedNameToken(type) : new IRIToken_1.IRIToken(type);
+        this.type = typeof type === "string" ? iri_1.isPrefixed(type) ?
+            new PrefixedNameToken_1.PrefixedNameToken(type) : new IRIToken_1.IRIToken(type) : type;
     };
     LiteralToken.prototype.setLanguage = function (language) {
         if (!this.value || this.value.token !== "string")
@@ -20188,6 +20197,144 @@ __export(__webpack_require__(66));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var ValuesToken = (function () {
+    function ValuesToken() {
+        this.token = "values";
+        this.variables = [];
+        this.values = [];
+    }
+    ValuesToken.prototype.addValues = function (variable) {
+        var values = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            values[_i - 1] = arguments[_i];
+        }
+        this.variables.push(variable);
+        this.values.push(values);
+        return this;
+    };
+    ValuesToken.prototype.toString = function () {
+        var variables = this.variables.length ? this.variables.length === 1 ? this.variables.join(" ") :
+            "( " + this.variables.join(" ") + " )" : "()";
+        var values = this.variables.length ? this.variables.length === 1 ? this.values[0] :
+            this.values.map(function (varValues) { return "( " + varValues.join(" ") + " )"; }) : ["()"];
+        return "VALUES " + variables + " { " + values.join(" ") + " }";
+    };
+    return ValuesToken;
+}());
+exports.ValuesToken = ValuesToken;
+
+//# sourceMappingURL=ValuesToken.js.map
+
+
+/***/ }),
+/* 252 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var SubjectToken = (function () {
+    function SubjectToken(subject) {
+        this.token = "subject";
+        this.subject = subject;
+        this.predicates = [];
+    }
+    SubjectToken.prototype.addPredicate = function (predicate) {
+        this.predicates.push(predicate);
+        return this;
+    };
+    SubjectToken.prototype.toString = function () {
+        return this.subject + " " + this.predicates.join("; ");
+    };
+    return SubjectToken;
+}());
+exports.SubjectToken = SubjectToken;
+
+//# sourceMappingURL=SubjectToken.js.map
+
+
+/***/ }),
+/* 253 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PredicateToken = (function () {
+    function PredicateToken(predicate) {
+        this.token = "predicate";
+        this.predicate = predicate;
+        this.objects = [];
+    }
+    PredicateToken.prototype.addObject = function (object) {
+        this.objects.push(object);
+        return this;
+    };
+    PredicateToken.prototype.toString = function () {
+        return this.predicate + " " + this.objects.join(", ");
+    };
+    return PredicateToken;
+}());
+exports.PredicateToken = PredicateToken;
+
+//# sourceMappingURL=PredicateToken.js.map
+
+
+/***/ }),
+/* 254 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var OptionalToken = (function () {
+    function OptionalToken() {
+        this.token = "optional";
+        this.patterns = [];
+    }
+    OptionalToken.prototype.addPattern = function (pattern) {
+        this.patterns.push(pattern);
+        return this;
+    };
+    OptionalToken.prototype.toString = function () {
+        return "OPTIONAL { " + this.patterns.join(". ") + " }";
+    };
+    return OptionalToken;
+}());
+exports.OptionalToken = OptionalToken;
+
+//# sourceMappingURL=OptionalToken.js.map
+
+
+/***/ }),
+/* 255 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var FilterToken = (function () {
+    function FilterToken(constraint) {
+        this.token = "filter";
+        this.constraint = constraint;
+    }
+    FilterToken.prototype.toString = function () {
+        return "FILTER( " + this.constraint + " )";
+    };
+    return FilterToken;
+}());
+exports.FilterToken = FilterToken;
+
+//# sourceMappingURL=FilterToken.js.map
+
+
+/***/ }),
+/* 256 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var Container_1 = __webpack_require__(13);
 var _1 = __webpack_require__(17);
 var utils_1 = __webpack_require__(16);
@@ -20214,7 +20361,7 @@ exports.fromDecorator = fromDecorator;
 
 
 /***/ }),
-/* 252 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20239,7 +20386,7 @@ exports.groupDecorator = groupDecorator;
 
 
 /***/ }),
-/* 253 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20264,7 +20411,7 @@ exports.havingDecorator = havingDecorator;
 
 
 /***/ }),
-/* 254 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20281,7 +20428,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Container_1 = __webpack_require__(13);
-var values_1 = __webpack_require__(255);
+var values_1 = __webpack_require__(260);
 var utils_1 = __webpack_require__(16);
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(11);
@@ -20342,7 +20489,7 @@ exports.limitOffsetDecorator = limitOffsetDecorator;
 
 
 /***/ }),
-/* 255 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20353,7 +20500,7 @@ var Container_1 = __webpack_require__(13);
 var IRIResolver_1 = __webpack_require__(28);
 var patterns_1 = __webpack_require__(119);
 var tokens_1 = __webpack_require__(5);
-var triples_1 = __webpack_require__(258);
+var triples_1 = __webpack_require__(263);
 var ObjectPattern_1 = __webpack_require__(38);
 function values(variableOrVariables, valuesOrBuilder) {
     var isSingle = !Array.isArray(variableOrVariables);
@@ -20399,7 +20546,7 @@ exports.valuesDecorator = valuesDecorator;
 
 
 /***/ }),
-/* 256 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20415,7 +20562,7 @@ __export(__webpack_require__(122));
 
 
 /***/ }),
-/* 257 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20432,7 +20579,7 @@ exports.string = exports.NAMESPACE + "string";
 
 
 /***/ }),
-/* 258 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20453,7 +20600,7 @@ __export(__webpack_require__(127));
 
 
 /***/ }),
-/* 259 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20479,7 +20626,7 @@ exports.orderDecorator = orderDecorator;
 
 
 /***/ }),
-/* 260 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20517,7 +20664,7 @@ exports.queryDecorator = queryDecorator;
 
 
 /***/ }),
-/* 261 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20584,7 +20731,7 @@ exports.selectDecorator = selectDecorator;
 
 
 /***/ }),
-/* 262 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20622,7 +20769,7 @@ exports.subWhereDecorator = subWhereDecorator;
 
 
 /***/ }),
-/* 263 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20666,7 +20813,7 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 264 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20780,7 +20927,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 265 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20789,7 +20936,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 /***/ }),
-/* 266 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20827,7 +20974,7 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 267 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20853,7 +21000,7 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 268 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20897,7 +21044,7 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 269 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20918,7 +21065,7 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 270 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20943,7 +21090,7 @@ exports.SCHEMA = {
 
 
 /***/ }),
-/* 271 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

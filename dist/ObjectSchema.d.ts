@@ -47,6 +47,7 @@ export declare class Digester {
     static digestSchema(schemas: Class[]): DigestedObjectSchema;
     static digestSchema(schema: Class): DigestedObjectSchema;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+    static digestPropertyDefinition(digestedSchema: DigestedObjectSchema, propertyName: string, propertyDefinition: PropertyDefinition): DigestedPropertyDefinition;
     static resolvePrefixedURI(uri: string, digestedSchema: DigestedObjectSchema): string;
     private static _resolvePrefixedURI(uri, digestedSchema);
     private static digestSingleSchema(schema);

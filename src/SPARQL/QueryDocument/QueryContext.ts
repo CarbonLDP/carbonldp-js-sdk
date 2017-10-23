@@ -1,9 +1,15 @@
+import { isBNodeLabel, isPrefixed } from "sparqler/iri";
+import { BlankNodeToken, IRIToken, PatternToken, PrefixedNameToken } from "sparqler/tokens";
+
 import * as AbstractContext from "../../AbstractContext";
+import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryVariable from "./QueryVariable";
 
 export class Class {
 	protected _context:AbstractContext.Class;
+	get context():AbstractContext.Class { return this._context; }
+
 	protected _propertiesMap:Map<string, QueryProperty.Class>;
 
 	private _variablesCounter:number;
@@ -25,6 +31,12 @@ export class Class {
 		return variable;
 	}
 
+	addProperty( name:string, pattern:PatternToken ):QueryProperty.Class {
+		const property:QueryProperty.Class = new QueryProperty.Class( this, name, pattern );
+		this._propertiesMap.set( name, property );
+		return property;
+	}
+
 	getProperty( name:string ):QueryProperty.Class {
 		if( ! this._propertiesMap.has( name ) ) throw new Error( `The "${ name }" property was not declared.` );
 		return this._propertiesMap.get( name );
@@ -42,9 +54,24 @@ export class Class {
 		return iri;
 	}
 
-	compactIRI( iri:string ):string {
-		// TODO: Implement
-		return iri;
+	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
+		// TODO: Implement correctly
+		return isPrefixed( iri ) ? new PrefixedNameToken( iri ) : new IRIToken( iri );
+	}
+
+	getInheritTypeDefinition( propertyName:string, propertyURI?:string, context:AbstractContext.Class = this._context ):DigestedPropertyDefinition {
+		if( context === null ) return null;
+
+		const typeSchemas:DigestedObjectSchema[] = Array.from( context[ "typeObjectSchemaMap" ].values() );
+		for( const schema of typeSchemas ) {
+			if( ! schema.properties.has( propertyName ) ) continue;
+			const digestedProperty:DigestedPropertyDefinition = schema.properties.get( propertyName );
+
+			if( propertyURI && digestedProperty.uri.stringValue !== propertyURI ) continue;
+			return digestedProperty;
+		}
+
+		return this.getInheritTypeDefinition( propertyName, propertyURI, context.parentContext as AbstractContext.Class );
 	}
 
 }

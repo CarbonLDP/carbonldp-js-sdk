@@ -3,6 +3,7 @@ import { TokenNode } from "sparqler/tokens";
 import QueryProperty from "./QueryProperty";
 import QueryValue from "./QueryValue";
 import QueryObject from "./QueryObject";
+import QueryPropertiesSchema from "./QueryPropertiesSchema";
 import QueryDocumentBuilderImplementation from "./QueryDocumentBuilder";
 
 /*interface Documents {
@@ -16,12 +17,6 @@ interface QueryDocumentGetter {
 
 
 interface QueryDocumentBuilder extends QueryDocumentBuilderImplementation {
-	property( name:string ):QueryProperty;
-
-	value( value:SupportedNatives ):QueryValue;
-
-	object( object:Pointer.Class ):QueryObject;
-
 	withType( iriClass:string ):this & QueryDocumentGetter;
 
 	properties( propertiesSchema:QueryPropertiesSchema ):this & QueryDocumentGetter;
@@ -35,16 +30,6 @@ interface QueryMembersBuilder extends QueryDocumentBuilder {
 	limit( limit:number ):this & QueryDocumentGetter;
 
 	offset( offset:number ):this & QueryDocumentGetter;
-}
-
-interface QueryPropertiesSchema {
-	[ propertyName:string ]:{
-		"@id":string;
-		"@type":"@id" | string;
-		"@language":string;
-		"@container":"@set" | "@list" | "@language";
-		"@query":( builder:QueryPropertyBuilder ) => QueryDocumentGetter;
-	};
 }
 
 interface QueryPropertyBuilder extends QueryDocumentBuilder {
