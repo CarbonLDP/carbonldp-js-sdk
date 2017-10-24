@@ -1,8 +1,8 @@
-import { isBNodeLabel, isPrefixed } from "sparqler/iri";
-import { BlankNodeToken, IRIToken, PatternToken, PrefixedNameToken } from "sparqler/tokens";
+import { isPrefixed } from "sparqler/iri";
+import { IRIToken, PatternToken, PrefixedNameToken } from "sparqler/tokens";
 
 import * as AbstractContext from "../../AbstractContext";
-import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
+import { DigestedObjectSchema, DigestedPropertyDefinition, Util as SchemaUtils } from "../../ObjectSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryVariable from "./QueryVariable";
 
@@ -31,6 +31,12 @@ export class Class {
 		return variable;
 	}
 
+	hasProperties( propertyName:string ):boolean {
+		propertyName += ".";
+		return Array.from( this._propertiesMap.keys() )
+			.some( key => key.startsWith( propertyName ) );
+	}
+
 	addProperty( name:string, pattern:PatternToken ):QueryProperty.Class {
 		const property:QueryProperty.Class = new QueryProperty.Class( this, name, pattern );
 		this._propertiesMap.set( name, property );
@@ -50,7 +56,10 @@ export class Class {
 	}
 
 	expandIRI( iri:string ):string {
-		// TODO: Implement
+		const vocab:string = this._context.hasSetting( "vocabulary" ) ? this._context.resolve( this._context.getSetting( "vocabulary" ) ) : void 0;
+		iri = SchemaUtils.resolveURI( iri, this._context.getObjectSchema(), vocab );
+
+		if( isPrefixed( iri ) ) throw new Error( `Prefix "${ iri.split( ":" )[ 0 ] }" has not been declared.` );
 		return iri;
 	}
 

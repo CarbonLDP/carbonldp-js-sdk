@@ -106,7 +106,9 @@ export class Class implements Context.Class {
 	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
 		let type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
+
+		const vocab:string = this.hasSetting( "vocabulary" ) ? this.resolve( this.getSetting( "vocabulary" ) ) : void 0;
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema, vocab );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -202,20 +204,9 @@ export class Class implements Context.Class {
 	}
 
 	private resolveTypeURI( uri:string ):string {
-		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		let schema:ObjectSchema.DigestedObjectSchema = this.getObjectSchema();
-		let vocab:string;
-		if( this.hasSetting( "vocabulary" ) ) vocab = this.resolve( this.getSetting( "vocabulary" ) );
-
-
-		if( RDF.URI.Util.isPrefixed( uri ) ) {
-			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
-		} else if( vocab ) {
-			uri = vocab + uri;
-		}
-
-		return uri;
+		const vocab:string = this.hasSetting( "vocabulary" ) ?
+			this.resolve( this.getSetting( "vocabulary" ) ) : null;
+		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
 	}
 }
 

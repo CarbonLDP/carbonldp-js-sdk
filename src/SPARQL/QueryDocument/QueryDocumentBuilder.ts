@@ -1,4 +1,4 @@
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
@@ -9,7 +9,6 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
-import * as QueryVariable from "./QueryVariable";
 
 const inherit:Readonly<{}> = Object.freeze( {} );
 
@@ -18,16 +17,20 @@ export class Class {
 
 	private _context:QueryContext.Class;
 	private _schema:DigestedObjectSchema;
-	private _document:QueryVariable.Class;
+	private _document:QueryProperty.Class;
+	private _typesPredicate:PredicateToken;
 
-	constructor( queryContext:QueryContext.Class, name:string = "document" ) {
+	constructor( queryContext:QueryContext.Class, property:QueryProperty.Class ) {
 		this._context = queryContext;
 		this._schema = queryContext.context.documents.getSchemaFor( {} );
-		this._document = this._context.getVariable( name );
+		this._document = property
+			.addPattern( new SubjectToken( property.variable )
+				.addPredicate( this._typesPredicate = new PredicateToken( "a" )
+					.addObject( queryContext.getVariable( property.name + "___type" ) ) ) );
 	}
 
 	property( name:string ):QueryProperty.Class {
-		return this._context.getProperty( name );
+		return this._context.getProperty( `${ this._document.name }.${ name }` );
 	}
 
 	value( value:string | number | boolean | Date ):QueryValue.Class {
@@ -38,26 +41,31 @@ export class Class {
 		return new QueryObject.Class( this._context, object );
 	}
 
-	withType( iriClass:string ):Class {
-		// TODO:
-		throw new Error( "Not implemented" );
+	withType( type:string ):this {
+		if( this._context.hasProperties( this._document.name ) ) throw new Error( "Types must be specified before the properties." );
+
+		type = this._context.expandIRI( type );
+		this._typesPredicate.addObject( this._context.compactIRI( type ) );
+
+		const schema:DigestedObjectSchema = this._context.context.getObjectSchema( type );
+		if( schema ) this._schema = Digester.combineDigestedObjectSchemas( [ this._schema, schema ] );
+
+		return this;
 	}
 
-	properties( propertiesSchema:QueryPropertiesSchema.Class ):Class /*& QueryDocumentGetter*/ {
+	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
 		for( const propertyName in propertiesSchema ) {
 			const queryProperty:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
 			const propertyDefinition:PropertyDefinition = isObject( queryProperty ) ? queryProperty : { "@id": queryProperty };
 			const { uri, literalType } = this.addPropertyDefinition( propertyName, propertyDefinition );
 
-			const propertyPredicate:VariableToken = this._context.getVariable( propertyName + "_predicate" );
+			const name:string = `${ this._document.name }.${ propertyName }`;
 			const propertyPath:IRIToken | PrefixedNameToken = this._context.compactIRI( uri.stringValue );
-			const propertyObject:VariableToken = this._context.getVariable( propertyName + "_object" );
+			const propertyObject:VariableToken = this._context.getVariable( name );
 
 			const propertyPattern:OptionalToken = new OptionalToken()
-				.addPattern( new ValuesToken()
-					.addValues( propertyPredicate, propertyPath ) )
-				.addPattern( new SubjectToken( this._document )
-					.addPredicate( new PredicateToken( propertyPredicate )
+				.addPattern( new SubjectToken( this._document.variable )
+					.addPredicate( new PredicateToken( propertyPath )
 						.addObject( propertyObject ) ) )
 			;
 
@@ -66,7 +74,7 @@ export class Class {
 
 			// TODO: Process query
 
-			this._context.addProperty( propertyName, propertyPattern );
+			this._context.addProperty( name, propertyPattern );
 		}
 
 		return this;

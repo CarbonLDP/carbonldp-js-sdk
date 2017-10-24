@@ -7,15 +7,17 @@ var QueryObject = require("./QueryObject");
 var QueryValue = require("./QueryValue");
 var inherit = Object.freeze({});
 var Class = (function () {
-    function Class(queryContext, name) {
-        if (name === void 0) { name = "document"; }
+    function Class(queryContext, property) {
         this.inherit = inherit;
         this._context = queryContext;
         this._schema = queryContext.context.documents.getSchemaFor({});
-        this._document = this._context.getVariable(name);
+        this._document = property
+            .addPattern(new tokens_1.SubjectToken(property.variable)
+            .addPredicate(this._typesPredicate = new tokens_1.PredicateToken("a")
+            .addObject(queryContext.getVariable(property.name + "___type"))));
     }
     Class.prototype.property = function (name) {
-        return this._context.getProperty(name);
+        return this._context.getProperty(this._document.name + "." + name);
     };
     Class.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
@@ -23,27 +25,32 @@ var Class = (function () {
     Class.prototype.object = function (object) {
         return new QueryObject.Class(this._context, object);
     };
-    Class.prototype.withType = function (iriClass) {
-        throw new Error("Not implemented");
+    Class.prototype.withType = function (type) {
+        if (this._context.hasProperties(this._document.name))
+            throw new Error("Types must be specified before the properties.");
+        type = this._context.expandIRI(type);
+        this._typesPredicate.addObject(this._context.compactIRI(type));
+        var schema = this._context.context.getObjectSchema(type);
+        if (schema)
+            this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this._schema, schema]);
+        return this;
     };
     Class.prototype.properties = function (propertiesSchema) {
         for (var propertyName in propertiesSchema) {
             var queryProperty = propertiesSchema[propertyName];
             var propertyDefinition = Utils_1.isObject(queryProperty) ? queryProperty : { "@id": queryProperty };
             var _a = this.addPropertyDefinition(propertyName, propertyDefinition), uri = _a.uri, literalType = _a.literalType;
-            var propertyPredicate = this._context.getVariable(propertyName + "_predicate");
+            var name_1 = this._document.name + "." + propertyName;
             var propertyPath = this._context.compactIRI(uri.stringValue);
-            var propertyObject = this._context.getVariable(propertyName + "_object");
+            var propertyObject = this._context.getVariable(name_1);
             var propertyPattern = new tokens_1.OptionalToken()
-                .addPattern(new tokens_1.ValuesToken()
-                .addValues(propertyPredicate, propertyPath))
-                .addPattern(new tokens_1.SubjectToken(this._document)
-                .addPredicate(new tokens_1.PredicateToken(propertyPredicate)
+                .addPattern(new tokens_1.SubjectToken(this._document.variable)
+                .addPredicate(new tokens_1.PredicateToken(propertyPath)
                 .addObject(propertyObject)));
             if (literalType)
                 propertyPattern
                     .addPattern(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + this._context.compactIRI(literalType.stringValue)));
-            this._context.addProperty(propertyName, propertyPattern);
+            this._context.addProperty(name_1, propertyPattern);
         }
         return this;
     };

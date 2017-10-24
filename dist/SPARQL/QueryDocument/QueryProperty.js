@@ -2,24 +2,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Class = (function () {
     function Class(context, name, pattern) {
-        this._variable = context.getVariable(name);
-        this._pattern = pattern;
-        this._filters = [];
+        this.name = name;
+        this.variable = context.getVariable(name);
+        this._patterns = [pattern];
     }
-    Class.prototype.addFilter = function (filter) {
-        this._filters.push(filter);
+    Class.prototype.addPattern = function (pattern) {
+        this._patterns.push(pattern);
         return this;
     };
     Class.prototype.hasFilters = function () {
-        return this._filters.length !== 0;
+        return this._patterns.some(function (pattern) { return pattern.token === "filter"; });
     };
     Class.prototype.getPatterns = function () {
-        return [
-            this._pattern
-        ].concat(this._filters);
+        return this._patterns;
     };
     Class.prototype.toString = function () {
-        return "" + this._variable;
+        return "" + this.variable;
     };
     return Class;
 }());

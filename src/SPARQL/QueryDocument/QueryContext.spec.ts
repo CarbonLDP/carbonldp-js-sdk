@@ -87,6 +87,35 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 		} );
 
+		describe( method( INSTANCE, "hasProperties" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.hasProperties ).toBeDefined();
+				expect( QueryContext.prototype.hasProperties ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return if the a named property contains properties", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+				queryContext[ "_propertiesMap" ].set( "document.property1", new QueryProperty( queryContext, "_", null ) );
+				queryContext[ "_propertiesMap" ].set( "document.property2", new QueryProperty( queryContext, "_", null ) );
+				queryContext[ "_propertiesMap" ].set( "document.property1.property1_1", new QueryProperty( queryContext, "_", null ) );
+
+				expect( queryContext.hasProperties( "" ) ).toBe( false );
+
+				expect( queryContext.hasProperties( "document" ) ).toBe( true );
+
+				expect( queryContext.hasProperties( "document_else" ) ).toBe( false );
+				expect( queryContext.hasProperties( "another_document" ) ).toBe( false );
+
+				expect( queryContext.hasProperties( "document.property1" ) ).toBe( true );
+
+				expect( queryContext.hasProperties( "document.property1_1" ) ).toBe( false );
+				expect( queryContext.hasProperties( "document.property2" ) ).toBe( false );
+				expect( queryContext.hasProperties( "document.property1.property1_1" ) ).toBe( false );
+			} );
+
+		} );
+
 		describe( method( INSTANCE, "getProperty" ), ():void => {
 
 			it( "should exists", ():void => {
@@ -169,10 +198,48 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 			it( "should call to expandIRI method", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( queryContext, "expandIRI" ).and.callThrough();
+				const spy:jasmine.Spy = spyOn( queryContext, "expandIRI" );
 
 				queryContext.serializeLiteral( "xsd:string", "value" );
 				expect( spy ).toHaveBeenCalledWith( "xsd:string" );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "expandIRI" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.expandIRI ).toBeDefined();
+				expect( QueryContext.prototype.expandIRI ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should resolve existing prefixes", ():void => {
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+					"schema": "https://schema.org/",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+				expect( queryContext.expandIRI( "ex:resource" ) ).toBe( "http://example.com/ns#resource" );
+				expect( queryContext.expandIRI( "ex:another_resource" ) ).toBe( "http://example.com/ns#another_resource" );
+				expect( queryContext.expandIRI( "schema:resource" ) ).toBe( "https://schema.org/resource" );
+			} );
+
+			it( "should resolve relative with vocab", ():void => {
+				context.setSetting( "vocabulary", "http://example.com/vocab#" );
+				const queryContext:QueryContext = new QueryContext( context );
+				expect( queryContext.expandIRI( "resource" ) ).toBe( "http://example.com/vocab#resource" );
+				expect( queryContext.expandIRI( "another_resource" ) ).toBe( "http://example.com/vocab#another_resource" );
+			} );
+
+			it( "should throw error if no declared prefix", ():void => {
+				context.extendObjectSchema( {
+					"schema": "https://schema.org/",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+				const helper:( iri:string ) => void = ( iri:string ) => () => queryContext.expandIRI( iri );
+				expect( helper( "ex:resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
+				expect( helper( "ex:another_resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
+				expect( helper( "schema2:resource" ) ).toThrowError( `Prefix "schema2" has not been declared.` );
 			} );
 
 		} );

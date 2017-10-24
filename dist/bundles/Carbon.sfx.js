@@ -1395,13 +1395,12 @@ exports.DigestedPropertyDefinition = DigestedPropertyDefinition;
 var Digester = (function () {
     function Digester() {
     }
-    Digester.digestSchema = function (schemaOrSchemas) {
-        if (!Utils.isArray(schemaOrSchemas))
-            return Digester.digestSingleSchema(schemaOrSchemas);
+    Digester.digestSchema = function (schemaOrSchemas, vocab) {
+        schemaOrSchemas = Utils.isArray(schemaOrSchemas) ? schemaOrSchemas : [schemaOrSchemas];
         var digestedSchemas = [];
         for (var _i = 0, _a = schemaOrSchemas; _i < _a.length; _i++) {
             var schema = _a[_i];
-            digestedSchemas.push(Digester.digestSingleSchema(schema));
+            digestedSchemas.push(Digester.digestSingleSchema(schema, vocab));
         }
         return Digester.combineDigestedObjectSchemas(digestedSchemas);
     };
@@ -1421,21 +1420,16 @@ var Digester = (function () {
         Digester.resolvePrefixedURIs(combinedSchema);
         return combinedSchema;
     };
-    Digester.digestPropertyDefinition = function (digestedSchema, propertyName, propertyDefinition) {
+    Digester.digestPropertyDefinition = function (digestedSchema, propertyName, propertyDefinition, vocab) {
         var digestedDefinition = new DigestedPropertyDefinition();
         if ("@id" in propertyDefinition) {
             if (RDF.URI.Util.isPrefixed(propertyName))
                 throw new Errors.IllegalArgumentError("A prefixed property cannot have assigned another URI.");
             if (!Utils.isString(propertyDefinition["@id"]))
                 throw new Errors.IllegalArgumentError("@id needs to point to a string");
-            digestedDefinition.uri = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyDefinition["@id"]), digestedSchema);
         }
-        else if (RDF.URI.Util.isPrefixed(propertyName)) {
-            digestedDefinition.uri = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyName), digestedSchema);
-        }
-        else if (digestedSchema.vocab !== null) {
-            digestedDefinition.uri = new RDF.URI.Class(digestedSchema.vocab + propertyName);
-        }
+        digestedDefinition.uri = new RDF.URI.Class(propertyDefinition["@id"] || propertyName);
+        Digester._resolveURI(digestedDefinition.uri, digestedSchema, vocab);
         if ("@type" in propertyDefinition) {
             if (!Utils.isString(propertyDefinition["@type"]))
                 throw new Errors.IllegalArgumentError("@type needs to point to a string");
@@ -1487,6 +1481,16 @@ var Digester = (function () {
         }
         return uri;
     };
+    Digester._resolveURI = function (uri, digestedSchema, vocab) {
+        uri.stringValue = Util.resolveURI(uri.stringValue, digestedSchema, vocab);
+        if (RDF.URI.Util.isPrefixed(uri.stringValue)) {
+            var prefix = uri.stringValue.split(":")[0];
+            if (!digestedSchema.prefixedURIs.has(prefix))
+                digestedSchema.prefixedURIs.set(prefix, []);
+            digestedSchema.prefixedURIs.get(prefix).push(uri);
+        }
+        return uri;
+    };
     Digester._resolvePrefixedURI = function (uri, digestedSchema) {
         if (uri.stringValue === null || !RDF.URI.Util.isPrefixed(uri.stringValue))
             return uri;
@@ -1501,7 +1505,7 @@ var Digester = (function () {
         }
         return uri;
     };
-    Digester.digestSingleSchema = function (schema) {
+    Digester.digestSingleSchema = function (schema, vocab) {
         var digestedSchema = new DigestedObjectSchema();
         for (var _i = 0, _a = ["@base", "@vocab"]; _i < _a.length; _i++) {
             var propertyName = _a[_i];
@@ -1544,7 +1548,7 @@ var Digester = (function () {
                 digestedSchema.prefixes.set(propertyName, uri);
             }
             else if (!!propertyValue && Utils.isObject(propertyValue)) {
-                var digestedDefinition = Digester.digestPropertyDefinition(digestedSchema, propertyName, propertyValue);
+                var digestedDefinition = Digester.digestPropertyDefinition(digestedSchema, propertyName, propertyValue, vocab);
                 digestedSchema.properties.set(propertyName, digestedDefinition);
             }
             else {
@@ -1573,14 +1577,14 @@ exports.Digester = Digester;
 var Util = (function () {
     function Util() {
     }
-    Util.resolveURI = function (uri, schema) {
+    Util.resolveURI = function (uri, schema, vocab) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
         if (RDF.URI.Util.isPrefixed(uri)) {
             uri = Digester.resolvePrefixedURI(uri, schema);
         }
-        else if (schema.vocab !== null) {
-            uri = schema.vocab + uri;
+        else if (schema.vocab !== null || vocab) {
+            uri = (schema.vocab || vocab) + uri;
         }
         return uri;
     };
@@ -6710,7 +6714,8 @@ var Class = (function () {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
+        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
+        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -6797,19 +6802,9 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        var schema = this.getObjectSchema();
-        var vocab;
-        if (this.hasSetting("vocabulary"))
-            vocab = this.resolve(this.getSetting("vocabulary"));
-        if (RDF.URI.Util.isPrefixed(uri)) {
-            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
-        }
-        else if (vocab) {
-            uri = vocab + uri;
-        }
-        return uri;
+        var vocab = this.hasSetting("vocabulary") ?
+            this.resolve(this.getSetting("vocabulary")) : null;
+        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
     };
     return Class;
 }());
@@ -7690,7 +7685,7 @@ var Class = (function () {
             return schema.vocab + uri;
         }
         if (relativeTo.base)
-            RDF.URI.Util.resolve(schema.base, uri);
+            return RDF.URI.Util.resolve(schema.base, uri);
         return uri;
     };
     Class.expandLanguageMap = function (languageMap) {

@@ -133,7 +133,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			OPTIONAL,
 			"getSchemaFor",
 			"Returns the specific object schema that applies to the object provided.", [
-				{ name: "object", type: "Object", description: "The object to look for its schema." }
+				{ name: "object", type: "Object", description: "The object to look for its schema." },
 			],
 			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
 		), ():void => {} );
@@ -402,7 +402,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				expect( digestedSchema.properties.get( "elementWithoutID" ).literal ).toEqual( true );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType instanceof RDF.URI.Class ).toEqual( true );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
-				expect( digestedSchema.properties.get( "elementWithoutID" ).uri ).toBeNull();
+				expect( digestedSchema.properties.get( "elementWithoutID" ).uri.toString() ).toBe( "elementWithoutID" );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).language ).toBeUndefined();
 			} );

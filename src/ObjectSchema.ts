@@ -65,14 +65,14 @@ export interface Resolver {
 }
 
 export class Digester {
-	static digestSchema( schemas:Class[] ):DigestedObjectSchema;
-	static digestSchema( schema:Class ):DigestedObjectSchema;
-	static digestSchema( schemaOrSchemas:any ):DigestedObjectSchema {
-		if( ! Utils.isArray( schemaOrSchemas ) ) return Digester.digestSingleSchema( schemaOrSchemas );
+	static digestSchema( schemas:Class[], vocab?:string ):DigestedObjectSchema;
+	static digestSchema( schema:Class, vocab?:string ):DigestedObjectSchema;
+	static digestSchema( schemaOrSchemas:any, vocab?:string ):DigestedObjectSchema {
+		schemaOrSchemas = Utils.isArray( schemaOrSchemas ) ? schemaOrSchemas : [ schemaOrSchemas ];
 
 		let digestedSchemas:DigestedObjectSchema[] = [];
 		for( let schema of <Class[]> schemaOrSchemas ) {
-			digestedSchemas.push( Digester.digestSingleSchema( schema ) );
+			digestedSchemas.push( Digester.digestSingleSchema( schema, vocab ) );
 		}
 
 		return Digester.combineDigestedObjectSchemas( digestedSchemas );
@@ -97,19 +97,15 @@ export class Digester {
 		return combinedSchema;
 	}
 
-	static digestPropertyDefinition( digestedSchema:DigestedObjectSchema, propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
+	static digestPropertyDefinition( digestedSchema:DigestedObjectSchema, propertyName:string, propertyDefinition:PropertyDefinition, vocab?:string ):DigestedPropertyDefinition {
 		const digestedDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
 
 		if( "@id" in propertyDefinition ) {
 			if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
-
 			if( ! Utils.isString( propertyDefinition[ "@id" ] ) ) throw new Errors.IllegalArgumentError( "@id needs to point to a string" );
-			digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyDefinition[ "@id" ] ), digestedSchema );
-		} else if( RDF.URI.Util.isPrefixed( propertyName ) ) {
-			digestedDefinition.uri = Digester._resolvePrefixedURI( new RDF.URI.Class( propertyName ), digestedSchema );
-		} else if( digestedSchema.vocab !== null ) {
-			digestedDefinition.uri = new RDF.URI.Class( digestedSchema.vocab + <string> propertyName );
 		}
+		digestedDefinition.uri = new RDF.URI.Class( propertyDefinition[ "@id" ] || propertyName );
+		Digester._resolveURI( digestedDefinition.uri, digestedSchema, vocab );
 
 		if( "@type" in propertyDefinition ) {
 			if( ! Utils.isString( propertyDefinition[ "@type" ] ) ) throw new Errors.IllegalArgumentError( "@type needs to point to a string" );
@@ -166,6 +162,17 @@ export class Digester {
 		return uri;
 	}
 
+	private static _resolveURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema, vocab?:string ):RDF.URI.Class {
+		uri.stringValue = Util.resolveURI( uri.stringValue, digestedSchema, vocab );
+		if( RDF.URI.Util.isPrefixed( uri.stringValue ) ) {
+			const [ prefix ]:string[] = uri.stringValue.split( ":" );
+			if( ! digestedSchema.prefixedURIs.has( prefix ) ) digestedSchema.prefixedURIs.set( prefix, [] );
+			digestedSchema.prefixedURIs.get( prefix ).push( uri );
+		}
+
+		return uri;
+	}
+
 	private static _resolvePrefixedURI( uri:RDF.URI.Class, digestedSchema:DigestedObjectSchema ):RDF.URI.Class {
 		if( uri.stringValue === null || ! RDF.URI.Util.isPrefixed( uri.stringValue ) ) return uri;
 
@@ -181,7 +188,7 @@ export class Digester {
 		return uri;
 	}
 
-	private static digestSingleSchema( schema:Class ):DigestedObjectSchema {
+	private static digestSingleSchema( schema:Class, vocab?:string ):DigestedObjectSchema {
 		let digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
 		for( let propertyName of [ "@base", "@vocab" ] ) {
@@ -220,7 +227,7 @@ export class Digester {
 
 				digestedSchema.prefixes.set( propertyName, uri );
 			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
-				const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( digestedSchema, propertyName, propertyValue );
+				const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( digestedSchema, propertyName, propertyValue, vocab );
 				digestedSchema.properties.set( propertyName, digestedDefinition );
 			} else {
 				throw new Errors.IllegalArgumentError( "ObjectSchema Properties can only have string values or object values." );
@@ -249,13 +256,13 @@ export class Digester {
 }
 
 export class Util {
-	static resolveURI( uri:string, schema:DigestedObjectSchema ):string {
+	static resolveURI( uri:string, schema:DigestedObjectSchema, vocab?:string ):string {
 		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 		if( RDF.URI.Util.isPrefixed( uri ) ) {
 			uri = Digester.resolvePrefixedURI( uri, schema );
-		} else if( schema.vocab !== null ) {
-			uri = schema.vocab + uri;
+		} else if( schema.vocab !== null || vocab ) {
+			uri = ( schema.vocab || vocab ) + uri;
 		}
 
 		return uri;

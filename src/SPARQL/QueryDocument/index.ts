@@ -9,8 +9,6 @@ import QueryDocumentBuilderImplementation from "./QueryDocumentBuilder";
 /*interface Documents {
 	get( resourceURI:string, options:HTTP.Options, querySchema:( queryDocumentBuilder:QueryDocumentBuilder ) => QuerySchema );
 }*/
-type SupportedNatives = string | number | boolean | Date;
-
 interface QueryDocumentGetter {
 	getQueryTree():TokenNode;
 }

@@ -202,7 +202,7 @@ export class Class {
 			if( schema.vocab === null ) return null;
 			return schema.vocab + uri;
 		}
-		if( relativeTo.base ) RDF.URI.Util.resolve( schema.base, uri );
+		if( relativeTo.base ) return RDF.URI.Util.resolve( schema.base, uri );
 
 		return uri;
 	}

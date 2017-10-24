@@ -1,11 +1,11 @@
-import { FilterToken, PatternToken } from "sparqler/tokens";
+import { PatternToken, VariableToken } from "sparqler/tokens";
 import * as QueryContext from "./QueryContext";
 export declare class Class {
-    private _variable;
-    private _pattern;
-    private _filters;
+    readonly name: string;
+    readonly variable: VariableToken;
+    private _patterns;
     constructor(context: QueryContext.Class, name: string, pattern: PatternToken);
-    addFilter(filter: FilterToken): this;
+    addPattern(pattern: PatternToken): this;
     hasFilters(): boolean;
     getPatterns(): PatternToken[];
     toString(): string;

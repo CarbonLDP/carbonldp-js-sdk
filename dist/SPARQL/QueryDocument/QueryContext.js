@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
+var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryProperty = require("./QueryProperty");
 var QueryVariable = require("./QueryVariable");
 var Class = (function () {
@@ -23,6 +24,11 @@ var Class = (function () {
         this._variablesMap.set(name, variable);
         return variable;
     };
+    Class.prototype.hasProperties = function (propertyName) {
+        propertyName += ".";
+        return Array.from(this._propertiesMap.keys())
+            .some(function (key) { return key.startsWith(propertyName); });
+    };
     Class.prototype.addProperty = function (name, pattern) {
         var property = new QueryProperty.Class(this, name, pattern);
         this._propertiesMap.set(name, property);
@@ -40,6 +46,10 @@ var Class = (function () {
         return this._context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
     Class.prototype.expandIRI = function (iri) {
+        var vocab = this._context.hasSetting("vocabulary") ? this._context.resolve(this._context.getSetting("vocabulary")) : void 0;
+        iri = ObjectSchema_1.Util.resolveURI(iri, this._context.getObjectSchema(), vocab);
+        if (iri_1.isPrefixed(iri))
+            throw new Error("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
         return iri;
     };
     Class.prototype.compactIRI = function (iri) {

@@ -87,7 +87,8 @@ var Class = (function () {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
+        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
+        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -174,19 +175,9 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
-        if (RDF.URI.Util.isAbsolute(uri))
-            return uri;
-        var schema = this.getObjectSchema();
-        var vocab;
-        if (this.hasSetting("vocabulary"))
-            vocab = this.resolve(this.getSetting("vocabulary"));
-        if (RDF.URI.Util.isPrefixed(uri)) {
-            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
-        }
-        else if (vocab) {
-            uri = vocab + uri;
-        }
-        return uri;
+        var vocab = this.hasSetting("vocabulary") ?
+            this.resolve(this.getSetting("vocabulary")) : null;
+        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
     };
     return Class;
 }());

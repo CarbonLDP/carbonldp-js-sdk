@@ -11,6 +11,7 @@ export declare class Class {
     private _variablesMap;
     constructor(context: AbstractContext.Class);
     getVariable(name: string): QueryVariable.Class;
+    hasProperties(propertyName: string): boolean;
     addProperty(name: string, pattern: PatternToken): QueryProperty.Class;
     getProperty(name: string): QueryProperty.Class;
     serializeLiteral(type: string, value: any): string;

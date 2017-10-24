@@ -1,36 +1,34 @@
-import { FilterToken, PatternToken, VariableToken } from "sparqler/tokens";
+import { PatternToken, VariableToken } from "sparqler/tokens";
 
 import * as QueryContext from "./QueryContext";
 
 export class Class {
-	private _variable:VariableToken;
-	private _pattern:PatternToken;
-	private _filters:FilterToken[];
+	readonly name:string;
+	readonly variable:VariableToken;
+
+	private _patterns:PatternToken[];
 
 	constructor( context:QueryContext.Class, name:string, pattern:PatternToken ) {
-		this._variable = context.getVariable( name );
-		this._pattern = pattern;
-		this._filters = [];
+		this.name = name;
+		this.variable = context.getVariable( name );
+		this._patterns = [ pattern ];
 	}
 
-	addFilter( filter:FilterToken ):this {
-		this._filters.push( filter );
+	addPattern( pattern:PatternToken ):this {
+		this._patterns.push( pattern );
 		return this;
 	}
 
 	hasFilters():boolean {
-		return this._filters.length !== 0;
+		return this._patterns.some( pattern => pattern.token === "filter" );
 	}
 
 	getPatterns():PatternToken[] {
-		return [
-			this._pattern,
-			...this._filters,
-		];
+		return this._patterns;
 	}
 
 	toString():string {
-		return `${ this._variable }`;
+		return `${ this.variable }`;
 	}
 }
 
