@@ -11,6 +11,7 @@ var Class = (function () {
         this._propertiesMap = new Map();
         this._variablesCounter = 0;
         this._variablesMap = new Map();
+        this._prefixesMap = new Map();
     }
     Object.defineProperty(Class.prototype, "context", {
         get: function () { return this._context; },
@@ -53,7 +54,30 @@ var Class = (function () {
         return iri;
     };
     Class.prototype.compactIRI = function (iri) {
-        return iri_1.isPrefixed(iri) ? new tokens_1.PrefixedNameToken(iri) : new tokens_1.IRIToken(iri);
+        var schema = this.context.getObjectSchema();
+        var namespace;
+        var localName;
+        if (!iri_1.isPrefixed(iri)) {
+            for (var _i = 0, _a = Array.from(schema.prefixes.entries()); _i < _a.length; _i++) {
+                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1].stringValue;
+                if (!iri.startsWith(prefixURI))
+                    continue;
+                namespace = prefixName;
+                localName = iri.substr(prefixURI.length);
+                break;
+            }
+            if (namespace === void 0)
+                return new tokens_1.IRIToken(iri);
+        }
+        var prefixedName = new tokens_1.PrefixedNameToken(namespace || iri, localName);
+        namespace = prefixedName.namespace;
+        if (!this._prefixesMap.has(namespace)) {
+            if (!schema.prefixes.has(namespace))
+                throw new Error("Prefix \"" + namespace + "\" has not been declared.");
+            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace).stringValue);
+            this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
+        }
+        return prefixedName;
     };
     Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, context) {
         if (context === void 0) { context = this._context; }

@@ -9,6 +9,7 @@ export declare class Class {
     protected _propertiesMap: Map<string, QueryProperty.Class>;
     private _variablesCounter;
     private _variablesMap;
+    private _prefixesMap;
     constructor(context: AbstractContext.Class);
     getVariable(name: string): QueryVariable.Class;
     hasProperties(propertyName: string): boolean;

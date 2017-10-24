@@ -1,5 +1,5 @@
 import { isPrefixed } from "sparqler/iri";
-import { IRIToken, PatternToken, PrefixedNameToken } from "sparqler/tokens";
+import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema, DigestedPropertyDefinition, Util as SchemaUtils } from "../../ObjectSchema";
@@ -15,12 +15,16 @@ export class Class {
 	private _variablesCounter:number;
 	private _variablesMap:Map<string, QueryVariable.Class>;
 
+	private _prefixesMap:Map<string, PrefixToken>;
+
 	constructor( context:AbstractContext.Class ) {
 		this._context = context;
 		this._propertiesMap = new Map();
 
 		this._variablesCounter = 0;
 		this._variablesMap = new Map();
+
+		this._prefixesMap = new Map();
 	}
 
 	getVariable( name:string ):QueryVariable.Class {
@@ -64,8 +68,30 @@ export class Class {
 	}
 
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
-		// TODO: Implement correctly
-		return isPrefixed( iri ) ? new PrefixedNameToken( iri ) : new IRIToken( iri );
+		const schema:DigestedObjectSchema = this.context.getObjectSchema();
+
+		let namespace:string;
+		let localName:string;
+		if( ! isPrefixed( iri ) ) {
+			for( const [ prefixName, { stringValue: prefixURI } ] of Array.from( schema.prefixes.entries() ) ) {
+				if( ! iri.startsWith( prefixURI ) ) continue;
+				namespace = prefixName;
+				localName = iri.substr( prefixURI.length );
+				break;
+			}
+			if( namespace === void 0 ) return new IRIToken( iri );
+		}
+
+		const prefixedName:PrefixedNameToken = new PrefixedNameToken( namespace || iri, localName );
+
+		namespace = prefixedName.namespace;
+		if( ! this._prefixesMap.has( namespace ) ) {
+			if( ! schema.prefixes.has( namespace ) ) throw new Error( `Prefix "${ namespace }" has not been declared.` );
+			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ).stringValue );
+			this._prefixesMap.set( namespace, new PrefixToken( namespace, prefixIRI ) );
+		}
+
+		return prefixedName;
 	}
 
 	getInheritTypeDefinition( propertyName:string, propertyURI?:string, context:AbstractContext.Class = this._context ):DigestedPropertyDefinition {

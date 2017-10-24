@@ -1,3 +1,5 @@
+import { IRIToken, PrefixedNameToken } from "sparqler/tokens";
+
 import AbstractContext from "../../AbstractContext";
 import { DigestedPropertyDefinition } from "../../ObjectSchema";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
@@ -240,6 +242,129 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( helper( "ex:resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
 				expect( helper( "ex:another_resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
 				expect( helper( "schema2:resource" ) ).toThrowError( `Prefix "schema2" has not been declared.` );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "compactIRI" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.compactIRI ).toBeDefined();
+				expect( QueryContext.prototype.compactIRI ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should throw error if no prefix declared when prefixedName", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+				const helper:( prefixed:string ) => void = prefixed => () => queryContext.compactIRI( prefixed );
+
+				expect( helper( "ex:resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
+				expect( helper( "schema:resource" ) ).toThrowError( `Prefix "schema" has not been declared.` );
+			} );
+
+			it( "should return IRI when absolute and no prefix match", ():void => {
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+
+				const iri1:IRIToken = <IRIToken> queryContext.compactIRI( "https://schema.org/resource" );
+				expect( iri1 ).toEqual( jasmine.any( IRIToken ) );
+				expect( iri1 ).toEqual( jasmine.objectContaining( {
+					value: "https://schema.org/resource",
+				} ) );
+
+				const iri2:IRIToken = <IRIToken> queryContext.compactIRI( "http://example.org/ns#resource" );
+				expect( iri2 ).toEqual( jasmine.any( IRIToken ) );
+				expect( iri2 ).toEqual( jasmine.objectContaining( {
+					value: "http://example.org/ns#resource",
+				} ) );
+			} );
+
+			it( "should return PrefixedName when absolute and prefix match", ():void => {
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+					"schema": "https://schema.org/",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+
+				const prefixedName1:PrefixedNameToken = <PrefixedNameToken> queryContext.compactIRI( "http://example.com/ns#resource" );
+				expect( prefixedName1 ).toEqual( jasmine.any( PrefixedNameToken ) );
+				expect( prefixedName1 ).toEqual( jasmine.objectContaining( {
+					namespace: "ex",
+					localName: "resource",
+				} ) );
+
+				const prefixedName2:PrefixedNameToken = <PrefixedNameToken> queryContext.compactIRI( "https://schema.org/resource" );
+				expect( prefixedName2 ).toEqual( jasmine.any( PrefixedNameToken ) );
+				expect( prefixedName2 ).toEqual( jasmine.objectContaining( {
+					namespace: "schema",
+					localName: "resource",
+				} ) );
+			} );
+
+			it( "should return PrefixedName when prefixed", ():void => {
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+					"schema": "https://schema.org/",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+
+				const prefixedName1:PrefixedNameToken = <PrefixedNameToken> queryContext.compactIRI( "ex:resource" );
+				expect( prefixedName1 ).toEqual( jasmine.any( PrefixedNameToken ) );
+				expect( prefixedName1 ).toEqual( jasmine.objectContaining( {
+					namespace: "ex",
+					localName: "resource",
+				} ) );
+
+				const prefixedName2:PrefixedNameToken = <PrefixedNameToken> queryContext.compactIRI( "schema:resource" );
+				expect( prefixedName2 ).toEqual( jasmine.any( PrefixedNameToken ) );
+				expect( prefixedName2 ).toEqual( jasmine.objectContaining( {
+					namespace: "schema",
+					localName: "resource",
+				} ) );
+			} );
+
+			it( "should store used prefixes in the prefixesMap", ():void => {
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+					"schema": "https://schema.org/",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+
+				queryContext.compactIRI( "ex:resource" );
+				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
+				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( jasmine.objectContaining( {
+					token: "prefix",
+					name: "ex",
+					iri: new IRIToken( "http://example.com/ns#" ),
+				} ) as any );
+
+				queryContext.compactIRI( "schema:resource" );
+				expect( queryContext[ "_prefixesMap" ].size ).toBe( 2 );
+				expect( queryContext[ "_prefixesMap" ].get( "schema" ) ).toEqual( jasmine.objectContaining( {
+					token: "prefix",
+					name: "schema",
+					iri: new IRIToken( "https://schema.org/" ),
+				} ) as any );
+			} );
+
+			it( "should not repeat the stored prefixes", ():void => {
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+					"schema": "https://schema.org/",
+				} );
+				const queryContext:QueryContext = new QueryContext( context );
+
+				queryContext.compactIRI( "ex:resource" );
+				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
+				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( jasmine.objectContaining( {
+					token: "prefix",
+					name: "ex",
+					iri: new IRIToken( "http://example.com/ns#" ),
+				} ) as any );
+
+				queryContext.compactIRI( "ex:another_resource" );
+				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
 			} );
 
 		} );

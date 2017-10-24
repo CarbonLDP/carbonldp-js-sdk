@@ -30,6 +30,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
+			context.extendObjectSchema( {
+				"ex": "http://example.com/ns#",
+			} );
 			queryContext = new QueryContext( context );
 		} );
 

@@ -1,4 +1,4 @@
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, SubjectToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema } from "../../ObjectSchema";
@@ -267,7 +267,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 								token: "predicate",
 								predicate: "a",
 								objects: jasmine.arrayContaining( [
-									queryContext.compactIRI( queryContext.expandIRI( "Type-1" ) ),
+									new IRIToken( "http://example.com/vocab#Type-1" ),
 								] ),
 							} ),
 						] ),
@@ -284,7 +284,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 								token: "predicate",
 								predicate: "a",
 								objects: jasmine.arrayContaining( [
-									queryContext.compactIRI( queryContext.expandIRI( "ex:Type-2" ) ),
+									new PrefixedNameToken( "ex:Type-2" ),
 								] ),
 							} ),
 						] ),
@@ -398,7 +398,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( inheritProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new IRIToken( "http://example.com/ns#inheritProperty" ) )
+							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inheritProperty" ) )
 								.addObject( new QueryVariable.Class( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
@@ -408,9 +408,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( extendedProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new IRIToken( "http://example.com/ns#extendedProperty" ) )
+							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:extendedProperty" ) )
 								.addObject( new QueryVariable.Class( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
-						.addPattern( new FilterToken( "datatype( ?document__extendedProperty ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+						.addPattern( new FilterToken( "datatype( ?document__extendedProperty ) = xsd:string" ) )
 					,
 				] );
 
@@ -419,7 +419,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( inlineProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
 						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
-							.addPredicate( new PredicateToken( new IRIToken( "http://example.com/ns#inlineProperty" ) )
+							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inlineProperty" ) )
 								.addObject( new QueryVariable.Class( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
