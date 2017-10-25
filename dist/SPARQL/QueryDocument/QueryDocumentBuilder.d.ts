@@ -1,3 +1,5 @@
+import { PatternToken } from "sparqler/tokens";
+import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as Pointer from "./../../Pointer";
 import * as QueryContext from "./QueryContext";
 import * as QueryObject from "./QueryObject";
@@ -16,6 +18,8 @@ export declare class Class {
     object(object: Pointer.Class | string): QueryObject.Class;
     withType(type: string): this;
     properties(propertiesSchema: QueryPropertiesSchema.Class): this;
+    getPatterns(): PatternToken[];
+    getSchema(): DigestedObjectSchema;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }
 export default Class;

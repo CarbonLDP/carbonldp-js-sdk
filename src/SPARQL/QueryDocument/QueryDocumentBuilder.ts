@@ -1,4 +1,4 @@
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, OptionalToken, PatternToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
@@ -24,7 +24,7 @@ export class Class {
 		this._context = queryContext;
 		this._schema = queryContext.context.documents.getSchemaFor( {} );
 		this._document = property
-			.addPattern( new SubjectToken( property.variable )
+			.addPatterns( new SubjectToken( property.variable )
 				.addPredicate( this._typesPredicate = new PredicateToken( "a" )
 					.addObject( queryContext.getVariable( property.name + "___type" ) ) ) );
 	}
@@ -57,7 +57,7 @@ export class Class {
 		for( const propertyName in propertiesSchema ) {
 			const queryProperty:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
 			const propertyDefinition:PropertyDefinition = isObject( queryProperty ) ? queryProperty : { "@id": queryProperty };
-			const { uri, literalType } = this.addPropertyDefinition( propertyName, propertyDefinition );
+			const { uri, literalType, pointerType } = this.addPropertyDefinition( propertyName, propertyDefinition );
 
 			const name:string = `${ this._document.name }.${ propertyName }`;
 			const propertyPath:IRIToken | PrefixedNameToken = this._context.compactIRI( uri.stringValue );
@@ -71,6 +71,8 @@ export class Class {
 
 			if( literalType ) propertyPattern
 				.addPattern( new FilterToken( `datatype( ${ propertyObject } ) = ${ this._context.compactIRI( literalType.stringValue ) }` ) );
+			if( pointerType ) propertyPattern
+				.addPattern( new FilterToken( `! isLiteral( ${ propertyObject } )` ) );
 
 			// TODO: Process query
 
@@ -78,6 +80,15 @@ export class Class {
 		}
 
 		return this;
+	}
+
+	getPatterns():PatternToken[] {
+		const properties:QueryProperty.Class[] = this._context.getProperties( this._document.name );
+		return [].concat( ...properties.map( property => property.getPatterns() ) );
+	}
+
+	getSchema():DigestedObjectSchema {
+		return this._schema;
 	}
 
 	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {

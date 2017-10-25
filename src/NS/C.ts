@@ -49,6 +49,8 @@ export class Class {
 
 	static get PreferMembershipTriples():string { return namespace + "PreferMembershipTriples"; }
 
+	static get PreferResultsContext():string { return namespace + "PreferResultsContext"; }
+
 	static get PreferSelectedMembershipTriples():string { return namespace + "PreferSelectedMembershipTriples"; }
 
 	static get VolatileResource():string { return namespace + "VolatileResource"; }

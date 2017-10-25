@@ -49,5 +49,5 @@ export declare class Util {
     static setPreferredRetrievalResource(typeOfRequest: "Created" | "Modified", requestOptions: Options): Options;
     static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
-    static isOptions(object: Object): boolean;
+    static isOptions(object: Object): object is Options;
 }

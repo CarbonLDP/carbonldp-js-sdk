@@ -8,14 +8,15 @@ export class Class {
 
 	private _patterns:PatternToken[];
 
-	constructor( context:QueryContext.Class, name:string, pattern:PatternToken ) {
+	constructor( context:QueryContext.Class, name:string, pattern?:PatternToken ) {
 		this.name = name;
 		this.variable = context.getVariable( name );
-		this._patterns = [ pattern ];
+		this._patterns = [];
+		if( pattern ) this._patterns.push( pattern );
 	}
 
-	addPattern( pattern:PatternToken ):this {
-		this._patterns.push( pattern );
+	addPatterns( ...patterns:PatternToken[] ):this {
+		this._patterns.push( ...patterns );
 		return this;
 	}
 

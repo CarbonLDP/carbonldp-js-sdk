@@ -1,4 +1,5 @@
 import { QueryClause } from "sparqler/Clauses";
+import { ConstructToken, OptionalToken, PatternToken, TripleToken, ValuesToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -26,6 +27,7 @@ import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
+import { QueryContext, QueryDocumentBuilder, QueryProperty } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
 
@@ -137,12 +139,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.pointers.delete( localID );
 	}
 
-	get<T>( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	get<T>( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, requestOptions?:HTTP.Request.Options, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => any ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => any ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, optionsOrQueryDocument:any, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => any ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			const pointerID:string = this.getPointerID( uri );
-
 			uri = this.getRequestURI( uri );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
 			if( this.hasPointer( uri ) ) {
 				let pointer:Pointer.Class = this.getPointer( uri );
@@ -153,27 +156,80 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 
-			const promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-				let eTag:string = HTTP.Response.Util.getETag( response );
-				if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+			let requestOptions:HTTP.Request.Options;
+			if( Utils.isFunction( optionsOrQueryDocument ) ) {
+				documentQuery = optionsOrQueryDocument;
+				requestOptions = {};
+			} else {
+				requestOptions = optionsOrQueryDocument || {};
+			}
 
-				let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
-				if( ! ! locationHeader ) {
-					if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
+			let promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+			if( ! documentQuery ) {
+				this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+				promise = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+					let eTag:string = HTTP.Response.Util.getETag( response );
+					if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
-					uri = locationHeader.toString();
-					if( ! uri ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
-				}
+					let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
+					if( ! ! locationHeader ) {
+						if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
 
-				let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-				if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+						uri = locationHeader.toString();
+						if( ! uri ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+					}
 
-				let document:T & PersistedDocument.Class = this._getPersistedDocument<T>( rdfDocument, response );
-				document._etag = eTag;
+					let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+					if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
 
-				this.documentsBeingResolved.delete( pointerID );
-				return [ document, response ];
-			} ).catch( error => {
+					let document:T & PersistedDocument.Class = this._getPersistedDocument<T>( rdfDocument, response );
+					document._etag = eTag;
+
+					this.documentsBeingResolved.delete( pointerID );
+					return [ document, response ];
+				} );
+			} else {
+				if( ! this.context ) throw new Errors.IllegalStateError( "A documents with context is needed for this feature." );
+
+				const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+				const documentProperty:QueryProperty.Class = queryContext
+					.addProperty( "document", new ValuesToken()
+						.addValues( queryContext.getVariable( "document" ), queryContext.compactIRI( uri ) ) );
+				const queryDocumentBuilder:QueryDocumentBuilder.Class = new QueryDocumentBuilder.Class( queryContext, documentProperty );
+				documentQuery.call( void 0, queryDocumentBuilder );
+
+				const propertiesPatterns:PatternToken[] = queryDocumentBuilder.getPatterns();
+				if( ! propertiesPatterns.length ) throw new Errors.IllegalArgumentError( "The query function does not provide any property to retrieve" );
+
+				documentProperty.addPatterns( ...propertiesPatterns );
+				const construct:ConstructToken = new ConstructToken()
+					.addPatterns( ...documentProperty.getPatterns() );
+
+				(function triplesAdder( patterns:PatternToken[] ):void {
+					const typePattern:TripleToken = patterns.find( pattern => pattern.token === "subject" && pattern.predicates.some( predicate => predicate.predicate === "a" ) ) as TripleToken | undefined;
+					if( ! typePattern ) return;
+
+					construct.addTriples( typePattern );
+					patterns
+						.filter( pattern => pattern.token === "optional" )
+						.forEach( ( optional:OptionalToken ) => {
+							construct.addTriples( optional.patterns[ 0 ] as TripleToken );
+							triplesAdder( optional.patterns );
+						} );
+				})( documentProperty.getPatterns() );
+
+				HTTP.Request.Util.setContainerRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
+
+				return this.executeRawCONSTRUCTQuery( uri, construct.toString(), requestOptions ).then( ( [ jsonldString, response ]:[ string, HTTP.Response.Class ] ) => {
+					return new RDF.Document.Parser().parse( jsonldString ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( rdfDocuments:RDF.Document.Class[] ) => {
+						if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
+
+						const document:T & PersistedDocument.Class = this._getPersistedDocument( rdfDocuments[ 0 ], response, queryDocumentBuilder.getSchema() );
+						return [ document, response ];
+					} );
+				} );
+			}
+			promise.catch( error => {
 				this.documentsBeingResolved.delete( pointerID );
 				return Promise.reject( error );
 			} );
@@ -857,7 +913,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.on( Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 	}
 
-	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):T & PersistedDocument.Class {
+	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class, schema?:ObjectSchema.DigestedObjectSchema ):T & PersistedDocument.Class {
 		let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
 		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
 		fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
@@ -867,9 +923,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		let persistedDocument:T & PersistedDocument.Class;
 		if( PersistedDocument.Factory.is( documentPointer ) ) {
-			persistedDocument = this.updatePersistedDocument( <PersistedDocument.Class> documentPointer, documentResource, fragmentResources );
+			persistedDocument = this.updatePersistedDocument( <PersistedDocument.Class> documentPointer, documentResource, fragmentResources, schema );
 		} else {
-			persistedDocument = this.createPersistedDocument( documentPointer, documentResource, fragmentResources );
+			persistedDocument = this.createPersistedDocument( documentPointer, documentResource, fragmentResources, schema );
 		}
 
 		persistedDocument._resolved = true;
@@ -1007,10 +1063,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return pointer;
 	}
 
-	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library ):Object[];
-	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object;
-	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library ):any {
-		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary );
+	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):Object[];
+	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):Object;
+	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):any {
+		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary, schema );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
 		let targetObjects:Object[] = ! ! targetObjectOrObjects ? targetObjectOrObjects : [];
@@ -1018,22 +1074,22 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let expandedObject:Object = expandedObjects[ i ];
 			let targetObject:Object = targetObjects[ i ] = ! ! targetObjects[ i ] ? targetObjects[ i ] : {};
 
-			this.compactSingle( expandedObject, targetObject, pointerLibrary );
+			this.compactSingle( expandedObject, targetObject, pointerLibrary, schema );
 		}
 
 		return targetObjects;
 	}
 
-	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
+	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):Object {
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject, schema );
 
 		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
 	}
 
-	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object, schema?:ObjectSchema.DigestedObjectSchema ):ObjectSchema.DigestedObjectSchema {
 		let types:string[] = RDF.Node.Util.getTypes( <any> expandedObject );
 
-		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ] );
+		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ], schema );
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
@@ -1042,12 +1098,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.getDigestedObjectSchema( types, document.id );
 	}
 
-	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchema( objectTypes:string[], objectID:string, schema?:ObjectSchema.DigestedObjectSchema ):ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
 		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
 		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Class._documentSchema );
 
+		if( schema ) objectSchemas.push( schema );
 		for( let type of objectTypes ) {
 			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
 		}
@@ -1102,7 +1159,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return membershipResource;
 	}
 
-	private createPersistedDocument<T>( documentPointer:Pointer.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[] ):T & PersistedDocument.Class {
+	private createPersistedDocument<T>( documentPointer:Pointer.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[], schema?:ObjectSchema.DigestedObjectSchema ):T & PersistedDocument.Class {
 		let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( documentPointer, this );
 
 		let fragments:PersistedFragment.Class[] = [];
@@ -1110,7 +1167,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			fragments.push( persistedDocument.createFragment( fragmentResource[ "@id" ] ) );
 		}
 
-		this.compact( documentResource, persistedDocument, persistedDocument );
+		this.compact( documentResource, persistedDocument, persistedDocument, schema );
 		this.compact( fragmentResources, fragments, persistedDocument );
 
 		// TODO: Move this to a more appropriate place. See also updatePersistedDocument() method
@@ -1122,7 +1179,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return persistedDocument as T & PersistedDocument.Class;
 	}
 
-	private updatePersistedDocument<T>( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentsNode:RDF.Node.Class[] ):T & PersistedDocument.Class {
+	private updatePersistedDocument<T>( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentsNode:RDF.Node.Class[], schema?:ObjectSchema.DigestedObjectSchema ):T & PersistedDocument.Class {
 		for( const fragmentNode of fragmentsNode ) {
 			const targetObject:object = {};
 			const currentFragment:PersistedFragment.Class =
@@ -1135,7 +1192,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 		persistedDocument._syncSavedFragments();
 
-		const tempDocumentData:object = this.compact( documentResource, {}, persistedDocument );
+		const tempDocumentData:object = this.compact( documentResource, {}, persistedDocument, schema );
 		Utils.O.shallowUpdate( persistedDocument, tempDocumentData );
 		persistedDocument._syncSnapshot();
 

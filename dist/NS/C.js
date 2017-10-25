@@ -124,6 +124,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferResultsContext", {
+        get: function () { return exports.namespace + "PreferResultsContext"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
         get: function () { return exports.namespace + "PreferSelectedMembershipTriples"; },
         enumerable: true,

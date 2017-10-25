@@ -98,9 +98,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 			it( "should return if the a named property contains properties", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				queryContext[ "_propertiesMap" ].set( "document.property1", new QueryProperty( queryContext, "_", null ) );
-				queryContext[ "_propertiesMap" ].set( "document.property2", new QueryProperty( queryContext, "_", null ) );
-				queryContext[ "_propertiesMap" ].set( "document.property1.property1_1", new QueryProperty( queryContext, "_", null ) );
+				queryContext[ "_propertiesMap" ].set( "document.property1", new QueryProperty( queryContext, "_" ) );
+				queryContext[ "_propertiesMap" ].set( "document.property2", new QueryProperty( queryContext, "_" ) );
+				queryContext[ "_propertiesMap" ].set( "document.property1.property1_1", new QueryProperty( queryContext, "_" ) );
 
 				expect( queryContext.hasProperties( "" ) ).toBe( false );
 
@@ -136,10 +136,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( "should return the stored property", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
 
-				const nameProperty:QueryProperty = new QueryProperty( queryContext, "name", null );
+				const nameProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 				queryContext[ "_propertiesMap" ].set( "name", nameProperty );
 
-				const subDocumentProperty:QueryProperty = new QueryProperty( queryContext, "document.property", null );
+				const subDocumentProperty:QueryProperty = new QueryProperty( queryContext, "document.property" );
 				queryContext[ "_propertiesMap" ].set( "document.property", subDocumentProperty );
 
 				const helper:( name:string ) => QueryProperty = ( name:string ) => queryContext.getProperty( name );
@@ -163,13 +163,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				queryContext.addProperty( "name", null );
 				expect( queryContext[ "_propertiesMap" ] ).toEqual( jasmine.objectContaining( new Map( [ [
 					"name",
-					new QueryProperty( queryContext, "name", null ),
+					new QueryProperty( queryContext, "name" ),
 				] ] ) ) );
 
 				queryContext.addProperty( "document.property", null );
 				expect( queryContext[ "_propertiesMap" ] ).toEqual( jasmine.objectContaining( new Map( [ [
 					"document.property",
-					new QueryProperty( queryContext, "document.property", null ),
+					new QueryProperty( queryContext, "document.property" ),
 				] ] ) ) );
 			} );
 

@@ -24,6 +24,7 @@ export declare class Class {
     static readonly PreferContainmentTriples: string;
     static readonly PreferMembershipResources: string;
     static readonly PreferMembershipTriples: string;
+    static readonly PreferResultsContext: string;
     static readonly PreferSelectedMembershipTriples: string;
     static readonly VolatileResource: string;
     static readonly RDFRepresentation: string;

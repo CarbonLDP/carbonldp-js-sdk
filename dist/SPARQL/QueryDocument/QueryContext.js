@@ -40,6 +40,18 @@ var Class = (function () {
             throw new Error("The \"" + name + "\" property was not declared.");
         return this._propertiesMap.get(name);
     };
+    Class.prototype.getProperties = function (propertyLevel) {
+        propertyLevel += ".";
+        return Array.from(this._propertiesMap.entries())
+            .filter(function (_a) {
+            var name = _a[0];
+            return name.startsWith(propertyLevel);
+        })
+            .map(function (_a) {
+            var name = _a[0], property = _a[1];
+            return property;
+        });
+    };
     Class.prototype.serializeLiteral = function (type, value) {
         type = this.expandIRI(type);
         if (!this._context.documents.jsonldConverter.literalSerializers.has(type))

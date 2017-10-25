@@ -12,7 +12,7 @@ var Class = (function () {
         this._context = queryContext;
         this._schema = queryContext.context.documents.getSchemaFor({});
         this._document = property
-            .addPattern(new tokens_1.SubjectToken(property.variable)
+            .addPatterns(new tokens_1.SubjectToken(property.variable)
             .addPredicate(this._typesPredicate = new tokens_1.PredicateToken("a")
             .addObject(queryContext.getVariable(property.name + "___type"))));
     }
@@ -39,7 +39,7 @@ var Class = (function () {
         for (var propertyName in propertiesSchema) {
             var queryProperty = propertiesSchema[propertyName];
             var propertyDefinition = Utils_1.isObject(queryProperty) ? queryProperty : { "@id": queryProperty };
-            var _a = this.addPropertyDefinition(propertyName, propertyDefinition), uri = _a.uri, literalType = _a.literalType;
+            var _a = this.addPropertyDefinition(propertyName, propertyDefinition), uri = _a.uri, literalType = _a.literalType, pointerType = _a.pointerType;
             var name_1 = this._document.name + "." + propertyName;
             var propertyPath = this._context.compactIRI(uri.stringValue);
             var propertyObject = this._context.getVariable(name_1);
@@ -50,9 +50,19 @@ var Class = (function () {
             if (literalType)
                 propertyPattern
                     .addPattern(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + this._context.compactIRI(literalType.stringValue)));
+            if (pointerType)
+                propertyPattern
+                    .addPattern(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
             this._context.addProperty(name_1, propertyPattern);
         }
         return this;
+    };
+    Class.prototype.getPatterns = function () {
+        var properties = this._context.getProperties(this._document.name);
+        return [].concat.apply([], properties.map(function (property) { return property.getPatterns(); }));
+    };
+    Class.prototype.getSchema = function () {
+        return this._schema;
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
         var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);

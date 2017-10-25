@@ -1023,6 +1023,76 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			} );
 
+			describe( "When querying a document", ():void => {
+
+				let context:AbstractContext;
+				let documents:Documents.Class;
+				beforeEach( ():void => {
+					context = new class extends AbstractContext {
+						_baseURI:string = "https://example.com/";
+					};
+					context.setSetting( "vocabulary", "https://example.com/ns#" );
+					documents = context.documents;
+				} );
+
+				it( "should construct a construct query", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							} ],
+							"@id": "${ context.baseURI }resource/"
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+					} );
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+							},
+						} )
+					).then( ( [ document, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property1": "value",
+							"property2": jasmine.any( Object ),
+						} ) );
+						console.log( document );
+						done();
+					} ).catch( done.fail );
+				} );
+
+			} );
+
 		} );
 
 		describe( method(

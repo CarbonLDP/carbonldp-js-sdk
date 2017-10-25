@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 32 );
+			expect( Object.keys( C.Class ).length ).toBe( 33 );
 		} );
 
 		it( hasProperty(
@@ -304,6 +304,17 @@ describe( module(
 			expect( Utils.isString( C.Class.PreferMembershipTriples ) ).toBe( true );
 
 			expect( C.Class.PreferMembershipTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"PreferResultsContext",
+			"string"
+		), ():void => {
+			expect( C.Class.PreferResultsContext ).toBeDefined();
+			expect( Utils.isString( C.Class.PreferResultsContext ) ).toBe( true );
+
+			expect( C.Class.PreferResultsContext ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContext" );
 		} );
 
 		it( hasProperty(

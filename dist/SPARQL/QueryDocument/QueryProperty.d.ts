@@ -4,8 +4,8 @@ export declare class Class {
     readonly name: string;
     readonly variable: VariableToken;
     private _patterns;
-    constructor(context: QueryContext.Class, name: string, pattern: PatternToken);
-    addPattern(pattern: PatternToken): this;
+    constructor(context: QueryContext.Class, name: string, pattern?: PatternToken);
+    addPatterns(...patterns: PatternToken[]): this;
     hasFilters(): boolean;
     getPatterns(): PatternToken[];
     toString(): string;

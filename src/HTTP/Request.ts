@@ -304,7 +304,7 @@ export class Util {
 		return requestOptions;
 	}
 
-	static isOptions( object:Object ):boolean {
+	static isOptions( object:Object ):object is Options {
 		return Utils.hasPropertyDefined( object, "headers" )
 			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
 			|| Utils.hasPropertyDefined( object, "timeout" )

@@ -4,11 +4,18 @@ var Class = (function () {
     function Class(context, name, pattern) {
         this.name = name;
         this.variable = context.getVariable(name);
-        this._patterns = [pattern];
+        this._patterns = [];
+        if (pattern)
+            this._patterns.push(pattern);
     }
-    Class.prototype.addPattern = function (pattern) {
-        this._patterns.push(pattern);
+    Class.prototype.addPatterns = function () {
+        var patterns = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            patterns[_i] = arguments[_i];
+        }
+        (_a = this._patterns).push.apply(_a, patterns);
         return this;
+        var _a;
     };
     Class.prototype.hasFilters = function () {
         return this._patterns.some(function (pattern) { return pattern.token === "filter"; });

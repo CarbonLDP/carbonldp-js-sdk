@@ -41,7 +41,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			};
 			context.setSetting( "vocabulary", "http://example.com/vocab#" );
 			queryContext = new QueryContext( context );
-			baseProperty = new QueryProperty.Class( queryContext, "document", null );
+			baseProperty = new QueryProperty.Class( queryContext, "document" );
 		} );
 
 		describe( constructor(), ():void => {

@@ -36,12 +36,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		describe( constructor(), ():void => {
 
 			it( "should exists", ():void => {
-				const queryObject:QueryProperty = new QueryProperty( queryContext, "name", null );
+				const queryObject:QueryProperty = new QueryProperty( queryContext, "name" );
 				expect( queryObject ).toEqual( jasmine.any( QueryProperty ) );
 			} );
 
 			it( "should create an variable token", ():void => {
-				const queryObject:QueryProperty = new QueryProperty( queryContext, "name", null );
+				const queryObject:QueryProperty = new QueryProperty( queryContext, "name" );
 				expect( queryObject[ "variable" ] ).toEqual( jasmine.any( VariableToken ) );
 			} );
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 			it( "should return the string of the variable", ():void => {
 				const helper:( name:string ) => void = name => {
-					const queryObject:QueryProperty = new QueryProperty( queryContext, name, null );
+					const queryObject:QueryProperty = new QueryProperty( queryContext, name );
 					expect( queryObject.toString() ).toBe( queryObject[ "variable" ].toString() );
 				};
 

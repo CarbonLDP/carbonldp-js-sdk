@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var tokens_1 = require("sparqler/tokens");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
 var Document = require("./Document");
@@ -22,6 +23,7 @@ var Resource = require("./Resource");
 var RetrievalPreferences = require("./RetrievalPreferences");
 var SPARQL = require("./SPARQL");
 var Builder_1 = require("./SPARQL/Builder");
+var QueryDocument_1 = require("./SPARQL/QueryDocument");
 var Utils = require("./Utils");
 var Utils_2 = require("./Utils");
 var Class = (function () {
@@ -113,13 +115,11 @@ var Class = (function () {
         }
         return this.pointers.delete(localID);
     };
-    Class.prototype.get = function (uri, requestOptions) {
+    Class.prototype.get = function (uri, optionsOrQueryDocument, documentQuery) {
         var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_2.promiseMethod(function () {
             var pointerID = _this.getPointerID(uri);
             uri = _this.getRequestURI(uri);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
             if (_this.hasPointer(uri)) {
                 var pointer = _this.getPointer(uri);
                 if (pointer.isResolved()) {
@@ -128,32 +128,83 @@ var Class = (function () {
             }
             if (_this.documentsBeingResolved.has(pointerID))
                 return _this.documentsBeingResolved.get(pointerID);
-            var promise = _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
-                var rdfDocuments = _a[0], response = _a[1];
-                var eTag = HTTP.Response.Util.getETag(response);
-                if (eTag === null)
-                    throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                var locationHeader = response.getHeader("Content-Location");
-                if (!!locationHeader) {
-                    if (locationHeader.values.length !== 1)
-                        throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
-                    uri = locationHeader.toString();
-                    if (!uri)
-                        throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
-                }
-                var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
-                if (rdfDocument === null)
-                    throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-                var document = _this._getPersistedDocument(rdfDocument, response);
-                document._etag = eTag;
-                _this.documentsBeingResolved.delete(pointerID);
-                return [document, response];
-            }).catch(function (error) {
+            var requestOptions;
+            if (Utils.isFunction(optionsOrQueryDocument)) {
+                documentQuery = optionsOrQueryDocument;
+                requestOptions = {};
+            }
+            else {
+                requestOptions = optionsOrQueryDocument || {};
+            }
+            var promise;
+            if (!documentQuery) {
+                _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+                promise = _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
+                    var rdfDocuments = _a[0], response = _a[1];
+                    var eTag = HTTP.Response.Util.getETag(response);
+                    if (eTag === null)
+                        throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+                    var locationHeader = response.getHeader("Content-Location");
+                    if (!!locationHeader) {
+                        if (locationHeader.values.length !== 1)
+                            throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
+                        uri = locationHeader.toString();
+                        if (!uri)
+                            throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
+                    }
+                    var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
+                    if (rdfDocument === null)
+                        throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                    var document = _this._getPersistedDocument(rdfDocument, response);
+                    document._etag = eTag;
+                    _this.documentsBeingResolved.delete(pointerID);
+                    return [document, response];
+                });
+            }
+            else {
+                if (!_this.context)
+                    throw new Errors.IllegalStateError("A documents with context is needed for this feature.");
+                var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+                var documentProperty = queryContext
+                    .addProperty("document", new tokens_1.ValuesToken()
+                    .addValues(queryContext.getVariable("document"), queryContext.compactIRI(uri)));
+                var queryDocumentBuilder_1 = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext, documentProperty);
+                documentQuery.call(void 0, queryDocumentBuilder_1);
+                var propertiesPatterns = queryDocumentBuilder_1.getPatterns();
+                if (!propertiesPatterns.length)
+                    throw new Errors.IllegalArgumentError("The query function does not provide any property to retrieve");
+                documentProperty.addPatterns.apply(documentProperty, propertiesPatterns);
+                var construct_1 = (_a = new tokens_1.ConstructToken()).addPatterns.apply(_a, documentProperty.getPatterns());
+                (function triplesAdder(patterns) {
+                    var typePattern = patterns.find(function (pattern) { return pattern.token === "subject" && pattern.predicates.some(function (predicate) { return predicate.predicate === "a"; }); });
+                    if (!typePattern)
+                        return;
+                    construct_1.addTriples(typePattern);
+                    patterns
+                        .filter(function (pattern) { return pattern.token === "optional"; })
+                        .forEach(function (optional) {
+                        construct_1.addTriples(optional.patterns[0]);
+                        triplesAdder(optional.patterns);
+                    });
+                })(documentProperty.getPatterns());
+                HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
+                return _this.executeRawCONSTRUCTQuery(uri, construct_1.toString(), requestOptions).then(function (_a) {
+                    var jsonldString = _a[0], response = _a[1];
+                    return new RDF.Document.Parser().parse(jsonldString).then(function (rdfDocuments) {
+                        if (!rdfDocuments.length)
+                            throw new HTTP.Errors.BadResponseError("No document was returned", response);
+                        var document = _this._getPersistedDocument(rdfDocuments[0], response, queryDocumentBuilder_1.getSchema());
+                        return [document, response];
+                    });
+                });
+            }
+            promise.catch(function (error) {
                 _this.documentsBeingResolved.delete(pointerID);
                 return Promise.reject(error);
             });
             _this.documentsBeingResolved.set(pointerID, promise);
             return promise;
+            var _a;
         });
     };
     Class.prototype.exists = function (documentURI, requestOptions) {
@@ -760,7 +811,7 @@ var Class = (function () {
     Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
-    Class.prototype._getPersistedDocument = function (rdfDocument, response) {
+    Class.prototype._getPersistedDocument = function (rdfDocument, response, schema) {
         var documentResource = this.getDocumentResource(rdfDocument, response);
         var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
         fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
@@ -768,10 +819,10 @@ var Class = (function () {
         var documentPointer = this.getPointer(uri);
         var persistedDocument;
         if (PersistedDocument.Factory.is(documentPointer)) {
-            persistedDocument = this.updatePersistedDocument(documentPointer, documentResource, fragmentResources);
+            persistedDocument = this.updatePersistedDocument(documentPointer, documentResource, fragmentResources, schema);
         }
         else {
-            persistedDocument = this.createPersistedDocument(documentPointer, documentResource, fragmentResources);
+            persistedDocument = this.createPersistedDocument(documentPointer, documentResource, fragmentResources, schema);
         }
         persistedDocument._resolved = true;
         return persistedDocument;
@@ -895,36 +946,38 @@ var Class = (function () {
         });
         return pointer;
     };
-    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
+    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary, schema) {
         if (!Utils.isArray(expandedObjectOrObjects))
-            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary);
+            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary, schema);
         var expandedObjects = expandedObjectOrObjects;
         var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
         for (var i = 0, length_1 = expandedObjects.length; i < length_1; i++) {
             var expandedObject = expandedObjects[i];
             var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
-            this.compactSingle(expandedObject, targetObject, pointerLibrary);
+            this.compactSingle(expandedObject, targetObject, pointerLibrary, schema);
         }
         return targetObjects;
     };
-    Class.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
-        var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
+    Class.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary, schema) {
+        var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject, schema);
         return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
-    Class.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
+    Class.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject, schema) {
         var types = RDF.Node.Util.getTypes(expandedObject);
-        return this.getDigestedObjectSchema(types, expandedObject["@id"]);
+        return this.getDigestedObjectSchema(types, expandedObject["@id"], schema);
     };
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
         var types = Resource.Util.getTypes(document);
         return this.getDigestedObjectSchema(types, document.id);
     };
-    Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
+    Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID, schema) {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
         if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
             objectSchemas.push(Class._documentSchema);
+        if (schema)
+            objectSchemas.push(schema);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];
             if (this.context.hasObjectSchema(type))
@@ -982,14 +1035,14 @@ var Class = (function () {
         }
         return membershipResource;
     };
-    Class.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources) {
+    Class.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources, schema) {
         var persistedDocument = PersistedDocument.Factory.decorate(documentPointer, this);
         var fragments = [];
         for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
             var fragmentResource = fragmentResources_1[_i];
             fragments.push(persistedDocument.createFragment(fragmentResource["@id"]));
         }
-        this.compact(documentResource, persistedDocument, persistedDocument);
+        this.compact(documentResource, persistedDocument, persistedDocument, schema);
         this.compact(fragmentResources, fragments, persistedDocument);
         persistedDocument._syncSnapshot();
         fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
@@ -997,7 +1050,7 @@ var Class = (function () {
         this.decoratePersistedDocument(persistedDocument);
         return persistedDocument;
     };
-    Class.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentsNode) {
+    Class.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentsNode, schema) {
         for (var _i = 0, fragmentsNode_1 = fragmentsNode; _i < fragmentsNode_1.length; _i++) {
             var fragmentNode = fragmentsNode_1[_i];
             var targetObject = {};
@@ -1009,7 +1062,7 @@ var Class = (function () {
             currentFragment._syncSnapshot();
         }
         persistedDocument._syncSavedFragments();
-        var tempDocumentData = this.compact(documentResource, {}, persistedDocument);
+        var tempDocumentData = this.compact(documentResource, {}, persistedDocument, schema);
         Utils.O.shallowUpdate(persistedDocument, tempDocumentData);
         persistedDocument._syncSnapshot();
         this.decoratePersistedDocument(persistedDocument);
