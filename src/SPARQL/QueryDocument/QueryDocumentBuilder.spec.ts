@@ -70,14 +70,19 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				new QueryDocumentBuilder( queryContext, baseProperty );
 				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
 					jasmine.objectContaining( {
-						token: "subject",
-						subject: baseProperty.variable,
-						predicates: jasmine.arrayContaining( [
+						token: "optional",
+						patterns: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "predicate",
-								predicate: "a",
-								objects: jasmine.arrayContaining( [
-									jasmine.any( QueryVariable.Class ),
+								token: "subject",
+								subject: baseProperty.variable,
+								predicates: jasmine.arrayContaining( [
+									jasmine.objectContaining( {
+										token: "predicate",
+										predicate: "a",
+										objects: jasmine.arrayContaining( [
+											jasmine.any( QueryVariable.Class ),
+										] ),
+									} ),
 								] ),
 							} ),
 						] ),
@@ -260,14 +265,19 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				builder.withType( "Type-1" );
 				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
 					jasmine.objectContaining( {
-						token: "subject",
-						subject: baseProperty.variable,
-						predicates: jasmine.arrayContaining( [
+						token: "optional",
+						patterns: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "predicate",
-								predicate: "a",
-								objects: jasmine.arrayContaining( [
-									new IRIToken( "http://example.com/vocab#Type-1" ),
+								token: "subject",
+								subject: baseProperty.variable,
+								predicates: jasmine.arrayContaining( [
+									jasmine.objectContaining( {
+										token: "predicate",
+										predicate: "a",
+										objects: jasmine.arrayContaining( [
+											new IRIToken( "http://example.com/vocab#Type-1" ),
+										] ),
+									} ),
 								] ),
 							} ),
 						] ),
@@ -277,14 +287,19 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				builder.withType( "ex:Type-2" );
 				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
 					jasmine.objectContaining( {
-						token: "subject",
-						subject: baseProperty.variable,
-						predicates: jasmine.arrayContaining( [
+						token: "optional",
+						patterns: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "predicate",
-								predicate: "a",
-								objects: jasmine.arrayContaining( [
-									new PrefixedNameToken( "ex:Type-2" ),
+								token: "subject",
+								subject: baseProperty.variable,
+								predicates: jasmine.arrayContaining( [
+									jasmine.objectContaining( {
+										token: "predicate",
+										predicate: "a",
+										objects: jasmine.arrayContaining( [
+											new PrefixedNameToken( "ex:Type-2" ),
+										] ),
+									} ),
 								] ),
 							} ),
 						] ),

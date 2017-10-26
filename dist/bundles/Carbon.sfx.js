@@ -6763,7 +6763,6 @@ var Class = (function () {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
         this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
-            new ObjectSchema.DigestedObjectSchema(),
             digestedSchemaToExtend,
             digestedSchema,
         ]);
@@ -8802,24 +8801,20 @@ var Class = (function () {
                     .addProperty("document", new tokens_1.ValuesToken()
                     .addValues(queryContext.getVariable("document"), queryContext.compactIRI(uri)));
                 var queryDocumentBuilder_1 = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext, documentProperty);
-                documentQuery.call(void 0, queryDocumentBuilder_1);
-                var propertiesPatterns = queryDocumentBuilder_1.getPatterns();
-                if (!propertiesPatterns.length)
-                    throw new Errors.IllegalArgumentError("The query function does not provide any property to retrieve");
-                documentProperty.addPatterns.apply(documentProperty, propertiesPatterns);
-                var construct_1 = (_a = new tokens_1.ConstructToken()).addPatterns.apply(_a, documentProperty.getPatterns());
+                if (documentQuery.call(void 0, queryDocumentBuilder_1) !== queryDocumentBuilder_1)
+                    throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+                var constructPatterns = documentProperty.getPatterns();
+                var construct_1 = (_a = new tokens_1.ConstructToken()).addPatterns.apply(_a, constructPatterns);
                 (function triplesAdder(patterns) {
-                    var typePattern = patterns.find(function (pattern) { return pattern.token === "subject" && pattern.predicates.some(function (predicate) { return predicate.predicate === "a"; }); });
-                    if (!typePattern)
-                        return;
-                    construct_1.addTriples(typePattern);
                     patterns
                         .filter(function (pattern) { return pattern.token === "optional"; })
                         .forEach(function (optional) {
                         construct_1.addTriples(optional.patterns[0]);
                         triplesAdder(optional.patterns);
                     });
-                })(documentProperty.getPatterns());
+                })(constructPatterns);
+                if (!construct_1.triples.length)
+                    throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
                 HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
                 return _this.executeRawCONSTRUCTQuery(uri, construct_1.toString(), requestOptions).then(function (_a) {
                     var jsonldString = _a[0], response = _a[1];
@@ -9605,17 +9600,17 @@ var Class = (function () {
     };
     Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID, schema) {
         if (!this.context)
-            return new ObjectSchema.DigestedObjectSchema();
+            return schema || new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
         if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
             objectSchemas.push(Class._documentSchema);
-        if (schema)
-            objectSchemas.push(schema);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];
             if (this.context.hasObjectSchema(type))
                 objectSchemas.push(this.context.getObjectSchema(type));
         }
+        if (schema)
+            objectSchemas.push(schema);
         var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
         if (this.context.hasSetting("vocabulary"))
             digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
@@ -12217,7 +12212,7 @@ var Class = (function () {
         if (pattern)
             this._patterns.push(pattern);
     }
-    Class.prototype.addPatterns = function () {
+    Class.prototype.addPattern = function () {
         var patterns = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             patterns[_i] = arguments[_i];
@@ -12225,6 +12220,16 @@ var Class = (function () {
         (_a = this._patterns).push.apply(_a, patterns);
         return this;
         var _a;
+    };
+    Class.prototype.addOptionalPattern = function () {
+        var patterns = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            patterns[_i] = arguments[_i];
+        }
+        var first = this._patterns[0];
+        var patternAdder = first && first.token === "optional" ? first : this;
+        patternAdder.addPattern.apply(patternAdder, patterns);
+        return this;
     };
     Class.prototype.hasFilters = function () {
         return this._patterns.some(function (pattern) { return pattern.token === "filter"; });
@@ -16256,9 +16261,14 @@ var OptionalToken = (function () {
         this.token = "optional";
         this.patterns = [];
     }
-    OptionalToken.prototype.addPattern = function (pattern) {
-        this.patterns.push(pattern);
+    OptionalToken.prototype.addPattern = function () {
+        var pattern = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            pattern[_i] = arguments[_i];
+        }
+        (_a = this.patterns).push.apply(_a, pattern);
         return this;
+        var _a;
     };
     OptionalToken.prototype.toString = function () {
         return "OPTIONAL { " + this.patterns.join(". ") + " }";
@@ -16347,7 +16357,7 @@ var ConstructToken = (function () {
         var _a;
     };
     ConstructToken.prototype.toString = function () {
-        return "CONSTRUCT { " + this.triples.join(". ") + " } WHERE { " + this.patterns.join(". ") + " } ";
+        return "CONSTRUCT { " + this.triples.join(". ") + " } WHERE { " + this.patterns.join(". ") + " }";
     };
     return ConstructToken;
 }());
@@ -21232,11 +21242,11 @@ var Class = (function () {
         return this._propertiesMap.get(name);
     };
     Class.prototype.getProperties = function (propertyLevel) {
-        propertyLevel += ".";
+        var levelRegex = new RegExp(propertyLevel.replace(".", "\\.") + "\\.[^.]+$");
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
             var name = _a[0];
-            return name.startsWith(propertyLevel);
+            return levelRegex.test(name);
         })
             .map(function (_a) {
             var name = _a[0], property = _a[1];
@@ -21282,13 +21292,11 @@ var Class = (function () {
         }
         return prefixedName;
     };
-    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, context) {
-        if (context === void 0) { context = this._context; }
-        if (context === null)
-            return null;
-        var typeSchemas = Array.from(context["typeObjectSchemaMap"].values());
-        for (var _i = 0, typeSchemas_1 = typeSchemas; _i < typeSchemas_1.length; _i++) {
-            var schema = typeSchemas_1[_i];
+    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, existingSchema) {
+        if (existingSchema === void 0) { existingSchema = this.context.getObjectSchema(); }
+        var schemas = [existingSchema].concat(this._getTypeSchemas());
+        for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
+            var schema = schemas_1[_i];
             if (!schema.properties.has(propertyName))
                 continue;
             var digestedProperty = schema.properties.get(propertyName);
@@ -21296,7 +21304,21 @@ var Class = (function () {
                 continue;
             return digestedProperty;
         }
-        return this.getInheritTypeDefinition(propertyName, propertyURI, context.parentContext);
+    };
+    Class.prototype._getTypeSchemas = function () {
+        var _this = this;
+        if (this._schemas)
+            return this._schemas;
+        var schemasTypes = new Set();
+        (function addSchemasTypes(context) {
+            if (!context)
+                return;
+            Array.from(context["typeObjectSchemaMap"].keys()).forEach(schemasTypes.add, schemasTypes);
+            addSchemasTypes(context.parentContext);
+        })(this.context);
+        this._schemas = [];
+        schemasTypes.forEach(function (type) { return _this._schemas.push(_this.context.getObjectSchema(type)); });
+        return this._schemas;
     };
     return Class;
 }());
@@ -21352,6 +21374,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(8);
 var ObjectSchema_1 = __webpack_require__(14);
 var Utils_1 = __webpack_require__(0);
+var Errors_1 = __webpack_require__(3);
 var QueryObject = __webpack_require__(132);
 var QueryValue = __webpack_require__(133);
 var inherit = Object.freeze({});
@@ -21360,13 +21383,15 @@ var Class = (function () {
         this.inherit = inherit;
         this._context = queryContext;
         this._schema = queryContext.context.documents.getSchemaFor({});
-        this._document = property
-            .addPatterns(new tokens_1.SubjectToken(property.variable)
-            .addPredicate(this._typesPredicate = new tokens_1.PredicateToken("a")
-            .addObject(queryContext.getVariable(property.name + "___type"))));
+        this._document = property.addOptionalPattern(new tokens_1.OptionalToken()
+            .addPattern(new tokens_1.SubjectToken(property.variable)
+            .addPredicate(new tokens_1.PredicateToken("a")
+            .addObject(queryContext.getVariable(property.name + "___type")))));
+        this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
     }
     Class.prototype.property = function (name) {
-        return this._context.getProperty(this._document.name + "." + name);
+        name = name !== void 0 ? this._document.name + "." + name : this._document.name;
+        return this._context.getProperty(name);
     };
     Class.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
@@ -21378,7 +21403,9 @@ var Class = (function () {
         if (this._context.hasProperties(this._document.name))
             throw new Error("Types must be specified before the properties.");
         type = this._context.expandIRI(type);
-        this._typesPredicate.addObject(this._context.compactIRI(type));
+        if (!this._typesTriple.predicates[0].objects.length)
+            this._document.addOptionalPattern(this._typesTriple);
+        this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
         var schema = this._context.context.getObjectSchema(type);
         if (schema)
             this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this._schema, schema]);
@@ -21386,8 +21413,8 @@ var Class = (function () {
     };
     Class.prototype.properties = function (propertiesSchema) {
         for (var propertyName in propertiesSchema) {
-            var queryProperty = propertiesSchema[propertyName];
-            var propertyDefinition = Utils_1.isObject(queryProperty) ? queryProperty : { "@id": queryProperty };
+            var queryPropertySchema = propertiesSchema[propertyName];
+            var propertyDefinition = Utils_1.isObject(queryPropertySchema) ? queryPropertySchema : { "@id": queryPropertySchema };
             var _a = this.addPropertyDefinition(propertyName, propertyDefinition), uri = _a.uri, literalType = _a.literalType, pointerType = _a.pointerType;
             var name_1 = this._document.name + "." + propertyName;
             var propertyPath = this._context.compactIRI(uri.stringValue);
@@ -21396,27 +21423,30 @@ var Class = (function () {
                 .addPattern(new tokens_1.SubjectToken(this._document.variable)
                 .addPredicate(new tokens_1.PredicateToken(propertyPath)
                 .addObject(propertyObject)));
-            if (literalType)
+            if (literalType !== null)
                 propertyPattern
                     .addPattern(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + this._context.compactIRI(literalType.stringValue)));
-            if (pointerType)
+            if (pointerType !== null)
                 propertyPattern
                     .addPattern(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
-            this._context.addProperty(name_1, propertyPattern);
+            var property = this._context.addProperty(name_1, propertyPattern);
+            if ("query" in propertyDefinition) {
+                var builder = new Class(this._context, property);
+                if (builder !== propertyDefinition["query"].call(void 0, builder))
+                    throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
+            }
+            (_b = this._document).addOptionalPattern.apply(_b, property.getPatterns());
         }
         return this;
-    };
-    Class.prototype.getPatterns = function () {
-        var properties = this._context.getProperties(this._document.name);
-        return [].concat.apply([], properties.map(function (property) { return property.getPatterns(); }));
+        var _b;
     };
     Class.prototype.getSchema = function () {
         return this._schema;
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
+        var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;
+        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, this._schema);
         var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);
-        var inheritDefinition = this._schema.properties.has(propertyName) ?
-            this._schema.properties.get(propertyName) : this._context.getInheritTypeDefinition(propertyName, digestedDefinition.uri && digestedDefinition.uri.stringValue);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {
                 if (key !== "uri" && key in digestedDefinition)

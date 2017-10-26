@@ -13,24 +13,18 @@ export {
 	QueryValue,
 };
 
-interface QueryDocumentGetter {
-	getQueryTree():TokenNode;
-}
-
 interface QueryMembersBuilder extends QueryDocumentBuilder.Class {
-	filter( filterExpression:string ):this & QueryDocumentGetter;
+	filter( filterExpression:string ):this;
 
-	orderBy( property:QueryProperty.Class ):this & QueryDocumentGetter;
+	orderBy( property:QueryProperty.Class ):this;
 
-	limit( limit:number ):this & QueryDocumentGetter;
+	limit( limit:number ):this;
 
-	offset( offset:number ):this & QueryDocumentGetter;
+	offset( offset:number ):this;
 }
 
 interface QueryPropertyBuilder extends QueryDocumentBuilder.Class {
-	property( name?:string ):QueryProperty.Class;
+	filter( filterExpression:string ):this;
 
-	filter( filterExpression:string ):this & QueryDocumentGetter;
-
-	values( ...values:(QueryValue.Class | QueryObject.Class)[] ):this & QueryDocumentGetter;
+	values( ...values:(QueryValue.Class | QueryObject.Class)[] ):this;
 }

@@ -118,7 +118,6 @@ var Class = (function () {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
         this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
-            new ObjectSchema.DigestedObjectSchema(),
             digestedSchemaToExtend,
             digestedSchema,
         ]);

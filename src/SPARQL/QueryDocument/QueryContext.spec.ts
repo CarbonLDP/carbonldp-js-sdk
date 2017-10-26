@@ -415,6 +415,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			} );
 
 			it( "should find in parent context", ():void => {
+				context = new (context.constructor as { new( context:AbstractContext ) })( context );
 				context.parentContext.extendObjectSchema( "ex:Type", {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "http://example.com/ns#",

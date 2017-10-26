@@ -1053,6 +1053,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
 								} ]
+							}, {
+								"@id": "_:1",
+								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value"
+								} ]
 							} ],
 							"@id": "${ context.baseURI }resource/"
 						} ]`,
@@ -1068,6 +1077,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-1",
 							"@type": NS.XSD.DataType.string,
 						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
 					} );
 
 					documents.get<MyDocument>( "https://example.com/resource/", _ => _
@@ -1076,6 +1093,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"property1": _.inherit,
 							"property2": {
 								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
 							},
 						} )
 					).then( ( [ document, response ] ) => {
@@ -1084,9 +1106,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property1": "value",
-							"property2": jasmine.any( Object ),
+							"property2": jasmine.objectContaining( {
+								// TODO: use created schema
+								"property-2": 12345,
+								"https://schema.org/property-3": "another value",
+								/*"property2": 12345,
+								"property3": "another value",*/
+							} ),
 						} ) );
-						console.log( document );
 						done();
 					} ).catch( done.fail );
 				} );

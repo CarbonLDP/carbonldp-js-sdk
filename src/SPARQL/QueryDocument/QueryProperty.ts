@@ -1,4 +1,4 @@
-import { PatternToken, VariableToken } from "sparqler/tokens";
+import { OptionalToken, PatternToken, VariableToken } from "sparqler/tokens";
 
 import * as QueryContext from "./QueryContext";
 
@@ -15,8 +15,16 @@ export class Class {
 		if( pattern ) this._patterns.push( pattern );
 	}
 
-	addPatterns( ...patterns:PatternToken[] ):this {
+	addPattern( ...patterns:PatternToken[] ):this {
 		this._patterns.push( ...patterns );
+		return this;
+	}
+
+	addOptionalPattern( ...patterns:PatternToken[] ):this {
+		const first:PatternToken = this._patterns[ 0 ];
+		const patternAdder:OptionalToken | this = first && first.token === "optional" ? first : this ;
+		patternAdder.addPattern( ...patterns );
+
 		return this;
 	}
 

@@ -196,27 +196,22 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					.addProperty( "document", new ValuesToken()
 						.addValues( queryContext.getVariable( "document" ), queryContext.compactIRI( uri ) ) );
 				const queryDocumentBuilder:QueryDocumentBuilder.Class = new QueryDocumentBuilder.Class( queryContext, documentProperty );
-				documentQuery.call( void 0, queryDocumentBuilder );
+				if( documentQuery.call( void 0, queryDocumentBuilder ) !== queryDocumentBuilder )
+					throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
-				const propertiesPatterns:PatternToken[] = queryDocumentBuilder.getPatterns();
-				if( ! propertiesPatterns.length ) throw new Errors.IllegalArgumentError( "The query function does not provide any property to retrieve" );
-
-				documentProperty.addPatterns( ...propertiesPatterns );
+				const constructPatterns:PatternToken[] = documentProperty.getPatterns();
 				const construct:ConstructToken = new ConstructToken()
-					.addPatterns( ...documentProperty.getPatterns() );
+					.addPatterns( ...constructPatterns );
 
 				(function triplesAdder( patterns:PatternToken[] ):void {
-					const typePattern:TripleToken = patterns.find( pattern => pattern.token === "subject" && pattern.predicates.some( predicate => predicate.predicate === "a" ) ) as TripleToken | undefined;
-					if( ! typePattern ) return;
-
-					construct.addTriples( typePattern );
 					patterns
 						.filter( pattern => pattern.token === "optional" )
 						.forEach( ( optional:OptionalToken ) => {
 							construct.addTriples( optional.patterns[ 0 ] as TripleToken );
 							triplesAdder( optional.patterns );
 						} );
-				})( documentProperty.getPatterns() );
+				})( constructPatterns );
+				if( ! construct.triples.length ) throw new Errors.IllegalArgumentError( "No data specified to be retrieved." );
 
 				HTTP.Request.Util.setContainerRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
 
@@ -1099,15 +1094,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private getDigestedObjectSchema( objectTypes:string[], objectID:string, schema?:ObjectSchema.DigestedObjectSchema ):ObjectSchema.DigestedObjectSchema {
-		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
+		if( ! this.context ) return schema || new ObjectSchema.DigestedObjectSchema();
 
 		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
 		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) ) objectSchemas.push( Class._documentSchema );
 
-		if( schema ) objectSchemas.push( schema );
 		for( let type of objectTypes ) {
 			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
 		}
+		if( schema ) objectSchemas.push( schema );
 
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( objectSchemas );
 		if( this.context.hasSetting( "vocabulary" ) ) digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );

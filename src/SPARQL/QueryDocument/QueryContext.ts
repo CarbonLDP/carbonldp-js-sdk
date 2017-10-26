@@ -17,6 +17,8 @@ export class Class {
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
+	private _schemas:DigestedObjectSchema[];
+
 	constructor( context:Context.Class ) {
 		this._context = context;
 		this._propertiesMap = new Map();
@@ -41,7 +43,7 @@ export class Class {
 			.some( key => key.startsWith( propertyName ) );
 	}
 
-	addProperty( name:string, pattern:PatternToken ):QueryProperty.Class {
+	addProperty( name:string, pattern?:PatternToken ):QueryProperty.Class {
 		const property:QueryProperty.Class = new QueryProperty.Class( this, name, pattern );
 		this._propertiesMap.set( name, property );
 		return property;
@@ -53,9 +55,9 @@ export class Class {
 	}
 
 	getProperties( propertyLevel:string ):QueryProperty.Class[] {
-		propertyLevel += ".";
+		const levelRegex:RegExp = new RegExp( propertyLevel.replace( ".", "\\." ) + "\\.[^.]+$" );
 		return Array.from( this._propertiesMap.entries() )
-			.filter( ( [ name ] ) => name.startsWith( propertyLevel ) )
+			.filter( ( [ name ] ) => levelRegex.test( name ) )
 			.map( ( [ name, property ] ) => property );
 	}
 
@@ -101,19 +103,31 @@ export class Class {
 		return prefixedName;
 	}
 
-	getInheritTypeDefinition( propertyName:string, propertyURI?:string, context:Context.Class = this._context ):DigestedPropertyDefinition {
-		if( context === null ) return null;
+	getInheritTypeDefinition( propertyName:string, propertyURI?:string, existingSchema:DigestedObjectSchema = this.context.getObjectSchema() ):DigestedPropertyDefinition {
+		const schemas:DigestedObjectSchema[] = [ existingSchema, ...this._getTypeSchemas() ];
 
-		const typeSchemas:DigestedObjectSchema[] = Array.from( context[ "typeObjectSchemaMap" ].values() );
-		for( const schema of typeSchemas ) {
+		for( const schema of schemas ) {
 			if( ! schema.properties.has( propertyName ) ) continue;
 			const digestedProperty:DigestedPropertyDefinition = schema.properties.get( propertyName );
 
 			if( propertyURI && digestedProperty.uri.stringValue !== propertyURI ) continue;
 			return digestedProperty;
 		}
+	}
 
-		return this.getInheritTypeDefinition( propertyName, propertyURI, context.parentContext as Context.Class );
+	private _getTypeSchemas():DigestedObjectSchema[] {
+		if( this._schemas ) return this._schemas;
+
+		const schemasTypes:Set<string> = new Set();
+		(function addSchemasTypes( context:Context.Class ):void {
+			if( ! context ) return;
+			Array.from( context[ "typeObjectSchemaMap" ].keys() ).forEach( schemasTypes.add, schemasTypes );
+			addSchemasTypes( context.parentContext );
+		})( this.context );
+
+		this._schemas = [];
+		schemasTypes.forEach( type => this._schemas.push( this.context.getObjectSchema( type ) ) );
+		return this._schemas;
 	}
 
 }

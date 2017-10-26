@@ -1,4 +1,3 @@
-import { PatternToken } from "sparqler/tokens";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as Pointer from "./../../Pointer";
 import * as QueryContext from "./QueryContext";
@@ -11,14 +10,13 @@ export declare class Class {
     private _context;
     private _schema;
     private _document;
-    private _typesPredicate;
+    private _typesTriple;
     constructor(queryContext: QueryContext.Class, property: QueryProperty.Class);
-    property(name: string): QueryProperty.Class;
+    property(name?: string): QueryProperty.Class;
     value(value: string | number | boolean | Date): QueryValue.Class;
     object(object: Pointer.Class | string): QueryObject.Class;
     withType(type: string): this;
     properties(propertiesSchema: QueryPropertiesSchema.Class): this;
-    getPatterns(): PatternToken[];
     getSchema(): DigestedObjectSchema;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }

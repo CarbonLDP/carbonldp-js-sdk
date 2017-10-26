@@ -169,24 +169,20 @@ var Class = (function () {
                     .addProperty("document", new tokens_1.ValuesToken()
                     .addValues(queryContext.getVariable("document"), queryContext.compactIRI(uri)));
                 var queryDocumentBuilder_1 = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext, documentProperty);
-                documentQuery.call(void 0, queryDocumentBuilder_1);
-                var propertiesPatterns = queryDocumentBuilder_1.getPatterns();
-                if (!propertiesPatterns.length)
-                    throw new Errors.IllegalArgumentError("The query function does not provide any property to retrieve");
-                documentProperty.addPatterns.apply(documentProperty, propertiesPatterns);
-                var construct_1 = (_a = new tokens_1.ConstructToken()).addPatterns.apply(_a, documentProperty.getPatterns());
+                if (documentQuery.call(void 0, queryDocumentBuilder_1) !== queryDocumentBuilder_1)
+                    throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+                var constructPatterns = documentProperty.getPatterns();
+                var construct_1 = (_a = new tokens_1.ConstructToken()).addPatterns.apply(_a, constructPatterns);
                 (function triplesAdder(patterns) {
-                    var typePattern = patterns.find(function (pattern) { return pattern.token === "subject" && pattern.predicates.some(function (predicate) { return predicate.predicate === "a"; }); });
-                    if (!typePattern)
-                        return;
-                    construct_1.addTriples(typePattern);
                     patterns
                         .filter(function (pattern) { return pattern.token === "optional"; })
                         .forEach(function (optional) {
                         construct_1.addTriples(optional.patterns[0]);
                         triplesAdder(optional.patterns);
                     });
-                })(documentProperty.getPatterns());
+                })(constructPatterns);
+                if (!construct_1.triples.length)
+                    throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
                 HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
                 return _this.executeRawCONSTRUCTQuery(uri, construct_1.toString(), requestOptions).then(function (_a) {
                     var jsonldString = _a[0], response = _a[1];
@@ -972,17 +968,17 @@ var Class = (function () {
     };
     Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID, schema) {
         if (!this.context)
-            return new ObjectSchema.DigestedObjectSchema();
+            return schema || new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
         if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
             objectSchemas.push(Class._documentSchema);
-        if (schema)
-            objectSchemas.push(schema);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];
             if (this.context.hasObjectSchema(type))
                 objectSchemas.push(this.context.getObjectSchema(type));
         }
+        if (schema)
+            objectSchemas.push(schema);
         var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
         if (this.context.hasSetting("vocabulary"))
             digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));

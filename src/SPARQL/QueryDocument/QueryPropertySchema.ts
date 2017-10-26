@@ -1,9 +1,11 @@
+import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
+
 export interface Class {
 	"@id"?:string;
 	"@type"?:"@id" | string;
 	"@language"?:string;
 	"@container"?:"@set" | "@list" | "@language";
-	// "@query":( builder:QueryPropertyBuilder ) => QueryDocumentGetter;
+	query?:( queryPropertyBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class;
 }
 
 export default Class;

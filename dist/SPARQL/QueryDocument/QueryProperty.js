@@ -8,7 +8,7 @@ var Class = (function () {
         if (pattern)
             this._patterns.push(pattern);
     }
-    Class.prototype.addPatterns = function () {
+    Class.prototype.addPattern = function () {
         var patterns = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             patterns[_i] = arguments[_i];
@@ -16,6 +16,16 @@ var Class = (function () {
         (_a = this._patterns).push.apply(_a, patterns);
         return this;
         var _a;
+    };
+    Class.prototype.addOptionalPattern = function () {
+        var patterns = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            patterns[_i] = arguments[_i];
+        }
+        var first = this._patterns[0];
+        var patternAdder = first && first.token === "optional" ? first : this;
+        patternAdder.addPattern.apply(patternAdder, patterns);
+        return this;
     };
     Class.prototype.hasFilters = function () {
         return this._patterns.some(function (pattern) { return pattern.token === "filter"; });

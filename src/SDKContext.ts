@@ -137,7 +137,6 @@ export class Class implements Context.Class {
 		}
 
 		this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-			new ObjectSchema.DigestedObjectSchema(),
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );

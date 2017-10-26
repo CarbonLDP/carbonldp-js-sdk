@@ -41,11 +41,11 @@ var Class = (function () {
         return this._propertiesMap.get(name);
     };
     Class.prototype.getProperties = function (propertyLevel) {
-        propertyLevel += ".";
+        var levelRegex = new RegExp(propertyLevel.replace(".", "\\.") + "\\.[^.]+$");
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
             var name = _a[0];
-            return name.startsWith(propertyLevel);
+            return levelRegex.test(name);
         })
             .map(function (_a) {
             var name = _a[0], property = _a[1];
@@ -91,13 +91,11 @@ var Class = (function () {
         }
         return prefixedName;
     };
-    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, context) {
-        if (context === void 0) { context = this._context; }
-        if (context === null)
-            return null;
-        var typeSchemas = Array.from(context["typeObjectSchemaMap"].values());
-        for (var _i = 0, typeSchemas_1 = typeSchemas; _i < typeSchemas_1.length; _i++) {
-            var schema = typeSchemas_1[_i];
+    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, existingSchema) {
+        if (existingSchema === void 0) { existingSchema = this.context.getObjectSchema(); }
+        var schemas = [existingSchema].concat(this._getTypeSchemas());
+        for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
+            var schema = schemas_1[_i];
             if (!schema.properties.has(propertyName))
                 continue;
             var digestedProperty = schema.properties.get(propertyName);
@@ -105,7 +103,21 @@ var Class = (function () {
                 continue;
             return digestedProperty;
         }
-        return this.getInheritTypeDefinition(propertyName, propertyURI, context.parentContext);
+    };
+    Class.prototype._getTypeSchemas = function () {
+        var _this = this;
+        if (this._schemas)
+            return this._schemas;
+        var schemasTypes = new Set();
+        (function addSchemasTypes(context) {
+            if (!context)
+                return;
+            Array.from(context["typeObjectSchemaMap"].keys()).forEach(schemasTypes.add, schemasTypes);
+            addSchemasTypes(context.parentContext);
+        })(this.context);
+        this._schemas = [];
+        schemasTypes.forEach(function (type) { return _this._schemas.push(_this.context.getObjectSchema(type)); });
+        return this._schemas;
     };
     return Class;
 }());
