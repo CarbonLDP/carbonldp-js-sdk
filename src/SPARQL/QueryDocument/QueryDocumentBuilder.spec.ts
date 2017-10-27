@@ -13,7 +13,7 @@ import * as QueryProperty from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
 import * as QueryVariable from "./QueryVariable";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
+fdescribe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
@@ -126,6 +126,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			} );
 
 			it( "should call the `getProperty` of the query context", ():void => {
+				spyOn( queryContext, "hasProperty" ).and.returnValue( true );
 				const spy:jasmine.Spy = spyOn( queryContext, "getProperty" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
@@ -133,6 +134,39 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( spy ).toHaveBeenCalledWith( "document.name" );
 				builder.property( "object.name" );
 				expect( spy ).toHaveBeenCalledWith( "document.object.name" );
+			} );
+
+			it( "should be able to look in all the properties tree", ():void => {
+				spyOn( queryContext, "getProperty" );
+				const spy:jasmine.Spy = spyOn( queryContext, "hasProperty" ).and.returnValue( false );
+
+				baseProperty = new QueryProperty.Class( queryContext, "document.path1.path2.path3" );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+
+				try {
+					builder.property( "name" );
+				} catch {}
+
+				expect( spy ).toHaveBeenCalledTimes( 4 );
+				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.path3.name" );
+				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.name" );
+				expect( spy ).toHaveBeenCalledWith( "document.path1.name" );
+				expect( spy ).toHaveBeenCalledWith( "document.name" );
+			} );
+
+			it( "should throw error when the property does not exists", ():void => {
+				spyOn( queryContext, "getProperty" );
+				spyOn( queryContext, "hasProperty" ).and.callFake( name => name === "document.path1.name" );
+
+				baseProperty = new QueryProperty.Class( queryContext, "document.path1.path2.path3" );
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const helper:( name:string ) => void = ( name:string ) => () => builder.property( name );
+
+				expect( helper( "name" ) ).not.toThrowError( `The "name" property was not declared.` );
+				expect( helper( "path1.name" ) ).not.toThrowError( `The "path1.name" property was not declared.` );
+
+				expect( helper( "path2.name" ) ).toThrowError( `The "path2.name" property was not declared.` );
+				expect( helper( "path1.path2.name" ) ).toThrowError( `The "path1.path2.name" property was not declared.` );
 			} );
 
 		} );

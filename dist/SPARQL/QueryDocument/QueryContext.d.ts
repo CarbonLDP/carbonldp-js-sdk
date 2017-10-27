@@ -13,7 +13,8 @@ export declare class Class implements Resolver {
     private _schemas;
     constructor(context: Context.Class);
     getVariable(name: string): QueryVariable.Class;
-    hasProperties(propertyName: string): boolean;
+    hasProperty(name: string): boolean;
+    hasProperties(name: string): boolean;
     addProperty(name: string, pattern?: PatternToken): QueryProperty.Class;
     getProperty(name: string): QueryProperty.Class;
     getProperties(propertyLevel: string): QueryProperty.Class[];

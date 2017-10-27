@@ -25,10 +25,13 @@ var Class = (function () {
         this._variablesMap.set(name, variable);
         return variable;
     };
-    Class.prototype.hasProperties = function (propertyName) {
-        propertyName += ".";
+    Class.prototype.hasProperty = function (name) {
+        return this._propertiesMap.has(name);
+    };
+    Class.prototype.hasProperties = function (name) {
+        name += ".";
         return Array.from(this._propertiesMap.keys())
-            .some(function (key) { return key.startsWith(propertyName); });
+            .some(function (key) { return key.startsWith(name); });
     };
     Class.prototype.addProperty = function (name, pattern) {
         var property = new QueryProperty.Class(this, name, pattern);
@@ -36,8 +39,6 @@ var Class = (function () {
         return property;
     };
     Class.prototype.getProperty = function (name) {
-        if (!this._propertiesMap.has(name))
-            throw new Error("The \"" + name + "\" property was not declared.");
         return this._propertiesMap.get(name);
     };
     Class.prototype.getProperties = function (propertyLevel) {

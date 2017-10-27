@@ -31,8 +31,18 @@ export class Class {
 	}
 
 	property( name?:string ):QueryProperty.Class {
-		name = name !== void 0 ? `${ this._document.name }.${ name }` : this._document.name;
-		return this._context.getProperty( name );
+		if( name === void 0 ) return this._context.getProperty( this._document.name );
+
+		const originalName:string = name;
+
+		let path:string = this._document.name;
+		while( path ) {
+			name = `${ path }.${ originalName }`;
+			if( this._context.hasProperty( name ) ) return this._context.getProperty( name );
+			path = path.split( "." ).slice( 0, - 1 ).join( "." );
+		}
+
+		throw new Error( `The "${ originalName }" property was not declared.` );
 	}
 
 	value( value:string | number | boolean | Date ):QueryValue.Class {

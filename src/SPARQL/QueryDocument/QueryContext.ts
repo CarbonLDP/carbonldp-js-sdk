@@ -37,10 +37,14 @@ export class Class implements Resolver {
 		return variable;
 	}
 
-	hasProperties( propertyName:string ):boolean {
-		propertyName += ".";
+	hasProperty( name:string ):boolean {
+		return this._propertiesMap.has( name );
+	}
+
+	hasProperties( name:string ):boolean {
+		name += ".";
 		return Array.from( this._propertiesMap.keys() )
-			.some( key => key.startsWith( propertyName ) );
+			.some( key => key.startsWith( name ) );
 	}
 
 	addProperty( name:string, pattern?:PatternToken ):QueryProperty.Class {
@@ -50,7 +54,6 @@ export class Class implements Resolver {
 	}
 
 	getProperty( name:string ):QueryProperty.Class {
-		if( ! this._propertiesMap.has( name ) ) throw new Error( `The "${ name }" property was not declared.` );
 		return this._propertiesMap.get( name );
 	}
 

@@ -125,14 +125,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( QueryContext.prototype.getProperty ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should throw error when the property does not exists", ():void => {
-				const queryContext:QueryContext = new QueryContext( context );
-				const helper:( name:string ) => void = ( name:string ) => () => queryContext.getProperty( name );
-
-				expect( helper( "name" ) ).toThrowError( `The "name" property was not declared.` );
-				expect( helper( "document.property" ) ).toThrowError( `The "document.property" property was not declared.` );
-			} );
-
 			it( "should return the stored property", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
 
