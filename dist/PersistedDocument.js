@@ -76,19 +76,15 @@ function extendCreateFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
-        if (RDF.URI.Util.isBNodeID(id)) {
+        if (RDF.URI.Util.isBNodeID(id))
             PersistedFragment.Factory.decorate(fragment);
-        }
-        else {
-            PersistedNamedFragment.Factory.decorate(fragment);
-        }
         return fragment;
     };
 }
 function extendCreateNamedFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
-        return PersistedFragment.Factory.decorate(fragment);
+        return PersistedNamedFragment.Factory.decorate(fragment);
     };
 }
 function refresh() {
@@ -255,7 +251,7 @@ var Factory = (function () {
     };
     Factory.decorate = function (object, documents, snapshot) {
         if (snapshot === void 0) { snapshot = {}; }
-        if (Factory.is(object))
+        if (Factory.hasClassProperties(object))
             return object;
         Document.Factory.decorate(object);
         PersistedResource.Factory.decorate(object, snapshot);

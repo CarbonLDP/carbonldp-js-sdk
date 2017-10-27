@@ -17,13 +17,11 @@ export class Class {
 	inherit:Readonly<{}> = inherit;
 
 	private _context:QueryContext.Class;
-	private _schema:DigestedObjectSchema;
 	private _document:QueryProperty.Class;
 	private _typesTriple:SubjectToken;
 
 	constructor( queryContext:QueryContext.Class, property:QueryProperty.Class ) {
 		this._context = queryContext;
-		this._schema = queryContext.context.documents.getSchemaFor( {} );
 		this._document = property.addOptionalPattern( new OptionalToken()
 			.addPattern( new SubjectToken( property.variable )
 				.addPredicate( new PredicateToken( "a" )
@@ -55,7 +53,7 @@ export class Class {
 		this._typesTriple.predicates[ 0 ].addObject( this._context.compactIRI( type ) );
 
 		const schema:DigestedObjectSchema = this._context.context.getObjectSchema( type );
-		if( schema ) this._schema = Digester.combineDigestedObjectSchemas( [ this._schema, schema ] );
+		if( schema ) this._document.addSchema( schema );
 
 		return this;
 	}
@@ -94,14 +92,12 @@ export class Class {
 		return this;
 	}
 
-	getSchema():DigestedObjectSchema {
-		return this._schema;
-	}
-
 	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
+		const schema:DigestedObjectSchema = this._document.getSchema();
 		const uri:string = "@id" in propertyDefinition ? this._context.expandIRI( propertyDefinition[ "@id" ] ) : void 0;
-		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( propertyName, uri, this._schema );
-		const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( this._schema, propertyName, propertyDefinition );
+
+		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( propertyName, uri, schema );
+		const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( schema, propertyName, propertyDefinition );
 
 		if( inheritDefinition ) {
 			for( const key in inheritDefinition ) {
@@ -112,7 +108,7 @@ export class Class {
 
 		if( ! digestedDefinition.uri ) throw new Error( `Invalid property "${ propertyName }" definition, URI "@id" is missing.` );
 
-		this._schema.properties.set( propertyName, digestedDefinition );
+		schema.properties.set( propertyName, digestedDefinition );
 		return digestedDefinition;
 	}
 

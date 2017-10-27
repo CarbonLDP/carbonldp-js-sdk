@@ -1035,10 +1035,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents = context.documents;
 				} );
 
-				it( "should construct a construct query", ( done:DoneFn ):void => {
+				it( "should return a partial document", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
+							"@id": "${ context.baseURI }resource/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
@@ -1062,8 +1063,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
 								} ]
-							} ],
-							"@id": "${ context.baseURI }resource/"
+							} ]
 						} ]`,
 					} );
 
@@ -1107,11 +1107,93 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
-								// TODO: use created schema
-								"property-2": 12345,
-								"https://schema.org/property-3": "another value",
-								/*"property2": 12345,
-								"property3": "another value",*/
+								"property2": 12345,
+								"property3": "another value",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return a partial document with partial relations", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "${ context.baseURI }another-resource/"
+								} ]
+							} ]
+						}, {
+							"@id": "${ context.baseURI }another-resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }another-resource/",
+								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+					} );
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( [ document, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
+
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property1": "value",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value",
 							} ),
 						} ) );
 						done();
@@ -8236,7 +8318,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				document = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
 				document[ "string" ] = "Document Resource";
 
-				document[ "pointer" ] = fragment = document.createNamedFragment( {
+				document[ "resource" ] = fragment = document.createNamedFragment( {
 					string: "NamedFragment 1",
 				}, "#1" );
 

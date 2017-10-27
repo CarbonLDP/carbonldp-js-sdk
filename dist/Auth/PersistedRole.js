@@ -25,14 +25,12 @@ var Factory = (function () {
         if (Factory.hasClassProperties(persistedRole))
             return persistedRole;
         PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
-        var context = documents.context;
-        var roles = context ? context.auth.roles : null;
         Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: roles,
+                value: documents["context"] ? documents["context"].auth.roles : null,
             },
             "createChild": {
                 writable: true,

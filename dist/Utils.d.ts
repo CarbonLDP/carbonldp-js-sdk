@@ -42,7 +42,6 @@ declare class O {
     }, ignore?: {
         [key: string]: boolean;
     }): boolean;
-    static shallowUpdate<T extends object>(target: object, source: T): T;
     static areShallowlyEqual(object1: Object, object2: Object): boolean;
 }
 declare class S {

@@ -11,7 +11,6 @@ var Class = (function () {
     function Class(queryContext, property) {
         this.inherit = inherit;
         this._context = queryContext;
-        this._schema = queryContext.context.documents.getSchemaFor({});
         this._document = property.addOptionalPattern(new tokens_1.OptionalToken()
             .addPattern(new tokens_1.SubjectToken(property.variable)
             .addPredicate(new tokens_1.PredicateToken("a")
@@ -37,7 +36,7 @@ var Class = (function () {
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
         var schema = this._context.context.getObjectSchema(type);
         if (schema)
-            this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this._schema, schema]);
+            this._document.addSchema(schema);
         return this;
     };
     Class.prototype.properties = function (propertiesSchema) {
@@ -69,13 +68,11 @@ var Class = (function () {
         return this;
         var _b;
     };
-    Class.prototype.getSchema = function () {
-        return this._schema;
-    };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
+        var schema = this._document.getSchema();
         var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;
-        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, this._schema);
-        var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);
+        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, schema);
+        var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(schema, propertyName, propertyDefinition);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {
                 if (key !== "uri" && key in digestedDefinition)
@@ -85,7 +82,7 @@ var Class = (function () {
         }
         if (!digestedDefinition.uri)
             throw new Error("Invalid property \"" + propertyName + "\" definition, URI \"@id\" is missing.");
-        this._schema.properties.set(propertyName, digestedDefinition);
+        schema.properties.set(propertyName, digestedDefinition);
         return digestedDefinition;
     };
     return Class;

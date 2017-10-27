@@ -203,20 +203,6 @@ class O {
 		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
 	}
 
-	static shallowUpdate<T extends object>( target:object, source:T ):T {
-		let keys:string[] = A.joinWithoutDuplicates( Object.keys( source ), Object.keys( target ) );
-
-		for( let key of keys ) {
-			if( hasProperty( source, key ) ) {
-				target[ key ] = source[ key ];
-			} else {
-				delete target[ key ];
-			}
-		}
-
-		return target as T;
-	}
-
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {
 		if( object1 === object2 ) return true;
 		if( ! isObject( object1 ) || ! isObject( object2 ) ) return false;

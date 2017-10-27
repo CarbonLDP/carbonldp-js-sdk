@@ -3,7 +3,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 
 export interface Class extends PersistedFragment.Class, NamedFragment.Class {
-	document: PersistedDocument.Class;
+	document:PersistedDocument.Class;
 }
 
 export class Factory {

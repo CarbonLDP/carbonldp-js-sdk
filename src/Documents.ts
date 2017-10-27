@@ -31,19 +31,14 @@ import { QueryContext, QueryDocumentBuilder, QueryProperty } from "./SPARQL/Quer
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
 
-export interface DocumentDecorator {
-	decorator:( object:Object, ...parameters:any[] ) => Object;
-	parameters?:any[];
-}
-
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 	private static _documentSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( Document.SCHEMA );
 
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
 
-	private _documentDecorators:Map<string, DocumentDecorator>;
-	get documentDecorators():Map<string, DocumentDecorator> { return this._documentDecorators; }
+	private _documentDecorators:Map<string, ( object:object, documents?:Class ) => object>;
+	get documentDecorators():Map<string, ( object:object, documents?:Class ) => object> { return this._documentDecorators; }
 
 	private context:Context;
 	private pointers:Map<string, Pointer.Class>;
@@ -64,16 +59,16 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this._jsonldConverter = new JSONLD.Converter.Class();
 		}
 
-		let decorators:Map<string, DocumentDecorator> = new Map();
-		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let parentDecorators:Map<string, DocumentDecorator> = this.context.parentContext.documents.documentDecorators;
+		let decorators:Class[ "documentDecorators" ] = new Map();
+		if( this.context && this.context.parentContext ) {
+			let parentDecorators:Class[ "documentDecorators" ] = this.context.parentContext.documents.documentDecorators;
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.M.extend( decorators, parentDecorators );
 		} else {
-			decorators.set( ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate } );
-			decorators.set( Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate } );
-			decorators.set( Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate, parameters: [ this ] } );
-			decorators.set( Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: [ this ] } );
-			decorators.set( Auth.Credentials.RDF_CLASS, { decorator: Auth.PersistedCredentials.Factory.decorate, parameters: [ this ] } );
+			decorators.set( ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate );
+			decorators.set( Auth.ACL.RDF_CLASS, Auth.PersistedACL.Factory.decorate );
+			decorators.set( Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate );
+			decorators.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate );
+			decorators.set( Auth.Credentials.RDF_CLASS, Auth.PersistedCredentials.Factory.decorate );
 		}
 
 		this._documentDecorators = decorators;
@@ -140,9 +135,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	get<T>( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, requestOptions?:HTTP.Request.Options, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => any ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => any ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, optionsOrQueryDocument:any, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => any ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	get<T>( uri:string, requestOptions?:HTTP.Request.Options, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, optionsOrQueryDocument:any, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			const pointerID:string = this.getPointerID( uri );
 			uri = this.getRequestURI( uri );
@@ -201,13 +196,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 				const constructPatterns:PatternToken[] = documentProperty.getPatterns();
 				const construct:ConstructToken = new ConstructToken()
-					.addPatterns( ...constructPatterns );
+					.addPattern( ...constructPatterns );
 
 				(function triplesAdder( patterns:PatternToken[] ):void {
 					patterns
 						.filter( pattern => pattern.token === "optional" )
 						.forEach( ( optional:OptionalToken ) => {
-							construct.addTriples( optional.patterns[ 0 ] as TripleToken );
+							construct.addTriple( optional.patterns[ 0 ] as TripleToken );
 							triplesAdder( optional.patterns );
 						} );
 				})( constructPatterns );
@@ -219,7 +214,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					return new RDF.Document.Parser().parse( jsonldString ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( rdfDocuments:RDF.Document.Class[] ) => {
 						if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
 
-						const document:T & PersistedDocument.Class = this._getPersistedDocument( rdfDocuments[ 0 ], response, queryDocumentBuilder.getSchema() );
+						const mainRDFDocument:RDF.Document.Class[] = rdfDocuments.filter( rdfDocument => rdfDocument[ "@id" ] === uri );
+						const [ document ]:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
+							.Class( this, queryContext )
+							.compactDocuments( rdfDocuments, mainRDFDocument );
+
 						return [ document, response ];
 					} );
 				} );
@@ -908,23 +907,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.on( Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 	}
 
-	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class, schema?:ObjectSchema.DigestedObjectSchema ):T & PersistedDocument.Class {
-		let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-		let fragmentResources:RDF.Node.Class[] = RDF.Document.Util.getBNodeResources( rdfDocument );
-		fragmentResources = fragmentResources.concat( RDF.Document.Util.getFragmentResources( rdfDocument ) );
+	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):T & PersistedDocument.Class {
+		const [ documentResources ] = RDF.Document.Util.getNodes( rdfDocument );
+		if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
+		if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
-		let uri:string = documentResource[ "@id" ];
-		let documentPointer:Pointer.Class = this.getPointer( uri );
-
-		let persistedDocument:T & PersistedDocument.Class;
-		if( PersistedDocument.Factory.is( documentPointer ) ) {
-			persistedDocument = this.updatePersistedDocument( <PersistedDocument.Class> documentPointer, documentResource, fragmentResources, schema );
-		} else {
-			persistedDocument = this.createPersistedDocument( documentPointer, documentResource, fragmentResources, schema );
-		}
-
-		persistedDocument._resolved = true;
-		return persistedDocument;
+		return new JSONLD.Compacter.Class( this ).compactDocument( rdfDocument );
 	}
 
 	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources.Class {
@@ -1154,47 +1142,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return membershipResource;
 	}
 
-	private createPersistedDocument<T>( documentPointer:Pointer.Class, documentResource:RDF.Node.Class, fragmentResources:RDF.Node.Class[], schema?:ObjectSchema.DigestedObjectSchema ):T & PersistedDocument.Class {
-		let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.decorate( documentPointer, this );
-
-		let fragments:PersistedFragment.Class[] = [];
-		for( let fragmentResource of fragmentResources ) {
-			fragments.push( persistedDocument.createFragment( fragmentResource[ "@id" ] ) );
-		}
-
-		this.compact( documentResource, persistedDocument, persistedDocument, schema );
-		this.compact( fragmentResources, fragments, persistedDocument );
-
-		// TODO: Move this to a more appropriate place. See also updatePersistedDocument() method
-		persistedDocument._syncSnapshot();
-		fragments.forEach( ( fragment:PersistedFragment.Class ) => fragment._syncSnapshot() );
-		persistedDocument._syncSavedFragments();
-
-		this.decoratePersistedDocument( persistedDocument );
-		return persistedDocument as T & PersistedDocument.Class;
-	}
-
-	private updatePersistedDocument<T>( persistedDocument:PersistedDocument.Class, documentResource:RDF.Node.Class, fragmentsNode:RDF.Node.Class[], schema?:ObjectSchema.DigestedObjectSchema ):T & PersistedDocument.Class {
-		for( const fragmentNode of fragmentsNode ) {
-			const targetObject:object = {};
-			const currentFragment:PersistedFragment.Class =
-				persistedDocument.getFragment( fragmentNode[ "@id" ] ) ||
-				persistedDocument.createFragment( targetObject, fragmentNode[ "@id" ] );
-			const tempFragmentData:object = this.compactSingle( fragmentNode, targetObject, persistedDocument );
-
-			if( currentFragment ) Utils.O.shallowUpdate( currentFragment, tempFragmentData );
-			currentFragment._syncSnapshot();
-		}
-		persistedDocument._syncSavedFragments();
-
-		const tempDocumentData:object = this.compact( documentResource, {}, persistedDocument, schema );
-		Utils.O.shallowUpdate( persistedDocument, tempDocumentData );
-		persistedDocument._syncSnapshot();
-
-		this.decoratePersistedDocument( persistedDocument );
-		return persistedDocument as T & PersistedDocument.Class;
-	}
-
 	private getPersistedMetadataResources<T>( freeNodes:RDF.Node.Class[], rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):(T & PersistedDocument.Class)[] {
 		let freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
 
@@ -1210,13 +1157,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			document._etag = documentMetadata.eTag;
 
 			return document;
-		} );
-	}
-
-	private decoratePersistedDocument( persistedDocument:PersistedDocument.Class ):void {
-		this._documentDecorators.forEach( ( options:DocumentDecorator, type:string ) => {
-			if( ! persistedDocument.hasType( type ) ) return;
-			options.decorator.call( null, persistedDocument, ...options.parameters );
 		} );
 	}
 

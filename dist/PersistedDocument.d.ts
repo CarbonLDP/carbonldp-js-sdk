@@ -82,7 +82,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     sparql(): QueryClause;
 }
 export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
+    static hasClassProperties(object: object): object is Class;
     static is(object: Object): object is Class;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): T & Class;

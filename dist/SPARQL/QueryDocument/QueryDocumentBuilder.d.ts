@@ -1,4 +1,3 @@
-import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as Pointer from "./../../Pointer";
 import * as QueryContext from "./QueryContext";
 import * as QueryObject from "./QueryObject";
@@ -8,7 +7,6 @@ import * as QueryValue from "./QueryValue";
 export declare class Class {
     inherit: Readonly<{}>;
     private _context;
-    private _schema;
     private _document;
     private _typesTriple;
     constructor(queryContext: QueryContext.Class, property: QueryProperty.Class);
@@ -17,7 +15,6 @@ export declare class Class {
     object(object: Pointer.Class | string): QueryObject.Class;
     withType(type: string): this;
     properties(propertiesSchema: QueryPropertiesSchema.Class): this;
-    getSchema(): DigestedObjectSchema;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }
 export default Class;

@@ -221,11 +221,7 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 		let fragment:Fragment.Class = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
-		if( RDF.URI.Util.isBNodeID( id ) ) {
-			PersistedFragment.Factory.decorate( fragment );
-		} else {
-			PersistedNamedFragment.Factory.decorate( <NamedFragment.Class> fragment );
-		}
+		if( RDF.URI.Util.isBNodeID( id ) ) PersistedFragment.Factory.decorate( fragment );
 		return fragment;
 	};
 }
@@ -235,7 +231,7 @@ function extendCreateNamedFragment( superFunction:( object:Object, slug:string )
 function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment.Class ):any {
 	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment.Class {
 		let fragment:NamedFragment.Class = superFunction.call( this, slugOrObject, slug );
-		return PersistedFragment.Factory.decorate( fragment );
+		return PersistedNamedFragment.Factory.decorate( fragment );
 	};
 }
 
@@ -397,7 +393,7 @@ function sparql():QueryClause {
 }
 
 export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+	static hasClassProperties( object:object ):object is Class {
 		return Utils.hasPropertyDefined( object, "_etag" )
 
 			&& Utils.hasFunction( object, "refresh" )
@@ -458,7 +454,7 @@ export class Factory {
 	}
 
 	static decorate<T extends Object>( object:T, documents:Documents, snapshot:Object = {} ):T & Class {
-		if( Factory.is( object ) ) return object;
+		if( Factory.hasClassProperties( object ) ) return object;
 
 		Document.Factory.decorate( object );
 		PersistedResource.Factory.decorate( object, snapshot );

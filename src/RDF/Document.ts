@@ -113,6 +113,21 @@ export class Util {
 
 		return bnodes;
 	}
+
+	static getNodes( rdfDocument:Class ):[ Node.Class[], Node.Class[] ] {
+		const documentNodes:Node.Class[] = [];
+		const fragmentNodes:Node.Class[] = [];
+
+		for( const node of rdfDocument[ "@graph" ] ) {
+			( Util.isNodeFragment( node ) ? fragmentNodes : documentNodes ).push( node );
+		}
+
+		return [ documentNodes, fragmentNodes ];
+	}
+
+	private static isNodeFragment( node:Node.Class ):boolean {
+		return URI.Util.hasFragment( node[ "@id" ] ) || URI.Util.isBNodeID( node[ "@id" ] );
+	}
 }
 
 export class Parser implements HTTP.Parser.Class<Class[]> {

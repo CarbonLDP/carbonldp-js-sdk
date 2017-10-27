@@ -2,11 +2,11 @@ import { isPrefixed } from "sparqler/iri";
 import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
-import { DigestedObjectSchema, DigestedPropertyDefinition, Util as SchemaUtils } from "../../ObjectSchema";
+import { DigestedObjectSchema, DigestedPropertyDefinition, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryVariable from "./QueryVariable";
 
-export class Class {
+export class Class implements Resolver {
 	protected _context:Context.Class;
 	get context():Context.Class { return this._context; }
 
@@ -113,6 +113,19 @@ export class Class {
 			if( propertyURI && digestedProperty.uri.stringValue !== propertyURI ) continue;
 			return digestedProperty;
 		}
+	}
+
+	getGeneralSchema():DigestedObjectSchema {
+		return this.context.documents.getGeneralSchema();
+	}
+
+	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
+		if( path === void 0 ) return this.context.documents.getSchemaFor( object );
+
+		const root:string = this._propertiesMap.keys().next().value;
+		path = root + path;
+
+		return this._propertiesMap.get( path ).getSchema();
 	}
 
 	private _getTypeSchemas():DigestedObjectSchema[] {

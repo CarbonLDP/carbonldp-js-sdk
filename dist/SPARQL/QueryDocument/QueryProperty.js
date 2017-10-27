@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var ObjectSchema_1 = require("../../ObjectSchema");
 var Class = (function () {
     function Class(context, name, pattern) {
         this.name = name;
         this.variable = context.getVariable(name);
+        this._context = context;
         this._patterns = [];
         if (pattern)
             this._patterns.push(pattern);
@@ -32,6 +34,14 @@ var Class = (function () {
     };
     Class.prototype.getPatterns = function () {
         return this._patterns;
+    };
+    Class.prototype.addSchema = function (schema) {
+        this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this.getSchema(), schema]);
+    };
+    Class.prototype.getSchema = function () {
+        if (!this._schema)
+            this._schema = this._context.getGeneralSchema();
+        return this._schema;
     };
     Class.prototype.toString = function () {
         return "" + this.variable;

@@ -258,7 +258,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@id": "http://example.com/.system/roles/a-role/",
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/",
-						"@type": [ "http://example.com/ns#Role" ],
+						"@type": [
+							"${ NS.C.Class.Document }",
+							"http://example.com/ns#Role"
+						 ],
 						"${ NS.C.Predicate.accessPoint }": [ {
 							"@id": "https://dev.carbonldp.com/.system/roles/a-role/users/"
 						} ],
@@ -274,7 +277,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"ETag": `"1234567890"`,
 				},
 			} );
-			context.documents.documentDecorators.set( "http://example.com/ns#Role", { decorator: PersistedRole.Factory.decorate, parameters: [ roles ] } );
+			context.documents.documentDecorators.set( "http://example.com/ns#Role", PersistedRole.Factory.decorate );
 
 			let spies:any = {
 				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
@@ -367,7 +370,12 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				}, {
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/users/",
-						"@type": [ "http://www.w3.org/ns/ldp#RDFSource", "http://www.w3.org/ns/ldp#DirectContainer", "http://www.w3.org/ns/ldp#Container" ],
+						"@type": [
+							"${ NS.C.Class.Document }",
+							 "http://www.w3.org/ns/ldp#RDFSource",
+							 "http://www.w3.org/ns/ldp#DirectContainer",
+							 "http://www.w3.org/ns/ldp#Container"
+					    ],
 						"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
 							"@id": "${ NS.CS.Predicate.user }"
 						} ],
@@ -510,6 +518,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 								{
 									"@id": "http://example.com/.system/roles/a-role/users/",
 									"@type": [
+										"${ NS.C.Class.Document }",
 										"http://www.w3.org/ns/ldp#RDFSource",
 										"http://www.w3.org/ns/ldp#DirectContainer",
 										"http://www.w3.org/ns/ldp#Container"
@@ -532,6 +541,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/users/an-user/",
+									"@type": [ "${ NS.C.Class.Document }" ],
 									"http://www.w3.org/2001/vcard-rdf/3.0#email": [
 										{
 											"@value": "an-user@example.com"

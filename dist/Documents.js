@@ -39,17 +39,17 @@ var Class = (function () {
             this._jsonldConverter = new JSONLD.Converter.Class();
         }
         var decorators = new Map();
-        if (!!this.context && !!this.context.parentContext) {
+        if (this.context && this.context.parentContext) {
             var parentDecorators = this.context.parentContext.documents.documentDecorators;
             if (parentDecorators)
                 decorators = this._documentDecorators = Utils.M.extend(decorators, parentDecorators);
         }
         else {
-            decorators.set(ProtectedDocument.RDF_CLASS, { decorator: PersistedProtectedDocument.Factory.decorate });
-            decorators.set(Auth.ACL.RDF_CLASS, { decorator: Auth.PersistedACL.Factory.decorate });
-            decorators.set(Auth.User.RDF_CLASS, { decorator: Auth.PersistedUser.Factory.decorate, parameters: [this] });
-            decorators.set(Auth.Role.RDF_CLASS, { decorator: Auth.PersistedRole.Factory.decorate, parameters: [this] });
-            decorators.set(Auth.Credentials.RDF_CLASS, { decorator: Auth.PersistedCredentials.Factory.decorate, parameters: [this] });
+            decorators.set(ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate);
+            decorators.set(Auth.ACL.RDF_CLASS, Auth.PersistedACL.Factory.decorate);
+            decorators.set(Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate);
+            decorators.set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
+            decorators.set(Auth.Credentials.RDF_CLASS, Auth.PersistedCredentials.Factory.decorate);
         }
         this._documentDecorators = decorators;
     }
@@ -164,20 +164,20 @@ var Class = (function () {
             else {
                 if (!_this.context)
                     throw new Errors.IllegalStateError("A documents with context is needed for this feature.");
-                var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
-                var documentProperty = queryContext
+                var queryContext_1 = new QueryDocument_1.QueryContext.Class(_this.context);
+                var documentProperty = queryContext_1
                     .addProperty("document", new tokens_1.ValuesToken()
-                    .addValues(queryContext.getVariable("document"), queryContext.compactIRI(uri)));
-                var queryDocumentBuilder_1 = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext, documentProperty);
-                if (documentQuery.call(void 0, queryDocumentBuilder_1) !== queryDocumentBuilder_1)
+                    .addValues(queryContext_1.getVariable("document"), queryContext_1.compactIRI(uri)));
+                var queryDocumentBuilder = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext_1, documentProperty);
+                if (documentQuery.call(void 0, queryDocumentBuilder) !== queryDocumentBuilder)
                     throw new Errors.IllegalArgumentError("The provided query builder was not returned");
                 var constructPatterns = documentProperty.getPatterns();
-                var construct_1 = (_a = new tokens_1.ConstructToken()).addPatterns.apply(_a, constructPatterns);
+                var construct_1 = (_a = new tokens_1.ConstructToken()).addPattern.apply(_a, constructPatterns);
                 (function triplesAdder(patterns) {
                     patterns
                         .filter(function (pattern) { return pattern.token === "optional"; })
                         .forEach(function (optional) {
-                        construct_1.addTriples(optional.patterns[0]);
+                        construct_1.addTriple(optional.patterns[0]);
                         triplesAdder(optional.patterns);
                     });
                 })(constructPatterns);
@@ -189,7 +189,10 @@ var Class = (function () {
                     return new RDF.Document.Parser().parse(jsonldString).then(function (rdfDocuments) {
                         if (!rdfDocuments.length)
                             throw new HTTP.Errors.BadResponseError("No document was returned", response);
-                        var document = _this._getPersistedDocument(rdfDocuments[0], response, queryDocumentBuilder_1.getSchema());
+                        var mainRDFDocument = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === uri; });
+                        var document = new JSONLD.Compacter
+                            .Class(_this, queryContext_1)
+                            .compactDocuments(rdfDocuments, mainRDFDocument)[0];
                         return [document, response];
                     });
                 });
@@ -807,21 +810,13 @@ var Class = (function () {
     Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
-    Class.prototype._getPersistedDocument = function (rdfDocument, response, schema) {
-        var documentResource = this.getDocumentResource(rdfDocument, response);
-        var fragmentResources = RDF.Document.Util.getBNodeResources(rdfDocument);
-        fragmentResources = fragmentResources.concat(RDF.Document.Util.getFragmentResources(rdfDocument));
-        var uri = documentResource["@id"];
-        var documentPointer = this.getPointer(uri);
-        var persistedDocument;
-        if (PersistedDocument.Factory.is(documentPointer)) {
-            persistedDocument = this.updatePersistedDocument(documentPointer, documentResource, fragmentResources, schema);
-        }
-        else {
-            persistedDocument = this.createPersistedDocument(documentPointer, documentResource, fragmentResources, schema);
-        }
-        persistedDocument._resolved = true;
-        return persistedDocument;
+    Class.prototype._getPersistedDocument = function (rdfDocument, response) {
+        var documentResources = RDF.Document.Util.getNodes(rdfDocument)[0];
+        if (documentResources.length === 0)
+            throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
+        if (documentResources.length > 1)
+            throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
+        return new JSONLD.Compacter.Class(this).compactDocument(rdfDocument);
     };
     Class.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources.Factory.create(this);
@@ -1031,39 +1026,6 @@ var Class = (function () {
         }
         return membershipResource;
     };
-    Class.prototype.createPersistedDocument = function (documentPointer, documentResource, fragmentResources, schema) {
-        var persistedDocument = PersistedDocument.Factory.decorate(documentPointer, this);
-        var fragments = [];
-        for (var _i = 0, fragmentResources_1 = fragmentResources; _i < fragmentResources_1.length; _i++) {
-            var fragmentResource = fragmentResources_1[_i];
-            fragments.push(persistedDocument.createFragment(fragmentResource["@id"]));
-        }
-        this.compact(documentResource, persistedDocument, persistedDocument, schema);
-        this.compact(fragmentResources, fragments, persistedDocument);
-        persistedDocument._syncSnapshot();
-        fragments.forEach(function (fragment) { return fragment._syncSnapshot(); });
-        persistedDocument._syncSavedFragments();
-        this.decoratePersistedDocument(persistedDocument);
-        return persistedDocument;
-    };
-    Class.prototype.updatePersistedDocument = function (persistedDocument, documentResource, fragmentsNode, schema) {
-        for (var _i = 0, fragmentsNode_1 = fragmentsNode; _i < fragmentsNode_1.length; _i++) {
-            var fragmentNode = fragmentsNode_1[_i];
-            var targetObject = {};
-            var currentFragment = persistedDocument.getFragment(fragmentNode["@id"]) ||
-                persistedDocument.createFragment(targetObject, fragmentNode["@id"]);
-            var tempFragmentData = this.compactSingle(fragmentNode, targetObject, persistedDocument);
-            if (currentFragment)
-                Utils.O.shallowUpdate(currentFragment, tempFragmentData);
-            currentFragment._syncSnapshot();
-        }
-        persistedDocument._syncSavedFragments();
-        var tempDocumentData = this.compact(documentResource, {}, persistedDocument, schema);
-        Utils.O.shallowUpdate(persistedDocument, tempDocumentData);
-        persistedDocument._syncSnapshot();
-        this.decoratePersistedDocument(persistedDocument);
-        return persistedDocument;
-    };
     Class.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
         var _this = this;
         var freeResources = this._getFreeResources(freeNodes);
@@ -1078,14 +1040,6 @@ var Class = (function () {
             var document = documentMetadata.relatedDocument;
             document._etag = documentMetadata.eTag;
             return document;
-        });
-    };
-    Class.prototype.decoratePersistedDocument = function (persistedDocument) {
-        this._documentDecorators.forEach(function (options, type) {
-            if (!persistedDocument.hasType(type))
-                return;
-            (_a = options.decorator).call.apply(_a, [null, persistedDocument].concat(options.parameters));
-            var _a;
         });
     };
     Class.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {

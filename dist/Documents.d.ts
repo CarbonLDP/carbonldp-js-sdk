@@ -15,16 +15,12 @@ import * as RDF from "./RDF";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument";
-export interface DocumentDecorator {
-    decorator: (object: Object, ...parameters: any[]) => Object;
-    parameters?: any[];
-}
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
-    readonly documentDecorators: Map<string, DocumentDecorator>;
+    readonly documentDecorators: Map<string, (object: object, documents?: Class) => object>;
     private context;
     private pointers;
     private documentsBeingResolved;
@@ -35,8 +31,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     getPointer(id: string): Pointer.Class;
     removePointer(idOrPointer: string | Pointer.Class): boolean;
     get<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    get<T>(uri: string, requestOptions?: HTTP.Request.Options, documentQuery?: (queryDocumentBuilder: QueryDocumentBuilder.Class) => any): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    get<T>(uri: string, documentQuery?: (queryDocumentBuilder: QueryDocumentBuilder.Class) => any): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    get<T>(uri: string, requestOptions?: HTTP.Request.Options, documentQuery?: (queryDocumentBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    get<T>(uri: string, documentQuery?: (queryDocumentBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChild<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
@@ -93,7 +89,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     onDocumentDeleted(uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
     onMemberAdded(uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
     onMemberRemoved(uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
-    _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class, schema?: ObjectSchema.DigestedObjectSchema): T & PersistedDocument.Class;
+    _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     _parseErrorResponse<T>(response: HTTP.Response.Class): any;
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
@@ -111,10 +107,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
     private getMembershipResource(documentResource, rdfDocuments, response);
-    private createPersistedDocument<T>(documentPointer, documentResource, fragmentResources, schema?);
-    private updatePersistedDocument<T>(persistedDocument, documentResource, fragmentsNode, schema?);
     private getPersistedMetadataResources<T>(freeNodes, rdfDocuments, response);
-    private decoratePersistedDocument(persistedDocument);
     private updateFromPreferenceApplied<T>(persistedDocument, rdfDocuments, response);
     private _parseMembers(pointers);
     private applyResponseData<T>(persistedProtectedDocument, response);

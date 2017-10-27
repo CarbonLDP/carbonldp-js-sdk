@@ -54,11 +54,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 			it( "should initialize the schema with the general schema", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder[ "_schema" ] ).not.toBe( context.getObjectSchema() );
+				expect( baseProperty.getSchema() ).not.toBe( context.getObjectSchema() );
 
 				const schema:DigestedObjectSchema = context.getObjectSchema();
 				schema.vocab = "http://example.com/vocab#";
-				expect( builder[ "_schema" ] ).toEqual( schema );
+				expect( baseProperty.getSchema() ).toEqual( schema );
 			} );
 
 			it( "should set the document property", ():void => {
@@ -238,21 +238,21 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 				builder.withType( "Type-1" );
 				const schema1:DigestedObjectSchema = context.getObjectSchema( "Type-1" );
-				expect( builder[ "_schema" ].properties ).not.toBe( schema1.properties );
-				expect( builder[ "_schema" ].properties.has( "property-1" ) ).toBe( true );
-				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
+				expect( baseProperty.getSchema().properties ).not.toBe( schema1.properties );
+				expect( baseProperty.getSchema().properties.has( "property-1" ) ).toBe( true );
+				expect( baseProperty.getSchema().properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
 					uri: new URI.Class( "http://example.com/vocab#property-1" ),
 				} ) );
 
 				builder.withType( "Type-2" );
 				const schema2:DigestedObjectSchema = context.getObjectSchema( "Type-1" );
-				expect( builder[ "_schema" ].properties ).not.toBe( schema2.properties );
-				expect( builder[ "_schema" ].properties.has( "property-1" ) ).toBe( true );
-				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
+				expect( baseProperty.getSchema().properties ).not.toBe( schema2.properties );
+				expect( baseProperty.getSchema().properties.has( "property-1" ) ).toBe( true );
+				expect( baseProperty.getSchema().properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
 					uri: new URI.Class( "http://example.com/vocab#property-2.1" ),
 				} ) );
-				expect( builder[ "_schema" ].properties.has( "property-2" ) ).toBe( true );
-				expect( builder[ "_schema" ].properties.get( "property-2" ) ).toEqual( jasmine.objectContaining( {
+				expect( baseProperty.getSchema().properties.has( "property-2" ) ).toBe( true );
+				expect( baseProperty.getSchema().properties.get( "property-2" ) ).toEqual( jasmine.objectContaining( {
 					uri: new URI.Class( "http://example.com/vocab#property-2" ),
 				} ) );
 			} );
@@ -345,21 +345,21 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					"inlineProperty": "ex:inlineProperty",
 				} );
 
-				expect( builder[ "_schema" ].properties ).toEqual( jasmine.objectContaining( new Map( [ [
+				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"defaultProperty",
 					jasmine.objectContaining( {
 						uri: new URI.Class( "http://example.com/vocab#defaultProperty" ),
 					} ) as any,
 				] ] ) ) );
 
-				expect( builder[ "_schema" ].properties ).toEqual( jasmine.objectContaining( new Map( [ [
+				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"inheritProperty",
 					jasmine.objectContaining( {
 						uri: new URI.Class( "http://example.com/ns#inheritProperty" ),
 					} ) as any,
 				] ] ) ) );
 
-				expect( builder[ "_schema" ].properties ).toEqual( jasmine.objectContaining( new Map( [ [
+				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"extendedProperty",
 					jasmine.objectContaining( {
 						uri: new URI.Class( "http://example.com/ns#extendedProperty" ),
@@ -368,7 +368,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					} ) as any,
 				] ] ) ) );
 
-				expect( builder[ "_schema" ].properties ).toEqual( jasmine.objectContaining( new Map( [ [
+				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"inlineProperty",
 					jasmine.objectContaining( {
 						uri: new URI.Class( "http://example.com/ns#inlineProperty" ),

@@ -104,6 +104,16 @@ var Class = (function () {
             return digestedProperty;
         }
     };
+    Class.prototype.getGeneralSchema = function () {
+        return this.context.documents.getGeneralSchema();
+    };
+    Class.prototype.getSchemaFor = function (object, path) {
+        if (path === void 0)
+            return this.context.documents.getSchemaFor(object);
+        var root = this._propertiesMap.keys().next().value;
+        path = root + path;
+        return this._propertiesMap.get(path).getSchema();
+    };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;
         if (this._schemas)

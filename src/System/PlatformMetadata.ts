@@ -1,7 +1,7 @@
 import * as VolatileResource from "./../LDP/VolatileResource";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-
+import * as PersistedDocument from "./../PersistedDocument";
 
 export const RDF_CLASS:string = NS.C.Class.Platform;
 
@@ -16,7 +16,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends VolatileResource.Class  {
+export interface Class extends VolatileResource.Class, PersistedDocument.Class {
 	version:string;
 	buildDate:Date;
 }

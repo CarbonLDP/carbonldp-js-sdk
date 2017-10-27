@@ -1,4 +1,3 @@
-import * as Context from "./../Context";
 import * as Documents from "./../Documents";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
@@ -65,16 +64,12 @@ export class Factory {
 
 		PersistedProtectedDocument.Factory.decorate( persistedRole, documents );
 
-		// TODO: Fix
-		const context:Context.Class = (documents as any as { context:Context.Class }).context;
-		const roles:Roles.Class = context ? context.auth.roles : null;
-
 		Object.defineProperties( persistedRole, {
 			"_roles": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: roles,
+				value: documents[ "context" ] ? documents[ "context" ].auth.roles : null,
 			},
 			"createChild": {
 				writable: true,
