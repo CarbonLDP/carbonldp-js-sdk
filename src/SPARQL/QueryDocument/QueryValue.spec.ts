@@ -1,4 +1,5 @@
 import { IRIToken, LiteralToken } from "sparqler/tokens";
+
 import AbstractContext from "../../AbstractContext";
 import * as XSD from "../../NS/XSD";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
@@ -37,23 +38,23 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 		describe( constructor(), ():void => {
 
 			it( "should exists", ():void => {
-				const queryObject:QueryValue = new QueryValue( queryContext, "value" );
-				expect( queryObject ).toEqual( jasmine.any( QueryValue ) );
+				const queryValue:QueryValue = new QueryValue( queryContext, "value" );
+				expect( queryValue ).toEqual( jasmine.any( QueryValue ) );
 			} );
 
 			it( "should create a literal token when string", ():void => {
-				const queryObject:QueryValue = new QueryValue( queryContext, "value" );
-				expect( queryObject[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
+				const queryValue:QueryValue = new QueryValue( queryContext, "value" );
+				expect( queryValue[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
 			} );
 
 			it( "should create a literal token when number", ():void => {
-				const queryObject:QueryValue = new QueryValue( queryContext, 1 );
-				expect( queryObject[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
+				const queryValue:QueryValue = new QueryValue( queryContext, 1 );
+				expect( queryValue[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
 			} );
 
 			it( "should create a literal token when boolean", ():void => {
-				const queryObject:QueryValue = new QueryValue( queryContext, true );
-				expect( queryObject[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
+				const queryValue:QueryValue = new QueryValue( queryContext, true );
+				expect( queryValue[ "_literal" ] ).toEqual( jasmine.any( LiteralToken ) );
 			} );
 
 			it( "should create a literal token using withType when Date", ():void => {
@@ -102,11 +103,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 				const helper:( value:any, type:string ) => void = ( value, type ) => {
 					serializeSpy.calls.reset();
 
-					const queryObject:QueryValue = new QueryValue( queryContext, value );
-					const valueSpy:jasmine.Spy = spyOn( queryObject[ "_literal" ], "setValue" ).and.callThrough();
-					const typeSpy:jasmine.Spy = spyOn( queryObject[ "_literal" ], "setType" ).and.callThrough();
+					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					const valueSpy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setValue" ).and.callThrough();
+					const typeSpy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setType" ).and.callThrough();
 
-					queryObject.withType( type );
+					queryValue.withType( type );
 
 					expect( valueSpy ).toHaveBeenCalled();
 					expect( typeSpy ).toHaveBeenCalled();
@@ -154,6 +155,27 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 		} );
 
+		describe( method( INSTANCE, "getToken" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryValue.prototype.getToken ).toBeDefined();
+				expect( QueryValue.prototype.getToken ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the token created", ():void => {
+				const helper:( value:string | number | boolean | Date ) => void = value => {
+					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					expect( queryValue.getToken() ).toBe( queryValue[ "_literal" ] );
+				};
+
+				helper( "a-value" );
+				helper( 10.01 );
+				helper( true );
+				helper( new Date() );
+			} );
+
+		} );
+
 		describe( method( INSTANCE, "toString" ), ():void => {
 
 			it( "should override the default toString", ():void => {
@@ -162,11 +184,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 			it( "should return the string of the literal", ():void => {
 				const helper:( value:any, type?:string, lang?:string ) => void = ( value, type, lang ) => {
-					const queryObject:QueryValue = new QueryValue( queryContext, value );
-					if( type ) queryObject.withType( type );
-					if( lang ) queryObject.withLanguage( lang );
+					const queryValue:QueryValue = new QueryValue( queryContext, value );
+					if( type ) queryValue.withType( type );
+					if( lang ) queryValue.withLanguage( lang );
 
-					expect( queryObject.toString() ).toBe( queryObject[ "_literal" ].toString() );
+					expect( queryValue.toString() ).toBe( queryValue[ "_literal" ].toString() );
 				};
 
 				helper( "value" );

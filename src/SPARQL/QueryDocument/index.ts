@@ -1,16 +1,21 @@
-import { TokenNode } from "sparqler/tokens";
 import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryObject from "./QueryObject";
+import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
+import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
+import * as QueryVariable from "./QueryVariable";
 
 export {
 	QueryContext,
 	QueryDocumentBuilder,
 	QueryObject,
+	QueryPropertiesSchema,
 	QueryProperty,
+	QueryPropertySchema,
 	QueryValue,
+	QueryVariable,
 };
 
 interface QueryMembersBuilder extends QueryDocumentBuilder.Class {
@@ -21,10 +26,4 @@ interface QueryMembersBuilder extends QueryDocumentBuilder.Class {
 	limit( limit:number ):this;
 
 	offset( offset:number ):this;
-}
-
-interface QueryPropertyBuilder extends QueryDocumentBuilder.Class {
-	filter( filterExpression:string ):this;
-
-	values( ...values:(QueryValue.Class | QueryObject.Class)[] ):this;
 }

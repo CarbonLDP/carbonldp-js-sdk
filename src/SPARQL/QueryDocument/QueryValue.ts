@@ -41,7 +41,10 @@ export class Class {
 		return this;
 	}
 
-	// "value"^^xsd:type | "value"@lang
+	getToken():LiteralToken {
+		return this._literal;
+	}
+
 	toString():string {
 		return `${ this._literal }`;
 	}

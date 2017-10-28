@@ -31,6 +31,9 @@ var Class = (function () {
         this._literal.setLanguage(language);
         return this;
     };
+    Class.prototype.getToken = function () {
+        return this._literal;
+    };
     Class.prototype.toString = function () {
         return "" + this._literal;
     };

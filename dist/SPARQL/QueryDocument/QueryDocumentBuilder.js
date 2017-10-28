@@ -16,6 +16,7 @@ var Class = (function () {
             .addPredicate(new tokens_1.PredicateToken("a")
             .addObject(queryContext.getVariable(property.name + "___type")))));
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
+        this._values = new tokens_1.ValuesToken();
     }
     Class.prototype.property = function (name) {
         if (name === void 0)
@@ -76,6 +77,32 @@ var Class = (function () {
         }
         return this;
         var _b;
+    };
+    Class.prototype.filter = function (constraint) {
+        var baseName = this._document.name.split(".").pop();
+        this._context
+            .getProperty(baseName)
+            .addPattern(new tokens_1.FilterToken(constraint));
+        return this;
+    };
+    Class.prototype.values = function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
+        var termTokens = values.map(function (value) {
+            var token = value.getToken();
+            if (token.token === "blankNode")
+                throw new Error("Blank node \"" + token.label + "\" is not a valid value.");
+            return token;
+        });
+        if (!this._values.values.length)
+            this._document
+                .addPattern(this._values
+                .addValues(this._document.variable));
+        (_a = this._values.values[0]).push.apply(_a, termTokens);
+        return this;
+        var _a;
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
         var schema = this._document.getSchema();

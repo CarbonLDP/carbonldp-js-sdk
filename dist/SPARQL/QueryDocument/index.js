@@ -6,9 +6,15 @@ var QueryDocumentBuilder = require("./QueryDocumentBuilder");
 exports.QueryDocumentBuilder = QueryDocumentBuilder;
 var QueryObject = require("./QueryObject");
 exports.QueryObject = QueryObject;
+var QueryPropertiesSchema = require("./QueryPropertiesSchema");
+exports.QueryPropertiesSchema = QueryPropertiesSchema;
 var QueryProperty = require("./QueryProperty");
 exports.QueryProperty = QueryProperty;
+var QueryPropertySchema = require("./QueryPropertySchema");
+exports.QueryPropertySchema = QueryPropertySchema;
 var QueryValue = require("./QueryValue");
 exports.QueryValue = QueryValue;
+var QueryVariable = require("./QueryVariable");
+exports.QueryVariable = QueryVariable;
 
 //# sourceMappingURL=index.js.map

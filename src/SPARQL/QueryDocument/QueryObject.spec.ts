@@ -1,6 +1,8 @@
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
+
 import AbstractContext from "../../AbstractContext";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import * as Pointer from "./../../Pointer";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryObject";
 import { Class as QueryObject } from "./QueryObject";
@@ -79,6 +81,30 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 				};
 
 				helper( "_:resource" );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "getToken" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryObject.prototype.getToken ).toBeDefined();
+				expect( QueryObject.prototype.getToken ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the token created", ():void => {
+				const helper:( object:string | Pointer.Class ) => void = object => {
+					const queryObject:QueryObject = new QueryObject( queryContext, object );
+					expect( queryObject.getToken() ).toBe( queryObject[ "_resource" ] );
+				};
+
+				helper( "http://example.com/" );
+				helper( "ex:resource" );
+				helper( "_:blank-node" );
+
+				helper( Pointer.Factory.create( "http://example.com/" ) );
+				helper( Pointer.Factory.create( "ex:resource" ) );
+				helper( Pointer.Factory.create( "_:blank-node" ) );
 			} );
 
 		} );

@@ -1,4 +1,4 @@
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
@@ -19,6 +19,7 @@ export class Class {
 	private _context:QueryContext.Class;
 	private _document:QueryProperty.Class;
 	private _typesTriple:SubjectToken;
+	private _values:ValuesToken;
 
 	constructor( queryContext:QueryContext.Class, property:QueryProperty.Class ) {
 		this._context = queryContext;
@@ -28,6 +29,7 @@ export class Class {
 					.addObject( queryContext.getVariable( property.name + "___type" ) ) ) )
 		);
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
+		this._values = new ValuesToken();
 	}
 
 	property( name?:string ):QueryProperty.Class {
@@ -98,6 +100,32 @@ export class Class {
 
 			this._document.addOptionalPattern( ...property.getPatterns() );
 		}
+
+		return this;
+	}
+
+	filter( constraint:string ):this {
+		const baseName:string = this._document.name.split( "." ).pop();
+		this._context
+			.getProperty( baseName )
+			.addPattern( new FilterToken( constraint ) );
+
+		return this;
+	}
+
+	values( ...values:( QueryValue.Class | QueryObject.Class )[] ):this {
+		const termTokens:( LiteralToken | IRIToken | PrefixedNameToken )[] = values.map( value => {
+			const token:TermToken = value.getToken();
+			if( token.token === "blankNode" ) throw new Error( `Blank node "${ token.label }" is not a valid value.` );
+
+			return token;
+		} );
+
+		if( ! this._values.values.length ) this._document
+			.addPattern( this._values
+				.addValues( this._document.variable ) );
+
+		this._values.values[ 0 ].push( ...termTokens );
 
 		return this;
 	}

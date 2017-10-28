@@ -1,9 +1,9 @@
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, ValuesToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import * as Pointer from "../../Pointer";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module, property } from "../../test/JasmineExtender";
+import * as Pointer from "./../../Pointer";
 import * as URI from "./../../RDF/URI";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryDocumentBuilder";
@@ -13,7 +13,7 @@ import * as QueryProperty from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
 import * as QueryVariable from "./QueryVariable";
 
-fdescribe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
+describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
@@ -40,8 +40,12 @@ fdescribe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void
 				protected _baseURI:string = "http://example.com";
 			};
 			context.setSetting( "vocabulary", "http://example.com/vocab#" );
+			context.extendObjectSchema( {
+				"ex": "http://example.com/ns#",
+			} );
+
 			queryContext = new QueryContext( context );
-			baseProperty = new QueryProperty.Class( queryContext, "document" );
+			baseProperty = queryContext.addProperty( "document" );
 		} );
 
 		describe( constructor(), ():void => {
@@ -53,7 +57,7 @@ fdescribe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void
 			} );
 
 			it( "should initialize the schema with the general schema", ():void => {
-				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				new QueryDocumentBuilder( queryContext, baseProperty );
 				expect( baseProperty.getSchema() ).not.toBe( context.getObjectSchema() );
 
 				const schema:DigestedObjectSchema = context.getObjectSchema();
@@ -472,6 +476,74 @@ fdescribe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void
 								.addObject( new QueryVariable.Class( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "filter" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryDocumentBuilder.prototype.filter ).toBeDefined();
+				expect( QueryDocumentBuilder.prototype.filter ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should add the filter to the base property", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+
+				builder.filter( "?property1 = ?property2" );
+				expect( baseProperty.getPatterns() ).toContain( new FilterToken( "?property1 = ?property2" ) );
+
+				builder.filter( "?property1 = 12345" );
+				expect( baseProperty.getPatterns() ).toContain( new FilterToken( "?property1 = 12345" ) );
+			} );
+		} );
+
+		describe( method( INSTANCE, "values" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryDocumentBuilder.prototype.values ).toBeDefined();
+				expect( QueryDocumentBuilder.prototype.values ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should add values as non optional of the property", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+
+				builder.values(
+					builder.value( "hello" ),
+					builder.value( "world" )
+				);
+				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
+					.addValues(
+						baseProperty.variable,
+						new LiteralToken( "hello" ),
+						new LiteralToken( "world" )
+					)
+				);
+
+				builder.values(
+					builder.object( Pointer.Factory.create( "http://example.com/pointer-1" ) ),
+					builder.object( Pointer.Factory.create( "ex:pointer2" ) )
+				);
+				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
+					.addValues(
+						baseProperty.variable,
+						new LiteralToken( "hello" ),
+						new LiteralToken( "world" ),
+
+						new IRIToken( "http://example.com/pointer-1" ),
+						new PrefixedNameToken( "ex:pointer2" )
+					)
+				);
+			} );
+
+			it( "should throw error if blank node is provided", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const helper:( label:string ) => void = label => () => {
+					builder.values( builder.object( Pointer.Factory.create( label ) ) );
+				};
+
+				expect( helper( "_:blank-node" ) ).toThrowError( `Blank node "_:blank-node" is not a valid value.` );
+				expect( helper( "_:another-one" ) ).toThrowError( `Blank node "_:another-one" is not a valid value.` );
 			} );
 
 		} );

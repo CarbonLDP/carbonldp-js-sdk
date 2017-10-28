@@ -15,6 +15,10 @@ export class Class {
 		this._resource = isBNodeLabel( id ) ? new BlankNodeToken( id ) : this._context.compactIRI( id );
 	}
 
+	getToken():IRIToken | BlankNodeToken | PrefixedNameToken {
+		return this._resource;
+	}
+
 	toString():string {
 		return `${ this._resource }`;
 	}

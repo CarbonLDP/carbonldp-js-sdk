@@ -9,6 +9,9 @@ var Class = (function () {
         var id = Utils_1.isString(object) ? object : object.id;
         this._resource = iri_1.isBNodeLabel(id) ? new tokens_1.BlankNodeToken(id) : this._context.compactIRI(id);
     }
+    Class.prototype.getToken = function () {
+        return this._resource;
+    };
     Class.prototype.toString = function () {
         return "" + this._resource;
     };
