@@ -139,7 +139,7 @@ export class Class {
 
 		if( inheritDefinition ) {
 			for( const key in inheritDefinition ) {
-				if( key !== "uri" && key in digestedDefinition ) continue;
+				if( key !== "uri" && digestedDefinition[ key ] !== null ) continue;
 				digestedDefinition[ key ] = inheritDefinition[ key ];
 			}
 		}

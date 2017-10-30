@@ -1,4 +1,4 @@
-import { IRIToken, PatternToken, PrefixedNameToken } from "sparqler/tokens";
+import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 import * as Context from "../../Context";
 import { DigestedObjectSchema, DigestedPropertyDefinition, Resolver } from "../../ObjectSchema";
 import * as QueryProperty from "./QueryProperty";
@@ -24,6 +24,7 @@ export declare class Class implements Resolver {
     getInheritTypeDefinition(propertyName: string, propertyURI?: string, existingSchema?: DigestedObjectSchema): DigestedPropertyDefinition;
     getGeneralSchema(): DigestedObjectSchema;
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
+    getPrologues(): PrefixToken[];
     private _getTypeSchemas();
 }
 export default Class;

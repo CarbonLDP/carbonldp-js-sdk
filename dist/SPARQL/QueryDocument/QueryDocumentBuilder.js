@@ -111,7 +111,7 @@ var Class = (function () {
         var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(schema, propertyName, propertyDefinition);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {
-                if (key !== "uri" && key in digestedDefinition)
+                if (key !== "uri" && digestedDefinition[key] !== null)
                     continue;
                 digestedDefinition[key] = inheritDefinition[key];
             }

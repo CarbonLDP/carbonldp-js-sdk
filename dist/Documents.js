@@ -173,6 +173,7 @@ var Class = (function () {
                     throw new Errors.IllegalArgumentError("The provided query builder was not returned");
                 var constructPatterns = documentProperty.getPatterns();
                 var construct_1 = (_a = new tokens_1.ConstructToken()).addPattern.apply(_a, constructPatterns);
+                var query = (_b = new tokens_1.QueryToken(construct_1)).addPrologues.apply(_b, queryContext_1.getPrologues());
                 (function triplesAdder(patterns) {
                     patterns
                         .filter(function (pattern) { return pattern.token === "optional"; })
@@ -184,7 +185,7 @@ var Class = (function () {
                 if (!construct_1.triples.length)
                     throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
                 HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
-                return _this.executeRawCONSTRUCTQuery(uri, construct_1.toString(), requestOptions).then(function (_a) {
+                return _this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
                     var jsonldString = _a[0], response = _a[1];
                     return new RDF.Document.Parser().parse(jsonldString).then(function (rdfDocuments) {
                         if (!rdfDocuments.length)
@@ -203,7 +204,7 @@ var Class = (function () {
             });
             _this.documentsBeingResolved.set(pointerID, promise);
             return promise;
-            var _a;
+            var _a, _b;
         });
     };
     Class.prototype.exists = function (documentURI, requestOptions) {

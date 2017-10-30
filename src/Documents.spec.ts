@@ -1035,6 +1035,93 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents = context.documents;
 				} );
 
+				it( "should send a correct construct query", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+					} );
+
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( () => {
+						expect( sendSpy ).toHaveBeenCalledWith(
+							"https://example.com/resource/",
+							"PREFIX schema: <https://schema.org/> " +
+							"CONSTRUCT {" +
+							" ?document a ?document___type." +
+							" ?document <https://example.com/ns#property-1> ?document__property1." +
+							" ?document schema:property\\-2 ?document__property2." +
+							" ?document__property2 a ?document__property2___type." +
+							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+							" ?document__property2 schema:property\\-3 ?document__property2__property3 " +
+							"} WHERE {" +
+
+							" VALUES ?document { <https://example.com/resource/> }." +
+							" OPTIONAL { ?document a ?document___type }." +
+							" ?document a <https://example.com/ns#Resource>." +
+
+							" OPTIONAL {" +
+							"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+							"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+							" }." +
+
+							" OPTIONAL {" +
+							"" + " ?document schema:property\\-2 ?document__property2." +
+							"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+							"" + " OPTIONAL { ?document__property2 a ?document__property2___type }." +
+
+							"" + " OPTIONAL {" +
+							"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+							"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+							"" + " }." +
+
+							"" + " OPTIONAL {" +
+							"" + "" + " ?document__property2 schema:property\\-3 ?document__property2__property3." +
+							"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+							"" + " }" +
+							" } " +
+							"}",
+							jasmine.objectContaining( {
+								headers: new Map( [
+									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+								] ),
+							} )
+						);
+						done();
+					} );
+				} );
+
 				it( "should return a partial document", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,

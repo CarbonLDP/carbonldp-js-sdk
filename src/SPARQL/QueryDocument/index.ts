@@ -1,5 +1,6 @@
 import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
+import * as QueryMembersBuilder from "./QueryMembersBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
@@ -10,6 +11,7 @@ import * as QueryVariable from "./QueryVariable";
 export {
 	QueryContext,
 	QueryDocumentBuilder,
+	QueryMembersBuilder,
 	QueryObject,
 	QueryPropertiesSchema,
 	QueryProperty,
@@ -18,9 +20,7 @@ export {
 	QueryVariable,
 };
 
-interface QueryMembersBuilder extends QueryDocumentBuilder.Class {
-	filter( filterExpression:string ):this;
-
+interface IQueryMembersBuilder extends QueryDocumentBuilder.Class {
 	orderBy( property:QueryProperty.Class ):this;
 
 	limit( limit:number ):this;

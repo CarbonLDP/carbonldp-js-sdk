@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/Clauses";
-import { ConstructToken, OptionalToken, PatternToken, TripleToken, ValuesToken } from "sparqler/tokens";
+import { ConstructToken, OptionalToken, PatternToken, QueryToken, TripleToken, ValuesToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -198,6 +198,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				const construct:ConstructToken = new ConstructToken()
 					.addPattern( ...constructPatterns );
 
+				const query:QueryToken = new QueryToken( construct )
+					.addPrologues( ...queryContext.getPrologues() );
+
 				(function triplesAdder( patterns:PatternToken[] ):void {
 					patterns
 						.filter( pattern => pattern.token === "optional" )
@@ -210,7 +213,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 				HTTP.Request.Util.setContainerRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
 
-				return this.executeRawCONSTRUCTQuery( uri, construct.toString(), requestOptions ).then( ( [ jsonldString, response ]:[ string, HTTP.Response.Class ] ) => {
+				return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, response ]:[ string, HTTP.Response.Class ] ) => {
 					return new RDF.Document.Parser().parse( jsonldString ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( rdfDocuments:RDF.Document.Class[] ) => {
 						if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
 

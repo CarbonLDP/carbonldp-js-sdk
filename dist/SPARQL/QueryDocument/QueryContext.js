@@ -115,6 +115,9 @@ var Class = (function () {
         path = root + path;
         return this._propertiesMap.get(path).getSchema();
     };
+    Class.prototype.getPrologues = function () {
+        return Array.from(this._prefixesMap.values());
+    };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;
         if (this._schemas)

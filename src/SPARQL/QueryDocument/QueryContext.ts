@@ -1,5 +1,5 @@
 import { isPrefixed } from "sparqler/iri";
-import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import { BaseToken, IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
 import { DigestedObjectSchema, DigestedPropertyDefinition, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
@@ -129,6 +129,10 @@ export class Class implements Resolver {
 		path = root + path;
 
 		return this._propertiesMap.get( path ).getSchema();
+	}
+
+	getPrologues():PrefixToken[] {
+		return Array.from( this._prefixesMap.values() );
 	}
 
 	private _getTypeSchemas():DigestedObjectSchema[] {
