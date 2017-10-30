@@ -16,8 +16,9 @@ const inherit:Readonly<{}> = Object.freeze( {} );
 export class Class {
 	inherit:Readonly<{}> = inherit;
 
-	private _context:QueryContext.Class;
-	private _document:QueryProperty.Class;
+	protected _context:QueryContext.Class;
+	protected _document:QueryProperty.Class;
+
 	private _typesTriple:SubjectToken;
 	private _values:ValuesToken;
 

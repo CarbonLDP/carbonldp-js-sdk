@@ -14,7 +14,7 @@ import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
-import { QueryDocumentBuilder } from "./SPARQL/QueryDocument";
+import { QueryDocumentBuilder, QueryMembersBuilder } from "./SPARQL/QueryDocument";
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private static _documentSchema;
     private _jsonldConverter;
@@ -56,7 +56,9 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     getMembers<T>(uri: string, includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getMembers<T>(uri: string, includeNonReadable?: boolean, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getMembers<T>(uri: string, retrievalPreferences?: RetrievalPreferences.Class, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
+    getMembers<T>(uri: string, requestOptions?: HTTP.Request.Options, membersQuery?: (queryMembersBuilder: QueryMembersBuilder.Class) => QueryMembersBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getMembers<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
+    getMembers<T>(uri: string, membersQuery?: (queryMembersBuilder: QueryMembersBuilder.Class) => QueryMembersBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
@@ -92,6 +94,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     _parseErrorResponse<T>(response: HTTP.Response.Class): any;
+    private getLDPMembers<T>(uri, includeNonReadable, retrievalPreferences?, requestOptions?);
+    private getQueryMembers<T>(uri, requestOptions, membersQuery);
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);

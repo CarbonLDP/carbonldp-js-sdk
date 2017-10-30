@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/Clauses";
-import { ConstructToken, OptionalToken, PatternToken, QueryToken, TripleToken, ValuesToken } from "sparqler/tokens";
+import { ConstructToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -27,7 +27,7 @@ import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
-import { QueryContext, QueryDocumentBuilder, QueryProperty } from "./SPARQL/QueryDocument";
+import { QueryContext, QueryDocumentBuilder, QueryMembersBuilder, QueryProperty } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
 
@@ -523,60 +523,20 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	getMembers<T>( uri:string, includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getMembers<T>( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getMembers<T>( uri:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( uri:string, requestOptions?:HTTP.Request.Options, membersQuery?:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getMembers<T>( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, nonReadRetPrefReqOpt?:any, retPrefReqOpt?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		let includeNonReadable:boolean = Utils.isBoolean( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : true;
-		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null );
-		requestOptions = HTTP.Request.Util.isOptions( nonReadRetPrefReqOpt ) ? nonReadRetPrefReqOpt : ( HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( requestOptions ) ? requestOptions : {} ) );
+	getMembers<T>( uri:string, membersQuery?:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( uri:string, nonReadOrRetPrefOrReqOptOrQuery?:any, retPrefOrReqOptOrQuery?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		let includeNonReadable:boolean = Utils.isBoolean( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : true;
+		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : ( RetrievalPreferences.Factory.is( retPrefOrReqOptOrQuery ) ? retPrefOrReqOptOrQuery : {} );
+		requestOptions = HTTP.Request.Util.isOptions( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : ( HTTP.Request.Util.isOptions( retPrefOrReqOptOrQuery ) ? retPrefOrReqOptOrQuery : ( HTTP.Request.Util.isOptions( requestOptions ) ? requestOptions : {} ) );
+		const membersQuery:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class = Utils.isFunction( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : Utils.isFunction( retPrefOrReqOptOrQuery ) ? retPrefOrReqOptOrQuery : null;
 
-		let containerURI:string;
-		return promiseMethod( () => {
-			uri = this.getRequestURI( uri );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
-
-			containerURI = uri;
-			if( ! ! retrievalPreferences ) uri += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
-
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
-				include: [
-					NS.LDP.Class.PreferMinimalContainer,
-					NS.LDP.Class.PreferMembership,
-					NS.C.Class.PreferMembershipResources,
-				],
-				omit: [
-					NS.LDP.Class.PreferContainment,
-					NS.C.Class.PreferContainmentResources,
-				],
-			};
-
-			if( includeNonReadable ) {
-				containerRetrievalPreferences.include.push( NS.C.Class.NonReadableMembershipResourceTriples );
-			} else {
-				containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
-			}
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
-
-			return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new JSONLD.Parser.Class() );
-		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
-			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
-
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( containerURI, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-
-			let containerResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-			let membershipResource:RDF.Node.Class = this.getMembershipResource( containerResource, rdfDocuments, response );
-			if( membershipResource === null ) return [ [], response ];
-
-			rdfDocuments = (<any[]> rdfDocuments).filter( ( targetRDFDocument:RDF.Node.Class ) => {
-				return ! RDF.Node.Util.areEqual( targetRDFDocument, containerResource )
-					&& ! RDF.Node.Util.areEqual( targetRDFDocument, membershipResource )
-					;
-			} );
-
-			let resources:( T & PersistedDocument.Class)[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
-			return [ resources, response ];
-		} );
+		if( ! membersQuery ) {
+			return this.getLDPMembers<T>( uri, includeNonReadable, retrievalPreferences, requestOptions );
+		} else {
+			return this.getQueryMembers<T>( uri, requestOptions, membersQuery );
+		}
 	}
 
 	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
@@ -947,6 +907,126 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			return Promise.reject( error );
 		}, () => {
 			return Promise.reject( error );
+		} );
+	}
+
+	private getLDPMembers<T>( uri:string, includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		return promiseMethod( () => {
+			uri = this.getRequestURI( uri );
+			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+
+			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+				include: [
+					NS.LDP.Class.PreferMinimalContainer,
+					NS.LDP.Class.PreferMembership,
+					NS.C.Class.PreferMembershipResources,
+				],
+				omit: [
+					NS.LDP.Class.PreferContainment,
+					NS.C.Class.PreferContainmentResources,
+				],
+			};
+
+			if( includeNonReadable ) {
+				containerRetrievalPreferences.include.push( NS.C.Class.NonReadableMembershipResourceTriples );
+			} else {
+				containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
+			}
+			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
+
+			const retrievalURI:string = uri + RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
+			return this.sendRequest( HTTP.Method.GET, retrievalURI, requestOptions, null, new JSONLD.Parser.Class() );
+
+		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+			let containerResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
+			let membershipResource:RDF.Node.Class = this.getMembershipResource( containerResource, rdfDocuments, response );
+			if( membershipResource === null ) return [ [], response ];
+
+			rdfDocuments = (<any[]> rdfDocuments).filter( ( targetRDFDocument:RDF.Node.Class ) => {
+				return ! RDF.Node.Util.areEqual( targetRDFDocument, containerResource )
+					&& ! RDF.Node.Util.areEqual( targetRDFDocument, membershipResource )
+					;
+			} );
+
+			let resources:( T & PersistedDocument.Class)[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
+			return [ resources, response ];
+		} );
+	}
+
+	private getQueryMembers<T>( uri:string, requestOptions:HTTP.Request.Options, membersQuery:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		if( ! this.context ) return Promise.reject( new Errors.IllegalStateError( "A documents with context is needed for this feature." ) );
+
+		let response:HTTP.Response.Class;
+		const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+
+		return promiseMethod( () => {
+			uri = this.getRequestURI( uri );
+
+			const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
+
+			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
+			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
+			const selectMembers:SelectToken = new SelectToken()
+				.addVariable( membersProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
+						.addObject( membershipResource )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
+						.addObject( hasMemberRelation )
+					)
+				)
+				.addPattern( new SubjectToken( membershipResource )
+					.addPredicate( new PredicateToken( hasMemberRelation )
+						.addObject( membersProperty.variable )
+					)
+				)
+			;
+			membersProperty.addPattern( selectMembers );
+
+			const queryMembersBuilder:QueryMembersBuilder.Class = new QueryMembersBuilder.Class( queryContext, membersProperty );
+			if( membersQuery.call( void 0, queryMembersBuilder ) !== queryMembersBuilder )
+				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
+
+			const constructPatterns:PatternToken[] = membersProperty.getPatterns();
+			const construct:ConstructToken = new ConstructToken()
+				.addPattern( ...constructPatterns );
+
+			const query:QueryToken = new QueryToken( construct )
+				.addPrologues( ...queryContext.getPrologues() );
+
+			(function triplesAdder( patterns:PatternToken[] ):void {
+				patterns
+					.filter( pattern => pattern.token === "optional" )
+					.forEach( ( optional:OptionalToken ) => {
+						construct.addTriple( optional.patterns[ 0 ] as TripleToken );
+						triplesAdder( optional.patterns );
+					} );
+			})( constructPatterns );
+			if( ! construct.triples.length ) throw new Errors.IllegalArgumentError( "No data specified to be retrieved." );
+
+			HTTP.Request.Util.setContainerRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
+
+			return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions );
+
+		} ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
+			response = _response;
+			return new RDF.Document.Parser().parse( jsonldString );
+
+		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfDocuments:RDF.Document.Class[] ) => {
+			if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
+
+			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
+				.Class( this, queryContext )
+				.compactDocuments( rdfDocuments );
+
+			return [ documents, response ];
 		} );
 	}
 

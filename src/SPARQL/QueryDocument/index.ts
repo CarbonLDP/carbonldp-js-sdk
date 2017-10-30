@@ -19,11 +19,3 @@ export {
 	QueryValue,
 	QueryVariable,
 };
-
-interface IQueryMembersBuilder extends QueryDocumentBuilder.Class {
-	orderBy( property:QueryProperty.Class ):this;
-
-	limit( limit:number ):this;
-
-	offset( offset:number ):this;
-}

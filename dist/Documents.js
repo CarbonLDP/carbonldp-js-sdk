@@ -460,55 +460,17 @@ var Class = (function () {
             return [persistedMemberPointers, response];
         });
     };
-    Class.prototype.getMembers = function (uri, nonReadRetPrefReqOpt, retPrefReqOpt, requestOptions) {
-        var _this = this;
-        var includeNonReadable = Utils.isBoolean(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : true;
-        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null);
-        requestOptions = HTTP.Request.Util.isOptions(nonReadRetPrefReqOpt) ? nonReadRetPrefReqOpt : (HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
-        var containerURI;
-        return Utils_2.promiseMethod(function () {
-            uri = _this.getRequestURI(uri);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            containerURI = uri;
-            if (!!retrievalPreferences)
-                uri += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, _this.getGeneralSchema());
-            var containerRetrievalPreferences = {
-                include: [
-                    NS.LDP.Class.PreferMinimalContainer,
-                    NS.LDP.Class.PreferMembership,
-                    NS.C.Class.PreferMembershipResources,
-                ],
-                omit: [
-                    NS.LDP.Class.PreferContainment,
-                    NS.C.Class.PreferContainmentResources,
-                ],
-            };
-            if (includeNonReadable) {
-                containerRetrievalPreferences.include.push(NS.C.Class.NonReadableMembershipResourceTriples);
-            }
-            else {
-                containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
-            }
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-            return _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new JSONLD.Parser.Class());
-        }).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            var rdfDocument = _this.getRDFDocument(containerURI, rdfDocuments, response);
-            if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var containerResource = _this.getDocumentResource(rdfDocument, response);
-            var membershipResource = _this.getMembershipResource(containerResource, rdfDocuments, response);
-            if (membershipResource === null)
-                return [[], response];
-            rdfDocuments = rdfDocuments.filter(function (targetRDFDocument) {
-                return !RDF.Node.Util.areEqual(targetRDFDocument, containerResource)
-                    && !RDF.Node.Util.areEqual(targetRDFDocument, membershipResource);
-            });
-            var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
-            return [resources, response];
-        });
+    Class.prototype.getMembers = function (uri, nonReadOrRetPrefOrReqOptOrQuery, retPrefOrReqOptOrQuery, requestOptions) {
+        var includeNonReadable = Utils.isBoolean(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : true;
+        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : (RetrievalPreferences.Factory.is(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : {});
+        requestOptions = HTTP.Request.Util.isOptions(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : (HTTP.Request.Util.isOptions(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
+        var membersQuery = Utils.isFunction(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : Utils.isFunction(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : null;
+        if (!membersQuery) {
+            return this.getLDPMembers(uri, includeNonReadable, retrievalPreferences, requestOptions);
+        }
+        else {
+            return this.getQueryMembers(uri, requestOptions, membersQuery);
+        }
     };
     Class.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -846,6 +808,105 @@ var Class = (function () {
             return Promise.reject(error);
         }, function () {
             return Promise.reject(error);
+        });
+    };
+    Class.prototype.getLDPMembers = function (uri, includeNonReadable, retrievalPreferences, requestOptions) {
+        var _this = this;
+        return Utils_2.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            var containerRetrievalPreferences = {
+                include: [
+                    NS.LDP.Class.PreferMinimalContainer,
+                    NS.LDP.Class.PreferMembership,
+                    NS.C.Class.PreferMembershipResources,
+                ],
+                omit: [
+                    NS.LDP.Class.PreferContainment,
+                    NS.C.Class.PreferContainmentResources,
+                ],
+            };
+            if (includeNonReadable) {
+                containerRetrievalPreferences.include.push(NS.C.Class.NonReadableMembershipResourceTriples);
+            }
+            else {
+                containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
+            }
+            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
+            var retrievalURI = uri + RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, _this.getGeneralSchema());
+            return _this.sendRequest(HTTP.Method.GET, retrievalURI, requestOptions, null, new JSONLD.Parser.Class());
+        }).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+            console.log(uri, rdfDocuments);
+            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var containerResource = _this.getDocumentResource(rdfDocument, response);
+            var membershipResource = _this.getMembershipResource(containerResource, rdfDocuments, response);
+            if (membershipResource === null)
+                return [[], response];
+            rdfDocuments = rdfDocuments.filter(function (targetRDFDocument) {
+                return !RDF.Node.Util.areEqual(targetRDFDocument, containerResource)
+                    && !RDF.Node.Util.areEqual(targetRDFDocument, membershipResource);
+            });
+            var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
+            return [resources, response];
+        });
+    };
+    Class.prototype.getQueryMembers = function (uri, requestOptions, membersQuery) {
+        var _this = this;
+        if (!this.context)
+            return Promise.reject(new Errors.IllegalStateError("A documents with context is needed for this feature."));
+        var response;
+        var queryContext = new QueryDocument_1.QueryContext.Class(this.context);
+        return Utils_2.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            var membersProperty = queryContext.addProperty("member");
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var selectMembers = new tokens_1.SelectToken()
+                .addVariable(membersProperty.variable)
+                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                .addObject(membershipResource))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                .addObject(hasMemberRelation)))
+                .addPattern(new tokens_1.SubjectToken(membershipResource)
+                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                .addObject(membersProperty.variable)));
+            membersProperty.addPattern(selectMembers);
+            var queryMembersBuilder = new QueryDocument_1.QueryMembersBuilder.Class(queryContext, membersProperty);
+            if (membersQuery.call(void 0, queryMembersBuilder) !== queryMembersBuilder)
+                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+            var constructPatterns = membersProperty.getPatterns();
+            var construct = (_a = new tokens_1.ConstructToken()).addPattern.apply(_a, constructPatterns);
+            var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
+            (function triplesAdder(patterns) {
+                patterns
+                    .filter(function (pattern) { return pattern.token === "optional"; })
+                    .forEach(function (optional) {
+                    construct.addTriple(optional.patterns[0]);
+                    triplesAdder(optional.patterns);
+                });
+            })(constructPatterns);
+            if (!construct.triples.length)
+                throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
+            HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
+            return _this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions);
+            var _a, _b;
+        }).then(function (_a) {
+            var jsonldString = _a[0], _response = _a[1];
+            response = _response;
+            return new RDF.Document.Parser().parse(jsonldString);
+        }).then(function (rdfDocuments) {
+            if (!rdfDocuments.length)
+                throw new HTTP.Errors.BadResponseError("No document was returned", response);
+            var documents = new JSONLD.Compacter
+                .Class(_this, queryContext)
+                .compactDocuments(rdfDocuments);
+            return [documents, response];
         });
     };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
