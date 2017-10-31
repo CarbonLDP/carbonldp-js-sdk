@@ -198,12 +198,11 @@ var Class = (function () {
                     });
                 });
             }
-            promise.catch(function (error) {
+            _this.documentsBeingResolved.set(pointerID, promise);
+            return promise.catch(function (error) {
                 _this.documentsBeingResolved.delete(pointerID);
                 return Promise.reject(error);
             });
-            _this.documentsBeingResolved.set(pointerID, promise);
-            return promise;
             var _a, _b;
         });
     };
