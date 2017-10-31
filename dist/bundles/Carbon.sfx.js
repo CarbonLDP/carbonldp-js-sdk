@@ -2851,32 +2851,6 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-var Utils_1 = __webpack_require__(0);
-exports.SCHEMA = {
-    "target": {
-        "@id": NS.C.Predicate.target,
-        "@type": "@id",
-    },
-};
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils_1.hasProperty(object, "target");
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode = __webpack_require__(186);
 var Errors = __webpack_require__(3);
 var Converter_1 = __webpack_require__(55);
@@ -3245,6 +3219,32 @@ function convertNestedObjects(parent, actual, fragmentsTracker) {
         }
     }
 }
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var NS = __webpack_require__(1);
+var Utils_1 = __webpack_require__(0);
+exports.SCHEMA = {
+    "target": {
+        "@id": NS.C.Predicate.target,
+        "@type": "@id",
+    },
+};
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return Utils_1.hasProperty(object, "target");
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
 
 
 /***/ }),
@@ -3662,7 +3662,7 @@ exports.Processor = Processor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(25);
+var Document = __webpack_require__(24);
 var HTTP = __webpack_require__(16);
 var MessagingDocument = __webpack_require__(77);
 var ObjectSchema = __webpack_require__(12);
@@ -6500,7 +6500,7 @@ var MemberRemoved = __webpack_require__(235);
 exports.MemberRemoved = MemberRemoved;
 var MemberRemovedDetails = __webpack_require__(236);
 exports.MemberRemovedDetails = MemberRemovedDetails;
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.Message = Message;
 var Service = __webpack_require__(99);
 exports.Service = Service;
@@ -6524,7 +6524,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
         "@id": NS.C.Predicate.details,
         "@type": "@id",
@@ -6768,6 +6768,7 @@ module.exports = Event;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __webpack_require__(29);
+var Document = __webpack_require__(24);
 var Documents = __webpack_require__(89);
 var Errors = __webpack_require__(3);
 var LDP = __webpack_require__(34);
@@ -6908,6 +6909,7 @@ var Class = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
+        this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA);
@@ -7424,7 +7426,7 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(25);
+var Document = __webpack_require__(24);
 var NS = __webpack_require__(1);
 var Errors_1 = __webpack_require__(3);
 exports.RDF_CLASS = NS.CS.Class.Credentials;
@@ -8636,7 +8638,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var AccessPoint = __webpack_require__(98);
 var Auth = __webpack_require__(29);
-var Document = __webpack_require__(25);
+var Document = __webpack_require__(24);
 var Errors = __webpack_require__(3);
 var FreeResources = __webpack_require__(88);
 var HTTP = __webpack_require__(16);
@@ -9658,8 +9660,8 @@ var Class = (function () {
         if (!this.context)
             return schema || new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
-        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
-            objectSchemas.push(Class._documentSchema);
+        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID) && objectTypes.indexOf(Document.RDF_CLASS) === -1)
+            objectTypes = objectTypes.concat(Document.RDF_CLASS);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];
             if (this.context.hasObjectSchema(type))
@@ -9792,7 +9794,6 @@ var Class = (function () {
         return HTTP.Request.Service.send(method, uri, body, options, parser)
             .catch(this._parseErrorResponse.bind(this));
     };
-    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;
 }());
 exports.Class = Class;
@@ -10059,7 +10060,7 @@ var webstomp = __webpack_require__(270);
 var Errors_1 = __webpack_require__(3);
 var Parser_1 = __webpack_require__(79);
 var Utils_1 = __webpack_require__(0);
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.DEFAULT_OPTIONS = {
     maxReconnectAttempts: 10,
     reconnectDelay: 1000,
@@ -12641,7 +12642,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractContext = __webpack_require__(143);
 var AccessPoint = __webpack_require__(98);
 var Auth = __webpack_require__(29);
-var Document = __webpack_require__(25);
+var Document = __webpack_require__(24);
 var Documents = __webpack_require__(89);
 var Errors = __webpack_require__(3);
 var Fragment = __webpack_require__(51);
@@ -15620,7 +15621,7 @@ function parsePointer(element) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(25);
+var Document = __webpack_require__(24);
 var IllegalArgumentError_1 = __webpack_require__(48);
 var NS = __webpack_require__(1);
 var Utils = __webpack_require__(0);
@@ -15980,7 +15981,7 @@ exports.Factory = Factory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __webpack_require__(25);
+var Document = __webpack_require__(24);
 var Errors = __webpack_require__(3);
 var NS = __webpack_require__(1);
 var Utils = __webpack_require__(0);
@@ -17003,7 +17004,7 @@ exports.SCHEMA = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.RDF_CLASS = NS.C.Class.DocumentDeleted;
 exports.SCHEMA = Message.SCHEMA;
 
@@ -17016,7 +17017,7 @@ exports.SCHEMA = Message.SCHEMA;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.RDF_CLASS = NS.C.Class.DocumentModified;
 exports.SCHEMA = Message.SCHEMA;
 
@@ -17057,7 +17058,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.RDF_CLASS = NS.C.Class.MemberAdded;
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
         "@id": NS.C.Predicate.details,
@@ -17094,7 +17095,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Message = __webpack_require__(24);
+var Message = __webpack_require__(25);
 exports.RDF_CLASS = NS.C.Class.MemberRemoved;
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
         "@id": NS.C.Predicate.details,

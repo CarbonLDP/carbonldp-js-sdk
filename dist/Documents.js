@@ -1025,8 +1025,8 @@ var Class = (function () {
         if (!this.context)
             return schema || new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
-        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID))
-            objectSchemas.push(Class._documentSchema);
+        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID) && objectTypes.indexOf(Document.RDF_CLASS) === -1)
+            objectTypes = objectTypes.concat(Document.RDF_CLASS);
         for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
             var type = objectTypes_1[_i];
             if (this.context.hasObjectSchema(type))
@@ -1159,7 +1159,6 @@ var Class = (function () {
         return HTTP.Request.Service.send(method, uri, body, options, parser)
             .catch(this._parseErrorResponse.bind(this));
     };
-    Class._documentSchema = ObjectSchema.Digester.digestSchema(Document.SCHEMA);
     return Class;
 }());
 exports.Class = Class;

@@ -16,7 +16,6 @@ import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder, QueryMembersBuilder } from "./SPARQL/QueryDocument";
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
-    private static _documentSchema;
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
