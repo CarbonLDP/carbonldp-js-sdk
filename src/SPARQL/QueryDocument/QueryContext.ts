@@ -1,10 +1,11 @@
 import { isPrefixed } from "sparqler/iri";
-import { BaseToken, IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
 import { DigestedObjectSchema, DigestedPropertyDefinition, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryVariable from "./QueryVariable";
+import { getLevelRegExp } from "./Utils";
 
 export class Class implements Resolver {
 	protected _context:Context.Class;
@@ -58,7 +59,7 @@ export class Class implements Resolver {
 	}
 
 	getProperties( propertyLevel:string ):QueryProperty.Class[] {
-		const levelRegex:RegExp = new RegExp( propertyLevel.replace( ".", "\\." ) + "\\.[^.]+$" );
+		const levelRegex:RegExp = getLevelRegExp( propertyLevel );
 		return Array.from( this._propertiesMap.entries() )
 			.filter( ( [ name ] ) => levelRegex.test( name ) )
 			.map( ( [ name, property ] ) => property );
@@ -125,10 +126,10 @@ export class Class implements Resolver {
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( path === void 0 ) return this.context.documents.getSchemaFor( object );
 
-		const root:string = this._propertiesMap.keys().next().value;
-		path = root + path;
+		const property:QueryProperty.Class = this._propertiesMap.get( path );
+		if( ! property ) throw new Error( `Schema path "${ path }" does not exists.` );
 
-		return this._propertiesMap.get( path ).getSchema();
+		return property.getSchema();
 	}
 
 	getPrologues():PrefixToken[] {

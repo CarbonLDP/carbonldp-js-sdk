@@ -20,7 +20,7 @@ var Class = (function () {
     }
     Class.prototype.property = function (name) {
         if (name === void 0)
-            return this._context.getProperty(this._document.name);
+            return this._document;
         var originalName = name;
         var path = this._document.name;
         while (path) {

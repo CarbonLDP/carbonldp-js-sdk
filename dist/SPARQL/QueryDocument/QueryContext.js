@@ -5,6 +5,7 @@ var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryProperty = require("./QueryProperty");
 var QueryVariable = require("./QueryVariable");
+var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class(context) {
         this._context = context;
@@ -42,7 +43,7 @@ var Class = (function () {
         return this._propertiesMap.get(name);
     };
     Class.prototype.getProperties = function (propertyLevel) {
-        var levelRegex = new RegExp(propertyLevel.replace(".", "\\.") + "\\.[^.]+$");
+        var levelRegex = Utils_1.getLevelRegExp(propertyLevel);
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
             var name = _a[0];
@@ -111,9 +112,10 @@ var Class = (function () {
     Class.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
             return this.context.documents.getSchemaFor(object);
-        var root = this._propertiesMap.keys().next().value;
-        path = root + path;
-        return this._propertiesMap.get(path).getSchema();
+        var property = this._propertiesMap.get(path);
+        if (!property)
+            throw new Error("Schema path \"" + path + "\" does not exists.");
+        return property.getSchema();
     };
     Class.prototype.getPrologues = function () {
         return Array.from(this._prefixesMap.values());

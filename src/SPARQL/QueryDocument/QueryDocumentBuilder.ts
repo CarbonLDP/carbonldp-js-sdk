@@ -34,7 +34,7 @@ export class Class {
 	}
 
 	property( name?:string ):QueryProperty.Class {
-		if( name === void 0 ) return this._context.getProperty( this._document.name );
+		if( name === void 0 ) return this._document;
 
 		const originalName:string = name;
 

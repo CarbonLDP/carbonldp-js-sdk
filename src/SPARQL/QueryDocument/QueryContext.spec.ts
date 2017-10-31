@@ -89,6 +89,30 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 		} );
 
+		describe( method( INSTANCE, "hasProperty" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.hasProperty ).toBeDefined();
+				expect( QueryContext.prototype.hasProperty ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return is a specific property exists", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+				queryContext[ "_propertiesMap" ].set( "document", null );
+				queryContext[ "_propertiesMap" ].set( "document.property", null );
+				queryContext[ "_propertiesMap" ].set( "property.sub-property", null );
+
+				expect( queryContext.hasProperty( "document" ) ).toBe( true );
+				expect( queryContext.hasProperty( "document.property" ) ).toBe( true );
+				expect( queryContext.hasProperty( "property.sub-property" ) ).toBe( true );
+
+				expect( queryContext.hasProperty( "document2" ) ).toBe( false );
+				expect( queryContext.hasProperty( "document.property-2" ) ).toBe( false );
+				expect( queryContext.hasProperty( "property.sub-property-2" ) ).toBe( false );
+			} );
+
+		} );
+
 		describe( method( INSTANCE, "hasProperties" ), ():void => {
 
 			it( "should exists", ():void => {
@@ -138,6 +162,45 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 				expect( helper( "name" ) ).toBe( nameProperty );
 				expect( helper( "document.property" ) ).toBe( subDocumentProperty );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "getProperties" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.getProperties ).toBeDefined();
+				expect( QueryContext.prototype.getProperties ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return empty array when not properties", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+
+				expect( queryContext.getProperties( "document" ) ).toEqual( [] );
+				expect( queryContext.getProperties( "document.property-1" ) ).toEqual( [] );
+				expect( queryContext.getProperties( "document-2" ) ).toEqual( [] );
+			} );
+
+			it( "should return the properties of the first level", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+				queryContext[ "_propertiesMap" ].set( "document.sub-document", null );
+				queryContext[ "_propertiesMap" ].set( "document.property-2", null );
+				queryContext[ "_propertiesMap" ].set( "document.property-3", null );
+				queryContext[ "_propertiesMap" ].set( "document.sub-document.property-1", null );
+				queryContext[ "_propertiesMap" ].set( "document.sub-document.property-2", null );
+
+				expect( queryContext.getProperties( "document" ) ).toEqual( [ null, null, null ] );
+			} );
+
+			it( "should return the properties of the second level", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+				queryContext[ "_propertiesMap" ].set( "document.sub-document", null );
+				queryContext[ "_propertiesMap" ].set( "document.property-2", null );
+				queryContext[ "_propertiesMap" ].set( "document.property-3", null );
+				queryContext[ "_propertiesMap" ].set( "document.sub-document.property-1", null );
+				queryContext[ "_propertiesMap" ].set( "document.sub-document.property-2", null );
+
+				expect( queryContext.getProperties( "document.sub-document" ) ).toEqual( [ null, null ] );
 			} );
 
 		} );
@@ -433,6 +496,48 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				} ) );
 			} );
 
+		} );
+
+		describe( method( INSTANCE, "getGeneralSchema" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.getGeneralSchema ).toBeDefined();
+				expect( QueryContext.prototype.getGeneralSchema ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call to the documents `getGeneralSchema` method", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+				const spy:jasmine.Spy = spyOn( context.documents, "getGeneralSchema" ).and.returnValue( null );
+
+				const returnedValue:any = queryContext.getGeneralSchema();
+				expect( spy ).toHaveBeenCalled();
+				expect( returnedValue ).toBeNull();
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "getSchemaFor" ), ():void => {
+
+			it( "should exists", ():void => {
+				expect( QueryContext.prototype.getSchemaFor ).toBeDefined();
+				expect( QueryContext.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the schema of the property defined by the path", ():void => {
+				const queryContext:QueryContext = new QueryContext( context );
+
+				const helper:( name:string ) => void = name => {
+					const property:QueryProperty = queryContext.addProperty( name );
+					const spy:jasmine.Spy = spyOn( property, "getSchema" ).and.returnValue( null );
+
+					const returnedValue:any = queryContext.getSchemaFor( {}, name );
+					expect( spy ).toHaveBeenCalled();
+					expect( returnedValue ).toBeNull();
+				};
+
+				helper( "property" );
+				helper( "property.another-one" );
+			} );
 		} );
 
 	} );

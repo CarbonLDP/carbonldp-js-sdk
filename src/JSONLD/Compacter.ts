@@ -26,12 +26,14 @@ interface CompactionNode {
 
 export class Class {
 	private documents:Documents.Class;
+	private root:string;
 	private resolver?:Resolver;
 	private converter?:Converter.Class;
 	private compactionMap:Map<string, CompactionNode>;
 
-	constructor( documents:Documents.Class, schemaResolver?:Resolver, jsonldConverter?:Converter.Class ) {
+	constructor( documents:Documents.Class, root?:string, schemaResolver?:Resolver, jsonldConverter?:Converter.Class ) {
 		this.documents = documents;
+		this.root = root || "";
 		this.resolver = schemaResolver || documents;
 		this.converter = jsonldConverter || documents.jsonldConverter;
 		this.compactionMap = new Map();
@@ -117,7 +119,7 @@ export class Class {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = PersistedDocument.Factory.decorate( resource, this.documents );
-		this.compactionMap.set( resource.id, { path: "", node, resource, containerLibrary } );
+		this.compactionMap.set( resource.id, { path: this.root, node, resource, containerLibrary } );
 
 		return resource;
 	}

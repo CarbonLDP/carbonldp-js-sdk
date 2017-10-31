@@ -165,13 +165,13 @@ var Class = (function () {
                 if (!_this.context)
                     throw new Errors.IllegalStateError("A documents with context is needed for this feature.");
                 var queryContext_1 = new QueryDocument_1.QueryContext.Class(_this.context);
-                var documentProperty = queryContext_1
-                    .addProperty("document", new tokens_1.ValuesToken()
-                    .addValues(queryContext_1.getVariable("document"), queryContext_1.compactIRI(uri)));
-                var queryDocumentBuilder = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext_1, documentProperty);
+                var documentProperty_1 = queryContext_1.addProperty("document");
+                var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty_1.variable, queryContext_1.compactIRI(uri));
+                documentProperty_1.addPattern(propertyValue);
+                var queryDocumentBuilder = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext_1, documentProperty_1);
                 if (documentQuery.call(void 0, queryDocumentBuilder) !== queryDocumentBuilder)
                     throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-                var constructPatterns = documentProperty.getPatterns();
+                var constructPatterns = documentProperty_1.getPatterns();
                 var construct_1 = (_a = new tokens_1.ConstructToken()).addPattern.apply(_a, constructPatterns);
                 var query = (_b = new tokens_1.QueryToken(construct_1)).addPrologues.apply(_b, queryContext_1.getPrologues());
                 (function triplesAdder(patterns) {
@@ -192,7 +192,7 @@ var Class = (function () {
                             throw new HTTP.Errors.BadResponseError("No document was returned", response);
                         var mainRDFDocument = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === uri; });
                         var document = new JSONLD.Compacter
-                            .Class(_this, queryContext_1)
+                            .Class(_this, documentProperty_1.name, queryContext_1)
                             .compactDocuments(rdfDocuments, mainRDFDocument)[0];
                         return [document, response];
                     });
@@ -839,7 +839,6 @@ var Class = (function () {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            console.log(uri, rdfDocuments);
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new HTTP.Errors.BadResponseError("No document was returned.", response);
@@ -861,9 +860,9 @@ var Class = (function () {
             return Promise.reject(new Errors.IllegalStateError("A documents with context is needed for this feature."));
         var response;
         var queryContext = new QueryDocument_1.QueryContext.Class(this.context);
+        var membersProperty = queryContext.addProperty("member");
         return Utils_2.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
-            var membersProperty = queryContext.addProperty("member");
             var membershipResource = queryContext.getVariable("membershipResource");
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
             var selectMembers = new tokens_1.SelectToken()
@@ -904,7 +903,7 @@ var Class = (function () {
             if (!rdfDocuments.length)
                 throw new HTTP.Errors.BadResponseError("No document was returned", response);
             var documents = new JSONLD.Compacter
-                .Class(_this, queryContext)
+                .Class(_this, membersProperty.name, queryContext)
                 .compactDocuments(rdfDocuments);
             return [documents, response];
         });

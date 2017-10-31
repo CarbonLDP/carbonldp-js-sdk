@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var QueryDocumentBuilder = require("./QueryDocumentBuilder");
+var Utils_1 = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -43,7 +44,8 @@ var Class = (function (_super) {
         return this;
     };
     Class.prototype._orderBy = function (property, flow) {
-        if (property.name.substr(this._document.name.length + 1).includes("."))
+        var levelRegex = Utils_1.getLevelRegExp(this._document.name);
+        if (!levelRegex.test(property.name))
             throw new Error("Property \"" + property.name + "\" isn't a direct property of a member.");
         var select = this._document.getPatterns()[0];
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });

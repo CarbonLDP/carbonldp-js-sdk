@@ -187,9 +187,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				if( ! this.context ) throw new Errors.IllegalStateError( "A documents with context is needed for this feature." );
 
 				const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
-				const documentProperty:QueryProperty.Class = queryContext
-					.addProperty( "document", new ValuesToken()
-						.addValues( queryContext.getVariable( "document" ), queryContext.compactIRI( uri ) ) );
+
+				const documentProperty:QueryProperty.Class = queryContext.addProperty( "document" );
+
+				const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
+				documentProperty.addPattern( propertyValue );
+
 				const queryDocumentBuilder:QueryDocumentBuilder.Class = new QueryDocumentBuilder.Class( queryContext, documentProperty );
 				if( documentQuery.call( void 0, queryDocumentBuilder ) !== queryDocumentBuilder )
 					throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
@@ -219,7 +222,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 						const mainRDFDocument:RDF.Document.Class[] = rdfDocuments.filter( rdfDocument => rdfDocument[ "@id" ] === uri );
 						const [ document ]:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-							.Class( this, queryContext )
+							.Class( this, documentProperty.name, queryContext )
 							.compactDocuments( rdfDocuments, mainRDFDocument );
 
 						return [ document, response ];
@@ -964,11 +967,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		let response:HTTP.Response.Class;
 		const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+		const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
 
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
-
-			const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
@@ -1023,7 +1025,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
 
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-				.Class( this, queryContext )
+				.Class( this, membersProperty.name, queryContext )
 				.compactDocuments( rdfDocuments );
 
 			return [ documents, response ];

@@ -9,8 +9,9 @@ function getRelativeID(node) {
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
 }
 var Class = (function () {
-    function Class(documents, schemaResolver, jsonldConverter) {
+    function Class(documents, root, schemaResolver, jsonldConverter) {
         this.documents = documents;
+        this.root = root || "";
         this.resolver = schemaResolver || documents;
         this.converter = jsonldConverter || documents.jsonldConverter;
         this.compactionMap = new Map();
@@ -79,7 +80,7 @@ var Class = (function () {
         var resource = containerLibrary.getPointer(node["@id"]);
         if (isDocument)
             containerLibrary = PersistedDocument.Factory.decorate(resource, this.documents);
-        this.compactionMap.set(resource.id, { path: "", node: node, resource: resource, containerLibrary: containerLibrary });
+        this.compactionMap.set(resource.id, { path: this.root, node: node, resource: resource, containerLibrary: containerLibrary });
         return resource;
     };
     Class.prototype.processCompactionQueue = function (compactionQueue) {

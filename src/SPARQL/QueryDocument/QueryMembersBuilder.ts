@@ -2,6 +2,7 @@ import { LimitToken, OffsetToken, OptionalToken, OrderToken, PatternToken, Selec
 
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryProperty from "./QueryProperty";
+import { getLevelRegExp } from "./Utils";
 
 export class Class extends QueryDocumentBuilder.Class {
 
@@ -39,7 +40,8 @@ export class Class extends QueryDocumentBuilder.Class {
 	}
 
 	private _orderBy( property:QueryProperty.Class, flow?:"ASC" | "DESC" ):this {
-		if( property.name.substr( this._document.name.length + 1 ).includes( "." ) ) throw new Error( `Property "${ property.name }" isn't a direct property of a member.` );
+		const levelRegex:RegExp = getLevelRegExp( this._document.name );
+		if( ! levelRegex.test( property.name ) ) throw new Error( `Property "${ property.name }" isn't a direct property of a member.` );
 
 		const select:SelectToken = this._document.getPatterns()[ 0 ] as SelectToken;
 		const orderIndex:number = select.modifiers.findIndex( pattern => pattern.token === "order" );
