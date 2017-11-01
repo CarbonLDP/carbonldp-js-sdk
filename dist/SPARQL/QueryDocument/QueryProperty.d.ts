@@ -10,10 +10,9 @@ export declare class Class {
     constructor(context: QueryContext.Class, name: string, pattern?: PatternToken);
     addPattern(...patterns: PatternToken[]): this;
     addOptionalPattern(...patterns: PatternToken[]): this;
-    hasFilters(): boolean;
     getPatterns(): PatternToken[];
-    addSchema(schema: DigestedObjectSchema): void;
     getSchema(): DigestedObjectSchema;
+    addSchema(schema: DigestedObjectSchema): void;
     toString(): string;
 }
 export default Class;

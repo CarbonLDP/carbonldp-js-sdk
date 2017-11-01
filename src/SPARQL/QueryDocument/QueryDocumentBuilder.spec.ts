@@ -1,9 +1,8 @@
 import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, ValuesToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
+import { DigestedObjectSchema } from "../../ObjectSchema";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module, property } from "../../test/JasmineExtender";
-import * as Document from "./../../Document";
 import * as Pointer from "./../../Pointer";
 import * as URI from "./../../RDF/URI";
 import QueryContext from "./QueryContext";
@@ -55,19 +54,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				expect( builder ).toBeDefined();
 				expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
-			} );
-
-			it( "should initialize the schema with a composed document schema", ():void => {
-				new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( baseProperty.getSchema() ).not.toBe( context.getObjectSchema() );
-
-				const schema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
-					context.getObjectSchema(),
-					context.getObjectSchema( Document.RDF_CLASS ),
-				] );
-				schema.vocab = "http://example.com/vocab#";
-
-				expect( baseProperty.getSchema() ).toEqual( schema );
 			} );
 
 			it( "should set the document property", ():void => {

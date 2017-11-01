@@ -33,21 +33,17 @@ export class Class {
 		return this;
 	}
 
-	hasFilters():boolean {
-		return this._patterns.some( pattern => pattern.token === "filter" );
-	}
-
 	getPatterns():PatternToken[] {
 		return this._patterns;
-	}
-
-	addSchema( schema:DigestedObjectSchema ):void {
-		this._schema = Digester.combineDigestedObjectSchemas( [ this.getSchema(), schema ] );
 	}
 
 	getSchema():DigestedObjectSchema {
 		if( ! this._schema ) this._schema = this._context.getSchemaFor( { id: "" } );
 		return this._schema;
+	}
+
+	addSchema( schema:DigestedObjectSchema ):void {
+		this._schema = Digester.combineDigestedObjectSchemas( [ this.getSchema(), schema ] );
 	}
 
 	toString():string {
