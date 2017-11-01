@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function getLevelRegExp(property) {
-    var parsedName = property.replace(".", "\\.");
-    return new RegExp("^" + parsedName + "\\.[^.]+$");
+    if (property)
+        property += ".";
+    var parsedName = property.replace(/\./g, "\\.");
+    return new RegExp("^" + parsedName + "[^.]+$");
 }
 exports.getLevelRegExp = getLevelRegExp;
 

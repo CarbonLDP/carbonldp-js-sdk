@@ -1,4 +1,6 @@
 export function getLevelRegExp( property:string ):RegExp {
-	const parsedName:string = property.replace( ".", "\\." );
-	return new RegExp( `^${ parsedName }\\.[^.]+$` );
+	if( property ) property += ".";
+	const parsedName:string = property.replace( /\./g, "\\." );
+
+	return new RegExp( `^${ parsedName }[^.]+$` );
 }
