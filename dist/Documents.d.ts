@@ -101,12 +101,12 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getPointerID(uri);
     private createPointer(localID);
     private createPointerFrom<T>(object, localID);
-    private compact(expandedObjects, targetObjects, pointerLibrary, schema?);
-    private compact(expandedObject, targetObject, pointerLibrary, schema?);
-    private compactSingle(expandedObject, targetObject, pointerLibrary, schema?);
-    private getDigestedObjectSchemaForExpandedObject(expandedObject, schema?);
+    private compact(expandedObjects, targetObjects, pointerLibrary);
+    private compact(expandedObject, targetObject, pointerLibrary);
+    private compactSingle(expandedObject, targetObject, pointerLibrary);
+    private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
-    private getDigestedObjectSchema(objectTypes, objectID, schema?);
+    private getDigestedObjectSchema(objectTypes, objectID);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
     private getMembershipResource(documentResource, rdfDocuments, response);

@@ -997,33 +997,33 @@ var Class = (function () {
         });
         return pointer;
     };
-    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary, schema) {
+    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
         if (!Utils.isArray(expandedObjectOrObjects))
-            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary, schema);
+            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary);
         var expandedObjects = expandedObjectOrObjects;
         var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
         for (var i = 0, length_1 = expandedObjects.length; i < length_1; i++) {
             var expandedObject = expandedObjects[i];
             var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
-            this.compactSingle(expandedObject, targetObject, pointerLibrary, schema);
+            this.compactSingle(expandedObject, targetObject, pointerLibrary);
         }
         return targetObjects;
     };
-    Class.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary, schema) {
-        var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject, schema);
+    Class.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
+        var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
         return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
-    Class.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject, schema) {
+    Class.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
         var types = RDF.Node.Util.getTypes(expandedObject);
-        return this.getDigestedObjectSchema(types, expandedObject["@id"], schema);
+        return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
         var types = Resource.Util.getTypes(document);
         return this.getDigestedObjectSchema(types, document.id);
     };
-    Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID, schema) {
+    Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
         if (!this.context)
-            return schema || new ObjectSchema.DigestedObjectSchema();
+            return new ObjectSchema.DigestedObjectSchema();
         var objectSchemas = [this.context.getObjectSchema()];
         if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID) && objectTypes.indexOf(Document.RDF_CLASS) === -1)
             objectTypes = objectTypes.concat(Document.RDF_CLASS);
@@ -1032,8 +1032,6 @@ var Class = (function () {
             if (this.context.hasObjectSchema(type))
                 objectSchemas.push(this.context.getObjectSchema(type));
         }
-        if (schema)
-            objectSchemas.push(schema);
         var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
         if (this.context.hasSetting("vocabulary"))
             digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));

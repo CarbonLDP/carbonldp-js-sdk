@@ -145,7 +145,7 @@ export class Class {
 			}
 		}
 
-		if( ! digestedDefinition.uri ) throw new Error( `Invalid property "${ propertyName }" definition, URI "@id" is missing.` );
+		if( ! digestedDefinition.uri ) throw new Error( `Invalid property "${ propertyName }" definition, "@id" is necessary.` );
 
 		schema.properties.set( propertyName, digestedDefinition );
 		return digestedDefinition;

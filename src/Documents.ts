@@ -1129,10 +1129,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return pointer;
 	}
 
-	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):Object[];
-	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):Object;
-	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):any {
-		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary, schema );
+	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library ):Object[];
+	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object;
+	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library ):any {
+		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
 		let targetObjects:Object[] = ! ! targetObjectOrObjects ? targetObjectOrObjects : [];
@@ -1140,22 +1140,22 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let expandedObject:Object = expandedObjects[ i ];
 			let targetObject:Object = targetObjects[ i ] = ! ! targetObjects[ i ] ? targetObjects[ i ] : {};
 
-			this.compactSingle( expandedObject, targetObject, pointerLibrary, schema );
+			this.compactSingle( expandedObject, targetObject, pointerLibrary );
 		}
 
 		return targetObjects;
 	}
 
-	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library, schema?:ObjectSchema.DigestedObjectSchema ):Object {
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject, schema );
+	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
 
 		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
 	}
 
-	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object, schema?:ObjectSchema.DigestedObjectSchema ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {
 		let types:string[] = RDF.Node.Util.getTypes( <any> expandedObject );
 
-		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ], schema );
+		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ] );
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
@@ -1164,8 +1164,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.getDigestedObjectSchema( types, document.id );
 	}
 
-	private getDigestedObjectSchema( objectTypes:string[], objectID:string, schema?:ObjectSchema.DigestedObjectSchema ):ObjectSchema.DigestedObjectSchema {
-		if( ! this.context ) return schema || new ObjectSchema.DigestedObjectSchema();
+	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):ObjectSchema.DigestedObjectSchema {
+		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
 		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
 		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) && objectTypes.indexOf( Document.RDF_CLASS ) === - 1 ) objectTypes = objectTypes.concat( Document.RDF_CLASS );
@@ -1173,7 +1173,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		for( let type of objectTypes ) {
 			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
 		}
-		if( schema ) objectSchemas.push( schema );
 
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( objectSchemas );
 		if( this.context.hasSetting( "vocabulary" ) ) digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
