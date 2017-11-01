@@ -10104,11 +10104,74 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"on"
+			"on",
+			"Subscribe to an event notification in any specified URI pattern."
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to an event notification in any specified URI pattern.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
 				[
 					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
@@ -10207,11 +10270,74 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"off"
+			"off",
+			"Remove the subscription of the URI pattern event specified that have the exact onEvent callback provided."
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the subscription of the URI pattern event specified that have the exact onEvent callback provided.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.ACCESS_POINT_CREATED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
 				[
 					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
@@ -10310,11 +10436,74 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"one"
+			"one",
+			"Subscribe to only one event notification in any specified URI pattern."
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to only one event notification in any specified URI pattern.",
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
+				[
+					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for the notification." },
+					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
+				]
+			), ():void => {} );
+
+			it( hasSignature(
 				[
 					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },

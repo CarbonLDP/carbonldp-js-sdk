@@ -801,7 +801,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return builder;
 	}
 
-	on( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
+	on( event:Messaging.Event.CHILD_CREATED, uriPattern:string, onEvent:( message:Messaging.ChildCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event.ACCESS_POINT_CREATED, uriPattern:string, onEvent:( message:Messaging.AccessPointCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event.DOCUMENT_CREATED, uriPattern:string, onEvent:( message:Messaging.DocumentCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:Messaging.DocumentModified.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:Messaging.DocumentDeleted.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:Messaging.MemberAdded.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void;
+	on( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void;
+	on<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
@@ -812,7 +820,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	off( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
+	off( event:Messaging.Event.CHILD_CREATED, uriPattern:string, onEvent:( message:Messaging.ChildCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event.ACCESS_POINT_CREATED, uriPattern:string, onEvent:( message:Messaging.AccessPointCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event.DOCUMENT_CREATED, uriPattern:string, onEvent:( message:Messaging.DocumentCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:Messaging.DocumentModified.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:Messaging.DocumentDeleted.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:Messaging.MemberAdded.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void;
+	off( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void;
+	off<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
@@ -823,9 +839,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	one( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
+	one( event:Messaging.Event.CHILD_CREATED, uriPattern:string, onEvent:( message:Messaging.ChildCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event.ACCESS_POINT_CREATED, uriPattern:string, onEvent:( message:Messaging.AccessPointCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event.DOCUMENT_CREATED, uriPattern:string, onEvent:( message:Messaging.DocumentCreated.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event.DOCUMENT_MODIFIED, uriPattern:string, onEvent:( message:Messaging.DocumentModified.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event.DOCUMENT_DELETED, uriPattern:string, onEvent:( message:Messaging.DocumentDeleted.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:Messaging.MemberAdded.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void;
+	one( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void;
+	one<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 		const self:Class = this;
-		this.on( event, uriPattern, function onEventWrapper( message:Messaging.Message.Class ):void {
+		this.on( event, uriPattern, function onEventWrapper( message:T ):void {
 			onEvent( message );
 			self.off( event, uriPattern, onEventWrapper, onError );
 		}, onError );
