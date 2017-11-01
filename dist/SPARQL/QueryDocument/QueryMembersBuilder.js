@@ -18,46 +18,54 @@ var Class = (function (_super) {
     function Class() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    Class.prototype.orderBy = function (property) {
+        return this._orderBy(property);
+    };
     Class.prototype.orderAscendantBy = function (property) {
         return this._orderBy(property, "ASC");
     };
     Class.prototype.orderDescendantBy = function (property) {
         return this._orderBy(property, "DESC");
     };
-    Class.prototype.orderBy = function (property) {
-        return this._orderBy(property);
-    };
     Class.prototype.limit = function (limit) {
-        var select = this._document.getPatterns()[0];
+        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
+        if (!select)
+            throw new Error("A sub-select token has not been defined.");
         var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
         if (limitIndex !== -1)
             select.modifiers.splice(limitIndex, 1);
-        select.addModifier(new tokens_1.LimitToken(limit));
+        select.modifiers.push(new tokens_1.LimitToken(limit));
         return this;
     };
     Class.prototype.offset = function (offset) {
-        var select = this._document.getPatterns()[0];
+        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
+        if (!select)
+            throw new Error("A sub-select token has not been defined.");
         var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
         if (offsetIndex !== -1)
             select.modifiers.splice(offsetIndex, 1);
-        select.addModifier(new tokens_1.OffsetToken(offset));
+        select.modifiers.push(new tokens_1.OffsetToken(offset));
         return this;
     };
     Class.prototype._orderBy = function (property, flow) {
         var levelRegex = Utils_1.getLevelRegExp(this._document.name);
         if (!levelRegex.test(property.name))
             throw new Error("Property \"" + property.name + "\" isn't a direct property of a member.");
-        var select = this._document.getPatterns()[0];
+        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
+        if (!select)
+            throw new Error("A sub-select token has not been defined.");
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
             select.modifiers.splice(orderIndex, 1);
             var optionalIndex = select.patterns.findIndex(function (pattern) { return pattern.token === "optional"; });
             select.patterns.splice(optionalIndex, 1);
         }
-        select.addModifier(new tokens_1.OrderToken(property.variable, flow));
-        var propertyTriple = property.getPatterns()
-            .find(function (pattern) { return pattern.token === "optional"; })
-            .patterns[0];
+        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, flow));
+        var propertyDefinitions = property.getPatterns()
+            .find(function (pattern) { return pattern.token === "optional"; });
+        if (!propertyDefinitions)
+            throw new Error("The property provided is not a valid property defined by the builder.");
+        var propertyTriple = propertyDefinitions.patterns[0];
         select.addPattern(new tokens_1.OptionalToken()
             .addPattern(propertyTriple));
         return this;
