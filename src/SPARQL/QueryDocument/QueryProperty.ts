@@ -46,7 +46,7 @@ export class Class {
 	}
 
 	getSchema():DigestedObjectSchema {
-		if( ! this._schema ) this._schema = this._context.getGeneralSchema();
+		if( ! this._schema ) this._schema = this._context.getSchemaFor( { id: "" } );
 		return this._schema;
 	}
 

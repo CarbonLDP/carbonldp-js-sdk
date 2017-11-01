@@ -40,7 +40,7 @@ var Class = (function () {
     };
     Class.prototype.getSchema = function () {
         if (!this._schema)
-            this._schema = this._context.getGeneralSchema();
+            this._schema = this._context.getSchemaFor({ id: "" });
         return this._schema;
     };
     Class.prototype.toString = function () {
