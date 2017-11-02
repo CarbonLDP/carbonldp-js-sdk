@@ -10118,6 +10118,37 @@ describe( module( "Carbon/Documents" ), ():void => {
 				expect( "vocab" in queryBuilder ).toBe( true );
 				expect( "prefix" in queryBuilder ).toBe( true );
 			})();
+
+			// Returns a ExecuteSelect
+			(() => {
+				context.extendObjectSchema( {
+					"xsd": "http://www.w3.org/2001/XMLSchema#",
+					"ex": "http://example.com/",
+				} );
+
+				let queryBuilder:SPARQL.Builder.ExecuteSelect = documents
+					.sparql( "http://example.com/resource/" )
+					.select( "a" )
+					.where( _ =>
+						_.var( "a" )
+							.has( _.resource( "ex:property" ), _.literal( "value" ) )
+					);
+
+				expect( queryBuilder ).toEqual( jasmine.objectContaining( {
+					toPrettyString: jasmine.any( Function ),
+					toCompactString: jasmine.any( Function ),
+					execute: jasmine.any( Function ),
+					executeRaw: jasmine.any( Function ),
+				} ) );
+
+				expect( queryBuilder.toPrettyString() ).toBe( "" +
+					"BASE <http://example.com/>\n" +
+					"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>\n" +
+					"PREFIX ex:<http://example.com/>\n" +
+					"SELECT ?a\n" +
+					"WHERE { ?a ex:property \"value\" }"
+				);
+			})();
 		} );
 
 		describe( method(

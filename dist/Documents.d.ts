@@ -79,7 +79,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: HTTP.Request.Options): Promise<[string, HTTP.Response.Class]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    sparql(documentURI: string): QueryClause;
+    sparql(documentURI: string): QueryClause<SPARQL.Builder.ExecuteSelect>;
     on(event: Messaging.Event | string, uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
     off(event: Messaging.Event | string, uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
     one(event: Messaging.Event | string, uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;

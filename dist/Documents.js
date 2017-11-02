@@ -695,17 +695,15 @@ var Class = (function () {
         });
     };
     Class.prototype.sparql = function (documentURI) {
-        var sparqlBuilder = new Builder_1.default();
-        sparqlBuilder._documents = this;
-        sparqlBuilder._entryPoint = documentURI;
-        var builder = sparqlBuilder.base(documentURI);
+        var builder = new Builder_1.default(this, this.getRequestURI(documentURI));
         if (!!this.context) {
-            builder.base(this.context.baseURI);
-            if (this.context.hasSetting("vocabulary"))
-                builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
+            builder = builder.base(this.context.baseURI);
+            if (this.context.hasSetting("vocabulary")) {
+                builder = builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
+            }
             var schema = this.context.getObjectSchema();
             schema.prefixes.forEach(function (uri, prefix) {
-                builder.prefix(prefix, uri.stringValue);
+                builder = builder.prefix(prefix, uri.stringValue);
             });
         }
         return builder;
