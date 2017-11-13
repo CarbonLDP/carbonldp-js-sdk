@@ -1,4 +1,5 @@
 import {
+	BlankNodeToken,
 	CollectionToken,
 	IRIToken,
 	PrefixedNameToken,
@@ -76,12 +77,14 @@ export class DeleteToken implements TokenNode {
 
 export class UpdateListToken implements TokenNode {
 	readonly token:"updateList" = "updateList";
-	readonly subject:VariableOrIRI;
+
+	// Extend LD Patch grammar allowing blank-nodes
+	readonly subject:VariableOrIRI | BlankNodeToken;
 	readonly predicate:IRIToken | PrefixedNameToken;
 	readonly slice:SliceToken;
 	readonly collection:CollectionToken;
 
-	constructor( subject:VariableOrIRI, predicate:IRIToken | PrefixedNameToken, slice:SliceToken, collection:CollectionToken ) {
+	constructor( subject:VariableOrIRI | BlankNodeToken, predicate:IRIToken | PrefixedNameToken, slice:SliceToken, collection:CollectionToken ) {
 		this.subject = subject;
 		this.predicate = predicate;
 		this.slice = slice;

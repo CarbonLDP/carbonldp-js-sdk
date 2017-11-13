@@ -20174,6 +20174,7 @@ var LiteralToken = (function () {
         this.value = typeof value === "boolean" ? new BooleanToken_1.BooleanToken(value) :
             typeof value === "number" ? new NumberToken_1.NumberToken(value) :
                 new StringToken_1.StringToken(value);
+        return this;
     };
     LiteralToken.prototype.setType = function (type) {
         if (!this.value)
@@ -20182,12 +20183,14 @@ var LiteralToken = (function () {
             this.value = new StringToken_1.StringToken("" + this.value);
         this.type = typeof type === "string" ? iri_1.isPrefixed(type) ?
             new PrefixedNameToken_1.PrefixedNameToken(type) : new IRIToken_1.IRIToken(type) : type;
+        return this;
     };
     LiteralToken.prototype.setLanguage = function (language) {
         if (!this.value || this.value.token !== "string")
             throw new Error("Non-string value can't have a language.");
         this.type = void 0;
         this.language = new LanguageToken_1.LanguageToken(language);
+        return this;
     };
     LiteralToken.prototype.toString = function () {
         if (this.language)
@@ -20635,6 +20638,10 @@ var CollectionToken = (function () {
         this.token = "collection";
         this.objects = [];
     }
+    CollectionToken.prototype.addObject = function (object) {
+        this.objects.push(object);
+        return this;
+    };
     CollectionToken.prototype.toString = function () {
         if (!this.objects.length)
             return "()";

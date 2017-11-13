@@ -1,4 +1,4 @@
-import { CollectionToken, IRIToken, PrefixedNameToken, SubjectToken, TokenNode, VariableOrIRI } from "sparqler/tokens";
+import { BlankNodeToken, CollectionToken, IRIToken, PrefixedNameToken, SubjectToken, TokenNode, VariableOrIRI } from "sparqler/tokens";
 export declare type StatementToken = AddToken | DeleteToken | UpdateListToken;
 export declare class LDPatchToken implements TokenNode {
     readonly token: "ldpatch";
@@ -29,11 +29,11 @@ export declare class DeleteToken implements TokenNode {
 }
 export declare class UpdateListToken implements TokenNode {
     readonly token: "updateList";
-    readonly subject: VariableOrIRI;
+    readonly subject: VariableOrIRI | BlankNodeToken;
     readonly predicate: IRIToken | PrefixedNameToken;
     readonly slice: SliceToken;
     readonly collection: CollectionToken;
-    constructor(subject: VariableOrIRI, predicate: IRIToken | PrefixedNameToken, slice: SliceToken, collection: CollectionToken);
+    constructor(subject: VariableOrIRI | BlankNodeToken, predicate: IRIToken | PrefixedNameToken, slice: SliceToken, collection: CollectionToken);
     toString(): string;
 }
 export declare class SliceToken implements TokenNode {

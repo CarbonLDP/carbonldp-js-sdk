@@ -27,7 +27,7 @@
     "webstomp-client": "^1.2.0"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.6.0",
+    "@types/jasmine": "^2.6.3",
     "@types/jasmine-ajax": "^3.1.36",
     "@types/node": "^8.0.31",
     "@types/sockjs-client": "^1.0.32",
@@ -67,6 +67,7 @@
     "typescript": "^2.5.2",
     "typings": "^2.1.1",
     "vinyl-named": "^1.1.0",
+    "wallaby-webpack": "0.0.45",
     "webpack": "^3.6.0",
     "webpack-merge": "^4.1.0",
     "webpack-stream": "^4.0.0"

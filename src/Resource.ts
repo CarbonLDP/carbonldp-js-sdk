@@ -40,7 +40,7 @@ export class Factory {
 		return Factory.createFrom( {}, id, types );
 	}
 
-	static createFrom<T extends Object>( object:T, id:string = null, types:string[] = null ):T & Class {
+	static createFrom<T extends object>( object:T, id:string = null, types:string[] = null ):T & Class {
 		const resource:T & Class = object as T & Class;
 		resource.id = id || resource.id;
 		resource.types = types || resource.types;
