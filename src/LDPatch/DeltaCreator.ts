@@ -1,31 +1,15 @@
 import { isBNodeLabel, isRelative } from "sparqler/iri";
 
-import {
-	BlankNodeToken,
-	CollectionToken,
-	IRIToken,
-	LiteralToken,
-	ObjectToken,
-	PredicateToken,
-	PrefixedNameToken,
-	SubjectToken
-} from "sparqler/tokens";
+import { BlankNodeToken, CollectionToken, IRIToken, LiteralToken, ObjectToken, PredicateToken, PrefixedNameToken, SubjectToken } from "sparqler/tokens";
 import { Converter } from "../JSONLD";
 import { XSD } from "../NS";
-import { ContainerType, DigestedObjectSchema, DigestedPropertyDefinition } from "../ObjectSchema";
+import { ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, PointerType } from "../ObjectSchema";
 import * as Pointer from "../Pointer";
 import { URI } from "../RDF";
 import * as Resource from "../Resource";
 import { isBoolean, isDate, isFunction, isNumber, isString } from "../Utils";
 
-import {
-	AddToken,
-	DeleteToken,
-	LDPatchToken,
-	PrefixToken,
-	SliceToken,
-	UpdateListToken
-} from "./Tokens";
+import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
 
 interface ArrayDelta {
 	toAdd:ObjectToken[];
@@ -36,6 +20,11 @@ interface UpdateDelta {
 	slice:[ number, number ];
 	objects:ObjectToken[];
 }
+
+const typesDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+typesDefinition.literal = false;
+typesDefinition.pointerType = PointerType.ID;
+typesDefinition.containerType = ContainerType.SET;
 
 export class Class {
 
@@ -76,12 +65,18 @@ export class Class {
 		const deleteTriples:SubjectToken = new SubjectToken( resource );
 
 		new Set( [
+			"types",
 			...Object.keys( oldResource ),
 			...Object.keys( newResource ),
 		] ).forEach( propertyName => {
-			const predicateURI:IRIToken | PrefixedNameToken = this.getPropertyIRI( schema, propertyName );
+			if( propertyName === "id" ) return;
 
-			const definition:DigestedPropertyDefinition = schema.properties.get( propertyName );
+			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
+				"a" : this.getPropertyIRI( schema, propertyName );
+
+			const definition:DigestedPropertyDefinition = predicateURI === "a" ?
+				typesDefinition : schema.properties.get( propertyName );
+
 			const oldValue:any = oldResource[ propertyName ];
 			const newValue:any = newResource[ propertyName ];
 
@@ -89,7 +84,7 @@ export class Class {
 				if( ! isValidValue( newValue ) ) {
 					this.updateLists.push( new UpdateListToken(
 						resource,
-						predicateURI,
+						predicateURI as IRIToken | PrefixedNameToken,
 						new SliceToken( 0 ),
 						new CollectionToken()
 					) );
@@ -114,7 +109,7 @@ export class Class {
 
 					this.updateLists.push( new UpdateListToken(
 						resource,
-						predicateURI,
+						predicateURI as IRIToken | PrefixedNameToken,
 						updateDelta.objects.length ?
 							new SliceToken( updateDelta.slice[ 0 ], updateDelta.slice[ 0 ] ) :
 							new SliceToken( ...updateDelta.slice ),
@@ -147,8 +142,9 @@ export class Class {
 	}
 
 	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
-		const uri:string = schema.properties.has( propertyName ) ?
-			schema.properties.get( propertyName ).uri.stringValue :
+		const propertyDefinition:DigestedPropertyDefinition = schema.properties.get( propertyName );
+		const uri:string = propertyDefinition && propertyDefinition.uri ?
+			propertyDefinition.uri.stringValue :
 			propertyName;
 
 		return this.compactIRI( schema, uri );
@@ -300,7 +296,7 @@ function getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):Update
 	let remnants:Node[] = newPositions;
 
 	oldPositions.forEach( oldNode => {
-		const currentIndex:number = remnants.findIndex( newNode => newNode.identifier === oldNode.identifier )/*?*/;
+		const currentIndex:number = remnants.findIndex( newNode => newNode.identifier === oldNode.identifier );
 
 		if( currentIndex === - 1 ) {
 			oldNode.index -= offset ++;

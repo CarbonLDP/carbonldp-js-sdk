@@ -629,6 +629,29 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					] );
 				} );
 
+
+				it( "should detect deleted types", ():void => {
+					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+
+					const oldResource:Resource.Class = Resource.Factory.createFrom( {
+						id: "http://example.org/resource/",
+						types: [ "http://example.org/vocab#Document", "Type-1", "Type-2" ],
+					} );
+					const newResource:Resource.Class = Resource.Factory.createFrom( {
+						id: "http://example.org/resource/",
+						types: [ "Type-1" ],
+					} );
+
+					deltaCreator.addResource( schema, oldResource, newResource );
+					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
+						.addPredicate( new PredicateToken( "a" )
+							.addObject( new IRIToken( "http://example.org/vocab#Document" ) )
+							.addObject( new IRIToken( "http://example.org/vocab#Type-2" ) )
+						),
+					] );
+					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
+				} );
+
 			} );
 
 			describe( "When property in the schema", ():void => {

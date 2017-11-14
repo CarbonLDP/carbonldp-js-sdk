@@ -16,6 +16,10 @@ var Pointer = require("../Pointer");
 var RDF_1 = require("../RDF");
 var Utils_1 = require("../Utils");
 var Tokens_1 = require("./Tokens");
+var typesDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
+typesDefinition.literal = false;
+typesDefinition.pointerType = ObjectSchema_1.PointerType.ID;
+typesDefinition.containerType = ObjectSchema_1.ContainerType.SET;
 var Class = (function () {
     function Class(jsonldConverter) {
         this.prefixesMap = new Map();
@@ -42,9 +46,15 @@ var Class = (function () {
             new tokens_1.BlankNodeToken(id) : this.compactIRI(schema, id);
         var addTriples = new tokens_1.SubjectToken(resource);
         var deleteTriples = new tokens_1.SubjectToken(resource);
-        new Set(Object.keys(oldResource).concat(Object.keys(newResource))).forEach(function (propertyName) {
-            var predicateURI = _this.getPropertyIRI(schema, propertyName);
-            var definition = schema.properties.get(propertyName);
+        new Set([
+            "types"
+        ].concat(Object.keys(oldResource), Object.keys(newResource))).forEach(function (propertyName) {
+            if (propertyName === "id")
+                return;
+            var predicateURI = propertyName === "types" ?
+                "a" : _this.getPropertyIRI(schema, propertyName);
+            var definition = predicateURI === "a" ?
+                typesDefinition : schema.properties.get(propertyName);
             var oldValue = oldResource[propertyName];
             var newValue = newResource[propertyName];
             if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST && isValidValue(oldValue)) {
@@ -85,8 +95,9 @@ var Class = (function () {
             this.deleteToken.triples.push(deleteTriples);
     };
     Class.prototype.getPropertyIRI = function (schema, propertyName) {
-        var uri = schema.properties.has(propertyName) ?
-            schema.properties.get(propertyName).uri.stringValue :
+        var propertyDefinition = schema.properties.get(propertyName);
+        var uri = propertyDefinition && propertyDefinition.uri ?
+            propertyDefinition.uri.stringValue :
             propertyName;
         return this.compactIRI(schema, uri);
     };

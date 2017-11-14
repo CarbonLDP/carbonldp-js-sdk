@@ -105,7 +105,7 @@
           </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="TypeScript">
-          <option name="RIGHT_MARGIN" value="100" />
+          <option name="RIGHT_MARGIN" value="500" />
           <option name="SPACE_AROUND_UNARY_OPERATOR" value="true" />
           <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="true" />
           <option name="SPACE_WITHIN_METHOD_PARENTHESES" value="true" />

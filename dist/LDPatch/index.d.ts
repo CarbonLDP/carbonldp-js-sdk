@@ -1,2 +1,3 @@
+import * as DeltaCreator from "./DeltaCreator";
 import * as Tokens from "./Tokens";
-export { Tokens };
+export { DeltaCreator, Tokens };

@@ -2,16 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = require("./Utils");
 function syncSnapshot() {
-    var resource = this;
-    resource._snapshot = Utils.O.clone(resource, { arrays: true });
-    if ("id" in resource)
-        resource._snapshot.id = resource.id;
-    if ("types" in resource)
-        resource._snapshot.types = Utils.O.clone(resource.types);
+    this._snapshot = Utils.O.clone(this, { arrays: true });
+    this._snapshot.id = this.id;
+    this._snapshot.types = this.types.slice();
 }
 function isDirty() {
     var resource = this;
-    if (!Utils.O.areEqual(resource, resource._snapshot, { arrays: true }, { id: true, types: true }))
+    if (!Utils.O.areEqual(resource, resource._snapshot, { arrays: true }))
         return true;
     var response = false;
     if ("id" in resource)
@@ -38,8 +35,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "isDirty")
             && Utils.hasFunction(object, "revert"));
     };
-    Factory.decorate = function (object, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
+    Factory.decorate = function (object) {
         if (Factory.hasClassProperties(object))
             return object;
         var persistedResource = object;
@@ -48,7 +44,7 @@ var Factory = (function () {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: snapshot,
+                value: {},
             },
             "_syncSnapshot": {
                 writable: false,

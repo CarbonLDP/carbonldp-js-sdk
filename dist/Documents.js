@@ -8,6 +8,7 @@ var FreeResources = require("./FreeResources");
 var HTTP = require("./HTTP");
 var JSONLD = require("./JSONLD");
 var LDP = require("./LDP");
+var LDPatch = require("./LDPatch");
 var Messaging = require("./Messaging");
 var Utils_1 = require("./Messaging/Utils");
 var NS = require("./NS");
@@ -525,11 +526,15 @@ var Class = (function () {
         return Utils_2.promiseMethod(function () {
             var uri = _this.getRequestURI(persistedDocument.id);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-            HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+            HTTP.Request.Util.setContentTypeHeader("text/ldpatch", requestOptions);
             HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
             persistedDocument._normalize();
-            var body = persistedDocument.toJSON(_this, _this.jsonldConverter);
-            return _this.sendRequest(HTTP.Method.PUT, uri, requestOptions, body);
+            var deltaCreator = new LDPatch.DeltaCreator.Class(_this.jsonldConverter);
+            [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
+                var schema = _this.getSchemaFor(resource);
+                deltaCreator.addResource(schema, resource._snapshot, resource);
+            });
+            return _this.sendRequest(HTTP.Method.PATCH, uri, requestOptions, deltaCreator.getPatch());
         }).then(function (response) {
             return _this.applyResponseData(persistedDocument, response);
         });
@@ -563,24 +568,9 @@ var Class = (function () {
         });
     };
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
-        var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var responses = [];
-        var previousETag = persistedDocument._etag;
-        return Utils.promiseMethod(function () {
-            HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
-            return _this.save(persistedDocument, requestOptions);
-        }).then(function (_a) {
-            var document = _a[0], saveResponse = _a[1];
-            if (document._etag !== previousETag)
-                return [document, saveResponse];
-            responses.push(saveResponse);
-            return _this.refresh(document);
-        }).then(function (_a) {
-            var document = _a[0], refreshResponse = _a[1];
-            responses.push(refreshResponse);
-            return [persistedDocument, responses];
-        });
+        HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
+        return this.save(persistedDocument, requestOptions);
     };
     Class.prototype.delete = function (documentURI, requestOptions) {
         var _this = this;

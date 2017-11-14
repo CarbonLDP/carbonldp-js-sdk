@@ -10,6 +10,7 @@ import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import { createDestination, validateEventContext } from "./Messaging/Utils";
 import * as NS from "./NS";
@@ -19,6 +20,7 @@ import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
@@ -599,22 +601,21 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	save<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
-
-			// TODO: Check if the document isDirty
-			/*
-			if( ! persistedDocument.isDirty() ) return new Promise<HTTP.Response.Class>( ( resolve:( result:HTTP.Response.Class ) => void ) => {
-				resolve( null );
-			});
-			*/
 			const uri:string = this.getRequestURI( persistedDocument.id );
+
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
-			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+			HTTP.Request.Util.setContentTypeHeader( "text/ldpatch", requestOptions );
+			// TODO: ETags?
 			HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 			persistedDocument._normalize();
-			const body:string = persistedDocument.toJSON( this, this.jsonldConverter );
+			const deltaCreator:LDPatch.DeltaCreator.Class = new LDPatch.DeltaCreator.Class( this.jsonldConverter );
+			[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource.Class ) => {
+				const schema:ObjectSchema.DigestedObjectSchema = this.getSchemaFor( resource );
+				deltaCreator.addResource( schema, resource._snapshot, resource );
+			} );
 
-			return this.sendRequest( HTTP.Method.PUT, uri, requestOptions, body );
+			return this.sendRequest( HTTP.Method.PATCH, uri, requestOptions, deltaCreator.getPatch() );
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 			return this.applyResponseData( persistedDocument, response );
 		} );
@@ -649,22 +650,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]> {
-		const responses:HTTP.Response.Class[] = [];
-		const previousETag:string = persistedDocument._etag;
-
-		return Utils.promiseMethod( () => {
-			HTTP.Request.Util.setPreferredRetrievalResource( "Modified", requestOptions );
-			return this.save<T>( persistedDocument, requestOptions );
-		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ document, saveResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
-			if( document._etag !== previousETag ) return [ document, saveResponse ];
-
-			responses.push( saveResponse );
-			return this.refresh<T>( document );
-		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]>( ( [ document, refreshResponse ]:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => {
-			responses.push( refreshResponse );
-			return [ persistedDocument, responses ];
-		} );
+	saveAndRefresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		HTTP.Request.Util.setPreferredRetrievalResource( "Modified", requestOptions );
+		return this.save<T>( persistedDocument, requestOptions );
 	}
 
 

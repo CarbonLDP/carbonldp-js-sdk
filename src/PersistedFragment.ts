@@ -34,8 +34,8 @@ function extendRemoveType( superFunction:( type:string ) => void ):( type:string
 }
 
 export class Factory {
-	static decorate<T extends Fragment.Class>( fragment:T, snapshot:Object = {} ):T & Class {
-		PersistedResource.Factory.decorate( fragment, snapshot );
+	static decorate<T extends Fragment.Class>( fragment:T ):T & Class {
+		PersistedResource.Factory.decorate( fragment );
 
 		Object.defineProperties( fragment, {
 			"addType": {

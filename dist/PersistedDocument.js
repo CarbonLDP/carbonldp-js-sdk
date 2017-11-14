@@ -241,24 +241,20 @@ var Factory = (function () {
             && Factory.hasClassProperties(object)
             && MessagingDocument.Factory.hasClassProperties(object);
     };
-    Factory.create = function (uri, documents, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        var document = Document.Factory.create();
-        document.id = uri;
-        return Factory.decorate(document, documents, snapshot);
+    Factory.create = function (uri, documents) {
+        return Factory.createFrom({}, uri, documents);
     };
-    Factory.createFrom = function (object, uri, documents, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        var document = Factory.decorate(object, documents, snapshot);
+    Factory.createFrom = function (object, uri, documents) {
+        var document = Factory.decorate(object, documents);
         document.id = uri;
+        document._normalize();
         return document;
     };
-    Factory.decorate = function (object, documents, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
+    Factory.decorate = function (object, documents) {
         if (Factory.is(object))
             return object;
         Document.Factory.decorate(object);
-        PersistedResource.Factory.decorate(object, snapshot);
+        PersistedResource.Factory.decorate(object);
         ServiceAwareDocument.Factory.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;

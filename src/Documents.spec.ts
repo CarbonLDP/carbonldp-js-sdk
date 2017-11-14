@@ -1,3 +1,5 @@
+import { QueryClause } from "sparqler/Clauses";
+
 import {
 	INSTANCE,
 	OBLIGATORY,
@@ -16,17 +18,20 @@ import {
 	hasProperty,
 	hasDefaultExport,
 } from "./test/JasmineExtender";
-
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
-import Carbon from "./Carbon";
 import * as BlankNode from "./BlankNode";
+import Carbon from "./Carbon";
 import * as Document from "./Document";
+import * as Documents from "./Documents";
+import DefaultExport from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
+import MessagingEvent from "./Messaging/Event";
+import * as MessagingUtils from "./Messaging/Utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -37,13 +42,6 @@ import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import * as Utils from "./Utils";
-import MessagingEvent from "./Messaging/Event";
-import * as MessagingUtils from "./Messaging/Utils";
-
-import { QueryClause } from "sparqler/Clauses";
-
-import * as Documents from "./Documents";
-import DefaultExport from "./Documents";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -7813,44 +7811,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:DoneFn ):void => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			), ():void => {} );
 
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
-
-				expect( documents.save ).toBeDefined();
-				expect( Utils.isFunction( documents.save ) ).toBe( true );
-
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"ETag": `"0123456789"`,
-					},
-				} );
-				let persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
-
-				documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
-					expect( _document ).toBe( persistedDocument );
-					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
-
-					done();
-				} ).catch( done.fail );
+			it( "should exists", ():void => {
+				expect( Documents.Class.prototype.save ).toBeDefined();
+				expect( Documents.Class.prototype.save ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
+				let context:AbstractContext;
 
 				beforeEach( () => {
-					let context:AbstractContext = new class extends AbstractContext {
+					context = new class extends AbstractContext {
 						protected _baseURI:string;
 
 						constructor() {
@@ -7883,7 +7856,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should sync the persisted blank nodes", async ( done:DoneFn ) => {
-					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
 						status: 200,
 						responseHeaders: {
 							"ETag": '"1234567890"',
@@ -7985,7 +7958,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "http://example.com/", null, "PATCH" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -8006,55 +7979,113 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
-
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
-
-				beforeEach( () => {
-					documents = new Documents.Class();
-				} );
-
-				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.save( <any>{ id: "relative-uri/" } );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
-						done();
-					} );
-				} );
-
-				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.save( <any>{ id: "prefix:the-uri" } );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
-						done();
-					} );
-				} );
-
-				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
-						status: 500,
-						responseText: "",
+				it( "should send the patch headers in request", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": `"0123456789"`,
+						},
 					} );
 
-					const error:Error = new Error( "Error message" );
-					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+					persistedDocument._etag = `"12345"`;
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
-					documents.save( document ).then( () => {
-						done.fail( "Should not resolve" );
-					} ).catch( _error => {
-						expect( spy ).toHaveBeenCalled();
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+						expect( _document ).toBe( persistedDocument );
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
-						expect( _error ).toBeDefined();
-						expect( _error ).toBe( error );
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+							"accept": "application/ld+json",
+							"content-type": "text/ldpatch",
+							"if-match": "\"12345\"",
+						} ) );
 
 						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should send the patch delta", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": `"0123456789"`,
+						},
 					} );
+
+					context.extendObjectSchema( {
+						"xsd": NS.XSD.namespace,
+					} );
+					context.extendObjectSchema( "http://example.com/ns#Document", {
+						"list": {
+							"@container": "@list",
+						},
+						"pointer": {
+							"@type": "@id",
+						},
+					} );
+					context.extendObjectSchema( "http://example.com/ns#Fragment", {
+						"string": {
+							"@type": NS.XSD.DataType.string,
+							"@container": "@set",
+						},
+						"pointer": {
+							"@type": "@id",
+						},
+					} );
+					context.extendObjectSchema( "http://example.com/ns#BlankNode", {
+						"number": {
+							"@type": NS.XSD.DataType.integer,
+						},
+					} );
+
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+						types: [ "http://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "http://example.com/resource/#fragment",
+							types: [ "http://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointer: [ {
+								id: "_:blank-node",
+								types: [ "http://example.con/ns#Fragment", "http://example.com/ns#BlankNode" ],
+								string: [ "string 1" ],
+								number: 100,
+							} ],
+						},
+					}, "http://example.com/resource/", documents );
+					persistedDocument._syncSnapshot();
+					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
+
+					persistedDocument.addType( "NewType" );
+					persistedDocument[ "list" ] = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					persistedDocument[ "pointer" ][ "string" ] = [ "string 2", "string 3" ];
+					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
+					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
+
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+						expect( _document ).toBe( persistedDocument );
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.params ).toBe( "" +
+							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`UpdateList <http://example.com/resource/> <http://example.com/ns#list> 3..5 (). ` +
+							`UpdateList <http://example.com/resource/> <http://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+							`UpdateList <http://example.com/resource/> <http://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+							`Add { ` +
+							`` + `<http://example.com/resource/> a <http://example.com/ns#NewType>. ` +
+							`` + `<http://example.com/resource/#fragment> <http://example.com/ns#string> "string 3". ` +
+							`` + `_:blank-node <http://example.com/ns#string> "string -1" ` +
+							`}. ` +
+							`Delete { ` +
+							`` + `<http://example.com/resource/#fragment> <http://example.com/ns#string> "string 1" ` +
+							`}.` +
+							``
+						);
+
+						done();
+					} ).catch( done.fail );
 				} );
 
 			} );
@@ -8346,114 +8377,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, [ HTTP.Response.Class, HTTP.Response.Class ] ]>" }
-			), ( done:DoneFn ):void => {
-				let finalPromises:Promise<any>[] = [];
+			), ():void => {} );
 
-				// Two request behaviour
-				finalPromises.push( (():Promise<any> => {
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
-
-					let context:MockedContext = new MockedContext();
-					let documents:Documents.Class = context.documents;
-
-					expect( documents.saveAndRefresh ).toBeDefined();
-					expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
-
-					let mockSaveResponse:HTTP.Response.Class = new HTTP.Response.Class( <any> {}, "Mock Save Response", <any> {} );
-					let mockRefreshResponse:HTTP.Response.Class = new HTTP.Response.Class( <any> {}, "Mock Save Response", <any> {} );
-					let document:PersistedDocument.Class = PersistedDocument.Factory.create( "", documents );
-					let options:HTTP.Request.Options = { timeout: 50500 };
-
-					let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve<any>( [ document, mockSaveResponse ] ) );
-					let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.returnValue( Promise.resolve<any>( [ document, mockRefreshResponse ] ) );
-
-					return documents.saveAndRefresh( document, options ).then( ( [ _document, [ saveResponse, refreshResponse ] ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
-						expect( spySave ).toHaveBeenCalledWith( document, options );
-						expect( spyRefresh ).toHaveBeenCalledWith( document );
-
-						expect( document ).toBe( _document );
-						expect( saveResponse ).toBe( mockSaveResponse );
-						expect( refreshResponse ).toBe( mockRefreshResponse );
-					} );
-				})() );
-
-				// One request behaviour
-				finalPromises.push( (():Promise<any> => {
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
-
-					let context:MockedContext = new MockedContext();
-					context.setSetting( "vocabulary", "http://example.com/ns#" );
-					let documents:Documents.Class = context.documents;
-
-					expect( documents.saveAndRefresh ).toBeDefined();
-					expect( Utils.isFunction( documents.saveAndRefresh ) ).toBe( true );
-
-					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
-						status: 200,
-						responseHeaders: {
-							"Preference-Applied": "return=representation",
-							"ETag": '"1234567890"',
-						},
-						responseText: `{
-						"@id": "http://example.com/resource/",
-						"@graph": [
-							{
-								"@id": "http://example.com/resource/",
-								"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ]
-							}
-						]
-					}`,
-					} );
-					let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
-					let options:HTTP.Request.Options = { timeout: 50500 };
-
-					let spySave:jasmine.Spy = spyOn( context.documents, "save" ).and.callThrough();
-					let spyRefresh:jasmine.Spy = spyOn( context.documents, "refresh" ).and.callThrough();
-
-					return documents.saveAndRefresh( document, options ).then( ( [ _document, responses ]:[ PersistedDocument.Class, HTTP.Response.Class[] ] ) => {
-						expect( spySave ).toHaveBeenCalledTimes( 1 );
-						expect( spySave ).toHaveBeenCalledWith( document, options );
-						expect( spyRefresh ).not.toHaveBeenCalled();
-
-						expect( responses ).toEqual( jasmine.any( Array ) );
-						expect( responses.length ).toBe( 1 );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
-
-						expect( document ).toBe( _document );
-						expect( "property" in document ).toBe( true );
-						expect( document[ "property" ] ).toBe( "my UPDATED property" );
-
-					} );
-				})() );
-
-				expect( finalPromises.length ).toBe( 2 );
-				expect( finalPromises.every( promise => promise instanceof Promise ) ).toBe( true );
-				Promise.all( finalPromises ).then( done ).catch( done.fail );
+			it( "should exists", ():void => {
+				expect( Documents.Class.prototype.saveAndRefresh ).toBeDefined();
+				expect( Documents.Class.prototype.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 				let documents:Documents.Class;
+				let context:AbstractContext;
 
 				beforeEach( () => {
-					let context:AbstractContext = new class extends AbstractContext {
+					context = new class extends AbstractContext {
 						protected _baseURI:string;
 
 						constructor() {
@@ -8486,7 +8422,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should sync the persisted blank nodes and update document", async ( done:DoneFn ) => {
-					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
 						status: 200,
 						responseHeaders: {
 							"Preference-Applied": "return=representation",
@@ -8634,6 +8570,146 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						done();
 					} );
+				} );
+
+				it( "should send the patch headers in request", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": `"0123456789"`,
+						},
+						responseText: `[]`,
+					} );
+
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/", documents );
+					persistedDocument._etag = `"12345"`;
+
+					documents.saveAndRefresh( persistedDocument ).then( () => {
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+							"accept": "application/ld+json",
+							"content-type": "text/ldpatch",
+							"if-match": "\"12345\"",
+						} ) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should send the patch delta", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": `"0123456789"`,
+						},
+					} );
+
+					context.extendObjectSchema( {
+						"xsd": NS.XSD.namespace,
+					} );
+					context.extendObjectSchema( "http://example.com/ns#Document", {
+						"list": {
+							"@container": "@list",
+						},
+						"pointer": {
+							"@type": "@id",
+						},
+					} );
+					context.extendObjectSchema( "http://example.com/ns#Fragment", {
+						"string": {
+							"@type": NS.XSD.DataType.string,
+							"@container": "@set",
+						},
+						"pointer": {
+							"@type": "@id",
+						},
+					} );
+					context.extendObjectSchema( "http://example.com/ns#BlankNode", {
+						"number": {
+							"@type": NS.XSD.DataType.integer,
+						},
+					} );
+
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+						types: [ "http://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "http://example.com/resource/#fragment",
+							types: [ "http://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointer: [ {
+								id: "_:blank-node",
+								types: [ "http://example.con/ns#Fragment", "http://example.com/ns#BlankNode" ],
+								string: [ "string 1" ],
+								number: 100,
+							} ],
+						},
+					}, "http://example.com/resource/", documents );
+					persistedDocument._syncSnapshot();
+					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
+
+					persistedDocument.addType( "NewType" );
+					persistedDocument[ "list" ] = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					persistedDocument[ "pointer" ][ "string" ] = [ "string 2", "string 3" ];
+					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
+					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
+
+					documents.saveAndRefresh( persistedDocument ).then( () => {
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.params ).toBe( "" +
+							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`UpdateList <http://example.com/resource/> <http://example.com/ns#list> 3..5 (). ` +
+							`UpdateList <http://example.com/resource/> <http://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+							`UpdateList <http://example.com/resource/> <http://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+							`Add { ` +
+							`` + `<http://example.com/resource/> a <http://example.com/ns#NewType>. ` +
+							`` + `<http://example.com/resource/#fragment> <http://example.com/ns#string> "string 3". ` +
+							`` + `_:blank-node <http://example.com/ns#string> "string -1" ` +
+							`}. ` +
+							`Delete { ` +
+							`` + `<http://example.com/resource/#fragment> <http://example.com/ns#string> "string 1" ` +
+							`}.` +
+							``
+						);
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should update with the full document", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PATCH" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"Preference-Applied": "return=representation",
+							"ETag": '"1234567890"',
+						},
+						responseText: `{
+							"@id": "http://example.com/resource/",
+							"@graph": [
+								{
+									"@id": "http://example.com/resource/",
+									"http://example.com/ns#property": [ { "@value": "my UPDATED property" } ]
+								}
+							]
+						}`,
+					} );
+
+					let document:PersistedDocument.Class = PersistedDocument.Factory.createFrom( documents.getPointer( "http://example.com/resource/" ), "http://example.com/resource/", documents );
+					let options:HTTP.Request.Options = { timeout: 50500 };
+
+					documents.saveAndRefresh( document, options ).then( ( [ returnedDocument, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+						expect( returnedDocument ).toBeDefined();
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders[ "prefer" ] ).toContain( `return=representation; ${ NS.C.Class.ModifiedResource }` );
+
+						expect( document ).toBe( returnedDocument );
+						expect( "property" in document ).toBe( true );
+						expect( document[ "property" ] ).toBe( "my UPDATED property" );
+
+						done();
+					} ).catch( done.fail );
 				} );
 
 			} );

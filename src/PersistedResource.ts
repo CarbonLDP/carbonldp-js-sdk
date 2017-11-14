@@ -1,26 +1,26 @@
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
-export interface Class {
-	_snapshot:Object;
+export interface Class extends Resource.Class {
+	_snapshot:Resource.Class;
 	_syncSnapshot:() => void;
 
 	isDirty():boolean;
+
 	revert():void;
 }
 
-function syncSnapshot():void {
-	let resource:Class & Resource.Class = this;
-	resource._snapshot = Utils.O.clone( resource, {arrays: true} );
+function syncSnapshot( this:Class ):void {
+	this._snapshot = Utils.O.clone( this, { arrays: true } );
 
-	if( "id" in resource ) (resource._snapshot as Resource.Class).id = resource.id;
-	if( "types" in resource ) (resource._snapshot as Resource.Class).types = Utils.O.clone( resource.types );
+	this._snapshot.id = this.id;
+	this._snapshot.types = this.types.slice();
 }
 
 function isDirty():boolean {
 	let resource:Class & Resource.Class = this;
 
-	if( ! Utils.O.areEqual( resource, resource._snapshot, {arrays: true}, {id: true, types: true} ) ) return true;
+	if( ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true } ) ) return true;
 
 	let response:boolean = false;
 	if( "id" in resource ) response = response || (resource._snapshot as Resource.Class).id !== resource.id;
@@ -36,11 +36,11 @@ function revert():void {
 		if( ! ( key in resource._snapshot ) ) delete resource[ key ];
 	}
 
-	Utils.O.extend( resource, resource._snapshot, {arrays: true} );
+	Utils.O.extend( resource, resource._snapshot, { arrays: true } );
 }
 
 export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+	static hasClassProperties( object:object ):boolean {
 		return (
 			Utils.hasPropertyDefined( object, "_snapshot" )
 			&& Utils.hasFunction( object, "_syncSnapshot" )
@@ -49,7 +49,7 @@ export class Factory {
 		);
 	}
 
-	static decorate<T extends Object>( object:T, snapshot:Object = {} ):T & Class {
+	static decorate<T extends Resource.Class>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return <any> object;
 
 		let persistedResource:Class = <any> object;
@@ -59,7 +59,7 @@ export class Factory {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: snapshot,
+				value: {},
 			},
 			"_syncSnapshot": {
 				writable: false,
