@@ -1,6 +1,6 @@
 import { isBNodeLabel, isRelative } from "sparqler/iri";
 
-import { BlankNodeToken, CollectionToken, IRIToken, LiteralToken, ObjectToken, PredicateToken, PrefixedNameToken, SubjectToken } from "sparqler/tokens";
+import { BlankNodeToken, CollectionToken, IRIToken, LiteralToken, ObjectToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableOrIRI, VariableToken } from "sparqler/tokens";
 import { Converter } from "../JSONLD";
 import { XSD } from "../NS";
 import { ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, PointerType } from "../ObjectSchema";
@@ -61,6 +61,7 @@ export class Class {
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) : this.compactIRI( schema, id );
 
+		const updateLists:UpdateListToken[] = [];
 		const addTriples:SubjectToken = new SubjectToken( resource );
 		const deleteTriples:SubjectToken = new SubjectToken( resource );
 
@@ -81,33 +82,33 @@ export class Class {
 			const newValue:any = newResource[ propertyName ];
 
 			if( definition && definition.containerType === ContainerType.LIST && isValidValue( oldValue ) ) {
-				if( ! isValidValue( newValue ) ) {
-					this.updateLists.push( new UpdateListToken(
-						resource,
-						predicateURI as IRIToken | PrefixedNameToken,
-						new SliceToken( 0 ),
-						new CollectionToken()
-					) );
+				const listUpdates:UpdateDelta[] = [];
 
-					deleteTriples.addPredicate( new PredicateToken( predicateURI )
-						.addObject( new CollectionToken() )
-					);
-					return;
+				if( ! isValidValue( newValue ) ) {
+					deleteTriples.addPredicate( new PredicateToken( predicateURI ).addObject( new CollectionToken() ) );
+					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
+
+				} else {
+					const tempDefinition:DigestedPropertyDefinition = { ...definition, containerType: ContainerType.SET };
+
+					listUpdates.push( ...getListDelta(
+						this.getObjects( oldValue, schema, tempDefinition ),
+						this.getObjects( newValue, schema, tempDefinition )
+					) );
 				}
 
-				const tempDefinition:DigestedPropertyDefinition = {
-					...definition,
-					containerType: ContainerType.SET,
-				};
+				if( ! listUpdates.length ) return;
 
-				const oldObjects:ObjectToken[] = this.getObjects( oldValue, schema, tempDefinition );
-				const newObjects:ObjectToken[] = this.getObjects( newValue, schema, tempDefinition );
-
-				getListDelta( oldObjects, newObjects ).forEach( updateDelta => {
+				this.addPrefixFrom( predicateURI, schema );
+				listUpdates.forEach( updateDelta => {
 					const collection:CollectionToken = new CollectionToken();
-					updateDelta.objects.forEach( collection.addObject, collection );
 
-					this.updateLists.push( new UpdateListToken(
+					updateDelta.objects.forEach( object => {
+						collection.addObject( object );
+						this.addPrefixFrom( object, schema );
+					} );
+
+					updateLists.push( new UpdateListToken(
 						resource,
 						predicateURI as IRIToken | PrefixedNameToken,
 						updateDelta.objects.length ?
@@ -127,7 +128,10 @@ export class Class {
 					if( ! objects.length ) return;
 
 					const predicate:PredicateToken = new PredicateToken( predicateURI );
-					objects.forEach( predicate.addObject, predicate );
+					objects.forEach( object => {
+						predicate.addObject( object );
+						this.addPrefixFrom( object, schema );
+					} );
 
 					triple.addPredicate( predicate );
 				};
@@ -137,8 +141,19 @@ export class Class {
 			}
 		} );
 
+		this.updateLists.push( ...updateLists );
 		if( addTriples.predicates.length ) this.addToken.triples.push( addTriples );
 		if( deleteTriples.predicates.length ) this.deleteToken.triples.push( deleteTriples );
+
+		const predicates:{ predicate:VariableOrIRI | "a" }[] = [
+			...updateLists,
+			...addTriples.predicates,
+			...deleteTriples.predicates,
+		];
+		if( ! predicates.length ) return;
+
+		this.addPrefixFrom( resource, schema );
+		predicates.forEach( x => this.addPrefixFrom( x.predicate, schema ) );
 	}
 
 	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
@@ -232,10 +247,25 @@ export class Class {
 		if( matchPrefix === void 0 ) return new IRIToken( iri );
 
 		const [ namespace, { stringValue: prefixIRI } ] = matchPrefix;
-		if( ! this.prefixesMap.has( namespace ) )
-			this.prefixesMap.set( namespace, new PrefixToken( namespace, new IRIToken( prefixIRI ) ) );
-
 		return new PrefixedNameToken( namespace, iri.substr( prefixIRI.length ) );
+	}
+
+	private addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
+		if( object instanceof CollectionToken )
+			return object.objects.forEach( collectionObject => {
+				this.addPrefixFrom( collectionObject, schema );
+			} );
+
+		if( object instanceof LiteralToken )
+			return this.addPrefixFrom( object.type, schema );
+
+		if( ! ( object instanceof PrefixedNameToken ) ) return;
+
+		const namespace:string = object.namespace;
+		if( this.prefixesMap.has( namespace ) ) return;
+
+		const iri:string = schema.prefixes.get( namespace ).stringValue;
+		this.prefixesMap.set( namespace, new PrefixToken( namespace, new IRIToken( iri ) ) );
 	}
 
 }

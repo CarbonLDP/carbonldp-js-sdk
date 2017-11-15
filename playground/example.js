@@ -47,16 +47,29 @@
 			} );
 
 			carbon.extendObjectSchema( {
-				"hri": "http://hri.base22.com/ns#",
-				"labels": {
-					"@id": "hri:labels",
-					"@type": "boolean",
-					"@container": "@set"
+				"ex": "https://example.com/ns#",
+				"schema": "https://schema.org/",
+				"property0": {
+					"@id": "ex:property-0",
+					"@type": "integer",
 				},
-				"gradient": {
-					"@id": "hri:gradient",
-					"@type": "string"
-				}
+				"property1": {
+					"@id": "ex:property-1",
+					"@type": "string",
+				},
+				"property2": {
+					"@id": "schema:property-2",
+					"@type": "@id",
+				},
+				"property3": {
+					"@id": "schema:property-3",
+					"@type": "string",
+				},
+				"list": {
+					"@id": "ex:list",
+					"@type": "string",
+					"@container": "@list",
+				},
 			} );
 
 			let resource;
@@ -64,18 +77,9 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				fragment = { value: "a name" };
-				resource = { name: fragment };
-				carbon.documents.on( "*.*", "/**", ( data ) => {
-					console.log( data );
-				}, ( error ) => {
-					console.error( error );
-				} );
-
-				return new Promise( resolve => setTimeout( resolve, 3000 ) );
-			} ).then( () => {
-				return carbon.documents.createChild( "posts/", {} );
-			} ).then( () => {
+				return carbon.documents.get( "container/member-1/" );
+			} ).then( ( data ) => {
+				console.log( data );
 				done();
 			} ).catch( ( error ) => {
 				console.error( { error } );

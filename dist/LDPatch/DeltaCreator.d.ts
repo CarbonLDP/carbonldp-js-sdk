@@ -17,5 +17,6 @@ export declare class Class {
     private expandPointer(value, schema);
     private expandLiteral(value, schema, definition?);
     private compactIRI(schema, iri);
+    private addPrefixFrom(object, schema);
 }
 export default Class;

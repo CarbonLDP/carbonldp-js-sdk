@@ -70,17 +70,6 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 			} );
 
 			it( "should return the list of actions", ():void => {
-				`
-				@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-				@prefix schema: <http://schema.org/> .
-				@prefix profile: <http://ogp.me/ns/profile#> .
-				@prefix ex: <http://example.org/vocab#> .
-				Add {
-				  <#> profile:first_name "Timothy" ;
-				    profile:image <https://example.org/timbl.jpg> .
-				} .
-
-				UpdateList <#> ex:preferredLanguages 1..2 ( "fr-CH" ) .`;
 				const token:LDPatchToken = new LDPatchToken();
 				token.prologues.push( ...[
 					new PrefixToken( "profile", new IRIToken( "http://ogp.me/ns/profile#" ) ),
@@ -114,13 +103,14 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 				expect( token.toString() ).toBe( `` +
 					`@prefix profile: <http://ogp.me/ns/profile#>. ` +
 					`@prefix ex: <http://example.org/vocab#>. ` +
-					`Delete { <#> profile:first\\_name "Tim" }. ` +
+					`Delete { <#> profile:first_name "Tim" }. ` +
 					`Add { ` +
-					`<#> profile:first\\_name "Timothy";` +
+					`<#> profile:first_name "Timothy";` +
 					` profile:image <https://example.org/tim.jpg> ` +
 					`}. ` +
 					`UpdateList <#> ex:preferredLanguages 1..2 ( "fr-CH" ).` +
-					`` );
+					``
+				);
 			} );
 
 		} );

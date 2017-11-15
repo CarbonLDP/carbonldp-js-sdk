@@ -9857,7 +9857,6 @@ exports.IRIToken = IRIToken;
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(57);
 var NAMESPACE_REGEX = /^([A-Za-z](([A-Za-z_\-0-9]|\.)*[A-Za-z_\-0-9])?)?$/;
-var NORMALIZE_REGEX = /([_~.\-!$&'|()*+,;=/?#@%])/g;
 var PrefixedNameToken = (function () {
     function PrefixedNameToken(prefixedOrNamespace, localName) {
         this.token = "prefixedName";
@@ -9870,7 +9869,15 @@ var PrefixedNameToken = (function () {
         if (!NAMESPACE_REGEX.test(namespace))
             throw new Error("Invalid prefixed namespace.");
         this.namespace = namespace;
-        this.localName = localName.replace(NORMALIZE_REGEX, "\\$1");
+        var _b = localName.split(/^(.)(?:(.*)?(.))?$/), ln1 = _b[1], ln2 = _b[2], ln3 = _b[3];
+        var preSanitation = "";
+        if (ln1)
+            preSanitation += ln1.replace(/([\-.])/g, "\\$1");
+        if (ln2)
+            preSanitation += ln2;
+        if (ln2)
+            preSanitation += ln3.replace(/([.])/g, "\\$1");
+        this.localName = preSanitation.replace(/([~!$&'|()*+,;=/?#@%])/g, "\\$1");
         var _a;
     }
     PrefixedNameToken.prototype.toString = function () {
@@ -15996,6 +16003,7 @@ var Class = (function () {
         var id = newResource.id;
         var resource = iri_1.isBNodeLabel(id) ?
             new tokens_1.BlankNodeToken(id) : this.compactIRI(schema, id);
+        var updateLists = [];
         var addTriples = new tokens_1.SubjectToken(resource);
         var deleteTriples = new tokens_1.SubjectToken(resource);
         new Set([
@@ -16010,19 +16018,25 @@ var Class = (function () {
             var oldValue = oldResource[propertyName];
             var newValue = newResource[propertyName];
             if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST && isValidValue(oldValue)) {
+                var listUpdates = [];
                 if (!isValidValue(newValue)) {
-                    _this.updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, new Tokens_1.SliceToken(0), new tokens_1.CollectionToken()));
-                    deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI)
-                        .addObject(new tokens_1.CollectionToken()));
-                    return;
+                    deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI).addObject(new tokens_1.CollectionToken()));
+                    listUpdates.push({ slice: [0, void 0], objects: [] });
                 }
-                var tempDefinition = __assign({}, definition, { containerType: ObjectSchema_1.ContainerType.SET });
-                var oldObjects = _this.getObjects(oldValue, schema, tempDefinition);
-                var newObjects = _this.getObjects(newValue, schema, tempDefinition);
-                getListDelta(oldObjects, newObjects).forEach(function (updateDelta) {
+                else {
+                    var tempDefinition = __assign({}, definition, { containerType: ObjectSchema_1.ContainerType.SET });
+                    listUpdates.push.apply(listUpdates, getListDelta(_this.getObjects(oldValue, schema, tempDefinition), _this.getObjects(newValue, schema, tempDefinition)));
+                }
+                if (!listUpdates.length)
+                    return;
+                _this.addPrefixFrom(predicateURI, schema);
+                listUpdates.forEach(function (updateDelta) {
                     var collection = new tokens_1.CollectionToken();
-                    updateDelta.objects.forEach(collection.addObject, collection);
-                    _this.updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, updateDelta.objects.length ?
+                    updateDelta.objects.forEach(function (object) {
+                        collection.addObject(object);
+                        _this.addPrefixFrom(object, schema);
+                    });
+                    updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, updateDelta.objects.length ?
                         new Tokens_1.SliceToken(updateDelta.slice[0], updateDelta.slice[0]) : new (Tokens_1.SliceToken.bind.apply(Tokens_1.SliceToken, [void 0].concat(updateDelta.slice)))(), collection));
                 });
             }
@@ -16034,17 +16048,27 @@ var Class = (function () {
                     if (!objects.length)
                         return;
                     var predicate = new tokens_1.PredicateToken(predicateURI);
-                    objects.forEach(predicate.addObject, predicate);
+                    objects.forEach(function (object) {
+                        predicate.addObject(object);
+                        _this.addPrefixFrom(object, schema);
+                    });
                     triple.addPredicate(predicate);
                 };
                 addValues(setDelta.toAdd, addTriples);
                 addValues(setDelta.toDelete, deleteTriples);
             }
         });
+        (_a = this.updateLists).push.apply(_a, updateLists);
         if (addTriples.predicates.length)
             this.addToken.triples.push(addTriples);
         if (deleteTriples.predicates.length)
             this.deleteToken.triples.push(deleteTriples);
+        var predicates = updateLists.concat(addTriples.predicates, deleteTriples.predicates);
+        if (!predicates.length)
+            return;
+        this.addPrefixFrom(resource, schema);
+        predicates.forEach(function (x) { return _this.addPrefixFrom(x.predicate, schema); });
+        var _a;
     };
     Class.prototype.getPropertyIRI = function (schema, propertyName) {
         var propertyDefinition = schema.properties.get(propertyName);
@@ -16126,9 +16150,23 @@ var Class = (function () {
         if (matchPrefix === void 0)
             return new tokens_1.IRIToken(iri);
         var namespace = matchPrefix[0], prefixIRI = matchPrefix[1].stringValue;
-        if (!this.prefixesMap.has(namespace))
-            this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(prefixIRI)));
         return new tokens_1.PrefixedNameToken(namespace, iri.substr(prefixIRI.length));
+    };
+    Class.prototype.addPrefixFrom = function (object, schema) {
+        var _this = this;
+        if (object instanceof tokens_1.CollectionToken)
+            return object.objects.forEach(function (collectionObject) {
+                _this.addPrefixFrom(collectionObject, schema);
+            });
+        if (object instanceof tokens_1.LiteralToken)
+            return this.addPrefixFrom(object.type, schema);
+        if (!(object instanceof tokens_1.PrefixedNameToken))
+            return;
+        var namespace = object.namespace;
+        if (this.prefixesMap.has(namespace))
+            return;
+        var iri = schema.prefixes.get(namespace).stringValue;
+        this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(iri)));
     };
     return Class;
 }());

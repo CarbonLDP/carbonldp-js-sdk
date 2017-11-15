@@ -2083,6 +2083,58 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					] ) );
 				} );
 
+
+				it( "should add used prefixes", ():void => {
+					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+
+					const schema:DigestedObjectSchema = Digester.digestSchema( {
+						"@vocab": "http://example.org/vocab#",
+						"base": "http://example.org/",
+						"xsd": XSD.namespace,
+					} );
+
+					const oldResource:Resource.Class = Resource.Factory.createFrom( {
+						id: "http://example.org/resource/",
+						integers: [ 1 ],
+					} );
+					const newResource:Resource.Class = Resource.Factory.createFrom( {
+						id: "http://example.org/resource/",
+						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						integers: [ 1, 2 ],
+					} );
+
+					deltaCreator.addResource( schema, oldResource, newResource );
+					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
+						[ "xsd", new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) ],
+						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
+					] ) );
+				} );
+
+				it( "should ignore unused prefixes", ():void => {
+					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
+
+					const schema:DigestedObjectSchema = Digester.digestSchema( {
+						"@vocab": "http://example.org/vocab#",
+						"base": "http://example.org/",
+						"xsd": XSD.namespace,
+					} );
+
+					const oldResource:Resource.Class = Resource.Factory.createFrom( {
+						id: "http://example.org/resource/",
+						integers: [ 1, 2 ],
+					} );
+					const newResource:Resource.Class = Resource.Factory.createFrom( {
+						id: "http://example.org/resource/",
+						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						integers: [ 1, 2 ],
+					} );
+
+					deltaCreator.addResource( schema, oldResource, newResource );
+					expect( deltaCreator[ "prefixesMap" ] ).toEqual( new Map( [
+						[ "base", new PrefixToken( "base", new IRIToken( "http://example.org/" ) ) ],
+					] ) );
+				} );
+
 			} );
 
 			describe( "When blank node resource", ():void => {
@@ -2381,8 +2433,8 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				} ) );
 
 				expect( deltaCreator.getPatch() ).toBe( `` +
-					`@prefix resource: <http://example.org/resource/#>. ` +
 					`@prefix xsd: <${ XSD.namespace }>. ` +
+					`@prefix resource: <http://example.org/resource/#>. ` +
 					`UpdateList <http://example.org/resource/> <http://example.org/vocab#property2> 0.. (). ` +
 					`UpdateList resource:fragment <http://example.org/vocab#property2> 3..5 (). ` +
 					`UpdateList resource:fragment <http://example.org/vocab#property2> 0..0 ( "4"^^xsd:float ). ` +
