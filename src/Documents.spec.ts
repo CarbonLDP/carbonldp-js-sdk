@@ -1081,10 +1081,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"CONSTRUCT {" +
 							" ?document a ?document___type." +
 							" ?document <https://example.com/ns#property-1> ?document__property1." +
-							" ?document schema:property\\-2 ?document__property2." +
+							" ?document schema:property-2 ?document__property2." +
 							" ?document__property2 a ?document__property2___type." +
 							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-							" ?document__property2 schema:property\\-3 ?document__property2__property3 " +
+							" ?document__property2 schema:property-3 ?document__property2__property3 " +
 							"} WHERE {" +
 
 							" VALUES ?document { <https://example.com/resource/> }." +
@@ -1097,7 +1097,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" }." +
 
 							" OPTIONAL {" +
-							"" + " ?document schema:property\\-2 ?document__property2." +
+							"" + " ?document schema:property-2 ?document__property2." +
 							"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
 							"" + " OPTIONAL { ?document__property2 a ?document__property2___type }." +
 
@@ -1107,7 +1107,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }." +
 
 							"" + " OPTIONAL {" +
-							"" + "" + " ?document__property2 schema:property\\-3 ?document__property2__property3." +
+							"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
 							"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 							"" + " }" +
 							" } " +
@@ -7186,20 +7186,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
+							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
+							"" + ` <${ NS.C.Predicate.target }> ?member.` +
+
 							" ?member a ?member___type." +
 							" ?member <https://example.com/ns#property-1> ?member__property1." +
-							" ?member schema:property\\-2 ?member__property2." +
+							" ?member schema:property-2 ?member__property2." +
+
 							" ?member__property2 a ?member__property2___type." +
 							" ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
-							" ?member__property2 schema:property\\-3 ?member__property2__property3 " +
+							" ?member__property2 schema:property-3 ?member__property2__property3 " +
+
 							"} WHERE {" +
+							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
 							"" + " SELECT ?member WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 							"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 							"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
-							"" + "" + " OPTIONAL { ?member schema:property\\-2 ?member__property2 }" +
+							"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
 							"" + " }" +
 							"" + " ORDER BY ?member__property2" +
 							"" + " LIMIT 10" +
@@ -7215,7 +7221,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" }." +
 
 							" OPTIONAL {" +
-							"" + " ?member schema:property\\-2 ?member__property2." +
+							"" + " ?member schema:property-2 ?member__property2." +
 							"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
 							"" + " OPTIONAL { ?member__property2 a ?member__property2___type }." +
 
@@ -7225,7 +7231,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }." +
 
 							"" + " OPTIONAL {" +
-							"" + "" + " ?member__property2 schema:property\\-3 ?member__property2__property3." +
+							"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
 							"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
 							"" + " }" +
 							" } " +
@@ -7240,10 +7246,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-				it( "should return a partial document", ( done:DoneFn ):void => {
+				it( "should return partial member", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/member2/"
+							} ]
+						}, {
 							"@id": "${ context.baseURI }resource/member1/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
@@ -7303,6 +7327,154 @@ describe( module( "Carbon/Documents" ), ():void => {
 						property2:{};
 					}
 
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+					} );
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( [ myDocuments, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						}
+
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return partial member with partial relations", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/member2/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/member1/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/member1/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "${ context.baseURI }sub-member/sub-member1/"
+								} ]
+							} ]
+						}, {
+							"@id": "${ context.baseURI }sub-member/sub-member1/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }sub-member/sub-member1/",
+								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 1"
+								} ]
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/member2/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/member2/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "${ context.baseURI }sub-member/sub-member2/"
+								} ]
+							} ]
+						}, {
+							"@id": "${ context.baseURI }sub-member/sub-member2/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }sub-member/sub-member2/",
+								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+									"@value": "67890",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",

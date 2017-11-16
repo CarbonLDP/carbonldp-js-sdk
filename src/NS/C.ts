@@ -21,6 +21,10 @@ export class Class {
 
 	static get DocumentModified():string { return namespace + "DocumentModified"; }
 
+	static get ErrorResponse():string { return namespace + "ErrorResponse"; }
+
+	static get Error():string { return namespace + "Error"; }
+
 	static get Instance():string { return namespace + "Instance"; }
 
 	static get Map():string { return namespace + "Map"; }
@@ -53,19 +57,17 @@ export class Class {
 
 	static get PreferSelectedMembershipTriples():string { return namespace + "PreferSelectedMembershipTriples"; }
 
-	static get VolatileResource():string { return namespace + "VolatileResource"; }
+	static get QueryMetadata():string { return namespace + "QueryMetadata"; }
 
 	static get RDFRepresentation():string { return namespace + "RDFRepresentation"; }
 
 	static get RemoveMemberAction():string { return namespace + "RemoveMemberAction"; }
 
-	static get ErrorResponse():string { return namespace + "ErrorResponse"; }
-
-	static get Error():string { return namespace + "Error"; }
-
 	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
 
 	static get ValidationError():string { return namespace + "ValidationError"; }
+
+	static get VolatileResource():string { return namespace + "VolatileResource"; }
 }
 
 export class Predicate {

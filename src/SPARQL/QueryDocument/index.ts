@@ -1,6 +1,7 @@
 import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryMembersBuilder from "./QueryMembersBuilder";
+import * as QueryMetadata from "./QueryMetadata";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
@@ -12,6 +13,7 @@ export {
 	QueryContext,
 	QueryDocumentBuilder,
 	QueryMembersBuilder,
+	QueryMetadata,
 	QueryObject,
 	QueryPropertiesSchema,
 	QueryProperty,

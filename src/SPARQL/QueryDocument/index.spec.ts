@@ -4,6 +4,7 @@ import * as QueryDocument from "../QueryDocument";
 import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryMembersBuilder from "./QueryMembersBuilder";
+import * as QueryMetadata from "./QueryMetadata";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
@@ -31,6 +32,11 @@ describe( module( "Carbon/SPARQL/QueryDocument" ), ():void => {
 	it( reexports( INSTANCE, "QueryMembersBuilder", "Carbon.SPARQL.QueryDocument.QueryMembersBuilder" ), ():void => {
 		expect( QueryDocument.QueryMembersBuilder ).toBeDefined();
 		expect( QueryDocument.QueryMembersBuilder ).toBe( QueryMembersBuilder );
+	} );
+
+	it( reexports( INSTANCE, "QueryMetadata", "Carbon.SPARQL.QueryDocument.QueryMetadata" ), ():void => {
+		expect( QueryDocument.QueryMetadata ).toBeDefined();
+		expect( QueryDocument.QueryMetadata ).toBe( QueryMetadata );
 	} );
 
 	it( reexports( INSTANCE, "QueryObject", "Carbon.SPARQL.QueryDocument.QueryObject" ), ():void => {

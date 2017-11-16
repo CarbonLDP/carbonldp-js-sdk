@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/Clauses";
-import { ConstructToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { BindToken, ConstructToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -995,7 +995,19 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
 			const constructPatterns:PatternToken[] = membersProperty.getPatterns();
+
+			const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 			const construct:ConstructToken = new ConstructToken()
+				.addTriple( new SubjectToken( metadataVar )
+					.addPredicate( new PredicateToken( "a" )
+						.addObject( queryContext.compactIRI( NS.C.Class.VolatileResource ) )
+						.addObject( queryContext.compactIRI( NS.C.Class.QueryMetadata ) )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.Predicate.target ) )
+						.addObject( membersProperty.variable )
+					)
+				)
+				.addPattern( new BindToken( "BNODE()", metadataVar ) )
 				.addPattern( ...constructPatterns );
 
 			const query:QueryToken = new QueryToken( construct )
@@ -1017,14 +1029,28 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		} ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
 			response = _response;
-			return new RDF.Document.Parser().parse( jsonldString );
+			return new JSONLD.Parser.Class().parse( jsonldString );
 
-		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfDocuments:RDF.Document.Class[] ) => {
-			if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
+		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfNodes:RDF.Node.Class[] ) => {
+			const freeNodes:RDF.Node.Class[] = rdfNodes
+				.filter( node => ! RDF.Document.Factory.is( node ) );
+			const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
+
+			const targetsIDs:string[] = freeResources
+				.getResources()
+				.filter<SPARQL.QueryDocument.QueryMetadata.Class>( SPARQL.QueryDocument.QueryMetadata.Factory.is )
+				.map( x => x.target.id );
+			const targetSet:Set<string> = new Set( targetsIDs );
+
+			const rdfDocuments:RDF.Document.Class[] = rdfNodes
+				.filter<any>( RDF.Document.Factory.is );
+
+			const targetDocuments:RDF.Document.Class[] = rdfDocuments
+				.filter( x => targetSet.has( x[ "@id" ] ) );
 
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
 				.Class( this, membersProperty.name, queryContext )
-				.compactDocuments( rdfDocuments );
+				.compactDocuments( rdfDocuments, targetDocuments );
 
 			return [ documents, response ];
 		} );

@@ -54,6 +54,16 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "ErrorResponse", {
+        get: function () { return exports.namespace + "ErrorResponse"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Error", {
+        get: function () { return exports.namespace + "Error"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Instance", {
         get: function () { return exports.namespace + "Instance"; },
         enumerable: true,
@@ -134,8 +144,8 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "VolatileResource", {
-        get: function () { return exports.namespace + "VolatileResource"; },
+    Object.defineProperty(Class, "QueryMetadata", {
+        get: function () { return exports.namespace + "QueryMetadata"; },
         enumerable: true,
         configurable: true
     });
@@ -149,16 +159,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "ErrorResponse", {
-        get: function () { return exports.namespace + "ErrorResponse"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Error", {
-        get: function () { return exports.namespace + "Error"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "ResponseMetadata", {
         get: function () { return exports.namespace + "ResponseMetadata"; },
         enumerable: true,
@@ -166,6 +166,11 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "ValidationError", {
         get: function () { return exports.namespace + "ValidationError"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "VolatileResource", {
+        get: function () { return exports.namespace + "VolatileResource"; },
         enumerable: true,
         configurable: true
     });

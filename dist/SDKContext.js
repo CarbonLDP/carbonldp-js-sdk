@@ -11,6 +11,7 @@ var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
 var RDFRepresentation = require("./RDFRepresentation");
 var SHACL = require("./SHACL");
+var SPARQL = require("./SPARQL");
 var System = require("./System");
 var Class = (function () {
     function Class() {
@@ -165,6 +166,7 @@ var Class = (function () {
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
+        this.extendObjectSchema(SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA);
         this.extendObjectSchema(Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA);
         this.extendObjectSchema(Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA);
         this.extendObjectSchema(Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA);

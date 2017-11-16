@@ -10,6 +10,8 @@ export declare class Class {
     static readonly DocumentDeleted: string;
     static readonly DocumentMetadata: string;
     static readonly DocumentModified: string;
+    static readonly ErrorResponse: string;
+    static readonly Error: string;
     static readonly Instance: string;
     static readonly Map: string;
     static readonly MemberAdded: string;
@@ -26,13 +28,12 @@ export declare class Class {
     static readonly PreferMembershipTriples: string;
     static readonly PreferResultsContext: string;
     static readonly PreferSelectedMembershipTriples: string;
-    static readonly VolatileResource: string;
+    static readonly QueryMetadata: string;
     static readonly RDFRepresentation: string;
     static readonly RemoveMemberAction: string;
-    static readonly ErrorResponse: string;
-    static readonly Error: string;
     static readonly ResponseMetadata: string;
     static readonly ValidationError: string;
+    static readonly VolatileResource: string;
 }
 export declare class Predicate {
     static readonly accessPoint: string;

@@ -879,7 +879,15 @@ var Class = (function () {
             if (membersQuery.call(void 0, queryMembersBuilder) !== queryMembersBuilder)
                 throw new Errors.IllegalArgumentError("The provided query builder was not returned");
             var constructPatterns = membersProperty.getPatterns();
-            var construct = (_a = new tokens_1.ConstructToken()).addPattern.apply(_a, constructPatterns);
+            var metadataVar = queryContext.getVariable("metadata");
+            var construct = (_a = new tokens_1.ConstructToken()
+                .addTriple(new tokens_1.SubjectToken(metadataVar)
+                .addPredicate(new tokens_1.PredicateToken("a")
+                .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
+                .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
+                .addObject(membersProperty.variable)))
+                .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
             var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
             (function triplesAdder(patterns) {
                 patterns
@@ -897,13 +905,23 @@ var Class = (function () {
         }).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
             response = _response;
-            return new RDF.Document.Parser().parse(jsonldString);
-        }).then(function (rdfDocuments) {
-            if (!rdfDocuments.length)
-                throw new HTTP.Errors.BadResponseError("No document was returned", response);
+            return new JSONLD.Parser.Class().parse(jsonldString);
+        }).then(function (rdfNodes) {
+            var freeNodes = rdfNodes
+                .filter(function (node) { return !RDF.Document.Factory.is(node); });
+            var freeResources = _this._getFreeResources(freeNodes);
+            var targetsIDs = freeResources
+                .getResources()
+                .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
+                .map(function (x) { return x.target.id; });
+            var targetSet = new Set(targetsIDs);
+            var rdfDocuments = rdfNodes
+                .filter(RDF.Document.Factory.is);
+            var targetDocuments = rdfDocuments
+                .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new JSONLD.Compacter
                 .Class(_this, membersProperty.name, queryContext)
-                .compactDocuments(rdfDocuments);
+                .compactDocuments(rdfDocuments, targetDocuments);
             return [documents, response];
         });
     };
