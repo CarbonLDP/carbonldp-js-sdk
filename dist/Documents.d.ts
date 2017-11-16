@@ -28,9 +28,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
     removePointer(idOrPointer: string | Pointer.Class): boolean;
-    get<T>(uri: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    get<T>(uri: string, requestOptions?: HTTP.Request.Options, documentQuery?: (queryDocumentBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    get<T>(uri: string, documentQuery?: (queryDocumentBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    get<T>(uri: string, requestOptions?: HTTP.Request.Options, documentQuery?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    get<T>(uri: string, documentQuery?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChild<T>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
@@ -84,7 +83,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     onMemberRemoved(uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
     _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
-    _parseErrorResponse<T>(response: HTTP.Response.Class): any;
+    _parseErrorResponse<T>(response: HTTP.Response.Class | Error): any;
     private getLDPMembers<T>(uri, includeNonReadable, retrievalPreferences?, requestOptions?);
     private queryDocuments<T>(uri, requestOptions, queryContext, targetProperty, membersQuery?);
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);

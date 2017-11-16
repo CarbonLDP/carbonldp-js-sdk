@@ -162,40 +162,14 @@ var Class = (function () {
                 });
             }
             else {
-                if (!_this.context)
-                    throw new Errors.IllegalStateError("A documents with context is needed for this feature.");
-                var queryContext_1 = new QueryDocument_1.QueryContext.Class(_this.context);
-                var documentProperty_1 = queryContext_1.addProperty("document");
-                var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty_1.variable, queryContext_1.compactIRI(uri));
-                documentProperty_1.addPattern(propertyValue);
-                var queryDocumentBuilder = new QueryDocument_1.QueryDocumentBuilder.Class(queryContext_1, documentProperty_1);
-                if (documentQuery.call(void 0, queryDocumentBuilder) !== queryDocumentBuilder)
-                    throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-                var constructPatterns = documentProperty_1.getPatterns();
-                var construct_1 = (_a = new tokens_1.ConstructToken()).addPattern.apply(_a, constructPatterns);
-                var query = (_b = new tokens_1.QueryToken(construct_1)).addPrologues.apply(_b, queryContext_1.getPrologues());
-                (function triplesAdder(patterns) {
-                    patterns
-                        .filter(function (pattern) { return pattern.token === "optional"; })
-                        .forEach(function (optional) {
-                        construct_1.addTriple(optional.patterns[0]);
-                        triplesAdder(optional.patterns);
-                    });
-                })(constructPatterns);
-                if (!construct_1.triples.length)
-                    throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
-                HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
-                return _this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
-                    var jsonldString = _a[0], response = _a[1];
-                    return new RDF.Document.Parser().parse(jsonldString).then(function (rdfDocuments) {
-                        if (!rdfDocuments.length)
-                            throw new HTTP.Errors.BadResponseError("No document was returned", response);
-                        var mainRDFDocument = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === uri; });
-                        var document = new JSONLD.Compacter
-                            .Class(_this, documentProperty_1.name, queryContext_1)
-                            .compactDocuments(rdfDocuments, mainRDFDocument)[0];
-                        return [document, response];
-                    });
+                var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+                var documentProperty = queryContext.addProperty("document");
+                var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
+                documentProperty.addPattern(propertyValue);
+                promise = _this.queryDocuments(uri, requestOptions, queryContext, documentProperty, documentQuery)
+                    .then(function (_a) {
+                    var documents = _a[0], response = _a[1];
+                    return [documents[0], response];
                 });
             }
             _this.documentsBeingResolved.set(pointerID, promise);
@@ -203,7 +177,6 @@ var Class = (function () {
                 _this.documentsBeingResolved.delete(pointerID);
                 return Promise.reject(error);
             });
-            var _a, _b;
         });
     };
     Class.prototype.exists = function (documentURI, requestOptions) {
@@ -714,6 +687,8 @@ var Class = (function () {
     };
     Class.prototype._parseErrorResponse = function (response) {
         var _this = this;
+        if (response instanceof Error)
+            return Promise.reject(response);
         if (!(response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has(response.status)))
             return Promise.reject(new HTTP.Errors.UnknownError(response.data, response));
         var error = new (HTTP.Errors.statusCodeMap.get(response.status))(response.data, response);

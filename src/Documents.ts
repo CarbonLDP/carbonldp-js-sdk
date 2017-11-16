@@ -133,10 +133,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.pointers.delete( localID );
 	}
 
-	get<T>( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, requestOptions?:HTTP.Request.Options, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, optionsOrQueryDocument:any, documentQuery?:( queryDocumentBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	get<T>( uri:string, requestOptions?:HTTP.Request.Options, documentQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, documentQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, optionsOrQueryDocument:any, documentQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			const pointerID:string = this.getPointerID( uri );
 			uri = this.getRequestURI( uri );
@@ -183,8 +182,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					return [ document, response ];
 				} );
 			} else {
-				if( ! this.context ) throw new Errors.IllegalStateError( "A documents with context is needed for this feature." );
-
 				const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
 
 				const documentProperty:QueryProperty.Class = queryContext.addProperty( "document" );
@@ -192,41 +189,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 				documentProperty.addPattern( propertyValue );
 
-				const queryDocumentBuilder:QueryDocumentBuilder.Class = new QueryDocumentBuilder.Class( queryContext, documentProperty );
-				if( documentQuery.call( void 0, queryDocumentBuilder ) !== queryDocumentBuilder )
-					throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
-
-				const constructPatterns:PatternToken[] = documentProperty.getPatterns();
-				const construct:ConstructToken = new ConstructToken()
-					.addPattern( ...constructPatterns );
-
-				const query:QueryToken = new QueryToken( construct )
-					.addPrologues( ...queryContext.getPrologues() );
-
-				(function triplesAdder( patterns:PatternToken[] ):void {
-					patterns
-						.filter( pattern => pattern.token === "optional" )
-						.forEach( ( optional:OptionalToken ) => {
-							construct.addTriple( optional.patterns[ 0 ] as TripleToken );
-							triplesAdder( optional.patterns );
-						} );
-				})( constructPatterns );
-				if( ! construct.triples.length ) throw new Errors.IllegalArgumentError( "No data specified to be retrieved." );
-
-				HTTP.Request.Util.setContainerRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
-
-				return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, response ]:[ string, HTTP.Response.Class ] ) => {
-					return new RDF.Document.Parser().parse( jsonldString ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( rdfDocuments:RDF.Document.Class[] ) => {
-						if( ! rdfDocuments.length ) throw new HTTP.Errors.BadResponseError( "No document was returned", response );
-
-						const mainRDFDocument:RDF.Document.Class[] = rdfDocuments.filter( rdfDocument => rdfDocument[ "@id" ] === uri );
-						const [ document ]:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-							.Class( this, documentProperty.name, queryContext )
-							.compactDocuments( rdfDocuments, mainRDFDocument );
-
-						return [ document, response ];
-					} );
-				} );
+				promise = this.queryDocuments<T>( uri, requestOptions, queryContext, documentProperty, documentQuery )
+					.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 			}
 
 			this.documentsBeingResolved.set( pointerID, promise );
@@ -815,7 +779,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return freeResourcesDocument;
 	}
 
-	_parseErrorResponse<T>( response:HTTP.Response.Class ):any {
+	_parseErrorResponse<T>( response:HTTP.Response.Class | Error ):any {
+		if( response instanceof Error ) return Promise.reject( response );
+
 		if( ! ( response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has( response.status ) ) )
 			return Promise.reject( new HTTP.Errors.UnknownError( response.data, response ) );
 
@@ -887,7 +853,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private queryDocuments<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetProperty:QueryProperty.Class, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+	private queryDocuments<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetProperty:QueryProperty.Class, membersQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		let response:HTTP.Response.Class;
 
 		// tslint:disable: variable-name

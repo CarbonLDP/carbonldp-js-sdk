@@ -689,171 +689,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				[ "T" ],
-				"Retrieves the Carbon Document referred by the URI specified from the CarbonLDP server.", [
-					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
+				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
+					{ name: "uri", type: "string", description: "The URI of the document to retrieve/query." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "documentQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
-			), ( done:DoneFn ):void => {
-				let promises:Promise<any>[] = [];
+			), ():void => {} );
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
-
-				let responseBody:string = JSON.stringify( {
-					"@id": "http://example.com/resource/",
-					"@graph": [
-						{
-							"@id": "http://example.com/resource/",
-							"http://example.com/ns#string": [ { "@value": "Document Resource" } ],
-							"http://example.com/ns#pointerSet": [
-								{ "@id": "_:1" },
-								{ "@id": "_:2" },
-								{ "@id": "http://example.com/resource/#1" },
-								{ "@id": "http://example.com/external-resource/" },
-							],
-						},
-						{
-							"@id": "_:1",
-							"http://example.com/ns#string": [ { "@value": "Fragment 1" } ],
-							"http://example.com/ns#pointerSet": [
-								{ "@id": "http://example.com/resource/" },
-								{ "@id": "http://example.com/resource/#1" },
-							],
-						},
-						{
-							"@id": "_:2",
-							"http://example.com/ns#string": [ { "@value": "Fragment 2" } ],
-						},
-						{
-							"@id": "http://example.com/resource/#1",
-							"http://example.com/ns#string": [ { "@value": "NamedFragment 1" } ],
-						},
-						{
-							"@id": "http://example.com/resource/#2",
-							"http://example.com/ns#string": [ { "@value": "NamedFragment 2" } ],
-						},
-					],
-				} );
-
-				let objectSchema:ObjectSchema.Class = {
-					"ex": "http://example.com/ns#",
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"string": {
-						"@id": "ex:string",
-						"@type": "xsd:string",
-					},
-					"date": {
-						"@id": "ex:date",
-						"@type": "xsd:dateTime",
-					},
-					"numberList": {
-						"@id": "ex:numberList",
-						"@type": "xsd:integer",
-						"@container": "@list",
-					},
-					"languageMap": {
-						"@id": "ex:languageMap",
-						"@container": "@language",
-					},
-					"pointer": {
-						"@id": "ex:pointer",
-						"@type": "@id",
-					},
-					"pointerList": {
-						"@id": "ex:pointerList",
-						"@type": "@id",
-						"@container": "@list",
-					},
-					"pointerSet": {
-						"@id": "ex:pointerSet",
-						"@type": "@id",
-						"@container": "@set",
-					},
-				};
-
-				context.extendObjectSchema( objectSchema );
-
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "GET" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"ETag": "162458126348712643",
-					},
-					responseText: responseBody,
-				} );
-
-				promises.push( documents.get( "http://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
-					expect( document ).toBeDefined();
-					expect( Utils.isObject( document ) ).toEqual( true );
-
-					expect( response ).toBeDefined();
-					expect( Utils.isObject( response ) ).toEqual( true );
-
-					expect( document[ "string" ] ).toBe( "Document Resource" );
-
-					(function documentResource():void {
-						expect( document[ "pointerSet" ].length ).toBe( 4 );
-						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
-						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
-						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
-						expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "http://example.com/external-resource/" );
-					})();
-
-					(function documentFragments():void {
-
-						let fragment:Fragment.Class;
-						expect( document.getFragments().length ).toBe( 4 );
-
-						(function documentBlankNode_1():void {
-							fragment = document.getFragment( "_:1" );
-							expect( fragment ).toBeTruthy();
-							expect( fragment[ "string" ] ).toBe( "Fragment 1" );
-							expect( fragment[ "pointerSet" ].length ).toBe( 2 );
-							expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/" );
-							expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "http://example.com/resource/#1" );
-							expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/" ) ).toBe( document );
-							expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "http://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
-						})();
-
-						(function documentBlankNode_2():void {
-							fragment = document.getFragment( "_:2" );
-							expect( fragment ).toBeTruthy();
-							expect( fragment[ "string" ] ).toBe( "Fragment 2" );
-						})();
-
-						(function documentNamedFragment_1():void {
-							fragment = document.getFragment( "1" );
-							expect( fragment ).toBeTruthy();
-							expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
-						})();
-
-						(function documentNamedFragment_1():void {
-							fragment = document.getFragment( "2" );
-							expect( fragment ).toBeTruthy();
-							expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
-						})();
-
-					})();
-
-				} ) );
-
-				Promise.all( promises ).then( ():void => {
-					done();
-				}, ( error:Error ):void => {
-					error = ! ! error ? error : new Error( "Unknown error" );
-					done.fail( error );
-				} );
-			} );
+			it( hasSignature(
+				[ "T" ],
+				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
+					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
+					{ name: "documentQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+			), ():void => {} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
 
@@ -916,17 +767,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
+
+				let context:AbstractContext;
 				let documents:Documents.Class;
-
-				beforeEach( () => {
-					const context:AbstractContext = new class MockedContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-						}
-					}();
+				beforeEach( ():void => {
+					context = new class extends AbstractContext {
+						_baseURI:string = "https://example.com/";
+					};
+					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -951,7 +799,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -959,7 +807,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -971,69 +819,143 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
 
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				it( "should retrieve the entire document", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "GET" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": "162458126348712643",
+						},
+						responseText: `{
+							"@id": "https://example.com/resource/",
+							"@graph": [
+								{
+									"@id": "https://example.com/resource/",
+									"https://example.com/ns#string": [ { "@value": "Document Resource" } ],
+									"https://example.com/ns#pointerSet": [
+										{ "@id": "_:1" },
+										{ "@id": "_:2" },
+										{ "@id": "https://example.com/resource/#1" },
+										{ "@id": "https://example.com/external-resource/" }
+									]
+								},
+								{
+									"@id": "_:1",
+									"https://example.com/ns#string": [ { "@value": "Fragment 1" } ],
+									"https://example.com/ns#pointerSet": [
+										{ "@id": "https://example.com/resource/" },
+										{ "@id": "https://example.com/resource/#1" }
+									]
+								},
+								{
+									"@id": "_:2",
+									"https://example.com/ns#string": [ { "@value": "Fragment 2" } ]
+								},
+								{
+									"@id": "https://example.com/resource/#1",
+									"https://example.com/ns#string": [ { "@value": "NamedFragment 1" } ]
+								},
+								{
+									"@id": "https://example.com/resource/#2",
+									"https://example.com/ns#string": [ { "@value": "NamedFragment 2" } ]
+								}
+							]
+						}`,
+					} );
 
-				beforeEach( () => {
-					documents = new Documents.Class();
-				} );
+					context.extendObjectSchema( {
+						"ex": "https://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					} );
 
-				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.get( "relative-uri/" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
+						expect( document ).toBeDefined();
+						expect( Utils.isObject( document ) ).toEqual( true );
+
+						expect( response ).toBeDefined();
+						expect( Utils.isObject( response ) ).toEqual( true );
+
+						expect( document[ "string" ] ).toBe( "Document Resource" );
+
+						(function documentResource():void {
+							expect( document[ "pointerSet" ].length ).toBe( 4 );
+							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
+							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
+							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
+							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/external-resource/" );
+						})();
+
+						(function documentFragments():void {
+
+							let fragment:Fragment.Class;
+							expect( document.getFragments().length ).toBe( 4 );
+
+							(function documentBlankNode_1():void {
+								fragment = document.getFragment( "_:1" );
+								expect( fragment ).toBeTruthy();
+								expect( fragment[ "string" ] ).toBe( "Fragment 1" );
+								expect( fragment[ "pointerSet" ].length ).toBe( 2 );
+								expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/" );
+								expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
+								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/" ) ).toBe( document );
+								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
+							})();
+
+							(function documentBlankNode_2():void {
+								fragment = document.getFragment( "_:2" );
+								expect( fragment ).toBeTruthy();
+								expect( fragment[ "string" ] ).toBe( "Fragment 2" );
+							})();
+
+							(function documentNamedFragment_1():void {
+								fragment = document.getFragment( "1" );
+								expect( fragment ).toBeTruthy();
+								expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
+							})();
+
+							(function documentNamedFragment_1():void {
+								fragment = document.getFragment( "2" );
+								expect( fragment ).toBeTruthy();
+								expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
+							})();
+
+						})();
+
 						done();
-					} );
+					} ).catch( done.fail );
 				} );
 
-				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.get( "prefix:the-uri" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
-						done();
-					} );
-				} );
-
-				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
-						status: 500,
-						responseText: "",
-					} );
-
-					const error:Error = new Error( "Error message" );
-					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
-
-					documents.get( "http://example.com/" ).then( () => {
-						done.fail( "Should not resolve" );
-					} ).catch( _error => {
-						expect( spy ).toHaveBeenCalled();
-
-						expect( _error ).toBeDefined();
-						expect( _error ).toBe( error );
-
-						done();
-					} );
-				} );
-
-			} );
-
-			describe( "When querying a document", ():void => {
-
-				let context:AbstractContext;
-				let documents:Documents.Class;
-				beforeEach( ():void => {
-					context = new class extends AbstractContext {
-						_baseURI:string = "https://example.com/";
-					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
-					documents = context.documents;
-				} );
 
 				it( "should send a correct construct query", ( done:DoneFn ):void => {
 					interface MyDocument {
@@ -1079,13 +1001,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
+							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
+							"" + ` <${ NS.C.Predicate.target }> ?document.` +
+
 							" ?document a ?document___type." +
 							" ?document <https://example.com/ns#property-1> ?document__property1." +
 							" ?document schema:property-2 ?document__property2." +
+
 							" ?document__property2 a ?document__property2___type." +
 							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 							" ?document__property2 schema:property-3 ?document__property2__property3 " +
+
 							"} WHERE {" +
+							" BIND(BNODE() AS ?metadata)." +
 
 							" VALUES ?document { <https://example.com/resource/> }." +
 							" OPTIONAL { ?document a ?document___type }." +
@@ -1126,6 +1054,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
 							"@id": "${ context.baseURI }resource/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
@@ -1206,6 +1143,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
 							"@id": "${ context.baseURI }resource/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
@@ -1267,6 +1213,310 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": __.inherit,
 									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( [ document, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
+
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property1": "value",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+
+				let documents:Documents.Class;
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.get( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.get( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.get( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+
+				it( "should send a correct construct query", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "https://example.com/ns#Resource" )
+						.properties( {
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": {
+										"@id": "https://example.com/ns#property-2",
+										"@type": NS.XSD.DataType.integer,
+									},
+									"property3": {
+										"@id": "https://schema.org/property-3",
+										"@type": NS.XSD.DataType.string,
+									},
+								} ),
+							},
+						} )
+					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( () => {
+						expect( sendSpy ).toHaveBeenCalledWith(
+							"https://example.com/resource/", " " +
+							"CONSTRUCT {" +
+							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
+							"" + ` <${ NS.C.Predicate.target }> ?document.` +
+
+							" ?document a ?document___type." +
+							" ?document <https://example.com/ns#property-1> ?document__property1." +
+							" ?document <https://schema.org/property-2> ?document__property2." +
+
+							" ?document__property2 a ?document__property2___type." +
+							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+							" ?document__property2 <https://schema.org/property-3> ?document__property2__property3 " +
+
+							"} WHERE {" +
+							" BIND(BNODE() AS ?metadata)." +
+
+							" VALUES ?document { <https://example.com/resource/> }." +
+							" OPTIONAL { ?document a ?document___type }." +
+							" ?document a <https://example.com/ns#Resource>." +
+
+							" OPTIONAL {" +
+							"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+							"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+							" }." +
+
+							" OPTIONAL {" +
+							"" + " ?document <https://schema.org/property-2> ?document__property2." +
+							"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+							"" + " OPTIONAL { ?document__property2 a ?document__property2___type }." +
+
+							"" + " OPTIONAL {" +
+							"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+							"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+							"" + " }." +
+
+							"" + " OPTIONAL {" +
+							"" + "" + " ?document__property2 <https://schema.org/property-3> ?document__property2__property3." +
+							"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+							"" + " }" +
+							" } " +
+							"}",
+							jasmine.objectContaining( {
+								headers: new Map( [
+									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+								] ),
+							} )
+						);
+						done();
+					} );
+				} );
+
+				it( "should return a partial document", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://example.com/ns#property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "https://example.com/ns#Resource" ).properties( {
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": {
+										"@id": "https://example.com/ns#property-2",
+										"@type": NS.XSD.DataType.integer,
+									},
+									"property3": {
+										"@id": "https://schema.org/property-3",
+										"@type": NS.XSD.DataType.string,
+									},
+								} ),
+							},
+						} )
+					).then( ( [ document, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property1": "value",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return a partial document with partial relations", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "https://example.com/another-resource/"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/another-resource/",
+							"@graph": [ {
+								"@id": "https://example.com/another-resource/",
+								"https://example.com/ns#property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "https://example.com/ns#Resource" )
+						.properties( {
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": {
+										"@id": "https://example.com/ns#property-2",
+										"@type": NS.XSD.DataType.integer,
+									},
+									"property3": {
+										"@id": "https://schema.org/property-3",
+										"@type": NS.XSD.DataType.string,
+									},
 								} ),
 							},
 						} )
@@ -4064,8 +4314,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
-					{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), () => {} );
@@ -4074,7 +4324,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), () => {} );
@@ -6071,8 +6321,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
-					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), () => {} );
@@ -6081,7 +6331,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), () => {} );
@@ -6249,7 +6499,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-				it( "should return partial member", ( done:DoneFn ):void => {
+				it( "should return partial members", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
@@ -6388,7 +6638,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
-				it( "should return partial member with partial relations", ( done:DoneFn ):void => {
+				it( "should return partial members with partial relations", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
@@ -6683,7 +6933,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-				it( "should return partial member", ( done:DoneFn ):void => {
+				it( "should return partial members", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
@@ -6813,7 +7063,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
-				it( "should return partial member with partial relations", ( done:DoneFn ):void => {
+				it( "should return partial members with partial relations", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
