@@ -11,9 +11,9 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
-import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
+import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
@@ -59,9 +59,10 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    getChildren<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    getMembers<T>(includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    getMembers<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getChildren<T>(requestOptions: HTTP.Request.Options, childrenQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getChildren<T>(childrenQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getMembers<T>(requestOptions: HTTP.Request.Options, membersQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getMembers<T>(membersQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     removeMember(memberURI: string): Promise<HTTP.Response.Class>;
     removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;

@@ -134,18 +134,11 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
-function getChildren(retrievalPreferences) {
-    return this._documents.getChildren(this.id, retrievalPreferences);
+function getChildren(requestOptionsOrQuery, childrenQuery) {
+    return this._documents.getChildren(this.id, requestOptionsOrQuery, childrenQuery);
 }
-function getMembers(includeNonReadableOrRetrievalPreferences, retrievalPreferences) {
-    var includeNonReadable = true;
-    if (Utils.isBoolean(includeNonReadableOrRetrievalPreferences)) {
-        includeNonReadable = includeNonReadableOrRetrievalPreferences;
-    }
-    else {
-        retrievalPreferences = includeNonReadableOrRetrievalPreferences;
-    }
-    return this._documents.getMembers(this.id, includeNonReadable, retrievalPreferences);
+function getMembers(requestOptionsOrQuery, childrenQuery) {
+    return this._documents.getMembers(this.id, requestOptionsOrQuery, childrenQuery);
 }
 function removeMember(memberOrUri) {
     return this._documents.removeMember(this.id, memberOrUri);

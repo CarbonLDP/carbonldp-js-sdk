@@ -19,6 +19,7 @@ import * as URI from "./RDF/URI";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
+import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 
 export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
@@ -102,11 +103,16 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 
 	createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 
-	getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
-	getMembers<T>( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
-	getMembers<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
+
+	getMembers<T>( requestOptions:HTTP.Request.Options, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
+	getMembers<T>( membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
 
 	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
 
@@ -309,21 +315,17 @@ function createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], slugsOrR
 	return this._documents.createAccessPoints( this.id, accessPoints, slugsOrRequestOptions, requestOptions );
 }
 
-function getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]> {
-	return this._documents.getChildren( this.id, retrievalPreferences );
+
+function getChildren<T>( this:Class,  requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getChildren<T>( this:Class,  childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getChildren<T>( this:Class,  requestOptionsOrQuery?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
+	return this._documents.getChildren<T>( this.id, requestOptionsOrQuery, childrenQuery );
 }
 
-function getMembers<T>( includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]>;
-function getMembers<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]>;
-function getMembers<T>( includeNonReadableOrRetrievalPreferences:any, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]> {
-	let includeNonReadable:boolean = true;
-	if( Utils.isBoolean( includeNonReadableOrRetrievalPreferences ) ) {
-		includeNonReadable = includeNonReadableOrRetrievalPreferences;
-	} else {
-		retrievalPreferences = includeNonReadableOrRetrievalPreferences;
-	}
-
-	return this._documents.getMembers( this.id, includeNonReadable, retrievalPreferences );
+function getMembers<T>( this:Class,  requestOptions:HTTP.Request.Options, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getMembers<T>( this:Class,  membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getMembers<T>( this:Class,  requestOptionsOrQuery?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
+	return this._documents.getMembers<T>( this.id, requestOptionsOrQuery, childrenQuery );
 }
 
 function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;

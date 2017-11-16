@@ -327,40 +327,29 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	getChildren<T>( parentURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getChildren<T>( parentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getChildren<T>( parentURI:string, retPrefReqOpt?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( retPrefReqOpt ) ? retPrefReqOpt : null;
-		requestOptions = HTTP.Request.Util.isOptions( retPrefReqOpt ) ? retPrefReqOpt : ( HTTP.Request.Util.isOptions( requestOptions ) ? requestOptions : {} );
+	getChildren<T>( parentURI:string, requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( parentURI:string, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( parentURI:string, requestOptionsOrQuery?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( requestOptionsOrQuery ) ? requestOptionsOrQuery : {};
+		childrenQuery = Utils.isFunction( requestOptionsOrQuery ) ? requestOptionsOrQuery : childrenQuery;
 
-		let containerURI:string;
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
-			containerURI = parentURI;
-			if( ! ! retrievalPreferences ) parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
+			const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+			const childrenProperty:QueryProperty.Class = queryContext.addProperty( "child" );
 
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
-				include: [
-					NS.LDP.Class.PreferContainment,
-					NS.C.Class.PreferContainmentResources,
-				],
-				omit: [
-					NS.LDP.Class.PreferMembership,
-					NS.LDP.Class.PreferMinimalContainer,
-					NS.C.Class.PreferMembershipResources,
-				],
-			};
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
+			const selectChildren:SelectToken = new SelectToken()
+				.addVariable( childrenProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.contains ) )
+						.addObject( childrenProperty.variable )
+					)
+				)
+			;
+			childrenProperty.addPattern( selectChildren );
 
-			return this.sendRequest( HTTP.Method.GET, parentURI, requestOptions, null, new JSONLD.Parser.Class() );
-		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
-			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( document => document[ "@id" ] !== containerURI );
-
-			let resources:(T & PersistedDocument.Class)[] = <any> this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
-			return [ resources, response ];
+			return this.queryDocuments<T>( parentURI, requestOptions, queryContext, childrenProperty, childrenQuery );
 		} );
 	}
 
@@ -382,7 +371,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			return this.persistDocument<T & AccessPoint.DocumentClass, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
 		} );
 	}
-
 
 	createAccessPoints<T>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 	createAccessPoints<T>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;

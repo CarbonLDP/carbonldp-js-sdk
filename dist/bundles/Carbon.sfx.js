@@ -3798,18 +3798,11 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
-function getChildren(retrievalPreferences) {
-    return this._documents.getChildren(this.id, retrievalPreferences);
+function getChildren(requestOptionsOrQuery, childrenQuery) {
+    return this._documents.getChildren(this.id, requestOptionsOrQuery, childrenQuery);
 }
-function getMembers(includeNonReadableOrRetrievalPreferences, retrievalPreferences) {
-    var includeNonReadable = true;
-    if (Utils.isBoolean(includeNonReadableOrRetrievalPreferences)) {
-        includeNonReadable = includeNonReadableOrRetrievalPreferences;
-    }
-    else {
-        retrievalPreferences = includeNonReadableOrRetrievalPreferences;
-    }
-    return this._documents.getMembers(this.id, includeNonReadable, retrievalPreferences);
+function getMembers(requestOptionsOrQuery, childrenQuery) {
+    return this._documents.getMembers(this.id, requestOptionsOrQuery, childrenQuery);
 }
 function removeMember(memberOrUri) {
     return this._documents.removeMember(this.id, memberOrUri);
@@ -8915,36 +8908,21 @@ var Class = (function () {
             return [persistedDocuments, responses];
         });
     };
-    Class.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
+    Class.prototype.getChildren = function (parentURI, requestOptionsOrQuery, childrenQuery) {
         var _this = this;
-        var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
-        requestOptions = HTTP.Request.Util.isOptions(retPrefReqOpt) ? retPrefReqOpt : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {});
-        var containerURI;
+        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
+        childrenQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : childrenQuery;
         return Utils_2.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            containerURI = parentURI;
-            if (!!retrievalPreferences)
-                parentURI += RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, _this.getGeneralSchema());
-            var containerRetrievalPreferences = {
-                include: [
-                    NS.LDP.Class.PreferContainment,
-                    NS.C.Class.PreferContainmentResources,
-                ],
-                omit: [
-                    NS.LDP.Class.PreferMembership,
-                    NS.LDP.Class.PreferMinimalContainer,
-                    NS.C.Class.PreferMembershipResources,
-                ],
-            };
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-            return _this.sendRequest(HTTP.Method.GET, parentURI, requestOptions, null, new JSONLD.Parser.Class());
-        }).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (document) { return document["@id"] !== containerURI; });
-            var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
-            return [resources, response];
+            var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+            var childrenProperty = queryContext.addProperty("child");
+            var selectChildren = new tokens_1.SelectToken()
+                .addVariable(childrenProperty.variable)
+                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                .addObject(childrenProperty.variable)));
+            childrenProperty.addPattern(selectChildren);
+            return _this.queryDocuments(parentURI, requestOptions, queryContext, childrenProperty, childrenQuery);
         });
     };
     Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {

@@ -441,36 +441,44 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getChildren",
-			[ "T" ],
-			"Retrieves an array of resolved persisted documents that refers to the children of the current document, in accordance to the retrieval preferences specified.", [
-				{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
-			],
-			{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
-		), ():void => {} );
-
-		describe( method(
-			OBLIGATORY,
-			"getMembers"
-		), ():void => {
+		describe( method( OBLIGATORY, "getChildren" ), ():void => {
 
 			it( hasSignature(
 				[ "T" ],
-				"Retrieves an array of resolved persisted documents that refers to the members of the current document, in accordance to the retrieval preferences specified.", [
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+					{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Retrieves an array of resolved persisted documents that refers to the members of the current document, including the non readable elements, in accordance to the retrieval preferences specified.", [
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+					{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+			), ():void => {} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getChildren" ), ():void => {
+
+			it( hasSignature(
+				[ "T" ],
+				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T" ],
+				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -2167,104 +2175,104 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"getChildren",
-				[ "T" ],
-				"Retrieves an array of resolved persisted documents that refers to the children of the current document, in accordance to the retrieval preferences specified.", [
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
-				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
-			), ():void => {
-				expect( document.getChildren ).toBeDefined();
-				expect( Utils.isFunction( document.getChildren ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "getChildren" );
-
-				document.getChildren();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", undefined );
-				spy.calls.reset();
-
-
-				let retrievalPreferences:RetrievalPreferences.Class = {
-					limit: 10,
-					offset: 0,
-					orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-				};
-				document.getChildren( retrievalPreferences );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", retrievalPreferences );
-			} );
-
-			describe( method(
-				INSTANCE,
-				"getMembers"
-			), ():void => {
+			describe( method( INSTANCE, "getChildren" ), ():void => {
 
 				it( hasSignature(
 					[ "T" ],
-					"Retrieves an array of resolved persisted documents that refers to the members of the current document, in accordance to the retrieval preferences specified.", [
-						{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
-						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+					"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+						{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.getMembers ).toBeDefined();
-					expect( Utils.isFunction( document.getMembers ) ).toBeDefined();
+					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+				), ():void => {} );
 
-					let spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
+				it( hasSignature(
+					[ "T" ],
+					"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+						{ name: "childrenQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					],
+					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+				), ():void => {} );
 
-					document.getMembers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, undefined );
+				it( "Should pass parameters to documents instance", ():void => {
+					expect( document.getChildren ).toBeDefined();
+					expect( Utils.isFunction( document.getChildren ) ).toBeDefined();
+
+					const spy:jasmine.Spy = spyOn( document._documents, "getChildren" );
+
+					// noinspection JSIgnoredPromiseFromCall
+					document.getChildren();
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0, void 0 );
 					spy.calls.reset();
 
-					document.getMembers( false );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", false, undefined );
+					// noinspection JSIgnoredPromiseFromCall
+					document.getChildren( { timeout: 5000 } );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, void 0 );
 					spy.calls.reset();
 
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
+					let query:( queryBuilder:any ) => any;
 
-					document.getMembers( false, retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", false, retrievalPreferences );
+					query = _ => _;
+					// noinspection JSIgnoredPromiseFromCall
+					document.getChildren( { timeout: 5000 }, query );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, query );
 					spy.calls.reset();
 
-					document.getMembers( true, retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, retrievalPreferences );
-					spy.calls.reset();
-
-					document.getMembers( retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, retrievalPreferences );
-					spy.calls.reset();
+					query = _ => _;
+					// noinspection JSIgnoredPromiseFromCall
+					document.getChildren( query );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", query, void 0 );
 				} );
 
+			} );
+
+			describe( method( INSTANCE, "getMembers" ), ():void => {
+
 				it( hasSignature(
 					[ "T" ],
-					"Retrieves an array of resolved persisted documents that refers to the members of the current document, including the non readable elements, in accordance to the retrieval preferences specified.", [
-						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
+					"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+						{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
+					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+				), ():void => {} );
+
+				it( hasSignature(
+					[ "T" ],
+					"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
+						{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					],
+					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+				), ():void => {} );
+
+				it( "Should pass parameters to documents instance", ():void => {
 					expect( document.getMembers ).toBeDefined();
 					expect( Utils.isFunction( document.getMembers ) ).toBeDefined();
 
-					let spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
+					const spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
 
+					// noinspection JSIgnoredPromiseFromCall
 					document.getMembers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0, void 0 );
 					spy.calls.reset();
 
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					document.getMembers( retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true, retrievalPreferences );
+					// noinspection JSIgnoredPromiseFromCall
+					document.getMembers( { timeout: 5000 } );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, void 0 );
 					spy.calls.reset();
+
+					let query:( queryBuilder:any ) => any;
+
+					query = _ => _;
+					// noinspection JSIgnoredPromiseFromCall
+					document.getMembers( { timeout: 5000 }, query );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, query );
+					spy.calls.reset();
+
+					query = _ => _;
+					// noinspection JSIgnoredPromiseFromCall
+					document.getMembers( query );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", query, void 0 );
 				} );
 
 			} );
