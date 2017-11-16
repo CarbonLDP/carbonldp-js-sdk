@@ -29,6 +29,9 @@ function revert() {
     }
     Utils.O.extend(resource, resource._snapshot, { arrays: true });
 }
+function isPartial() {
+    return !!this._partialMetadata;
+}
 var Factory = (function () {
     function Factory() {
     }
@@ -36,6 +39,7 @@ var Factory = (function () {
         return (Utils.hasPropertyDefined(object, "_snapshot")
             && Utils.hasFunction(object, "_syncSnapshot")
             && Utils.hasFunction(object, "isDirty")
+            && Utils.hasFunction(object, "isPartial")
             && Utils.hasFunction(object, "revert"));
     };
     Factory.decorate = function (object, snapshot) {
@@ -56,6 +60,11 @@ var Factory = (function () {
                 configurable: true,
                 value: syncSnapshot,
             },
+            "_partialMetadata": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+            },
             "isDirty": {
                 writable: false,
                 enumerable: false,
@@ -67,6 +76,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: revert,
+            },
+            "isPartial": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: isPartial,
             },
         });
         return persistedResource;

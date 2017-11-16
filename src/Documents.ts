@@ -142,7 +142,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			if( this.hasPointer( uri ) ) {
 				let pointer:Pointer.Class = this.getPointer( uri );
-				if( pointer.isResolved() ) {
+				if( pointer.isResolved() && ! ( pointer as PersistedDocument.Class ).isPartial() ) {
 					return Promise.resolve<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( [ <any> pointer, null ] );
 				}
 			}
@@ -160,6 +160,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 			if( ! documentQuery ) {
 				this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+
 				promise = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
 					let eTag:string = HTTP.Response.Util.getETag( response );
 					if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
@@ -181,6 +182,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					this.documentsBeingResolved.delete( pointerID );
 					return [ document, response ];
 				} );
+
+				this.documentsBeingResolved.set( pointerID, promise );
+				return promise.catch( error => {
+					this.documentsBeingResolved.delete( pointerID );
+					return Promise.reject( error );
+				} );
+
 			} else {
 				const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
 
@@ -189,15 +197,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 				documentProperty.addPattern( propertyValue );
 
-				promise = this.queryDocuments<T>( uri, requestOptions, queryContext, documentProperty, documentQuery )
+				return this.queryDocuments<T>( uri, requestOptions, queryContext, documentProperty, documentQuery )
 					.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 			}
-
-			this.documentsBeingResolved.set( pointerID, promise );
-			return promise.catch( error => {
-				this.documentsBeingResolved.delete( pointerID );
-				return Promise.reject( error );
-			} );
 		} );
 	}
 

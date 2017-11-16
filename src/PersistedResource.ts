@@ -11,6 +11,9 @@ export interface Class extends Resource.Class {
 	isDirty():boolean;
 
 	revert():void;
+
+
+	isPartial():boolean;
 }
 
 function syncSnapshot():void {
@@ -43,12 +46,17 @@ function revert():void {
 	Utils.O.extend( resource, resource._snapshot, { arrays: true } );
 }
 
+function isPartial( this:Class ):boolean {
+	return ! ! this._partialMetadata;
+}
+
 export class Factory {
 	static hasClassProperties( object:object ):object is Class {
 		return (
 			Utils.hasPropertyDefined( object, "_snapshot" )
 			&& Utils.hasFunction( object, "_syncSnapshot" )
 			&& Utils.hasFunction( object, "isDirty" )
+			&& Utils.hasFunction( object, "isPartial" )
 			&& Utils.hasFunction( object, "revert" )
 		);
 	}
@@ -72,6 +80,12 @@ export class Factory {
 				value: syncSnapshot,
 			},
 
+			"_partialMetadata": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+			},
+
 			"isDirty": {
 				writable: false,
 				enumerable: false,
@@ -83,6 +97,13 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: revert,
+			},
+
+			"isPartial": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: isPartial,
 			},
 		} );
 

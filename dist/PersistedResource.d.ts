@@ -6,6 +6,7 @@ export interface Class extends Resource.Class {
     _syncSnapshot: () => void;
     isDirty(): boolean;
     revert(): void;
+    isPartial(): boolean;
 }
 export declare class Factory {
     static hasClassProperties(object: object): object is Class;

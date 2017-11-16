@@ -1235,7 +1235,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
-				fit( "should add partial metadata to the document", ( done:DoneFn ):void => {
+				it( "should add partial metadata to the document", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
 						responseText: `[ {
@@ -1368,6 +1368,228 @@ describe( module( "Carbon/Documents" ), ():void => {
 									)
 								)
 								.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+							,
+						] );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should merge partial metadata of a partial document", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:PersistedResource.Class;
+					}
+
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property4": {
+							"@id": "property-4",
+							"@type": NS.XSD.DataType.boolean,
+						},
+						"property5": {
+							"@id": "https://schema.org/property-5",
+							"@type": NS.XSD.DataType.dateTime,
+						},
+					} );
+
+					Utils.promiseMethod( () => {
+						jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+							status: 200,
+							responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value"
+								} ]
+							} ]
+						} ]`,
+						} );
+
+						return documents.get<MyDocument>( "https://example.com/resource/", _ => _
+							.withType( "Resource" )
+							.properties( {
+								"property1": _.inherit,
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+									"query": __ => __.properties( {
+										"property2": __.inherit,
+										"property3": __.inherit,
+									} ),
+								},
+							} )
+						);
+					} ).then( () => {
+						jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+							status: 200,
+							responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+									"@value": "true",
+									"@type": "${ NS.XSD.DataType.boolean }"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://schema.org/property-3": [ {
+									"@value": "updated value"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "2000-01-01",
+									"@type": "${ NS.XSD.DataType.dateTime }"
+								} ]
+							} ]
+						} ]`,
+						} );
+
+						return documents.get<MyDocument>( "https://example.com/resource/", _ => _
+							.withType( "Resource" )
+							.properties( {
+								"property4": _.inherit,
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+									"query": __ => __.properties( {
+										"property3": __.inherit,
+										"property5": __.inherit,
+									} ),
+								},
+							} )
+						);
+					} ).then( ( [ document ] ) => {
+						const variableHelper:( name:string ) => VariableToken = name => {
+							return jasmine.objectContaining( {
+								token: "variable",
+								name,
+							} ) as any;
+						};
+
+						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document._partialMetadata.query ).toEqual( [
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__types" ) )
+									)
+								)
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
+										.addObject( variableHelper( "document__property4" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean>" ) )
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
+										.addObject( variableHelper( "document__property2" ) )
+									)
+								)
+								.addPattern( new FilterToken( "! isLiteral( ?document__property2 )" ) )
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+										.addObject( variableHelper( "document__property1" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+							,
+						] );
+
+						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document.property2._partialMetadata.query ).toEqual( [
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__property2__types" ) )
+									)
+								)
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
+										.addObject( variableHelper( "document__property2__property3" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-5" ) )
+										.addObject( variableHelper( "document__property2__property5" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime>" ) )
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
+										.addObject( variableHelper( "document__property2__property2" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer>" ) )
 							,
 						] );
 

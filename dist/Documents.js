@@ -121,7 +121,7 @@ var Class = (function () {
             uri = _this.getRequestURI(uri);
             if (_this.hasPointer(uri)) {
                 var pointer = _this.getPointer(uri);
-                if (pointer.isResolved()) {
+                if (pointer.isResolved() && !pointer.isPartial()) {
                     return Promise.resolve([pointer, null]);
                 }
             }
@@ -159,23 +159,23 @@ var Class = (function () {
                     _this.documentsBeingResolved.delete(pointerID);
                     return [document, response];
                 });
+                _this.documentsBeingResolved.set(pointerID, promise);
+                return promise.catch(function (error) {
+                    _this.documentsBeingResolved.delete(pointerID);
+                    return Promise.reject(error);
+                });
             }
             else {
                 var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
                 var documentProperty = queryContext.addProperty("document");
                 var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
                 documentProperty.addPattern(propertyValue);
-                promise = _this.queryDocuments(uri, requestOptions, queryContext, documentProperty, documentQuery)
+                return _this.queryDocuments(uri, requestOptions, queryContext, documentProperty, documentQuery)
                     .then(function (_a) {
                     var documents = _a[0], response = _a[1];
                     return [documents[0], response];
                 });
             }
-            _this.documentsBeingResolved.set(pointerID, promise);
-            return promise.catch(function (error) {
-                _this.documentsBeingResolved.delete(pointerID);
-                return Promise.reject(error);
-            });
         });
     };
     Class.prototype.exists = function (documentURI, requestOptions) {
