@@ -1,9 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var tokens_1 = require("sparqler/tokens");
 var PersistedDocument = require("../PersistedDocument");
 var Pointer = require("../Pointer");
 var RDFDocument = require("../RDF/Document");
 var URI_1 = require("../RDF/URI");
+var QueryContext = require("../SPARQL/QueryDocument/QueryContext");
+var PartialMetadata = require("../SPARQL/QueryDocument/PartialMetadata");
+var Documents = require("./../Documents");
 function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
@@ -59,8 +63,8 @@ var Class = (function () {
         return mainCompactedDocuments;
     };
     Class.prototype.compactNode = function (node, resource, containerLibrary, path) {
-        var digestedSchema = this.resolver.getSchemaFor(node, path);
-        var compactedData = this.converter.compact(node, {}, digestedSchema, containerLibrary);
+        var schema = this.resolver.getSchemaFor(node, path);
+        var compactedData = this.converter.compact(node, {}, schema, containerLibrary);
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
             if (!compactedData.hasOwnProperty(key)) {
                 delete resource[key];
@@ -75,6 +79,22 @@ var Class = (function () {
             (_a = resource[key]).push.apply(_a, values);
             var _a;
         });
+        if (this.resolver instanceof Documents.Class) {
+            delete resource._partialMetadata;
+        }
+        else if (this.resolver instanceof QueryContext.Class) {
+            var queryContext = this.resolver;
+            var query = queryContext.getProperty(path)
+                .getOptionalPattern()
+                .filter(function (pattern) { return pattern instanceof tokens_1.OptionalToken; })
+                .map(function (pattern) {
+                return (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, pattern
+                    .patterns
+                    .filter(function (token) { return token.token !== "optional"; }));
+                var _a;
+            });
+            resource._partialMetadata = new PartialMetadata.Class(schema, query, resource._partialMetadata);
+        }
     };
     Class.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);

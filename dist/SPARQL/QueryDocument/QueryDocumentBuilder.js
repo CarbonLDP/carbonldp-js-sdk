@@ -14,7 +14,7 @@ var Class = (function () {
         this._document = property.addOptionalPattern(new tokens_1.OptionalToken()
             .addPattern(new tokens_1.SubjectToken(property.variable)
             .addPredicate(new tokens_1.PredicateToken("a")
-            .addObject(queryContext.getVariable(property.name + "___type")))));
+            .addObject(queryContext.getVariable(property.name + "__types")))));
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
         this._values = new tokens_1.ValuesToken();
     }

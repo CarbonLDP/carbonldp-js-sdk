@@ -1,3 +1,4 @@
+import * as PartialMetadata from "./PartialMetadata";
 import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryDocumentsBuilder from "./QueryDocumentsBuilder";
@@ -10,6 +11,7 @@ import * as QueryValue from "./QueryValue";
 import * as QueryVariable from "./QueryVariable";
 
 export {
+	PartialMetadata,
 	QueryContext,
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,

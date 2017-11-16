@@ -33,6 +33,7 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
@@ -44,6 +45,7 @@ import { QueryClause } from "sparqler/Clauses";
 
 import * as Documents from "./Documents";
 import DefaultExport from "./Documents";
+import { FilterToken, IRIToken, OptionalToken, PredicateToken, SubjectToken, VariableToken } from "sparqler/tokens";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -1004,11 +1006,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?document.` +
 
-							" ?document a ?document___type." +
+							" ?document a ?document__types." +
 							" ?document <https://example.com/ns#property-1> ?document__property1." +
 							" ?document schema:property-2 ?document__property2." +
 
-							" ?document__property2 a ?document__property2___type." +
+							" ?document__property2 a ?document__property2__types." +
 							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 							" ?document__property2 schema:property-3 ?document__property2__property3 " +
 
@@ -1016,7 +1018,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" VALUES ?document { <https://example.com/resource/> }." +
-							" OPTIONAL { ?document a ?document___type }." +
+							" OPTIONAL { ?document a ?document__types }." +
 							" ?document a <https://example.com/ns#Resource>." +
 
 							" OPTIONAL {" +
@@ -1027,7 +1029,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" OPTIONAL {" +
 							"" + " ?document schema:property-2 ?document__property2." +
 							"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-							"" + " OPTIONAL { ?document__property2 a ?document__property2___type }." +
+							"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
 
 							"" + " OPTIONAL {" +
 							"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
@@ -1233,6 +1235,146 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
+				fit( "should add partial metadata to the document", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:PersistedResource.Class;
+					}
+
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+					} );
+
+					documents.get<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( [ document ] ) => {
+						const variableHelper:( name:string ) => VariableToken = name => {
+							return jasmine.objectContaining( {
+								token: "variable",
+								name,
+							} ) as any;
+						};
+
+						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document._partialMetadata.query ).toEqual( [
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__types" ) )
+									)
+								)
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+										.addObject( variableHelper( "document__property1" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
+										.addObject( variableHelper( "document__property2" ) )
+									)
+								)
+								.addPattern( new FilterToken( "! isLiteral( ?document__property2 )" ) )
+							,
+						] );
+
+						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document.property2._partialMetadata.query ).toEqual( [
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__property2__types" ) )
+									)
+								)
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
+										.addObject( variableHelper( "document__property2__property2" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer>" ) )
+							,
+							new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
+										.addObject( variableHelper( "document__property2__property3" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+							,
+						] );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -1321,11 +1463,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?document.` +
 
-							" ?document a ?document___type." +
+							" ?document a ?document__types." +
 							" ?document <https://example.com/ns#property-1> ?document__property1." +
 							" ?document <https://schema.org/property-2> ?document__property2." +
 
-							" ?document__property2 a ?document__property2___type." +
+							" ?document__property2 a ?document__property2__types." +
 							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
 							" ?document__property2 <https://schema.org/property-3> ?document__property2__property3 " +
 
@@ -1333,7 +1475,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" VALUES ?document { <https://example.com/resource/> }." +
-							" OPTIONAL { ?document a ?document___type }." +
+							" OPTIONAL { ?document a ?document__types }." +
 							" ?document a <https://example.com/ns#Resource>." +
 
 							" OPTIONAL {" +
@@ -1344,7 +1486,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" OPTIONAL {" +
 							"" + " ?document <https://schema.org/property-2> ?document__property2." +
 							"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-							"" + " OPTIONAL { ?document__property2 a ?document__property2___type }." +
+							"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
 
 							"" + " OPTIONAL {" +
 							"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
@@ -4435,11 +4577,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?child.` +
 
-							" ?child a ?child___type." +
+							" ?child a ?child__types." +
 							" ?child <https://example.com/ns#property-1> ?child__property1." +
 							" ?child schema:property-2 ?child__property2." +
 
-							" ?child__property2 a ?child__property2___type." +
+							" ?child__property2 a ?child__property2__types." +
 							" ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
 							" ?child__property2 schema:property-3 ?child__property2__property3 " +
 
@@ -4456,7 +4598,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " OFFSET 5" +
 							" }." +
 
-							" OPTIONAL { ?child a ?child___type }." +
+							" OPTIONAL { ?child a ?child__types }." +
 							" ?child a <https://example.com/ns#Resource>." +
 
 							" OPTIONAL {" +
@@ -4467,7 +4609,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" OPTIONAL {" +
 							"" + " ?child schema:property-2 ?child__property2." +
 							"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
-							"" + " OPTIONAL { ?child__property2 a ?child__property2___type }." +
+							"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
 
 							"" + " OPTIONAL {" +
 							"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
@@ -4867,11 +5009,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?child.` +
 
-							" ?child a ?child___type." +
+							" ?child a ?child__types." +
 							" ?child <https://example.com/ns#property-1> ?child__property1." +
 							" ?child <https://schema.org/property-2> ?child__property2." +
 
-							" ?child__property2 a ?child__property2___type." +
+							" ?child__property2 a ?child__property2__types." +
 							" ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
 							" ?child__property2 <https://schema.org/property-3> ?child__property2__property3 " +
 
@@ -4888,7 +5030,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " OFFSET 5" +
 							" }." +
 
-							" OPTIONAL { ?child a ?child___type }." +
+							" OPTIONAL { ?child a ?child__types }." +
 							" ?child a <https://example.com/ns#Resource>." +
 
 							" OPTIONAL {" +
@@ -4899,7 +5041,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" OPTIONAL {" +
 							"" + " ?child <https://schema.org/property-2> ?child__property2." +
 							"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
-							"" + " OPTIONAL { ?child__property2 a ?child__property2___type }." +
+							"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
 
 							"" + " OPTIONAL {" +
 							"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
@@ -6442,11 +6584,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?member.` +
 
-							" ?member a ?member___type." +
+							" ?member a ?member__types." +
 							" ?member <https://example.com/ns#property-1> ?member__property1." +
 							" ?member schema:property-2 ?member__property2." +
 
-							" ?member__property2 a ?member__property2___type." +
+							" ?member__property2 a ?member__property2__types." +
 							" ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
 							" ?member__property2 schema:property-3 ?member__property2__property3 " +
 
@@ -6465,7 +6607,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " OFFSET 5" +
 							" }." +
 
-							" OPTIONAL { ?member a ?member___type }." +
+							" OPTIONAL { ?member a ?member__types }." +
 							" ?member a <https://example.com/ns#Resource>." +
 
 							" OPTIONAL {" +
@@ -6476,7 +6618,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" OPTIONAL {" +
 							"" + " ?member schema:property-2 ?member__property2." +
 							"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
-							"" + " OPTIONAL { ?member__property2 a ?member__property2___type }." +
+							"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
 
 							"" + " OPTIONAL {" +
 							"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
@@ -6876,11 +7018,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?member.` +
 
-							" ?member a ?member___type." +
+							" ?member a ?member__types." +
 							" ?member <https://example.com/ns#property-1> ?member__property1." +
 							" ?member <https://schema.org/property-2> ?member__property2." +
 
-							" ?member__property2 a ?member__property2___type." +
+							" ?member__property2 a ?member__property2__types." +
 							" ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
 							" ?member__property2 <https://schema.org/property-3> ?member__property2__property3 " +
 
@@ -6899,7 +7041,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " OFFSET 5" +
 							" }." +
 
-							" OPTIONAL { ?member a ?member___type }." +
+							" OPTIONAL { ?member a ?member__types }." +
 							" ?member a <https://example.com/ns#Resource>." +
 
 							" OPTIONAL {" +
@@ -6910,7 +7052,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" OPTIONAL {" +
 							"" + " ?member <https://schema.org/property-2> ?member__property2." +
 							"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
-							"" + " OPTIONAL { ?member__property2 a ?member__property2___type }." +
+							"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
 
 							"" + " OPTIONAL {" +
 							"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +

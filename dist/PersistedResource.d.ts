@@ -1,4 +1,7 @@
-export interface Class {
+import * as Resource from "./Resource";
+import * as PartialMetadata from "./SPARQL/QueryDocument/PartialMetadata";
+export interface Class extends Resource.Class {
+    _partialMetadata?: PartialMetadata.Class;
     _snapshot: Object;
     _syncSnapshot: () => void;
     isDirty(): boolean;

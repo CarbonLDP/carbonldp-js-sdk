@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var PartialMetadata = require("./PartialMetadata");
+exports.PartialMetadata = PartialMetadata;
 var QueryContext = require("./QueryContext");
 exports.QueryContext = QueryContext;
 var QueryDocumentBuilder = require("./QueryDocumentBuilder");

@@ -20,7 +20,6 @@ var Pointer = require("./Pointer");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
 var Resource = require("./Resource");
-var RetrievalPreferences = require("./RetrievalPreferences");
 var SPARQL = require("./SPARQL");
 var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
@@ -708,50 +707,6 @@ var Class = (function () {
             return Promise.reject(error);
         }, function () {
             return Promise.reject(error);
-        });
-    };
-    Class.prototype.getLDPMembers = function (uri, includeNonReadable, retrievalPreferences, requestOptions) {
-        var _this = this;
-        return Utils_2.promiseMethod(function () {
-            uri = _this.getRequestURI(uri);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            var containerRetrievalPreferences = {
-                include: [
-                    NS.LDP.Class.PreferMinimalContainer,
-                    NS.LDP.Class.PreferMembership,
-                    NS.C.Class.PreferMembershipResources,
-                ],
-                omit: [
-                    NS.LDP.Class.PreferContainment,
-                    NS.C.Class.PreferContainmentResources,
-                ],
-            };
-            if (includeNonReadable) {
-                containerRetrievalPreferences.include.push(NS.C.Class.NonReadableMembershipResourceTriples);
-            }
-            else {
-                containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
-            }
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-            var retrievalURI = uri + RetrievalPreferences.Util.stringifyRetrievalPreferences(retrievalPreferences, _this.getGeneralSchema());
-            return _this.sendRequest(HTTP.Method.GET, retrievalURI, requestOptions, null, new JSONLD.Parser.Class());
-        }).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
-            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
-            if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var containerResource = _this.getDocumentResource(rdfDocument, response);
-            var membershipResource = _this.getMembershipResource(containerResource, rdfDocuments, response);
-            if (membershipResource === null)
-                return [[], response];
-            rdfDocuments = rdfDocuments.filter(function (targetRDFDocument) {
-                return !RDF.Node.Util.areEqual(targetRDFDocument, containerResource)
-                    && !RDF.Node.Util.areEqual(targetRDFDocument, membershipResource);
-            });
-            var resources = _this.getPersistedMetadataResources(freeNodes, rdfDocuments, response);
-            return [resources, response];
         });
     };
     Class.prototype.queryDocuments = function (uri, requestOptions, queryContext, targetProperty, membersQuery) {

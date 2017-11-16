@@ -1,7 +1,10 @@
 import * as Resource from "./Resource";
+import * as PartialMetadata from "./SPARQL/QueryDocument/PartialMetadata";
 import * as Utils from "./Utils";
 
-export interface Class {
+export interface Class extends Resource.Class {
+	_partialMetadata?:PartialMetadata.Class;
+
 	_snapshot:Object;
 	_syncSnapshot:() => void;
 

@@ -1,3 +1,4 @@
+import { OptionalToken, PatternToken } from "sparqler/tokens";
 import { DigestedObjectSchema, Resolver } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
@@ -5,21 +6,21 @@ import * as Pointer from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
-import * as Resource from "../Resource";
+import * as QueryContext from "../SPARQL/QueryDocument/QueryContext";
+import * as PartialMetadata from "../SPARQL/QueryDocument/PartialMetadata";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
+import { O as OUtils } from "../Utils";
 
 function getRelativeID( node:RDFNode.Class ):string {
 	const id:string = node[ "@id" ];
 	return URIUtils.hasFragment( id ) ? URIUtils.getFragment( id ) : id;
 }
 
-type TargetResource = PersistedResource.Class & Resource.Class;
-
 interface CompactionNode {
 	path:string;
 	node:RDFNode.Class;
-	resource:TargetResource;
+	resource:PersistedResource.Class;
 	containerLibrary:Pointer.Library;
 	added?:boolean;
 }
@@ -91,9 +92,9 @@ export class Class {
 		return mainCompactedDocuments;
 	}
 
-	compactNode( node:RDFNode.Class, resource:Pointer.Class, containerLibrary:Pointer.Library, path:string ):void {
-		const digestedSchema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
-		const compactedData:object = this.converter.compact( node, {}, digestedSchema, containerLibrary );
+	compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:Pointer.Library, path:string ):void {
+		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
+		const compactedData:object = this.converter.compact( node, {}, schema, containerLibrary );
 
 		new Set( [
 			...Object.keys( resource ),
@@ -113,9 +114,28 @@ export class Class {
 			resource[ key ].length = 0;
 			resource[ key ].push( ...values );
 		} );
+
+		if( this.resolver instanceof Documents.Class ) {
+			delete resource._partialMetadata;
+
+		} else if( this.resolver instanceof QueryContext.Class ) {
+			const queryContext:QueryContext.Class = this.resolver;
+
+			const query:OptionalToken[] = queryContext.getProperty( path )
+				.getOptionalPattern()
+				.filter<OptionalToken>( ( pattern ):pattern is OptionalToken => pattern instanceof OptionalToken )
+				.map( pattern => new OptionalToken()
+					.addPattern( ...pattern
+						.patterns
+						.filter( token => token.token !== "optional" )
+					)
+				);
+
+			resource._partialMetadata = new PartialMetadata.Class( schema, query, resource._partialMetadata );
+		}
 	}
 
-	private getResource<T extends TargetResource>( node:RDFNode.Class, containerLibrary:Pointer.Library, isDocument?:boolean ):T {
+	private getResource<T extends PersistedResource.Class>( node:RDFNode.Class, containerLibrary:Pointer.Library, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = PersistedDocument.Factory.decorate( resource, this.documents );

@@ -37,6 +37,11 @@ export class Class {
 		return this._patterns;
 	}
 
+	getOptionalPattern():PatternToken[] {
+		const first:PatternToken = this._patterns[ 0 ];
+		return first instanceof OptionalToken ? first.patterns : this.getPatterns();
+	}
+
 	getSchema():DigestedObjectSchema {
 		if( ! this._schema ) this._schema = this._context.getSchemaFor( { id: "" } );
 		return this._schema;

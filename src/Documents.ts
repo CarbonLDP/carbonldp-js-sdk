@@ -804,55 +804,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private getLDPMembers<T>( uri:string, includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		return promiseMethod( () => {
-			uri = this.getRequestURI( uri );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
-
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
-				include: [
-					NS.LDP.Class.PreferMinimalContainer,
-					NS.LDP.Class.PreferMembership,
-					NS.C.Class.PreferMembershipResources,
-				],
-				omit: [
-					NS.LDP.Class.PreferContainment,
-					NS.C.Class.PreferContainmentResources,
-				],
-			};
-
-			if( includeNonReadable ) {
-				containerRetrievalPreferences.include.push( NS.C.Class.NonReadableMembershipResourceTriples );
-			} else {
-				containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
-			}
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
-
-			const retrievalURI:string = uri + RetrievalPreferences.Util.stringifyRetrievalPreferences( retrievalPreferences, this.getGeneralSchema() );
-			return this.sendRequest( HTTP.Method.GET, retrievalURI, requestOptions, null, new JSONLD.Parser.Class() );
-
-		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
-			let rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
-
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-
-			let containerResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-			let membershipResource:RDF.Node.Class = this.getMembershipResource( containerResource, rdfDocuments, response );
-			if( membershipResource === null ) return [ [], response ];
-
-			rdfDocuments = (<any[]> rdfDocuments).filter( ( targetRDFDocument:RDF.Node.Class ) => {
-				return ! RDF.Node.Util.areEqual( targetRDFDocument, containerResource )
-					&& ! RDF.Node.Util.areEqual( targetRDFDocument, membershipResource )
-					;
-			} );
-
-			let resources:( T & PersistedDocument.Class)[] = this.getPersistedMetadataResources( freeNodes, rdfDocuments, response );
-			return [ resources, response ];
-		} );
-	}
-
 	private queryDocuments<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetProperty:QueryProperty.Class, membersQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		let response:HTTP.Response.Class;
 

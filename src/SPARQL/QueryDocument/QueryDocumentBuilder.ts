@@ -27,7 +27,7 @@ export class Class {
 		this._document = property.addOptionalPattern( new OptionalToken()
 			.addPattern( new SubjectToken( property.variable )
 				.addPredicate( new PredicateToken( "a" )
-					.addObject( queryContext.getVariable( property.name + "___type" ) ) ) )
+					.addObject( queryContext.getVariable( property.name + "__types" ) ) ) )
 		);
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
 		this._values = new ValuesToken();
