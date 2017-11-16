@@ -8,17 +8,12 @@ var QueryVariable = require("./QueryVariable");
 var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class(context) {
-        this._context = context;
+        this.context = context;
         this._propertiesMap = new Map();
         this._variablesCounter = 0;
         this._variablesMap = new Map();
         this._prefixesMap = new Map();
     }
-    Object.defineProperty(Class.prototype, "context", {
-        get: function () { return this._context; },
-        enumerable: true,
-        configurable: true
-    });
     Class.prototype.getVariable = function (name) {
         if (this._variablesMap.has(name))
             return this._variablesMap.get(name);
@@ -56,18 +51,27 @@ var Class = (function () {
     };
     Class.prototype.serializeLiteral = function (type, value) {
         type = this.expandIRI(type);
-        if (!this._context.documents.jsonldConverter.literalSerializers.has(type))
+        if (!this.context || !this.context.documents.jsonldConverter.literalSerializers.has(type))
             return "" + value;
-        return this._context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
+        return this.context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
     Class.prototype.expandIRI = function (iri) {
-        var vocab = this._context.hasSetting("vocabulary") ? this._context.resolve(this._context.getSetting("vocabulary")) : void 0;
-        iri = ObjectSchema_1.Util.resolveURI(iri, this._context.getObjectSchema(), vocab);
+        if (this.context) {
+            var vocab = this.context.hasSetting("vocabulary") ? this.context.resolve(this.context.getSetting("vocabulary")) : void 0;
+            iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
+        }
         if (iri_1.isPrefixed(iri))
             throw new Error("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
         return iri;
     };
     Class.prototype.compactIRI = function (iri) {
+        if (!this.context) {
+            if (iri_1.isPrefixed(iri))
+                throw new Error("Prefixed iri \"" + iri + "\" is not supported without a context.");
+            if (iri_1.isRelative(iri))
+                throw new Error("Relative iri \"" + iri + "\" is not supported without a context.");
+            return new tokens_1.IRIToken(iri);
+        }
         var schema = this.context.getObjectSchema();
         var namespace;
         var localName;
@@ -107,11 +111,16 @@ var Class = (function () {
         }
     };
     Class.prototype.getGeneralSchema = function () {
+        if (!this.context)
+            return new ObjectSchema_1.DigestedObjectSchema();
         return this.context.documents.getGeneralSchema();
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0)
+        if (path === void 0) {
+            if (!this.context)
+                return new ObjectSchema_1.DigestedObjectSchema();
             return this.context.documents.getSchemaFor(object);
+        }
         var property = this._propertiesMap.get(path);
         if (!property)
             throw new Error("Schema path \"" + path + "\" does not exists.");

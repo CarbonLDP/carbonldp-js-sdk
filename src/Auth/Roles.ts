@@ -60,9 +60,8 @@ export class Class {
 	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
-		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
-			return this.context.documents.getMembers<T & PersistedUser.Class>( accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions );
-		} );
+		// TODO: Implement in milestone:Security
+		throw new Errors.NotImplementedError( "To be re-implemented in milestone:Security" );
 	}
 
 	addUser( roleURI:string, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {

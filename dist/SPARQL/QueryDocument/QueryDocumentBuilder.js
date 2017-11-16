@@ -44,6 +44,8 @@ var Class = (function () {
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addOptionalPattern(this._typesTriple);
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
+        if (!this._context.context)
+            return this;
         var schema = this._context.context.getObjectSchema(type);
         if (schema)
             this._document.addSchema(schema);

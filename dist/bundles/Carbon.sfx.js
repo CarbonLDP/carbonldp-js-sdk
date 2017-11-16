@@ -9016,17 +9016,29 @@ var Class = (function () {
             return [pointer, response];
         });
     };
-    Class.prototype.getMembers = function (uri, nonReadOrRetPrefOrReqOptOrQuery, retPrefOrReqOptOrQuery, requestOptions) {
-        var includeNonReadable = Utils.isBoolean(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : true;
-        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : (RetrievalPreferences.Factory.is(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : {});
-        requestOptions = HTTP.Request.Util.isOptions(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : (HTTP.Request.Util.isOptions(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
-        var membersQuery = Utils.isFunction(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : Utils.isFunction(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : null;
-        if (!membersQuery) {
-            return this.getLDPMembers(uri, includeNonReadable, retrievalPreferences, requestOptions);
-        }
-        else {
-            return this.getQueryMembers(uri, requestOptions, membersQuery);
-        }
+    Class.prototype.getMembers = function (uri, requestOptionsOrQuery, membersQuery) {
+        var _this = this;
+        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
+        membersQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : membersQuery;
+        return Utils_2.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+            var membersProperty = queryContext.addProperty("member");
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var selectMembers = new tokens_1.SelectToken()
+                .addVariable(membersProperty.variable)
+                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                .addObject(membershipResource))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                .addObject(hasMemberRelation)))
+                .addPattern(new tokens_1.SubjectToken(membershipResource)
+                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                .addObject(membersProperty.variable)));
+            membersProperty.addPattern(selectMembers);
+            return _this.queryDocuments(uri, requestOptions, queryContext, membersProperty, membersQuery);
+        });
     };
     Class.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -9410,32 +9422,16 @@ var Class = (function () {
             return [resources, response];
         });
     };
-    Class.prototype.getQueryMembers = function (uri, requestOptions, membersQuery) {
+    Class.prototype.queryDocuments = function (uri, requestOptions, queryContext, targetProperty, membersQuery) {
         var _this = this;
-        if (!this.context)
-            return Promise.reject(new Errors.IllegalStateError("A documents with context is needed for this feature."));
         var response;
-        var queryContext = new QueryDocument_1.QueryContext.Class(this.context);
-        var membersProperty = queryContext.addProperty("member");
+        var Builder = targetProperty.name === "document" ?
+            QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         return Utils_2.promiseMethod(function () {
-            uri = _this.getRequestURI(uri);
-            var membershipResource = queryContext.getVariable("membershipResource");
-            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
-            var selectMembers = new tokens_1.SelectToken()
-                .addVariable(membersProperty.variable)
-                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
-                .addObject(membershipResource))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
-                .addObject(hasMemberRelation)))
-                .addPattern(new tokens_1.SubjectToken(membershipResource)
-                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
-                .addObject(membersProperty.variable)));
-            membersProperty.addPattern(selectMembers);
-            var queryMembersBuilder = new QueryDocument_1.QueryMembersBuilder.Class(queryContext, membersProperty);
-            if (membersQuery.call(void 0, queryMembersBuilder) !== queryMembersBuilder)
+            var queryBuilder = new Builder(queryContext, targetProperty);
+            if (membersQuery && membersQuery.call(void 0, queryBuilder) !== queryBuilder)
                 throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-            var constructPatterns = membersProperty.getPatterns();
+            var constructPatterns = targetProperty.getPatterns();
             var metadataVar = queryContext.getVariable("metadata");
             var construct = (_a = new tokens_1.ConstructToken()
                 .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -9443,7 +9439,7 @@ var Class = (function () {
                 .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
                 .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
-                .addObject(membersProperty.variable)))
+                .addObject(targetProperty.variable)))
                 .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
             var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
             (function triplesAdder(patterns) {
@@ -9470,14 +9466,14 @@ var Class = (function () {
             var targetsIDs = freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return x.target.id; });
+                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; });
             var targetSet = new Set(targetsIDs);
             var rdfDocuments = rdfNodes
                 .filter(RDF.Document.Factory.is);
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new JSONLD.Compacter
-                .Class(_this, membersProperty.name, queryContext)
+                .Class(_this, targetProperty.name, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
             return [documents, response];
         });
@@ -12148,8 +12144,8 @@ var QueryContext = __webpack_require__(287);
 exports.QueryContext = QueryContext;
 var QueryDocumentBuilder = __webpack_require__(135);
 exports.QueryDocumentBuilder = QueryDocumentBuilder;
-var QueryMembersBuilder = __webpack_require__(288);
-exports.QueryMembersBuilder = QueryMembersBuilder;
+var QueryDocumentsBuilder = __webpack_require__(288);
+exports.QueryDocumentsBuilder = QueryDocumentsBuilder;
 var QueryMetadata = __webpack_require__(289);
 exports.QueryMetadata = QueryMetadata;
 var QueryObject = __webpack_require__(136);
@@ -12327,6 +12323,8 @@ var Class = (function () {
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addOptionalPattern(this._typesTriple);
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
+        if (!this._context.context)
+            return this;
         var schema = this._context.context.getObjectSchema(type);
         if (schema)
             this._document.addSchema(schema);
@@ -15659,10 +15657,7 @@ var Class = (function () {
         });
     };
     Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
-        var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
-            return _this.context.documents.getMembers(accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
-        });
+        throw new Errors.NotImplementedError("To be re-implemented in milestone:Security");
     };
     Class.prototype.addUser = function (roleURI, user, requestOptions) {
         return this.addUsers(roleURI, [user], requestOptions);
@@ -21582,17 +21577,12 @@ var QueryVariable = __webpack_require__(133);
 var Utils_1 = __webpack_require__(134);
 var Class = (function () {
     function Class(context) {
-        this._context = context;
+        this.context = context;
         this._propertiesMap = new Map();
         this._variablesCounter = 0;
         this._variablesMap = new Map();
         this._prefixesMap = new Map();
     }
-    Object.defineProperty(Class.prototype, "context", {
-        get: function () { return this._context; },
-        enumerable: true,
-        configurable: true
-    });
     Class.prototype.getVariable = function (name) {
         if (this._variablesMap.has(name))
             return this._variablesMap.get(name);
@@ -21630,18 +21620,27 @@ var Class = (function () {
     };
     Class.prototype.serializeLiteral = function (type, value) {
         type = this.expandIRI(type);
-        if (!this._context.documents.jsonldConverter.literalSerializers.has(type))
+        if (!this.context || !this.context.documents.jsonldConverter.literalSerializers.has(type))
             return "" + value;
-        return this._context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
+        return this.context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
     Class.prototype.expandIRI = function (iri) {
-        var vocab = this._context.hasSetting("vocabulary") ? this._context.resolve(this._context.getSetting("vocabulary")) : void 0;
-        iri = ObjectSchema_1.Util.resolveURI(iri, this._context.getObjectSchema(), vocab);
+        if (this.context) {
+            var vocab = this.context.hasSetting("vocabulary") ? this.context.resolve(this.context.getSetting("vocabulary")) : void 0;
+            iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
+        }
         if (iri_1.isPrefixed(iri))
             throw new Error("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
         return iri;
     };
     Class.prototype.compactIRI = function (iri) {
+        if (!this.context) {
+            if (iri_1.isPrefixed(iri))
+                throw new Error("Prefixed iri \"" + iri + "\" is not supported without a context.");
+            if (iri_1.isRelative(iri))
+                throw new Error("Relative iri \"" + iri + "\" is not supported without a context.");
+            return new tokens_1.IRIToken(iri);
+        }
         var schema = this.context.getObjectSchema();
         var namespace;
         var localName;
@@ -21681,11 +21680,16 @@ var Class = (function () {
         }
     };
     Class.prototype.getGeneralSchema = function () {
+        if (!this.context)
+            return new ObjectSchema_1.DigestedObjectSchema();
         return this.context.documents.getGeneralSchema();
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0)
+        if (path === void 0) {
+            if (!this.context)
+                return new ObjectSchema_1.DigestedObjectSchema();
             return this.context.documents.getSchemaFor(object);
+        }
         var property = this._propertiesMap.get(path);
         if (!property)
             throw new Error("Schema path \"" + path + "\" does not exists.");

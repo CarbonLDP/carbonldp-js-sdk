@@ -388,17 +388,29 @@ var Class = (function () {
             return [pointer, response];
         });
     };
-    Class.prototype.getMembers = function (uri, nonReadOrRetPrefOrReqOptOrQuery, retPrefOrReqOptOrQuery, requestOptions) {
-        var includeNonReadable = Utils.isBoolean(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : true;
-        var retrievalPreferences = RetrievalPreferences.Factory.is(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : (RetrievalPreferences.Factory.is(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : {});
-        requestOptions = HTTP.Request.Util.isOptions(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : (HTTP.Request.Util.isOptions(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : (HTTP.Request.Util.isOptions(requestOptions) ? requestOptions : {}));
-        var membersQuery = Utils.isFunction(nonReadOrRetPrefOrReqOptOrQuery) ? nonReadOrRetPrefOrReqOptOrQuery : Utils.isFunction(retPrefOrReqOptOrQuery) ? retPrefOrReqOptOrQuery : null;
-        if (!membersQuery) {
-            return this.getLDPMembers(uri, includeNonReadable, retrievalPreferences, requestOptions);
-        }
-        else {
-            return this.getQueryMembers(uri, requestOptions, membersQuery);
-        }
+    Class.prototype.getMembers = function (uri, requestOptionsOrQuery, membersQuery) {
+        var _this = this;
+        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
+        membersQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : membersQuery;
+        return Utils_2.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+            var membersProperty = queryContext.addProperty("member");
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var selectMembers = new tokens_1.SelectToken()
+                .addVariable(membersProperty.variable)
+                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                .addObject(membershipResource))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                .addObject(hasMemberRelation)))
+                .addPattern(new tokens_1.SubjectToken(membershipResource)
+                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                .addObject(membersProperty.variable)));
+            membersProperty.addPattern(selectMembers);
+            return _this.queryDocuments(uri, requestOptions, queryContext, membersProperty, membersQuery);
+        });
     };
     Class.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -782,32 +794,16 @@ var Class = (function () {
             return [resources, response];
         });
     };
-    Class.prototype.getQueryMembers = function (uri, requestOptions, membersQuery) {
+    Class.prototype.queryDocuments = function (uri, requestOptions, queryContext, targetProperty, membersQuery) {
         var _this = this;
-        if (!this.context)
-            return Promise.reject(new Errors.IllegalStateError("A documents with context is needed for this feature."));
         var response;
-        var queryContext = new QueryDocument_1.QueryContext.Class(this.context);
-        var membersProperty = queryContext.addProperty("member");
+        var Builder = targetProperty.name === "document" ?
+            QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         return Utils_2.promiseMethod(function () {
-            uri = _this.getRequestURI(uri);
-            var membershipResource = queryContext.getVariable("membershipResource");
-            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
-            var selectMembers = new tokens_1.SelectToken()
-                .addVariable(membersProperty.variable)
-                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
-                .addObject(membershipResource))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
-                .addObject(hasMemberRelation)))
-                .addPattern(new tokens_1.SubjectToken(membershipResource)
-                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
-                .addObject(membersProperty.variable)));
-            membersProperty.addPattern(selectMembers);
-            var queryMembersBuilder = new QueryDocument_1.QueryMembersBuilder.Class(queryContext, membersProperty);
-            if (membersQuery.call(void 0, queryMembersBuilder) !== queryMembersBuilder)
+            var queryBuilder = new Builder(queryContext, targetProperty);
+            if (membersQuery && membersQuery.call(void 0, queryBuilder) !== queryBuilder)
                 throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-            var constructPatterns = membersProperty.getPatterns();
+            var constructPatterns = targetProperty.getPatterns();
             var metadataVar = queryContext.getVariable("metadata");
             var construct = (_a = new tokens_1.ConstructToken()
                 .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -815,7 +811,7 @@ var Class = (function () {
                 .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
                 .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
-                .addObject(membersProperty.variable)))
+                .addObject(targetProperty.variable)))
                 .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
             var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
             (function triplesAdder(patterns) {
@@ -842,14 +838,14 @@ var Class = (function () {
             var targetsIDs = freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return x.target.id; });
+                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; });
             var targetSet = new Set(targetsIDs);
             var rdfDocuments = rdfNodes
                 .filter(RDF.Document.Factory.is);
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new JSONLD.Compacter
-                .Class(_this, membersProperty.name, queryContext)
+                .Class(_this, targetProperty.name, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
             return [documents, response];
         });

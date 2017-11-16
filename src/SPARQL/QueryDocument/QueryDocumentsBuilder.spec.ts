@@ -4,27 +4,27 @@ import AbstractContext from "../../AbstractContext";
 import { clazz, extendsClass, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
 import QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
-import * as Module from "./QueryMembersBuilder";
-import { Class as QueryMembersBuilder } from "./QueryMembersBuilder";
+import * as Module from "./QueryDocumentsBuilder";
+import { Class as QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import * as QueryProperty from "./QueryProperty";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void => {
+describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryMembersBuilder.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class" ), ():void => {
 		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryMembersBuilder );
+		expect( Module.default ).toBe( QueryDocumentsBuilder );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryMembersBuilder.Class", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
-			expect( QueryMembersBuilder ).toBeDefined();
-			expect( QueryMembersBuilder ).toEqual( jasmine.any( Function ) );
+			expect( QueryDocumentsBuilder ).toBeDefined();
+			expect( QueryDocumentsBuilder ).toEqual( jasmine.any( Function ) );
 		} );
 
 		let context:AbstractContext;
@@ -57,36 +57,36 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			baseProperty.addPattern( selectToken );
 		} );
 
-		describe( "QueryMembersBuilder.constructor", ():void => {
+		describe( "QueryDocumentsBuilder.constructor", ():void => {
 
 			it( "should exists", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				expect( builder ).toBeDefined();
-				expect( builder ).toEqual( jasmine.any( QueryMembersBuilder ) );
+				expect( builder ).toEqual( jasmine.any( QueryDocumentsBuilder ) );
 			} );
 
 			it( "should be instantiable", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				expect( builder ).toBeDefined();
-				expect( builder ).toEqual( jasmine.any( QueryMembersBuilder ) );
+				expect( builder ).toEqual( jasmine.any( QueryDocumentsBuilder ) );
 			} );
 
 		} );
 
 		it( extendsClass( "Carbon.QueryDocuments.QueryDocumentBuilder.Class" ), ():void => {
-			const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 			expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder.Class ) );
 		} );
 
 		describe( method( INSTANCE, "orderBy" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMembersBuilder.prototype.orderBy ).toBeDefined();
-				expect( QueryMembersBuilder.prototype.orderBy ).toEqual( jasmine.any( Function ) );
+				expect( QueryDocumentsBuilder.prototype.orderBy ).toBeDefined();
+				expect( QueryDocumentsBuilder.prototype.orderBy ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call to private _orderBy", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const spy:jasmine.Spy = spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
@@ -96,11 +96,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should return itself", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				const returnedValue:QueryMembersBuilder = builder.orderBy( property );
+				const returnedValue:QueryDocumentsBuilder = builder.orderBy( property );
 
 				expect( returnedValue ).toBe( builder );
 			} );
@@ -110,12 +110,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 		describe( method( INSTANCE, "orderAscendantBy" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMembersBuilder.prototype.orderAscendantBy ).toBeDefined();
-				expect( QueryMembersBuilder.prototype.orderAscendantBy ).toEqual( jasmine.any( Function ) );
+				expect( QueryDocumentsBuilder.prototype.orderAscendantBy ).toBeDefined();
+				expect( QueryDocumentsBuilder.prototype.orderAscendantBy ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call to private _orderBy", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const spy:jasmine.Spy = spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
@@ -125,11 +125,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should return itself", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				const returnedValue:QueryMembersBuilder = builder.orderAscendantBy( property );
+				const returnedValue:QueryDocumentsBuilder = builder.orderAscendantBy( property );
 
 				expect( returnedValue ).toBe( builder );
 			} );
@@ -139,12 +139,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 		describe( method( INSTANCE, "orderDescendantBy" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMembersBuilder.prototype.orderDescendantBy ).toBeDefined();
-				expect( QueryMembersBuilder.prototype.orderDescendantBy ).toEqual( jasmine.any( Function ) );
+				expect( QueryDocumentsBuilder.prototype.orderDescendantBy ).toBeDefined();
+				expect( QueryDocumentsBuilder.prototype.orderDescendantBy ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call to private _orderBy", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const spy:jasmine.Spy = spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
@@ -154,11 +154,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should return itself", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				const returnedValue:QueryMembersBuilder = builder.orderDescendantBy( property );
+				const returnedValue:QueryDocumentsBuilder = builder.orderDescendantBy( property );
 
 				expect( returnedValue ).toBe( builder );
 			} );
@@ -168,13 +168,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 		describe( method( INSTANCE, "limit" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMembersBuilder.prototype.limit ).toBeDefined();
-				expect( QueryMembersBuilder.prototype.limit ).toEqual( jasmine.any( Function ) );
+				expect( QueryDocumentsBuilder.prototype.limit ).toBeDefined();
+				expect( QueryDocumentsBuilder.prototype.limit ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should throw error when no select token defined", ():void => {
 				baseProperty = queryContext.addProperty( "member" );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( limit:number ) => void = limit => () => {
 					builder.limit( limit );
 				};
@@ -184,9 +184,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should return itself", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( limit:number ) => void = limit => {
-					const returnedValue:QueryMembersBuilder = builder.limit( limit );
+					const returnedValue:QueryDocumentsBuilder = builder.limit( limit );
 					expect( returnedValue ).toBe( builder );
 				};
 
@@ -195,7 +195,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should add modifier in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.limit( 10 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -205,7 +205,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should replace the modifier in the sub-select", ():void => {
 				selectToken.modifiers.push( new LimitToken( 10 ) );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.limit( 100 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -215,7 +215,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should add modifier last that offset modifier", ():void => {
 				selectToken.modifiers.push( new OffsetToken( 10 ) );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.limit( 100 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -226,7 +226,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should add modifier last that order modifier", ():void => {
 				selectToken.modifiers.push( new OrderToken( queryContext.getVariable( "member.property" ) ) );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.limit( 100 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -240,13 +240,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 		describe( method( INSTANCE, "offset" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMembersBuilder.prototype.offset ).toBeDefined();
-				expect( QueryMembersBuilder.prototype.offset ).toEqual( jasmine.any( Function ) );
+				expect( QueryDocumentsBuilder.prototype.offset ).toBeDefined();
+				expect( QueryDocumentsBuilder.prototype.offset ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should throw error when no select token defined", ():void => {
 				baseProperty = queryContext.addProperty( "member" );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( offset:number ) => void = offset => () => {
 					builder.offset( offset );
 				};
@@ -256,9 +256,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should return itself", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( offset:number ) => void = offset => {
-					const returnedValue:QueryMembersBuilder = builder.offset( offset );
+					const returnedValue:QueryDocumentsBuilder = builder.offset( offset );
 					expect( returnedValue ).toBe( builder );
 				};
 
@@ -267,7 +267,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should add modifier in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.offset( 10 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -277,7 +277,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should replace the modifier in the sub-select", ():void => {
 				selectToken.modifiers.push( new OffsetToken( 10 ) );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.offset( 100 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -287,7 +287,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should add modifier last that limit modifier", ():void => {
 				selectToken.modifiers.push( new LimitToken( 10 ) );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.offset( 100 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -298,7 +298,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should add modifier last that order modifier", ():void => {
 				selectToken.modifiers.push( new OrderToken( queryContext.getVariable( "member.property" ) ) );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				builder.offset( 100 );
 				expect( selectToken.modifiers ).toEqual( [
@@ -309,15 +309,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 		} );
 
-		describe( "QueryMembersBuilder._orderBy", ():void => {
+		describe( "QueryDocumentsBuilder._orderBy", ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMembersBuilder.prototype[ "_orderBy" ] ).toBeDefined();
-				expect( QueryMembersBuilder.prototype[ "_orderBy" ] ).toEqual( jasmine.any( Function ) );
+				expect( QueryDocumentsBuilder.prototype[ "_orderBy" ] ).toBeDefined();
+				expect( QueryDocumentsBuilder.prototype[ "_orderBy" ] ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should throw error when property is not a direct property", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => () => {
 					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
 					builder[ "_orderBy" ]( property );
@@ -333,7 +333,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 
 			it( "should throw error when no select token defined", ():void => {
 				baseProperty = queryContext.addProperty( "member" );
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => () => {
 					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
 					builder[ "_orderBy" ]( property );
@@ -344,7 +344,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should throw error when no valid property provided", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => () => {
 					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
 					builder[ "_orderBy" ]( property );
@@ -355,7 +355,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should return itself", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => {
 					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
 					property.addPattern( new OptionalToken()
@@ -363,7 +363,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
 								.addObject( property.variable ) ) ) );
 
-					const returnedValue:QueryMembersBuilder = builder[ "_orderBy" ]( property );
+					const returnedValue:QueryDocumentsBuilder = builder[ "_orderBy" ]( property );
 					expect( returnedValue ).toBe( builder );
 				};
 
@@ -372,7 +372,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should add modifier in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
 				property.addPattern( new OptionalToken()
@@ -390,7 +390,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should add modifier with specific ascendant flow in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
 				property.addPattern( new OptionalToken()
@@ -408,7 +408,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should add modifier with specific descendant flow in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
 				property.addPattern( new OptionalToken()
@@ -426,7 +426,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should replace existing modifier in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const oldProperty:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property-1" );
 				oldProperty.addPattern( new OptionalToken()
@@ -456,7 +456,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			it( "should add modifier first that limit modifier", ():void => {
 				selectToken.addModifier( new LimitToken( 10 ) );
 
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
 				property.addPattern( new OptionalToken()
@@ -477,7 +477,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			it( "should add modifier first that offset modifier", ():void => {
 				selectToken.addModifier( new OffsetToken( 10 ) );
 
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
 				property.addPattern( new OptionalToken()
@@ -496,7 +496,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should add the property triple in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
 				property.addPattern( new OptionalToken()
@@ -520,7 +520,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMembersBuilder" ), ():void =
 			} );
 
 			it( "should replace the property triple in the sub-select", ():void => {
-				const builder:QueryMembersBuilder = new QueryMembersBuilder( queryContext, baseProperty );
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const oldProperty:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property-1" );
 				oldProperty.addPattern( new OptionalToken()

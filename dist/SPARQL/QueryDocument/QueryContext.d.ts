@@ -4,14 +4,13 @@ import { DigestedObjectSchema, DigestedPropertyDefinition, Resolver } from "../.
 import * as QueryProperty from "./QueryProperty";
 import * as QueryVariable from "./QueryVariable";
 export declare class Class implements Resolver {
-    protected _context: Context.Class;
-    readonly context: Context.Class;
+    readonly context?: Context.Class;
     protected _propertiesMap: Map<string, QueryProperty.Class>;
     private _variablesCounter;
     private _variablesMap;
     private _prefixesMap;
     private _schemas;
-    constructor(context: Context.Class);
+    constructor(context?: Context.Class);
     getVariable(name: string): QueryVariable.Class;
     hasProperty(name: string): boolean;
     hasProperties(name: string): boolean;

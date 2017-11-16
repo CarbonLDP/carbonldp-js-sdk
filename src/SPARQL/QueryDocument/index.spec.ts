@@ -3,7 +3,7 @@ import { INSTANCE, module, reexports } from "../../test/JasmineExtender";
 import * as QueryDocument from "../QueryDocument";
 import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
-import * as QueryMembersBuilder from "./QueryMembersBuilder";
+import * as QueryDocumentsBuilder from "./QueryDocumentsBuilder";
 import * as QueryMetadata from "./QueryMetadata";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
@@ -29,9 +29,9 @@ describe( module( "Carbon/SPARQL/QueryDocument" ), ():void => {
 		expect( QueryDocument.QueryDocumentBuilder ).toBe( QueryDocumentBuilder );
 	} );
 
-	it( reexports( INSTANCE, "QueryMembersBuilder", "Carbon.SPARQL.QueryDocument.QueryMembersBuilder" ), ():void => {
-		expect( QueryDocument.QueryMembersBuilder ).toBeDefined();
-		expect( QueryDocument.QueryMembersBuilder ).toBe( QueryMembersBuilder );
+	it( reexports( INSTANCE, "QueryDocumentsBuilder", "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder" ), ():void => {
+		expect( QueryDocument.QueryDocumentsBuilder ).toBeDefined();
+		expect( QueryDocument.QueryDocumentsBuilder ).toBe( QueryDocumentsBuilder );
 	} );
 
 	it( reexports( INSTANCE, "QueryMetadata", "Carbon.SPARQL.QueryDocument.QueryMetadata" ), ():void => {

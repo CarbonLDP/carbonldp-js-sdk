@@ -1,4 +1,4 @@
-import { isPrefixed } from "sparqler/iri";
+import { isPrefixed, isRelative } from "sparqler/iri";
 import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
@@ -8,8 +8,7 @@ import * as QueryVariable from "./QueryVariable";
 import { getLevelRegExp } from "./Utils";
 
 export class Class implements Resolver {
-	protected _context:Context.Class;
-	get context():Context.Class { return this._context; }
+	readonly context?:Context.Class;
 
 	protected _propertiesMap:Map<string, QueryProperty.Class>;
 
@@ -20,8 +19,8 @@ export class Class implements Resolver {
 
 	private _schemas:DigestedObjectSchema[];
 
-	constructor( context:Context.Class ) {
-		this._context = context;
+	constructor( context?:Context.Class ) {
+		this.context = context;
 		this._propertiesMap = new Map();
 
 		this._variablesCounter = 0;
@@ -68,19 +67,28 @@ export class Class implements Resolver {
 	serializeLiteral( type:string, value:any ):string {
 		type = this.expandIRI( type );
 
-		if( ! this._context.documents.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
-		return this._context.documents.jsonldConverter.literalSerializers.get( type ).serialize( value );
+		if( ! this.context || ! this.context.documents.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
+		return this.context.documents.jsonldConverter.literalSerializers.get( type ).serialize( value );
 	}
 
 	expandIRI( iri:string ):string {
-		const vocab:string = this._context.hasSetting( "vocabulary" ) ? this._context.resolve( this._context.getSetting( "vocabulary" ) ) : void 0;
-		iri = SchemaUtils.resolveURI( iri, this._context.getObjectSchema(), vocab );
+		if( this.context ) {
+			const vocab:string = this.context.hasSetting( "vocabulary" ) ? this.context.resolve( this.context.getSetting( "vocabulary" ) ) : void 0;
+			iri = SchemaUtils.resolveURI( iri, this.context.getObjectSchema(), vocab );
+		}
 
 		if( isPrefixed( iri ) ) throw new Error( `Prefix "${ iri.split( ":" )[ 0 ] }" has not been declared.` );
+
 		return iri;
 	}
 
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
+		if( ! this.context ) {
+			if( isPrefixed( iri ) ) throw new Error( `Prefixed iri "${ iri }" is not supported without a context.` );
+			if( isRelative( iri ) ) throw new Error( `Relative iri "${ iri }" is not supported without a context.` );
+			return new IRIToken( iri );
+		}
+
 		const schema:DigestedObjectSchema = this.context.getObjectSchema();
 
 		let namespace:string;
@@ -120,11 +128,15 @@ export class Class implements Resolver {
 	}
 
 	getGeneralSchema():DigestedObjectSchema {
+		if( ! this.context ) return new DigestedObjectSchema();
 		return this.context.documents.getGeneralSchema();
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
-		if( path === void 0 ) return this.context.documents.getSchemaFor( object );
+		if( path === void 0 ) {
+			if( ! this.context ) return new DigestedObjectSchema();
+			return this.context.documents.getSchemaFor( object );
+		}
 
 		const property:QueryProperty.Class = this._propertiesMap.get( path );
 		if( ! property ) throw new Error( `Schema path "${ path }" does not exists.` );

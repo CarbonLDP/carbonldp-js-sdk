@@ -5675,712 +5675,40 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"getMembers",
 			"Retrieves and resolve all the members of a specified document."
 		), () => {
-			let documents:Documents.Class;
-
-			beforeEach( () => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
-				context.extendObjectSchema( {
-					"ex": "http://example.com/ns#",
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"string": {
-						"@id": "ex:string",
-						"@type": "xsd:string",
-					},
-					"pointer": {
-						"@id": "ex:pointer",
-						"@type": "@id",
-					},
-				} );
-
-				documents = context.documents;
-			} );
 
 			it( isDefined(), () => {
-				expect( documents.getMembers ).toBeDefined();
-				expect( Utils.isFunction( documents.getMembers ) ).toBe( true );
-			} );
-
-			function stubListRequest( resource:string, withMembers:boolean = true ):void {
-				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
-					status: 200,
-					responseText: withMembers ? `[
-						{
-							"@id": "_:00",
-							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
-								"@id": "_:01"
-							}, {
-								"@id": "_:02"
-							} ]
-						},
-						{
-							"@id": "_:01",
-							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.eTag }": [ {
-								"@value": "\\"1234567890\\""
-							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
-								"@id": "http://example.com/resource/element-01/"
-							} ]
-						},
-						{
-							"@id": "_:02",
-							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.eTag }": [ {
-								"@value": "\\"0987654321\\""
-							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
-								"@id": "http://example.com/resource/element-02/"
-							} ]
-						},
-						{
-							"@id": "http://example.com/${ resource }",
-							"@graph": [ {
-								"@id": "http://example.com/${ resource }",
-								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
-								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
-									"@id": "$http://example.com/ns#my-member"
-								} ],
-								"http://example.com/ns#my-member": [ {
-									"@id": "http://example.com/resource/element-01/"
-								}, {
-									"@id": "http://example.com/resource/element-02/"
-								} ]
-							} ]
-						},
-						{
-							"@id": "http://example.com/resource/element-01/",
-							"@graph": [ {
-								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
-								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
-								"http://example.com/ns#pointer": [
-									{"@id": "http://example.com/resource/element-01/#1"}
-								]
-							}, {
-								"@id": "http://example.com/resource/element-01/#1",
-								"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
-							} ]
-						},
-						{
-							"@id": "http://example.com/resource/element-02/",
-							"@graph": [ {
-								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
-								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
-								"http://example.com/ns#pointer": [
-									{"@id": "_:01"}
-								]
-							}, {
-								"@id": "_:01",
-								"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
-							} ]
-						}
-					]` : `[ {
-						"@id": "http://example.com/${ resource }",
-						"@graph": [ {
-							"@id": "http://example.com/${ resource }",
-							"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
-							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
-								"@id": "$http://example.com/ns#my-member"
-							} ]
-						} ]
-					} ]`,
-				} );
-			}
-
-			function stubListRequestOfAccessPoint( resource:string, withMembers:boolean = true ):void {
-				jasmine.Ajax.stubRequest( new RegExp( resource ), null, "GET" ).andReturn( {
-					status: 200,
-					responseText: withMembers ? `[
-						{
-							"@id": "_:00",
-							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
-								"@id": "_:01"
-							}, {
-								"@id": "_:02"
-							} ]
-						},
-						{
-							"@id": "_:01",
-							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.eTag }": [ {
-								"@value": "\\"1234567890\\""
-							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
-								"@id": "http://example.com/resource/element-01/"
-							} ]
-						},
-						{
-							"@id": "_:02",
-							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.eTag }": [ {
-								"@value": "\\"0987654321\\""
-							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
-								"@id": "http://example.com/resource/element-02/"
-							} ]
-						},
-						{
-							"@id": "http://example.com/${ resource }",
-							"@graph": [ {
-								"@id": "http://example.com/${ resource }",
-								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
-								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
-									"@id": "http://example.com/ns#my-member"
-								} ],
-								"${ NS.LDP.Predicate.membershipResource }": [{
-									"@id": "http://example.com/members-resource/"
-								} ]
-							} ]
-						}, {
-							"@id": "http://example.com/members-resource/",
-							"@graph": [ {
-								"@id": "http://example.com/members-resource/",
-								"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
-								"${ NS.LDP.Predicate.hasMemberRelation }": [ {
-									"@id": "http://example.com/ns#another-member"
-								} ],
-								"http://example.com/ns#my-member": [ {
-									"@id": "http://example.com/resource/element-01/"
-								}, {
-									"@id": "http://example.com/resource/element-02/"
-								} ]
-							} ]
-						},
-						{
-							"@id": "http://example.com/resource/element-01/",
-							"@graph": [ {
-								"@id": "http://example.com/resource/element-01/",
-								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
-								"http://example.com/ns#string": [ {"@value": "Document of resource 01"} ],
-								"http://example.com/ns#pointer": [
-									{"@id": "http://example.com/resource/element-01/#1"}
-								]
-							}, {
-								"@id": "http://example.com/resource/element-01/#1",
-								"http://example.com/ns#string": [ {"@value": "NamedFragment of resource 01"} ]
-							} ]
-						},
-						{
-							"@id": "http://example.com/resource/element-02/",
-							"@graph": [ {
-								"@id": "http://example.com/resource/element-02/",
-								"@type": [ "${ NS.LDP.Class.BasicContainer }" ],
-								"http://example.com/ns#string": [ {"@value": "Document of resource 02"} ],
-								"http://example.com/ns#pointer": [
-									{"@id": "_:01"}
-								]
-							}, {
-								"@id": "_:01",
-								"http://example.com/ns#string": [ {"@value": "BlankNode of resource 02"} ]
-							} ]
-						}
-					]` : `[ {
-						"@id": "http://example.com/${ resource }",
-						"@graph": [ {
-							"@id": "http://example.com/${ resource }",
-							"@type": [ "${ NS.LDP.Class.DirectContainer }" ],
-							"${ NS.LDP.Predicate.hasMemberRelation }": [ {
-								"@id": "http://example.com/ns#my-member"
-							} ],
-							"${ NS.LDP.Predicate.membershipResource }": [{
-								"@id": "http://example.com/members-resource/"
-							} ]
-						} ]
-					} ]`,
-				} );
-			}
-
-			function checkResponse( resource:string, pointers:PersistedDocument.Class[], response:HTTP.Response.Class, hasMembers:boolean = true ):void {
-				expect( documents.hasPointer( resource ) ).toBe( false );
-				expect( (<any> documents).pointers.size ).toBe( 2 );
-
-				expect( pointers ).toBeDefined();
-				expect( Utils.isArray( pointers ) ).toBe( true );
-
-				if( hasMembers ) {
-					expect( pointers.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( pointers ) ).toEqual( [ "http://example.com/resource/element-01/", "http://example.com/resource/element-02/" ] );
-
-					expect( pointers[ 0 ].id ).toBe( "http://example.com/resource/element-01/" );
-					expect( pointers[ 0 ].isResolved() ).toBe( true );
-					expect( pointers[ 0 ][ "_etag" ] ).toBe( "\"1234567890\"" );
-					expect( pointers[ 0 ][ "string" ] ).toBe( "Document of resource 01" );
-					expect( pointers[ 0 ][ "pointer" ] ).toBeDefined();
-					expect( pointers[ 0 ][ "pointer" ][ "id" ] ).toBe( "http://example.com/resource/element-01/#1" );
-					expect( pointers[ 0 ][ "pointer" ][ "string" ] ).toBe( "NamedFragment of resource 01" );
-
-					expect( pointers[ 1 ].id ).toBe( "http://example.com/resource/element-02/" );
-					expect( pointers[ 1 ].isResolved() ).toBe( true );
-					expect( pointers[ 1 ][ "_etag" ] ).toBe( "\"0987654321\"" );
-					expect( pointers[ 1 ][ "string" ] ).toBe( "Document of resource 02" );
-					expect( pointers[ 1 ][ "pointer" ] ).toBeDefined();
-					expect( pointers[ 1 ][ "pointer" ][ "id" ] ).toBe( "_:01" );
-					expect( pointers[ 1 ][ "pointer" ][ "string" ] ).toBe( "BlankNode of resource 02" );
-				} else {
-					expect( pointers.length ).toBe( 0 );
-				}
-
-				expect( response ).toBeDefined();
-				expect( response instanceof HTTP.Response.Class ).toBe( true );
-			}
-
-			function getPrefers( request:JasmineAjaxRequest ):[ string[], string[] ] {
-				let prefers:[ string[], string[] ] = <any> [];
-				let types:string[] = [ "include", "omit" ];
-
-				for( let index:number = 0, length:number = types.length; index < length; ++ index ) {
-					let preferType:string = `return=representation; ${ types[ index ] }=`;
-					let prefersValues:HTTP.Header.Class = new HTTP.Header.Class( request.requestHeaders[ "prefer" ] );
-					let preferInclude:HTTP.Header.Value = prefersValues.values.find( ( value:HTTP.Header.Value ) => {
-						return value.toString().startsWith( preferType );
-					} );
-					prefers[ index ] = preferInclude.toString().substring( preferType.length + 1, preferInclude.toString().length - 1 ).split( " " );
-				}
-				return prefers;
-			}
-
-			function checkPrefer( request:JasmineAjaxRequest, nonReadable:boolean = true ):void {
-				let includes:string[];
-				let omits:string[];
-
-				expect( request.requestHeaders[ "prefer" ] ).toBeDefined();
-
-				[ includes, omits ] = getPrefers( request );
-
-				expect( includes ).toContain( NS.LDP.Class.PreferMembership );
-				expect( includes ).toContain( NS.C.Class.PreferMembershipResources );
-				expect( omits ).toContain( NS.LDP.Class.PreferContainment );
-				expect( omits ).toContain( NS.C.Class.PreferContainmentResources );
-
-				if( nonReadable ) {
-					expect( includes ).toContain( NS.C.Class.NonReadableMembershipResourceTriples );
-				} else {
-					expect( omits ).toContain( NS.C.Class.NonReadableMembershipResourceTriples );
-				}
-			}
-
-			it( hasSignature(
-				[ "T" ],
-				"Retrieves all the members of a document and their contents, or a part of them in accordance to the retrieval preferences specified.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object to specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:DoneFn ) => {
-				let promises:Promise<any> [] = [];
-
-				(() => {
-					stubListRequest( "resource-1/" );
-
-					let options:HTTP.Request.Options = { timeout: 12345 };
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", true, retrievalPreferences, options );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-1/", pointers, response );
-
-						expect( options.timeout ).toBe( 12345 );
-						expect( options.headers ).toBeDefined();
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
-						checkPrefer( request, true );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-2/" );
-
-					let options:HTTP.Request.Options = { timeout: 12345 };
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", false, retrievalPreferences, options );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-2/", pointers, response );
-
-						expect( options.timeout ).toBe( 12345 );
-						expect( options.headers ).toBeDefined();
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
-						checkPrefer( request, false );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-3/" );
-
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/", true, retrievalPreferences );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-3/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
-						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-3/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
-						checkPrefer( request, true );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-4/" );
-
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/", false, retrievalPreferences );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-4/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
-						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-4/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
-						checkPrefer( request, false );
-					} ) );
-				})();
-
-				Promise.all( promises ).then( done ).catch( done.fail );
+				expect( Documents.Class.prototype.getMembers ).toBeDefined();
+				expect( Documents.Class.prototype.getMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Retrieves all the members of a document and their contents.", [
+				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "Specify if the response should include the Non Readable resources. By default this is set to `true`." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:DoneFn ) => {
-				let promises:Promise<any> [] = [];
-
-				(() => {
-					stubListRequest( "resource-1/" );
-
-					let options:HTTP.Request.Options = { timeout: 12345 };
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", true, options );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-1/", pointers, response );
-
-						expect( options.timeout ).toBe( 12345 );
-						expect( options.headers ).toBeDefined();
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-1/" );
-						checkPrefer( request, true );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-2/" );
-
-					let options:HTTP.Request.Options = { timeout: 12345 };
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", false, options );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-2/", pointers, response );
-
-						expect( options.timeout ).toBe( 12345 );
-						expect( options.headers ).toBeDefined();
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-2/" );
-						checkPrefer( request, false );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-3/" );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/", true );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-3/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-3/" );
-						checkPrefer( request, true );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-4/" );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/", false );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-4/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-4/" );
-						checkPrefer( request, false );
-					} ) );
-				})();
-
-				Promise.all( promises ).then( done ).catch( done.fail );
-			} );
+			), () => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Retrieves all the members of a document and their content, or a part of them in accordance to the retrieval preferences specified.", [
+				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object to specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "membersQuery", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:DoneFn ) => {
-				let promises:Promise<any> [] = [];
-
-				(() => {
-					stubListRequest( "resource-1/" );
-
-					let options:HTTP.Request.Options = { timeout: 12345 };
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", retrievalPreferences, options );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-1/", pointers, response );
-
-						expect( options.timeout ).toBe( 12345 );
-						expect( options.headers ).toBeDefined();
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-1/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-2/" );
-
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/", retrievalPreferences );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-2/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-						let url:string = decodeURI( request.url );
-						expect( url.indexOf( "resource-2/?limit=10&offset=0&orderBy=<http://example.com/ns%23string>;<http://www.w3.org/2001/XMLSchema%23string>" ) ).not.toBe( - 1 );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				Promise.all( promises ).then( done ).catch( done.fail );
-			} );
-
-			it( hasSignature(
-				[ "T" ],
-				"Retrieves all the members of a document and their contents.", [
-					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:DoneFn ) => {
-				let promises:Promise<any> [] = [];
-
-				(() => {
-					stubListRequest( "resource-1/" );
-
-					let options:HTTP.Request.Options = { timeout: 12345 };
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-1/", options );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-1/", pointers, response );
-
-						expect( options.timeout ).toBe( 12345 );
-						expect( options.headers ).toBeDefined();
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-1/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-1/" );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-2/" );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-2/" );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-
-						checkResponse( "resource-2/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-2/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-2/" );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-3/" );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-3/" );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-						expect( (<any> documents).pointers.size ).toBe( 2 );
-						expect( documents.hasPointer( "resource-3/" ) ).toBe( false );
-						checkResponse( "resource-3/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-3/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-3/" );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequest( "resource-4/", false );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-4/" );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-						expect( (<any> documents).pointers.size ).toBe( 2 );
-						expect( documents.hasPointer( "resource-4/" ) ).toBe( false );
-						checkResponse( "resource-4/", pointers, response, false );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-4/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-4/" );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequestOfAccessPoint( "resource-5/" );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-5/" );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-						expect( documents.hasPointer( "members-resource/" ) ).toBe( false );
-						checkResponse( "resource-5/", pointers, response );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-5/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-5/" );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				(() => {
-					stubListRequestOfAccessPoint( "resource-6/", false );
-
-					let promise:Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> = documents.getMembers( "resource-6/" );
-
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( ( [ pointers, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-						expect( documents.hasPointer( "members-resource/" ) ).toBe( false );
-						checkResponse( "resource-6/", pointers, response, false );
-
-						let request:JasmineAjaxRequest = jasmine.Ajax.requests.filter( /resource-6/ )[ 0 ];
-						expect( request.url ).toMatch( "resource-6/" );
-						checkPrefer( request );
-					} ) );
-				})();
-
-				Promise.all( promises ).then( done ).catch( done.fail );
-			} );
+			), () => {} );
 
 			describe( "When Documents has a specified context", ():void => {
 
+				let context:AbstractContext;
+				let documents:Documents.Class;
 				beforeEach( () => {
-					const context:AbstractContext = new class extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-						}
+					context = new class extends AbstractContext {
+						_baseURI:string = "https://example.com/";
 					};
+					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -6405,7 +5733,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -6413,7 +5741,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.getMembers( "http://example.com/" ).then( () => {
+					documents.getMembers( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -6423,68 +5751,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						done();
 					} );
-				} );
-
-			} );
-
-			describe( "When Documents does not have a context", ():void => {
-
-				beforeEach( () => {
-					documents = new Documents.Class();
-				} );
-
-				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getMembers( "relative-uri/" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
-						done();
-					} );
-				} );
-
-				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
-						done();
-					} );
-				} );
-
-				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
-						status: 500,
-						responseText: "",
-					} );
-
-					const error:Error = new Error( "Error message" );
-					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
-
-					documents.getMembers( "http://example.com/" ).then( () => {
-						done.fail( "Should not resolve" );
-					} ).catch( _error => {
-						expect( spy ).toHaveBeenCalled();
-
-						expect( _error ).toBeDefined();
-						expect( _error ).toBe( error );
-
-						done();
-					} );
-				} );
-
-			} );
-
-			describe( "When querying members", ():void => {
-
-				let context:AbstractContext;
-				beforeEach( ():void => {
-					context = new class extends AbstractContext {
-						_baseURI:string = "https://example.com/";
-					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
-					documents = context.documents;
 				} );
 
 				it( "should send a correct construct query", ( done:DoneFn ):void => {
@@ -6850,6 +6116,421 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": __.inherit,
 									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( [ myDocuments, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						}
+
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+
+				let documents:Documents.Class;
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.getMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.getMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+				it( "should send a correct construct query", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "https://example.com/ns#Resource" )
+						.properties( {
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": {
+										"@id": "https://example.com/ns#property-2",
+										"@type": NS.XSD.DataType.integer,
+									},
+									"property3": {
+										"@id": "https://schema.org/property-3",
+										"@type": NS.XSD.DataType.string,
+									},
+								} ),
+							},
+						} )
+						.orderBy( _.property( "property2" ) )
+						.limit( 10 )
+						.offset( 5 )
+					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
+						if( error ) done.fail( error );
+
+						expect( sendSpy ).toHaveBeenCalledWith(
+							"https://example.com/resource/", " " +
+							"CONSTRUCT {" +
+							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
+							"" + ` <${ NS.C.Predicate.target }> ?member.` +
+
+							" ?member a ?member___type." +
+							" ?member <https://example.com/ns#property-1> ?member__property1." +
+							" ?member <https://schema.org/property-2> ?member__property2." +
+
+							" ?member__property2 a ?member__property2___type." +
+							" ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
+							" ?member__property2 <https://schema.org/property-3> ?member__property2__property3 " +
+
+							"} WHERE {" +
+							" BIND(BNODE() AS ?metadata)." +
+
+							" {" +
+							"" + " SELECT ?member WHERE {" +
+							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+							"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+							"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+							"" + "" + " OPTIONAL { ?member <https://schema.org/property-2> ?member__property2 }" +
+							"" + " }" +
+							"" + " ORDER BY ?member__property2" +
+							"" + " LIMIT 10" +
+							"" + " OFFSET 5" +
+							" }." +
+
+							" OPTIONAL { ?member a ?member___type }." +
+							" ?member a <https://example.com/ns#Resource>." +
+
+							" OPTIONAL {" +
+							"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
+							"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+							" }." +
+
+							" OPTIONAL {" +
+							"" + " ?member <https://schema.org/property-2> ?member__property2." +
+							"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
+							"" + " OPTIONAL { ?member__property2 a ?member__property2___type }." +
+
+							"" + " OPTIONAL {" +
+							"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
+							"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+							"" + " }." +
+
+							"" + " OPTIONAL {" +
+							"" + "" + " ?member__property2 <https://schema.org/property-3> ?member__property2__property3." +
+							"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+							"" + " }" +
+							" } " +
+							"}",
+							jasmine.objectContaining( {
+								headers: new Map( [
+									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+								] ),
+							} )
+						);
+						done();
+					} );
+				} );
+
+				it( "should return partial member", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member1/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://example.com/ns#property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 1"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member2/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:2"
+								} ]
+							}, {
+								"@id": "_:2",
+								"https://example.com/ns#property-2": [ {
+									"@value": "67890",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "https://example.com/ns#Resource" )
+						.properties( {
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": {
+										"@id": "https://example.com/ns#property-2",
+										"@type": NS.XSD.DataType.integer,
+									},
+									"property3": {
+										"@id": "https://schema.org/property-3",
+										"@type": NS.XSD.DataType.string,
+									},
+								} ),
+							},
+						} )
+					).then( ( [ myDocuments, response ] ) => {
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						}
+
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return partial member with partial relations", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member1/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "https://example.com/sub-member/sub-member1/"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/sub-member/sub-member1/",
+							"@graph": [ {
+								"@id": "https://example.com/sub-member/sub-member1/",
+								"https://example.com/ns#property-2": [ {
+									"@value": "12345",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 1"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member2/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "https://example.com/sub-member/sub-member2/"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/sub-member/sub-member2/",
+							"@graph": [ {
+								"@id": "https://example.com/sub-member/sub-member2/",
+								"https://example.com/ns#property-2": [ {
+									"@value": "67890",
+									"@type": "${ NS.XSD.DataType.integer }"
+								} ],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "https://example.com/ns#Resource" )
+						.properties( {
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": {
+										"@id": "https://example.com/ns#property-2",
+										"@type": NS.XSD.DataType.integer,
+									},
+									"property3": {
+										"@id": "https://schema.org/property-3",
+										"@type": NS.XSD.DataType.string,
+									},
 								} ),
 							},
 						} )

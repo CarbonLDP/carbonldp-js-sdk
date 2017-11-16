@@ -75,4 +75,4 @@ var Class = (function (_super) {
 exports.Class = Class;
 exports.default = Class;
 
-//# sourceMappingURL=QueryMembersBuilder.js.map
+//# sourceMappingURL=QueryDocumentsBuilder.js.map

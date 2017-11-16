@@ -27,7 +27,7 @@ import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
-import { QueryContext, QueryDocumentBuilder, QueryMembersBuilder, QueryProperty } from "./SPARQL/QueryDocument";
+import { QueryContext, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
 
@@ -443,23 +443,40 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	getMembers<T>( uri:string, includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, requestOptions?:HTTP.Request.Options, membersQuery?:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, membersQuery?:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, nonReadOrRetPrefOrReqOptOrQuery?:any, retPrefOrReqOptOrQuery?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		let includeNonReadable:boolean = Utils.isBoolean( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : true;
-		let retrievalPreferences:RetrievalPreferences.Class = RetrievalPreferences.Factory.is( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : ( RetrievalPreferences.Factory.is( retPrefOrReqOptOrQuery ) ? retPrefOrReqOptOrQuery : {} );
-		requestOptions = HTTP.Request.Util.isOptions( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : ( HTTP.Request.Util.isOptions( retPrefOrReqOptOrQuery ) ? retPrefOrReqOptOrQuery : ( HTTP.Request.Util.isOptions( requestOptions ) ? requestOptions : {} ) );
-		const membersQuery:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class = Utils.isFunction( nonReadOrRetPrefOrReqOptOrQuery ) ? nonReadOrRetPrefOrReqOptOrQuery : Utils.isFunction( retPrefOrReqOptOrQuery ) ? retPrefOrReqOptOrQuery : null;
+	getMembers<T>( uri:string, requestOptions:HTTP.Request.Options, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( uri:string, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( uri:string, requestOptionsOrQuery?:any, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( requestOptionsOrQuery ) ? requestOptionsOrQuery : {};
+		membersQuery = Utils.isFunction( requestOptionsOrQuery ) ? requestOptionsOrQuery : membersQuery;
 
-		if( ! membersQuery ) {
-			return this.getLDPMembers<T>( uri, includeNonReadable, retrievalPreferences, requestOptions );
-		} else {
-			return this.getQueryMembers<T>( uri, requestOptions, membersQuery );
-		}
+		return promiseMethod( () => {
+			uri = this.getRequestURI( uri );
+
+			const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+			const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
+
+			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
+			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
+			const selectMembers:SelectToken = new SelectToken()
+				.addVariable( membersProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
+						.addObject( membershipResource )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
+						.addObject( hasMemberRelation )
+					)
+				)
+				.addPattern( new SubjectToken( membershipResource )
+					.addPredicate( new PredicateToken( hasMemberRelation )
+						.addObject( membersProperty.variable )
+					)
+				)
+			;
+			membersProperty.addPattern( selectMembers );
+
+			return this.queryDocuments<T>( uri, requestOptions, queryContext, membersProperty, membersQuery );
+		} );
 	}
 
 	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
@@ -882,41 +899,21 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private getQueryMembers<T>( uri:string, requestOptions:HTTP.Request.Options, membersQuery:( queryMembersBuilder:QueryMembersBuilder.Class ) => QueryMembersBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		if( ! this.context ) return Promise.reject( new Errors.IllegalStateError( "A documents with context is needed for this feature." ) );
-
+	private queryDocuments<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetProperty:QueryProperty.Class, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		let response:HTTP.Response.Class;
-		const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
-		const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
+
+		// tslint:disable: variable-name
+		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
+		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
+			QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
+		// tslint:enable: variable-name
 
 		return promiseMethod( () => {
-			uri = this.getRequestURI( uri );
-
-			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
-			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const selectMembers:SelectToken = new SelectToken()
-				.addVariable( membersProperty.variable )
-				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
-						.addObject( membershipResource )
-					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
-						.addObject( hasMemberRelation )
-					)
-				)
-				.addPattern( new SubjectToken( membershipResource )
-					.addPredicate( new PredicateToken( hasMemberRelation )
-						.addObject( membersProperty.variable )
-					)
-				)
-			;
-			membersProperty.addPattern( selectMembers );
-
-			const queryMembersBuilder:QueryMembersBuilder.Class = new QueryMembersBuilder.Class( queryContext, membersProperty );
-			if( membersQuery.call( void 0, queryMembersBuilder ) !== queryMembersBuilder )
+			const queryBuilder:Builder = new Builder( queryContext, targetProperty );
+			if( membersQuery && membersQuery.call( void 0, queryBuilder ) !== queryBuilder )
 				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
-			const constructPatterns:PatternToken[] = membersProperty.getPatterns();
+			const constructPatterns:PatternToken[] = targetProperty.getPatterns();
 
 			const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 			const construct:ConstructToken = new ConstructToken()
@@ -926,7 +923,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 						.addObject( queryContext.compactIRI( NS.C.Class.QueryMetadata ) )
 					)
 					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.Predicate.target ) )
-						.addObject( membersProperty.variable )
+						.addObject( targetProperty.variable )
 					)
 				)
 				.addPattern( new BindToken( "BNODE()", metadataVar ) )
@@ -961,7 +958,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const targetsIDs:string[] = freeResources
 				.getResources()
 				.filter<SPARQL.QueryDocument.QueryMetadata.Class>( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => x.target.id );
+				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id );
 			const targetSet:Set<string> = new Set( targetsIDs );
 
 			const rdfDocuments:RDF.Document.Class[] = rdfNodes
@@ -971,7 +968,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				.filter( x => targetSet.has( x[ "@id" ] ) );
 
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-				.Class( this, membersProperty.name, queryContext )
+				.Class( this, targetProperty.name, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
 
 			return [ documents, response ];

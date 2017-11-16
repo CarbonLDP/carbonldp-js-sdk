@@ -325,7 +325,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 		} );
 
-		describe( method(
+		xdescribe( method(
 			INSTANCE,
 			"getUsers"
 		), ():void => {
