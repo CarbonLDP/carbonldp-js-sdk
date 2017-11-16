@@ -443,28 +443,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"listChildren",
-			"Retrieves an array of unresolved persisted documents that refers to the children of the current document.",
-			{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
 			"getChildren",
 			[ "T" ],
 			"Retrieves an array of resolved persisted documents that refers to the children of the current document, in accordance to the retrieval preferences specified.", [
 				{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true },
 			],
 			{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"listMembers",
-			"Retrieves an array of unresolved persisted documents that refers to the members of the current document.", [
-				{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
-			],
-			{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
 
 		describe( method(
@@ -715,9 +699,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				createChildren: ():void => {},
 				createChildAndRetrieve: ():void => {},
 				createChildrenAndRetrieve: ():void => {},
-				listChildren: ():void => {},
 				getChildren: ():void => {},
-				listMembers: ():void => {},
 				getMembers: ():void => {},
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
@@ -808,17 +790,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChildrenAndRetrieve = ():void => {};
 
-			delete document.listChildren;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document.listChildren = ():void => {};
-
 			delete document.getChildren;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.getChildren = ():void => {};
-
-			delete document.listMembers;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document.listMembers = ():void => {};
 
 			delete document.getMembers;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -914,9 +888,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				createChildren: ():void => {},
 				createChildAndRetrieve: ():void => {},
 				createChildrenAndRetrieve: ():void => {},
-				listChildren: ():void => {},
 				getChildren: ():void => {},
-				listMembers: ():void => {},
 				getMembers: ():void => {},
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
@@ -2197,21 +2169,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasMethod(
 				INSTANCE,
-				"listChildren",
-				"Retrieves an array of unresolved persisted documents that refers to the children of the current document.",
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
-			), ():void => {
-				expect( document.listChildren ).toBeDefined();
-				expect( Utils.isFunction( document.listChildren ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "listChildren" );
-
-				document.listChildren();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/" );
-			} );
-
-			it( hasMethod(
-				INSTANCE,
 				"getChildren",
 				[ "T" ],
 				"Retrieves an array of resolved persisted documents that refers to the children of the current document, in accordance to the retrieval preferences specified.", [
@@ -2236,27 +2193,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				};
 				document.getChildren( retrievalPreferences );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", retrievalPreferences );
-			} );
-
-			it( hasMethod(
-				INSTANCE,
-				"listMembers",
-				"Retrieves an array of unresolved persisted documents that refers to the members of the current document.", [
-					{ name: "includeNonReadable", type: "boolean", optional: true, description: "By default this option is set to `true`." },
-				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
-			), ():void => {
-				expect( document.listMembers ).toBeDefined();
-				expect( Utils.isFunction( document.listMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "listMembers" );
-
-				document.listMembers();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", true );
-				spy.calls.reset();
-
-				document.listMembers( false );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", false );
 			} );
 
 			describe( method(

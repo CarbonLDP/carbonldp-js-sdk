@@ -100,15 +100,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"listUsers",
-			"Retrieves an array of unresolved pointers for all the users of the role.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-			],
-			{ type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
-		), ():void => {} );
-
 		describe( method(
 			OBLIGATORY,
 			"getUsers"
@@ -202,7 +193,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				name: null,
 				users: null,
 				createChild: ():void => {},
-				listUsers: ():void => {},
 				getUsers: ():void => {},
 				addUser: ():void => {},
 				addUsers: ():void => {},
@@ -226,10 +216,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			delete object.createChild;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
 			object.createChild = ():void => {};
-
-			delete object.listUsers;
-			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
-			object.listUsers = ():void => {};
 
 			delete object.getUsers;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
@@ -271,7 +257,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				name: null,
 				users: null,
 				createChild: ():void => {},
-				listUsers: ():void => {},
 				getUsers: ():void => {},
 				addUser: ():void => {},
 				addUsers: ():void => {},
@@ -354,8 +339,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			), ():void => {
 
 				it( isDefined(), ():void => {
-					expect( role.listUsers ).toBeDefined();
-					expect( Utils.isFunction( role.listUsers ) ).toBe( true );
+					expect( role.createChild ).toBeDefined();
+					expect( Utils.isFunction( role.createChild ) ).toBe( true );
 				} );
 
 				it( hasSignature(
@@ -413,32 +398,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					expect( () => role.createChild( newRole ) ).toThrowError( Errors.IllegalStateError );
 				} );
 
-			} );
-
-			it( hasMethod(
-				INSTANCE,
-				"listUsers",
-				"Retrieves an array of unresolved pointers for all the users of the role.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-				],
-				{ type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {
-				expect( role.listUsers ).toBeDefined();
-				expect( Utils.isFunction( role.listUsers ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( roles, "listUsers" );
-
-				//noinspection JSIgnoredPromiseFromCall
-				role.listUsers();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
-
-				let options:HTTP.Request.Options = { timeout: 5050 };
-				//noinspection JSIgnoredPromiseFromCall
-				role.listUsers( options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
-
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
-				expect( () => role.listUsers() ).toThrowError( Errors.IllegalStateError );
 			} );
 
 			describe( method(

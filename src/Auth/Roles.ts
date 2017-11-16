@@ -57,15 +57,6 @@ export class Class {
 		} );
 	}
 
-	listUsers( this:Class, roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]> {
-		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer.Class ) => {
-			return this.context.documents.listMembers( accessPoint.id, requestOptions );
-		} ).then<[ PersistedProtectedDocument.Class[], HTTP.Response.Class ]>( ( [ documents, response ]:[ PersistedDocument.Class[], HTTP.Response.Class ] ) => {
-			const users:PersistedProtectedDocument.Class[] = documents.map( user => PersistedProtectedDocument.Factory.decorate( user, this.context.documents ) );
-			return [ users, response ];
-		} );
-	}
-
 	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {

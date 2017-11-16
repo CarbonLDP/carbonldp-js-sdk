@@ -102,11 +102,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 
 	createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 
-	listChildren():Promise<[ Class[], HTTP.Response.Class ]>;
-
 	getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
-
-	listMembers( includeNonReadable?:boolean ):Promise<[ Class[], HTTP.Response.Class ]>;
 
 	getMembers<T>( includeNonReadable?:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
@@ -313,16 +309,8 @@ function createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], slugsOrR
 	return this._documents.createAccessPoints( this.id, accessPoints, slugsOrRequestOptions, requestOptions );
 }
 
-function listChildren():Promise<[ Class[], HTTP.Response.Class ]> {
-	return this._documents.listChildren( this.id );
-}
-
 function getChildren<T>( retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]> {
 	return this._documents.getChildren( this.id, retrievalPreferences );
-}
-
-function listMembers( includeNonReadable:boolean = true ):Promise<[ Class[], HTTP.Response.Class ]> {
-	return this._documents.listMembers( this.id, includeNonReadable );
 }
 
 function getMembers<T>( includeNonReadable:boolean, retrievalPreferences?:RetrievalPreferences.Class ):Promise<[ T & Class[], HTTP.Response.Class ]>;
@@ -413,8 +401,6 @@ export class Factory {
 			&& Utils.hasFunction( object, "createChildrenAndRetrieve" )
 			&& Utils.hasFunction( object, "getChildren" )
 			&& Utils.hasFunction( object, "getMembers" )
-			&& Utils.hasFunction( object, "listChildren" )
-			&& Utils.hasFunction( object, "listMembers" )
 			&& Utils.hasFunction( object, "removeMember" )
 			&& Utils.hasFunction( object, "removeMembers" )
 			&& Utils.hasFunction( object, "removeAllMembers" )
@@ -635,23 +621,11 @@ export class Factory {
 				configurable: true,
 				value: createAccessPoints,
 			},
-			"listChildren": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: listChildren,
-			},
 			"getChildren": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: getChildren,
-			},
-			"listMembers": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: listMembers,
 			},
 			"getMembers": {
 				writable: false,

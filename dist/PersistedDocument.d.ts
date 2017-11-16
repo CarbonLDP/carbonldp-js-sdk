@@ -59,9 +59,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    listChildren(): Promise<[Class[], HTTP.Response.Class]>;
     getChildren<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    listMembers(includeNonReadable?: boolean): Promise<[Class[], HTTP.Response.Class]>;
     getMembers<T>(includeNonReadable?: boolean, retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getMembers<T>(retrievalPreferences?: RetrievalPreferences.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;

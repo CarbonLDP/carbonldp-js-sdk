@@ -134,15 +134,8 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
-function listChildren() {
-    return this._documents.listChildren(this.id);
-}
 function getChildren(retrievalPreferences) {
     return this._documents.getChildren(this.id, retrievalPreferences);
-}
-function listMembers(includeNonReadable) {
-    if (includeNonReadable === void 0) { includeNonReadable = true; }
-    return this._documents.listMembers(this.id, includeNonReadable);
 }
 function getMembers(includeNonReadableOrRetrievalPreferences, retrievalPreferences) {
     var includeNonReadable = true;
@@ -217,8 +210,6 @@ var Factory = (function () {
             && Utils.hasFunction(object, "createChildrenAndRetrieve")
             && Utils.hasFunction(object, "getChildren")
             && Utils.hasFunction(object, "getMembers")
-            && Utils.hasFunction(object, "listChildren")
-            && Utils.hasFunction(object, "listMembers")
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
             && Utils.hasFunction(object, "removeAllMembers")
@@ -423,23 +414,11 @@ var Factory = (function () {
                 configurable: true,
                 value: createAccessPoints,
             },
-            "listChildren": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: listChildren,
-            },
             "getChildren": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getChildren,
-            },
-            "listMembers": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: listMembers,
             },
             "getMembers": {
                 writable: false,

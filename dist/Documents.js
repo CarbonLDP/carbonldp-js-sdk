@@ -287,36 +287,6 @@ var Class = (function () {
             return [persistedDocuments, responses];
         });
     };
-    Class.prototype.listChildren = function (parentURI, requestOptions) {
-        var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
-            parentURI = _this.getRequestURI(parentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            var containerRetrievalPreferences = {
-                include: [
-                    NS.LDP.Class.PreferContainment,
-                ],
-                omit: [
-                    NS.LDP.Class.PreferMembership,
-                    NS.LDP.Class.PreferMinimalContainer,
-                    NS.C.Class.PreferContainmentResources,
-                    NS.C.Class.PreferMembershipResources,
-                ],
-            };
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-            return _this.sendRequest(HTTP.Method.GET, parentURI, requestOptions, null, new RDF.Document.Parser());
-        }).then(function (_a) {
-            var rdfDocuments = _a[0], response = _a[1];
-            var rdfDocument = _this.getRDFDocument(parentURI, rdfDocuments, response);
-            if (rdfDocument === null)
-                return [[], response];
-            var documentResource = _this.getDocumentResource(rdfDocument, response);
-            var childPointers = RDF.Node.Util.getPropertyPointers(documentResource, NS.LDP.Predicate.contains, _this);
-            var persistedChildPointers = childPointers.map(function (pointer) { return PersistedDocument.Factory.decorate(pointer, _this); });
-            return [persistedChildPointers, response];
-        });
-    };
     Class.prototype.getChildren = function (parentURI, retPrefReqOpt, requestOptions) {
         var _this = this;
         var retrievalPreferences = RetrievalPreferences.Factory.is(retPrefReqOpt) ? retPrefReqOpt : null;
@@ -416,47 +386,6 @@ var Class = (function () {
             var locationURI = locationHeader.values[0].toString();
             var pointer = _this.getPointer(locationURI);
             return [pointer, response];
-        });
-    };
-    Class.prototype.listMembers = function (uri, nonReadReqOpt, reqOpt) {
-        var _this = this;
-        var includeNonReadable = Utils.isBoolean(nonReadReqOpt) ? nonReadReqOpt : true;
-        var requestOptions = HTTP.Request.Util.isOptions(nonReadReqOpt) ? nonReadReqOpt : (HTTP.Request.Util.isOptions(reqOpt) ? reqOpt : {});
-        return Utils_2.promiseMethod(function () {
-            uri = _this.getRequestURI(uri);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            var containerRetrievalPreferences = {
-                include: [
-                    NS.LDP.Class.PreferMinimalContainer,
-                    NS.LDP.Class.PreferMembership,
-                ],
-                omit: [
-                    NS.LDP.Class.PreferContainment,
-                    NS.C.Class.PreferContainmentResources,
-                    NS.C.Class.PreferMembershipResources,
-                ],
-            };
-            if (includeNonReadable) {
-                containerRetrievalPreferences.include.push(NS.C.Class.NonReadableMembershipResourceTriples);
-            }
-            else {
-                containerRetrievalPreferences.omit.push(NS.C.Class.NonReadableMembershipResourceTriples);
-            }
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-            return _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser());
-        }).then(function (_a) {
-            var rdfDocuments = _a[0], response = _a[1];
-            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
-            if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var documentResource = _this.getDocumentResource(rdfDocument, response);
-            var membershipResource = _this.getMembershipResource(documentResource, rdfDocuments, response);
-            if (membershipResource === null)
-                return [[], response];
-            var hasMemberRelation = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.hasMemberRelation);
-            var memberPointers = RDF.Node.Util.getPropertyPointers(membershipResource, hasMemberRelation, _this);
-            var persistedMemberPointers = memberPointers.map(function (pointer) { return PersistedDocument.Factory.decorate(pointer, _this); });
-            return [persistedMemberPointers, response];
         });
     };
     Class.prototype.getMembers = function (uri, nonReadOrRetPrefOrReqOptOrQuery, retPrefOrReqOptOrQuery, requestOptions) {

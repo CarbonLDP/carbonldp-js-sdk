@@ -9,7 +9,6 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_roles")
             && Utils.hasFunction(object, "createChild")
-            && Utils.hasFunction(object, "listUsers")
             && Utils.hasFunction(object, "getUsers")
             && Utils.hasFunction(object, "addUser")
             && Utils.hasFunction(object, "addUsers")
@@ -37,12 +36,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createChild,
-            },
-            "listUsers": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: listUsers,
             },
             "getUsers": {
                 writable: true,
@@ -83,10 +76,6 @@ exports.Factory = Factory;
 function createChild(role, slugOrRequestOptions, requestOptions) {
     checkState(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
-}
-function listUsers(requestOptions) {
-    checkState(this);
-    return this._roles.listUsers(this.id, requestOptions);
 }
 function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
     checkState(this);

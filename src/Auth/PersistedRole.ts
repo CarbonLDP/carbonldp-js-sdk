@@ -24,8 +24,6 @@ export interface Class extends PersistedProtectedDocument.Class {
 
 	createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
-	listUsers( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
-
 	getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
 
 	getUsers<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
@@ -44,7 +42,6 @@ export class Factory {
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "_roles" )
 			&& Utils.hasFunction( object, "createChild" )
-			&& Utils.hasFunction( object, "listUsers" )
 			&& Utils.hasFunction( object, "getUsers" )
 			&& Utils.hasFunction( object, "addUser" )
 			&& Utils.hasFunction( object, "addUsers" )
@@ -76,12 +73,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: createChild,
-			},
-			"listUsers": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-				value: listUsers,
 			},
 			"getUsers": {
 				writable: true,
@@ -125,11 +116,6 @@ function createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP
 function createChild<T>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]> {
 	checkState( this );
 	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
-}
-
-function listUsers( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
-	checkState( this );
-	return this._roles.listUsers( this.id, requestOptions );
 }
 
 function getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;

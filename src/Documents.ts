@@ -327,37 +327,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	listChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
-		return promiseMethod( () => {
-			parentURI = this.getRequestURI( parentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
-
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
-				include: [
-					NS.LDP.Class.PreferContainment,
-				],
-				omit: [
-					NS.LDP.Class.PreferMembership,
-					NS.LDP.Class.PreferMinimalContainer,
-					NS.C.Class.PreferContainmentResources,
-					NS.C.Class.PreferMembershipResources,
-				],
-			};
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
-
-			return this.sendRequest( HTTP.Method.GET, parentURI, requestOptions, null, new RDF.Document.Parser() );
-		} ).then<[ PersistedDocument.Class[], HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( parentURI, rdfDocuments, response );
-			if( rdfDocument === null ) return [ [], response ];
-
-			let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-			let childPointers:Pointer.Class[] = RDF.Node.Util.getPropertyPointers( documentResource, NS.LDP.Predicate.contains, this );
-			let persistedChildPointers:PersistedDocument.Class[] = childPointers.map( pointer => PersistedDocument.Factory.decorate( pointer, this ) );
-
-			return [ persistedChildPointers, response ];
-		} );
-	}
-
 	getChildren<T>( parentURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getChildren<T>( parentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getChildren<T>( parentURI:string, retPrefReqOpt?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
@@ -471,53 +440,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let pointer:Pointer.Class = this.getPointer( locationURI );
 
 			return [ pointer, response ];
-		} );
-	}
-
-	listMembers( uri:string, includeNonReadable?:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
-	listMembers( uri:string, nonReadReqOpt?:any, reqOpt?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
-		let includeNonReadable:boolean = Utils.isBoolean( nonReadReqOpt ) ? nonReadReqOpt : true;
-		let requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( nonReadReqOpt ) ? nonReadReqOpt : ( HTTP.Request.Util.isOptions( reqOpt ) ? reqOpt : {} );
-
-		return promiseMethod( () => {
-			uri = this.getRequestURI( uri );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
-
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
-				include: [
-					NS.LDP.Class.PreferMinimalContainer,
-					NS.LDP.Class.PreferMembership,
-				],
-				omit: [
-					NS.LDP.Class.PreferContainment,
-					NS.C.Class.PreferContainmentResources,
-					NS.C.Class.PreferMembershipResources,
-				],
-			};
-
-			if( includeNonReadable ) {
-				containerRetrievalPreferences.include.push( NS.C.Class.NonReadableMembershipResourceTriples );
-			} else {
-				containerRetrievalPreferences.omit.push( NS.C.Class.NonReadableMembershipResourceTriples );
-			}
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions );
-
-			return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() );
-		} ).then<[ PersistedDocument.Class[], HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-
-			let documentResource:RDF.Node.Class = this.getDocumentResource( rdfDocument, response );
-			let membershipResource:RDF.Node.Class = this.getMembershipResource( documentResource, rdfDocuments, response );
-			if( membershipResource === null ) return [ [], response ];
-
-			let hasMemberRelation:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.hasMemberRelation );
-
-			let memberPointers:Pointer.Class[] = RDF.Node.Util.getPropertyPointers( membershipResource, hasMemberRelation, this );
-			let persistedMemberPointers:PersistedDocument.Class[] = memberPointers.map( pointer => PersistedDocument.Factory.decorate( pointer, this ) );
-
-			return [ persistedMemberPointers, response ];
 		} );
 	}
 
