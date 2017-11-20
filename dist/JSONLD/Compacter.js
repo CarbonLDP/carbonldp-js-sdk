@@ -1,13 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tokens_1 = require("sparqler/tokens");
 var PersistedDocument = require("../PersistedDocument");
 var Pointer = require("../Pointer");
 var RDFDocument = require("../RDF/Document");
 var URI_1 = require("../RDF/URI");
-var QueryContext = require("../SPARQL/QueryDocument/QueryContext");
-var PartialMetadata = require("../SPARQL/QueryDocument/PartialMetadata");
-var Documents = require("./../Documents");
+var QueryDocument_1 = require("../SPARQL/QueryDocument");
 function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
@@ -15,7 +12,7 @@ function getRelativeID(node) {
 var Class = (function () {
     function Class(documents, root, schemaResolver, jsonldConverter) {
         this.documents = documents;
-        this.root = root || "";
+        this.root = root;
         this.resolver = schemaResolver || documents;
         this.converter = jsonldConverter || documents.jsonldConverter;
         this.compactionMap = new Map();
@@ -67,7 +64,8 @@ var Class = (function () {
         var compactedData = this.converter.compact(node, {}, schema, containerLibrary);
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
             if (!compactedData.hasOwnProperty(key)) {
-                delete resource[key];
+                if (!resource.isPartial() || schema.properties.has(key))
+                    delete resource[key];
                 return;
             }
             if (!Array.isArray(resource[key])) {
@@ -79,21 +77,8 @@ var Class = (function () {
             (_a = resource[key]).push.apply(_a, values);
             var _a;
         });
-        if (this.resolver instanceof Documents.Class) {
-            delete resource._partialMetadata;
-        }
-        else if (this.resolver instanceof QueryContext.Class) {
-            var queryContext = this.resolver;
-            var query = queryContext.getProperty(path)
-                .getOptionalPattern()
-                .filter(function (pattern) { return pattern instanceof tokens_1.OptionalToken; })
-                .map(function (pattern) {
-                return (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, pattern
-                    .patterns
-                    .filter(function (token) { return token.token !== "optional"; }));
-                var _a;
-            });
-            resource._partialMetadata = new PartialMetadata.Class(schema, query, resource._partialMetadata);
+        if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
+            resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(schema, resource._partialMetadata);
         }
     };
     Class.prototype.getResource = function (node, containerLibrary, isDocument) {
@@ -121,7 +106,8 @@ var Class = (function () {
                     var subCompactionNode = this.compactionMap.get(pointer.id);
                     if (!subCompactionNode || subCompactionNode.added)
                         continue;
-                    subCompactionNode.path = compactionNode.path + "." + propertyName;
+                    var parentPath = compactionNode.path ? compactionNode.path + "." : "";
+                    subCompactionNode.path = parentPath + propertyName;
                     subCompactionNode.added = true;
                     compactionQueue.push(pointer.id);
                 }

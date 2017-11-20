@@ -22,7 +22,6 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     hasMemberRelation?: Pointer.Class;
     isMemberOfRelation?: Pointer.Class;
     contains?: Pointer.Class[];
-    _partialResolver?: any;
     _etag: string;
     _fragmentsIndex: Map<string, PersistedFragment.Class>;
     _savedFragments: PersistedFragment.Class[];

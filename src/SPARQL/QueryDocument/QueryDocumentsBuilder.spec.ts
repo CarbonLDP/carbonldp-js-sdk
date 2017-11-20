@@ -2,7 +2,7 @@ import { LimitToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, Pre
 
 import AbstractContext from "../../AbstractContext";
 import { clazz, extendsClass, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
-import QueryContext from "./QueryContext";
+import QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as Module from "./QueryDocumentsBuilder";
 import { Class as QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
@@ -28,7 +28,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 		} );
 
 		let context:AbstractContext;
-		let queryContext:QueryContext;
+		let queryContext:QueryContextBuilder;
 		let baseProperty:QueryProperty.Class;
 		let selectToken:SelectToken;
 		beforeEach( ():void => {
@@ -40,7 +40,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				"ex": "http://example.com/ns#",
 			} );
 
-			queryContext = new QueryContext( context );
+			queryContext = new QueryContextBuilder( context );
 
 			baseProperty = queryContext.addProperty( "member" );
 

@@ -1,36 +1,43 @@
 import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
-import { isObject } from "../../Utils";
+import { isObject, M } from "../../Utils";
 import { IllegalArgumentError } from "./../../Errors";
 import * as Pointer from "./../../Pointer";
-import * as QueryContext from "./QueryContext";
+import * as URI from "./../../RDF/URI";
+import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
+import { createPropertyPattern } from "./Utils";
 
 const inherit:Readonly<{}> = Object.freeze( {} );
 
 export class Class {
 	inherit:Readonly<{}> = inherit;
 
-	protected _context:QueryContext.Class;
+	protected _context:QueryContextBuilder.Class;
 	protected _document:QueryProperty.Class;
 
 	private _typesTriple:SubjectToken;
 	private _values:ValuesToken;
 
-	constructor( queryContext:QueryContext.Class, property:QueryProperty.Class ) {
+	private _schema:DigestedObjectSchema;
+
+	constructor( queryContext:QueryContextBuilder.Class, property:QueryProperty.Class ) {
 		this._context = queryContext;
 		this._document = property.addOptionalPattern( new OptionalToken()
 			.addPattern( new SubjectToken( property.variable )
 				.addPredicate( new PredicateToken( "a" )
 					.addObject( queryContext.getVariable( property.name + "__types" ) ) ) )
 		);
+
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
 		this._values = new ValuesToken();
+
+		this._schema = this._context.getSchemaFor( { id: "" } );
 	}
 
 	property( name?:string ):QueryProperty.Class {
@@ -68,7 +75,9 @@ export class Class {
 		if( ! this._context.context ) return this;
 
 		const schema:DigestedObjectSchema = this._context.context.getObjectSchema( type );
-		if( schema ) this._document.addSchema( schema );
+		if( schema ) {
+			this._schema = Digester.combineDigestedObjectSchemas( [ this._schema, schema ] );
+		}
 
 		return this;
 	}
@@ -77,22 +86,16 @@ export class Class {
 		for( const propertyName in propertiesSchema ) {
 			const queryPropertySchema:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
 			const propertyDefinition:QueryPropertySchema.Class = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
-			const { uri, literalType, pointerType } = this.addPropertyDefinition( propertyName, propertyDefinition );
 
+			const digestedDefinition:DigestedPropertyDefinition = this.addPropertyDefinition( propertyName, propertyDefinition );
 			const name:string = `${ this._document.name }.${ propertyName }`;
-			const propertyPath:IRIToken | PrefixedNameToken = this._context.compactIRI( uri.stringValue );
-			const propertyObject:VariableToken = this._context.getVariable( name );
 
-			const propertyPattern:OptionalToken = new OptionalToken()
-				.addPattern( new SubjectToken( this._document.variable )
-					.addPredicate( new PredicateToken( propertyPath )
-						.addObject( propertyObject ) ) )
-			;
-
-			if( literalType !== null ) propertyPattern
-				.addPattern( new FilterToken( `datatype( ${ propertyObject } ) = ${ this._context.compactIRI( literalType.stringValue ) }` ) );
-			if( pointerType !== null ) propertyPattern
-				.addPattern( new FilterToken( `! isLiteral( ${ propertyObject } )` ) );
+			const propertyPattern:OptionalToken = createPropertyPattern(
+				this._context,
+				this._document.name,
+				name,
+				digestedDefinition
+			);
 
 			const property:QueryProperty.Class = this._context.addProperty( name, propertyPattern );
 			if( "query" in propertyDefinition ) {
@@ -134,11 +137,10 @@ export class Class {
 	}
 
 	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
-		const schema:DigestedObjectSchema = this._document.getSchema();
 		const uri:string = "@id" in propertyDefinition ? this._context.expandIRI( propertyDefinition[ "@id" ] ) : void 0;
 
-		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( propertyName, uri, schema );
-		const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( schema, propertyName, propertyDefinition );
+		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( propertyName, uri, this._schema );
+		const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( this._schema, propertyName, propertyDefinition );
 
 		if( inheritDefinition ) {
 			for( const key in inheritDefinition ) {
@@ -149,11 +151,11 @@ export class Class {
 
 		if( ! digestedDefinition.uri ) throw new Error( `Invalid property "${ propertyName }" definition, "@id" is necessary.` );
 
-		schema.properties.set( propertyName, digestedDefinition );
+		this._document.getSchema()
+			.properties.set( propertyName, digestedDefinition );
 		return digestedDefinition;
 	}
 
 }
 
 export default Class;
-

@@ -16,7 +16,6 @@ import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as URI from "./RDF/URI";
-import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
@@ -30,8 +29,6 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 	hasMemberRelation?:Pointer.Class;
 	isMemberOfRelation?:Pointer.Class;
 	contains?:Pointer.Class[];
-
-	_partialResolver?:any;
 
 	_etag:string;
 	_fragmentsIndex:Map<string, PersistedFragment.Class>;

@@ -1,11 +1,12 @@
 import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, ValuesToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { DigestedObjectSchema } from "../../ObjectSchema";
+import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module, property } from "../../test/JasmineExtender";
+import * as Document from "./../../Document";
 import * as Pointer from "./../../Pointer";
 import * as URI from "./../../RDF/URI";
-import QueryContext from "./QueryContext";
+import QueryContextBuilder from "./QueryContextBuilder";
 import * as Module from "./QueryDocumentBuilder";
 import { Class as QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import * as QueryObject from "./QueryObject";
@@ -33,7 +34,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 		} );
 
 		let context:AbstractContext;
-		let queryContext:QueryContext;
+		let queryContext:QueryContextBuilder;
 		let baseProperty:QueryProperty.Class;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
@@ -44,7 +45,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				"ex": "http://example.com/ns#",
 			} );
 
-			queryContext = new QueryContext( context );
+			queryContext = new QueryContextBuilder( context );
 			baseProperty = queryContext.addProperty( "document" );
 		} );
 
@@ -83,6 +84,18 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 						] ),
 					} ),
 				] ) as any );
+			} );
+
+			it( "should initialize the schema with a general document schema", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+
+				const schema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
+					context.getObjectSchema(),
+					context.getObjectSchema( Document.RDF_CLASS ),
+				] );
+				schema.vocab = "http://example.com/vocab#";
+
+				expect( builder[ "_schema" ] ).toEqual( schema );
 			} );
 
 		} );
@@ -267,21 +280,21 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 				builder.withType( "Type-1" );
 				const schema1:DigestedObjectSchema = context.getObjectSchema( "Type-1" );
-				expect( baseProperty.getSchema().properties ).not.toBe( schema1.properties );
-				expect( baseProperty.getSchema().properties.has( "property-1" ) ).toBe( true );
-				expect( baseProperty.getSchema().properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
+				expect( builder[ "_schema" ].properties ).not.toBe( schema1.properties );
+				expect( builder[ "_schema" ].properties.has( "property-1" ) ).toBe( true );
+				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
 					uri: new URI.Class( "http://example.com/vocab#property-1" ),
 				} ) );
 
 				builder.withType( "Type-2" );
 				const schema2:DigestedObjectSchema = context.getObjectSchema( "Type-1" );
-				expect( baseProperty.getSchema().properties ).not.toBe( schema2.properties );
-				expect( baseProperty.getSchema().properties.has( "property-1" ) ).toBe( true );
-				expect( baseProperty.getSchema().properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
+				expect( builder[ "_schema" ].properties ).not.toBe( schema2.properties );
+				expect( builder[ "_schema" ].properties.has( "property-1" ) ).toBe( true );
+				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
 					uri: new URI.Class( "http://example.com/vocab#property-2.1" ),
 				} ) );
-				expect( baseProperty.getSchema().properties.has( "property-2" ) ).toBe( true );
-				expect( baseProperty.getSchema().properties.get( "property-2" ) ).toEqual( jasmine.objectContaining( {
+				expect( builder[ "_schema" ].properties.has( "property-2" ) ).toBe( true );
+				expect( builder[ "_schema" ].properties.get( "property-2" ) ).toEqual( jasmine.objectContaining( {
 					uri: new URI.Class( "http://example.com/vocab#property-2" ),
 				} ) );
 			} );

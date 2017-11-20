@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/Clauses";
-import { BindToken, ConstructToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { BindToken, ConstructToken, IRIToken, OptionalToken, PatternToken, PredicateToken, PrefixToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -19,6 +19,7 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
+import * as PersistedResource from "./PersistedResource";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as ProtectedDocument from "./ProtectedDocument";
@@ -27,9 +28,10 @@ import * as Resource from "./Resource";
 import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
-import { QueryContext, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
+import { QueryContext, QueryContextBuilder, QueryContextPartial, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
+import { createPropertyPattern } from "./SPARQL/QueryDocument/Utils";
 
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 
@@ -190,14 +192,14 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				} );
 
 			} else {
-				const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+				const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
 
 				const documentProperty:QueryProperty.Class = queryContext.addProperty( "document" );
 
 				const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 				documentProperty.addPattern( propertyValue );
 
-				return this.queryDocuments<T>( uri, requestOptions, queryContext, documentProperty, documentQuery )
+				return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, documentQuery )
 					.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 			}
 		} );
@@ -302,7 +304,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
 
-			const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
 			const childrenProperty:QueryProperty.Class = queryContext.addProperty( "child" );
 
 			const selectChildren:SelectToken = new SelectToken()
@@ -315,7 +317,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			;
 			childrenProperty.addPattern( selectChildren );
 
-			return this.queryDocuments<T>( parentURI, requestOptions, queryContext, childrenProperty, childrenQuery );
+			return this.executeQueryBuilder<T>( parentURI, requestOptions, queryContext, childrenProperty, childrenQuery );
 		} );
 	}
 
@@ -406,7 +408,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
 
-			const queryContext:QueryContext.Class = new QueryContext.Class( this.context );
+			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
 			const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
@@ -429,7 +431,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			;
 			membersProperty.addPattern( selectMembers );
 
-			return this.queryDocuments<T>( uri, requestOptions, queryContext, membersProperty, membersQuery );
+			return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, membersQuery );
 		} );
 	}
 
@@ -528,28 +530,14 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	refresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
-		let uri:string;
 		return promiseMethod( () => {
-			uri = this.getRequestURI( persistedDocument.id );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
-
+			const uri:string = this.getRequestURI( persistedDocument.id );
 			// Add header to check id the document has been modified
 			HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
-			return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() );
-		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-			if( response === null ) return <any> [ rdfDocuments, response ];
-
-			let eTag:string = HTTP.Response.Util.getETag( response );
-			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
-
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-
-			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
-			updatedPersistedDocument._etag = eTag;
-
-			return [ updatedPersistedDocument, response ];
+			return persistedDocument.isPartial() ?
+				this.refreshQuery<T>( persistedDocument, requestOptions ) :
+				this.entireRefresh<T>( uri, requestOptions );
 		} ).catch<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( error:HTTP.Errors.Error ) => {
 			if( error.statusCode === 304 ) return [ persistedDocument, null ];
 			return Promise.reject( error );
@@ -806,22 +794,27 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private queryDocuments<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetProperty:QueryProperty.Class, membersQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, documentsQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		if( documentsQuery ) {
+			type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
+			// tslint:disable: variable-name
+			const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
+				QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
+			// tslint:enable: variable-name
+			const queryBuilder:Builder = new Builder( queryContext, targetProperty );
+
+			if( documentsQuery.call( void 0, queryBuilder ) !== queryBuilder )
+				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
+		}
+
+		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
+		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
+	}
+
+	private executeQueryPatterns<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		let response:HTTP.Response.Class;
 
-		// tslint:disable: variable-name
-		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
-		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
-			QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
-		// tslint:enable: variable-name
-
 		return promiseMethod( () => {
-			const queryBuilder:Builder = new Builder( queryContext, targetProperty );
-			if( membersQuery && membersQuery.call( void 0, queryBuilder ) !== queryBuilder )
-				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
-
-			const constructPatterns:PatternToken[] = targetProperty.getPatterns();
-
 			const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 			const construct:ConstructToken = new ConstructToken()
 				.addTriple( new SubjectToken( metadataVar )
@@ -830,7 +823,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 						.addObject( queryContext.compactIRI( NS.C.Class.QueryMetadata ) )
 					)
 					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.Predicate.target ) )
-						.addObject( targetProperty.variable )
+						.addObject( queryContext.getVariable( targetName ) )
 					)
 				)
 				.addPattern( new BindToken( "BNODE()", metadataVar ) )
@@ -875,11 +868,52 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				.filter( x => targetSet.has( x[ "@id" ] ) );
 
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-				.Class( this, targetProperty.name, queryContext )
+				.Class( this, targetName, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
 
 			return [ documents, response ];
 		} );
+	}
+
+	private refreshQuery<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		const queryContext:QueryContextPartial.Class = new QueryContextPartial.Class( persistedDocument, this.context );
+
+		const targetName:string = "document";
+		const constructPatterns:OptionalToken = new OptionalToken()
+			.addPattern( new ValuesToken()
+				.addValues( queryContext.getVariable( targetName ), new IRIToken( persistedDocument.id ) )
+			)
+		;
+
+		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
+			parentAdder.addPattern( new OptionalToken()
+				.addPattern( new SubjectToken( queryContext.getVariable( parentName ) )
+					.addPredicate( new PredicateToken( "a" )
+						.addObject( queryContext.getVariable( `${ parentName }.types` ) ) )
+				)
+			);
+
+			resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
+				const path:string = `${ parentName }.${ propertyName }`;
+
+				const propertyPattern:OptionalToken = createPropertyPattern(
+					queryContext,
+					parentName,
+					path,
+					digestedProperty
+				);
+				parentAdder.addPattern( propertyPattern );
+
+				const propertyValue:any = resource[ propertyName ];
+				if( ! PersistedFragment.Factory.is( propertyValue ) ) return;
+				if( ! propertyValue.isPartial() ) return;
+
+				createRefreshQuery( propertyPattern, propertyValue, path );
+			} );
+		})( constructPatterns, persistedDocument, targetName );
+
+		return this.executeQueryPatterns<T>( persistedDocument.id, requestOptions, queryContext, targetName, constructPatterns.patterns )
+			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
 
 	private persistDocument<T extends Document.Class, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {
@@ -918,6 +952,25 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}, this._parseErrorResponse.bind( this ) ).catch( ( error ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 			return Promise.reject( error );
+		} );
+	}
+
+	private entireRefresh<T>( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+
+		return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			if( response === null ) return <any> [ rdfDocuments, response ];
+
+			let eTag:string = HTTP.Response.Util.getETag( response );
+			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
+			updatedPersistedDocument._etag = eTag;
+
+			return [ updatedPersistedDocument, response ];
 		} );
 	}
 

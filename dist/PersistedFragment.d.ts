@@ -5,6 +5,7 @@ export interface Class extends PersistedResource.Class, Fragment.Class {
     document: PersistedDocument.Class;
 }
 export declare class Factory {
+    static is(object: object): object is Class;
     static decorate<T extends Fragment.Class>(fragment: T, snapshot?: Object): T & Class;
 }
 export default Class;

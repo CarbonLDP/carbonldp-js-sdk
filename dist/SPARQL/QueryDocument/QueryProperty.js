@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Class = (function () {
     function Class(context, name, pattern) {
@@ -33,17 +32,12 @@ var Class = (function () {
     Class.prototype.getPatterns = function () {
         return this._patterns;
     };
-    Class.prototype.getOptionalPattern = function () {
-        var first = this._patterns[0];
-        return first instanceof tokens_1.OptionalToken ? first.patterns : this.getPatterns();
-    };
     Class.prototype.getSchema = function () {
-        if (!this._schema)
-            this._schema = this._context.getSchemaFor({ id: "" });
+        if (this._schema)
+            return this._schema;
+        this._schema = new ObjectSchema_1.DigestedObjectSchema();
+        this._schema.vocab = this._context.expandIRI("") || null;
         return this._schema;
-    };
-    Class.prototype.addSchema = function (schema) {
-        this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this.getSchema(), schema]);
     };
     Class.prototype.toString = function () {
         return "" + this.variable;

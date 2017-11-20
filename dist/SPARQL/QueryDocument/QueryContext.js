@@ -3,13 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
-var QueryProperty = require("./QueryProperty");
 var QueryVariable = require("./QueryVariable");
-var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
-        this._propertiesMap = new Map();
         this._variablesCounter = 0;
         this._variablesMap = new Map();
         this._prefixesMap = new Map();
@@ -20,34 +17,6 @@ var Class = (function () {
         var variable = new QueryVariable.Class(name, this._variablesCounter++);
         this._variablesMap.set(name, variable);
         return variable;
-    };
-    Class.prototype.hasProperty = function (name) {
-        return this._propertiesMap.has(name);
-    };
-    Class.prototype.hasProperties = function (name) {
-        name += ".";
-        return Array.from(this._propertiesMap.keys())
-            .some(function (key) { return key.startsWith(name); });
-    };
-    Class.prototype.addProperty = function (name, pattern) {
-        var property = new QueryProperty.Class(this, name, pattern);
-        this._propertiesMap.set(name, property);
-        return property;
-    };
-    Class.prototype.getProperty = function (name) {
-        return this._propertiesMap.get(name);
-    };
-    Class.prototype.getProperties = function (propertyLevel) {
-        var levelRegex = Utils_1.getLevelRegExp(propertyLevel);
-        return Array.from(this._propertiesMap.entries())
-            .filter(function (_a) {
-            var name = _a[0];
-            return levelRegex.test(name);
-        })
-            .map(function (_a) {
-            var name = _a[0], property = _a[1];
-            return property;
-        });
     };
     Class.prototype.serializeLiteral = function (type, value) {
         type = this.expandIRI(type);
@@ -97,18 +66,8 @@ var Class = (function () {
         }
         return prefixedName;
     };
-    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, existingSchema) {
-        if (existingSchema === void 0) { existingSchema = this.context.getObjectSchema(); }
-        var schemas = [existingSchema].concat(this._getTypeSchemas());
-        for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
-            var schema = schemas_1[_i];
-            if (!schema.properties.has(propertyName))
-                continue;
-            var digestedProperty = schema.properties.get(propertyName);
-            if (propertyURI && digestedProperty.uri.stringValue !== propertyURI)
-                continue;
-            return digestedProperty;
-        }
+    Class.prototype.getPrologues = function () {
+        return Array.from(this._prefixesMap.values());
     };
     Class.prototype.getGeneralSchema = function () {
         if (!this.context)
@@ -116,33 +75,9 @@ var Class = (function () {
         return this.context.documents.getGeneralSchema();
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0) {
-            if (!this.context)
-                return new ObjectSchema_1.DigestedObjectSchema();
-            return this.context.documents.getSchemaFor(object);
-        }
-        var property = this._propertiesMap.get(path);
-        if (!property)
-            throw new Error("Schema path \"" + path + "\" does not exists.");
-        return property.getSchema();
-    };
-    Class.prototype.getPrologues = function () {
-        return Array.from(this._prefixesMap.values());
-    };
-    Class.prototype._getTypeSchemas = function () {
-        var _this = this;
-        if (this._schemas)
-            return this._schemas;
-        var schemasTypes = new Set();
-        (function addSchemasTypes(context) {
-            if (!context)
-                return;
-            Array.from(context["typeObjectSchemaMap"].keys()).forEach(schemasTypes.add, schemasTypes);
-            addSchemasTypes(context.parentContext);
-        })(this.context);
-        this._schemas = [];
-        schemasTypes.forEach(function (type) { return _this._schemas.push(_this.context.getObjectSchema(type)); });
-        return this._schemas;
+        if (!this.context)
+            return new ObjectSchema_1.DigestedObjectSchema();
+        return this.context.documents.getSchemaFor(object);
     };
     return Class;
 }());

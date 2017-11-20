@@ -3,7 +3,6 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedResource from "./PersistedResource";
 import * as RDF from "./RDF";
-import { isObject } from "./Utils";
 
 export interface Class extends PersistedResource.Class, Fragment.Class {
 	document:PersistedDocument.Class;
@@ -38,6 +37,12 @@ function extendRemoveType( superFunction:( type:string ) => void ):( type:string
 }
 
 export class Factory {
+
+	static is( object:object ):object is Class {
+		return PersistedResource.Factory.hasClassProperties( object )
+			&& Fragment.Factory.hasClassProperties( object )
+			;
+	}
 
 	static decorate<T extends Fragment.Class>( fragment:T, snapshot:Object = {} ):T & Class {
 		PersistedResource.Factory.decorate( fragment, snapshot );

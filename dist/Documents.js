@@ -25,6 +25,7 @@ var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
 var Utils = require("./Utils");
 var Utils_2 = require("./Utils");
+var Utils_3 = require("./SPARQL/QueryDocument/Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -166,11 +167,11 @@ var Class = (function () {
                 });
             }
             else {
-                var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+                var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
                 var documentProperty = queryContext.addProperty("document");
                 var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
                 documentProperty.addPattern(propertyValue);
-                return _this.queryDocuments(uri, requestOptions, queryContext, documentProperty, documentQuery)
+                return _this.executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, documentQuery)
                     .then(function (_a) {
                     var documents = _a[0], response = _a[1];
                     return [documents[0], response];
@@ -265,7 +266,7 @@ var Class = (function () {
         childrenQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : childrenQuery;
         return Utils_2.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
             var childrenProperty = queryContext.addProperty("child");
             var selectChildren = new tokens_1.SelectToken()
                 .addVariable(childrenProperty.variable)
@@ -273,7 +274,7 @@ var Class = (function () {
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
                 .addObject(childrenProperty.variable)));
             childrenProperty.addPattern(selectChildren);
-            return _this.queryDocuments(parentURI, requestOptions, queryContext, childrenProperty, childrenQuery);
+            return _this.executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, childrenQuery);
         });
     };
     Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
@@ -351,7 +352,7 @@ var Class = (function () {
         membersQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : membersQuery;
         return Utils_2.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
-            var queryContext = new QueryDocument_1.QueryContext.Class(_this.context);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
             var membersProperty = queryContext.addProperty("member");
             var membershipResource = queryContext.getVariable("membershipResource");
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
@@ -366,7 +367,7 @@ var Class = (function () {
                 .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
                 .addObject(membersProperty.variable)));
             membersProperty.addPattern(selectMembers);
-            return _this.queryDocuments(uri, requestOptions, queryContext, membersProperty, membersQuery);
+            return _this.executeQueryBuilder(uri, requestOptions, queryContext, membersProperty, membersQuery);
         });
     };
     Class.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
@@ -447,25 +448,12 @@ var Class = (function () {
     Class.prototype.refresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var uri;
         return Utils_2.promiseMethod(function () {
-            uri = _this.getRequestURI(persistedDocument.id);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+            var uri = _this.getRequestURI(persistedDocument.id);
             HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
-            return _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser());
-        }).then(function (_a) {
-            var rdfDocuments = _a[0], response = _a[1];
-            if (response === null)
-                return [rdfDocuments, response];
-            var eTag = HTTP.Response.Util.getETag(response);
-            if (eTag === null)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
-            if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
-            updatedPersistedDocument._etag = eTag;
-            return [updatedPersistedDocument, response];
+            return persistedDocument.isPartial() ?
+                _this.refreshQuery(persistedDocument, requestOptions) :
+                _this.entireRefresh(uri, requestOptions);
         }).catch(function (error) {
             if (error.statusCode === 304)
                 return [persistedDocument, null];
@@ -709,16 +697,21 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
-    Class.prototype.queryDocuments = function (uri, requestOptions, queryContext, targetProperty, membersQuery) {
+    Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, documentsQuery) {
+        if (documentsQuery) {
+            var Builder = targetProperty.name === "document" ?
+                QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
+            var queryBuilder = new Builder(queryContext, targetProperty);
+            if (documentsQuery.call(void 0, queryBuilder) !== queryBuilder)
+                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        }
+        var constructPatterns = targetProperty.getPatterns();
+        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
+    };
+    Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns) {
         var _this = this;
         var response;
-        var Builder = targetProperty.name === "document" ?
-            QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         return Utils_2.promiseMethod(function () {
-            var queryBuilder = new Builder(queryContext, targetProperty);
-            if (membersQuery && membersQuery.call(void 0, queryBuilder) !== queryBuilder)
-                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-            var constructPatterns = targetProperty.getPatterns();
             var metadataVar = queryContext.getVariable("metadata");
             var construct = (_a = new tokens_1.ConstructToken()
                 .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -726,7 +719,7 @@ var Class = (function () {
                 .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
                 .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
-                .addObject(targetProperty.variable)))
+                .addObject(queryContext.getVariable(targetName))))
                 .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
             var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
             (function triplesAdder(patterns) {
@@ -760,9 +753,38 @@ var Class = (function () {
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new JSONLD.Compacter
-                .Class(_this, targetProperty.name, queryContext)
+                .Class(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
             return [documents, response];
+        });
+    };
+    Class.prototype.refreshQuery = function (persistedDocument, requestOptions) {
+        var queryContext = new QueryDocument_1.QueryContextPartial.Class(persistedDocument, this.context);
+        var targetName = "document";
+        var constructPatterns = new tokens_1.OptionalToken()
+            .addPattern(new tokens_1.ValuesToken()
+            .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(persistedDocument.id)));
+        (function createRefreshQuery(parentAdder, resource, parentName) {
+            parentAdder.addPattern(new tokens_1.OptionalToken()
+                .addPattern(new tokens_1.SubjectToken(queryContext.getVariable(parentName))
+                .addPredicate(new tokens_1.PredicateToken("a")
+                .addObject(queryContext.getVariable(parentName + ".types")))));
+            resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
+                var path = parentName + "." + propertyName;
+                var propertyPattern = Utils_3.createPropertyPattern(queryContext, parentName, path, digestedProperty);
+                parentAdder.addPattern(propertyPattern);
+                var propertyValue = resource[propertyName];
+                if (!PersistedFragment.Factory.is(propertyValue))
+                    return;
+                if (!propertyValue.isPartial())
+                    return;
+                createRefreshQuery(propertyPattern, propertyValue, path);
+            });
+        })(constructPatterns, persistedDocument, targetName);
+        return this.executeQueryPatterns(persistedDocument.id, requestOptions, queryContext, targetName, constructPatterns.patterns)
+            .then(function (_a) {
+            var documents = _a[0], response = _a[1];
+            return [documents[0], response];
         });
     };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
@@ -798,6 +820,24 @@ var Class = (function () {
         }, this._parseErrorResponse.bind(this)).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             return Promise.reject(error);
+        });
+    };
+    Class.prototype.entireRefresh = function (uri, requestOptions) {
+        var _this = this;
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        return this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            if (response === null)
+                return [rdfDocuments, response];
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
+            updatedPersistedDocument._etag = eTag;
+            return [updatedPersistedDocument, response];
         });
     };
     Class.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {

@@ -1,4 +1,3 @@
-import { OptionalToken, PatternToken } from "sparqler/tokens";
 import { DigestedObjectSchema, Resolver } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
@@ -6,11 +5,9 @@ import * as Pointer from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
-import * as QueryContext from "../SPARQL/QueryDocument/QueryContext";
-import * as PartialMetadata from "../SPARQL/QueryDocument/PartialMetadata";
+import { PartialMetadata, QueryContextBuilder } from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
-import { O as OUtils } from "../Utils";
 
 function getRelativeID( node:RDFNode.Class ):string {
 	const id:string = node[ "@id" ];
@@ -34,7 +31,7 @@ export class Class {
 
 	constructor( documents:Documents.Class, root?:string, schemaResolver?:Resolver, jsonldConverter?:Converter.Class ) {
 		this.documents = documents;
-		this.root = root || "";
+		this.root = root;
 		this.resolver = schemaResolver || documents;
 		this.converter = jsonldConverter || documents.jsonldConverter;
 		this.compactionMap = new Map();
@@ -101,7 +98,7 @@ export class Class {
 			...Object.keys( compactedData ),
 		] ).forEach( key => {
 			if( ! compactedData.hasOwnProperty( key ) ) {
-				delete resource[ key ];
+				if( ! resource.isPartial() || schema.properties.has( key ) ) delete resource[ key ];
 				return;
 			}
 
@@ -115,23 +112,8 @@ export class Class {
 			resource[ key ].push( ...values );
 		} );
 
-		if( this.resolver instanceof Documents.Class ) {
-			delete resource._partialMetadata;
-
-		} else if( this.resolver instanceof QueryContext.Class ) {
-			const queryContext:QueryContext.Class = this.resolver;
-
-			const query:OptionalToken[] = queryContext.getProperty( path )
-				.getOptionalPattern()
-				.filter<OptionalToken>( ( pattern ):pattern is OptionalToken => pattern instanceof OptionalToken )
-				.map( pattern => new OptionalToken()
-					.addPattern( ...pattern
-						.patterns
-						.filter( token => token.token !== "optional" )
-					)
-				);
-
-			resource._partialMetadata = new PartialMetadata.Class( schema, query, resource._partialMetadata );
+		if( this.resolver instanceof QueryContextBuilder.Class ) {
+			resource._partialMetadata = new PartialMetadata.Class( schema, resource._partialMetadata );
 		}
 	}
 
@@ -165,7 +147,8 @@ export class Class {
 					const subCompactionNode:CompactionNode = this.compactionMap.get( pointer.id );
 					if( ! subCompactionNode || subCompactionNode.added ) continue;
 
-					subCompactionNode.path = `${ compactionNode.path }.${ propertyName }`;
+					const parentPath:string = compactionNode.path ? `${ compactionNode.path }.` : "";
+					subCompactionNode.path = parentPath + propertyName;
 					subCompactionNode.added = true;
 
 					compactionQueue.push( pointer.id );

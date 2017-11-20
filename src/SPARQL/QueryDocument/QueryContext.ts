@@ -1,27 +1,20 @@
 import { isPrefixed, isRelative } from "sparqler/iri";
-import { IRIToken, PatternToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
-import { DigestedObjectSchema, DigestedPropertyDefinition, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
-import * as QueryProperty from "./QueryProperty";
+import { DigestedObjectSchema, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
-import { getLevelRegExp } from "./Utils";
 
 export class Class implements Resolver {
 	readonly context?:Context.Class;
-
-	protected _propertiesMap:Map<string, QueryProperty.Class>;
 
 	private _variablesCounter:number;
 	private _variablesMap:Map<string, QueryVariable.Class>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
-	private _schemas:DigestedObjectSchema[];
-
 	constructor( context?:Context.Class ) {
 		this.context = context;
-		this._propertiesMap = new Map();
 
 		this._variablesCounter = 0;
 		this._variablesMap = new Map();
@@ -35,33 +28,6 @@ export class Class implements Resolver {
 		const variable:QueryVariable.Class = new QueryVariable.Class( name, this._variablesCounter ++ );
 		this._variablesMap.set( name, variable );
 		return variable;
-	}
-
-	hasProperty( name:string ):boolean {
-		return this._propertiesMap.has( name );
-	}
-
-	hasProperties( name:string ):boolean {
-		name += ".";
-		return Array.from( this._propertiesMap.keys() )
-			.some( key => key.startsWith( name ) );
-	}
-
-	addProperty( name:string, pattern?:PatternToken ):QueryProperty.Class {
-		const property:QueryProperty.Class = new QueryProperty.Class( this, name, pattern );
-		this._propertiesMap.set( name, property );
-		return property;
-	}
-
-	getProperty( name:string ):QueryProperty.Class {
-		return this._propertiesMap.get( name );
-	}
-
-	getProperties( propertyLevel:string ):QueryProperty.Class[] {
-		const levelRegex:RegExp = getLevelRegExp( propertyLevel );
-		return Array.from( this._propertiesMap.entries() )
-			.filter( ( [ name ] ) => levelRegex.test( name ) )
-			.map( ( [ name, property ] ) => property );
 	}
 
 	serializeLiteral( type:string, value:any ):string {
@@ -115,16 +81,8 @@ export class Class implements Resolver {
 		return prefixedName;
 	}
 
-	getInheritTypeDefinition( propertyName:string, propertyURI?:string, existingSchema:DigestedObjectSchema = this.context.getObjectSchema() ):DigestedPropertyDefinition {
-		const schemas:DigestedObjectSchema[] = [ existingSchema, ...this._getTypeSchemas() ];
-
-		for( const schema of schemas ) {
-			if( ! schema.properties.has( propertyName ) ) continue;
-			const digestedProperty:DigestedPropertyDefinition = schema.properties.get( propertyName );
-
-			if( propertyURI && digestedProperty.uri.stringValue !== propertyURI ) continue;
-			return digestedProperty;
-		}
+	getPrologues():PrefixToken[] {
+		return Array.from( this._prefixesMap.values() );
 	}
 
 	getGeneralSchema():DigestedObjectSchema {
@@ -132,35 +90,9 @@ export class Class implements Resolver {
 		return this.context.documents.getGeneralSchema();
 	}
 
-	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
-		if( path === void 0 ) {
-			if( ! this.context ) return new DigestedObjectSchema();
-			return this.context.documents.getSchemaFor( object );
-		}
-
-		const property:QueryProperty.Class = this._propertiesMap.get( path );
-		if( ! property ) throw new Error( `Schema path "${ path }" does not exists.` );
-
-		return property.getSchema();
-	}
-
-	getPrologues():PrefixToken[] {
-		return Array.from( this._prefixesMap.values() );
-	}
-
-	private _getTypeSchemas():DigestedObjectSchema[] {
-		if( this._schemas ) return this._schemas;
-
-		const schemasTypes:Set<string> = new Set();
-		(function addSchemasTypes( context:Context.Class ):void {
-			if( ! context ) return;
-			Array.from( context[ "typeObjectSchemaMap" ].keys() ).forEach( schemasTypes.add, schemasTypes );
-			addSchemasTypes( context.parentContext );
-		})( this.context );
-
-		this._schemas = [];
-		schemasTypes.forEach( type => this._schemas.push( this.context.getObjectSchema( type ) ) );
-		return this._schemas;
+	getSchemaFor( object:Object, path?:string ):DigestedObjectSchema {
+		if( ! this.context ) return new DigestedObjectSchema();
+		return this.context.documents.getSchemaFor( object );
 	}
 
 }

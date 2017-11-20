@@ -37,18 +37,13 @@ export class Class {
 		return this._patterns;
 	}
 
-	getOptionalPattern():PatternToken[] {
-		const first:PatternToken = this._patterns[ 0 ];
-		return first instanceof OptionalToken ? first.patterns : this.getPatterns();
-	}
-
 	getSchema():DigestedObjectSchema {
-		if( ! this._schema ) this._schema = this._context.getSchemaFor( { id: "" } );
-		return this._schema;
-	}
+		if( this._schema ) return this._schema;
 
-	addSchema( schema:DigestedObjectSchema ):void {
-		this._schema = Digester.combineDigestedObjectSchemas( [ this.getSchema(), schema ] );
+		this._schema = new DigestedObjectSchema();
+		this._schema.vocab = this._context.expandIRI( "" ) || null;
+
+		return this._schema;
 	}
 
 	toString():string {

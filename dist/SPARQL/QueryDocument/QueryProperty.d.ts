@@ -11,9 +11,7 @@ export declare class Class {
     addPattern(...patterns: PatternToken[]): this;
     addOptionalPattern(...patterns: PatternToken[]): this;
     getPatterns(): PatternToken[];
-    getOptionalPattern(): PatternToken[];
     getSchema(): DigestedObjectSchema;
-    addSchema(schema: DigestedObjectSchema): void;
     toString(): string;
 }
 export default Class;

@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var URI = require("../../RDF/URI");
 var Errors_1 = require("../../Errors");
+var URI = require("../../RDF/URI");
 var Class = (function () {
-    function Class(schema, query, partialData) {
+    function Class(schema, partialData) {
         this.schema = partialData ? this.mergeSchemas(partialData.schema, schema) : schema;
-        this.query = partialData ? this.mergeQueries(partialData.query, query) : query;
     }
     Class.prototype.mergeSchemas = function (oldSchema, newSchema) {
         oldSchema.prefixes.forEach(function (oldURI, namespace) {
@@ -19,26 +18,14 @@ var Class = (function () {
             if (!newSchema.properties.has(propertyName))
                 return newSchema.properties.set(propertyName, oldDefinition);
             var newDefinition = newSchema.properties.get(propertyName);
-            for (var definitionProperty in newDefinition) {
-                var newValue = newDefinition[definitionProperty] instanceof URI.Class ? newDefinition[definitionProperty].stringValue : newDefinition[definitionProperty];
-                var oldValue = oldDefinition[definitionProperty] instanceof URI.Class ? oldDefinition[definitionProperty].stringValue : oldDefinition[definitionProperty];
+            for (var key in newDefinition) {
+                var newValue = newDefinition[key] instanceof URI.Class ? newDefinition[key].stringValue : newDefinition[key];
+                var oldValue = oldDefinition[key] instanceof URI.Class ? oldDefinition[key].stringValue : oldDefinition[key];
                 if (newValue !== oldValue)
-                    throw new Errors_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + propertyName + "\": \"" + oldValue + "\", \"" + newValue + "\"");
+                    throw new Errors_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\"");
             }
         });
         return newSchema;
-    };
-    Class.prototype.mergeQueries = function (oldQuery, newQuery) {
-        var getPredicate = function (optional) {
-            return "" + optional.patterns[0].predicates[0];
-        };
-        var newPredicates = new Set(newQuery.map(getPredicate));
-        oldQuery.forEach(function (optional) {
-            var oldPredicate = getPredicate(optional);
-            if (!newPredicates.has(oldPredicate))
-                newQuery.push(optional);
-        });
-        return newQuery;
     };
     return Class;
 }());

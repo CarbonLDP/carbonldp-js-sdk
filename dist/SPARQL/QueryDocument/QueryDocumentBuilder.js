@@ -6,6 +6,7 @@ var Utils_1 = require("../../Utils");
 var Errors_1 = require("./../../Errors");
 var QueryObject = require("./QueryObject");
 var QueryValue = require("./QueryValue");
+var Utils_2 = require("./Utils");
 var inherit = Object.freeze({});
 var Class = (function () {
     function Class(queryContext, property) {
@@ -17,6 +18,7 @@ var Class = (function () {
             .addObject(queryContext.getVariable(property.name + "__types")))));
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
         this._values = new tokens_1.ValuesToken();
+        this._schema = this._context.getSchemaFor({ id: "" });
     }
     Class.prototype.property = function (name) {
         if (name === void 0)
@@ -47,38 +49,28 @@ var Class = (function () {
         if (!this._context.context)
             return this;
         var schema = this._context.context.getObjectSchema(type);
-        if (schema)
-            this._document.addSchema(schema);
+        if (schema) {
+            this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this._schema, schema]);
+        }
         return this;
     };
     Class.prototype.properties = function (propertiesSchema) {
         for (var propertyName in propertiesSchema) {
             var queryPropertySchema = propertiesSchema[propertyName];
             var propertyDefinition = Utils_1.isObject(queryPropertySchema) ? queryPropertySchema : { "@id": queryPropertySchema };
-            var _a = this.addPropertyDefinition(propertyName, propertyDefinition), uri = _a.uri, literalType = _a.literalType, pointerType = _a.pointerType;
+            var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
             var name_1 = this._document.name + "." + propertyName;
-            var propertyPath = this._context.compactIRI(uri.stringValue);
-            var propertyObject = this._context.getVariable(name_1);
-            var propertyPattern = new tokens_1.OptionalToken()
-                .addPattern(new tokens_1.SubjectToken(this._document.variable)
-                .addPredicate(new tokens_1.PredicateToken(propertyPath)
-                .addObject(propertyObject)));
-            if (literalType !== null)
-                propertyPattern
-                    .addPattern(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + this._context.compactIRI(literalType.stringValue)));
-            if (pointerType !== null)
-                propertyPattern
-                    .addPattern(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
+            var propertyPattern = Utils_2.createPropertyPattern(this._context, this._document.name, name_1, digestedDefinition);
             var property = this._context.addProperty(name_1, propertyPattern);
             if ("query" in propertyDefinition) {
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
                     throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
             }
-            (_b = this._document).addOptionalPattern.apply(_b, property.getPatterns());
+            (_a = this._document).addOptionalPattern.apply(_a, property.getPatterns());
         }
         return this;
-        var _b;
+        var _a;
     };
     Class.prototype.filter = function (constraint) {
         var baseName = this._document.name.split(".").pop();
@@ -107,10 +99,9 @@ var Class = (function () {
         var _a;
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
-        var schema = this._document.getSchema();
         var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;
-        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, schema);
-        var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(schema, propertyName, propertyDefinition);
+        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, this._schema);
+        var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {
                 if (key !== "uri" && digestedDefinition[key] !== null)
@@ -120,7 +111,8 @@ var Class = (function () {
         }
         if (!digestedDefinition.uri)
             throw new Error("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
-        schema.properties.set(propertyName, digestedDefinition);
+        this._document.getSchema()
+            .properties.set(propertyName, digestedDefinition);
         return digestedDefinition;
     };
     return Class;

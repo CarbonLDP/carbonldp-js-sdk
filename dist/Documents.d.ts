@@ -84,8 +84,11 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     _parseErrorResponse<T>(response: HTTP.Response.Class | Error): any;
-    private queryDocuments<T>(uri, requestOptions, queryContext, targetProperty, membersQuery?);
+    private executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, documentsQuery?);
+    private executeQueryPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns);
+    private refreshQuery<T>(persistedDocument, requestOptions);
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
+    private entireRefresh<T>(uri, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);

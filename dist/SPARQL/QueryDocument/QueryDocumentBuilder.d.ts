@@ -1,16 +1,17 @@
 import * as Pointer from "./../../Pointer";
-import * as QueryContext from "./QueryContext";
+import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
 export declare class Class {
     inherit: Readonly<{}>;
-    protected _context: QueryContext.Class;
+    protected _context: QueryContextBuilder.Class;
     protected _document: QueryProperty.Class;
     private _typesTriple;
     private _values;
-    constructor(queryContext: QueryContext.Class, property: QueryProperty.Class);
+    private _schema;
+    constructor(queryContext: QueryContextBuilder.Class, property: QueryProperty.Class);
     property(name?: string): QueryProperty.Class;
     value(value: string | number | boolean | Date): QueryValue.Class;
     object(object: Pointer.Class | string): QueryObject.Class;

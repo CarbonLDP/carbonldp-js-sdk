@@ -1,7 +1,10 @@
 import { INSTANCE, module, reexports } from "../../test/JasmineExtender";
 
 import * as QueryDocument from "../QueryDocument";
+import * as PartialMetadata from "./PartialMetadata";
 import * as QueryContext from "./QueryContext";
+import * as QueryContextBuilder from "./QueryContextBuilder";
+import * as QueryContextPartial from "./QueryContextPartial";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryDocumentsBuilder from "./QueryDocumentsBuilder";
 import * as QueryMetadata from "./QueryMetadata";
@@ -19,9 +22,24 @@ describe( module( "Carbon/SPARQL/QueryDocument" ), ():void => {
 		expect( QueryDocument ).toEqual( jasmine.any( Object ) );
 	} );
 
+	it( reexports( INSTANCE, "PartialMetadata", "Carbon.SPARQL.QueryDocument.PartialMetadata" ), ():void => {
+		expect( QueryDocument.PartialMetadata ).toBeDefined();
+		expect( QueryDocument.PartialMetadata ).toBe( PartialMetadata );
+	} );
+
 	it( reexports( INSTANCE, "QueryContext", "Carbon.SPARQL.QueryDocument.QueryContext" ), ():void => {
 		expect( QueryDocument.QueryContext ).toBeDefined();
 		expect( QueryDocument.QueryContext ).toBe( QueryContext );
+	} );
+
+	it( reexports( INSTANCE, "QueryContextBuilder", "Carbon.SPARQL.QueryDocument.QueryContextBuilder" ), ():void => {
+		expect( QueryDocument.QueryContextBuilder ).toBeDefined();
+		expect( QueryDocument.QueryContextBuilder ).toBe( QueryContextBuilder );
+	} );
+
+	it( reexports( INSTANCE, "QueryContextPartial", "Carbon.SPARQL.QueryDocument.QueryContextPartial" ), ():void => {
+		expect( QueryDocument.QueryContextPartial ).toBeDefined();
+		expect( QueryDocument.QueryContextPartial ).toBe( QueryContextPartial );
 	} );
 
 	it( reexports( INSTANCE, "QueryDocumentBuilder", "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder" ), ():void => {

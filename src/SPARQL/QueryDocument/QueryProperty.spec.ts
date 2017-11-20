@@ -191,65 +191,18 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				expect( QueryProperty.prototype.getSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should initialize the schema with a general document schema", ():void => {
+			it( "should initialize the schema with an empty schema with vocab", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 
-				const schema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
-					context.getObjectSchema(),
-					context.getObjectSchema( Document.RDF_CLASS ),
-				] );
-				schema.vocab = "http://example.com/vocab#";
+				const schema:DigestedObjectSchema = Digester.digestSchema( {
+					"@vocab": "http://example.com/vocab#",
+				} );
 
 				expect( queryProperty[ "_schema" ] ).toBeUndefined();
 
 				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();
 				expect( propertySchema ).toEqual( schema );
 				expect( queryProperty[ "_schema" ] ).toBe( propertySchema );
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "addSchema" ), ():void => {
-
-			it( "should exists", ():void => {
-				expect( QueryProperty.prototype.addSchema ).toBeDefined();
-				expect( QueryProperty.prototype.addSchema ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should add schema to the general document schema", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-
-				const schemaToAdd1:DigestedObjectSchema = Digester.digestSchema( {
-					"property-1": {
-						"@id": "http://example.com/ns#propery-1",
-					},
-				} );
-				const targetSchema1:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
-					context.getObjectSchema(),
-					context.getObjectSchema( Document.RDF_CLASS ),
-					schemaToAdd1,
-				] );
-				targetSchema1.vocab = "http://example.com/vocab#";
-
-				queryProperty.addSchema( schemaToAdd1 );
-				expect( queryProperty[ "_schema" ] ).toEqual( targetSchema1 );
-
-
-				const schemaToAdd2:DigestedObjectSchema = Digester.digestSchema( {
-					"property-1": {
-						"@id": "http://example.com/ns#propery-1",
-					},
-				} );
-				const targetSchema2:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
-					context.getObjectSchema(),
-					context.getObjectSchema( Document.RDF_CLASS ),
-					schemaToAdd1,
-					schemaToAdd2,
-				] );
-				targetSchema2.vocab = "http://example.com/vocab#";
-
-				queryProperty.addSchema( schemaToAdd2 );
-				expect( queryProperty[ "_schema" ] ).toEqual( targetSchema2 );
 			} );
 
 		} );

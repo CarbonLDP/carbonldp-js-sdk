@@ -17,6 +17,9 @@ import {
 	hasDefaultExport,
 } from "./test/JasmineExtender";
 
+import { BindToken, ConstructToken, FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import * as TokensModule from "sparqler/tokens";
+
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -31,6 +34,7 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as PersistedResource from "./PersistedResource";
@@ -45,7 +49,6 @@ import { QueryClause } from "sparqler/Clauses";
 
 import * as Documents from "./Documents";
 import DefaultExport from "./Documents";
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, SubjectToken, VariableToken } from "sparqler/tokens";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -1310,67 +1313,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ document ] ) => {
-						const variableHelper:( name:string ) => VariableToken = name => {
-							return jasmine.objectContaining( {
-								token: "variable",
-								name,
-							} ) as any;
-						};
-
 						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document._partialMetadata.query ).toEqual( [
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "document__types" ) )
-									)
-								)
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
-										.addObject( variableHelper( "document__property1" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
-										.addObject( variableHelper( "document__property2" ) )
-									)
-								)
-								.addPattern( new FilterToken( "! isLiteral( ?document__property2 )" ) )
-							,
-						] );
+						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+							"@vocab": "https://example.com/ns#",
+							"property1": {
+								"@id": "property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+						} ) );
 
 						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document.property2._partialMetadata.query ).toEqual( [
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "document__property2__types" ) )
-									)
-								)
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
-										.addObject( variableHelper( "document__property2__property2" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer>" ) )
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
-										.addObject( variableHelper( "document__property2__property3" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
-							,
-						] );
-
+						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+							"@vocab": "https://example.com/ns#",
+							"property2": {
+								"@id": "property-2",
+								"@type": NS.XSD.DataType.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": NS.XSD.DataType.string,
+							},
+						} ) );
 						done();
 					} ).catch( done.fail );
 				} );
@@ -1493,7 +1460,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://schema.org/property-3": [ {
 									"@value": "updated value"
 								} ],
-								"https://schema.org/property-3": [ {
+								"https://schema.org/property-5": [ {
 									"@value": "2000-01-01",
 									"@type": "${ NS.XSD.DataType.dateTime }"
 								} ]
@@ -1516,83 +1483,184 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} )
 						);
 					} ).then( ( [ document ] ) => {
-						const variableHelper:( name:string ) => VariableToken = name => {
-							return jasmine.objectContaining( {
-								token: "variable",
-								name,
-							} ) as any;
-						};
-
 						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document._partialMetadata.query ).toEqual( [
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "document__types" ) )
-									)
-								)
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
-										.addObject( variableHelper( "document__property4" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean>" ) )
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
-										.addObject( variableHelper( "document__property2" ) )
-									)
-								)
-								.addPattern( new FilterToken( "! isLiteral( ?document__property2 )" ) )
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
-										.addObject( variableHelper( "document__property1" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
-							,
-						] );
+						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+							"@vocab": "https://example.com/ns#",
+							"property4": {
+								"@id": "property-4",
+								"@type": NS.XSD.DataType.boolean,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "property-1",
+								"@type": NS.XSD.DataType.string,
+							},
+						} ) );
 
 						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document.property2._partialMetadata.query ).toEqual( [
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "document__property2__types" ) )
-									)
-								)
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
-										.addObject( variableHelper( "document__property2__property3" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-5" ) )
-										.addObject( variableHelper( "document__property2__property5" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime>" ) )
-							,
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
-										.addObject( variableHelper( "document__property2__property2" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer>" ) )
-							,
-						] );
+						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+							"@vocab": "https://example.com/ns#",
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": NS.XSD.DataType.string,
+							},
+							"property5": {
+								"@id": "https://schema.org/property-5",
+								"@type": NS.XSD.DataType.dateTime,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": NS.XSD.DataType.integer,
+							},
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
 
+				it( "should merge query results to the partial", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+									"@value": "false",
+									"@type": "${ NS.XSD.DataType.boolean }"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://schema.org/property-3": [ {
+									"@value": "updated sub-value"
+								} ],
+								"https://schema.org/property-5": [ {
+									"@value": "2010-01-01",
+									"@type": "${ NS.XSD.DataType.dateTime }"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property4:boolean;
+						property1:string;
+						property2:PersistedResource.Class;
+					}
+
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property4": {
+							"@id": "property-4",
+							"@type": NS.XSD.DataType.boolean,
+						},
+						"property5": {
+							"@id": "https://schema.org/property-5",
+							"@type": NS.XSD.DataType.dateTime,
+						},
+					} );
+
+					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+						Object.assign(
+							documents.getPointer( "https://example.com/resource/" ),
+							{ property4: true, property1: "value", property2: null }
+						),
+						"https://example.com/resource/",
+						documents
+					);
+					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "property-4",
+							"@type": NS.XSD.DataType.boolean,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+					} ) );
+
+					persistedDocument.property2 = persistedDocument.createFragment(
+						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
+						"_:1"
+					);
+					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						"@vocab": "https://example.com/ns#",
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property5": {
+							"@id": "https://schema.org/property-5",
+							"@type": NS.XSD.DataType.dateTime,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} ) );
+
+					Utils.promiseMethod( () => {
+						return documents.get<MyDocument>( "https://example.com/resource/", _ => _
+							.withType( "Resource" )
+							.properties( {
+								"property4": _.inherit,
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+									"query": __ => __.properties( {
+										"property3": __.inherit,
+										"property5": __.inherit,
+									} ),
+								},
+							} )
+						);
+					} ).then( ( [ document ] ) => {
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property4": false,
+							"property1": "value",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "updated sub-value",
+								"property5": new Date( "2010-01-01" ),
+							} ) as any,
+						} ) );
 						done();
 					} ).catch( done.fail );
 				} );
@@ -8928,17 +8996,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
+
+				let context:AbstractContext;
 				let documents:Documents.Class;
-
-				beforeEach( () => {
-					const context:AbstractContext = new class extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-						}
+				beforeEach( ():void => {
+					context = new class extends AbstractContext {
+						_baseURI:string = "https://example.com/";
 					};
+					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -8963,7 +9028,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -8971,7 +9036,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -8982,6 +9047,392 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						done();
 					} );
+				} );
+
+
+				it( "should create refresh query", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "updated value"
+								} ],
+								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+									"@value": "false",
+									"@type": "${ NS.XSD.DataType.boolean }"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://schema.org/property-3": [ {
+									"@value": "updated sub-value"
+								} ],
+								"https://schema.org/property-5": [ {
+									"@value": "2010-01-01",
+									"@type": "${ NS.XSD.DataType.dateTime }"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property4:boolean;
+						property1:string;
+						property2:PersistedResource.Class;
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+
+					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+						Object.assign(
+							documents.getPointer( "https://example.com/resource/" ),
+							{ property4: true, property1: "value", property2: null }
+						),
+						"https://example.com/resource/",
+						documents
+					);
+					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "property-4",
+							"@type": NS.XSD.DataType.boolean,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+					} ) );
+
+					persistedDocument.property2 = persistedDocument.createFragment(
+						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
+						"_:1"
+					);
+					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						"@vocab": "https://example.com/ns#",
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property5": {
+							"@id": "https://schema.org/property-5",
+							"@type": NS.XSD.DataType.dateTime,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} ) );
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					Utils.promiseMethod( () => {
+						return documents.refresh<MyDocument>( persistedDocument );
+					} ).then( () => {
+						const variableHelper:( name:string ) => VariableToken = name => {
+							return jasmine.objectContaining( {
+								token: "variable",
+								name,
+							} ) as any;
+						};
+
+						expect( query ).toEqual( new QueryToken(
+							new ConstructToken()
+								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+										.addObject( variableHelper( "document" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__types" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
+										.addObject( variableHelper( "document__property4" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+										.addObject( variableHelper( "document__property2" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__property2__types" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "document__property2__property3" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-5" ) )
+										.addObject( variableHelper( "document__property2__property5" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
+										.addObject( variableHelper( "document__property2__property2" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+										.addObject( variableHelper( "document__property1" ) )
+									)
+								)
+
+								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new ValuesToken()
+									.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( "a" )
+												.addObject( variableHelper( "document__types" ) )
+											)
+										)
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
+												.addObject( variableHelper( "document__property4" ) )
+											)
+										)
+										.addPattern( new FilterToken( "datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean>" ) )
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+												.addObject( variableHelper( "document__property2" ) )
+											)
+										)
+										.addPattern( new FilterToken( "! isLiteral( ?document__property2 )" ) )
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( "a" )
+													.addObject( variableHelper( "document__property2__types" ) )
+												)
+											)
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+													.addObject( variableHelper( "document__property2__property3" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-5" ) )
+													.addObject( variableHelper( "document__property2__property5" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime>" ) )
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
+													.addObject( variableHelper( "document__property2__property2" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer>" ) )
+										)
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+												.addObject( variableHelper( "document__property1" ) )
+											)
+										)
+										.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+								)
+							)
+
+								.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+						);
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should refresh data from query", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "updated value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ],
+								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+									"@value": "false",
+									"@type": "${ NS.XSD.DataType.boolean }"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://schema.org/property-3": [ {
+									"@value": "updated sub-value"
+								} ],
+								"https://schema.org/property-5": [ {
+									"@value": "2010-01-01",
+									"@type": "${ NS.XSD.DataType.dateTime }"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:PersistedResource.Class & {
+							property2:number;
+							property3:string;
+							property5:Date;
+						};
+						property3:string;
+						property4:boolean;
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+
+					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
+							property1: "value",
+							property2: null,
+							property3: "non query-value",
+							property4: true,
+							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								"@vocab": "https://example.com/ns#",
+								"property1": {
+									"@id": "property-1",
+									"@type": NS.XSD.DataType.string,
+								},
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+								},
+								"property4": {
+									"@id": "property-4",
+									"@type": NS.XSD.DataType.boolean,
+								},
+							} ) ),
+						} ),
+						"https://example.com/resource/",
+						documents
+					);
+
+					persistedDocument.property2 = persistedDocument.createFragment(
+						{
+							property3: "sub-value",
+							property5: new Date( "2000-01-01" ),
+							property2: 12345,
+							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								"@vocab": "https://example.com/ns#",
+								"property2": {
+									"@id": "property-2",
+									"@type": NS.XSD.DataType.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": NS.XSD.DataType.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": NS.XSD.DataType.dateTime,
+								},
+							} ) ),
+						},
+						"_:1"
+					);
+
+					Utils.promiseMethod( () => {
+						return documents.refresh<MyDocument>( persistedDocument );
+					} ).then( ( [ document ] ) => {
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+
+						// Data updates
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property4": false,
+							"property1": "updated value",
+							"property2": jasmine.objectContaining( {
+								"property3": "updated sub-value",
+								"property5": new Date( "2010-01-01" ),
+							} ) as any,
+						} ) );
+
+						// Non query data
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property3": "non query-value",
+						} ) );
+
+						// Data removed
+						expect( document.property2 ).not.toEqual( jasmine.objectContaining( {
+							"property2": 12345,
+						} ) );
+
+						done();
+					} ).catch( done.fail );
 				} );
 
 			} );
@@ -9035,8 +9486,247 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 				} );
 
-			} );
 
+				it( "should create refresh query", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://example.com/ns#Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://example.com/ns#property-1": [ {
+									"@value": "updated value"
+								} ],
+								"https://example.com/ns#property-4": [ {
+									"@value": "false",
+									"@type": "${ NS.XSD.DataType.boolean }"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://schema.org/property-3": [ {
+									"@value": "updated sub-value"
+								} ],
+								"https://schema.org/property-5": [ {
+									"@value": "2010-01-01",
+									"@type": "${ NS.XSD.DataType.dateTime }"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property4:boolean;
+						property1:string;
+						property2:PersistedResource.Class;
+					}
+
+					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+						Object.assign(
+							documents.getPointer( "https://example.com/resource/" ),
+							{ property4: true, property1: "value", property2: null }
+						),
+						"https://example.com/resource/",
+						documents
+					);
+					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						"@vocab": "https://example.com/ns#",
+						"property4": {
+							"@id": "property-4",
+							"@type": NS.XSD.DataType.boolean,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+					} ) );
+
+					persistedDocument.property2 = persistedDocument.createFragment(
+						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
+						"_:1"
+					);
+					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						"@vocab": "https://example.com/ns#",
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property5": {
+							"@id": "https://schema.org/property-5",
+							"@type": NS.XSD.DataType.dateTime,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} ) );
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					Utils.promiseMethod( () => {
+						return persistedDocument.refresh();
+					} ).then( () => {
+						const variableHelper:( name:string ) => VariableToken = name => {
+							return jasmine.objectContaining( {
+								token: "variable",
+								name,
+							} ) as any;
+						};
+
+						expect( query ).toEqual( new QueryToken(
+							new ConstructToken()
+								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+										.addObject( variableHelper( "document" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__types" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
+										.addObject( variableHelper( "document__property4" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
+										.addObject( variableHelper( "document__property2" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "document__property2__types" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
+										.addObject( variableHelper( "document__property2__property3" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-5" ) )
+										.addObject( variableHelper( "document__property2__property5" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
+										.addObject( variableHelper( "document__property2__property2" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "document" ) )
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+										.addObject( variableHelper( "document__property1" ) )
+									)
+								)
+
+								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new ValuesToken()
+									.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( "a" )
+												.addObject( variableHelper( "document__types" ) )
+											)
+										)
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
+												.addObject( variableHelper( "document__property4" ) )
+											)
+										)
+										.addPattern( new FilterToken( "datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean>" ) )
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
+												.addObject( variableHelper( "document__property2" ) )
+											)
+										)
+										.addPattern( new FilterToken( "! isLiteral( ?document__property2 )" ) )
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( "a" )
+													.addObject( variableHelper( "document__property2__types" ) )
+												)
+											)
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
+													.addObject( variableHelper( "document__property2__property3" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-5" ) )
+													.addObject( variableHelper( "document__property2__property5" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime>" ) )
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+												.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
+													.addObject( variableHelper( "document__property2__property2" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer>" ) )
+										)
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+												.addObject( variableHelper( "document__property1" ) )
+											)
+										)
+										.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+								)
+						) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+			} );
 		} );
 
 		describe( method(
