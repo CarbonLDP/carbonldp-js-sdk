@@ -10020,13 +10020,11 @@ var Class = (function () {
         });
     };
     Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, documentsQuery) {
-        if (documentsQuery) {
-            var Builder = targetProperty.name === "document" ?
-                QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
-            var queryBuilder = new Builder(queryContext, targetProperty);
-            if (documentsQuery.call(void 0, queryBuilder) !== queryBuilder)
-                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-        }
+        var Builder = targetProperty.name === "document" ?
+            QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
+        var queryBuilder = new Builder(queryContext, targetProperty);
+        if (documentsQuery && documentsQuery.call(void 0, queryBuilder) !== queryBuilder)
+            throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };

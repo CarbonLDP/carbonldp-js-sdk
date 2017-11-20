@@ -800,17 +800,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 
 	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, documentsQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		if( documentsQuery ) {
-			type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
-			// tslint:disable: variable-name
-			const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
-				QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
-			// tslint:enable: variable-name
-			const queryBuilder:Builder = new Builder( queryContext, targetProperty );
+		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
+		// tslint:disable: variable-name
+		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
+			QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
+		// tslint:enable: variable-name
+		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-			if( documentsQuery.call( void 0, queryBuilder ) !== queryBuilder )
-				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
-		}
+		if( documentsQuery && documentsQuery.call( void 0, queryBuilder ) !== queryBuilder )
+			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
 		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );

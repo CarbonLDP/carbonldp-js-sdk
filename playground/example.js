@@ -64,18 +64,9 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				fragment = { value: "a name" };
-				resource = { name: fragment };
-				carbon.documents.on( "*.*", "/**", ( data ) => {
-					console.log( data );
-				}, ( error ) => {
-					console.error( error );
-				} );
-
-				return new Promise( resolve => setTimeout( resolve, 3000 ) );
-			} ).then( () => {
-				return carbon.documents.createChild( "posts/", {} );
-			} ).then( () => {
+				return carbon.documents.getMembers( "container/" );
+			} ).then( ( data ) => {
+				console.log( data );
 				done();
 			} ).catch( ( error ) => {
 				console.error( { error } );
