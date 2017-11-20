@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 34 );
+			expect( Object.keys( C.Class ).length ).toBe( 35 );
 		} );
 
 		it( hasProperty(
@@ -304,6 +304,17 @@ describe( module(
 			expect( Utils.isString( C.Class.PreferContainmentTriples ) ).toBe( true );
 
 			expect( C.Class.PreferContainmentTriples ).toBe( "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"PreferDocumentETags",
+			"string"
+		), ():void => {
+			expect( C.Class.PreferDocumentETags ).toBeDefined();
+			expect( Utils.isString( C.Class.PreferDocumentETags ) ).toBe( true );
+
+			expect( C.Class.PreferDocumentETags ).toBe( "https://carbonldp.com/ns/v1/platform#PreferDocumentETags" );
 		} );
 
 		it( hasProperty(

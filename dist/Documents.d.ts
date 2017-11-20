@@ -90,7 +90,6 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
     private entireRefresh<T>(uri, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
-    private getDocumentResource(rdfDocument, response);
     private getPointerID(uri);
     private createPointer(localID);
     private createPointerFrom<T>(object, localID);
@@ -102,8 +101,6 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getDigestedObjectSchema(objectTypes, objectID);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel);
-    private getMembershipResource(documentResource, rdfDocuments, response);
-    private getPersistedMetadataResources<T>(freeNodes, rdfDocuments, response);
     private updateFromPreferenceApplied<T>(persistedDocument, rdfDocuments, response);
     private _parseMembers(pointers);
     private applyResponseData<T>(persistedProtectedDocument, response);

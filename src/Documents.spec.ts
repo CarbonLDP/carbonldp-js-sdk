@@ -1045,9 +1045,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }" +
 							" } " +
 							"}",
+
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+									[ "prefer", new HTTP.Header.Class( [
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+									] ) ],
 								] ),
 							} )
 						);
@@ -1066,6 +1070,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:3"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "${ context.baseURI }resource/",
@@ -1134,6 +1159,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -1155,6 +1181,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
 							"@id": "${ context.baseURI }resource/",
@@ -1228,8 +1289,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"2-12345\"",
 								"property2": 12345,
 								"property3": "another value",
 							} ),
@@ -1789,9 +1852,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }" +
 							" } " +
 							"}",
+
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+									[ "prefer", new HTTP.Header.Class( [
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+									] ) ],
 								] ),
 							} )
 						);
@@ -1810,6 +1877,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:3"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "https://example.com/resource/",
@@ -1871,6 +1959,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -1892,6 +1981,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
 							"@id": "https://example.com/resource/",
@@ -1959,8 +2083,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"2-12345\"",
 								"property2": 12345,
 								"property3": "another value",
 							} ),
@@ -2790,7 +2916,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
+							        "${ NS.C.Class.VolatileResource }",
 						            "${ NS.C.Class.ResponseMetadata }"
 								],
 								"${ NS.C.Predicate.documentMetadata }": [ {
@@ -4912,9 +5038,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }" +
 							" } " +
 							"}",
+
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+									[ "prefer", new HTTP.Header.Class( [
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+									] ) ],
 								] ),
 							} )
 						);
@@ -4942,6 +5072,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "${ context.baseURI }resource/child1/",
@@ -5044,6 +5209,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -5051,6 +5217,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -5081,6 +5248,69 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							}, {
+								"@id": "_:6"
+							}, {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"3-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/"
+							} ]
+						}, {
+							"@id": "_:7",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"4-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
 							"@id": "${ context.baseURI }resource/child1/",
@@ -5189,15 +5419,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -5344,9 +5578,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }" +
 							" } " +
 							"}",
+
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+									[ "prefer", new HTTP.Header.Class( [
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+									] ) ],
 								] ),
 							} )
 						);
@@ -5374,6 +5612,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "https://example.com/resource/child1/",
@@ -5467,6 +5740,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -5474,6 +5748,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -5504,6 +5779,69 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							}, {
+								"@id": "_:6"
+							}, {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"3-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/"
+							} ]
+						}, {
+							"@id": "_:7",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"4-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
 							"@id": "https://example.com/resource/child1/",
@@ -5603,15 +5941,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -6921,9 +7263,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }" +
 							" } " +
 							"}",
+
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+									[ "prefer", new HTTP.Header.Class( [
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+									] ) ],
 								] ),
 							} )
 						);
@@ -6951,6 +7297,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "${ context.baseURI }resource/member1/",
@@ -7053,6 +7434,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -7060,6 +7442,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -7090,6 +7473,69 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							}, {
+								"@id": "_:6"
+							}, {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"3-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/"
+							} ]
+						}, {
+							"@id": "_:7",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"4-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
 							"@id": "${ context.baseURI }resource/member1/",
@@ -7198,15 +7644,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -7355,9 +7805,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"" + " }" +
 							" } " +
 							"}",
+
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( `include="${ NS.C.Class.PreferResultsContext }"` ) ],
+									[ "prefer", new HTTP.Header.Class( [
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+									] ) ],
 								] ),
 							} )
 						);
@@ -7385,6 +7839,41 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "https://example.com/resource/member1/",
@@ -7478,6 +7967,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -7485,6 +7975,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -7515,6 +8006,69 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"${ NS.C.Predicate.target }": [ {
 								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							}, {
+								"@id": "_:6"
+							}, {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"3-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/"
+							} ]
+						}, {
+							"@id": "_:7",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"4-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
 							"@id": "https://example.com/resource/member1/",
@@ -7614,15 +8168,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_etag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
+								"_etag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),

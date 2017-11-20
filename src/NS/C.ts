@@ -49,6 +49,8 @@ export class Class {
 
 	static get PreferContainmentTriples():string { return namespace + "PreferContainmentTriples"; }
 
+	static get PreferDocumentETags():string { return namespace + "PreferDocumentETags"; }
+
 	static get PreferMembershipResources():string { return namespace + "PreferMembershipResources"; }
 
 	static get PreferMembershipTriples():string { return namespace + "PreferMembershipTriples"; }

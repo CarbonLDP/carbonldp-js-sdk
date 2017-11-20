@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/Clauses";
-import { BindToken, ConstructToken, IRIToken, OptionalToken, PatternToken, PredicateToken, PrefixToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { BindToken, ConstructToken, IRIToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -19,19 +19,18 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
-import * as PersistedResource from "./PersistedResource";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
-import * as RetrievalPreferences from "./RetrievalPreferences";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
 import { QueryContext, QueryContextBuilder, QueryContextPartial, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
+import { createPropertyPattern } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
-import { createPropertyPattern } from "./SPARQL/QueryDocument/Utils";
 
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 
@@ -471,11 +470,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
 				include: [ NS.C.Class.PreferSelectedMembershipTriples ],
 				omit: [ NS.C.Class.PreferMembershipTriples ],
 			};
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
 			freeResources.createResourceFrom( LDP.RemoveMemberAction.Factory.create( pointers ) );
@@ -489,7 +488,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
 
-			let containerRetrievalPreferences:HTTP.Request.ContainerRetrievalPreferences = {
+			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
 				include: [
 					NS.C.Class.PreferMembershipTriples,
 				],
@@ -500,7 +499,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					NS.C.Class.PreferContainer,
 				],
 			};
-			HTTP.Request.Util.setContainerRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions );
 		} );
@@ -585,6 +584,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
+
 	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
@@ -598,6 +598,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			this.getDigestedObjectSchemaForExpandedObject( object ) :
 			this.getDigestedObjectSchemaForDocument( <any> object );
 	}
+
 
 	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
@@ -676,6 +677,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
+
 	sparql( documentURI:string ):QueryClause<SPARQL.Builder.ExecuteSelect> {
 		let builder:QueryClause<SPARQL.Builder.ExecuteSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
 
@@ -693,6 +695,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return builder;
 	}
+
 
 	on( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void {
 		try {
@@ -752,6 +755,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.on( Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 	}
 
+
 	_getPersistedDocument<T>( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):T & PersistedDocument.Class {
 		const [ documentResources ] = RDF.Document.Util.getNodes( rdfDocument );
 		if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
@@ -793,6 +797,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			return Promise.reject( error );
 		} );
 	}
+
 
 	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, documentsQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		if( documentsQuery ) {
@@ -842,7 +847,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			})( constructPatterns );
 			if( ! construct.triples.length ) throw new Errors.IllegalArgumentError( "No data specified to be retrieved." );
 
-			HTTP.Request.Util.setContainerRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
+			HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
+			HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
 
 			return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions );
 
@@ -857,7 +863,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			const targetsIDs:string[] = freeResources
 				.getResources()
-				.filter<SPARQL.QueryDocument.QueryMetadata.Class>( SPARQL.QueryDocument.QueryMetadata.Factory.is )
+				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
 				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id );
 			const targetSet:Set<string> = new Set( targetsIDs );
 
@@ -870,6 +876,19 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
 				.Class( this, targetName, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
+
+			freeResources
+				.getResources()
+				.filter( LDP.ResponseMetadata.Factory.is )
+				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
+				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
+				.forEach( documentsMetadata => documentsMetadata
+					.map( documentMetadata => [
+						documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ],
+						documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ],
+					] )
+					.forEach( ( [ relatedDocument, eTag ] ) => relatedDocument._etag = eTag )
+				);
 
 			return [ documents, response ];
 		} );
@@ -915,6 +934,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.executeQueryPatterns<T>( persistedDocument.id, requestOptions, queryContext, targetName, constructPatterns.patterns )
 			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
+
 
 	private persistDocument<T extends Document.Class, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {
 		parentURI = this.getRequestURI( parentURI );
@@ -974,6 +994,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
+
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
 		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );
 
@@ -982,13 +1003,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return rdfDocuments.length > 0 ? rdfDocuments[ 0 ] : null;
 	}
 
-	private getDocumentResource( rdfDocument:RDF.Document.Class, response:HTTP.Response.Class ):RDF.Node.Class {
-		let documentResources:RDF.Node.Class[] = RDF.Document.Util.getDocumentResources( rdfDocument );
-		if( documentResources.length === 0 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
-		if( documentResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
-
-		return documentResources[ 0 ];
-	}
 
 	private getPointerID( uri:string ):string {
 		if( RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
@@ -1034,6 +1048,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return pointer;
 	}
 
+
 	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library ):Object[];
 	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object;
 	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library ):any {
@@ -1056,6 +1071,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
 	}
+
 
 	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {
 		let types:string[] = RDF.Node.Util.getTypes( <any> expandedObject );
@@ -1085,6 +1101,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return digestedSchema;
 	}
 
+
 	private getRequestURI( uri:string ):string {
 		if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
@@ -1106,45 +1123,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
 
 		return requestOptions;
-	}
-
-	private getMembershipResource( documentResource:RDF.Node.Class, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Node.Class {
-		let membershipResource:RDF.Node.Class;
-
-		let membershipResourceURI:string = RDF.Node.Util.getPropertyURI( documentResource, NS.LDP.Predicate.membershipResource );
-		if( documentResource[ "@id" ] === membershipResourceURI ) {
-			membershipResource = documentResource;
-		} else if( membershipResourceURI === null ) {
-			if( documentResource[ "@type" ].indexOf( NS.LDP.Class.BasicContainer ) !== - 1 ) {
-				membershipResource = documentResource;
-			} else {
-				throw new HTTP.Errors.BadResponseError( "The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response );
-			}
-		} else {
-			let membershipResourceDocument:RDF.Document.Class = this.getRDFDocument( membershipResourceURI, rdfDocuments, response );
-			if( membershipResourceDocument === null ) return null;
-			membershipResource = this.getDocumentResource( membershipResourceDocument, response );
-		}
-
-		return membershipResource;
-	}
-
-	private getPersistedMetadataResources<T>( freeNodes:RDF.Node.Class[], rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):(T & PersistedDocument.Class)[] {
-		let freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
-
-		let descriptionResources:LDP.ResponseMetadata.Class[] = freeResources.getResources().filter( LDP.ResponseMetadata.Factory.is );
-		if( descriptionResources.length === 0 ) return [];
-		if( descriptionResources.length > 1 ) throw new HTTP.Errors.BadResponseError( `The response contained multiple ${ LDP.ResponseMetadata.RDF_CLASS } objects.`, response );
-
-		rdfDocuments.forEach( rdfDocument => this._getPersistedDocument( rdfDocument, response ) );
-
-		let responseMetadata:LDP.ResponseMetadata.Class = descriptionResources[ 0 ];
-		return responseMetadata.documentsMetadata.map( ( documentMetadata:LDP.DocumentMetadata.Class ) => {
-			const document:T & PersistedDocument.Class = <T & PersistedDocument.Class> documentMetadata.relatedDocument;
-			document._etag = documentMetadata.eTag;
-
-			return document;
-		} );
 	}
 
 	private updateFromPreferenceApplied<T>( persistedDocument:T & PersistedDocument.Class, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):[ T, HTTP.Response.Class ] {
@@ -1205,7 +1183,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private sendRequest( method:HTTP.Method, uri:string, options:HTTP.Request.Options, body?:string | Blob | Buffer ):Promise<HTTP.Response.Class>;
 	private sendRequest<T>( method:HTTP.Method, uri:string, options:HTTP.Request.Options, body?:string | Blob | Buffer, parser?:HTTP.Parser.Class<T> ):Promise<[ T, HTTP.Response.Class ]>;
 	private sendRequest( method:HTTP.Method, uri:string, options:HTTP.Request.Options, body?:string | Blob | Buffer, parser?:HTTP.Parser.Class<any> ):any {
-		return HTTP.Request.Service.send( method, uri, body, options, parser )
+		return HTTP.Request.Service.send( method, uri, body || null, options, parser )
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }

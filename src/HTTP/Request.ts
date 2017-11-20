@@ -17,7 +17,7 @@ export interface Options {
 	request?:XMLHttpRequest;
 }
 
-export interface ContainerRetrievalPreferences {
+export interface RetrievalPreferences {
 	include?:string[];
 	omit?:string[];
 }
@@ -283,7 +283,7 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
+	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
 		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		let representation:string = returnRepresentation ? "return=representation; " : "";
 

@@ -233,7 +233,7 @@ var Util = (function () {
         prefer.values.push(new Header.Value("return=representation; " + preferType));
         return requestOptions;
     };
-    Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
+    Util.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
         if (returnRepresentation === void 0) { returnRepresentation = true; }
         var prefer = Util.getHeader("prefer", requestOptions, true);
         var representation = returnRepresentation ? "return=representation; " : "";

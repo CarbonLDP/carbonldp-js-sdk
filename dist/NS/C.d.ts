@@ -24,6 +24,7 @@ export declare class Class {
     static readonly PreferContainer: string;
     static readonly PreferContainmentResources: string;
     static readonly PreferContainmentTriples: string;
+    static readonly PreferDocumentETags: string;
     static readonly PreferMembershipResources: string;
     static readonly PreferMembershipTriples: string;
     static readonly PreferResultsContext: string;

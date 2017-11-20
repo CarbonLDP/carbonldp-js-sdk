@@ -15,14 +15,13 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends VolatileResource.Class {
-	documentsMetadata:DocumentMetadata.Class[];
+	documentsMetadata?:DocumentMetadata.Class[];
 }
 
 export class Factory {
 
 	static is( object:object ):object is Class {
 		return VolatileResource.Factory.is( object )
-			&& Utils.hasProperty( object, "documentsMetadata" )
 			&& object.hasType( RDF_CLASS );
 	}
 

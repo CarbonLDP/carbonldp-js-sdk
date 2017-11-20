@@ -124,6 +124,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferDocumentETags", {
+        get: function () { return exports.namespace + "PreferDocumentETags"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "PreferMembershipResources", {
         get: function () { return exports.namespace + "PreferMembershipResources"; },
         enumerable: true,

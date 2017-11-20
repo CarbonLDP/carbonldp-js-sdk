@@ -23,9 +23,9 @@ var Resource = require("./Resource");
 var SPARQL = require("./SPARQL");
 var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
+var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Utils = require("./Utils");
-var Utils_2 = require("./Utils");
-var Utils_3 = require("./SPARQL/QueryDocument/Utils");
+var Utils_3 = require("./Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -117,7 +117,7 @@ var Class = (function () {
     };
     Class.prototype.get = function (uri, optionsOrQueryDocument, documentQuery) {
         var _this = this;
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             var pointerID = _this.getPointerID(uri);
             uri = _this.getRequestURI(uri);
             if (_this.hasPointer(uri)) {
@@ -182,7 +182,7 @@ var Class = (function () {
     Class.prototype.exists = function (documentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
             return _this.sendRequest(HTTP.Method.HEAD, documentURI, requestOptions);
@@ -199,7 +199,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             if (PersistedDocument.Factory.is(childObject))
                 return Promise.reject(new Errors.IllegalArgumentError("The child provided has been already persisted."));
             var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
@@ -264,7 +264,7 @@ var Class = (function () {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
         childrenQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : childrenQuery;
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
             var childrenProperty = queryContext.addProperty("child");
@@ -284,7 +284,7 @@ var Class = (function () {
             documentURI = this.context.resolve(documentURI);
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             if (PersistedDocument.Factory.is(accessPoint))
                 return Promise.reject(new Errors.IllegalArgumentError("The accessPoint provided has been already persisted."));
             var accessPointDocument = AccessPoint.Factory.is(accessPoint) ? accessPoint
@@ -329,7 +329,7 @@ var Class = (function () {
             var bufferType = fileType(data);
             HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
         }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             if (!!slug)
@@ -350,7 +350,7 @@ var Class = (function () {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
         membersQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : membersQuery;
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
             var membersProperty = queryContext.addProperty("member");
@@ -377,7 +377,7 @@ var Class = (function () {
     Class.prototype.addMembers = function (documentURI, members, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
@@ -394,7 +394,7 @@ var Class = (function () {
     Class.prototype.removeMembers = function (documentURI, members, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
@@ -403,7 +403,7 @@ var Class = (function () {
                 include: [NS.C.Class.PreferSelectedMembershipTriples],
                 omit: [NS.C.Class.PreferMembershipTriples],
             };
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             var freeResources = FreeResources.Factory.create(_this);
             freeResources.createResourceFrom(LDP.RemoveMemberAction.Factory.create(pointers));
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON());
@@ -412,7 +412,7 @@ var Class = (function () {
     Class.prototype.removeAllMembers = function (documentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             var containerRetrievalPreferences = {
@@ -426,14 +426,14 @@ var Class = (function () {
                     NS.C.Class.PreferContainer,
                 ],
             };
-            HTTP.Request.Util.setContainerRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
         });
     };
     Class.prototype.save = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             var uri = _this.getRequestURI(persistedDocument.id);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
@@ -448,7 +448,7 @@ var Class = (function () {
     Class.prototype.refresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             var uri = _this.getRequestURI(persistedDocument.id);
             HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
             return persistedDocument.isPartial() ?
@@ -483,7 +483,7 @@ var Class = (function () {
     Class.prototype.delete = function (documentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
@@ -497,7 +497,7 @@ var Class = (function () {
         var _this = this;
         if (!this.context)
             return Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             return _this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
         });
@@ -518,7 +518,7 @@ var Class = (function () {
     Class.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -529,7 +529,7 @@ var Class = (function () {
     Class.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -540,7 +540,7 @@ var Class = (function () {
     Class.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -551,7 +551,7 @@ var Class = (function () {
     Class.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -562,7 +562,7 @@ var Class = (function () {
     Class.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -573,7 +573,7 @@ var Class = (function () {
     Class.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -584,7 +584,7 @@ var Class = (function () {
     Class.prototype.executeUPDATE = function (documentURI, update, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
@@ -711,7 +711,7 @@ var Class = (function () {
     Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns) {
         var _this = this;
         var response;
-        return Utils_2.promiseMethod(function () {
+        return Utils_3.promiseMethod(function () {
             var metadataVar = queryContext.getVariable("metadata");
             var construct = (_a = new tokens_1.ConstructToken()
                 .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -732,7 +732,8 @@ var Class = (function () {
             })(constructPatterns);
             if (!construct.triples.length)
                 throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
-            HTTP.Request.Util.setContainerRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
+            HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
+            HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
             return _this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions);
             var _a, _b;
         }).then(function (_a) {
@@ -755,6 +756,20 @@ var Class = (function () {
             var documents = new JSONLD.Compacter
                 .Class(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
+            freeResources
+                .getResources()
+                .filter(LDP.ResponseMetadata.Factory.is)
+                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
+                .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
+                .forEach(function (documentsMetadata) { return documentsMetadata
+                .map(function (documentMetadata) { return [
+                documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument],
+                documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag],
+            ]; })
+                .forEach(function (_a) {
+                var relatedDocument = _a[0], eTag = _a[1];
+                return relatedDocument._etag = eTag;
+            }); });
             return [documents, response];
         });
     };
@@ -771,7 +786,7 @@ var Class = (function () {
                 .addObject(queryContext.getVariable(parentName + ".types")))));
             resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
                 var path = parentName + "." + propertyName;
-                var propertyPattern = Utils_3.createPropertyPattern(queryContext, parentName, path, digestedProperty);
+                var propertyPattern = Utils_2.createPropertyPattern(queryContext, parentName, path, digestedProperty);
                 parentAdder.addPattern(propertyPattern);
                 var propertyValue = resource[propertyName];
                 if (!PersistedFragment.Factory.is(propertyValue))
@@ -845,14 +860,6 @@ var Class = (function () {
         if (rdfDocuments.length > 1)
             throw new HTTP.Errors.BadResponseError("Several documents share the same id.", response);
         return rdfDocuments.length > 0 ? rdfDocuments[0] : null;
-    };
-    Class.prototype.getDocumentResource = function (rdfDocument, response) {
-        var documentResources = RDF.Document.Util.getDocumentResources(rdfDocument);
-        if (documentResources.length === 0)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
-        if (documentResources.length > 1)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
-        return documentResources[0];
     };
     Class.prototype.getPointerID = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri))
@@ -960,44 +967,6 @@ var Class = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
         return requestOptions;
     };
-    Class.prototype.getMembershipResource = function (documentResource, rdfDocuments, response) {
-        var membershipResource;
-        var membershipResourceURI = RDF.Node.Util.getPropertyURI(documentResource, NS.LDP.Predicate.membershipResource);
-        if (documentResource["@id"] === membershipResourceURI) {
-            membershipResource = documentResource;
-        }
-        else if (membershipResourceURI === null) {
-            if (documentResource["@type"].indexOf(NS.LDP.Class.BasicContainer) !== -1) {
-                membershipResource = documentResource;
-            }
-            else {
-                throw new HTTP.Errors.BadResponseError("The document is not an ldp:BasicContainer and it doesn't contain an ldp:membershipResource triple.", response);
-            }
-        }
-        else {
-            var membershipResourceDocument = this.getRDFDocument(membershipResourceURI, rdfDocuments, response);
-            if (membershipResourceDocument === null)
-                return null;
-            membershipResource = this.getDocumentResource(membershipResourceDocument, response);
-        }
-        return membershipResource;
-    };
-    Class.prototype.getPersistedMetadataResources = function (freeNodes, rdfDocuments, response) {
-        var _this = this;
-        var freeResources = this._getFreeResources(freeNodes);
-        var descriptionResources = freeResources.getResources().filter(LDP.ResponseMetadata.Factory.is);
-        if (descriptionResources.length === 0)
-            return [];
-        if (descriptionResources.length > 1)
-            throw new HTTP.Errors.BadResponseError("The response contained multiple " + LDP.ResponseMetadata.RDF_CLASS + " objects.", response);
-        rdfDocuments.forEach(function (rdfDocument) { return _this._getPersistedDocument(rdfDocument, response); });
-        var responseMetadata = descriptionResources[0];
-        return responseMetadata.documentsMetadata.map(function (documentMetadata) {
-            var document = documentMetadata.relatedDocument;
-            document._etag = documentMetadata.eTag;
-            return document;
-        });
-    };
     Class.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
         var eTag = HTTP.Response.Util.getETag(response);
         if (eTag === null)
@@ -1052,7 +1021,7 @@ var Class = (function () {
         }
     };
     Class.prototype.sendRequest = function (method, uri, options, body, parser) {
-        return HTTP.Request.Service.send(method, uri, body, options, parser)
+        return HTTP.Request.Service.send(method, uri, body || null, options, parser)
             .catch(this._parseErrorResponse.bind(this));
     };
     return Class;
