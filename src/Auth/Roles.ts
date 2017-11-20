@@ -5,7 +5,6 @@ import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as SPARQL from "./../SPARQL";
 import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";
@@ -58,7 +57,6 @@ export class Class {
 	}
 
 	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
-	getUsers<T>( roleURI:string, retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
 	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
 		// TODO: Implement in milestone:Security
 		throw new Errors.NotImplementedError( "To be re-implemented in milestone:Security" );

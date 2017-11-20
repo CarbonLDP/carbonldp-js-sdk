@@ -24,7 +24,6 @@ import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
@@ -431,34 +430,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options, undefined );
 				} );
 
-				it( hasSignature(
-					"Retrieves an array of resolved pointers for the users of the role, in accordance of the retrievalPreferences provided.", [
-						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-					],
-					{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					let spy:jasmine.Spy = spyOn( roles, "getUsers" );
-
-					//noinspection JSIgnoredPromiseFromCall
-					role.getUsers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined, undefined );
-
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-					//noinspection JSIgnoredPromiseFromCall
-					role.getUsers( retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", retrievalPreferences, undefined );
-
-					let options:HTTP.Request.Options = { timeout: 5050 };
-					//noinspection JSIgnoredPromiseFromCall
-					role.getUsers( retrievalPreferences, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", retrievalPreferences, options );
-
-				} );
 			} );
 
 			it( hasMethod(

@@ -9037,9 +9037,9 @@ function createChild(role, slugOrRequestOptions, requestOptions) {
     checkState(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
 }
-function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
+function getUsers(requestOptions) {
     checkState(this);
-    return this._roles.getUsers(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
+    return this._roles.getUsers(this.id, requestOptions);
 }
 function addUser(user, requestOptions) {
     checkState(this);

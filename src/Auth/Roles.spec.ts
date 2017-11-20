@@ -15,7 +15,6 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
@@ -506,77 +505,6 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", options, undefined );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", undefined, undefined );
-						done();
-					} ).catch( done.fail );
-
-				} );
-
-			} );
-
-			it( hasSignature(
-				[ "T" ],
-				"Retrieves an array of resolved pointers for the users of the role, in accordance of the retrievalPreferences provided.", [
-					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-				],
-				// TODO: Change to `PersistedUser`
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
-					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "system.roles.container", "roles/" );
-
-					let spies:any = {
-						success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
-							expect( pointers ).toBeTruthy();
-							expect( pointers.length ).toBe( 1 );
-							expect( pointers[ 0 ].id ).toBe( "http://example.com/users/an-user/" );
-							expect( pointers[ 0 ].isResolved() ).toBe( true );
-
-							expect( response ).toBeTruthy();
-							expect( response instanceof HTTP.Response.Class ).toBe( true );
-
-						},
-						error: function( error:Error ):void {
-							expect( error instanceof Errors.IllegalArgumentError );
-						},
-					};
-
-					let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
-					let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-					let spyCreate:jasmine.Spy = spyOn( context.documents, "getMembers" ).and.callThrough();
-
-					let promises:Promise<any>[] = [];
-					let promise:Promise<any>;
-					let options:HTTP.Request.Options = {
-						timeout: 5555,
-					};
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					promise = roles.getUsers( "a-role/", retrievalPreferences, options );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( spies.success ) );
-
-					promise = roles.getUsers( "http://example.com/.system/roles/a-role/", retrievalPreferences );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( spies.success ) );
-
-					promise = roles.getUsers( "role-not-found/", retrievalPreferences );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.catch( spies.error ) );
-
-					Promise.all( promises ).then( ():void => {
-						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
-						expect( spyError ).toHaveBeenCalledTimes( 1 );
-
-						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", retrievalPreferences, options );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", retrievalPreferences, undefined );
 						done();
 					} ).catch( done.fail );
 
