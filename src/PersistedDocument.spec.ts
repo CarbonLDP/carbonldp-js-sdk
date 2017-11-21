@@ -858,7 +858,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the element provided is considered a `Carbon.PersistedDocument.Class` object.", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -867,8 +867,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			expect( PersistedDocument.Factory.is( undefined ) ).toBe( false );
 			expect( PersistedDocument.Factory.is( null ) ).toBe( false );
-			expect( PersistedDocument.Factory.is( "a string" ) ).toBe( false );
-			expect( PersistedDocument.Factory.is( 100 ) ).toBe( false );
+			expect( PersistedDocument.Factory.is( <any> "a string" ) ).toBe( false );
+			expect( PersistedDocument.Factory.is( <any> 100 ) ).toBe( false );
 			expect( PersistedDocument.Factory.is( {} ) ).toBe( false );
 
 			let object:any = Document.Factory.createFrom( {

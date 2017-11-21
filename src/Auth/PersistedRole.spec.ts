@@ -241,7 +241,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.Class` object", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {

@@ -84,7 +84,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.PersistedResource.Class` object.", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {

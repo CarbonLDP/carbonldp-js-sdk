@@ -163,9 +163,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	createChild<T>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
-	createChild<T>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
+	createChild<T extends object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -178,9 +178,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	createChildren<T>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
-	createChildren<T>( parentURI:string, childrenObjects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
-	createChildren<T>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]> {
+	createChildren<T extends object>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T extends object>( parentURI:string, childrenObjects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]>;
+	createChildren<T extends object>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[] ]> {
 		let slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : null;
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
@@ -199,9 +199,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	createChildAndRetrieve<T>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
-	createChildAndRetrieve<T>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
-	createChildAndRetrieve<T>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]> {
+	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
+	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]>;
+	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class[] ]> {
 		let responses:HTTP.Response.Class[] = [];
 
 		let options:HTTP.Request.Options = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
@@ -219,9 +219,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	createChildrenAndRetrieve<T>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
-	createChildrenAndRetrieve<T>( parentURI:string, childrenObjects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
-	createChildrenAndRetrieve<T>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]> {
+	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
+	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]>;
+	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][] ]> {
 		let responses:HTTP.Response.Class[][] = [];
 
 		let options:HTTP.Request.Options = HTTP.Request.Util.isOptions( slugsOrRequestOptions ) ? slugsOrRequestOptions : requestOptions;
@@ -474,17 +474,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	refresh<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
-		return promiseMethod( () => {
-			const uri:string = this.getRequestURI( persistedDocument.id );
-			// Add header to check id the document has been modified
-			HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
+		return Utils.promiseMethod( () => {
+			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
 			return persistedDocument.isPartial() ?
-				this.refreshQuery<T>( persistedDocument, requestOptions ) :
-				this.entireRefresh<T>( uri, requestOptions );
-		} ).catch<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( error:HTTP.Errors.Error ) => {
-			if( error.statusCode === 304 ) return [ persistedDocument, null ];
-			return Promise.reject( error );
+				this.refreshPartialDocument<T>( persistedDocument, requestOptions ) :
+				this.refreshFullDocument<T>( persistedDocument, requestOptions );
 		} );
 	}
 
@@ -800,6 +795,77 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 
+	private refreshFullDocument<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		const uri:string = this.getRequestURI( persistedDocument.id );
+
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+		HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
+
+		return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+			if( response === null ) return <any> [ rdfDocuments, response ];
+
+			let eTag:string = HTTP.Response.Util.getETag( response );
+			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
+			updatedPersistedDocument._etag = eTag;
+
+			return [ updatedPersistedDocument, response ];
+		} ).catch<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( error:HTTP.Errors.Error ) => {
+			if( error.statusCode === 304 ) return [ persistedDocument, null ];
+			return Promise.reject( error );
+		} );
+	}
+
+	private refreshPartialDocument<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		const uri:string = this.getRequestURI( persistedDocument.id );
+
+		const queryContext:QueryContextPartial.Class = new QueryContextPartial.Class( persistedDocument, this.context );
+
+		const targetName:string = "document";
+		const constructPatterns:OptionalToken = new OptionalToken()
+			.addPattern( new ValuesToken()
+				.addValues( queryContext.getVariable( targetName ), new IRIToken( uri ) )
+			)
+		;
+
+		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
+			parentAdder.addPattern( new OptionalToken()
+				.addPattern( new SubjectToken( queryContext.getVariable( parentName ) )
+					.addPredicate( new PredicateToken( "a" )
+						.addObject( queryContext.getVariable( `${ parentName }.types` ) ) )
+				)
+			);
+
+			resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
+				const path:string = `${ parentName }.${ propertyName }`;
+
+				const propertyPattern:OptionalToken = createPropertyPattern(
+					queryContext,
+					parentName,
+					path,
+					digestedProperty
+				);
+				parentAdder.addPattern( propertyPattern );
+
+				const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
+				const propertyFragment:PersistedFragment.Class = propertyValues
+					.filter( PersistedFragment.Factory.is )
+					.find( fragment => fragment.isPartial() );
+				if( ! propertyFragment ) return;
+
+				createRefreshQuery( propertyPattern, propertyFragment, path );
+			} );
+		})( constructPatterns, persistedDocument, targetName );
+
+		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns )
+			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
+	}
+
+
 	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
 		// tslint:disable: variable-name
@@ -893,47 +959,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	private refreshQuery<T>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
-		const queryContext:QueryContextPartial.Class = new QueryContextPartial.Class( persistedDocument, this.context );
-
-		const targetName:string = "document";
-		const constructPatterns:OptionalToken = new OptionalToken()
-			.addPattern( new ValuesToken()
-				.addValues( queryContext.getVariable( targetName ), new IRIToken( persistedDocument.id ) )
-			)
-		;
-
-		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
-			parentAdder.addPattern( new OptionalToken()
-				.addPattern( new SubjectToken( queryContext.getVariable( parentName ) )
-					.addPredicate( new PredicateToken( "a" )
-						.addObject( queryContext.getVariable( `${ parentName }.types` ) ) )
-				)
-			);
-
-			resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
-				const path:string = `${ parentName }.${ propertyName }`;
-
-				const propertyPattern:OptionalToken = createPropertyPattern(
-					queryContext,
-					parentName,
-					path,
-					digestedProperty
-				);
-				parentAdder.addPattern( propertyPattern );
-
-				const propertyValue:any = resource[ propertyName ];
-				if( ! PersistedFragment.Factory.is( propertyValue ) ) return;
-				if( ! propertyValue.isPartial() ) return;
-
-				createRefreshQuery( propertyPattern, propertyValue, path );
-			} );
-		})( constructPatterns, persistedDocument, targetName );
-
-		return this.executeQueryPatterns<T>( persistedDocument.id, requestOptions, queryContext, targetName, constructPatterns.patterns )
-			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
-	}
-
 
 	private persistDocument<T extends Document.Class, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {
 		parentURI = this.getRequestURI( parentURI );
@@ -973,26 +998,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			return Promise.reject( error );
 		} );
 	}
-
-	private entireRefresh<T>( uri:string, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
-
-		return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-			if( response === null ) return <any> [ rdfDocuments, response ];
-
-			let eTag:string = HTTP.Response.Util.getETag( response );
-			if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
-
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-
-			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
-			updatedPersistedDocument._etag = eTag;
-
-			return [ updatedPersistedDocument, response ];
-		} );
-	}
-
 
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:HTTP.Response.Class ):RDF.Document.Class {
 		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );

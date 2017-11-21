@@ -19,9 +19,9 @@ export interface Class extends PersistedProtectedDocument.Class {
 
 	users?:Pointer.Class[];
 
-	createChild<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
-	createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
 	getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
 
@@ -108,9 +108,9 @@ export class Factory {
 
 }
 
-function createChild<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild<T>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]> {
+function createChild<T extends object>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild<T extends object>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]> {
 	checkState( this );
 	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
 }

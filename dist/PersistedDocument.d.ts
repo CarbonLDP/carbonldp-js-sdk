@@ -43,18 +43,18 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     addMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     addMember(memberURI: string): Promise<HTTP.Response.Class>;
     addMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
-    createChild<T>(object: T, slug: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
-    createChild<T>(object: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
+    createChild<T extends object>(object: T, slug: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
+    createChild<T extends object>(object: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChild(slug: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChild(requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class]>;
-    createChildren<T>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
-    createChildren<T>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
-    createChildAndRetrieve<T>(object: T, slug: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
-    createChildAndRetrieve<T>(object: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildren<T extends object>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
+    createChildren<T extends object>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
+    createChildAndRetrieve<T extends object>(object: T, slug: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
+    createChildAndRetrieve<T extends object>(object: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
     createChildAndRetrieve(slug: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
     createChildAndRetrieve(requestOptions?: HTTP.Request.Options): Promise<[PersistedProtectedDocument.Class, HTTP.Response.Class[]]>;
-    createChildrenAndRetrieve<T>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
-    createChildrenAndRetrieve<T>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
+    createChildrenAndRetrieve<T extends object>(objects: T[], slugs: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
+    createChildrenAndRetrieve<T extends object>(objects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[][]]>;
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
@@ -82,7 +82,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 }
 export declare class Factory {
     static hasClassProperties(object: object): object is Class;
-    static is(object: Object): object is Class;
+    static is(object: object): object is Class;
     static create(uri: string, documents: Documents, snapshot?: Object): Class;
     static createFrom<T extends Object>(object: T, uri: string, documents: Documents, snapshot?: Object): T & Class;
     static decorate<T extends Object>(object: T, documents: Documents, snapshot?: Object): T & Class;

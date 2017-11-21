@@ -9718,16 +9718,12 @@ var Class = (function () {
     Class.prototype.refresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        return Utils_3.promiseMethod(function () {
-            var uri = _this.getRequestURI(persistedDocument.id);
-            HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        return Utils.promiseMethod(function () {
+            if (!PersistedDocument.Factory.is(persistedDocument))
+                throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             return persistedDocument.isPartial() ?
-                _this.refreshQuery(persistedDocument, requestOptions) :
-                _this.entireRefresh(uri, requestOptions);
-        }).catch(function (error) {
-            if (error.statusCode === 304)
-                return [persistedDocument, null];
-            return Promise.reject(error);
+                _this.refreshPartialDocument(persistedDocument, requestOptions) :
+                _this.refreshFullDocument(persistedDocument, requestOptions);
         });
     };
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
@@ -10017,6 +10013,61 @@ var Class = (function () {
             return [documents[0], response];
         });
     };
+    Class.prototype.refreshFullDocument = function (persistedDocument, requestOptions) {
+        var _this = this;
+        var uri = this.getRequestURI(persistedDocument.id);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        return this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            if (response === null)
+                return [rdfDocuments, response];
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
+            updatedPersistedDocument._etag = eTag;
+            return [updatedPersistedDocument, response];
+        }).catch(function (error) {
+            if (error.statusCode === 304)
+                return [persistedDocument, null];
+            return Promise.reject(error);
+        });
+    };
+    Class.prototype.refreshPartialDocument = function (persistedDocument, requestOptions) {
+        var uri = this.getRequestURI(persistedDocument.id);
+        var queryContext = new QueryDocument_1.QueryContextPartial.Class(persistedDocument, this.context);
+        var targetName = "document";
+        var constructPatterns = new tokens_1.OptionalToken()
+            .addPattern(new tokens_1.ValuesToken()
+            .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(uri)));
+        (function createRefreshQuery(parentAdder, resource, parentName) {
+            parentAdder.addPattern(new tokens_1.OptionalToken()
+                .addPattern(new tokens_1.SubjectToken(queryContext.getVariable(parentName))
+                .addPredicate(new tokens_1.PredicateToken("a")
+                .addObject(queryContext.getVariable(parentName + ".types")))));
+            resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
+                var path = parentName + "." + propertyName;
+                var propertyPattern = Utils_2.createPropertyPattern(queryContext, parentName, path, digestedProperty);
+                parentAdder.addPattern(propertyPattern);
+                var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
+                var propertyFragment = propertyValues
+                    .filter(PersistedFragment.Factory.is)
+                    .find(function (fragment) { return fragment.isPartial(); });
+                if (!propertyFragment)
+                    return;
+                createRefreshQuery(propertyPattern, propertyFragment, path);
+            });
+        })(constructPatterns, persistedDocument, targetName);
+        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns)
+            .then(function (_a) {
+            var documents = _a[0], response = _a[1];
+            return [documents[0], response];
+        });
+    };
     Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
@@ -10091,35 +10142,6 @@ var Class = (function () {
             return [documents, response];
         });
     };
-    Class.prototype.refreshQuery = function (persistedDocument, requestOptions) {
-        var queryContext = new QueryDocument_1.QueryContextPartial.Class(persistedDocument, this.context);
-        var targetName = "document";
-        var constructPatterns = new tokens_1.OptionalToken()
-            .addPattern(new tokens_1.ValuesToken()
-            .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(persistedDocument.id)));
-        (function createRefreshQuery(parentAdder, resource, parentName) {
-            parentAdder.addPattern(new tokens_1.OptionalToken()
-                .addPattern(new tokens_1.SubjectToken(queryContext.getVariable(parentName))
-                .addPredicate(new tokens_1.PredicateToken("a")
-                .addObject(queryContext.getVariable(parentName + ".types")))));
-            resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
-                var path = parentName + "." + propertyName;
-                var propertyPattern = Utils_2.createPropertyPattern(queryContext, parentName, path, digestedProperty);
-                parentAdder.addPattern(propertyPattern);
-                var propertyValue = resource[propertyName];
-                if (!PersistedFragment.Factory.is(propertyValue))
-                    return;
-                if (!propertyValue.isPartial())
-                    return;
-                createRefreshQuery(propertyPattern, propertyValue, path);
-            });
-        })(constructPatterns, persistedDocument, targetName);
-        return this.executeQueryPatterns(persistedDocument.id, requestOptions, queryContext, targetName, constructPatterns.patterns)
-            .then(function (_a) {
-            var documents = _a[0], response = _a[1];
-            return [documents[0], response];
-        });
-    };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
         var _this = this;
         parentURI = this.getRequestURI(parentURI);
@@ -10153,24 +10175,6 @@ var Class = (function () {
         }, this._parseErrorResponse.bind(this)).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             return Promise.reject(error);
-        });
-    };
-    Class.prototype.entireRefresh = function (uri, requestOptions) {
-        var _this = this;
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        return this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
-            var rdfDocuments = _a[0], response = _a[1];
-            if (response === null)
-                return [rdfDocuments, response];
-            var eTag = HTTP.Response.Util.getETag(response);
-            if (eTag === null)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-            var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
-            if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
-            updatedPersistedDocument._etag = eTag;
-            return [updatedPersistedDocument, response];
         });
     };
     Class.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {

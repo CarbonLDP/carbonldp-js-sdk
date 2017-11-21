@@ -9565,8 +9565,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents = context.documents;
 				} );
 
+				it( "should reject promise if not a persisted document", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.refresh( <any> { id: "http://not-example.com" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `Provided element is not a valid persisted document.` );
+						done();
+					} );
+				} );
+
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.refresh( <any>{ id: "http://not-example.com" } );
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://not-example.com", documents );
+					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9576,7 +9587,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.refresh( <any>{ id: "prefix:the-uri" } );
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -10002,8 +10014,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents = new Documents.Class();
 				} );
 
+				it( "should reject promise if not a persisted document", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.refresh( <any> { id: "http://not-example.com" } );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `Provided element is not a valid persisted document.` );
+						done();
+					} );
+				} );
+
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.refresh( <any>{ id: "relative-uri/" } );
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -10013,7 +10036,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.refresh( <any>{ id: "prefix:the-uri" } );
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {

@@ -19,9 +19,9 @@ export class Class {
 	}
 
 	// TODO: Requests must return all the responses made
-	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T>( parentRole:string | Pointer.Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	createChild<T extends object>( parentRole:string | Pointer.Class, role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( parentRole:string | Pointer.Class, role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( parentRole:string | Pointer.Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
 		let parentURI:string = Utils.isString( parentRole ) ? <string> parentRole : ( <Pointer.Class> parentRole).id;
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
