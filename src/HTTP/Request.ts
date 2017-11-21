@@ -17,6 +17,10 @@ export interface Options {
 	request?:XMLHttpRequest;
 }
 
+export interface GETOptions extends Options {
+	ensureLatest?:boolean;
+}
+
 export interface RetrievalPreferences {
 	include?:string[];
 	omit?:string[];

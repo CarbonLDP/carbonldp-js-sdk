@@ -9439,66 +9439,14 @@ var Class = (function () {
     };
     Class.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
+        var requestOptions = HTTP.Request.Util.isOptions(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
+        if (Utils.isFunction(optionsOrQueryBuilderFn))
+            queryBuilderFn = optionsOrQueryBuilderFn;
         return Utils_3.promiseMethod(function () {
-            var pointerID = _this.getPointerID(uri);
             uri = _this.getRequestURI(uri);
-            if (_this.hasPointer(uri)) {
-                var pointer = _this.getPointer(uri);
-                if (pointer.isResolved() && !pointer.isPartial()) {
-                    return Promise.resolve([pointer, null]);
-                }
-            }
-            if (_this.documentsBeingResolved.has(pointerID))
-                return _this.documentsBeingResolved.get(pointerID);
-            var requestOptions;
-            if (Utils.isFunction(optionsOrQueryBuilderFn)) {
-                queryBuilderFn = optionsOrQueryBuilderFn;
-                requestOptions = {};
-            }
-            else {
-                requestOptions = optionsOrQueryBuilderFn || {};
-            }
-            var promise;
-            if (!queryBuilderFn) {
-                _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-                promise = _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
-                    var rdfDocuments = _a[0], response = _a[1];
-                    var eTag = HTTP.Response.Util.getETag(response);
-                    if (eTag === null)
-                        throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
-                    var locationHeader = response.getHeader("Content-Location");
-                    if (!!locationHeader) {
-                        if (locationHeader.values.length !== 1)
-                            throw new HTTP.Errors.BadResponseError("The response contains more than one Content-Location header.", response);
-                        uri = locationHeader.toString();
-                        if (!uri)
-                            throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
-                    }
-                    var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
-                    if (rdfDocument === null)
-                        throw new HTTP.Errors.BadResponseError("No document was returned.", response);
-                    var document = _this._getPersistedDocument(rdfDocument, response);
-                    document._etag = eTag;
-                    _this.documentsBeingResolved.delete(pointerID);
-                    return [document, response];
-                });
-                _this.documentsBeingResolved.set(pointerID, promise);
-                return promise.catch(function (error) {
-                    _this.documentsBeingResolved.delete(pointerID);
-                    return Promise.reject(error);
-                });
-            }
-            else {
-                var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
-                var documentProperty = queryContext.addProperty("document");
-                var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
-                documentProperty.addPattern(propertyValue);
-                return _this.executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, queryBuilderFn)
-                    .then(function (_a) {
-                    var documents = _a[0], response = _a[1];
-                    return [documents[0], response];
-                });
-            }
+            return queryBuilderFn ?
+                _this.getPartialDocument(uri, requestOptions, queryBuilderFn) :
+                _this.getFullDocument(uri, requestOptions);
         });
     };
     Class.prototype.exists = function (documentURI, requestOptions) {
@@ -10019,6 +9967,56 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
+    Class.prototype.getFullDocument = function (uri, requestOptions) {
+        var _this = this;
+        if (this.hasPointer(uri)) {
+            var pointer = this.getPointer(uri);
+            if (pointer.isResolved()) {
+                var persistedDocument = pointer;
+                if (!persistedDocument.isPartial() || !requestOptions.ensureLatest)
+                    return Promise.resolve([persistedDocument, null]);
+            }
+        }
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        if (this.documentsBeingResolved.has(uri))
+            return this.documentsBeingResolved.get(uri);
+        var promise = this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser())
+            .then(function (_a) {
+            var rdfDocuments = _a[0], response = _a[1];
+            var eTag = HTTP.Response.Util.getETag(response);
+            if (eTag === null)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            var locationHeader = response.getHeader("Content-Location");
+            if (!locationHeader || locationHeader.values.length !== 1)
+                throw new HTTP.Errors.BadResponseError("The response must contain one Content-Location header.", response);
+            var targetURI = "" + locationHeader;
+            if (!targetURI)
+                throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
+            var rdfDocument = _this.getRDFDocument(targetURI, rdfDocuments, response);
+            if (rdfDocument === null)
+                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            var document = _this._getPersistedDocument(rdfDocument, response);
+            document._etag = eTag;
+            _this.documentsBeingResolved.delete(uri);
+            return [document, response];
+        }).catch(function (error) {
+            _this.documentsBeingResolved.delete(uri);
+            return Promise.reject(error);
+        });
+        this.documentsBeingResolved.set(uri, promise);
+        return promise;
+    };
+    Class.prototype.getPartialDocument = function (uri, requestOptions, queryBuilderFn) {
+        var queryContext = new QueryDocument_1.QueryContextBuilder.Class(this.context);
+        var documentProperty = queryContext.addProperty("document");
+        var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
+        documentProperty.addPattern(propertyValue);
+        return this.executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, queryBuilderFn)
+            .then(function (_a) {
+            var documents = _a[0], response = _a[1];
+            return [documents[0], response];
+        });
+    };
     Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
@@ -10263,7 +10261,10 @@ var Class = (function () {
         return digestedSchema;
     };
     Class.prototype.getRequestURI = function (uri) {
-        if (RDF.URI.Util.isPrefixed(uri)) {
+        if (RDF.URI.Util.isBNodeID(uri)) {
+            throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
+        }
+        else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
             uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());

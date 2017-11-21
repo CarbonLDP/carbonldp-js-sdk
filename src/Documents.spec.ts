@@ -829,6 +829,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 200,
 						responseHeaders: {
 							"ETag": "162458126348712643",
+							"Content-Location": "https://example.com/resource/",
 						},
 						responseText: `{
 							"@id": "https://example.com/resource/",

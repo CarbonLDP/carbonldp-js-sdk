@@ -28,7 +28,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer.Class;
     removePointer(idOrPointer: string | Pointer.Class): boolean;
-    get<T>(uri: string, requestOptions?: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    get<T>(uri: string, requestOptions?: HTTP.Request.GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     get<T>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     createChild<T>(parentURI: string, childObject: T, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
@@ -84,6 +84,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     _getPersistedDocument<T>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
     _parseErrorResponse<T>(response: HTTP.Response.Class | Error): any;
+    private getFullDocument<T>(uri, requestOptions);
+    private getPartialDocument<T>(uri, requestOptions, queryBuilderFn?);
     private executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
     private executeQueryPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns);
     private refreshQuery<T>(persistedDocument, requestOptions);

@@ -9,6 +9,9 @@ export interface Options {
     timeout?: number;
     request?: XMLHttpRequest;
 }
+export interface GETOptions extends Options {
+    ensureLatest?: boolean;
+}
 export interface RetrievalPreferences {
     include?: string[];
     omit?: string[];

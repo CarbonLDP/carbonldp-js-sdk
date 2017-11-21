@@ -134,73 +134,18 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.pointers.delete( localID );
 	}
 
-	get<T>( uri:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, requestOptions?:HTTP.Request.GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 	get<T>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 	get<T>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
+		if( Utils.isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
+
 		return promiseMethod( () => {
-			const pointerID:string = this.getPointerID( uri );
 			uri = this.getRequestURI( uri );
 
-			if( this.hasPointer( uri ) ) {
-				let pointer:Pointer.Class = this.getPointer( uri );
-				if( pointer.isResolved() && ! ( pointer as PersistedDocument.Class ).isPartial() ) {
-					return Promise.resolve<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( [ <any> pointer, null ] );
-				}
-			}
-
-			if( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-
-			let requestOptions:HTTP.Request.Options;
-			if( Utils.isFunction( optionsOrQueryBuilderFn ) ) {
-				queryBuilderFn = optionsOrQueryBuilderFn;
-				requestOptions = {};
-			} else {
-				requestOptions = optionsOrQueryBuilderFn || {};
-			}
-
-			let promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-			if( ! queryBuilderFn ) {
-				this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
-
-				promise = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
-					let eTag:string = HTTP.Response.Util.getETag( response );
-					if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
-
-					let locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
-					if( ! ! locationHeader ) {
-						if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Content-Location header.", response );
-
-						uri = locationHeader.toString();
-						if( ! uri ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
-					}
-
-					let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-					if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
-
-					let document:T & PersistedDocument.Class = this._getPersistedDocument<T>( rdfDocument, response );
-					document._etag = eTag;
-
-					this.documentsBeingResolved.delete( pointerID );
-					return [ document, response ];
-				} );
-
-				this.documentsBeingResolved.set( pointerID, promise );
-				return promise.catch( error => {
-					this.documentsBeingResolved.delete( pointerID );
-					return Promise.reject( error );
-				} );
-
-			} else {
-				const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
-
-				const documentProperty:QueryProperty.Class = queryContext.addProperty( "document" );
-
-				const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
-				documentProperty.addPattern( propertyValue );
-
-				return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, queryBuilderFn )
-					.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
-			}
+			return queryBuilderFn ?
+				this.getPartialDocument( uri, requestOptions, queryBuilderFn ) :
+				this.getFullDocument( uri, requestOptions );
 		} );
 	}
 
@@ -799,6 +744,62 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 
+	private getFullDocument<T>( uri:string, requestOptions:HTTP.Request.GETOptions ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		if( this.hasPointer( uri ) ) {
+			const pointer:Pointer.Class = this.getPointer( uri );
+			if( pointer.isResolved() ) {
+				const persistedDocument:T & PersistedDocument.Class = pointer as any;
+				if( ! persistedDocument.isPartial() || ! requestOptions.ensureLatest )
+					return Promise.resolve<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( [ persistedDocument, null ] );
+			}
+		}
+
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+
+		if( this.documentsBeingResolved.has( uri ) )
+			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+
+		const promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() )
+			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
+				const eTag:string = HTTP.Response.Util.getETag( response );
+				if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
+
+				const locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
+				if( ! locationHeader || locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response must contain one Content-Location header.", response );
+
+				const targetURI:string = "" + locationHeader;
+				if( ! targetURI ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+
+				const rdfDocument:RDF.Document.Class = this.getRDFDocument( targetURI, rdfDocuments, response );
+				if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );
+
+				let document:T & PersistedDocument.Class = this._getPersistedDocument<T>( rdfDocument, response );
+				document._etag = eTag;
+
+				this.documentsBeingResolved.delete( uri );
+				return [ document, response ];
+			} ).catch( error => {
+				this.documentsBeingResolved.delete( uri );
+				return Promise.reject( error );
+			} );
+
+		this.documentsBeingResolved.set( uri, promise );
+		return promise;
+	}
+
+	private getPartialDocument<T>( uri:string, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+		const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+
+		const documentProperty:QueryProperty.Class = queryContext.addProperty( "document" );
+
+		const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
+		documentProperty.addPattern( propertyValue );
+
+		return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, queryBuilderFn )
+			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
+	}
+
+
 	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
 		// tslint:disable: variable-name
@@ -1101,7 +1102,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 
 	private getRequestURI( uri:string ):string {
-		if( RDF.URI.Util.isPrefixed( uri ) ) {
+		if( RDF.URI.Util.isBNodeID( uri ) ) {
+			throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
+		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
 			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );

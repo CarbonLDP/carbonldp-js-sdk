@@ -274,6 +274,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} ]`,
 				responseHeaders: {
 					"ETag": `"1234567890"`,
+					"Content-Location": "http://example.com/.system/roles/a-role/",
 				},
 			} );
 			context.documents.documentDecorators.set( "http://example.com/ns#Role", PersistedRole.Factory.decorate );

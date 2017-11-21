@@ -473,6 +473,7 @@ describe( module( "Carbon" ), ():void => {
 					status: 200,
 					responseHeaders: {
 						"ETag": '"123456789"',
+						"Content-Location": "https://example.com/.system/platform/",
 					},
 					responseText: `[ {
 					"@graph": [ {
@@ -559,6 +560,7 @@ describe( module( "Carbon" ), ():void => {
 					status: 200,
 					responseHeaders: {
 						"ETag": '"123456789"',
+						"Content-Location": "https://example.com/.system/instance/",
 					},
 					responseText: `[ {
 					"@graph": [ {

@@ -422,12 +422,12 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 					//noinspection JSIgnoredPromiseFromCall
 					role.getUsers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
 
 					let options:HTTP.Request.Options = { timeout: 5050 };
 					//noinspection JSIgnoredPromiseFromCall
 					role.getUsers( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
 				} );
 
 			} );
