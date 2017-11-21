@@ -103,14 +103,14 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 	createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 
 
-	getChildren<T>( requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
-	getChildren<T>( childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 
-	getMembers<T>( requestOptions:HTTP.Request.Options, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
-	getMembers<T>( membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 
 	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
@@ -316,15 +316,15 @@ function createAccessPoints<T>( accessPoints:(T & AccessPoint.Class)[], slugsOrR
 
 
 function getChildren<T>( this:Class,  requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
-function getChildren<T>( this:Class,  childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
-function getChildren<T>( this:Class,  requestOptionsOrQuery?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
-	return this._documents.getChildren<T>( this.id, requestOptionsOrQuery, childrenQuery );
+function getChildren<T>( this:Class,  queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getChildren<T>( this:Class,  requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
+	return this._documents.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
 }
 
-function getMembers<T>( this:Class,  requestOptions:HTTP.Request.Options, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
-function getMembers<T>( this:Class,  membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
-function getMembers<T>( this:Class,  requestOptionsOrQuery?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
-	return this._documents.getMembers<T>( this.id, requestOptionsOrQuery, childrenQuery );
+function getMembers<T>( this:Class,  requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getMembers<T>( this:Class,  queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getMembers<T>( this:Class,  requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
+	return this._documents.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery );
 }
 
 function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;

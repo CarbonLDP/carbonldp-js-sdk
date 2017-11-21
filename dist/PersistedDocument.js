@@ -134,11 +134,11 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
-function getChildren(requestOptionsOrQuery, childrenQuery) {
-    return this._documents.getChildren(this.id, requestOptionsOrQuery, childrenQuery);
+function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+    return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
 }
-function getMembers(requestOptionsOrQuery, childrenQuery) {
-    return this._documents.getMembers(this.id, requestOptionsOrQuery, childrenQuery);
+function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
+    return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
 }
 function removeMember(memberOrUri) {
     return this._documents.removeMember(this.id, memberOrUri);

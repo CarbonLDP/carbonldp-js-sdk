@@ -115,7 +115,7 @@ var Class = (function () {
         }
         return this.pointers.delete(localID);
     };
-    Class.prototype.get = function (uri, optionsOrQueryDocument, documentQuery) {
+    Class.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
         return Utils_3.promiseMethod(function () {
             var pointerID = _this.getPointerID(uri);
@@ -129,15 +129,15 @@ var Class = (function () {
             if (_this.documentsBeingResolved.has(pointerID))
                 return _this.documentsBeingResolved.get(pointerID);
             var requestOptions;
-            if (Utils.isFunction(optionsOrQueryDocument)) {
-                documentQuery = optionsOrQueryDocument;
+            if (Utils.isFunction(optionsOrQueryBuilderFn)) {
+                queryBuilderFn = optionsOrQueryBuilderFn;
                 requestOptions = {};
             }
             else {
-                requestOptions = optionsOrQueryDocument || {};
+                requestOptions = optionsOrQueryBuilderFn || {};
             }
             var promise;
-            if (!documentQuery) {
+            if (!queryBuilderFn) {
                 _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
                 promise = _this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
                     var rdfDocuments = _a[0], response = _a[1];
@@ -171,7 +171,7 @@ var Class = (function () {
                 var documentProperty = queryContext.addProperty("document");
                 var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
                 documentProperty.addPattern(propertyValue);
-                return _this.executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, documentQuery)
+                return _this.executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, queryBuilderFn)
                     .then(function (_a) {
                     var documents = _a[0], response = _a[1];
                     return [documents[0], response];
@@ -260,10 +260,10 @@ var Class = (function () {
             return [persistedDocuments, responses];
         });
     };
-    Class.prototype.getChildren = function (parentURI, requestOptionsOrQuery, childrenQuery) {
+    Class.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
-        childrenQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : childrenQuery;
+        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
+        queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
@@ -274,7 +274,7 @@ var Class = (function () {
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
                 .addObject(childrenProperty.variable)));
             childrenProperty.addPattern(selectChildren);
-            return _this.executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, childrenQuery);
+            return _this.executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn);
         });
     };
     Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
@@ -346,10 +346,10 @@ var Class = (function () {
             return [pointer, response];
         });
     };
-    Class.prototype.getMembers = function (uri, requestOptionsOrQuery, membersQuery) {
+    Class.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQuery) ? requestOptionsOrQuery : {};
-        membersQuery = Utils.isFunction(requestOptionsOrQuery) ? requestOptionsOrQuery : membersQuery;
+        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
+        queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
@@ -367,7 +367,7 @@ var Class = (function () {
                 .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
                 .addObject(membersProperty.variable)));
             membersProperty.addPattern(selectMembers);
-            return _this.executeQueryBuilder(uri, requestOptions, queryContext, membersProperty, membersQuery);
+            return _this.executeQueryBuilder(uri, requestOptions, queryContext, membersProperty, queryBuilderFn);
         });
     };
     Class.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
@@ -697,11 +697,11 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
-    Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, documentsQuery) {
+    Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        if (documentsQuery && documentsQuery.call(void 0, queryBuilder) !== queryBuilder)
+        if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);

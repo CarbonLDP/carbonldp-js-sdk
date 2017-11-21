@@ -59,10 +59,10 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     createAccessPoint<T>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T>(accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    getChildren<T>(requestOptions: HTTP.Request.Options, childrenQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    getChildren<T>(childrenQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    getMembers<T>(requestOptions: HTTP.Request.Options, membersQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    getMembers<T>(membersQuery?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getChildren<T>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getChildren<T>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getMembers<T>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    getMembers<T>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     removeMember(memberURI: string): Promise<HTTP.Response.Class>;
     removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;

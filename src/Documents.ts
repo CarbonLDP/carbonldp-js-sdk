@@ -134,9 +134,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.pointers.delete( localID );
 	}
 
-	get<T>( uri:string, requestOptions?:HTTP.Request.Options, documentQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, documentQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-	get<T>( uri:string, optionsOrQueryDocument:any, documentQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	get<T>( uri:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	get<T>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			const pointerID:string = this.getPointerID( uri );
 			uri = this.getRequestURI( uri );
@@ -151,15 +151,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			if( this.documentsBeingResolved.has( pointerID ) ) return this.documentsBeingResolved.get( pointerID ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
 
 			let requestOptions:HTTP.Request.Options;
-			if( Utils.isFunction( optionsOrQueryDocument ) ) {
-				documentQuery = optionsOrQueryDocument;
+			if( Utils.isFunction( optionsOrQueryBuilderFn ) ) {
+				queryBuilderFn = optionsOrQueryBuilderFn;
 				requestOptions = {};
 			} else {
-				requestOptions = optionsOrQueryDocument || {};
+				requestOptions = optionsOrQueryBuilderFn || {};
 			}
 
 			let promise:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
-			if( ! documentQuery ) {
+			if( ! queryBuilderFn ) {
 				this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
 
 				promise = this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
@@ -198,7 +198,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 				documentProperty.addPattern( propertyValue );
 
-				return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, documentQuery )
+				return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, queryBuilderFn )
 					.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 			}
 		} );
@@ -294,11 +294,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	getChildren<T>( parentURI:string, requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getChildren<T>( parentURI:string, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getChildren<T>( parentURI:string, requestOptionsOrQuery?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( requestOptionsOrQuery ) ? requestOptionsOrQuery : {};
-		childrenQuery = Utils.isFunction( requestOptionsOrQuery ) ? requestOptionsOrQuery : childrenQuery;
+	getChildren<T>( parentURI:string, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getChildren<T>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
+		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
@@ -316,7 +316,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			;
 			childrenProperty.addPattern( selectChildren );
 
-			return this.executeQueryBuilder<T>( parentURI, requestOptions, queryContext, childrenProperty, childrenQuery );
+			return this.executeQueryBuilder<T>( parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn );
 		} );
 	}
 
@@ -398,11 +398,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	getMembers<T>( uri:string, requestOptions:HTTP.Request.Options, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
-	getMembers<T>( uri:string, requestOptionsOrQuery?:any, membersQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( requestOptionsOrQuery ) ? requestOptionsOrQuery : {};
-		membersQuery = Utils.isFunction( requestOptionsOrQuery ) ? requestOptionsOrQuery : membersQuery;
+	getMembers<T>( uri:string, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
+	getMembers<T>( uri:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		const requestOptions:HTTP.Request.Options = HTTP.Request.Util.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
+		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
@@ -430,7 +430,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			;
 			membersProperty.addPattern( selectMembers );
 
-			return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, membersQuery );
+			return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, queryBuilderFn );
 		} );
 	}
 
@@ -799,7 +799,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 
-	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, documentsQuery?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+	private executeQueryBuilder<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
 		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
@@ -807,7 +807,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-		if( documentsQuery && documentsQuery.call( void 0, queryBuilder ) !== queryBuilder )
+		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
 			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
