@@ -878,7 +878,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				accessPoints: null,
 
 				_documents: null,
-				_etag: null,
+				_etag: void 0,
 
 				refresh: ():void => {},
 				save: ():void => {},
@@ -1057,9 +1057,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"string",
 				"The ETag (entity tag) of the persisted document."
 			), ():void => {
-				expect( document._etag ).toBeDefined();
-				// By default, the ETag is null.
-				expect( document._etag ).toBeNull();
+				// By default, the ETag is undefined.
+				expect( document._etag ).toBeUndefined();
+				// But property is declared
+				expect( document.hasOwnProperty( "_etag" ) ).toBe( true );
 			} );
 
 			it( hasMethod(

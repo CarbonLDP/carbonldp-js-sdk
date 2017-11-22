@@ -89,7 +89,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private refreshFullDocument<T>(persistedDocument, requestOptions);
     private refreshPartialDocument<T>(persistedDocument, requestOptions);
     private executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
-    private executeQueryPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns);
+    private executeQueryPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument?);
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);
     private getRDFDocument(requestURL, rdfDocuments, response);
     private getPointerID(uri);

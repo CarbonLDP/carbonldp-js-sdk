@@ -861,7 +861,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			} );
 		})( constructPatterns, persistedDocument, targetName );
 
-		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns )
+		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
 			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
 
@@ -881,56 +881,70 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
 	}
 
-	private executeQueryPatterns<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
-		let response:HTTP.Response.Class;
-
-		return promiseMethod( () => {
-			const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
-			const construct:ConstructToken = new ConstructToken()
-				.addTriple( new SubjectToken( metadataVar )
-					.addPredicate( new PredicateToken( "a" )
-						.addObject( queryContext.compactIRI( NS.C.Class.VolatileResource ) )
-						.addObject( queryContext.compactIRI( NS.C.Class.QueryMetadata ) )
-					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.Predicate.target ) )
-						.addObject( queryContext.getVariable( targetName ) )
-					)
+	private executeQueryPatterns<T>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
+		const construct:ConstructToken = new ConstructToken()
+			.addTriple( new SubjectToken( metadataVar )
+				.addPredicate( new PredicateToken( "a" )
+					.addObject( queryContext.compactIRI( NS.C.Class.VolatileResource ) )
+					.addObject( queryContext.compactIRI( NS.C.Class.QueryMetadata ) )
 				)
-				.addPattern( new BindToken( "BNODE()", metadataVar ) )
-				.addPattern( ...constructPatterns );
+				.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.Predicate.target ) )
+					.addObject( queryContext.getVariable( targetName ) )
+				)
+			)
+			.addPattern( new BindToken( "BNODE()", metadataVar ) )
+			.addPattern( ...constructPatterns );
 
-			const query:QueryToken = new QueryToken( construct )
-				.addPrologues( ...queryContext.getPrologues() );
+		const query:QueryToken = new QueryToken( construct )
+			.addPrologues( ...queryContext.getPrologues() );
 
-			(function triplesAdder( patterns:PatternToken[] ):void {
-				patterns
-					.filter( pattern => pattern.token === "optional" )
-					.forEach( ( optional:OptionalToken ) => {
-						construct.addTriple( optional.patterns[ 0 ] as TripleToken );
-						triplesAdder( optional.patterns );
-					} );
-			})( constructPatterns );
-			if( ! construct.triples.length ) throw new Errors.IllegalArgumentError( "No data specified to be retrieved." );
+		(function triplesAdder( patterns:PatternToken[] ):void {
+			patterns
+				.filter( pattern => pattern.token === "optional" )
+				.forEach( ( optional:OptionalToken ) => {
+					construct.addTriple( optional.patterns[ 0 ] as TripleToken );
+					triplesAdder( optional.patterns );
+				} );
+		})( constructPatterns );
 
-			HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
-			HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
 
-			return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions );
-
-		} ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
+		let response:HTTP.Response.Class;
+		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
 			response = _response;
 			return new JSONLD.Parser.Class().parse( jsonldString );
 
 		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfNodes:RDF.Node.Class[] ) => {
-			const freeNodes:RDF.Node.Class[] = rdfNodes
-				.filter( node => ! RDF.Document.Factory.is( node ) );
-			const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
+			const freeResources:FreeResources.Class = this._getFreeResources( rdfNodes
+				.filter( node => ! RDF.Document.Factory.is( node ) )
+			);
 
-			const targetsIDs:string[] = freeResources
+			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
 				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id );
-			const targetSet:Set<string> = new Set( targetsIDs );
+				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id )
+			);
+
+			const targetETag:string = targetDocument && targetDocument._etag;
+			if( targetDocument ) targetDocument._etag = void 0;
+
+			freeResources
+				.getResources()
+				.filter( LDP.ResponseMetadata.Factory.is )
+				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
+				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
+				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
+					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ];
+					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ];
+
+					if( relatedDocument._etag === void 0 ) relatedDocument._etag = eTag;
+					if( relatedDocument._etag !== eTag ) relatedDocument._etag = null;
+				} ) );
+
+			if( targetDocument && targetETag === targetDocument._etag )
+				return [ [ targetDocument ], null ];
 
 			const rdfDocuments:RDF.Document.Class[] = rdfNodes
 				.filter<any>( RDF.Document.Factory.is );
@@ -941,19 +955,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
 				.Class( this, targetName, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
-
-			freeResources
-				.getResources()
-				.filter( LDP.ResponseMetadata.Factory.is )
-				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
-				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
-				.forEach( documentsMetadata => documentsMetadata
-					.map( documentMetadata => [
-						documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ],
-						documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ],
-					] )
-					.forEach( ( [ relatedDocument, eTag ] ) => relatedDocument._etag = eTag )
-				);
 
 			return [ documents, response ];
 		} );

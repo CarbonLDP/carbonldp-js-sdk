@@ -740,7 +740,7 @@ var Class = (function () {
                 createRefreshQuery(propertyPattern, propertyFragment, path);
             });
         })(constructPatterns, persistedDocument, targetName);
-        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns)
+        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
             .then(function (_a) {
             var documents = _a[0], response = _a[1];
             return [documents[0], response];
@@ -755,47 +755,58 @@ var Class = (function () {
         var constructPatterns = targetProperty.getPatterns();
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
-    Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns) {
+    Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;
+        var metadataVar = queryContext.getVariable("metadata");
+        var construct = (_a = new tokens_1.ConstructToken()
+            .addTriple(new tokens_1.SubjectToken(metadataVar)
+            .addPredicate(new tokens_1.PredicateToken("a")
+            .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
+            .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
+            .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
+            .addObject(queryContext.getVariable(targetName))))
+            .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
+        var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
+        (function triplesAdder(patterns) {
+            patterns
+                .filter(function (pattern) { return pattern.token === "optional"; })
+                .forEach(function (optional) {
+                construct.addTriple(optional.patterns[0]);
+                triplesAdder(optional.patterns);
+            });
+        })(constructPatterns);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
         var response;
-        return Utils_3.promiseMethod(function () {
-            var metadataVar = queryContext.getVariable("metadata");
-            var construct = (_a = new tokens_1.ConstructToken()
-                .addTriple(new tokens_1.SubjectToken(metadataVar)
-                .addPredicate(new tokens_1.PredicateToken("a")
-                .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
-                .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
-                .addObject(queryContext.getVariable(targetName))))
-                .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
-            var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
-            (function triplesAdder(patterns) {
-                patterns
-                    .filter(function (pattern) { return pattern.token === "optional"; })
-                    .forEach(function (optional) {
-                    construct.addTriple(optional.patterns[0]);
-                    triplesAdder(optional.patterns);
-                });
-            })(constructPatterns);
-            if (!construct.triples.length)
-                throw new Errors.IllegalArgumentError("No data specified to be retrieved.");
-            HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
-            HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
-            return _this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions);
-            var _a, _b;
-        }).then(function (_a) {
+        return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
             response = _response;
             return new JSONLD.Parser.Class().parse(jsonldString);
         }).then(function (rdfNodes) {
-            var freeNodes = rdfNodes
-                .filter(function (node) { return !RDF.Document.Factory.is(node); });
-            var freeResources = _this._getFreeResources(freeNodes);
-            var targetsIDs = freeResources
+            var freeResources = _this._getFreeResources(rdfNodes
+                .filter(function (node) { return !RDF.Document.Factory.is(node); }));
+            var targetSet = new Set(freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; });
-            var targetSet = new Set(targetsIDs);
+                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; }));
+            var targetETag = targetDocument && targetDocument._etag;
+            if (targetDocument)
+                targetDocument._etag = void 0;
+            freeResources
+                .getResources()
+                .filter(LDP.ResponseMetadata.Factory.is)
+                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
+                .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
+                .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
+                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument];
+                var eTag = documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag];
+                if (relatedDocument._etag === void 0)
+                    relatedDocument._etag = eTag;
+                if (relatedDocument._etag !== eTag)
+                    relatedDocument._etag = null;
+            }); });
+            if (targetDocument && targetETag === targetDocument._etag)
+                return [[targetDocument], null];
             var rdfDocuments = rdfNodes
                 .filter(RDF.Document.Factory.is);
             var targetDocuments = rdfDocuments
@@ -803,22 +814,9 @@ var Class = (function () {
             var documents = new JSONLD.Compacter
                 .Class(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
-            freeResources
-                .getResources()
-                .filter(LDP.ResponseMetadata.Factory.is)
-                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
-                .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
-                .forEach(function (documentsMetadata) { return documentsMetadata
-                .map(function (documentMetadata) { return [
-                documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument],
-                documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag],
-            ]; })
-                .forEach(function (_a) {
-                var relatedDocument = _a[0], eTag = _a[1];
-                return relatedDocument._etag = eTag;
-            }); });
             return [documents, response];
         });
+        var _a, _b;
     };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
         var _this = this;

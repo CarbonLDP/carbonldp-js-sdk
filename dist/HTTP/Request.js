@@ -202,12 +202,16 @@ var Util = (function () {
         headers.set("content-type", new Header.Class(contentType));
         return requestOptions;
     };
-    Util.setIfMatchHeader = function (etag, requestOptions) {
+    Util.setIfMatchHeader = function (eTag, requestOptions) {
+        if (!eTag)
+            return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("if-match", new Header.Class(etag));
+        headers.set("if-match", new Header.Class(eTag));
         return requestOptions;
     };
     Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
+        if (!eTag)
+            return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("if-none-match", new Header.Class(eTag));
         return requestOptions;

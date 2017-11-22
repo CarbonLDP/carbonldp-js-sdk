@@ -247,7 +247,6 @@ var Factory = (function () {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: null,
             },
             "_savedFragments": {
                 writable: true,

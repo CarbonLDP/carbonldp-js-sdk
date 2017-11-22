@@ -34,7 +34,6 @@ import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as PersistedResource from "./PersistedResource";
@@ -9879,6 +9878,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:3"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
 							"@id": "${ context.baseURI }resource/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
@@ -10000,6 +10020,161 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document.property2 ).not.toEqual( jasmine.objectContaining( {
 							"property2": 12345,
 						} ) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should not process data if same eTag", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:3"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"${ context.getSetting( "vocabulary" ) }Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+									"@value": "updated value"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ],
+								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+									"@value": "false",
+									"@type": "${ NS.XSD.DataType.boolean }"
+								} ]
+							}, {
+								"@id": "_:1",
+								"https://schema.org/property-3": [ {
+									"@value": "updated sub-value"
+								} ],
+								"https://schema.org/property-5": [ {
+									"@value": "2010-01-01",
+									"@type": "${ NS.XSD.DataType.dateTime }"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:PersistedResource.Class & {
+							property2:number;
+							property3:string;
+							property5:Date;
+						};
+						property3:string;
+						property4:boolean;
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+
+					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
+							_etag: "\"1-12345\"",
+							property1: "value",
+							property2: null,
+							property3: "non query-value",
+							property4: true,
+							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								"@vocab": "https://example.com/ns#",
+								"property1": {
+									"@id": "property-1",
+									"@type": NS.XSD.DataType.string,
+								},
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+								},
+								"property4": {
+									"@id": "property-4",
+									"@type": NS.XSD.DataType.boolean,
+								},
+							} ) ),
+						} ),
+						"https://example.com/resource/",
+						documents
+					);
+
+					persistedDocument.property2 = persistedDocument.createFragment(
+						{
+							property3: "sub-value",
+							property5: new Date( "2000-01-01" ),
+							property2: 12345,
+							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								"@vocab": "https://example.com/ns#",
+								"property2": {
+									"@id": "property-2",
+									"@type": NS.XSD.DataType.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": NS.XSD.DataType.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": NS.XSD.DataType.dateTime,
+								},
+							} ) ),
+						},
+						"_:1"
+					);
+
+					Utils.promiseMethod( () => {
+						return documents.refresh<MyDocument>( persistedDocument );
+					} ).then( ( [ document, response ] ) => {
+						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+
+						// Data updates
+						expect( document ).toEqual( jasmine.objectContaining( {
+							"property4": true,
+							"property1": "value",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "sub-value",
+								"property5": new Date( "2000-01-01" ),
+							} ) as any,
+							"property3": "non query-value",
+						} ) );
+
+						expect( response ).toBeNull();
 
 						done();
 					} ).catch( done.fail );

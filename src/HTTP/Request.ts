@@ -249,13 +249,17 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setIfMatchHeader( etag:string, requestOptions:Options ):Options {
+	static setIfMatchHeader( eTag:string, requestOptions:Options ):Options {
+		if( ! eTag ) return;
+
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "if-match", new Header.Class( etag ) );
+		headers.set( "if-match", new Header.Class( eTag ) );
 		return requestOptions;
 	}
 
 	static setIfNoneMatchHeader( eTag:string, requestOptions:Options ):Options {
+		if( ! eTag ) return;
+
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 		headers.set( "if-none-match", new Header.Class( eTag ) );
 		return requestOptions;
