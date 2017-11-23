@@ -4,6 +4,7 @@ var Errors = require("./../Errors");
 var URI = require("./../RDF/URI");
 var Credentials = require("./Credentials");
 var PersistedUser = require("./PersistedUser");
+var Utils_1 = require("../Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -12,14 +13,12 @@ var Class = (function () {
         var _this = this;
         var credentials = Credentials.Factory.create(email, password);
         credentials.enabled = enabled;
-        return Promise.resolve()
-            .then(function () {
+        return Utils_1.promiseMethod(function () {
             var containerURI = _this.getCredentialsContainerURI();
             return _this.context.documents.createChildAndRetrieve(containerURI, credentials);
-        })
-            .then(function (_a) {
-            var persistedCredentials = _a[0], responses = _a[1];
-            return [persistedCredentials.user, responses];
+        }).then(function (_a) {
+            var persistedCredentials = _a[0], response = _a[1];
+            return [persistedCredentials.user, response];
         });
     };
     Class.prototype.get = function (userURI, requestOptions) {

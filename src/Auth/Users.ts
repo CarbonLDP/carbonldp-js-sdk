@@ -6,6 +6,7 @@ import * as URI from "./../RDF/URI";
 import * as Credentials from "./Credentials";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
+import { promiseMethod } from "../Utils";
 
 export class Class {
 	private context:Context.Class;
@@ -14,15 +15,15 @@ export class Class {
 		this.context = context;
 	}
 
-	register( email:string, password:string, enabled?:boolean ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+	register( email:string, password:string, enabled?:boolean ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
 		const credentials:Credentials.Class = Credentials.Factory.create( email, password );
 		credentials.enabled = enabled;
-		return Promise.resolve()
-			.then( () => {
-				const containerURI:string = this.getCredentialsContainerURI();
-				return this.context.documents.createChildAndRetrieve<PersistedCredentials.Class>( containerURI, credentials as any );
-			} )
-			.then<[ PersistedUser.Class, HTTP.Response.Class[] ]>( ( [ persistedCredentials, responses ] ) => [ persistedCredentials.user, responses ] );
+		return promiseMethod( () => {
+			const containerURI:string = this.getCredentialsContainerURI();
+			return this.context.documents.createChildAndRetrieve<PersistedCredentials.Class>( containerURI, credentials as any );
+		} ).then<[ PersistedUser.Class, HTTP.Response.Class ]>( ( [ persistedCredentials, response ] ) => {
+			return [ persistedCredentials.user, response ];
+		} );
 	}
 
 	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {

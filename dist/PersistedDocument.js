@@ -31,6 +31,9 @@ function extendIsDirty(superFunction) {
         return false;
     };
 }
+function isLocallyOutDated() {
+    return this._etag === null;
+}
 function extendRevert(superFunction) {
     return function () {
         var persistedDocument = this;
@@ -188,6 +191,7 @@ var Factory = (function () {
     }
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_etag")
+            && Utils.hasFunction(object, "isLocallyOutDated")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
@@ -247,6 +251,12 @@ var Factory = (function () {
                 writable: true,
                 enumerable: false,
                 configurable: true,
+            },
+            "isLocallyOutDated": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: isLocallyOutDated,
             },
             "_savedFragments": {
                 writable: true,

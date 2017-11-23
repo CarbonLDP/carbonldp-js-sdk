@@ -49,8 +49,9 @@ export declare class Util {
     static setIfMatchHeader(eTag: string, requestOptions: Options): Options;
     static setIfNoneMatchHeader(eTag: string, requestOptions: Options): Options;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
-    static setPreferredRetrievalResource(typeOfRequest: "Created" | "Modified", requestOptions: Options): Options;
+    static setPreferredRetrieval(retrievalType: "representation" | "minimal", requestOptions: Options): Options;
     static setRetrievalPreferences(preferences: RetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
     static isOptions(object: Object): object is Options;
+    static cloneOptions(options: Options): Options;
 }

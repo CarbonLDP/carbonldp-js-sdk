@@ -272,22 +272,10 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setPreferredRetrievalResource( typeOfRequest:"Created" | "Modified", requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:Options ):Options {
+		const prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 
-		let preferType:string;
-		switch( typeOfRequest ) {
-			case "Created":
-				preferType = NS.C.Class.CreatedResource;
-				break;
-			case "Modified":
-				preferType = NS.C.Class.ModifiedResource;
-				break;
-			default:
-				throw new Errors.IllegalArgumentError( `Invalid type of request: '${ typeOfRequest }'.` );
-		}
-
-		prefer.values.push( new Header.Value( `return=representation; ${ preferType }` ) );
+		prefer.values.push( new Header.Value( `return=${ retrievalType }` ) );
 		return requestOptions;
 	}
 
@@ -317,6 +305,18 @@ export class Util {
 			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
 			|| Utils.hasPropertyDefined( object, "timeout" )
 			|| Utils.hasPropertyDefined( object, "request" );
+	}
+
+	static cloneOptions( options:Options ):Options {
+		const clone:Options = {
+			...options,
+			headers: new Map(),
+		};
+
+		if( options.headers ) options.headers
+			.forEach( ( value, key ) => clone.headers.set( key, new Header.Class( value.values.slice() ) ) );
+
+		return clone;
 	}
 
 }

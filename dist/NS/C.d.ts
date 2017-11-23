@@ -4,7 +4,6 @@ export declare class Class {
     static readonly AccessPointCreated: string;
     static readonly AddMemberAction: string;
     static readonly ChildCreated: string;
-    static readonly CreatedResource: string;
     static readonly Document: string;
     static readonly DocumentCreatedDetails: string;
     static readonly DocumentDeleted: string;
@@ -18,7 +17,6 @@ export declare class Class {
     static readonly MemberAddedDetails: string;
     static readonly MemberRemoved: string;
     static readonly MemberRemovedDetails: string;
-    static readonly ModifiedResource: string;
     static readonly NonReadableMembershipResourceTriples: string;
     static readonly Platform: string;
     static readonly PreferContainer: string;

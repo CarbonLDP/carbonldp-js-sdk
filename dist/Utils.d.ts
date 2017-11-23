@@ -18,6 +18,7 @@ declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
 export declare function promiseMethod<T>(fn: () => T | Promise<T>): Promise<T>;
+export declare function mapTupleArray<T, W>(tuples: [T, W][]): [T[], W[]];
 declare class A {
     static from<T>(iterator: Iterator<T>): Array<T>;
     static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;

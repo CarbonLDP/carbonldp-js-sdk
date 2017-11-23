@@ -1218,38 +1218,33 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		it( hasMethod(
 			STATIC,
-			"setPreferredRetrievalResource",
-			"Set a Prefer header which indicates to the platform to retrieve the server resource in the same request.", [
-				{ name: "typeOfRequest", type: `"Created" | "Modified"`, description: "The type of the request, where to retrieve the resource, is been made." },
+			"setPreferredRetrieval",
+			"Set a Prefer header which indicates to the platform to type of retrieval to make.", [
+				{ name: "retrievalType", type: `"representation" | "minimal"`, description: `If "representation" is chosen the platform must retrieve the entire resource; otherwise when "minimal" is sent the minimal data will be returned generally an empty one.` },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
 			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
-			expect( Request.Util.setPreferredRetrievalResource ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setPreferredRetrievalResource ) ).toBe( true );
+			expect( Request.Util.setPreferredRetrieval ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.setPreferredRetrieval ) ).toBe( true );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrievalResource( "Created", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
+			options = Request.Util.setPreferredRetrieval( "representation", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation" ) );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" ) );
-
-			optionsWithHeaders = Request.Util.setPreferredRetrievalResource( "Created", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
-
+			options = Request.Util.setPreferredRetrieval( "minimal", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=minimal" ) );
 
 			options = {
 				headers: new Map()
 					.set( "prefer", new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
 			};
-			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
+			options = Request.Util.setPreferredRetrieval( "representation", options );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual(
 				new Header.Class(
 					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
-					"return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource"
+					"return=representation"
 				)
 			);
 		} );

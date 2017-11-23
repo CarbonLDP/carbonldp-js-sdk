@@ -148,65 +148,49 @@ var Class = (function () {
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
-            if (PersistedDocument.Factory.is(childObject))
-                return Promise.reject(new Errors.IllegalArgumentError("The child provided has been already persisted."));
-            var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            return _this.persistDocument(parentURI, slug, childDocument, requestOptions);
+            parentURI = _this.getRequestURI(parentURI);
+            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
     Class.prototype.createChildren = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : null;
+        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : [];
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
-        return Promise.all(childrenObjects.map(function (childObject, index) {
-            var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
-            var options = Object.assign({}, requestOptions);
-            if (requestOptions.headers)
-                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
-            return _this.createChild(parentURI, childObject, slug, options);
-        })).then(function (requestResponses) {
-            var persistedDocuments = requestResponses.map(function (response) { return response[0]; });
-            var responses = requestResponses.map(function (response) { return response[1]; });
-            return [persistedDocuments, responses];
-        });
+        return Utils_3.promiseMethod(function () {
+            parentURI = _this.getRequestURI(parentURI);
+            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            return Promise.all(childrenObjects.map(function (childObject, index) {
+                var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+                return _this.persistChildDocument(parentURI, childObject, slugs[index], cloneOptions);
+            }));
+        }).then(Utils_3.mapTupleArray);
     };
     Class.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var responses = [];
-        var options = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
-        return this.createChild(parentURI, childObject, slugOrRequestOptions, requestOptions).then(function (_a) {
-            var document = _a[0], createResponse = _a[1];
-            if (document.isResolved())
-                return [document, createResponse];
-            responses.push(createResponse);
-            return _this.get(document.id);
-        }).then(function (_a) {
-            var persistedDocument = _a[0], resolveResponse = _a[1];
-            responses.push(resolveResponse);
-            return [persistedDocument, responses];
+        requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        return Utils_3.promiseMethod(function () {
+            parentURI = _this.getRequestURI(parentURI);
+            HTTP.Request.Util.setPreferredRetrieval("representation", requestOptions);
+            return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
     Class.prototype.createChildrenAndRetrieve = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
+        var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var responses = [];
-        var options = HTTP.Request.Util.isOptions(slugsOrRequestOptions) ? slugsOrRequestOptions : requestOptions;
-        HTTP.Request.Util.setPreferredRetrievalResource("Created", options);
-        return this.createChildren(parentURI, childrenObjects, slugsOrRequestOptions, requestOptions).then(function (_a) {
-            var documents = _a[0], creationResponses = _a[1];
-            responses.push(creationResponses);
-            if (documents.every(function (document) { return document.isResolved(); }))
-                return [documents, null];
-            return Pointer.Util.resolveAll(documents);
-        }).then(function (_a) {
-            var persistedDocuments = _a[0], resolveResponses = _a[1];
-            if (!!resolveResponses)
-                responses.push(resolveResponses);
-            return [persistedDocuments, responses];
-        });
+        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : [];
+        requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
+        return Utils_3.promiseMethod(function () {
+            parentURI = _this.getRequestURI(parentURI);
+            HTTP.Request.Util.setPreferredRetrieval("representation", requestOptions);
+            return Promise.all(childrenObjects.map(function (childObject, index) {
+                var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+                return _this.persistChildDocument(parentURI, childObject, slugs[index], cloneOptions);
+            }));
+        }).then(Utils_3.mapTupleArray);
     };
     Class.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
@@ -228,37 +212,27 @@ var Class = (function () {
     Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (this.context)
-            documentURI = this.context.resolve(documentURI);
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
-            if (PersistedDocument.Factory.is(accessPoint))
-                return Promise.reject(new Errors.IllegalArgumentError("The accessPoint provided has been already persisted."));
-            var accessPointDocument = AccessPoint.Factory.is(accessPoint) ? accessPoint
-                : AccessPoint.Factory.createFrom(accessPoint, _this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
-            if (accessPointDocument.membershipResource.id !== documentURI)
-                return Promise.reject(new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource"));
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-            return _this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
+            documentURI = _this.getRequestURI(documentURI);
+            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            return _this.persistAccessPoint(documentURI, accessPoint, slug, requestOptions);
         });
     };
     Class.prototype.createAccessPoints = function (documentURI, accessPoints, slugsOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : null;
+        var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : [];
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
-        return Promise.all(accessPoints.map(function (accessPoint, index) {
-            var slug = (slugs !== null && index < slugs.length && !!slugs[index]) ? slugs[index] : null;
-            var options = Object.assign({}, requestOptions);
-            if (requestOptions.headers)
-                options.headers = Utils.M.extend(new Map(), requestOptions.headers);
-            return _this.createAccessPoint(documentURI, accessPoint, slug, options);
-        })).then(function (requestResponses) {
-            var persistedAccessPoints = requestResponses.map(function (response) { return response[0]; });
-            var responses = requestResponses.map(function (response) { return response[1]; });
-            return [persistedAccessPoints, responses];
-        });
+        return Utils_3.promiseMethod(function () {
+            documentURI = _this.getRequestURI(documentURI);
+            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            return Promise.all(accessPoints.map(function (accessPoint, index) {
+                var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+                return _this.persistAccessPoint(documentURI, accessPoint, slugs[index], cloneOptions);
+            }));
+        }).then(Utils_3.mapTupleArray);
     };
     Class.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -382,15 +356,15 @@ var Class = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            var uri = _this.getRequestURI(persistedDocument.id);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-            HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-            HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-            persistedDocument._normalize();
-            var body = persistedDocument.toJSON(_this, _this.jsonldConverter);
-            return _this.sendRequest(HTTP.Method.PUT, uri, requestOptions, body);
-        }).then(function (response) {
-            return _this.applyResponseData(persistedDocument, response);
+            if (!PersistedDocument.Factory.is(persistedDocument))
+                throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
+            if (!persistedDocument.isPartial()) {
+                HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+                return _this.saveFullDocument(persistedDocument, requestOptions);
+            }
+            else {
+                throw new Errors.NotImplementedError("To be implemented with LD Patch");
+            }
         });
     };
     Class.prototype.refresh = function (persistedDocument, requestOptions) {
@@ -407,21 +381,16 @@ var Class = (function () {
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        var responses = [];
-        var previousETag = persistedDocument._etag;
-        return Utils.promiseMethod(function () {
-            HTTP.Request.Util.setPreferredRetrievalResource("Modified", requestOptions);
-            return _this.save(persistedDocument, requestOptions);
-        }).then(function (_a) {
-            var document = _a[0], saveResponse = _a[1];
-            if (document._etag !== previousETag)
-                return [document, saveResponse];
-            responses.push(saveResponse);
-            return _this.refresh(document);
-        }).then(function (_a) {
-            var document = _a[0], refreshResponse = _a[1];
-            responses.push(refreshResponse);
-            return [persistedDocument, responses];
+        return Utils_3.promiseMethod(function () {
+            if (!PersistedDocument.Factory.is(persistedDocument))
+                throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
+            if (!persistedDocument.isPartial()) {
+                HTTP.Request.Util.setPreferredRetrieval("representation", requestOptions);
+                return _this.saveFullDocument(persistedDocument, requestOptions);
+            }
+            else {
+                throw new Errors.NotImplementedError("To be implemented with LD Patch");
+            }
         });
     };
     Class.prototype.delete = function (documentURI, requestOptions) {
@@ -691,6 +660,23 @@ var Class = (function () {
             return [documents[0], response];
         });
     };
+    Class.prototype.saveFullDocument = function (persistedDocument, requestOptions) {
+        var _this = this;
+        var uri = this.getRequestURI(persistedDocument.id);
+        if (!persistedDocument.isDirty())
+            return Promise.resolve([persistedDocument, null]);
+        if (persistedDocument.isLocallyOutDated())
+            throw new Errors.IllegalStateError("Cannot save an outdated document.");
+        persistedDocument._normalize();
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        var body = persistedDocument.toJSON(this, this.jsonldConverter);
+        return this.sendRequest(HTTP.Method.PUT, uri, requestOptions, body)
+            .then(function (response) {
+            return _this.applyResponseData(persistedDocument, response);
+        });
+    };
     Class.prototype.refreshFullDocument = function (persistedDocument, requestOptions) {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
@@ -818,9 +804,25 @@ var Class = (function () {
         });
         var _a, _b;
     };
+    Class.prototype.persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
+        if (PersistedDocument.Factory.is(childObject))
+            throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
+        var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        return this.persistDocument(parentURI, slug, childDocument, requestOptions);
+    };
+    Class.prototype.persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
+        if (PersistedDocument.Factory.is(accessPoint))
+            throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
+        var accessPointDocument = AccessPoint.Factory.is(accessPoint) ?
+            accessPoint : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
+        if (accessPointDocument.membershipResource.id !== documentURI)
+            throw new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource.");
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        return this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
+    };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
         var _this = this;
-        parentURI = this.getRequestURI(parentURI);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         if (document.id) {
             var childURI = document.id;

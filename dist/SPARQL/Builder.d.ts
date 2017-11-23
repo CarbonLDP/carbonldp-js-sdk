@@ -5,7 +5,7 @@ import HTTPResponse from "./../HTTP/Response";
 import RawResults from "./RawResults";
 import SELECTResults from "./SELECTResults";
 export interface ExecuteSelect extends FinishClause {
-    execute<T>(): Promise<[SELECTResults<T>, HTTPResponse]>;
+    execute<T extends object>(): Promise<[SELECTResults<T>, HTTPResponse]>;
     executeRaw(): Promise<[RawResults, HTTPResponse]>;
 }
 export declare class Class extends SPARQLER<ExecuteSelect> {

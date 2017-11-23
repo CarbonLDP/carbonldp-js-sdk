@@ -9,8 +9,6 @@ export class Class {
 
 	static get ChildCreated():string { return namespace + "ChildCreatedEvent"; }
 
-	static get CreatedResource():string { return namespace + "CreatedResource"; }
-
 	static get Document():string { return namespace + "Document"; }
 
 	static get DocumentCreatedDetails():string { return namespace + "DocumentCreatedEventDetails"; }
@@ -36,8 +34,6 @@ export class Class {
 	static get MemberRemoved():string { return namespace + "MemberRemovedEvent"; }
 
 	static get MemberRemovedDetails():string { return namespace + "MemberRemovedEventDetails"; }
-
-	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
 
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
 

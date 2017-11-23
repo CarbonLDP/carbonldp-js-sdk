@@ -1,20 +1,11 @@
-import {
-	INSTANCE,
+import { clazz, hasConstructor, hasDefaultExport, hasMethod, hasSignature, INSTANCE, isDefined, method, module, } from "../test/JasmineExtender";
 
-	module,
-	clazz,
-
-	isDefined,
-	hasDefaultExport,
-	hasConstructor,
-	hasMethod,
-} from "./../test/JasmineExtender";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as NS from "./../NS";
-import * as PersistedCredentials from "./PersistedCredentials";
 import * as Utils from "./../Utils";
+import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
 
 import * as Users from "./Users";
@@ -49,19 +40,17 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users instanceof Users.Class ).toBe( true );
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"register",
-			"Creates a new user with the provided credentials.\n" +
-			"Returns a Promise with a persisted user, and the responses of the request.",
-			[
-				{ name: "email", type: "string" },
-				{ name: "password", type: "string" },
-			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[]] >" }
-		), ():void => {} );
+		describe( method( INSTANCE, "register" ), ():void => {
 
-		describe( "register", ():void => {
+			it( hasSignature(
+				"Creates a new user with the provided credentials.\n" +
+				"Returns a Promise with a persisted user, and the responses of the request.",
+				[
+					{ name: "email", type: "string" },
+					{ name: "password", type: "string" },
+				],
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				const context:AbstractContext = new class extends AbstractContext {
@@ -85,7 +74,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -108,7 +97,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -158,13 +147,11 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					}`,
 				} );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 
-				promise.then( ( [ persistedUser, responses ]:[ PersistedUser.Class, HTTP.Response.Class[] ] ) => {
-					expect( responses ).toEqual( jasmine.any( Array ) );
-					expect( responses.length ).toBe( 1 );
-					responses.forEach( response => expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) ) );
+				promise.then( ( [ persistedUser, response ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
 					expect( PersistedUser.Factory.is( persistedUser ) ).toBe( true );
 					expect( persistedUser ).toEqual( jasmine.objectContaining( { credentials: jasmine.any( Object ) as any } ) );
@@ -200,6 +187,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					this._baseURI = "http://example.com/";
 				}
 			}
+
 			context = new MockedContext();
 
 			users = new Users.Class( context );
@@ -469,6 +457,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					this._baseURI = "http://example.com/";
 				}
 			}
+
 			context = new MockedContext();
 			users = new Users.Class( context );
 

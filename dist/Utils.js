@@ -140,6 +140,16 @@ function promiseMethod(fn) {
     return new Promise(function (resolve) { return resolve(fn()); });
 }
 exports.promiseMethod = promiseMethod;
+function mapTupleArray(tuples) {
+    var firsts = [];
+    var seconds = [];
+    tuples.forEach(function (tuple) {
+        firsts.push(tuple[0]);
+        seconds.push(tuple[1]);
+    });
+    return [firsts, seconds];
+}
+exports.mapTupleArray = mapTupleArray;
 var A = (function () {
     function A() {
     }

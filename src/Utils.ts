@@ -132,6 +132,18 @@ export function promiseMethod<T>( fn:() => T | Promise<T> ):Promise<T> {
 	return new Promise<T>( resolve => resolve( fn() ) );
 }
 
+export function mapTupleArray<T, W>( tuples:[ T, W ][] ):[ T[], W[] ] {
+	const firsts:T[] = [];
+	const seconds:W[] = [];
+
+	tuples.forEach( tuple => {
+		firsts.push( tuple[ 0 ] );
+		seconds.push( tuple[ 1 ] );
+	} );
+
+	return [ firsts, seconds ];
+}
+
 class A {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];

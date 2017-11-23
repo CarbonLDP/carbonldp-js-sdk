@@ -11,25 +11,23 @@ export interface Class extends Document.Class {
 }
 
 export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "membershipResource" )
-		);
+	static hasClassProperties( resource:object ):boolean {
+		return Utils.hasPropertyDefined( resource, "membershipResource" )
+			;
 	}
 
-	static is( object:Object ):boolean {
-		return (
-			Factory.hasClassProperties( object )
-			&& Document.Factory.is( object )
-			&& (<Document.Class> object).hasType( RDF_CLASS )
-		);
+	static is( object:object ):object is Class {
+		return Document.Factory.is( object )
+			&& object.hasType( RDF_CLASS )
+			&& Factory.hasClassProperties( object )
+			;
 	}
 
 	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):Class {
 		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 
-	static createFrom<T extends Object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & Class {
+	static createFrom<T extends object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & Class {
 		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer." );
 		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The property membershipResource cannot be null." );
 		if( ! hasMemberRelation ) throw new Errors.IllegalArgumentError( "The property hasMemberRelation cannot be empty." );

@@ -8,7 +8,7 @@ import RawResults from "./RawResults";
 import SELECTResults from "./SELECTResults";
 
 export interface ExecuteSelect extends FinishClause {
-	execute<T>():Promise<[ SELECTResults<T>, HTTPResponse ]>;
+	execute<T extends object>():Promise<[ SELECTResults<T>, HTTPResponse ]>;
 
 	executeRaw():Promise<[ RawResults, HTTPResponse ]>;
 }
@@ -18,7 +18,7 @@ export class Class extends SPARQLER<ExecuteSelect> {
 		super( <W extends object>( container:Container<ExecuteSelect>, object:W ):W & ExecuteSelect => {
 			const finishObject:FinishClause & W = finishDecorator( container, object );
 			return Object.assign( finishObject, {
-				execute: <T>():Promise<[ SELECTResults<T>, HTTPResponse ]> =>
+				execute: <T extends object>():Promise<[ SELECTResults<T>, HTTPResponse ]> =>
 					documents.executeSELECTQuery<T>( entryPoint, finishObject.toCompactString() ),
 				executeRaw: ():Promise<[ RawResults, HTTPResponse ]> =>
 					documents.executeRawSELECTQuery( entryPoint, finishObject.toCompactString() ),
