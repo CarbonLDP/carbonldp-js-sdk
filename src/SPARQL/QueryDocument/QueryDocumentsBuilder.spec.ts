@@ -7,6 +7,7 @@ import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as Module from "./QueryDocumentsBuilder";
 import { Class as QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import * as QueryProperty from "./QueryProperty";
+import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
 
@@ -179,8 +180,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 					builder.limit( limit );
 				};
 
-				expect( helper( 10 ) ).toThrowError( `A sub-select token has not been defined.` );
-				expect( helper( 100 ) ).toThrowError( `A sub-select token has not been defined.` );
+				expect( helper( 10 ) ).toThrowError( IllegalStateError, `A sub-select token has not been defined.` );
+				expect( helper( 100 ) ).toThrowError( IllegalStateError, `A sub-select token has not been defined.` );
 			} );
 
 			it( "should return itself", ():void => {
@@ -251,8 +252,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 					builder.offset( offset );
 				};
 
-				expect( helper( 10 ) ).toThrowError( `A sub-select token has not been defined.` );
-				expect( helper( 100 ) ).toThrowError( `A sub-select token has not been defined.` );
+				expect( helper( 10 ) ).toThrowError( IllegalStateError, `A sub-select token has not been defined.` );
+				expect( helper( 100 ) ).toThrowError( IllegalStateError, `A sub-select token has not been defined.` );
 			} );
 
 			it( "should return itself", ():void => {
@@ -323,12 +324,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 					builder[ "_orderBy" ]( property );
 				};
 
-				expect( helper( "member" ) ).toThrowError( `Property "member" isn't a direct property of a member.` );
+				expect( helper( "member" ) ).toThrowError( IllegalArgumentError, `Property "member" isn't a direct property of the main query.` );
 
-				expect( helper( "member.property" ) ).not.toThrowError( `Property "member.property" isn't a direct property of a member.` );
+				expect( helper( "member.property" ) ).not.toThrowError( IllegalArgumentError, `Property "member.property" isn't a direct property of the main query.` );
 
-				expect( helper( "member.property.sub-property" ) ).toThrowError( `Property "member.property.sub-property" isn't a direct property of a member.` );
-				expect( helper( "member.property-2.sub-property-2" ) ).toThrowError( `Property "member.property-2.sub-property-2" isn't a direct property of a member.` );
+				expect( helper( "member.property.sub-property" ) ).toThrowError( IllegalArgumentError, `Property "member.property.sub-property" isn't a direct property of the main query.` );
+				expect( helper( "member.property-2.sub-property-2" ) ).toThrowError( IllegalArgumentError, `Property "member.property-2.sub-property-2" isn't a direct property of the main query.` );
 			} );
 
 			it( "should throw error when no select token defined", ():void => {
@@ -339,8 +340,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 					builder[ "_orderBy" ]( property );
 				};
 
-				expect( helper( "member.property" ) ).toThrowError( `A sub-select token has not been defined.` );
-				expect( helper( "member.property-2" ) ).toThrowError( `A sub-select token has not been defined.` );
+				expect( helper( "member.property" ) ).toThrowError( IllegalStateError, `A sub-select token has not been defined.` );
+				expect( helper( "member.property-2" ) ).toThrowError( IllegalStateError, `A sub-select token has not been defined.` );
 			} );
 
 			it( "should throw error when no valid property provided", ():void => {
@@ -350,8 +351,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 					builder[ "_orderBy" ]( property );
 				};
 
-				expect( helper( "member.property" ) ).toThrowError( `The property provided is not a valid property defined by the builder.` );
-				expect( helper( "member.property-2" ) ).toThrowError( `The property provided is not a valid property defined by the builder.` );
+				expect( helper( "member.property" ) ).toThrowError( IllegalArgumentError, `The property provided is not a valid property defined by the builder.` );
+				expect( helper( "member.property-2" ) ).toThrowError( IllegalArgumentError, `The property provided is not a valid property defined by the builder.` );
 			} );
 
 			it( "should return itself", ():void => {

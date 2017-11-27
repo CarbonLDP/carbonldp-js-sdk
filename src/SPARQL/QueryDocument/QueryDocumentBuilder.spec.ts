@@ -4,6 +4,7 @@ import AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module, property } from "../../test/JasmineExtender";
 import * as Document from "./../../Document";
+import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import * as Pointer from "./../../Pointer";
 import * as URI from "./../../RDF/URI";
 import QueryContextBuilder from "./QueryContextBuilder";
@@ -170,11 +171,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = ( name:string ) => () => builder.property( name );
 
-				expect( helper( "name" ) ).not.toThrowError( `The "name" property was not declared.` );
-				expect( helper( "path1.name" ) ).not.toThrowError( `The "path1.name" property was not declared.` );
+				expect( helper( "name" ) ).not.toThrowError( IllegalArgumentError, `The "name" property was not declared.` );
+				expect( helper( "path1.name" ) ).not.toThrowError( IllegalArgumentError, `The "path1.name" property was not declared.` );
 
-				expect( helper( "path2.name" ) ).toThrowError( `The "path2.name" property was not declared.` );
-				expect( helper( "path1.path2.name" ) ).toThrowError( `The "path1.path2.name" property was not declared.` );
+				expect( helper( "path2.name" ) ).toThrowError( IllegalArgumentError, `The "path2.name" property was not declared.` );
+				expect( helper( "path1.path2.name" ) ).toThrowError( IllegalArgumentError, `The "path1.path2.name" property was not declared.` );
 			} );
 
 		} );
@@ -257,8 +258,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					builder.withType( type );
 				};
 
-				expect( helper( "Type" ) ).toThrowError( "Types must be specified before the properties." );
-				expect( helper( "http://example.com/ns#Type" ) ).toThrowError( "Types must be specified before the properties." );
+				expect( helper( "Type" ) ).toThrowError( IllegalStateError, "Types must be specified before the properties." );
+				expect( helper( "http://example.com/ns#Type" ) ).toThrowError( IllegalStateError, "Types must be specified before the properties." );
 			} );
 
 			it( "should add the schema of the type", ():void => {
@@ -546,8 +547,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					builder.values( builder.object( Pointer.Factory.create( label ) ) );
 				};
 
-				expect( helper( "_:blank-node" ) ).toThrowError( `Blank node "_:blank-node" is not a valid value.` );
-				expect( helper( "_:another-one" ) ).toThrowError( `Blank node "_:another-one" is not a valid value.` );
+				expect( helper( "_:blank-node" ) ).toThrowError( IllegalArgumentError, `Blank node "_:blank-node" is not a valid value.` );
+				expect( helper( "_:another-one" ) ).toThrowError( IllegalArgumentError, `Blank node "_:another-one" is not a valid value.` );
 			} );
 
 		} );

@@ -1,5 +1,6 @@
 import { LimitToken, OffsetToken, OptionalToken, OrderToken, PatternToken, SelectToken } from "sparqler/tokens";
 
+import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryProperty from "./QueryProperty";
 import { getLevelRegExp } from "./Utils";
@@ -20,7 +21,7 @@ export class Class extends QueryDocumentBuilder.Class {
 
 	limit( limit:number ):this {
 		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new Error( `A sub-select token has not been defined.` );
+		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
 
 		const limitIndex:number = select.modifiers.findIndex( pattern => pattern.token === "limit" );
 		if( limitIndex !== - 1 ) select.modifiers.splice( limitIndex, 1 );
@@ -32,7 +33,7 @@ export class Class extends QueryDocumentBuilder.Class {
 
 	offset( offset:number ):this {
 		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new Error( `A sub-select token has not been defined.` );
+		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
 
 		const offsetIndex:number = select.modifiers.findIndex( pattern => pattern.token === "offset" );
 		if( offsetIndex !== - 1 ) select.modifiers.splice( offsetIndex, 1 );
@@ -43,10 +44,10 @@ export class Class extends QueryDocumentBuilder.Class {
 
 	private _orderBy( property:QueryProperty.Class, flow?:"ASC" | "DESC" ):this {
 		const levelRegex:RegExp = getLevelRegExp( this._document.name );
-		if( ! levelRegex.test( property.name ) ) throw new Error( `Property "${ property.name }" isn't a direct property of a member.` );
+		if( ! levelRegex.test( property.name ) ) throw new IllegalArgumentError( `Property "${ property.name }" isn't a direct property of the main query.` );
 
 		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new Error( `A sub-select token has not been defined.` );
+		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
 
 		const orderIndex:number = select.modifiers.findIndex( pattern => pattern.token === "order" );
 
@@ -61,7 +62,7 @@ export class Class extends QueryDocumentBuilder.Class {
 
 		const propertyDefinitions:OptionalToken = property.getPatterns()
 			.find( pattern => pattern.token === "optional" ) as OptionalToken;
-		if( ! propertyDefinitions ) throw new Error( `The property provided is not a valid property defined by the builder.` );
+		if( ! propertyDefinitions ) throw new IllegalArgumentError( `The property provided is not a valid property defined by the builder.` );
 
 		const propertyTriple:PatternToken = propertyDefinitions.patterns[ 0 ];
 

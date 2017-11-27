@@ -10,6 +10,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = require("../../Errors");
 var QueryContext = require("./QueryContext");
 var QueryProperty = require("./QueryProperty");
 var Utils_1 = require("./Utils");
@@ -66,7 +67,7 @@ var Class = (function (_super) {
             return _super.prototype.getSchemaFor.call(this, object);
         var property = this._propertiesMap.get(path);
         if (!property)
-            throw new Error("Schema path \"" + path + "\" does not exists.");
+            throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return property.getSchema();
     };
     Class.prototype._getTypeSchemas = function () {

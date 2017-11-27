@@ -1,12 +1,10 @@
 import { IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { DigestedPropertyDefinition } from "../../ObjectSchema";
+import { IllegalArgumentError } from "../../Errors";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as URI from "./../../RDF/URI";
 import * as Module from "./QueryContext";
 import { Class as QueryContext } from "./QueryContext";
-import QueryProperty from "./QueryProperty";
 import QueryVariable from "./QueryVariable";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
@@ -148,9 +146,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				} );
 				const queryContext:QueryContext = new QueryContext( context );
 				const helper:( iri:string ) => void = ( iri:string ) => () => queryContext.expandIRI( iri );
-				expect( helper( "ex:resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
-				expect( helper( "ex:another_resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
-				expect( helper( "schema2:resource" ) ).toThrowError( `Prefix "schema2" has not been declared.` );
+				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
+				expect( helper( "ex:another_resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
+				expect( helper( "schema2:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "schema2" has not been declared.` );
 			} );
 
 		} );
@@ -166,8 +164,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
 				const helper:( prefixed:string ) => void = prefixed => () => queryContext.compactIRI( prefixed );
 
-				expect( helper( "ex:resource" ) ).toThrowError( `Prefix "ex" has not been declared.` );
-				expect( helper( "schema:resource" ) ).toThrowError( `Prefix "schema" has not been declared.` );
+				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
+				expect( helper( "schema:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "schema" has not been declared.` );
 			} );
 
 			it( "should return IRI when absolute and no prefix match", ():void => {
@@ -302,7 +300,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( QueryContext.prototype.getSchemaFor ).toBeDefined();
 				expect( QueryContext.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
 			} );
-
 
 
 			it( "should call to the documents `getSchemaFor` method", ():void => {

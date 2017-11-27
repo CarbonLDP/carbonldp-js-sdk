@@ -31,7 +31,7 @@ var Class = (function () {
                 return this._context.getProperty(name);
             path = path.split(".").slice(0, -1).join(".");
         }
-        throw new Error("The \"" + originalName + "\" property was not declared.");
+        throw new Errors_1.IllegalArgumentError("The \"" + originalName + "\" property was not declared.");
     };
     Class.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
@@ -41,7 +41,7 @@ var Class = (function () {
     };
     Class.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
-            throw new Error("Types must be specified before the properties.");
+            throw new Errors_1.IllegalStateError("Types must be specified before the properties.");
         type = this._context.expandIRI(type);
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addOptionalPattern(this._typesTriple);
@@ -87,7 +87,7 @@ var Class = (function () {
         var termTokens = values.map(function (value) {
             var token = value.getToken();
             if (token.token === "blankNode")
-                throw new Error("Blank node \"" + token.label + "\" is not a valid value.");
+                throw new Errors_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
             return token;
         });
         if (!this._values.values.length)
@@ -110,7 +110,7 @@ var Class = (function () {
             }
         }
         if (!digestedDefinition.uri)
-            throw new Error("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
+            throw new Errors_1.IllegalArgumentError("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
         this._document.getSchema()
             .properties.set(propertyName, digestedDefinition);
         return digestedDefinition;

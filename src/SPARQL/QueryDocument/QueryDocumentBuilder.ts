@@ -1,10 +1,9 @@
-import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
-import { isObject, M } from "../../Utils";
-import { IllegalArgumentError } from "./../../Errors";
+import { isObject } from "../../Utils";
+import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import * as Pointer from "./../../Pointer";
-import * as URI from "./../../RDF/URI";
 import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
@@ -52,7 +51,7 @@ export class Class {
 			path = path.split( "." ).slice( 0, - 1 ).join( "." );
 		}
 
-		throw new Error( `The "${ originalName }" property was not declared.` );
+		throw new IllegalArgumentError( `The "${ originalName }" property was not declared.` );
 	}
 
 	value( value:string | number | boolean | Date ):QueryValue.Class {
@@ -64,7 +63,7 @@ export class Class {
 	}
 
 	withType( type:string ):this {
-		if( this._context.hasProperties( this._document.name ) ) throw new Error( "Types must be specified before the properties." );
+		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
 		type = this._context.expandIRI( type );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
@@ -122,7 +121,7 @@ export class Class {
 	values( ...values:( QueryValue.Class | QueryObject.Class )[] ):this {
 		const termTokens:( LiteralToken | IRIToken | PrefixedNameToken )[] = values.map( value => {
 			const token:TermToken = value.getToken();
-			if( token.token === "blankNode" ) throw new Error( `Blank node "${ token.label }" is not a valid value.` );
+			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );
 
 			return token;
 		} );
@@ -149,7 +148,7 @@ export class Class {
 			}
 		}
 
-		if( ! digestedDefinition.uri ) throw new Error( `Invalid property "${ propertyName }" definition, "@id" is necessary.` );
+		if( ! digestedDefinition.uri ) throw new IllegalArgumentError( `Invalid property "${ propertyName }" definition, "@id" is necessary.` );
 
 		this._document.getSchema()
 			.properties.set( propertyName, digestedDefinition );

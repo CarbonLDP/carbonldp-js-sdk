@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
+var Errors_1 = require("./../../Errors");
 var QueryDocumentBuilder = require("./QueryDocumentBuilder");
 var Utils_1 = require("./Utils");
 var Class = (function (_super) {
@@ -30,7 +31,7 @@ var Class = (function (_super) {
     Class.prototype.limit = function (limit) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Error("A sub-select token has not been defined.");
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
         var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
         if (limitIndex !== -1)
             select.modifiers.splice(limitIndex, 1);
@@ -40,7 +41,7 @@ var Class = (function (_super) {
     Class.prototype.offset = function (offset) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Error("A sub-select token has not been defined.");
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
         var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
         if (offsetIndex !== -1)
             select.modifiers.splice(offsetIndex, 1);
@@ -50,10 +51,10 @@ var Class = (function (_super) {
     Class.prototype._orderBy = function (property, flow) {
         var levelRegex = Utils_1.getLevelRegExp(this._document.name);
         if (!levelRegex.test(property.name))
-            throw new Error("Property \"" + property.name + "\" isn't a direct property of a member.");
+            throw new Errors_1.IllegalArgumentError("Property \"" + property.name + "\" isn't a direct property of the main query.");
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Error("A sub-select token has not been defined.");
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
             select.modifiers.splice(orderIndex, 1);
@@ -64,7 +65,7 @@ var Class = (function (_super) {
         var propertyDefinitions = property.getPatterns()
             .find(function (pattern) { return pattern.token === "optional"; });
         if (!propertyDefinitions)
-            throw new Error("The property provided is not a valid property defined by the builder.");
+            throw new Errors_1.IllegalArgumentError("The property provided is not a valid property defined by the builder.");
         var propertyTriple = propertyDefinitions.patterns[0];
         select.addPattern(new tokens_1.OptionalToken()
             .addPattern(propertyTriple));

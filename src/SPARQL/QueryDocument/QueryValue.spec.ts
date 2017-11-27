@@ -3,6 +3,7 @@ import { IRIToken, LiteralToken } from "sparqler/tokens";
 import AbstractContext from "../../AbstractContext";
 import * as XSD from "../../NS/XSD";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { IllegalArgumentError } from "./../../Errors";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryValue";
 import { Class as QueryValue } from "./QueryValue";
@@ -93,8 +94,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 					new QueryValue( queryContext, "" ).withType( type );
 				};
 
-				expect( helper( "no-string" ) ).toThrowError( "Invalid type provided." );
-				expect( helper( "invalid" ) ).toThrowError( "Invalid type provided." );
+				expect( helper( "no-string" ) ).toThrowError( IllegalArgumentError, "Invalid type provided." );
+				expect( helper( "invalid" ) ).toThrowError( IllegalArgumentError, "Invalid type provided." );
 			} );
 
 			it( "should create a serialize and add the type", ():void => {

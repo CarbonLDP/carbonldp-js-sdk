@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
+var Errors_1 = require("../../Errors");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryVariable = require("./QueryVariable");
 var Class = (function () {
@@ -30,15 +31,15 @@ var Class = (function () {
             iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
         }
         if (iri_1.isPrefixed(iri))
-            throw new Error("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
+            throw new Errors_1.IllegalArgumentError("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
         return iri;
     };
     Class.prototype.compactIRI = function (iri) {
         if (!this.context) {
             if (iri_1.isPrefixed(iri))
-                throw new Error("Prefixed iri \"" + iri + "\" is not supported without a context.");
+                throw new Errors_1.IllegalArgumentError("Prefixed iri \"" + iri + "\" is not supported without a context.");
             if (iri_1.isRelative(iri))
-                throw new Error("Relative iri \"" + iri + "\" is not supported without a context.");
+                throw new Errors_1.IllegalArgumentError("Relative iri \"" + iri + "\" is not supported without a context.");
             return new tokens_1.IRIToken(iri);
         }
         var schema = this.context.getObjectSchema();
@@ -60,7 +61,7 @@ var Class = (function () {
         namespace = prefixedName.namespace;
         if (!this._prefixesMap.has(namespace)) {
             if (!schema.prefixes.has(namespace))
-                throw new Error("Prefix \"" + namespace + "\" has not been declared.");
+                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
             var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace).stringValue);
             this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
         }

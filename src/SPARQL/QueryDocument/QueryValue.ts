@@ -2,6 +2,7 @@ import { isAbsolute } from "sparqler/iri";
 import { LiteralToken } from "sparqler/tokens";
 
 import { isDate } from "../../Utils";
+import { IllegalArgumentError } from "./../../Errors";
 import * as XSD from "./../../NS/XSD";
 import * as QueryContext from "./QueryContext";
 
@@ -25,7 +26,7 @@ export class Class {
 
 	withType( type:string ):this {
 		if( ! isAbsolute( type ) ) {
-			if( ! XSD.DataType.hasOwnProperty( type ) ) throw new Error( "Invalid type provided." );
+			if( ! XSD.DataType.hasOwnProperty( type ) ) throw new IllegalArgumentError( "Invalid type provided." );
 			type = XSD.DataType[ type ];
 		}
 		const value:string = this._context.serializeLiteral( type, this._value );

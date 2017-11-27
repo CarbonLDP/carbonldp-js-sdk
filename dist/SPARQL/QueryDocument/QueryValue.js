@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../../Utils");
+var Errors_1 = require("./../../Errors");
 var XSD = require("./../../NS/XSD");
 var Class = (function () {
     function Class(context, value) {
@@ -19,7 +20,7 @@ var Class = (function () {
     Class.prototype.withType = function (type) {
         if (!iri_1.isAbsolute(type)) {
             if (!XSD.DataType.hasOwnProperty(type))
-                throw new Error("Invalid type provided.");
+                throw new Errors_1.IllegalArgumentError("Invalid type provided.");
             type = XSD.DataType[type];
         }
         var value = this._context.serializeLiteral(type, this._value);

@@ -2,6 +2,7 @@ import { isPrefixed, isRelative } from "sparqler/iri";
 import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
+import { IllegalArgumentError } from "../../Errors";
 import { DigestedObjectSchema, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
 
@@ -43,15 +44,15 @@ export class Class implements Resolver {
 			iri = SchemaUtils.resolveURI( iri, this.context.getObjectSchema(), vocab );
 		}
 
-		if( isPrefixed( iri ) ) throw new Error( `Prefix "${ iri.split( ":" )[ 0 ] }" has not been declared.` );
+		if( isPrefixed( iri ) ) throw new IllegalArgumentError( `Prefix "${ iri.split( ":" )[ 0 ] }" has not been declared.` );
 
 		return iri;
 	}
 
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
 		if( ! this.context ) {
-			if( isPrefixed( iri ) ) throw new Error( `Prefixed iri "${ iri }" is not supported without a context.` );
-			if( isRelative( iri ) ) throw new Error( `Relative iri "${ iri }" is not supported without a context.` );
+			if( isPrefixed( iri ) ) throw new IllegalArgumentError( `Prefixed iri "${ iri }" is not supported without a context.` );
+			if( isRelative( iri ) ) throw new IllegalArgumentError( `Relative iri "${ iri }" is not supported without a context.` );
 			return new IRIToken( iri );
 		}
 
@@ -73,7 +74,7 @@ export class Class implements Resolver {
 
 		namespace = prefixedName.namespace;
 		if( ! this._prefixesMap.has( namespace ) ) {
-			if( ! schema.prefixes.has( namespace ) ) throw new Error( `Prefix "${ namespace }" has not been declared.` );
+			if( ! schema.prefixes.has( namespace ) ) throw new IllegalArgumentError( `Prefix "${ namespace }" has not been declared.` );
 			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ).stringValue );
 			this._prefixesMap.set( namespace, new PrefixToken( namespace, prefixIRI ) );
 		}

@@ -1,6 +1,7 @@
 import { PatternToken } from "sparqler/tokens";
 
 import * as Context from "../../Context";
+import { IllegalArgumentError } from "../../Errors";
 import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
@@ -59,7 +60,7 @@ export class Class extends QueryContext.Class {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
 		const property:QueryProperty.Class = this._propertiesMap.get( path );
-		if( ! property ) throw new Error( `Schema path "${ path }" does not exists.` );
+		if( ! property ) throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
 
 		return property.getSchema();
 	}

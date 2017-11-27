@@ -5623,6 +5623,7 @@ exports.QueryVariable = QueryVariable;
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(42);
 var tokens_1 = __webpack_require__(6);
+var Errors_1 = __webpack_require__(3);
 var ObjectSchema_1 = __webpack_require__(15);
 var QueryVariable = __webpack_require__(92);
 var Class = (function () {
@@ -5651,15 +5652,15 @@ var Class = (function () {
             iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
         }
         if (iri_1.isPrefixed(iri))
-            throw new Error("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
+            throw new Errors_1.IllegalArgumentError("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
         return iri;
     };
     Class.prototype.compactIRI = function (iri) {
         if (!this.context) {
             if (iri_1.isPrefixed(iri))
-                throw new Error("Prefixed iri \"" + iri + "\" is not supported without a context.");
+                throw new Errors_1.IllegalArgumentError("Prefixed iri \"" + iri + "\" is not supported without a context.");
             if (iri_1.isRelative(iri))
-                throw new Error("Relative iri \"" + iri + "\" is not supported without a context.");
+                throw new Errors_1.IllegalArgumentError("Relative iri \"" + iri + "\" is not supported without a context.");
             return new tokens_1.IRIToken(iri);
         }
         var schema = this.context.getObjectSchema();
@@ -5681,7 +5682,7 @@ var Class = (function () {
         namespace = prefixedName.namespace;
         if (!this._prefixesMap.has(namespace)) {
             if (!schema.prefixes.has(namespace))
-                throw new Error("Prefix \"" + namespace + "\" has not been declared.");
+                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
             var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace).stringValue);
             this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
         }
@@ -8187,7 +8188,7 @@ var Class = (function () {
                 return this._context.getProperty(name);
             path = path.split(".").slice(0, -1).join(".");
         }
-        throw new Error("The \"" + originalName + "\" property was not declared.");
+        throw new Errors_1.IllegalArgumentError("The \"" + originalName + "\" property was not declared.");
     };
     Class.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
@@ -8197,7 +8198,7 @@ var Class = (function () {
     };
     Class.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
-            throw new Error("Types must be specified before the properties.");
+            throw new Errors_1.IllegalStateError("Types must be specified before the properties.");
         type = this._context.expandIRI(type);
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addOptionalPattern(this._typesTriple);
@@ -8243,7 +8244,7 @@ var Class = (function () {
         var termTokens = values.map(function (value) {
             var token = value.getToken();
             if (token.token === "blankNode")
-                throw new Error("Blank node \"" + token.label + "\" is not a valid value.");
+                throw new Errors_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
             return token;
         });
         if (!this._values.values.length)
@@ -8266,7 +8267,7 @@ var Class = (function () {
             }
         }
         if (!digestedDefinition.uri)
-            throw new Error("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
+            throw new Errors_1.IllegalArgumentError("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
         this._document.getSchema()
             .properties.set(propertyName, digestedDefinition);
         return digestedDefinition;
@@ -8315,6 +8316,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(42);
 var tokens_1 = __webpack_require__(6);
 var Utils_1 = __webpack_require__(0);
+var Errors_1 = __webpack_require__(3);
 var XSD = __webpack_require__(39);
 var Class = (function () {
     function Class(context, value) {
@@ -8331,7 +8333,7 @@ var Class = (function () {
     Class.prototype.withType = function (type) {
         if (!iri_1.isAbsolute(type)) {
             if (!XSD.DataType.hasOwnProperty(type))
-                throw new Error("Invalid type provided.");
+                throw new Errors_1.IllegalArgumentError("Invalid type provided.");
             type = XSD.DataType[type];
         }
         var value = this._context.serializeLiteral(type, this._value);
@@ -16233,6 +16235,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = __webpack_require__(3);
 var QueryContext = __webpack_require__(56);
 var QueryProperty = __webpack_require__(93);
 var Utils_1 = __webpack_require__(44);
@@ -16289,7 +16292,7 @@ var Class = (function (_super) {
             return _super.prototype.getSchemaFor.call(this, object);
         var property = this._propertiesMap.get(path);
         if (!property)
-            throw new Error("Schema path \"" + path + "\" does not exists.");
+            throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return property.getSchema();
     };
     Class.prototype._getTypeSchemas = function () {
@@ -16377,6 +16380,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
+var Errors_1 = __webpack_require__(3);
 var QueryDocumentBuilder = __webpack_require__(94);
 var Utils_1 = __webpack_require__(44);
 var Class = (function (_super) {
@@ -16396,7 +16400,7 @@ var Class = (function (_super) {
     Class.prototype.limit = function (limit) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Error("A sub-select token has not been defined.");
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
         var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
         if (limitIndex !== -1)
             select.modifiers.splice(limitIndex, 1);
@@ -16406,7 +16410,7 @@ var Class = (function (_super) {
     Class.prototype.offset = function (offset) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Error("A sub-select token has not been defined.");
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
         var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
         if (offsetIndex !== -1)
             select.modifiers.splice(offsetIndex, 1);
@@ -16416,10 +16420,10 @@ var Class = (function (_super) {
     Class.prototype._orderBy = function (property, flow) {
         var levelRegex = Utils_1.getLevelRegExp(this._document.name);
         if (!levelRegex.test(property.name))
-            throw new Error("Property \"" + property.name + "\" isn't a direct property of a member.");
+            throw new Errors_1.IllegalArgumentError("Property \"" + property.name + "\" isn't a direct property of the main query.");
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Error("A sub-select token has not been defined.");
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
             select.modifiers.splice(orderIndex, 1);
@@ -16430,7 +16434,7 @@ var Class = (function (_super) {
         var propertyDefinitions = property.getPatterns()
             .find(function (pattern) { return pattern.token === "optional"; });
         if (!propertyDefinitions)
-            throw new Error("The property provided is not a valid property defined by the builder.");
+            throw new Errors_1.IllegalArgumentError("The property provided is not a valid property defined by the builder.");
         var propertyTriple = propertyDefinitions.patterns[0];
         select.addPattern(new tokens_1.OptionalToken()
             .addPattern(propertyTriple));
