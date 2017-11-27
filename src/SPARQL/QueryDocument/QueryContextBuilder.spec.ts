@@ -179,13 +179,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 			it( "should add property to the properties map", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
-				queryContext.addProperty( "name", null );
+				queryContext.addProperty( "name" );
 				expect( queryContext[ "_propertiesMap" ] ).toEqual( jasmine.objectContaining( new Map( [ [
 					"name",
 					new QueryProperty( queryContext, "name" ),
 				] ] ) ) );
 
-				queryContext.addProperty( "document.property", null );
+				queryContext.addProperty( "document.property" );
 				expect( queryContext[ "_propertiesMap" ] ).toEqual( jasmine.objectContaining( new Map( [ [
 					"document.property",
 					new QueryProperty( queryContext, "document.property" ),

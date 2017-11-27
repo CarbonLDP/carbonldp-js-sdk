@@ -11,13 +11,12 @@ export class Class {
 	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
-	constructor( context:QueryContext.Class, name:string, pattern?:PatternToken ) {
+	constructor( context:QueryContext.Class, name:string ) {
 		this.name = name;
 		this.variable = context.getVariable( name );
 
 		this._context = context;
 		this._patterns = [];
-		if( pattern ) this._patterns.push( pattern );
 	}
 
 	addPattern( ...patterns:PatternToken[] ):this {

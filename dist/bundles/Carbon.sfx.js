@@ -8104,13 +8104,11 @@ exports.default = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ObjectSchema_1 = __webpack_require__(15);
 var Class = (function () {
-    function Class(context, name, pattern) {
+    function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
         this._context = context;
         this._patterns = [];
-        if (pattern)
-            this._patterns.push(pattern);
     }
     Class.prototype.addPattern = function () {
         var patterns = [];
@@ -8174,7 +8172,7 @@ var Class = (function () {
             .addPredicate(new tokens_1.PredicateToken("a")
             .addObject(queryContext.getVariable(property.name + "__types")))));
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
-        this._values = new tokens_1.ValuesToken();
+        this._values = new tokens_1.ValuesToken().addValues(this._document.variable);
         this._schema = this._context.getSchemaFor({ id: "" });
     }
     Class.prototype.property = function (name) {
@@ -8218,7 +8216,9 @@ var Class = (function () {
             var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
             var name_1 = this._document.name + "." + propertyName;
             var propertyPattern = Utils_2.createPropertyPattern(this._context, this._document.name, name_1, digestedDefinition);
-            var property = this._context.addProperty(name_1, propertyPattern);
+            var property = this._context
+                .addProperty(name_1)
+                .addPattern(propertyPattern);
             if ("query" in propertyDefinition) {
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
@@ -8247,10 +8247,8 @@ var Class = (function () {
                 throw new Errors_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
             return token;
         });
-        if (!this._values.values.length)
-            this._document
-                .addPattern(this._values
-                .addValues(this._document.variable));
+        if (!this._values.values[0].length)
+            this._document.addPattern(this._values);
         (_a = this._values.values[0]).push.apply(_a, termTokens);
         return this;
         var _a;
@@ -16254,8 +16252,8 @@ var Class = (function (_super) {
         return Array.from(this._propertiesMap.keys())
             .some(function (key) { return key.startsWith(name); });
     };
-    Class.prototype.addProperty = function (name, pattern) {
-        var property = new QueryProperty.Class(this, name, pattern);
+    Class.prototype.addProperty = function (name) {
+        var property = new QueryProperty.Class(this, name);
         this._propertiesMap.set(name, property);
         return property;
     };

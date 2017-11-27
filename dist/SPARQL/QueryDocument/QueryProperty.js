@@ -2,13 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Class = (function () {
-    function Class(context, name, pattern) {
+    function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
         this._context = context;
         this._patterns = [];
-        if (pattern)
-            this._patterns.push(pattern);
     }
     Class.prototype.addPattern = function () {
         var patterns = [];

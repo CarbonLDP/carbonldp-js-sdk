@@ -1,4 +1,3 @@
-import { PatternToken } from "sparqler/tokens";
 import * as Context from "../../Context";
 import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
@@ -9,7 +8,7 @@ export declare class Class extends QueryContext.Class {
     constructor(context?: Context.Class);
     hasProperty(name: string): boolean;
     hasProperties(name: string): boolean;
-    addProperty(name: string, pattern?: PatternToken): QueryProperty.Class;
+    addProperty(name: string): QueryProperty.Class;
     getProperty(name: string): QueryProperty.Class;
     getProperties(propertyLevel: string): QueryProperty.Class[];
     getInheritTypeDefinition(propertyName: string, propertyURI?: string, existingSchema?: DigestedObjectSchema): DigestedPropertyDefinition;

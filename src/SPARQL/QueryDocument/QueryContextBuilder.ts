@@ -27,8 +27,8 @@ export class Class extends QueryContext.Class {
 			.some( key => key.startsWith( name ) );
 	}
 
-	addProperty( name:string, pattern?:PatternToken ):QueryProperty.Class {
-		const property:QueryProperty.Class = new QueryProperty.Class( this, name, pattern );
+	addProperty( name:string ):QueryProperty.Class {
+		const property:QueryProperty.Class = new QueryProperty.Class( this, name );
 		this._propertiesMap.set( name, property );
 		return property;
 	}

@@ -1,8 +1,8 @@
-import { OptionalToken, PatternToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { OptionalToken, ValuesToken, VariableToken } from "sparqler/tokens";
+
 import AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
 import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as Document from "./../../Document";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryProperty";
 import { Class as QueryProperty } from "./QueryProperty";
@@ -53,13 +53,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 				expect( queryProperty[ "_patterns" ] ).toEqual( [] );
 			} );
-
-			it( "should add a pattern when provided", ():void => {
-				const pattern:PatternToken = new OptionalToken();
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name", pattern );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [ new OptionalToken() ] );
-			} );
-
 		} );
 
 		describe( method( INSTANCE, "addPattern" ), ():void => {
@@ -119,7 +112,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			} );
 
 			it( "should add a pattern to the first optional token in the patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name", new OptionalToken() );
+				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" ).addPattern( new OptionalToken() );
 
 				queryProperty.addOptionalPattern( new ValuesToken() );
 				expect( queryProperty[ "_patterns" ] ).toEqual( [
@@ -154,7 +147,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			} );
 
 			it( "should add multiple patterns to the first optional token in the patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name", new OptionalToken() );
+				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" ).addPattern( new OptionalToken() );
 
 				queryProperty.addOptionalPattern( new ValuesToken(), new OptionalToken() );
 				expect( queryProperty[ "_patterns" ] ).toEqual( [

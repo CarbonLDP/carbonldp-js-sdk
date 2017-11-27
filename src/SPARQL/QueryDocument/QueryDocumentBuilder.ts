@@ -34,7 +34,7 @@ export class Class {
 		);
 
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
-		this._values = new ValuesToken();
+		this._values = new ValuesToken().addValues( this._document.variable );
 
 		this._schema = this._context.getSchemaFor( { id: "" } );
 	}
@@ -95,8 +95,10 @@ export class Class {
 				name,
 				digestedDefinition
 			);
+			const property:QueryProperty.Class = this._context
+				.addProperty( name )
+				.addPattern( propertyPattern );
 
-			const property:QueryProperty.Class = this._context.addProperty( name, propertyPattern );
 			if( "query" in propertyDefinition ) {
 				const builder:Class = new Class( this._context, property );
 				if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
@@ -126,10 +128,7 @@ export class Class {
 			return token;
 		} );
 
-		if( ! this._values.values.length ) this._document
-			.addPattern( this._values
-				.addValues( this._document.variable ) );
-
+		if( ! this._values.values[ 0 ].length ) this._document.addPattern( this._values );
 		this._values.values[ 0 ].push( ...termTokens );
 
 		return this;

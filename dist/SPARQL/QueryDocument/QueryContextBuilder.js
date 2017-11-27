@@ -29,8 +29,8 @@ var Class = (function (_super) {
         return Array.from(this._propertiesMap.keys())
             .some(function (key) { return key.startsWith(name); });
     };
-    Class.prototype.addProperty = function (name, pattern) {
-        var property = new QueryProperty.Class(this, name, pattern);
+    Class.prototype.addProperty = function (name) {
+        var property = new QueryProperty.Class(this, name);
         this._propertiesMap.set(name, property);
         return property;
     };

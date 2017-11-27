@@ -7,7 +7,7 @@ export declare class Class {
     private _context;
     private _patterns;
     private _schema;
-    constructor(context: QueryContext.Class, name: string, pattern?: PatternToken);
+    constructor(context: QueryContext.Class, name: string);
     addPattern(...patterns: PatternToken[]): this;
     addOptionalPattern(...patterns: PatternToken[]): this;
     getPatterns(): PatternToken[];

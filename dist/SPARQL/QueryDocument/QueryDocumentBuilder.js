@@ -17,7 +17,7 @@ var Class = (function () {
             .addPredicate(new tokens_1.PredicateToken("a")
             .addObject(queryContext.getVariable(property.name + "__types")))));
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
-        this._values = new tokens_1.ValuesToken();
+        this._values = new tokens_1.ValuesToken().addValues(this._document.variable);
         this._schema = this._context.getSchemaFor({ id: "" });
     }
     Class.prototype.property = function (name) {
@@ -61,7 +61,9 @@ var Class = (function () {
             var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
             var name_1 = this._document.name + "." + propertyName;
             var propertyPattern = Utils_2.createPropertyPattern(this._context, this._document.name, name_1, digestedDefinition);
-            var property = this._context.addProperty(name_1, propertyPattern);
+            var property = this._context
+                .addProperty(name_1)
+                .addPattern(propertyPattern);
             if ("query" in propertyDefinition) {
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
@@ -90,10 +92,8 @@ var Class = (function () {
                 throw new Errors_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
             return token;
         });
-        if (!this._values.values.length)
-            this._document
-                .addPattern(this._values
-                .addValues(this._document.variable));
+        if (!this._values.values[0].length)
+            this._document.addPattern(this._values);
         (_a = this._values.values[0]).push.apply(_a, termTokens);
         return this;
         var _a;
