@@ -8142,6 +8142,9 @@ var Class = (function () {
         this._schema.vocab = this._context.expandIRI("") || null;
         return this._schema;
     };
+    Class.prototype.isOptional = function () {
+        return this._optional;
+    };
     Class.prototype.setOptional = function (optional) {
         this._optional = optional;
         return this;
@@ -8258,6 +8261,14 @@ var Class = (function () {
         if (!this._values.values[0].length)
             this._document.addPattern(this._values);
         (_a = this._values.values[0]).push.apply(_a, termTokens);
+        var property = this._document;
+        while (property.isOptional()) {
+            property.setOptional(false);
+            property = this._context.getProperty(property.name
+                .split(".")
+                .slice(0, -1)
+                .join("."));
+        }
         return this;
         var _a;
     };
@@ -10111,11 +10122,16 @@ var Class = (function () {
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         (function triplesAdder(patterns) {
-            patterns
-                .filter(function (pattern) { return pattern.token === "optional"; })
-                .forEach(function (optional) {
-                construct.addTriple(optional.patterns[0]);
-                triplesAdder(optional.patterns);
+            patterns.forEach(function (pattern) {
+                if (pattern.token === "optional")
+                    return triplesAdder(pattern.patterns);
+                if (pattern.token !== "subject")
+                    return;
+                var valid = pattern.predicates
+                    .map(function (predicate) { return predicate.objects; })
+                    .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
+                if (valid)
+                    construct.addTriple(pattern);
             });
         })(constructPatterns);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);

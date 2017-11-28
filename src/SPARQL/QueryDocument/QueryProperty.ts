@@ -44,6 +44,10 @@ export class Class {
 		return this._schema;
 	}
 
+	isOptional():boolean {
+		return this._optional;
+	}
+
 	setOptional( optional:boolean ):this {
 		this._optional = optional;
 		return this;

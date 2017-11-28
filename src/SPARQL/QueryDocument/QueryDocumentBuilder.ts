@@ -129,6 +129,16 @@ export class Class {
 		if( ! this._values.values[ 0 ].length ) this._document.addPattern( this._values );
 		this._values.values[ 0 ].push( ...termTokens );
 
+		let property:QueryProperty.Class = this._document;
+		while( property.isOptional() ) {
+			property.setOptional( false );
+			property = this._context.getProperty( property.name
+				.split( "." )
+				.slice( 0, - 1 )
+				.join( "." )
+			);
+		}
+
 		return this;
 	}
 

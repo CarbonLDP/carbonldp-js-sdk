@@ -92,6 +92,14 @@ var Class = (function () {
         if (!this._values.values[0].length)
             this._document.addPattern(this._values);
         (_a = this._values.values[0]).push.apply(_a, termTokens);
+        var property = this._document;
+        while (property.isOptional()) {
+            property.setOptional(false);
+            property = this._context.getProperty(property.name
+                .split(".")
+                .slice(0, -1)
+                .join("."));
+        }
         return this;
         var _a;
     };

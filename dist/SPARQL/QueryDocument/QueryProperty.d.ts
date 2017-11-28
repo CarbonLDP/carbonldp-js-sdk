@@ -12,6 +12,7 @@ export declare class Class {
     addPattern(...patterns: PatternToken[]): this;
     getPatterns(): PatternToken[];
     getSchema(): DigestedObjectSchema;
+    isOptional(): boolean;
     setOptional(optional: boolean): this;
     getTriple(): SubjectToken;
     toString(): string;

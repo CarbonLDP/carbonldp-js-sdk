@@ -33,6 +33,9 @@ var Class = (function () {
         this._schema.vocab = this._context.expandIRI("") || null;
         return this._schema;
     };
+    Class.prototype.isOptional = function () {
+        return this._optional;
+    };
     Class.prototype.setOptional = function (optional) {
         this._optional = optional;
         return this;

@@ -892,12 +892,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			.addPrologues( ...queryContext.getPrologues() );
 
 		(function triplesAdder( patterns:PatternToken[] ):void {
-			patterns
-				.filter( pattern => pattern.token === "optional" )
-				.forEach( ( optional:OptionalToken ) => {
-					construct.addTriple( optional.patterns[ 0 ] as TripleToken );
-					triplesAdder( optional.patterns );
-				} );
+			patterns.forEach( ( pattern:PatternToken ) => {
+				if( pattern.token === "optional" )
+					return triplesAdder( pattern.patterns );
+
+				if( pattern.token !== "subject" ) return;
+
+				const valid:boolean = pattern.predicates
+					.map( predicate => predicate.objects )
+					.some( objects => objects.some( object => object.token === "variable" ) );
+				if( valid ) construct.addTriple( pattern );
+			} );
 		})( constructPatterns );
 
 		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );

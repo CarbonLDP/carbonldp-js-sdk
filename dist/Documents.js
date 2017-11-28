@@ -762,11 +762,16 @@ var Class = (function () {
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         (function triplesAdder(patterns) {
-            patterns
-                .filter(function (pattern) { return pattern.token === "optional"; })
-                .forEach(function (optional) {
-                construct.addTriple(optional.patterns[0]);
-                triplesAdder(optional.patterns);
+            patterns.forEach(function (pattern) {
+                if (pattern.token === "optional")
+                    return triplesAdder(pattern.patterns);
+                if (pattern.token !== "subject")
+                    return;
+                var valid = pattern.predicates
+                    .map(function (predicate) { return predicate.objects; })
+                    .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
+                if (valid)
+                    construct.addTriple(pattern);
             });
         })(constructPatterns);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
