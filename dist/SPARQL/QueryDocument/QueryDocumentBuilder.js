@@ -12,12 +12,9 @@ var Class = (function () {
     function Class(queryContext, property) {
         this.inherit = inherit;
         this._context = queryContext;
-        this._document = property.addOptionalPattern(new tokens_1.OptionalToken()
-            .addPattern(new tokens_1.SubjectToken(property.variable)
-            .addPredicate(new tokens_1.PredicateToken("a")
-            .addObject(queryContext.getVariable(property.name + "__types")))));
+        this._document = property;
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
-        this._values = new tokens_1.ValuesToken().addValues(this._document.variable);
+        this._values = new tokens_1.ValuesToken().addValues(property.variable);
         this._schema = this._context.getSchemaFor({ id: "" });
     }
     Class.prototype.property = function (name) {
@@ -44,7 +41,7 @@ var Class = (function () {
             throw new Errors_1.IllegalStateError("Types must be specified before the properties.");
         type = this._context.expandIRI(type);
         if (!this._typesTriple.predicates[0].objects.length)
-            this._document.addOptionalPattern(this._typesTriple);
+            this._document.addPattern(this._typesTriple);
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
         if (!this._context.context)
             return this;
@@ -60,22 +57,22 @@ var Class = (function () {
             var propertyDefinition = Utils_1.isObject(queryPropertySchema) ? queryPropertySchema : { "@id": queryPropertySchema };
             var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
             var name_1 = this._document.name + "." + propertyName;
-            var propertyPattern = Utils_2.createPropertyPattern(this._context, this._document.name, name_1, digestedDefinition);
-            var property = this._context
-                .addProperty(name_1)
-                .addPattern(propertyPattern);
+            var property = (_a = this._context
+                .addProperty(name_1)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name_1, digestedDefinition));
             if ("query" in propertyDefinition) {
+                if (digestedDefinition.literal === false)
+                    property.addPattern(Utils_2.createTypePattern(this._context, name_1));
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
                     throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
             }
-            (_a = this._document).addOptionalPattern.apply(_a, property.getPatterns());
+            (_b = this._document).addPattern.apply(_b, property.getPatterns());
         }
         return this;
-        var _a;
+        var _a, _b;
     };
     Class.prototype.filter = function (constraint) {
-        var baseName = this._document.name.split(".").pop();
+        var baseName = this._document.name.split(".")[0];
         this._context
             .getProperty(baseName)
             .addPattern(new tokens_1.FilterToken(constraint));

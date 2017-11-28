@@ -28,7 +28,7 @@ import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
 import { QueryContext, QueryContextBuilder, QueryContextPartial, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
-import { createPropertyPattern } from "./SPARQL/QueryDocument/Utils";
+import { createPropertyPatterns, createTypePattern } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import { mapTupleArray, promiseMethod } from "./Utils";
 
@@ -235,7 +235,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			parentURI = this.getRequestURI( parentURI );
 
 			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
-			const childrenProperty:QueryProperty.Class = queryContext.addProperty( "child" );
+			const childrenProperty:QueryProperty.Class = queryContext
+				.addProperty( "child" )
+				.setOptional( false );
 
 			const selectChildren:SelectToken = new SelectToken()
 				.addVariable( childrenProperty.variable )
@@ -330,7 +332,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			uri = this.getRequestURI( uri );
 
 			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
-			const membersProperty:QueryProperty.Class = queryContext.addProperty( "member" );
+			const membersProperty:QueryProperty.Class = queryContext
+				.addProperty( "member" )
+				.setOptional( false );
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
@@ -749,7 +753,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private getPartialDocument<T extends object>( uri:string, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
 
-		const documentProperty:QueryProperty.Class = queryContext.addProperty( "document" );
+		const documentProperty:QueryProperty.Class = queryContext
+			.addProperty( "document" )
+			.setOptional( false );
 
 		const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 		documentProperty.addPattern( propertyValue );
@@ -806,7 +812,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	private refreshPartialDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
-
 		const queryContext:QueryContextPartial.Class = new QueryContextPartial.Class( persistedDocument, this.context );
 
 		const targetName:string = "document";
@@ -827,12 +832,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 				const path:string = `${ parentName }.${ propertyName }`;
 
-				const propertyPattern:OptionalToken = createPropertyPattern(
-					queryContext,
-					parentName,
-					path,
-					digestedProperty
-				);
+				const propertyPattern:OptionalToken = new OptionalToken()
+					.addPattern( ...createPropertyPatterns(
+						queryContext,
+						parentName,
+						path,
+						digestedProperty
+					) );
 				parentAdder.addPattern( propertyPattern );
 
 				const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
@@ -857,6 +863,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
+
+		targetProperty.addPattern( createTypePattern( queryContext, targetProperty.name ) );
 
 		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
 			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );

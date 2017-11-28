@@ -62,11 +62,9 @@ var Class = (function (_super) {
             select.patterns.splice(optionalIndex, 1);
         }
         select.modifiers.unshift(new tokens_1.OrderToken(property.variable, flow));
-        var propertyDefinitions = property.getPatterns()
-            .find(function (pattern) { return pattern.token === "optional"; });
-        if (!propertyDefinitions)
+        var propertyTriple = property.getTriple();
+        if (!propertyTriple)
             throw new Errors_1.IllegalArgumentError("The property provided is not a valid property defined by the builder.");
-        var propertyTriple = propertyDefinitions.patterns[0];
         select.addPattern(new tokens_1.OptionalToken()
             .addPattern(propertyTriple));
         return this;

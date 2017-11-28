@@ -199,7 +199,9 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
-            var childrenProperty = queryContext.addProperty("child");
+            var childrenProperty = queryContext
+                .addProperty("child")
+                .setOptional(false);
             var selectChildren = new tokens_1.SelectToken()
                 .addVariable(childrenProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
@@ -275,7 +277,9 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
-            var membersProperty = queryContext.addProperty("member");
+            var membersProperty = queryContext
+                .addProperty("member")
+                .setOptional(false);
             var membershipResource = queryContext.getVariable("membershipResource");
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
             var selectMembers = new tokens_1.SelectToken()
@@ -651,7 +655,9 @@ var Class = (function () {
     };
     Class.prototype.getPartialDocument = function (uri, requestOptions, queryBuilderFn) {
         var queryContext = new QueryDocument_1.QueryContextBuilder.Class(this.context);
-        var documentProperty = queryContext.addProperty("document");
+        var documentProperty = queryContext
+            .addProperty("document")
+            .setOptional(false);
         var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
         documentProperty.addPattern(propertyValue);
         return this.executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, queryBuilderFn)
@@ -715,7 +721,7 @@ var Class = (function () {
                 .addObject(queryContext.getVariable(parentName + ".types")))));
             resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
                 var path = parentName + "." + propertyName;
-                var propertyPattern = Utils_2.createPropertyPattern(queryContext, parentName, path, digestedProperty);
+                var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_2.createPropertyPatterns(queryContext, parentName, path, digestedProperty));
                 parentAdder.addPattern(propertyPattern);
                 var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
                 var propertyFragment = propertyValues
@@ -724,6 +730,7 @@ var Class = (function () {
                 if (!propertyFragment)
                     return;
                 createRefreshQuery(propertyPattern, propertyFragment, path);
+                var _a;
             });
         })(constructPatterns, persistedDocument, targetName);
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
@@ -736,6 +743,7 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
+        targetProperty.addPattern(Utils_2.createTypePattern(queryContext, targetProperty.name));
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();

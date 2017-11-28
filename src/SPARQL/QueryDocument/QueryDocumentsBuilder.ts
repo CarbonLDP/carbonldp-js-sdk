@@ -1,4 +1,4 @@
-import { LimitToken, OffsetToken, OptionalToken, OrderToken, PatternToken, SelectToken } from "sparqler/tokens";
+import { LimitToken, OffsetToken, OptionalToken, OrderToken, PatternToken, SelectToken, SubjectToken } from "sparqler/tokens";
 
 import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
@@ -60,11 +60,8 @@ export class Class extends QueryDocumentBuilder.Class {
 
 		select.modifiers.unshift( new OrderToken( property.variable, flow ) );
 
-		const propertyDefinitions:OptionalToken = property.getPatterns()
-			.find( pattern => pattern.token === "optional" ) as OptionalToken;
-		if( ! propertyDefinitions ) throw new IllegalArgumentError( `The property provided is not a valid property defined by the builder.` );
-
-		const propertyTriple:PatternToken = propertyDefinitions.patterns[ 0 ];
+		const propertyTriple:SubjectToken = property.getTriple();
+		if( ! propertyTriple ) throw new IllegalArgumentError( `The property provided is not a valid property defined by the builder.` );
 
 		select.addPattern( new OptionalToken()
 			.addPattern( propertyTriple )

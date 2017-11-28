@@ -2,12 +2,12 @@ import { LimitToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, Pre
 
 import AbstractContext from "../../AbstractContext";
 import { clazz, extendsClass, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as Module from "./QueryDocumentsBuilder";
 import { Class as QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import * as QueryProperty from "./QueryProperty";
-import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
 
@@ -43,7 +43,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 
 			queryContext = new QueryContextBuilder( context );
 
-			baseProperty = queryContext.addProperty( "member" );
+			baseProperty = queryContext
+				.addProperty( "member" )
+				.setOptional( false );
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
@@ -90,7 +92,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const spy:jasmine.Spy = spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
-				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 				builder.orderBy( property );
 
 				expect( spy ).toHaveBeenCalledWith( property );
@@ -100,7 +103,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
-				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 				const returnedValue:QueryDocumentsBuilder = builder.orderBy( property );
 
 				expect( returnedValue ).toBe( builder );
@@ -119,7 +123,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const spy:jasmine.Spy = spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
-				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 				builder.orderAscendantBy( property );
 
 				expect( spy ).toHaveBeenCalledWith( property, "ASC" );
@@ -129,7 +134,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
-				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 				const returnedValue:QueryDocumentsBuilder = builder.orderAscendantBy( property );
 
 				expect( returnedValue ).toBe( builder );
@@ -148,7 +154,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const spy:jasmine.Spy = spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
-				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 				builder.orderDescendantBy( property );
 
 				expect( spy ).toHaveBeenCalledWith( property, "DESC" );
@@ -158,7 +165,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				spyOn( builder, "_orderBy" as any ).and.returnValue( builder );
 
-				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 				const returnedValue:QueryDocumentsBuilder = builder.orderDescendantBy( property );
 
 				expect( returnedValue ).toBe( builder );
@@ -320,7 +328,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 			it( "should throw error when property is not a direct property", ():void => {
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => () => {
-					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
+					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name )
+						.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 					builder[ "_orderBy" ]( property );
 				};
 
@@ -336,7 +345,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				baseProperty = queryContext.addProperty( "member" );
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => () => {
-					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
+					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name )
+						.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
 					builder[ "_orderBy" ]( property );
 				};
 
@@ -359,10 +369,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => {
 					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
-					property.addPattern( new OptionalToken()
-						.addPattern( new SubjectToken( baseProperty.variable )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-								.addObject( property.variable ) ) ) );
+					property.addPattern( new SubjectToken( baseProperty.variable )
+						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addObject( property.variable )
+						)
+					);
 
 					const returnedValue:QueryDocumentsBuilder = builder[ "_orderBy" ]( property );
 					expect( returnedValue ).toBe( builder );
@@ -376,11 +387,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				property.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( property.variable )
-						)
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
 					)
 				);
 
@@ -394,11 +403,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				property.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( property.variable )
-						)
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
 					)
 				);
 
@@ -412,11 +419,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				property.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( property.variable )
-						)
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
 					)
 				);
 
@@ -430,21 +435,17 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const oldProperty:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property-1" );
-				oldProperty.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( oldProperty.variable )
-						)
+				oldProperty.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( oldProperty.variable )
 					)
 				);
 				builder[ "_orderBy" ]( oldProperty );
 
 				const newProperty:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property-2" );
-				newProperty.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( newProperty.variable )
-						)
+				newProperty.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( newProperty.variable )
 					)
 				);
 				builder[ "_orderBy" ]( newProperty );
@@ -460,11 +461,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				property.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( property.variable )
-						)
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
 					)
 				);
 
@@ -481,11 +480,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				property.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( property.variable )
-						)
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
 					)
 				);
 
@@ -500,11 +497,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
-				property.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( property.variable )
-						)
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
 					)
 				);
 
@@ -524,21 +519,17 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const oldProperty:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property-1" );
-				oldProperty.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( oldProperty.variable )
-						)
+				oldProperty.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( oldProperty.variable )
 					)
 				);
 				builder[ "_orderBy" ]( oldProperty );
 
 				const newProperty:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property-2" );
-				newProperty.addPattern( new OptionalToken()
-					.addPattern( new SubjectToken( baseProperty.variable )
-						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
-							.addObject( newProperty.variable )
-						)
+				newProperty.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( newProperty.variable )
 					)
 				);
 				builder[ "_orderBy" ]( newProperty );

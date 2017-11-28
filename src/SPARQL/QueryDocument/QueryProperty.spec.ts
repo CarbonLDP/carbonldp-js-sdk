@@ -89,80 +89,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 		} );
 
-		describe( method( INSTANCE, "addOptionalPattern" ), ():void => {
-
-			it( "should exists", ():void => {
-				expect( QueryProperty.prototype.addOptionalPattern ).toBeDefined();
-				expect( QueryProperty.prototype.addOptionalPattern ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should add a pattern when no optional", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-
-				queryProperty.addOptionalPattern( new ValuesToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					new ValuesToken(),
-				] );
-
-				queryProperty.addOptionalPattern( new OptionalToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					new ValuesToken(),
-					new OptionalToken(),
-				] );
-			} );
-
-			it( "should add a pattern to the first optional token in the patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" ).addPattern( new OptionalToken() );
-
-				queryProperty.addOptionalPattern( new ValuesToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					jasmine.objectContaining( {
-						token: "optional",
-						patterns: [
-							new ValuesToken(),
-						],
-					} ) as any,
-				] );
-
-				queryProperty.addOptionalPattern( new OptionalToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					jasmine.objectContaining( {
-						token: "optional",
-						patterns: [
-							new ValuesToken(),
-							new OptionalToken(),
-						],
-					} ) as any,
-				] );
-			} );
-
-			it( "should add multiple patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
-
-				queryProperty.addOptionalPattern( new ValuesToken(), new OptionalToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					new ValuesToken(),
-					new OptionalToken(),
-				] );
-			} );
-
-			it( "should add multiple patterns to the first optional token in the patterns", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" ).addPattern( new OptionalToken() );
-
-				queryProperty.addOptionalPattern( new ValuesToken(), new OptionalToken() );
-				expect( queryProperty[ "_patterns" ] ).toEqual( [
-					jasmine.objectContaining( {
-						token: "optional",
-						patterns: [
-							new ValuesToken(),
-							new OptionalToken(),
-						],
-					} ) as any,
-				] );
-			} );
-
-		} );
-
 		describe( method( INSTANCE, "getPatterns" ), ():void => {
 
 			it( "should exists", ():void => {
@@ -170,9 +96,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				expect( QueryProperty.prototype.getPatterns ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return the patterns array", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
+			it( "should return the patterns array when isn't optional", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name", false );
 				expect( queryProperty.getPatterns() ).toBe( queryProperty[ "_patterns" ] );
+			} );
+
+			it( "should return the patterns as optional array when is optional", ():void => {
+				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
+				expect( queryProperty.getPatterns() ).toEqual( [ new OptionalToken()
+					.addPattern( ...queryProperty[ "_patterns" ] ),
+				] );
 			} );
 
 		} );

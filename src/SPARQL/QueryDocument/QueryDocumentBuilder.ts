@@ -1,4 +1,4 @@
-import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, LiteralToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
@@ -10,7 +10,7 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
-import { createPropertyPattern } from "./Utils";
+import { createPropertyPatterns, createTypePattern } from "./Utils";
 
 const inherit:Readonly<{}> = Object.freeze( {} );
 
@@ -27,14 +27,10 @@ export class Class {
 
 	constructor( queryContext:QueryContextBuilder.Class, property:QueryProperty.Class ) {
 		this._context = queryContext;
-		this._document = property.addOptionalPattern( new OptionalToken()
-			.addPattern( new SubjectToken( property.variable )
-				.addPredicate( new PredicateToken( "a" )
-					.addObject( queryContext.getVariable( property.name + "__types" ) ) ) )
-		);
+		this._document = property;
 
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
-		this._values = new ValuesToken().addValues( this._document.variable );
+		this._values = new ValuesToken().addValues( property.variable );
 
 		this._schema = this._context.getSchemaFor( { id: "" } );
 	}
@@ -67,7 +63,7 @@ export class Class {
 
 		type = this._context.expandIRI( type );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
-			this._document.addOptionalPattern( this._typesTriple );
+			this._document.addPattern( this._typesTriple );
 
 		this._typesTriple.predicates[ 0 ].addObject( this._context.compactIRI( type ) );
 
@@ -89,30 +85,32 @@ export class Class {
 			const digestedDefinition:DigestedPropertyDefinition = this.addPropertyDefinition( propertyName, propertyDefinition );
 			const name:string = `${ this._document.name }.${ propertyName }`;
 
-			const propertyPattern:OptionalToken = createPropertyPattern(
-				this._context,
-				this._document.name,
-				name,
-				digestedDefinition
-			);
 			const property:QueryProperty.Class = this._context
 				.addProperty( name )
-				.addPattern( propertyPattern );
+				.addPattern( ...createPropertyPatterns(
+					this._context,
+					this._document.name,
+					name,
+					digestedDefinition
+				) );
 
 			if( "query" in propertyDefinition ) {
+				if( digestedDefinition.literal === false )
+					property.addPattern( createTypePattern( this._context, name ) );
+
 				const builder:Class = new Class( this._context, property );
 				if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
 					throw new IllegalArgumentError( "The provided query builder was not returned" );
 			}
 
-			this._document.addOptionalPattern( ...property.getPatterns() );
+			this._document.addPattern( ...property.getPatterns() );
 		}
 
 		return this;
 	}
 
 	filter( constraint:string ):this {
-		const baseName:string = this._document.name.split( "." ).pop();
+		const [ baseName ]:string[] = this._document.name.split( "." );
 		this._context
 			.getProperty( baseName )
 			.addPattern( new FilterToken( constraint ) );

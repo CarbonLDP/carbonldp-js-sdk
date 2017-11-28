@@ -1,6 +1,6 @@
-import { OptionalToken, PatternToken, VariableToken } from "sparqler/tokens";
+import { OptionalToken, PatternToken, SubjectToken, VariableToken } from "sparqler/tokens";
 
-import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
+import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 
 export class Class {
@@ -8,12 +8,15 @@ export class Class {
 	readonly variable:VariableToken;
 
 	private _context:QueryContext.Class;
+	private _optional:boolean;
 	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
-	constructor( context:QueryContext.Class, name:string ) {
+	constructor( context:QueryContext.Class, name:string, isOptional:boolean = true ) {
 		this.name = name;
 		this.variable = context.getVariable( name );
+
+		this._optional = isOptional;
 
 		this._context = context;
 		this._patterns = [];
@@ -24,16 +27,12 @@ export class Class {
 		return this;
 	}
 
-	addOptionalPattern( ...patterns:PatternToken[] ):this {
-		const first:PatternToken = this._patterns[ 0 ];
-		const patternAdder:OptionalToken | this = first && first.token === "optional" ? first : this;
-		patternAdder.addPattern( ...patterns );
-
-		return this;
-	}
-
 	getPatterns():PatternToken[] {
-		return this._patterns;
+		if( ! this._optional ) return this._patterns;
+
+		return [ new OptionalToken()
+			.addPattern( ...this._patterns ),
+		];
 	}
 
 	getSchema():DigestedObjectSchema {
@@ -43,6 +42,16 @@ export class Class {
 		this._schema.vocab = this._context.expandIRI( "" ) || null;
 
 		return this._schema;
+	}
+
+	setOptional( optional:boolean ):this {
+		this._optional = optional;
+		return this;
+	}
+
+	getTriple():SubjectToken {
+		return this._patterns
+			.find( pattern => pattern instanceof SubjectToken ) as SubjectToken;
 	}
 
 	toString():string {

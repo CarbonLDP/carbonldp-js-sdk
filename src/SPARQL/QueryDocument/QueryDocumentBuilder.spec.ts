@@ -47,7 +47,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			} );
 
 			queryContext = new QueryContextBuilder( context );
-			baseProperty = queryContext.addProperty( "document" );
+			baseProperty = queryContext
+				.addProperty( "document" )
+				.setOptional( false );
 		} );
 
 		describe( constructor(), ():void => {
@@ -61,30 +63,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( "should set the document property", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				expect( builder[ "_document" ] ).toEqual( baseProperty );
-			} );
-
-			it( "should add the types pattern to the property", ():void => {
-				new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
-					jasmine.objectContaining( {
-						token: "optional",
-						patterns: jasmine.arrayContaining( [
-							jasmine.objectContaining( {
-								token: "subject",
-								subject: baseProperty.variable,
-								predicates: jasmine.arrayContaining( [
-									jasmine.objectContaining( {
-										token: "predicate",
-										predicate: "a",
-										objects: jasmine.arrayContaining( [
-											jasmine.any( QueryVariable.Class ),
-										] ),
-									} ),
-								] ),
-							} ),
-						] ),
-					} ),
-				] ) as any );
 			} );
 
 			it( "should initialize the schema with a general document schema", ():void => {
@@ -308,19 +286,14 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				builder.withType( "Type-1" );
 				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
 					jasmine.objectContaining( {
-						token: "optional",
-						patterns: jasmine.arrayContaining( [
+						token: "subject",
+						subject: baseProperty.variable,
+						predicates: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "subject",
-								subject: baseProperty.variable,
-								predicates: jasmine.arrayContaining( [
-									jasmine.objectContaining( {
-										token: "predicate",
-										predicate: "a",
-										objects: jasmine.arrayContaining( [
-											new IRIToken( "http://example.com/vocab#Type-1" ),
-										] ),
-									} ),
+								token: "predicate",
+								predicate: "a",
+								objects: jasmine.arrayContaining( [
+									new IRIToken( "http://example.com/vocab#Type-1" ),
 								] ),
 							} ),
 						] ),
@@ -330,19 +303,14 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				builder.withType( "ex:Type-2" );
 				expect( baseProperty.getPatterns() ).toEqual( jasmine.arrayContaining( [
 					jasmine.objectContaining( {
-						token: "optional",
-						patterns: jasmine.arrayContaining( [
+						token: "subject",
+						subject: baseProperty.variable,
+						predicates: jasmine.arrayContaining( [
 							jasmine.objectContaining( {
-								token: "subject",
-								subject: baseProperty.variable,
-								predicates: jasmine.arrayContaining( [
-									jasmine.objectContaining( {
-										token: "predicate",
-										predicate: "a",
-										objects: jasmine.arrayContaining( [
-											new PrefixedNameToken( "ex:Type-2" ),
-										] ),
-									} ),
+								token: "predicate",
+								predicate: "a",
+								objects: jasmine.arrayContaining( [
+									new PrefixedNameToken( "ex:Type-2" ),
 								] ),
 							} ),
 						] ),
@@ -494,13 +462,23 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 			it( "should add the filter to the base property", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const helper:( constraint:string, propertyName?:string ) => void = ( constraint, propertyName ) => {
+					const targetBuilder:QueryDocumentBuilder = propertyName ?
+						new QueryDocumentBuilder( queryContext, queryContext.addProperty( propertyName ) ) :
+						builder
+					;
 
-				builder.filter( "?property1 = ?property2" );
-				expect( baseProperty.getPatterns() ).toContain( new FilterToken( "?property1 = ?property2" ) );
+					targetBuilder.filter( constraint );
+					expect( baseProperty.getPatterns() ).toContain( new FilterToken( constraint ) );
+				};
 
-				builder.filter( "?property1 = 12345" );
-				expect( baseProperty.getPatterns() ).toContain( new FilterToken( "?property1 = 12345" ) );
+				helper( "?property1 = ?property2" );
+				helper( "?property1 = 12345" );
+
+				helper( "?document__subProperty = 12345", "document.subProperty" );
+				helper( "?document__subProperty = 12345", "document.subProperty.subSubProperty" );
 			} );
+
 		} );
 
 		describe( method( INSTANCE, "values" ), ():void => {

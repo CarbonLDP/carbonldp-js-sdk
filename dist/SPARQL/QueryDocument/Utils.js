@@ -8,23 +8,30 @@ function getLevelRegExp(property) {
     return new RegExp("^" + parsedName + "[^.]+$");
 }
 exports.getLevelRegExp = getLevelRegExp;
-function createPropertyPattern(context, resourceName, propertyName, propertyDefinition) {
+function createPropertyPatterns(context, resourceName, propertyName, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
     var propertyPath = context.compactIRI(uri.stringValue);
     var resource = context.getVariable(resourceName);
     var propertyObject = context.getVariable(propertyName);
-    var propertyPattern = new tokens_1.OptionalToken()
-        .addPattern(new tokens_1.SubjectToken(resource)
-        .addPredicate(new tokens_1.PredicateToken(propertyPath)
-        .addObject(propertyObject)));
+    var propertyPatterns = [new tokens_1.SubjectToken(resource)
+            .addPredicate(new tokens_1.PredicateToken(propertyPath)
+            .addObject(propertyObject)),
+    ];
     if (literalType !== null)
-        propertyPattern
-            .addPattern(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType.stringValue)));
+        propertyPatterns
+            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType.stringValue)));
     if (pointerType !== null)
-        propertyPattern
-            .addPattern(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
-    return propertyPattern;
+        propertyPatterns
+            .push(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
+    return propertyPatterns;
 }
-exports.createPropertyPattern = createPropertyPattern;
+exports.createPropertyPatterns = createPropertyPatterns;
+function createTypePattern(context, resourceName) {
+    return new tokens_1.OptionalToken()
+        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourceName))
+        .addPredicate(new tokens_1.PredicateToken("a")
+        .addObject(context.getVariable(resourceName + ".types"))));
+}
+exports.createTypePattern = createTypePattern;
 
 //# sourceMappingURL=Utils.js.map

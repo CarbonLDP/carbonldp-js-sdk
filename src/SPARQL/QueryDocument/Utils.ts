@@ -1,5 +1,5 @@
 import { DigestedPropertyDefinition } from "../../ObjectSchema";
-import { FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import { FilterToken, IRIToken, OptionalToken, PatternToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
 import * as QueryContext from "./QueryContext";
 
 export function getLevelRegExp( property:string ):RegExp {
@@ -9,7 +9,7 @@ export function getLevelRegExp( property:string ):RegExp {
 	return new RegExp( `^${ parsedName }[^.]+$` );
 }
 
-export function createPropertyPattern( context:QueryContext.Class, resourceName:string, propertyName:string, propertyDefinition:DigestedPropertyDefinition ):OptionalToken {
+export function createPropertyPatterns( context:QueryContext.Class, resourceName:string, propertyName:string, propertyDefinition:DigestedPropertyDefinition ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
 	const propertyPath:IRIToken | PrefixedNameToken = context.compactIRI( uri.stringValue );
@@ -17,16 +17,24 @@ export function createPropertyPattern( context:QueryContext.Class, resourceName:
 	const resource:VariableToken = context.getVariable( resourceName );
 	const propertyObject:VariableToken = context.getVariable( propertyName );
 
-	const propertyPattern:OptionalToken = new OptionalToken()
-		.addPattern( new SubjectToken( resource )
-			.addPredicate( new PredicateToken( propertyPath )
-				.addObject( propertyObject ) ) )
-	;
+	const propertyPatterns:PatternToken[] = [ new SubjectToken( resource )
+		.addPredicate( new PredicateToken( propertyPath )
+			.addObject( propertyObject ) ),
+	];
 
-	if( literalType !== null ) propertyPattern
-		.addPattern( new FilterToken( `datatype( ${ propertyObject } ) = ${ context.compactIRI( literalType.stringValue ) }` ) );
-	if( pointerType !== null ) propertyPattern
-		.addPattern( new FilterToken( `! isLiteral( ${ propertyObject } )` ) );
+	if( literalType !== null ) propertyPatterns
+		.push( new FilterToken( `datatype( ${ propertyObject } ) = ${ context.compactIRI( literalType.stringValue ) }` ) );
+	if( pointerType !== null ) propertyPatterns
+		.push( new FilterToken( `! isLiteral( ${ propertyObject } )` ) );
 
-	return propertyPattern;
+	return propertyPatterns;
+}
+
+export function createTypePattern( context:QueryContext.Class, resourceName:string ):PatternToken {
+	return new OptionalToken()
+		.addPattern( new SubjectToken( context.getVariable( resourceName ) )
+			.addPredicate( new PredicateToken( "a" )
+				.addObject( context.getVariable( `${ resourceName }.types` ) )
+			)
+		);
 }

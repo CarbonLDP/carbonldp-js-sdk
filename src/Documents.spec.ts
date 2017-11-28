@@ -17,7 +17,7 @@ import {
 	hasDefaultExport,
 } from "./test/JasmineExtender";
 
-import { BindToken, ConstructToken, FilterToken, IRIToken, OptionalToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import { BindToken, ConstructToken, FilterToken, IRIToken, LimitToken, LiteralToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SelectToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
 import * as TokensModule from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
@@ -5973,7 +5973,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 
-				it( "should send a correct construct query", ( done:DoneFn ):void => {
+				it( "should send a correct basic construct query", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
 						property2:{};
@@ -6082,6 +6082,214 @@ describe( module( "Carbon/Documents" ), ():void => {
 								] ),
 							} )
 						);
+						done();
+					} );
+				} );
+
+				it( "should send a correct filtered construct query", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+						"ex": "https://example.com/ns#",
+						"xsd": NS.XSD.namespace,
+					} );
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+					} );
+
+					spyOn( documents, "executeRawCONSTRUCTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __
+									.properties( {
+										"property2": {
+											"query": ___ => ___
+												.values( ___.value( 12345 ).withType( "integer" ) )
+											,
+										},
+										"property3": __.inherit,
+									} )
+									.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
+								,
+							},
+						} )
+						.orderBy( _.property( "property2" ) )
+						.limit( 10 )
+						.offset( 5 )
+					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
+						if( error ) done.fail( error );
+
+						const variableHelper:( name:string ) => VariableToken = name => {
+							return jasmine.objectContaining( {
+								token: "variable",
+								name,
+							} ) as any;
+						};
+
+						expect( query ).toEqual( new QueryToken(
+							new ConstructToken()
+								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+										.addObject( variableHelper( "member" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "member" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "member__types" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "member" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+										.addObject( variableHelper( "member__property1" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "member" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+										.addObject( variableHelper( "member__property2" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "member__property2__types" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+										.addObject( variableHelper( "member__property2__property2" ) )
+									)
+								)
+								.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "member__property2__property3" ) )
+									)
+								)
+
+								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new SelectToken()
+									.addVariable( variableHelper( "member" ) )
+									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
+										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.membershipResource ) )
+											.addObject( variableHelper( "membershipResource" ) )
+										)
+										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.hasMemberRelation ) )
+											.addObject( variableHelper( "hasMemberRelation" ) )
+										)
+									)
+									.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
+										.addPredicate( new PredicateToken( variableHelper( "hasMemberRelation" ) )
+											.addObject( variableHelper( "member" ) )
+										)
+									)
+									.addPattern( new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "member" ) )
+											.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+												.addObject( variableHelper( "member__property2" ) )
+											)
+										)
+									)
+									.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
+									.addModifier( new LimitToken( 10 ) )
+									.addModifier( new OffsetToken( 5 ) )
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "member" ) )
+											.addPredicate( new PredicateToken( "a" )
+												.addObject( variableHelper( "member__types" ) )
+											)
+										)
+								)
+								.addPattern( new SubjectToken( variableHelper( "member" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( new PrefixedNameToken( "ex:Resource" ) )
+									)
+								)
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "member" ) )
+											.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+												.addObject( variableHelper( "member__property1" ) )
+											)
+										)
+										.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
+								)
+								.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
+								.addPattern(
+									new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "member" ) )
+											.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+												.addObject( variableHelper( "member__property2" ) )
+											)
+										)
+										.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+												.addPredicate( new PredicateToken( "a" )
+													.addObject( variableHelper( "member__property2__types" ) )
+												)
+											)
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+												.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+													.addObject( variableHelper( "member__property2__property2" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
+											.addPattern( new ValuesToken()
+												.addValues(
+													variableHelper( "member__property2__property2" ),
+													new LiteralToken( 12345 ).setType( "xsd:integer" )
+												)
+											)
+										)
+										.addPattern( new OptionalToken()
+											.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+												.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+													.addObject( variableHelper( "member__property2__property3" ) )
+												)
+											)
+											.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
+										)
+								)
+							)
+
+								.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
+								.addPrologues( new PrefixToken( "xsd", new IRIToken( NS.XSD.namespace ) ) )
+								.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+						);
+
 						done();
 					} );
 				} );
