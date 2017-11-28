@@ -13,7 +13,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var Errors_1 = require("./../../Errors");
 var QueryDocumentBuilder = require("./QueryDocumentBuilder");
-var Utils_1 = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -49,9 +48,6 @@ var Class = (function (_super) {
         return this;
     };
     Class.prototype._orderBy = function (property, flow) {
-        var levelRegex = Utils_1.getLevelRegExp(this._document.name);
-        if (!levelRegex.test(property.name))
-            throw new Errors_1.IllegalArgumentError("Property \"" + property.name + "\" isn't a direct property of the main query.");
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
             throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
@@ -62,11 +58,22 @@ var Class = (function (_super) {
             select.patterns.splice(optionalIndex, 1);
         }
         select.modifiers.unshift(new tokens_1.OrderToken(property.variable, flow));
-        var propertyTriple = property.getTriple();
-        if (!propertyTriple)
-            throw new Errors_1.IllegalArgumentError("The property provided is not a valid property defined by the builder.");
-        select.addPattern(new tokens_1.OptionalToken()
-            .addPattern(propertyTriple));
+        var propertyPatternsPath;
+        while (property !== this._document) {
+            var propertyTriple = property && property.getTriple();
+            if (!propertyTriple)
+                throw new Errors_1.IllegalArgumentError("The property \"" + property.name + "\" is not a valid property defined by the builder.");
+            var propertyPattern = new tokens_1.OptionalToken()
+                .addPattern(propertyTriple);
+            if (propertyPatternsPath)
+                propertyPattern.addPattern(propertyPatternsPath);
+            propertyPatternsPath = propertyPattern;
+            property = this._context.getProperty(property.name
+                .split(".")
+                .slice(0, -1)
+                .join("."));
+        }
+        select.addPattern(propertyPatternsPath);
         return this;
     };
     return Class;

@@ -28,7 +28,7 @@ export class Class extends QueryContext.Class {
 	}
 
 	addProperty( name:string ):QueryProperty.Class {
-		const property:QueryProperty.Class = new QueryProperty.Class( this, name );
+		const property:QueryProperty.Class = new QueryProperty.Class( this, name, );
 		this._propertiesMap.set( name, property );
 		return property;
 	}

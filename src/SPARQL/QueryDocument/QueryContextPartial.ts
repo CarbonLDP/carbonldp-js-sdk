@@ -1,12 +1,8 @@
-import { PatternToken } from "sparqler/tokens";
-
 import * as Context from "../../Context";
+import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as PersistedDocument from "../../PersistedDocument";
 import * as PersistedResource from "../../PersistedResource";
-import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
-import * as QueryProperty from "./QueryProperty";
-import { getLevelRegExp } from "./Utils";
 
 export class Class extends QueryContext.Class {
 

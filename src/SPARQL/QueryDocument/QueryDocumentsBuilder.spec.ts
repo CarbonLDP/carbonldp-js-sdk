@@ -325,22 +325,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				expect( QueryDocumentsBuilder.prototype[ "_orderBy" ] ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should throw error when property is not a direct property", ():void => {
-				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
-				const helper:( name:string ) => void = name => () => {
-					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name )
-						.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) ) );
-					builder[ "_orderBy" ]( property );
-				};
-
-				expect( helper( "member" ) ).toThrowError( IllegalArgumentError, `Property "member" isn't a direct property of the main query.` );
-
-				expect( helper( "member.property" ) ).not.toThrowError( IllegalArgumentError, `Property "member.property" isn't a direct property of the main query.` );
-
-				expect( helper( "member.property.sub-property" ) ).toThrowError( IllegalArgumentError, `Property "member.property.sub-property" isn't a direct property of the main query.` );
-				expect( helper( "member.property-2.sub-property-2" ) ).toThrowError( IllegalArgumentError, `Property "member.property-2.sub-property-2" isn't a direct property of the main query.` );
-			} );
-
 			it( "should throw error when no select token defined", ():void => {
 				baseProperty = queryContext.addProperty( "member" );
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
@@ -357,12 +341,36 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 			it( "should throw error when no valid property provided", ():void => {
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = name => () => {
-					const property:QueryProperty.Class = new QueryProperty.Class( queryContext, name );
+					if( ! queryContext.hasProperty( name ) ) queryContext.addProperty( name );
+
+					const property:QueryProperty.Class = queryContext.getProperty( name );
 					builder[ "_orderBy" ]( property );
 				};
 
-				expect( helper( "member.property" ) ).toThrowError( IllegalArgumentError, `The property provided is not a valid property defined by the builder.` );
-				expect( helper( "member.property-2" ) ).toThrowError( IllegalArgumentError, `The property provided is not a valid property defined by the builder.` );
+				expect( helper( "member.property" ) ).toThrowError( IllegalArgumentError, `The property "member.property" is not a valid property defined by the builder.` );
+				expect( helper( "member.property-2" ) ).toThrowError( IllegalArgumentError, `The property "member.property-2" is not a valid property defined by the builder.` );
+
+				expect( helper( "member.property.sub-property" ) ).toThrowError( IllegalArgumentError, `The property "member.property.sub-property" is not a valid property defined by the builder.` );
+				expect( helper( "member.property.sub-property-2" ) ).toThrowError( IllegalArgumentError, `The property "member.property.sub-property-2" is not a valid property defined by the builder.` );
+
+				queryContext
+					.getProperty( "member.property.sub-property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
+						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addObject( queryContext.getVariable( "member.property.sub-property" ) )
+						)
+					)
+				;
+				queryContext
+					.getProperty( "member.property.sub-property-2" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
+						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path-2" ) )
+							.addObject( queryContext.getVariable( "member.property.sub-property-2" ) )
+						)
+					)
+				;
+				expect( helper( "member.property.sub-property" ) ).toThrowError( IllegalArgumentError, `The property "member.property" is not a valid property defined by the builder.` );
+				expect( helper( "member.property.sub-property-2" ) ).toThrowError( IllegalArgumentError, `The property "member.property" is not a valid property defined by the builder.` );
 			} );
 
 			it( "should return itself", ():void => {
@@ -493,7 +501,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 				] );
 			} );
 
-			it( "should add the property triple in the sub-select", ():void => {
+			it( "should add the one-level property triple in the sub-select", ():void => {
 				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
 
 				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
@@ -513,6 +521,43 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 						)
 					,
 				] ) as any );
+			} );
+
+			it( "should add the two-level property triple in the sub-select", ():void => {
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
+
+				const property:QueryProperty.Class = queryContext.addProperty( "member.property" );
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
+					)
+				);
+
+				const subProperty:QueryProperty.Class = queryContext.addProperty( "member.property.subProperty" );
+				subProperty.addPattern( new SubjectToken( property.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:sub-path" ) )
+						.addObject( subProperty.variable )
+					)
+				);
+
+				builder[ "_orderBy" ]( subProperty );
+				expect( selectToken.patterns ).toEqual( [
+					jasmine.any( SubjectToken ) as any,
+					new OptionalToken()
+						.addPattern( new SubjectToken( baseProperty.variable )
+							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+								.addObject( property.variable )
+							)
+						)
+						.addPattern( new OptionalToken()
+							.addPattern( new SubjectToken( property.variable )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:sub-path" ) )
+									.addObject( subProperty.variable )
+								)
+							)
+						)
+					,
+				] );
 			} );
 
 			it( "should replace the property triple in the sub-select", ():void => {
