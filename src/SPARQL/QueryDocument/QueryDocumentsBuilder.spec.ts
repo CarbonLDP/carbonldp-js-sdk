@@ -1,7 +1,7 @@
 import { LimitToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, SelectToken, SubjectToken, VariableToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { clazz, extendsClass, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { clazz, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
@@ -83,6 +83,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 
 		describe( method( INSTANCE, "orderBy" ), ():void => {
 
+			it( hasSignature(
+				"Makes the target documents of the query to return ordered by the property specified.\n" +
+				"Used the default behaviour of SPARQL ordering that in ascending order.",
+				[
+					{ name: "property", type: "Carbon.SPARQL.QueryProperty.Class", description: "The property from which the results will be ordered." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryDocumentsBuilder.prototype.orderBy ).toBeDefined();
 				expect( QueryDocumentsBuilder.prototype.orderBy ).toEqual( jasmine.any( Function ) );
@@ -113,6 +123,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 		} );
 
 		describe( method( INSTANCE, "orderAscendantBy" ), ():void => {
+
+			it( hasSignature(
+				"Makes the target documents of the query to return in ascending order by the property specified.",
+				[
+					{ name: "property", type: "Carbon.SPARQL.QueryProperty.Class", description: "The property from which the results will be ordered." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentsBuilder.prototype.orderAscendantBy ).toBeDefined();
@@ -145,6 +164,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 
 		describe( method( INSTANCE, "orderDescendantBy" ), ():void => {
 
+			it( hasSignature(
+				"Makes the target documents of the query to return in descending order by the property specified.",
+				[
+					{ name: "property", type: "Carbon.SPARQL.QueryProperty.Class", description: "The property from which the results will be ordered." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryDocumentsBuilder.prototype.orderDescendantBy ).toBeDefined();
 				expect( QueryDocumentsBuilder.prototype.orderDescendantBy ).toEqual( jasmine.any( Function ) );
@@ -175,6 +203,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 		} );
 
 		describe( method( INSTANCE, "limit" ), ():void => {
+
+			it( hasSignature(
+				"Limit the target results to be returned by the number specified.",
+				[
+					{ name: "limit", type: "number", description: "The maximum number of targeted results." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentsBuilder.prototype.limit ).toBeDefined();
@@ -247,6 +284,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 		} );
 
 		describe( method( INSTANCE, "offset" ), ():void => {
+
+			it( hasSignature(
+				"Set an offset in the target results to be returned.",
+				[
+					{ name: "offset", type: "number", description: "The offset number to be applied to the targeted results." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentsBuilder.prototype.offset ).toBeDefined();

@@ -1,5 +1,3 @@
-import { PatternToken } from "sparqler/tokens";
-
 import * as Context from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
@@ -22,9 +20,9 @@ export class Class extends QueryContext.Class {
 	}
 
 	hasProperties( name:string ):boolean {
-		name += ".";
+		const levelRegex:RegExp = getLevelRegExp( name );
 		return Array.from( this._propertiesMap.keys() )
-			.some( key => key.startsWith( name ) );
+			.some( propertyName => levelRegex.test( propertyName ) );
 	}
 
 	addProperty( name:string ):QueryProperty.Class {
@@ -37,14 +35,14 @@ export class Class extends QueryContext.Class {
 		return this._propertiesMap.get( name );
 	}
 
-	getProperties( propertyLevel:string ):QueryProperty.Class[] {
-		const levelRegex:RegExp = getLevelRegExp( propertyLevel );
+	getProperties( name:string ):QueryProperty.Class[] {
+		const levelRegex:RegExp = getLevelRegExp( name );
 		return Array.from( this._propertiesMap.entries() )
-			.filter( ( [ name ] ) => levelRegex.test( name ) )
-			.map( ( [ name, property ] ) => property );
+			.filter( ( [ propertyName ] ) => levelRegex.test( propertyName ) )
+			.map( ( [ propertyName, property ] ) => property );
 	}
 
-	getInheritTypeDefinition( propertyName:string, propertyURI?:string, existingSchema:DigestedObjectSchema = this.context.getObjectSchema() ):DigestedPropertyDefinition {
+	getInheritTypeDefinition( existingSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedPropertyDefinition {
 		const schemas:DigestedObjectSchema[] = [ existingSchema, ...this._getTypeSchemas() ];
 
 		for( const schema of schemas ) {

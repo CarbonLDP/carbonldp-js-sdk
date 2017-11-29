@@ -14,6 +14,6 @@ export declare class Class implements Resolver {
     compactIRI(iri: string): IRIToken | PrefixedNameToken;
     getPrologues(): PrefixToken[];
     getGeneralSchema(): DigestedObjectSchema;
-    getSchemaFor(object: Object, path?: string): DigestedObjectSchema;
+    getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
 export default Class;

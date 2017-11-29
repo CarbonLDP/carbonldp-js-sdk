@@ -13,7 +13,7 @@ export class Class extends QueryContext.Class {
 		this._document = document;
 	}
 
-	getSchemaFor( object:Object, path?:string ):DigestedObjectSchema {
+	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
 		const parts:string[] = path.split( /\./g ).slice( 1 );

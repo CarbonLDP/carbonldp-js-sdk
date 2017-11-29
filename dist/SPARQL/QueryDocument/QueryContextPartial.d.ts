@@ -5,6 +5,6 @@ import * as QueryContext from "./QueryContext";
 export declare class Class extends QueryContext.Class {
     private _document;
     constructor(document: PersistedDocument.Class, context?: Context.Class);
-    getSchemaFor(object: Object, path?: string): DigestedObjectSchema;
+    getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
 export default Class;

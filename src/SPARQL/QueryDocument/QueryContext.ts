@@ -91,7 +91,7 @@ export class Class implements Resolver {
 		return this.context.documents.getGeneralSchema();
 	}
 
-	getSchemaFor( object:Object, path?:string ):DigestedObjectSchema {
+	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();
 		return this.context.documents.getSchemaFor( object );
 	}

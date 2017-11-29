@@ -5843,13 +5843,13 @@ function getLevelRegExp(property) {
     return new RegExp("^" + parsedName + "[^.]+$");
 }
 exports.getLevelRegExp = getLevelRegExp;
-function createPropertyPatterns(context, resourceName, propertyName, propertyDefinition) {
+function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
-    var propertyPath = context.compactIRI(uri.stringValue);
-    var resource = context.getVariable(resourceName);
-    var propertyObject = context.getVariable(propertyName);
+    var propertyIRI = context.compactIRI(uri.stringValue);
+    var resource = context.getVariable(resourcePath);
+    var propertyObject = context.getVariable(propertyPath);
     var propertyPatterns = [new tokens_1.SubjectToken(resource)
-            .addPredicate(new tokens_1.PredicateToken(propertyPath)
+            .addPredicate(new tokens_1.PredicateToken(propertyIRI)
             .addObject(propertyObject)),
     ];
     if (literalType !== null)
@@ -5861,13 +5861,13 @@ function createPropertyPatterns(context, resourceName, propertyName, propertyDef
     return propertyPatterns;
 }
 exports.createPropertyPatterns = createPropertyPatterns;
-function createTypePattern(context, resourceName) {
+function createTypesPattern(context, resourcePath) {
     return new tokens_1.OptionalToken()
-        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourceName))
+        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath))
         .addPredicate(new tokens_1.PredicateToken("a")
-        .addObject(context.getVariable(resourceName + ".types"))));
+        .addObject(context.getVariable(resourcePath + ".types"))));
 }
-exports.createTypePattern = createTypePattern;
+exports.createTypesPattern = createTypesPattern;
 
 
 /***/ }),
@@ -8112,11 +8112,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var ObjectSchema_1 = __webpack_require__(15);
 var Class = (function () {
-    function Class(context, name, isOptional) {
-        if (isOptional === void 0) { isOptional = true; }
+    function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
-        this._optional = isOptional;
+        this._optional = true;
         this._context = context;
         this._patterns = [];
     }
@@ -8230,7 +8229,7 @@ var Class = (function () {
                 .addProperty(name_1)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name_1, digestedDefinition));
             if ("query" in propertyDefinition) {
                 if (digestedDefinition.literal === false)
-                    property.addPattern(Utils_2.createTypePattern(this._context, name_1));
+                    property.addPattern(Utils_2.createTypesPattern(this._context, name_1));
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
                     throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
@@ -8274,7 +8273,7 @@ var Class = (function () {
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
         var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;
-        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, this._schema);
+        var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);
         var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {
@@ -10103,7 +10102,7 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        targetProperty.addPattern(Utils_2.createTypePattern(queryContext, targetProperty.name));
+        targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();
@@ -16280,9 +16279,9 @@ var Class = (function (_super) {
         return this._propertiesMap.has(name);
     };
     Class.prototype.hasProperties = function (name) {
-        name += ".";
+        var levelRegex = Utils_1.getLevelRegExp(name);
         return Array.from(this._propertiesMap.keys())
-            .some(function (key) { return key.startsWith(name); });
+            .some(function (propertyName) { return levelRegex.test(propertyName); });
     };
     Class.prototype.addProperty = function (name) {
         var property = new QueryProperty.Class(this, name);
@@ -16292,20 +16291,19 @@ var Class = (function (_super) {
     Class.prototype.getProperty = function (name) {
         return this._propertiesMap.get(name);
     };
-    Class.prototype.getProperties = function (propertyLevel) {
-        var levelRegex = Utils_1.getLevelRegExp(propertyLevel);
+    Class.prototype.getProperties = function (name) {
+        var levelRegex = Utils_1.getLevelRegExp(name);
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
-            var name = _a[0];
-            return levelRegex.test(name);
+            var propertyName = _a[0];
+            return levelRegex.test(propertyName);
         })
             .map(function (_a) {
-            var name = _a[0], property = _a[1];
+            var propertyName = _a[0], property = _a[1];
             return property;
         });
     };
-    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, existingSchema) {
-        if (existingSchema === void 0) { existingSchema = this.context.getObjectSchema(); }
+    Class.prototype.getInheritTypeDefinition = function (existingSchema, propertyName, propertyURI) {
         var schemas = [existingSchema].concat(this._getTypeSchemas());
         for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
             var schema = schemas_1[_i];

@@ -25,9 +25,9 @@ var Class = (function (_super) {
         return this._propertiesMap.has(name);
     };
     Class.prototype.hasProperties = function (name) {
-        name += ".";
+        var levelRegex = Utils_1.getLevelRegExp(name);
         return Array.from(this._propertiesMap.keys())
-            .some(function (key) { return key.startsWith(name); });
+            .some(function (propertyName) { return levelRegex.test(propertyName); });
     };
     Class.prototype.addProperty = function (name) {
         var property = new QueryProperty.Class(this, name);
@@ -37,20 +37,19 @@ var Class = (function (_super) {
     Class.prototype.getProperty = function (name) {
         return this._propertiesMap.get(name);
     };
-    Class.prototype.getProperties = function (propertyLevel) {
-        var levelRegex = Utils_1.getLevelRegExp(propertyLevel);
+    Class.prototype.getProperties = function (name) {
+        var levelRegex = Utils_1.getLevelRegExp(name);
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
-            var name = _a[0];
-            return levelRegex.test(name);
+            var propertyName = _a[0];
+            return levelRegex.test(propertyName);
         })
             .map(function (_a) {
-            var name = _a[0], property = _a[1];
+            var propertyName = _a[0], property = _a[1];
             return property;
         });
     };
-    Class.prototype.getInheritTypeDefinition = function (propertyName, propertyURI, existingSchema) {
-        if (existingSchema === void 0) { existingSchema = this.context.getObjectSchema(); }
+    Class.prototype.getInheritTypeDefinition = function (existingSchema, propertyName, propertyURI) {
         var schemas = [existingSchema].concat(this._getTypeSchemas());
         for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
             var schema = schemas_1[_i];

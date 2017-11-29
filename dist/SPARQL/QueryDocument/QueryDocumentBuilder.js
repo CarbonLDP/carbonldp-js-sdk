@@ -61,7 +61,7 @@ var Class = (function () {
                 .addProperty(name_1)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name_1, digestedDefinition));
             if ("query" in propertyDefinition) {
                 if (digestedDefinition.literal === false)
-                    property.addPattern(Utils_2.createTypePattern(this._context, name_1));
+                    property.addPattern(Utils_2.createTypesPattern(this._context, name_1));
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
                     throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
@@ -105,7 +105,7 @@ var Class = (function () {
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
         var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;
-        var inheritDefinition = this._context.getInheritTypeDefinition(propertyName, uri, this._schema);
+        var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);
         var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {

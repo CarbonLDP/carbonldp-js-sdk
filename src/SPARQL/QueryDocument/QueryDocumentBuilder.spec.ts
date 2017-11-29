@@ -2,7 +2,7 @@ import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, Pre
 
 import AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
-import { clazz, constructor, hasDefaultExport, INSTANCE, method, module, property } from "../../test/JasmineExtender";
+import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module, property } from "../../test/JasmineExtender";
 import * as Document from "./../../Document";
 import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
 import * as Pointer from "./../../Pointer";
@@ -79,7 +79,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		} );
 
-		describe( property( INSTANCE, "inherit", "Readonly<{}>" ), ():void => {
+		describe( property( INSTANCE, "inherit", "Readonly<{}>", "Property to make a descriptive inheritance os a query property definition." ), ():void => {
 
 			it( "should exists", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
@@ -106,6 +106,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 		} );
 
 		describe( method( INSTANCE, "property" ), ():void => {
+
+			it( hasSignature(
+				"Returns the property specified by the name provided.\n" +
+				"If no name is provided, the property where the query belongs to is returned. In case the the main query, it will be the target document(s).",
+				[
+					{ name: "name", type: "string", optional: true, description: "Optional name of the property to look for." },
+				],
+				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.property ).toBeDefined();
@@ -160,6 +170,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		describe( method( INSTANCE, "value" ), ():void => {
 
+			it( hasSignature(
+				"Wraps a basic value to be used correctly in the query filters and values.",
+				[
+					{ name: "value", type: "string | number | boolean | Date", description: "Value to be converted in a safe to use in query object." },
+				],
+				{ type: "Carbon.SPARQL.QueryDocument.QueryValue.Class" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.value ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.value ).toEqual( jasmine.any( Function ) );
@@ -195,6 +214,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		describe( method( INSTANCE, "object" ), ():void => {
 
+			it( hasSignature(
+				"Wraps a pointer or URi to be used correctly in the query filters and values.",
+				[
+					{ name: "value", type: "Carbon.Pointer.Class | string", description: "Pointer or URI to be converted in a safe to use in query object." },
+				],
+				{ type: "Carbon.SPARQL.QueryDocument.QueryObject.Class" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.object ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.object ).toEqual( jasmine.any( Function ) );
@@ -221,6 +249,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 		} );
 
 		describe( method( INSTANCE, "withType" ), ():void => {
+
+			it( hasSignature(
+				"Specified a type the target document(s) has" +
+				"and also uses its schema (if exits) from where to inherit the specification of the properties defined in the query",
+				[
+					{ name: "type", type: "string", description: "The type of the target and schema" },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.withType ).toBeDefined();
@@ -328,6 +366,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 		} );
 
 		describe( method( INSTANCE, "properties" ), ():void => {
+
+			it( hasSignature(
+				"Method that allows to specify the property to be retrieved the the target document",
+				[
+					{ name: "propertiesSchema", type: "Carbon.SPARQL.QueryDocument.QueryPropertiesSchema.Class", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.properties ).toBeDefined();
@@ -455,6 +502,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		describe( method( INSTANCE, "filter" ), ():void => {
 
+			it( hasSignature(
+				"Adds an filter that affects all the query, not only possible indicated properties values.",
+				[
+					{ name: "constraint", type: "string", description: "RAW constrain of the filter to make." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.filter ).toBeDefined();
 				expect( QueryDocumentBuilder.prototype.filter ).toEqual( jasmine.any( Function ) );
@@ -482,6 +538,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 		} );
 
 		describe( method( INSTANCE, "values" ), ():void => {
+
+			it( hasSignature(
+				"Adds a filter to the specific values of the property where the query is been applied.\n" +
+				"NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.",
+				[
+					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.Class | Carbon.SPARQL.QueryDocument.QueryObject.Class)[]", description: "Values the property must have so that the document would be returned." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryDocumentBuilder.prototype.values ).toBeDefined();

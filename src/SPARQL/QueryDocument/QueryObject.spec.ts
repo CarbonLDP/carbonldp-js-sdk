@@ -1,7 +1,7 @@
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import * as Pointer from "./../../Pointer";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryObject";
@@ -39,6 +39,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(
+				"Creates an object for the specified object resource.",
+				[
+					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the object is been used." },
+					{ name: "object", type: "Carbon.Pointer.Class | string", description: "The object to be converted in a safe to use in query object resource." },
+				]
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const queryObject:QueryObject = new QueryObject( queryContext, "http://example.com/" );
@@ -87,6 +96,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 
 		describe( method( INSTANCE, "getToken" ), ():void => {
 
+			it( hasSignature(
+				"Returns the SPARQL token of the object.",
+				{ type: "SPARQL/tokens/IRIToken | SPARQL/tokens/BlankNodeToken | SPARQL/tokens/PrefixedNameToken" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryObject.prototype.getToken ).toBeDefined();
 				expect( QueryObject.prototype.getToken ).toEqual( jasmine.any( Function ) );
@@ -110,6 +125,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature(
+				"Returns the SPARQL string representation of the object to be used in the query.",
+				{ type: "string" }
+			), ():void => {
+			} );
 
 			it( "should override the default toString", ():void => {
 				expect( QueryObject.prototype.toString ).not.toBe( Object.prototype.toString );

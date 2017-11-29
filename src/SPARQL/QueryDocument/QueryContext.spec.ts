@@ -2,7 +2,7 @@ import { IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import { IllegalArgumentError } from "../../Errors";
-import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import * as Module from "./QueryContext";
 import { Class as QueryContext } from "./QueryContext";
 import QueryVariable from "./QueryVariable";
@@ -35,6 +35,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 		describe( constructor(), ():void => {
 
+			it( hasSignature(
+				"Class that helps the builders of a query document with the shared data.",
+				[
+					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+				]
+			), ():void => {} );
+
 			it( "should be instantiable", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
 				expect( queryContext ).toBeDefined();
@@ -54,6 +61,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "getVariable" ), ():void => {
+
+			it( hasSignature(
+				"Returns a variable object with the name specified.\n" +
+				"If a variable with the same name has already been created this will be returned.",
+				[
+					{ name: "name", type: "string" },
+				],
+				{ type: "Carbon.SPARQL.QueryDocument.QueryVariable.Class" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryContext.prototype.getVariable ).toBeDefined();
@@ -83,6 +100,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "serializeLiteral" ), ():void => {
+
+			it( hasSignature(
+				"Serialize the value with the literalSerializer specified by the type provided if exists.",
+				[
+					{ name: "type", type: "string", description: "The type to the literalSerializer to use." },
+					{ name: "value", type: "any", description: "The value to be serialized" },
+				],
+				{ type: "string" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryContext.prototype.serializeLiteral ).toBeDefined();
@@ -116,6 +143,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "expandIRI" ), ():void => {
+
+			it( hasSignature(
+				"Resolved the relative or prefixed IRI in an absolute one.",
+				[
+					{ name: "iri", type: "string", description: "The iri to be expanded." },
+				],
+				{ type: "string" },
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryContext.prototype.expandIRI ).toBeDefined();
@@ -154,6 +190,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "compactIRI" ), ():void => {
+
+			it( hasSignature(
+				"Returns a IRI token of the string provided," +
+				"but if the IRI can be converted in a prefixed name the corresponding token will be returned.",
+				[
+					{ name: "iri", type: "string", description: "The iri to be compacted and tokenized" },
+				],
+				{ type: "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryContext.prototype.compactIRI ).toBeDefined();
@@ -278,6 +324,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 		describe( method( INSTANCE, "getGeneralSchema" ), ():void => {
 
+			it( hasSignature(
+				"Returns the general schema of the carbon context.\n" +
+				"If no carbon context provided at the constructor an empty schema will be returned.",
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryContext.prototype.getGeneralSchema ).toBeDefined();
 				expect( QueryContext.prototype.getGeneralSchema ).toEqual( jasmine.any( Function ) );
@@ -295,6 +348,17 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "getSchemaFor" ), ():void => {
+
+			it( hasSignature(
+				"Returns the schema specified by the object using the carbon context.\n" +
+				"If no carbon context provided at the constructor an empty schema will be returned.",
+				[
+					{ name: "object", type: "object", description: "The object to look for its corresponding schema." },
+					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query.\nNOTE: Property is ignored but used in the extensions of this class." },
+				],
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryContext.prototype.getSchemaFor ).toBeDefined();

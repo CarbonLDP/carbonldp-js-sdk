@@ -1,13 +1,13 @@
 import AbstractContext from "../../AbstractContext";
+import { Digester } from "../../ObjectSchema";
 import * as PersistedDocument from "../../PersistedDocument";
 import * as PersistedFragment from "../../PersistedFragment";
-import { clazz, constructor, extendsClass, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
-import QueryContext from "./QueryContext";
+import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import * as PartialMetadata from "./PartialMetadata";
+import QueryContext from "./QueryContext";
+
 import * as Module from "./QueryContextPartial";
 import { Class as QueryContextPartial } from "./QueryContextPartial";
-import QueryProperty from "./QueryProperty";
-import { Digester } from "../../ObjectSchema";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
 
@@ -49,6 +49,14 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 		describe( constructor(), ():void => {
 
+			it( hasSignature(
+				[
+					{ name: "document", type: "Carbon.PersistedDocument.Class", description: "partial document from whom the query context is created for." },
+					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+				]
+			), ():void => {
+			} );
+
 			it( "should be instantiable", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 				expect( queryContext ).toBeDefined();
@@ -68,6 +76,17 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 		} );
 
 		describe( method( INSTANCE, "getSchemaFor" ), ():void => {
+
+			it( hasSignature(
+				"Returns the partial schema of the object specified by the path.\n" +
+				"If no path specified the behaviour of the parent class will be executed.",
+				[
+					{ name: "object", type: "object", description: "The object to look for its corresponding schema.\nNOTE: Property is ignored when a path is specified." },
+					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the partial document." },
+				],
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryContextPartial.prototype.getSchemaFor ).toBeDefined();

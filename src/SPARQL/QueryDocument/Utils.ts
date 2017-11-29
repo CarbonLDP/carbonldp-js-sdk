@@ -9,16 +9,16 @@ export function getLevelRegExp( property:string ):RegExp {
 	return new RegExp( `^${ parsedName }[^.]+$` );
 }
 
-export function createPropertyPatterns( context:QueryContext.Class, resourceName:string, propertyName:string, propertyDefinition:DigestedPropertyDefinition ):PatternToken[] {
+export function createPropertyPatterns( context:QueryContext.Class, resourcePath:string, propertyPath:string, propertyDefinition:DigestedPropertyDefinition ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
-	const propertyPath:IRIToken | PrefixedNameToken = context.compactIRI( uri.stringValue );
+	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri.stringValue );
 
-	const resource:VariableToken = context.getVariable( resourceName );
-	const propertyObject:VariableToken = context.getVariable( propertyName );
+	const resource:VariableToken = context.getVariable( resourcePath );
+	const propertyObject:VariableToken = context.getVariable( propertyPath );
 
 	const propertyPatterns:PatternToken[] = [ new SubjectToken( resource )
-		.addPredicate( new PredicateToken( propertyPath )
+		.addPredicate( new PredicateToken( propertyIRI )
 			.addObject( propertyObject ) ),
 	];
 
@@ -30,11 +30,11 @@ export function createPropertyPatterns( context:QueryContext.Class, resourceName
 	return propertyPatterns;
 }
 
-export function createTypePattern( context:QueryContext.Class, resourceName:string ):PatternToken {
+export function createTypesPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
 	return new OptionalToken()
-		.addPattern( new SubjectToken( context.getVariable( resourceName ) )
+		.addPattern( new SubjectToken( context.getVariable( resourcePath ) )
 			.addPredicate( new PredicateToken( "a" )
-				.addObject( context.getVariable( `${ resourceName }.types` ) )
+				.addObject( context.getVariable( `${ resourcePath }.types` ) )
 			)
 		);
 }

@@ -2,7 +2,7 @@ import { IRIToken, LiteralToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import * as XSD from "../../NS/XSD";
-import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import { IllegalArgumentError } from "./../../Errors";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryValue";
@@ -38,6 +38,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 		describe( constructor(), ():void => {
 
+			it( hasSignature(
+				"Creates a value wrapper for the specified value.",
+				[
+					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the value is been used." },
+					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
+				]
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				const queryValue:QueryValue = new QueryValue( queryContext, "value" );
 				expect( queryValue ).toEqual( jasmine.any( QueryValue ) );
@@ -68,6 +77,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "withType" ), ():void => {
+
+			it( hasSignature(
+				"Sets an specific type to the query value.\n" +
+				"If the value is not string this will be serialized by the `Carbon.SPARQL.QueryDocument.QueryContext.serializeLiteral()` method.",
+				[
+					{ name: "type", type: "string", description: "The type to be assigned to the literal value." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryValue.prototype.withType ).toBeDefined();
@@ -136,6 +155,15 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 		describe( method( INSTANCE, "withLanguage" ), ():void => {
 
+			it( hasSignature(
+				"Sets an specific language to the query value.",
+				[
+					{ name: "language", type: "string", description: "The language to be assigned to the string literal value." },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryValue.prototype.withLanguage ).toBeDefined();
 				expect( QueryValue.prototype.withLanguage ).toEqual( jasmine.any( Function ) );
@@ -158,6 +186,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 		describe( method( INSTANCE, "getToken" ), ():void => {
 
+			it( hasSignature(
+				"Returns the SPARQL token of the value.",
+				{ type: "SPARQL/tokens/LiteralToken" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryValue.prototype.getToken ).toBeDefined();
 				expect( QueryValue.prototype.getToken ).toEqual( jasmine.any( Function ) );
@@ -178,6 +212,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature(
+				"Returns the SPARQL string representation of the value to be used in the query.",
+				{ type: "string" }
+			), ():void => {
+			} );
 
 			it( "should override the default toString", ():void => {
 				expect( QueryValue.prototype.toString ).not.toBe( Object.prototype.toString );

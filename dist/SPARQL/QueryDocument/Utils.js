@@ -8,13 +8,13 @@ function getLevelRegExp(property) {
     return new RegExp("^" + parsedName + "[^.]+$");
 }
 exports.getLevelRegExp = getLevelRegExp;
-function createPropertyPatterns(context, resourceName, propertyName, propertyDefinition) {
+function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
-    var propertyPath = context.compactIRI(uri.stringValue);
-    var resource = context.getVariable(resourceName);
-    var propertyObject = context.getVariable(propertyName);
+    var propertyIRI = context.compactIRI(uri.stringValue);
+    var resource = context.getVariable(resourcePath);
+    var propertyObject = context.getVariable(propertyPath);
     var propertyPatterns = [new tokens_1.SubjectToken(resource)
-            .addPredicate(new tokens_1.PredicateToken(propertyPath)
+            .addPredicate(new tokens_1.PredicateToken(propertyIRI)
             .addObject(propertyObject)),
     ];
     if (literalType !== null)
@@ -26,12 +26,12 @@ function createPropertyPatterns(context, resourceName, propertyName, propertyDef
     return propertyPatterns;
 }
 exports.createPropertyPatterns = createPropertyPatterns;
-function createTypePattern(context, resourceName) {
+function createTypesPattern(context, resourcePath) {
     return new tokens_1.OptionalToken()
-        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourceName))
+        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath))
         .addPredicate(new tokens_1.PredicateToken("a")
-        .addObject(context.getVariable(resourceName + ".types"))));
+        .addObject(context.getVariable(resourcePath + ".types"))));
 }
-exports.createTypePattern = createTypePattern;
+exports.createTypesPattern = createTypesPattern;
 
 //# sourceMappingURL=Utils.js.map

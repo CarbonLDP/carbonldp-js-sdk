@@ -743,7 +743,7 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        targetProperty.addPattern(Utils_2.createTypePattern(queryContext, targetProperty.name));
+        targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();

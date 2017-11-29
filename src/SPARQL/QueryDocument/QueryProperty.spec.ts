@@ -2,7 +2,7 @@ import { OptionalToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
-import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { clazz, constructor, hasDefaultExport, hasProperty, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryProperty";
 import { Class as QueryProperty } from "./QueryProperty";
@@ -39,6 +39,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 		describe( constructor(), ():void => {
 
+			it( hasSignature(
+				"Creates a query property for the specified name.\n" +
+				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
+				[
+					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the property is been used." },
+					{ name: "name", type: "string", description: "The name of the property." },
+				]
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 				expect( queryProperty ).toEqual( jasmine.any( QueryProperty ) );
@@ -55,7 +65,32 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			} );
 		} );
 
+		it( hasProperty(
+			INSTANCE,
+			"name",
+			"string",
+			"The name of the query property."
+		), ():void => {
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"variable",
+			"Carbon.SPARQL.QueryDocument.QueryVariable.Class",
+			"The variable that represents the property in the query."
+		), ():void => {
+		} );
+
 		describe( method( INSTANCE, "addPattern" ), ():void => {
+
+			it( hasSignature(
+				"Adds an pattern to query specification of the property retrieval.",
+				[
+					{ name: "...patterns", type: "SPARQL/tokens/PatternToken[]" },
+				],
+				{ type: "this" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryProperty.prototype.addPattern ).toBeDefined();
@@ -91,13 +126,21 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 		describe( method( INSTANCE, "getPatterns" ), ():void => {
 
+			it( hasSignature(
+				"Returns the pattern to be used in the query that specifies the property and its elements\n" +
+				"If the property is optional the patterns will be wrapped in an optional SPARQL token.",
+				{ type: "SPARQL/tokens/PatternToken[]" }
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( QueryProperty.prototype.getPatterns ).toBeDefined();
 				expect( QueryProperty.prototype.getPatterns ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return the patterns array when isn't optional", ():void => {
-				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name", false );
+				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" )
+					.setOptional( false );
 				expect( queryProperty.getPatterns() ).toBe( queryProperty[ "_patterns" ] );
 			} );
 
@@ -111,6 +154,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "getSchema" ), ():void => {
+
+			it( hasSignature(
+				"Returns the specific schema for the property objects that was created query definition.",
+				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( QueryProperty.prototype.getSchema ).toBeDefined();
@@ -134,6 +183,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature(
+				"Returns the string representation of the query property that is the SPARQL variable string.",
+				{ type: "string" }
+			), ():void => {
+			} );
 
 			it( "should override the default toString", ():void => {
 				expect( QueryProperty.prototype.toString ).not.toBe( Object.prototype.toString );

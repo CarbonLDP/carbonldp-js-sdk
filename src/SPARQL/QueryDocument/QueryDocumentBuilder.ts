@@ -10,7 +10,7 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
-import { createPropertyPatterns, createTypePattern } from "./Utils";
+import { createPropertyPatterns, createTypesPattern } from "./Utils";
 
 const inherit:Readonly<{}> = Object.freeze( {} );
 
@@ -96,7 +96,7 @@ export class Class {
 
 			if( "query" in propertyDefinition ) {
 				if( digestedDefinition.literal === false )
-					property.addPattern( createTypePattern( this._context, name ) );
+					property.addPattern( createTypesPattern( this._context, name ) );
 
 				const builder:Class = new Class( this._context, property );
 				if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
@@ -145,7 +145,7 @@ export class Class {
 	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
 		const uri:string = "@id" in propertyDefinition ? this._context.expandIRI( propertyDefinition[ "@id" ] ) : void 0;
 
-		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( propertyName, uri, this._schema );
+		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
 		const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( this._schema, propertyName, propertyDefinition );
 
 		if( inheritDefinition ) {

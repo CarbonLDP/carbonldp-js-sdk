@@ -1,22 +1,23 @@
-import { OptionalToken, PatternToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import { OptionalToken, PatternToken, SubjectToken } from "sparqler/tokens";
 
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
+import * as QueryVariable from "./QueryVariable";
 
 export class Class {
 	readonly name:string;
-	readonly variable:VariableToken;
+	readonly variable:QueryVariable.Class;
 
 	private _context:QueryContext.Class;
 	private _optional:boolean;
 	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
-	constructor( context:QueryContext.Class, name:string, isOptional:boolean = true ) {
+	constructor( context:QueryContext.Class, name:string ) {
 		this.name = name;
 		this.variable = context.getVariable( name );
 
-		this._optional = isOptional;
+		this._optional = true;
 
 		this._context = context;
 		this._patterns = [];

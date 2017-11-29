@@ -1,5 +1,5 @@
 import { VariableToken } from "sparqler/tokens";
-import { clazz, constructor, hasDefaultExport, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import * as Module from "./QueryVariable";
 import { Class as QueryVariable } from "./QueryVariable";
 
@@ -24,20 +24,27 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 		describe( constructor(), ():void => {
 
+			it( hasSignature(
+				[
+					{ name: "name", type: "string", description: "The name of the variable.\nTries to sanitize the unknown characters." },
+				]
+			), ():void => {
+			} );
+
 			it( "should exists", ():void => {
-				const queryObject:QueryVariable = new QueryVariable( "name", 1 );
-				expect( queryObject ).toEqual( jasmine.any( QueryVariable ) );
+				const queryVariable:QueryVariable = new QueryVariable( "name", 1 );
+				expect( queryVariable ).toEqual( jasmine.any( QueryVariable ) );
 			} );
 
 			it( "should extends a VariableToken", ():void => {
-				const queryObject:QueryVariable = new QueryVariable( "name", 1 );
-				expect( queryObject ).toEqual( jasmine.any( VariableToken ) );
+				const queryVariable:QueryVariable = new QueryVariable( "name", 1 );
+				expect( queryVariable ).toEqual( jasmine.any( VariableToken ) );
 			} );
 
 			it( "should normalize name when prefixedName is provided", ():void => {
 				const helper:( name:string, expectedName:string ) => void = ( name, expectedName ) => {
-					const queryObject:QueryVariable = new QueryVariable( name, 1 );
-					expect( queryObject.name ).toBe( expectedName );
+					const queryVariable:QueryVariable = new QueryVariable( name, 1 );
+					expect( queryVariable.name ).toBe( expectedName );
 				};
 
 				helper( "ex:name", "ex_name" );
@@ -46,8 +53,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 			it( "should normalize name when sub-property name is provided", ():void => {
 				const helper:( name:string, expectedName:string ) => void = ( name, expectedName ) => {
-					const queryObject:QueryVariable = new QueryVariable( name, 1 );
-					expect( queryObject.name ).toBe( expectedName );
+					const queryVariable:QueryVariable = new QueryVariable( name, 1 );
+					expect( queryVariable.name ).toBe( expectedName );
 				};
 
 				helper( "object.name", "object__name" );
@@ -57,7 +64,18 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 		} );
 
+		it( extendsClass( "SPARQL/tokens/VariableToken" ), ():void => {
+			const queryVariable:QueryVariable = new QueryVariable( "name", 1 );
+			expect( queryVariable ).toEqual( jasmine.any( VariableToken ) );
+		} );
+
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature(
+				"Returns the SPARQL string representation of the variable to be used in the query.",
+				{ type: "string" }
+			), ():void => {
+			} );
 
 			it( "should override the default toString", ():void => {
 				expect( QueryVariable.prototype.toString ).not.toBe( Object.prototype.toString );
@@ -65,9 +83,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 			it( "should return the string as a VariableToken", ():void => {
 				const helper:( name:string ) => void = name => {
-					const queryObject:QueryVariable = new QueryVariable( name, 1 );
-					const variableToken:VariableToken = new VariableToken( queryObject.name );
-					expect( queryObject.toString() ).toBe( variableToken.toString() );
+					const queryVariable:QueryVariable = new QueryVariable( name, 1 );
+					const variableToken:VariableToken = new VariableToken( queryVariable.name );
+					expect( queryVariable.toString() ).toBe( variableToken.toString() );
 				};
 
 				helper( "name" );
@@ -80,8 +98,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 			/*it( "should return from the index is environment is `prod`", ():void => {
 				const helper:( name:string, index:number, result:string ) => void = ( name, index, result ) => {
-					const queryObject:QueryVariable = new QueryVariable( name, index );
-					expect( queryObject.toString() ).toBe( result );
+					const queryVariable:QueryVariable = new QueryVariable( name, index );
+					expect( queryVariable.toString() ).toBe( result );
 				};
 
 				helper( "name", 1, "?_1" );

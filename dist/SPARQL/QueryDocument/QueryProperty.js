@@ -3,11 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Class = (function () {
-    function Class(context, name, isOptional) {
-        if (isOptional === void 0) { isOptional = true; }
+    function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
-        this._optional = isOptional;
+        this._optional = true;
         this._context = context;
         this._patterns = [];
     }

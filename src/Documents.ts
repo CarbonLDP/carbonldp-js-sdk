@@ -28,7 +28,7 @@ import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
 import { QueryContext, QueryContextBuilder, QueryContextPartial, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
-import { createPropertyPatterns, createTypePattern } from "./SPARQL/QueryDocument/Utils";
+import { createPropertyPatterns, createTypesPattern } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import { mapTupleArray, promiseMethod } from "./Utils";
 
@@ -864,7 +864,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-		targetProperty.addPattern( createTypePattern( queryContext, targetProperty.name ) );
+		targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
 
 		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
 			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );

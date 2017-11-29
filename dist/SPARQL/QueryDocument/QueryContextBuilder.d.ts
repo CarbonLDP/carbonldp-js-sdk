@@ -10,8 +10,8 @@ export declare class Class extends QueryContext.Class {
     hasProperties(name: string): boolean;
     addProperty(name: string): QueryProperty.Class;
     getProperty(name: string): QueryProperty.Class;
-    getProperties(propertyLevel: string): QueryProperty.Class[];
-    getInheritTypeDefinition(propertyName: string, propertyURI?: string, existingSchema?: DigestedObjectSchema): DigestedPropertyDefinition;
+    getProperties(name: string): QueryProperty.Class[];
+    getInheritTypeDefinition(existingSchema: DigestedObjectSchema, propertyName: string, propertyURI?: string): DigestedPropertyDefinition;
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
     private _getTypeSchemas();
 }
