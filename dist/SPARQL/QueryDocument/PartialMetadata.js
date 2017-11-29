@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
 var URI = require("../../RDF/URI");
 var Class = (function () {
-    function Class(schema, partialData) {
-        this.schema = partialData ? this.mergeSchemas(partialData.schema, schema) : schema;
+    function Class(schema, previousPartial) {
+        this.schema = previousPartial ? this.mergeSchemas(previousPartial.schema, schema) : schema;
     }
     Class.prototype.mergeSchemas = function (oldSchema, newSchema) {
         oldSchema.prefixes.forEach(function (oldURI, namespace) {

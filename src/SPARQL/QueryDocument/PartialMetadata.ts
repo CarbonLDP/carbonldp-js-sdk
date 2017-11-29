@@ -5,8 +5,8 @@ import * as URI from "../../RDF/URI";
 export class Class {
 	readonly schema:DigestedObjectSchema;
 
-	constructor( schema:DigestedObjectSchema, partialData?:Class ) {
-		this.schema = partialData ? this.mergeSchemas( partialData.schema, schema ) : schema;
+	constructor( schema:DigestedObjectSchema, previousPartial?:Class ) {
+		this.schema = previousPartial ? this.mergeSchemas( previousPartial.schema, schema ) : schema;
 	}
 
 	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
