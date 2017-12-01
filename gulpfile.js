@@ -200,7 +200,6 @@ gulp.task( "prepare:npm-package|copy:package-json", () => {
 			return json;
 		} ) )
 		.pipe( gulp.dest( config.dist.tsOutput ) );
-	;
 } );
 
 gulp.task( "test", ( done ) => {
@@ -235,6 +234,8 @@ gulp.task( "test:node", () => {
 		"webstomp-client/src/frame.js": path.resolve( __dirname, "temp/node_modules/frame.js" ),
 	} );
 
+	require( "source-map-support/register" );
+
 	let babelStream = gulp
 		.src( "node_modules/webstomp-client/src/frame.js" )
 		.pipe( named() )
@@ -244,12 +245,18 @@ gulp.task( "test:node", () => {
 		.pipe( gulp.dest( path.resolve( config.dist.temp, "node_modules" ) ) );
 
 	let tsProject = ts.createProject( "tsconfig.json" );
-	let tsResults = gulp.src( [ config.source.all ] )
-		.pipe( tsProject() );
+	let tsResults = gulp.src( [ "{src,test}/**/*.ts" ] )
+		.pipe( sourcemaps.init() )
+		.pipe( tsProject() )
+		.js
+		.pipe( sourcemaps.mapSources( ( sourcePath ) => path.resolve( "./", sourcePath ) ) )
+		.pipe( sourcemaps.write( ".", {
+			includeContent: false,
+		} ) );
 
-	const stream = merge2( babelStream, tsResults.js )
+	const stream = merge2( babelStream, tsResults )
 		.pipe( gulp.dest( config.dist.temp ) )
-		.pipe( filter( config.source.test ) )
+		.pipe( filter( [ config.source.test, "**/test/**/index.js" ] ) )
 		.pipe( jasmine( {
 			includeStackTrace: true,
 		} ) );

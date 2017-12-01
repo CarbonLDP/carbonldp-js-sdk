@@ -1,10 +1,7 @@
-import * as Errors from "./../Errors";
 import * as Header from "./Header";
 import Method from "./Method";
-import * as NS from "./../NS";
 import Parser from "./Parser";
 import Response from "./Response";
-
 import * as Utils from "./../Utils";
 
 import { RequestOptions, ClientRequest, IncomingMessage } from "http";
@@ -97,9 +94,8 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 			let requestOptions:RequestOptions & { withCredentials:boolean } = {
 				protocol: parsedURL.protocol,
-				host: parsedURL.host,
 				hostname: parsedURL.hostname,
-				port: parseFloat( parsedURL.port ),
+				port: parsedURL.port,
 				path: parsedURL.path,
 				method: method,
 				headers: {},

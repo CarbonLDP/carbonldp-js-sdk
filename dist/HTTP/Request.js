@@ -72,9 +72,8 @@ function sendWithNode(method, url, body, options) {
             var HTTP = parsedURL.protocol === "http:" ? require("http") : require("https");
             var requestOptions = {
                 protocol: parsedURL.protocol,
-                host: parsedURL.host,
                 hostname: parsedURL.hostname,
-                port: parseFloat(parsedURL.port),
+                port: parsedURL.port,
                 path: parsedURL.path,
                 method: method,
                 headers: {},

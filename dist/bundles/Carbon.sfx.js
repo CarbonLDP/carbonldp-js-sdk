@@ -15004,9 +15004,8 @@ function sendWithNode(method, url, body, options) {
             var HTTP = parsedURL.protocol === "http:" ? __webpack_require__(184) : __webpack_require__(185);
             var requestOptions = {
                 protocol: parsedURL.protocol,
-                host: parsedURL.host,
                 hostname: parsedURL.hostname,
-                port: parseFloat(parsedURL.port),
+                port: parsedURL.port,
                 path: parsedURL.path,
                 method: method,
                 headers: {},

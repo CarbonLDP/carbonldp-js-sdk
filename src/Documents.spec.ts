@@ -1,35 +1,23 @@
-import {
-	INSTANCE,
-	OBLIGATORY,
-	OPTIONAL,
+import { QueryClause } from "sparqler/Clauses";
 
-	module,
-
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasSignature,
-	hasProperty,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-
-import { BindToken, ConstructToken, FilterToken, IRIToken, LimitToken, LiteralToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SelectToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
 import * as TokensModule from "sparqler/tokens";
+import { BindToken, ConstructToken, FilterToken, IRIToken, LimitToken, LiteralToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SelectToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
-import Carbon from "./Carbon";
 import * as BlankNode from "./BlankNode";
+import Carbon from "./Carbon";
 import * as Document from "./Document";
+
+import * as Documents from "./Documents";
+import DefaultExport from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
+import MessagingEvent from "./Messaging/Event";
+import * as MessagingUtils from "./Messaging/Utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -38,14 +26,8 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as SPARQL from "./SPARQL";
+import { clazz, hasConstructor, hasDefaultExport, hasMethod, hasProperty, hasSignature, INSTANCE, interfaze, isDefined, method, module, OBLIGATORY, OPTIONAL, } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import MessagingEvent from "./Messaging/Event";
-import * as MessagingUtils from "./Messaging/Utils";
-
-import { QueryClause } from "sparqler/Clauses";
-
-import * as Documents from "./Documents";
-import DefaultExport from "./Documents";
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -2462,14 +2444,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 
-				it( "should convert plain object into document before request", ():void => {
+				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
-					// noinspection JSIgnoredPromiseFromCall
-					documents.createChild( "https://example.com/parent-resource/", childObject );
+					documents
+						.createChild( "https://example.com/parent-resource/", childObject )
+						.then( () => {
+							expect( spy ).toHaveBeenCalledWith( childObject );
 
-					expect( spy ).toHaveBeenCalledWith( childObject );
+							done();
+						} )
+						.catch( done.fail );
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
@@ -2768,7 +2755,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					;
 				} );
 
-				it( "should process children into a valid persisted documents", ( done:DoneFn ):void => {
+				it( "should process children into valid persisted documents", ( done:DoneFn ):void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
@@ -3132,14 +3119,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 
-				it( "should convert plain object into document before request", ():void => {
+				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
-					// noinspection JSIgnoredPromiseFromCall
-					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject );
+					documents
+						.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
+						.then( () => {
+							expect( spy ).toHaveBeenCalledWith( childObject );
 
-					expect( spy ).toHaveBeenCalledWith( childObject );
+							done();
+						} )
+						.catch( done.fail );
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
