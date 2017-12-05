@@ -1788,7 +1788,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( () => {
 						expect( sendSpy ).toHaveBeenCalledWith(
-							"https://example.com/resource/", " " +
+							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?document.` +
@@ -4556,7 +4556,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						if( error ) done.fail( error );
 
 						expect( sendSpy ).toHaveBeenCalledWith(
-							"https://example.com/resource/", " " +
+							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?child.` +
@@ -6954,7 +6954,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						if( error ) done.fail( error );
 
 						expect( sendSpy ).toHaveBeenCalledWith(
-							"https://example.com/resource/", " " +
+							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?member.` +

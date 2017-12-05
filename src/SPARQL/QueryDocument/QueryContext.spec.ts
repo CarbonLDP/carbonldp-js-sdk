@@ -1,4 +1,4 @@
-import { IRIToken, PrefixedNameToken } from "sparqler/tokens";
+import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import { IllegalArgumentError } from "../../Errors";
@@ -149,7 +149,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "iri", type: "string", description: "The iri to be expanded." },
 				],
-				{ type: "string" },
+				{ type: "string" }
 			), ():void => {
 			} );
 
@@ -286,19 +286,17 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 				queryContext.compactIRI( "ex:resource" );
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
-				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( jasmine.objectContaining( {
-					token: "prefix",
-					name: "ex",
-					iri: new IRIToken( "http://example.com/ns#" ),
-				} ) as any );
+				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( new PrefixToken(
+					"ex",
+					new IRIToken( "http://example.com/ns#" )
+				) );
 
 				queryContext.compactIRI( "schema:resource" );
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 2 );
-				expect( queryContext[ "_prefixesMap" ].get( "schema" ) ).toEqual( jasmine.objectContaining( {
-					token: "prefix",
-					name: "schema",
-					iri: new IRIToken( "https://schema.org/" ),
-				} ) as any );
+				expect( queryContext[ "_prefixesMap" ].get( "schema" ) ).toEqual( new PrefixToken(
+					"schema",
+					new IRIToken( "https://schema.org/" )
+				) );
 			} );
 
 			it( "should not repeat the stored prefixes", ():void => {
@@ -310,11 +308,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 				queryContext.compactIRI( "ex:resource" );
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
-				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( jasmine.objectContaining( {
-					token: "prefix",
-					name: "ex",
-					iri: new IRIToken( "http://example.com/ns#" ),
-				} ) as any );
+				expect( queryContext[ "_prefixesMap" ].get( "ex" ) ).toEqual( new PrefixToken(
+					"ex",
+					new IRIToken( "http://example.com/ns#" )
+				) );
 
 				queryContext.compactIRI( "ex:another_resource" );
 				expect( queryContext[ "_prefixesMap" ].size ).toBe( 1 );
