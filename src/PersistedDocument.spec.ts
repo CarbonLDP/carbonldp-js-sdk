@@ -216,7 +216,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"saveAndRefresh",
 			[ "T extends object" ],
 			"Save and refresh the persisted document.",
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -1643,7 +1643,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"saveAndRefresh",
 				[ "T extends object" ],
 				"Save and refresh the persisted document.",
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ():void => {
 				expect( document.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );

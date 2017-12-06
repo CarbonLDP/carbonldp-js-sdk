@@ -60,7 +60,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 
 	save<T extends object>( requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
-	saveAndRefresh<T extends object>():Promise<[ T & Class, HTTP.Response.Class ]>;
+	saveAndRefresh<T extends object>():Promise<[ T & Class, HTTP.Response.Class[] ]>;
 
 	delete():Promise<HTTP.Response.Class>;
 
@@ -250,7 +250,7 @@ function save<T extends Class>( requestOptions?:HTTP.Request.Options ):Promise<[
 	return this._documents.save( this, requestOptions );
 }
 
-function saveAndRefresh<T extends Class>( this:T ):Promise<[ T, HTTP.Response.Class ]> {
+function saveAndRefresh<T extends Class>( this:T ):Promise<[ T, HTTP.Response.Class[] ]> {
 	return this._documents.saveAndRefresh<T>( this );
 }
 

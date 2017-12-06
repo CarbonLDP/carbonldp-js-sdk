@@ -292,11 +292,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
 		if( typeof Blob !== "undefined" ) {
-			if( ! ( data instanceof Blob ) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
+			if( ! (data instanceof Blob) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
 			HTTP.Request.Util.setContentTypeHeader( (<Blob> data).type, requestOptions );
 
 		} else {
-			if( ! ( data instanceof Buffer ) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
+			if( ! (data instanceof Buffer) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
 			const fileType:( buffer:Buffer ) => { ext:string, mime:string } = require( "file-type" );
 
 			let bufferType:{ ext:string, mime:string } = fileType( <Buffer> data );
@@ -432,12 +432,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
+
 	save<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
 			HTTP.Request.Util.setPreferredRetrieval( "minimal", requestOptions );
-			return this.patchDocument( persistedDocument, requestOptions );
+			return this.patchDocument<T>( persistedDocument, requestOptions );
 		} );
 	}
 
@@ -451,7 +452,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]> {
+		const responses:HTTP.Response.Class[] = [];
 		return promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
@@ -462,7 +464,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ , response ] ) => {
 			if( ! persistedDocument.isPartial() ) return [ persistedDocument, response ];
 
+			responses.push( response );
 			return this.refreshPartialDocument<T>( persistedDocument, requestOptions );
+		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]>( ( [ , response ] ) => {
+			responses.push( response );
+			return [ persistedDocument, responses ];
 		} );
 	}
 
@@ -499,7 +505,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
-		return ( "@id" in object ) ?
+		return ("@id" in object) ?
 			this.getDigestedObjectSchemaForExpandedObject( object ) :
 			this.getDigestedObjectSchemaForDocument( <any> object );
 	}
@@ -681,7 +687,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	_parseErrorResponse<T extends object>( response:HTTP.Response.Class | Error ):any {
 		if( response instanceof Error ) return Promise.reject( response );
 
-		if( ! ( response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has( response.status ) ) )
+		if( ! (response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has( response.status )) )
 			return Promise.reject( new HTTP.Errors.UnknownError( response.data, response ) );
 
 		const error:HTTP.Errors.Error = new (HTTP.Errors.statusCodeMap.get( response.status ))( response.data, response );
@@ -767,12 +773,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		if( ! persistedDocument.isDirty() ) return Promise.resolve<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( [ persistedDocument, null ] );
 		if( persistedDocument.isLocallyOutDated() ) throw new Errors.IllegalStateError( "Cannot save an outdated document." );
-		persistedDocument._normalize();
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+		this.setDefaultRequestOptions( requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "text/ldpatch", requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
+		persistedDocument._normalize();
 		const deltaCreator:LDPatch.DeltaCreator.Class = new LDPatch.DeltaCreator.Class( this.jsonldConverter );
 		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource.Class ) => {
 			const schema:ObjectSchema.DigestedObjectSchema = this.getSchemaFor( resource );
@@ -1143,11 +1149,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return uri;
 	}
 
-	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel:string ):HTTP.Request.Options {
+	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel?:string ):HTTP.Request.Options {
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( interactionModel ) HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
 
 		return requestOptions;
 	}

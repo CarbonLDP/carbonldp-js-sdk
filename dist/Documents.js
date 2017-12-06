@@ -381,6 +381,7 @@ var Class = (function () {
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
+        var responses = [];
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
@@ -391,7 +392,12 @@ var Class = (function () {
             var response = _a[1];
             if (!persistedDocument.isPartial())
                 return [persistedDocument, response];
+            responses.push(response);
             return _this.refreshPartialDocument(persistedDocument, requestOptions);
+        }).then(function (_a) {
+            var response = _a[1];
+            responses.push(response);
+            return [persistedDocument, responses];
         });
     };
     Class.prototype.delete = function (documentURI, requestOptions) {
@@ -670,10 +676,10 @@ var Class = (function () {
             return Promise.resolve([persistedDocument, null]);
         if (persistedDocument.isLocallyOutDated())
             throw new Errors.IllegalStateError("Cannot save an outdated document.");
-        persistedDocument._normalize();
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions);
         HTTP.Request.Util.setContentTypeHeader("text/ldpatch", requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        persistedDocument._normalize();
         var deltaCreator = new LDPatch.DeltaCreator.Class(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
             var schema = _this.getSchemaFor(resource);
@@ -981,8 +987,9 @@ var Class = (function () {
     Class.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
+        if (interactionModel)
+            HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
         return requestOptions;
     };
     Class.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {

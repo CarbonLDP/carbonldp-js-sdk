@@ -58,7 +58,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     refresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    saveAndRefresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    saveAndRefresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class[]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
@@ -105,7 +105,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getDigestedObjectSchemaForDocument(document);
     private getDigestedObjectSchema(objectTypes, objectID);
     private getRequestURI(uri);
-    private setDefaultRequestOptions(requestOptions, interactionModel);
+    private setDefaultRequestOptions(requestOptions, interactionModel?);
     private updateFromPreferenceApplied<T>(persistedDocument, rdfDocuments, response);
     private _parseMembers(pointers);
     private applyResponseData<T>(persistedProtectedDocument, response);
