@@ -160,7 +160,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 		it( hasMethod( STATIC, "hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {

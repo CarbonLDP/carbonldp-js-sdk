@@ -28,9 +28,6 @@
           <option name="OBJECT_WRAPPING" value="5" />
           <option name="ARRAY_WRAPPING" value="5" />
         </JSON>
-        <MarkdownNavigatorCodeStyleSettings>
-          <option name="RIGHT_MARGIN" value="72" />
-        </MarkdownNavigatorCodeStyleSettings>
         <TypeScriptCodeStyleSettings>
           <option name="FORCE_SEMICOLON_STYLE" value="true" />
           <option name="SPACE_AFTER_TYPE_COLON" value="false" />

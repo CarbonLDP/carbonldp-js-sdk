@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
-var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
 var URI = require("./../RDF/URI");
 var PersistedRole = require("./PersistedRole");
 var Utils = require("./../Utils");
@@ -44,21 +43,8 @@ var Class = (function () {
             return _this.context.documents.get(_this.resolveURI(roleURI), requestOptions);
         });
     };
-    Class.prototype.listUsers = function (roleURI, requestOptions) {
-        var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
-            return _this.context.documents.listMembers(accessPoint.id, requestOptions);
-        }).then(function (_a) {
-            var documents = _a[0], response = _a[1];
-            var users = documents.map(function (user) { return PersistedProtectedDocument.Factory.decorate(user, _this.context.documents); });
-            return [users, response];
-        });
-    };
     Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
-        var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
-            return _this.context.documents.getMembers(accessPoint.id, retrievalPreferencesOrRequestOptions, requestOptions);
-        });
+        throw new Errors.NotImplementedError("To be re-implemented in milestone:Security");
     };
     Class.prototype.addUser = function (roleURI, user, requestOptions) {
         return this.addUsers(roleURI, [user], requestOptions);

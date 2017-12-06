@@ -47,29 +47,16 @@
 			} );
 
 			carbon.extendObjectSchema( {
-				"ex": "https://example.com/ns#",
-				"schema": "https://schema.org/",
-				"property0": {
-					"@id": "ex:property-0",
-					"@type": "integer",
+				"hri": "http://hri.base22.com/ns#",
+				"labels": {
+					"@id": "hri:labels",
+					"@type": "boolean",
+					"@container": "@set"
 				},
-				"property1": {
-					"@id": "ex:property-1",
-					"@type": "string",
-				},
-				"property2": {
-					"@id": "schema:property-2",
-					"@type": "@id",
-				},
-				"property3": {
-					"@id": "schema:property-3",
-					"@type": "string",
-				},
-				"list": {
-					"@id": "ex:list",
-					"@type": "string",
-					"@container": "@list",
-				},
+				"gradient": {
+					"@id": "hri:gradient",
+					"@type": "string"
+				}
 			} );
 
 			let resource;
@@ -77,7 +64,7 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				return carbon.documents.get( "container/member-1/" );
+				return carbon.documents.getMembers( "container/" );
 			} ).then( ( data ) => {
 				console.log( data );
 				done();

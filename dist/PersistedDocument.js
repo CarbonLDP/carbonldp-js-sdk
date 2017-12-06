@@ -31,6 +31,9 @@ function extendIsDirty(superFunction) {
         return false;
     };
 }
+function isLocallyOutDated() {
+    return this._etag === null;
+}
 function extendRevert(superFunction) {
     return function () {
         var persistedDocument = this;
@@ -76,19 +79,15 @@ function extendCreateFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
-        if (RDF.URI.Util.isBNodeID(id)) {
+        if (RDF.URI.Util.isBNodeID(id))
             PersistedFragment.Factory.decorate(fragment);
-        }
-        else {
-            PersistedNamedFragment.Factory.decorate(fragment);
-        }
         return fragment;
     };
 }
 function extendCreateNamedFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
-        return PersistedFragment.Factory.decorate(fragment);
+        return PersistedNamedFragment.Factory.decorate(fragment);
     };
 }
 function refresh() {
@@ -138,25 +137,11 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
-function listChildren() {
-    return this._documents.listChildren(this.id);
+function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+    return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
 }
-function getChildren(retrievalPreferences) {
-    return this._documents.getChildren(this.id, retrievalPreferences);
-}
-function listMembers(includeNonReadable) {
-    if (includeNonReadable === void 0) { includeNonReadable = true; }
-    return this._documents.listMembers(this.id, includeNonReadable);
-}
-function getMembers(includeNonReadableOrRetrievalPreferences, retrievalPreferences) {
-    var includeNonReadable = true;
-    if (Utils.isBoolean(includeNonReadableOrRetrievalPreferences)) {
-        includeNonReadable = includeNonReadableOrRetrievalPreferences;
-    }
-    else {
-        retrievalPreferences = includeNonReadableOrRetrievalPreferences;
-    }
-    return this._documents.getMembers(this.id, includeNonReadable, retrievalPreferences);
+function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
+    return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
 }
 function removeMember(memberOrUri) {
     return this._documents.removeMember(this.id, memberOrUri);
@@ -206,6 +191,7 @@ var Factory = (function () {
     }
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_etag")
+            && Utils.hasFunction(object, "isLocallyOutDated")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
@@ -221,8 +207,6 @@ var Factory = (function () {
             && Utils.hasFunction(object, "createChildrenAndRetrieve")
             && Utils.hasFunction(object, "getChildren")
             && Utils.hasFunction(object, "getMembers")
-            && Utils.hasFunction(object, "listChildren")
-            && Utils.hasFunction(object, "listMembers")
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
             && Utils.hasFunction(object, "removeAllMembers")
@@ -251,7 +235,7 @@ var Factory = (function () {
         return document;
     };
     Factory.decorate = function (object, documents) {
-        if (Factory.is(object))
+        if (Factory.hasClassProperties(object))
             return object;
         Document.Factory.decorate(object);
         PersistedResource.Factory.decorate(object);
@@ -263,7 +247,12 @@ var Factory = (function () {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: null,
+            },
+            "isLocallyOutDated": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: isLocallyOutDated,
             },
             "_savedFragments": {
                 writable: true,
@@ -423,23 +412,11 @@ var Factory = (function () {
                 configurable: true,
                 value: createAccessPoints,
             },
-            "listChildren": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: listChildren,
-            },
             "getChildren": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getChildren,
-            },
-            "listMembers": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: listMembers,
             },
             "getMembers": {
                 writable: false,

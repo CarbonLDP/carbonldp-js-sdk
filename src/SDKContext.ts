@@ -1,5 +1,6 @@
 import * as Auth from "./Auth";
 import * as Context from "./Context";
+import * as Document from "./Document";
 import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
@@ -9,6 +10,7 @@ import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
 import * as SHACL from "./SHACL";
+import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 
 export class Class implements Context.Class {
@@ -106,7 +108,9 @@ export class Class implements Context.Class {
 	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
 		let type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
+
+		const vocab:string = this.hasSetting( "vocabulary" ) ? this.resolve( this.getSetting( "vocabulary" ) ) : void 0;
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema, vocab );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -135,7 +139,6 @@ export class Class implements Context.Class {
 		}
 
 		this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-			new ObjectSchema.DigestedObjectSchema(),
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -162,6 +165,7 @@ export class Class implements Context.Class {
 	}
 
 	private registerDefaultObjectSchemas():void {
+		this.extendObjectSchema( Document.RDF_CLASS, Document.SCHEMA );
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
@@ -190,6 +194,8 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
 		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
 
+		this.extendObjectSchema( SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA );
+
 		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
 		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );
 		this.extendObjectSchema( Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA );
@@ -202,20 +208,9 @@ export class Class implements Context.Class {
 	}
 
 	private resolveTypeURI( uri:string ):string {
-		if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		let schema:ObjectSchema.DigestedObjectSchema = this.getObjectSchema();
-		let vocab:string;
-		if( this.hasSetting( "vocabulary" ) ) vocab = this.resolve( this.getSetting( "vocabulary" ) );
-
-
-		if( RDF.URI.Util.isPrefixed( uri ) ) {
-			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
-		} else if( vocab ) {
-			uri = vocab + uri;
-		}
-
-		return uri;
+		const vocab:string = this.hasSetting( "vocabulary" ) ?
+			this.resolve( this.getSetting( "vocabulary" ) ) : null;
+		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
 	}
 }
 

@@ -24,11 +24,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "CreatedResource", {
-        get: function () { return exports.namespace + "CreatedResource"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "Document", {
         get: function () { return exports.namespace + "Document"; },
         enumerable: true,
@@ -51,6 +46,16 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "DocumentModified", {
         get: function () { return exports.namespace + "DocumentModified"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "ErrorResponse", {
+        get: function () { return exports.namespace + "ErrorResponse"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "Error", {
+        get: function () { return exports.namespace + "Error"; },
         enumerable: true,
         configurable: true
     });
@@ -84,11 +89,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "ModifiedResource", {
-        get: function () { return exports.namespace + "ModifiedResource"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
         get: function () { return exports.namespace + "NonReadableMembershipResourceTriples"; },
         enumerable: true,
@@ -114,6 +114,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferDocumentETags", {
+        get: function () { return exports.namespace + "PreferDocumentETags"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "PreferMembershipResources", {
         get: function () { return exports.namespace + "PreferMembershipResources"; },
         enumerable: true,
@@ -124,13 +129,18 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "PreferResultsContext", {
+        get: function () { return exports.namespace + "PreferResultsContext"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
         get: function () { return exports.namespace + "PreferSelectedMembershipTriples"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "VolatileResource", {
-        get: function () { return exports.namespace + "VolatileResource"; },
+    Object.defineProperty(Class, "QueryMetadata", {
+        get: function () { return exports.namespace + "QueryMetadata"; },
         enumerable: true,
         configurable: true
     });
@@ -144,16 +154,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "ErrorResponse", {
-        get: function () { return exports.namespace + "ErrorResponse"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Error", {
-        get: function () { return exports.namespace + "Error"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "ResponseMetadata", {
         get: function () { return exports.namespace + "ResponseMetadata"; },
         enumerable: true,
@@ -161,6 +161,11 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "ValidationError", {
         get: function () { return exports.namespace + "ValidationError"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "VolatileResource", {
+        get: function () { return exports.namespace + "VolatileResource"; },
         enumerable: true,
         configurable: true
     });

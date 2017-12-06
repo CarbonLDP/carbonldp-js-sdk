@@ -9,7 +9,6 @@ var Factory = (function () {
     Factory.hasClassProperties = function (object) {
         return Utils.hasPropertyDefined(object, "_roles")
             && Utils.hasFunction(object, "createChild")
-            && Utils.hasFunction(object, "listUsers")
             && Utils.hasFunction(object, "getUsers")
             && Utils.hasFunction(object, "addUser")
             && Utils.hasFunction(object, "addUsers")
@@ -25,26 +24,18 @@ var Factory = (function () {
         if (Factory.hasClassProperties(persistedRole))
             return persistedRole;
         PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
-        var context = documents.context;
-        var roles = context ? context.auth.roles : null;
         Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: roles,
+                value: documents["context"] ? documents["context"].auth.roles : null,
             },
             "createChild": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
                 value: createChild,
-            },
-            "listUsers": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: listUsers,
             },
             "getUsers": {
                 writable: true,
@@ -86,13 +77,9 @@ function createChild(role, slugOrRequestOptions, requestOptions) {
     checkState(this);
     return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
 }
-function listUsers(requestOptions) {
+function getUsers(requestOptions) {
     checkState(this);
-    return this._roles.listUsers(this.id, requestOptions);
-}
-function getUsers(retrievalPreferencesOrRequestOptions, requestOptions) {
-    checkState(this);
-    return this._roles.getUsers(this.id, retrievalPreferencesOrRequestOptions, requestOptions);
+    return this._roles.getUsers(this.id, requestOptions);
 }
 function addUser(user, requestOptions) {
     checkState(this);

@@ -31,10 +31,10 @@ export interface Class extends Resource.Class, Pointer.Library, Pointer.Validato
     toJSON(): string;
 }
 export declare class Factory {
-    static hasClassProperties(documentResource: Object): boolean;
-    static is(object: Object): boolean;
+    static hasClassProperties(documentResource: object): boolean;
+    static is(object: object): object is Class;
     static create(): Class;
-    static createFrom<T extends Object>(object: T): T & Class;
-    static decorate<T extends Object>(object: T): T & Class;
+    static createFrom<T extends object>(object: T): T & Class;
+    static decorate<T extends object>(object: T): T & Class;
 }
 export default Class;

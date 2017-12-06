@@ -140,6 +140,16 @@ function promiseMethod(fn) {
     return new Promise(function (resolve) { return resolve(fn()); });
 }
 exports.promiseMethod = promiseMethod;
+function mapTupleArray(tuples) {
+    var firsts = [];
+    var seconds = [];
+    tuples.forEach(function (tuple) {
+        firsts.push(tuple[0]);
+        seconds.push(tuple[1]);
+    });
+    return [firsts, seconds];
+}
+exports.mapTupleArray = mapTupleArray;
 var A = (function () {
     function A() {
     }
@@ -218,19 +228,6 @@ var O = (function () {
         if (ignore === void 0) { ignore = {}; }
         return internalAreEqual(object1, object2, config, [object1], [object2], ignore);
     };
-    O.shallowUpdate = function (target, source) {
-        var keys = A.joinWithoutDuplicates(Object.keys(source), Object.keys(target));
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            if (hasProperty(source, key)) {
-                target[key] = source[key];
-            }
-            else {
-                delete target[key];
-            }
-        }
-        return target;
-    };
     O.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
             return true;
@@ -272,8 +269,8 @@ function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
     if (isDate(object1))
         return object1.getTime() === object2.getTime();
     var keys = A.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
-    for (var _i = 0, keys_2 = keys; _i < keys_2.length; _i++) {
-        var key = keys_2[_i];
+    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+        var key = keys_1[_i];
         if (!(key in object1) || !(key in object2))
             return false;
         if (typeof object1 !== typeof object2)

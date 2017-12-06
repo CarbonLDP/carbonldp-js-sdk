@@ -46,6 +46,12 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			"Revert the changes made to the resource into the state of the snapshot."
 		), ():void => {} );
 
+		it( hasMethod(
+			OBLIGATORY,
+			"isPartial",
+			"Returns true if the resource is a partial representation of the one stored in Carbon LDP."
+		), ():void => {} );
+
 	} );
 
 	it( hasDefaultExport( "Carbon.PersistedResource.Class" ), ():void => {
@@ -67,7 +73,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.PersistedResource.Class` object.", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -82,6 +88,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 				_syncSnapshot: ():void => {},
 				isDirty: ():void => {},
 				revert: ():void => {},
+				isPartial: ():void => {},
 			};
 			expect( PersistedResource.Factory.hasClassProperties( object ) ).toBe( true );
 
@@ -100,13 +107,18 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			delete object.revert;
 			expect( PersistedResource.Factory.hasClassProperties( object ) ).toBe( false );
 			object.revert = () => {};
+
+			delete object.isPartial;
+			expect( PersistedResource.Factory.hasClassProperties( object ) ).toBe( false );
+			object.isPartial = () => {};
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
+			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedResource.Class` object.", [
-				{ name: "fragment", type: "T extends Object", description: "The object to convert into a persisted resource one." },
+				{ name: "fragment", type: "T", description: "The object to convert into a persisted resource one." },
 			]
 		), ():void => {
 			expect( PersistedResource.Factory.decorate ).toBeDefined();
@@ -118,6 +130,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 				_syncSnapshot: fn,
 				isDirty: fn,
 				revert: fn,
+				isPartial: fn,
 			};
 			let persistedResource:PersistedResource.Class;
 

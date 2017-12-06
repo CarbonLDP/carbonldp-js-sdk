@@ -9,12 +9,12 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "membershipResource"));
+        return Utils.hasPropertyDefined(resource, "membershipResource");
     };
     Factory.is = function (object) {
-        return (Factory.hasClassProperties(object)
-            && Document.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS));
+        return Document.Factory.is(object)
+            && object.hasType(exports.RDF_CLASS)
+            && Factory.hasClassProperties(object);
     };
     Factory.create = function (membershipResource, hasMemberRelation, isMemberOfRelation) {
         return Factory.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);

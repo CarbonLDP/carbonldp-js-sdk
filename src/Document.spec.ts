@@ -257,7 +257,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
-					{ name: "object", type: "Object" },
+					{ name: "object", type: "object" },
 				],
 				{ type: "T & Carbon.Fragment.Class" }
 			), ():void => {} );
@@ -481,7 +481,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Document.Class` object.", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -1304,7 +1304,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				it( hasSignature(
 					[ "T" ],
 					"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
-						{ name: "object", type: "Object" },
+						{ name: "object", type: "object" },
 					],
 					{ type: "T & Carbon.Fragment.Class" }
 				), ():void => {

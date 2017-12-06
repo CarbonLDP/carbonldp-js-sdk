@@ -120,7 +120,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			object.addType( NS.C.Class.ResponseMetadata );
 
 			delete object.documentsMetadata;
-			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
+			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );
 			object.documentsMetadata = null;
 		} );
 
