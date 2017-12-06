@@ -1,5 +1,10 @@
-import { INSTANCE, module, reexports } from "../test/JasmineExtender";
+import {
+	INSTANCE,
+	module,
+	reexports,
+} from "../test/JasmineExtender";
 
+import * as DeltaCreator from "./DeltaCreator";
 import * as Module from "./index";
 import * as Tokens from "./Tokens";
 
@@ -13,6 +18,11 @@ describe( module( "Carbon/LDPatch" ), ():void => {
 	it( reexports( INSTANCE, "Tokens", "Carbon/LDPatch/Tokens" ), ():void => {
 		expect( Module.Tokens ).toBeDefined();
 		expect( Module.Tokens ).toBe( Tokens );
+	} );
+
+	it( reexports( INSTANCE, "DeltaCreator", "Carbon/LDPatch/DeltaCreator" ), ():void => {
+		expect( Module.DeltaCreator ).toBeDefined();
+		expect( Module.DeltaCreator ).toBe( DeltaCreator );
 	} );
 
 } );

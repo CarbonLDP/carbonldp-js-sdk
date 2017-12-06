@@ -1,15 +1,46 @@
-import { isBNodeLabel, isRelative } from "sparqler/iri";
+import {
+	isBNodeLabel,
+	isRelative,
+} from "sparqler/iri";
+import {
+	BlankNodeToken,
+	CollectionToken,
+	IRIToken,
+	LiteralToken,
+	ObjectToken,
+	PredicateToken,
+	PrefixedNameToken,
+	SubjectToken,
+	VariableOrIRI,
+} from "sparqler/tokens";
 
-import { BlankNodeToken, CollectionToken, IRIToken, LiteralToken, ObjectToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableOrIRI, VariableToken } from "sparqler/tokens";
 import { Converter } from "../JSONLD";
 import { XSD } from "../NS";
-import { ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, PointerType } from "../ObjectSchema";
+import {
+	ContainerType,
+	DigestedObjectSchema,
+	DigestedPropertyDefinition,
+	PointerType,
+} from "../ObjectSchema";
 import * as Pointer from "../Pointer";
 import { URI } from "../RDF";
 import * as Resource from "../Resource";
-import { isBoolean, isDate, isFunction, isNumber, isString } from "../Utils";
+import {
+	isBoolean,
+	isDate,
+	isFunction,
+	isNumber,
+	isString,
+} from "../Utils";
 
-import { AddToken, DeleteToken, LDPatchToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
+import {
+	AddToken,
+	DeleteToken,
+	LDPatchToken,
+	PrefixToken,
+	SliceToken,
+	UpdateListToken,
+} from "./Tokens";
 
 interface ArrayDelta {
 	toAdd:ObjectToken[];
@@ -166,7 +197,7 @@ export class Class {
 	}
 
 	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):ObjectToken[] {
-		const values:any[] = ( Array.isArray( value ) ?
+		const values:any[] = (Array.isArray( value ) ?
 				! definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
 				[ value ]
 		).filter( isValidValue );
@@ -259,7 +290,7 @@ export class Class {
 		if( object instanceof LiteralToken )
 			return this.addPrefixFrom( object.type, schema );
 
-		if( ! ( object instanceof PrefixedNameToken ) ) return;
+		if( ! (object instanceof PrefixedNameToken) ) return;
 
 		const namespace:string = object.namespace;
 		if( this.prefixesMap.has( namespace ) ) return;
@@ -311,11 +342,11 @@ function getListDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):Update
 		index:number;
 	}
 
-	const nodeMapper:( object:ObjectToken, index:number ) => Node = ( object, index ) => ( {
+	const nodeMapper:( object:ObjectToken, index:number ) => Node = ( object, index ) => ({
 		identifier: `${ object }`,
 		object,
 		index,
-	} );
+	});
 	const oldPositions:Node[] = oldValues.map( nodeMapper );
 	const newPositions:Node[] = newValues.map( nodeMapper );
 

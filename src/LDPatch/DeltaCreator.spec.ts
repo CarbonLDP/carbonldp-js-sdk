@@ -5,26 +5,36 @@ import {
 	LiteralToken,
 	PredicateToken,
 	PrefixedNameToken,
-	SubjectToken
+	SubjectToken,
 } from "sparqler/tokens";
 
 import { Converter } from "../JSONLD";
 import { XSD } from "../NS";
-import { DigestedObjectSchema, Digester } from "../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	Digester,
+} from "../ObjectSchema";
 import * as Pointer from "../Pointer";
 import * as Resource from "../Resource";
 import {
 	clazz,
 	constructor,
 	hasDefaultExport,
+	hasSignature,
 	INSTANCE,
 	method,
-	module
+	module,
 } from "../test/JasmineExtender";
 
 import * as Module from "./DeltaCreator";
 import { Class as DeltaCreator } from "./DeltaCreator";
-import { AddToken, DeleteToken, PrefixToken, SliceToken, UpdateListToken } from "./Tokens";
+import {
+	AddToken,
+	DeleteToken,
+	PrefixToken,
+	SliceToken,
+	UpdateListToken,
+} from "./Tokens";
 
 describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 
@@ -51,6 +61,13 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(
+				[
+					{ name: "jsonldConverter", type: "Carbon.JSONLD.Converter.Class", description: "The converted of JSON-LD to Javascript and viceversa to use." },
+				]
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const delta:DeltaCreator = new DeltaCreator( null );
@@ -81,6 +98,17 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "addResource" ), ():void => {
+
+			it( hasSignature(
+				"Creates and adds the delta to the patch, of the provided old and new resource.",
+				[
+					{ name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
+					{ name: "oldResource", type: "Carbon.Resource.Class", description: "The old representation of the resource to create the delta." },
+					{ name: "newResource", type: "Carbon.Resource.Class", description: "The current representation of the resource to create the delta." },
+				]
+			), ():void => {
+			} );
+
 
 			it( "should exists", ():void => {
 				expect( DeltaCreator.prototype.addResource ).toBeDefined();
@@ -2367,6 +2395,13 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "getPatch" ), ():void => {
+
+			it( hasSignature(
+				"Returns the LD Patch string of the resources provided in `addResource` method.",
+				{ type: "string" }
+			), ():void => {
+			} );
+
 
 			it( "should exists", ():void => {
 				expect( DeltaCreator.prototype.getPatch ).toBeDefined();

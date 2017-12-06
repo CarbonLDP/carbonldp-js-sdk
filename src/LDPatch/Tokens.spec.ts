@@ -8,7 +8,15 @@ import {
 } from "sparqler/tokens";
 import * as TokenUtils from "sparqler/tokens/utils";
 
-import { clazz, constructor, INSTANCE, method, module } from "../test/JasmineExtender";
+import {
+	clazz,
+	constructor,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	method,
+	module,
+} from "../test/JasmineExtender";
 
 import * as Module from "./Tokens";
 import {
@@ -29,12 +37,25 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	describe( clazz( "Carbon.LDPatch.Tokens.LDPatchToken", "An LD Patch expression.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
+		it( hasProperty( INSTANCE, "token", "ldpatch" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "prologues", "Carbon.LDPatch.Tokens.PrefixToken[]" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "statements", "Carbon.LDPatch.Tokens.StatementToken[]" ), ():void => {
+		} );
+
+
 		it( "should exists", ():void => {
 			expect( LDPatchToken ).toBeDefined();
 			expect( LDPatchToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const token:LDPatchToken = new LDPatchToken();
@@ -59,6 +80,9 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature( { type: "string" } ), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( LDPatchToken.prototype.toString ).toBeDefined();
@@ -119,12 +143,30 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	describe( clazz( "Carbon.LDPatch.Tokens.PrefixToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
+		it( hasProperty( INSTANCE, "token", "prefix" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "namespace", "string" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "iri", "SPARQLER/tokens/IRIToken" ), ():void => {
+		} );
+
+
 		it( "should exists", ():void => {
 			expect( PrefixToken ).toBeDefined();
 			expect( PrefixToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(
+				[
+					{ name: "namespace", type: "string", description: "The namespace of the LD Patch prefix." },
+					{ name: "iri", type: "SPARQLER/tokens/IRIToken", description: "The IRI of the LD Patch prefix." },
+				]
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const token:PrefixToken = new PrefixToken( null, null );
@@ -152,6 +194,9 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 		describe( method( INSTANCE, "toString" ), ():void => {
 
+			it( hasSignature( { type: "string" } ), ():void => {
+			} );
+
 			it( "should exists", ():void => {
 				expect( PrefixToken.prototype.toString ).toBeDefined();
 				expect( PrefixToken.prototype.toString ).toEqual( jasmine.any( Function ) );
@@ -173,12 +218,22 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	describe( clazz( "Carbon.LDPatch.Tokens.AddToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
+		it( hasProperty( INSTANCE, "token", "add" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "triples", "SPARQLER/tokens/SubjectToken[]" ), ():void => {
+		} );
+
+
 		it( "should exists", ():void => {
 			expect( AddToken ).toBeDefined();
 			expect( AddToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const token:AddToken = new AddToken();
@@ -198,6 +253,9 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature( { type: "string" } ), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( AddToken.prototype.toString ).toBeDefined();
@@ -237,12 +295,22 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	describe( clazz( "Carbon.LDPatch.Tokens.DeleteToken", "LD Patch delete action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
+		it( hasProperty( INSTANCE, "token", "delete" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "triples", "SPARQLER/tokens/SubjectToken[]" ), ():void => {
+		} );
+
+
 		it( "should exists", ():void => {
 			expect( DeleteToken ).toBeDefined();
 			expect( DeleteToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const token:DeleteToken = new DeleteToken();
@@ -262,6 +330,9 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature( { type: "string" } ), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( DeleteToken.prototype.toString ).toBeDefined();
@@ -301,12 +372,38 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	describe( clazz( "Carbon.LDPatch.Tokens.UpdateListToken", "LD Patch update list action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
+		it( hasProperty( INSTANCE, "token", "updateList" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "subject", "SPARQLER/tokens/VariableORIRI | SPARQLER/tokens/BlankNodeToken", ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "predicate", "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "slice", "Carbon.LDPatch.Tokens.SliceToken" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "collection", "SPARQLER/tokens/CollectionToken" ), ():void => {
+		} );
+
+
 		it( "should exists", ():void => {
 			expect( UpdateListToken ).toBeDefined();
 			expect( UpdateListToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(
+				[
+					{ name: "subject", type: "SPARQLER/tokens/VariableORIRI | SPARQLER/tokens/BlankNodeToken", description: "The subject that contains the list to update." },
+					{ name: "predicate", type: "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken", description: "The predicate relation to the list to update." },
+					{ name: "slice", type: "Carbon.LDPatch.Tokens.SliceToken", description: "The slice that specifies the index of the elements in the list that will be replaced." },
+					{ name: "collection", type: "SPARQLER/tokens/CollectionToken", description: "The collection to replace the selected elements by the slice token." },
+				]
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const token:UpdateListToken = new UpdateListToken( null, null, null, null );
@@ -321,6 +418,9 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature( { type: "string" } ), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				expect( UpdateListToken.prototype.toString ).toBeDefined();
@@ -346,12 +446,30 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	describe( clazz( "Carbon.LDPatch.Tokens.SliceToken", "LD Patch list slice expression token.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
+		it( hasProperty( INSTANCE, "token", "slice" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "minIndex", "number" ), ():void => {
+		} );
+
+		it( hasProperty( INSTANCE, "maxIndex", "number" ), ():void => {
+		} );
+
+
 		it( "should exists", ():void => {
 			expect( SliceToken ).toBeDefined();
 			expect( SliceToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
+
+			it( hasSignature(
+				[
+					{ name: "minIndex", type: "number", optional: true, description: "The minimum index of the list's range to update." },
+					{ name: "maxIndex", type: "number", optional: true, description: "The maximum index of the list's range to update." },
+				]
+			), ():void => {
+			} );
 
 			it( "should exists", ():void => {
 				const token:SliceToken = new SliceToken();
@@ -427,6 +545,9 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 		} );
 
 		describe( method( INSTANCE, "toString" ), ():void => {
+
+			it( hasSignature( { type: "string" } ), ():void => {
+			} );
 
 			it( "should override default", ():void => {
 				expect( SliceToken.prototype.toString ).toBeDefined();
