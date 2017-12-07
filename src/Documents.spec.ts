@@ -1,6 +1,24 @@
 import { QueryClause } from "sparqler/Clauses";
 import * as TokensModule from "sparqler/tokens";
-import { BindToken, ConstructToken, FilterToken, IRIToken, LimitToken, LiteralToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SelectToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import {
+	BindToken,
+	ConstructToken,
+	FilterToken,
+	IRIToken,
+	LimitToken,
+	LiteralToken,
+	OffsetToken,
+	OptionalToken,
+	OrderToken,
+	PredicateToken,
+	PrefixedNameToken,
+	PrefixToken,
+	QueryToken,
+	SelectToken,
+	SubjectToken,
+	ValuesToken,
+	VariableToken,
+} from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
@@ -24,7 +42,21 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as SPARQL from "./SPARQL";
-import { clazz, hasConstructor, hasDefaultExport, hasMethod, hasProperty, hasSignature, INSTANCE, interfaze, isDefined, method, module, OBLIGATORY, OPTIONAL, } from "./test/JasmineExtender";
+import {
+	clazz,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
 describe( module( "Carbon/Documents" ), ():void => {
@@ -8541,7 +8573,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} );
 				} );
 
-				it( "should send the patch delta", ( done:DoneFn ):void => {
+				it( "should send the patch delta when full document", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "PATCH" ).andReturn( {
 						status: 200,
 					} );
@@ -8586,6 +8618,93 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
+					}, "https://example.com/resource/", documents );
+					persistedDocument._syncSnapshot();
+					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
+
+					persistedDocument.addType( "NewType" );
+					persistedDocument[ "list" ] = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					persistedDocument[ "pointer" ][ "string" ] = [ "string 2", "string 3" ];
+					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
+					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
+
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+						expect( _document ).toBe( persistedDocument );
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.params ).toBe( "" +
+							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
+							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+							`Add { ` +
+							`` + `<https://example.com/resource/> a <https://example.com/ns#NewType>. ` +
+							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 3". ` +
+							`` + `_:blank-node <https://example.com/ns#string> "string -1" ` +
+							`}. ` +
+							`Delete { ` +
+							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1" ` +
+							`}.` +
+							``
+						);
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should send the patch delta when partial document", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "PATCH" ).andReturn( {
+						status: 200,
+					} );
+
+					context.extendObjectSchema( {
+						"xsd": NS.XSD.namespace,
+					} );
+
+					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+						types: [ "https://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "https://example.com/resource/#fragment",
+							types: [ "https://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointer: [ {
+								id: "_:blank-node",
+								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+								string: [ "string 1" ],
+								number: 100,
+								_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+									"string": {
+										"@type": NS.XSD.DataType.string,
+										"@container": "@set",
+									},
+									"pointer": {
+										"@type": "@id",
+									},
+									"number": {
+										"@type": NS.XSD.DataType.integer,
+									},
+								} ) ),
+							} ],
+							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								"string": {
+									"@type": NS.XSD.DataType.string,
+									"@container": "@set",
+								},
+								"pointer": {
+									"@type": "@id",
+								},
+							} ) ),
+						},
+						_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							"list": {
+								"@container": "@list",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} ) ),
 					}, "https://example.com/resource/", documents );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );

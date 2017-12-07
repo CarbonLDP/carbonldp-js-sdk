@@ -1,5 +1,17 @@
 import { QueryClause } from "sparqler/Clauses";
-import { BindToken, ConstructToken, IRIToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import {
+	BindToken,
+	ConstructToken,
+	IRIToken,
+	OptionalToken,
+	PatternToken,
+	PredicateToken,
+	QueryToken,
+	SelectToken,
+	SubjectToken,
+	ValuesToken,
+	VariableToken,
+} from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -13,7 +25,10 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { createDestination, validateEventContext } from "./Messaging/Utils";
+import {
+	createDestination,
+	validateEventContext,
+} from "./Messaging/Utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -28,10 +43,23 @@ import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
-import { QueryContext, QueryContextBuilder, QueryContextPartial, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
-import { createPropertyPatterns, createTypesPattern } from "./SPARQL/QueryDocument/Utils";
+import {
+	QueryContext,
+	QueryContextBuilder,
+	QueryContextPartial,
+	QueryDocumentBuilder,
+	QueryDocumentsBuilder,
+	QueryProperty,
+} from "./SPARQL/QueryDocument";
+import {
+	createPropertyPatterns,
+	createTypesPattern,
+} from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
-import { mapTupleArray, promiseMethod } from "./Utils";
+import {
+	mapTupleArray,
+	promiseMethod,
+} from "./Utils";
 
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 
@@ -1111,23 +1139,43 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
-		let types:string[] = Resource.Util.getTypes( document );
-
-		return this.getDigestedObjectSchema( types, document.id );
+		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
+			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
+			return this.getSchemaWith( schemas );
+		} else {
+			const types:string[] = Resource.Util.getTypes( document );
+			return this.getDigestedObjectSchema( types, document.id );
+		}
 	}
 
 	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
-		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
-		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) && objectTypes.indexOf( Document.RDF_CLASS ) === - 1 ) objectTypes = objectTypes.concat( Document.RDF_CLASS );
+		if(
+			Utils.isDefined( objectID ) &&
+			! RDF.URI.Util.hasFragment( objectID ) &&
+			! RDF.URI.Util.isBNodeID( objectID ) &&
+			objectTypes.indexOf( Document.RDF_CLASS ) === - 1
+		)
+			objectTypes = objectTypes.concat( Document.RDF_CLASS );
 
-		for( let type of objectTypes ) {
-			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
-		}
+		const schemas:ObjectSchema.DigestedObjectSchema[] = objectTypes
+			.filter( type => this.context.hasObjectSchema( type ) )
+			.map( type => this.context.getObjectSchema( type ) )
+		;
 
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( objectSchemas );
-		if( this.context.hasSetting( "vocabulary" ) ) digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
+		return this.getSchemaWith( schemas );
+	}
+
+	private getSchemaWith( objectSchemas:ObjectSchema.DigestedObjectSchema[] ):ObjectSchema.DigestedObjectSchema {
+		const digestedSchema:ObjectSchema.DigestedObjectSchema =
+			ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				this.context.getObjectSchema(),
+				...objectSchemas,
+			] );
+
+		if( this.context.hasSetting( "vocabulary" ) )
+			digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
 
 		return digestedSchema;
 	}

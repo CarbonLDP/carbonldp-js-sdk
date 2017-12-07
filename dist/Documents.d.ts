@@ -104,6 +104,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
     private getDigestedObjectSchema(objectTypes, objectID);
+    private getSchemaWith(objectSchemas);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel?);
     private updateFromPreferenceApplied<T>(persistedDocument, rdfDocuments, response);

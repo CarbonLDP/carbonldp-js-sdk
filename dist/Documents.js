@@ -17,6 +17,7 @@ var ObjectSchema = require("./ObjectSchema");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
+var PersistedResource = require("./PersistedResource");
 var Pointer = require("./Pointer");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
@@ -944,21 +945,33 @@ var Class = (function () {
         return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
-        var types = Resource.Util.getTypes(document);
-        return this.getDigestedObjectSchema(types, document.id);
+        if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
+            var schemas = [document._partialMetadata.schema];
+            return this.getSchemaWith(schemas);
+        }
+        else {
+            var types = Resource.Util.getTypes(document);
+            return this.getDigestedObjectSchema(types, document.id);
+        }
     };
     Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
+        var _this = this;
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var objectSchemas = [this.context.getObjectSchema()];
-        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID) && objectTypes.indexOf(Document.RDF_CLASS) === -1)
+        if (Utils.isDefined(objectID) &&
+            !RDF.URI.Util.hasFragment(objectID) &&
+            !RDF.URI.Util.isBNodeID(objectID) &&
+            objectTypes.indexOf(Document.RDF_CLASS) === -1)
             objectTypes = objectTypes.concat(Document.RDF_CLASS);
-        for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
-            var type = objectTypes_1[_i];
-            if (this.context.hasObjectSchema(type))
-                objectSchemas.push(this.context.getObjectSchema(type));
-        }
-        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
+        var schemas = objectTypes
+            .filter(function (type) { return _this.context.hasObjectSchema(type); })
+            .map(function (type) { return _this.context.getObjectSchema(type); });
+        return this.getSchemaWith(schemas);
+    };
+    Class.prototype.getSchemaWith = function (objectSchemas) {
+        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+            this.context.getObjectSchema()
+        ].concat(objectSchemas));
         if (this.context.hasSetting("vocabulary"))
             digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
         return digestedSchema;

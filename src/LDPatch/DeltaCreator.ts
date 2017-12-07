@@ -271,7 +271,6 @@ export class Class {
 	private compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
 		if( isRelative( iri ) && schema.vocab ) iri = schema.vocab + iri;
 
-		// noinspection JSMismatchedCollectionQueryUpdate
 		const matchPrefix:[ string, URI.Class ] = Array.from( schema.prefixes.entries() )
 			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI.stringValue ) );
 
