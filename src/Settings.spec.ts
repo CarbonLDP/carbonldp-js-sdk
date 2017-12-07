@@ -73,19 +73,14 @@ describe( module( "Carbon/Settings" ), ():void => {
 	it( hasDefaultExport(
 		"Carbon.settings", `
 		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
-		* auth.method: \`Carbon.Auth.Method.TOKEN\`
 		* system.container: \`".system/"\`
 		* system.users.container: \`"users/"\`
-		* system.credentials.container: \`"credentials/"\`
 		* system.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
 		`
 	), ():void => {
 		expect( defaultExport ).toBeDefined();
 		expect( Utils.isObject( defaultExport ) ).toBe( true );
-
-		expect( defaultExport[ "auth.method" ] ).toBeDefined();
-		expect( defaultExport[ "auth.method" ] ).toBe( Auth.Method.TOKEN );
 
 		expect( defaultExport[ "system.container" ] ).toBeDefined();
 		expect( defaultExport[ "system.container" ] ).toBe( ".system/" );

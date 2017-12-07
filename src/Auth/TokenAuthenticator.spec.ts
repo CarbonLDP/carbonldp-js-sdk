@@ -1,30 +1,27 @@
 import {
-	INSTANCE,
-
-	module,
-
-	isDefined,
-
 	clazz,
-	method,
-
 	hasConstructor,
+	hasDefaultExport,
 	hasMethod,
 	hasSignature,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+} from "../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as Utils from "./../Utils";
 import * as NS from "./../NS";
+import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
-import * as Token from "./Token";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
+
+import * as TokenCredentials from "./TokenCredentials";
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
@@ -40,7 +37,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 	describe( clazz(
 		"Carbon.Auth.TokenAuthenticator.Class",
-		"Authenticates requests using JSON Web Token (JWT) Authentication.", [
+		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.", [
 			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
 		]
 	), ():void => {
@@ -132,7 +129,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				"Stores credentials to authenticate future requests.", [
 					{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				// Property Integrity
@@ -146,6 +143,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							this.setSetting( "system.container", ".system/" );
 						}
 					}
+
 					let context:AbstractContext = new MockedContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -232,12 +230,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let context:SuccessfulContext = new SuccessfulContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
-					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( token:Token.Class ):void => {
+					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( token:TokenCredentials.Class ):void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
 						expect( token ).toBeDefined();
 						expect( token ).not.toBeNull();
-						expect( Token.Factory.is( token ) ).toEqual( true );
+						expect( TokenCredentials.Factory.is( token ) ).toEqual( true );
 
 						expect( PersistedUser.Factory.is( token.user ) ).toBe( true );
 					} ) );
@@ -278,9 +276,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "token", type: "Carbon.Auth.Token.Class" },
+					{ name: "token", type: "Carbon.Auth.TokenCredentials.Class" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
@@ -292,6 +290,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				// Property Integrity
@@ -318,12 +317,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
-						.then( ( tokenCredentials:Token.Class ):void => {
+						.then( ( tokenCredentials:TokenCredentials.Class ):void => {
 							expect( authenticator.isAuthenticated() ).toEqual( true );
 
 							expect( tokenCredentials ).toBeDefined();
 							expect( tokenCredentials ).not.toBeNull();
-							expect( Token.Factory.hasRequiredValues( tokenCredentials ) ).toEqual( true );
+							expect( TokenCredentials.Factory.hasClassProperties( tokenCredentials ) ).toEqual( true );
 						} )
 					);
 				})();
@@ -339,12 +338,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
 					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
-						.then( ( tokenCredentials:Token.Class ):void => {
+						.then( ( tokenCredentials:TokenCredentials.Class ):void => {
 							expect( authenticator.isAuthenticated() ).toEqual( true );
 
 							expect( tokenCredentials ).toBeDefined();
 							expect( tokenCredentials ).not.toBeNull();
-							expect( Token.Factory.hasRequiredValues( tokenCredentials ) ).toEqual( true );
+							expect( TokenCredentials.Factory.hasClassProperties( tokenCredentials ) ).toEqual( true );
 						} )
 					);
 				})();
@@ -379,7 +378,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
-			"Adds the Token Authentication header to the passed request options object.\n" +
+			"Adds the TokenCredentials Authentication header to the passed request options object.\n" +
 			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." },
 			],
@@ -650,6 +649,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
 				expect( "clearAuthentication" in authenticator ).toEqual( true );

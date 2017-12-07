@@ -1,3 +1,4 @@
+import Token from "sparqler/tokens/Token";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
 import Authenticator from "./Auth/Authenticator";
@@ -11,8 +12,8 @@ import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
-import * as Token from "./Auth/Token";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
@@ -45,7 +46,7 @@ export {
 	Role,
 	Roles,
 	Ticket,
-	Token,
+	TokenCredentials,
 	TokenAuthenticator,
 	UsernameAndPasswordToken
 };
@@ -62,8 +63,8 @@ export class Class {
 	protected _authenticatedUser:PersistedUser.Class;
 
 	private context:Context;
-	private authenticators:Authenticator<Object, Object>[];
-	private authenticator:Authenticator<Object, Object>;
+	private authenticators:Authenticator<object, object>[];
+	private authenticator:Authenticator<object, object>;
 
 	public get authenticatedUser():PersistedUser.Class {
 		if( ! this._authenticatedUser ) {
@@ -91,19 +92,19 @@ export class Class {
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<Token.Class> {
+	authenticate( username:string, password:string ):Promise<TokenCredentials.Class> {
 		return this.authenticateUsing( Method.TOKEN, username, password );
 	}
 
 	authenticateUsing( method:Method.BASIC, username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
-	authenticateUsing( method:Method.TOKEN, username:string, password:string ):Promise<Token.Class>;
-	authenticateUsing( method:Method.TOKEN, token:Token.Class ):Promise<Token.Class>;
-	authenticateUsing( method:Method, userOrTokenOrCredentials:any, password?:string ):Promise<UsernameAndPasswordCredentials | Token.Class> {
+	authenticateUsing( method:Method.TOKEN, username:string, password:string ):Promise<TokenCredentials.Class>;
+	authenticateUsing( method:Method.TOKEN, token:TokenCredentials.Class ):Promise<TokenCredentials.Class>;
+	authenticateUsing( method:Method, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<UsernameAndPasswordCredentials | TokenCredentials.Class> {
 		switch( method ) {
 			case Method.BASIC:
-				return this.authenticateWithBasic( userOrTokenOrCredentials, password );
+				return this.authenticateWithBasic( userOrCredentials as string, password );
 			case Method.TOKEN:
-				return this.authenticateWithToken( userOrTokenOrCredentials, password );
+				return this.authenticateWithToken( userOrCredentials, password );
 			default:
 				return Promise.reject( new Errors.IllegalArgumentError( `No exists the authentication method '${method}'` ) );
 		}
@@ -164,7 +165,7 @@ export class Class {
 	getAuthenticatedURL( uri:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
 		let resourceURI:string = this.context.resolve( uri );
 
-		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, HTTP.Response.Class ] ) => {
+		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket ]:[ Ticket.Class, HTTP.Response.Class ] ) => {
 			resourceURI += RDF.URI.Util.hasQuery( resourceURI ) ? "&" : "?";
 			resourceURI += `ticket=${ ticket.ticketKey }`;
 
@@ -173,61 +174,57 @@ export class Class {
 	}
 
 	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {
-		let authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ Method.BASIC ];
-		let authenticationToken:UsernameAndPasswordToken;
+		const authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ Method.BASIC ];
+		const authenticationToken:UsernameAndPasswordToken = new UsernameAndPasswordToken( username, password );
 
-		authenticationToken = new UsernameAndPasswordToken( username, password );
 		this.clearAuthentication();
 
-		let credentials:UsernameAndPasswordCredentials;
-		return authenticator.authenticate( authenticationToken ).then( ( _credentials:UsernameAndPasswordCredentials ) => {
-			credentials = _credentials;
+		let newCredentials:UsernameAndPasswordCredentials;
+		return authenticator.authenticate( authenticationToken ).then( ( credentials:UsernameAndPasswordCredentials ) => {
+			newCredentials = credentials;
+
 			return this.getAuthenticatedUser( authenticator );
 		} ).then( ( persistedUser:PersistedUser.Class ) => {
 			this._authenticatedUser = persistedUser;
 			this.authenticator = authenticator;
-			return credentials;
+
+			return newCredentials;
 		} );
 	}
 
-	private authenticateWithToken( userOrTokenOrCredentials:any, password:string ):Promise<Token.Class> {
-		let authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
-		let credentials:Token.Class = null;
-		let authenticationToken:UsernameAndPasswordToken = null;
+	private authenticateWithToken( userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<TokenCredentials.Class> {
+		const authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
+		const tokenOrCredentials:UsernameAndPasswordToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
+			new UsernameAndPasswordToken( userOrCredentials, password ) :
+			TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ?
+				userOrCredentials :
+				new Errors.IllegalArgumentError( "The token provided in not valid." );
 
-		if( Utils.isString( userOrTokenOrCredentials ) && Utils.isString( password ) ) {
-			authenticationToken = new UsernameAndPasswordToken( userOrTokenOrCredentials, password );
-
-		} else if( Token.Factory.hasRequiredValues( userOrTokenOrCredentials ) ) {
-			credentials = userOrTokenOrCredentials;
-
-		} else {
-			return Promise.reject<Token.Class>( new Errors.IllegalArgumentError( "Parameters do not match with the authentication request." ) );
-		}
-
+		if( tokenOrCredentials instanceof Error ) return Promise.reject( tokenOrCredentials );
 		this.clearAuthentication();
-		return authenticator.authenticate( (authenticationToken) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
-			credentials = _credentials;
+
+		let newCredentials:TokenCredentials.Class;
+		return authenticator.authenticate( tokenOrCredentials ).then( ( credentials:TokenCredentials.Class ) => {
+			newCredentials = credentials;
 
 			if( PersistedUser.Factory.is( credentials.user ) ) return credentials.user;
 			return this.getAuthenticatedUser( authenticator );
-
 		} ).then( ( persistedUser:PersistedUser.Class ) => {
 			this._authenticatedUser = persistedUser;
-			credentials.user = persistedUser;
-
 			this.authenticator = authenticator;
-			return credentials;
+
+			newCredentials.user = persistedUser;
+			return newCredentials;
 		} );
 	}
 
-	private getAuthenticatedUser( authenticator:Authenticator<Object, Object> ):Promise<PersistedUser.Class> {
-		let requestOptions:HTTP.Request.Options = {};
+	private getAuthenticatedUser( authenticator:Authenticator<object, object> ):Promise<PersistedUser.Class> {
+		const requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
 
-		return this.context.documents.get<PersistedUser.Class>( "users/me/", requestOptions ).then(
-			( [ userDocument, response ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => userDocument
-		);
+		return this.context.documents
+			.get<PersistedUser.Class>( "users/me/", requestOptions )
+			.then( ( [ persistedUser ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => persistedUser );
 	}
 
 }

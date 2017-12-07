@@ -8,19 +8,19 @@ import * as NS from "./../NS";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
+import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
-import * as Token from "./Token";
+import * as TokenCredentials from "./TokenCredentials";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-import * as Utils from "./../Utils";
 
 export const TOKEN_CONTAINER:string = "auth-tokens/";
 
-export class Class implements Authenticator<UsernameAndPasswordToken.Class, Token.Class> {
+export class Class implements Authenticator<UsernameAndPasswordToken.Class, TokenCredentials.Class> {
 
 	private context:Context;
 	private basicAuthenticator:BasicAuthenticator;
-	private _credentials:Token.Class;
+	private _credentials:TokenCredentials.Class;
 
 	constructor( context:Context ) {
 		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
@@ -33,20 +33,18 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return ! ! this._credentials && this._credentials.expirationTime > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken.Class ):Promise<Token.Class>;
-	authenticate( credentials:Token.Class ):Promise<Token.Class>;
-	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
-		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
+	authenticate( tokenOrCredentials:UsernameAndPasswordToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
+		if( tokenOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( tokenOrCredentials ).then( () => {
 			return this.createToken();
-		} ).then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
+		} ).then( ( [ tokenCredentials ]:[ TokenCredentials.Class, HTTP.Response.Class ] ):TokenCredentials.Class => {
 			this.basicAuthenticator.clearAuthentication();
-			this._credentials = token;
-			return token;
+			this._credentials = tokenCredentials;
+			return tokenCredentials;
 		} );
 
-		let credentials:Token.Class = <Token.Class> authenticationOrCredentials;
-		if( Utils.isString( credentials.expirationTime ) ) authenticationOrCredentials.expirationTime = new Date( <any> credentials.expirationTime );
-		if( credentials.expirationTime <= new Date() ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The token provided in not valid." ) );
+		const credentials:TokenCredentials.Class = <TokenCredentials.Class> tokenOrCredentials;
+		if( Utils.isString( credentials.expirationTime ) ) tokenOrCredentials.expirationTime = new Date( credentials.expirationTime );
+		if( credentials.expirationTime <= new Date() ) return Promise.reject( new Errors.IllegalArgumentError( "The token has already expired." ) );
 
 		this._credentials = credentials;
 		return Promise.resolve( credentials );
@@ -64,7 +62,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		this._credentials = null;
 	}
 
-	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
+	private createToken():Promise<[ TokenCredentials.Class, HTTP.Response.Class ]> {
 		let requestOptions:HTTP.Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
@@ -75,15 +73,15 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context.resolveSystemURI( TOKEN_CONTAINER );
 			return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
-		} ).then<[ Token.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		} ).then<[ TokenCredentials.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
-			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => Resource.Util.hasType( resource, Token.RDF_CLASS ) );
+			let tokenResources:TokenCredentials.Class[] = <TokenCredentials.Class[]> freeResources.getResources().filter( resource => Resource.Util.hasType( resource, TokenCredentials.RDF_CLASS ) );
 
-			if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
-			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
-			let token:Token.Class = tokenResources[ 0 ];
+			if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + TokenCredentials.RDF_CLASS + "' was returned.", response );
+			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response );
+			let token:TokenCredentials.Class = tokenResources[ 0 ];
 
 			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
 			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );

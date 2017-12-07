@@ -24,10 +24,10 @@ var Roles = require("./Auth/Roles");
 exports.Roles = Roles;
 var Ticket = require("./Auth/Ticket");
 exports.Ticket = Ticket;
-var Token = require("./Auth/Token");
-exports.Token = Token;
 var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
+var TokenCredentials = require("./Auth/TokenCredentials");
+exports.TokenCredentials = TokenCredentials;
 var User = require("./Auth/User");
 exports.User = User;
 var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
@@ -76,12 +76,12 @@ var Class = (function () {
     Class.prototype.authenticate = function (username, password) {
         return this.authenticateUsing(Method.TOKEN, username, password);
     };
-    Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
+    Class.prototype.authenticateUsing = function (method, userOrCredentials, password) {
         switch (method) {
             case Method.BASIC:
-                return this.authenticateWithBasic(userOrTokenOrCredentials, password);
+                return this.authenticateWithBasic(userOrCredentials, password);
             case Method.TOKEN:
-                return this.authenticateWithToken(userOrTokenOrCredentials, password);
+                return this.authenticateWithToken(userOrCredentials, password);
             default:
                 return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
         }
@@ -137,7 +137,7 @@ var Class = (function () {
     Class.prototype.getAuthenticatedURL = function (uri, requestOptions) {
         var resourceURI = this.context.resolve(uri);
         return this.createTicket(resourceURI, requestOptions).then(function (_a) {
-            var ticket = _a[0], response = _a[1];
+            var ticket = _a[0];
             resourceURI += RDF.URI.Util.hasQuery(resourceURI) ? "&" : "?";
             resourceURI += "ticket=" + ticket.ticketKey;
             return resourceURI;
@@ -146,52 +146,50 @@ var Class = (function () {
     Class.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;
         var authenticator = this.authenticators[Method.BASIC];
-        var authenticationToken;
-        authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+        var authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
         this.clearAuthentication();
-        var credentials;
-        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
-            credentials = _credentials;
+        var newCredentials;
+        return authenticator.authenticate(authenticationToken).then(function (credentials) {
+            newCredentials = credentials;
             return _this.getAuthenticatedUser(authenticator);
         }).then(function (persistedUser) {
             _this._authenticatedUser = persistedUser;
             _this.authenticator = authenticator;
-            return credentials;
+            return newCredentials;
         });
     };
-    Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+    Class.prototype.authenticateWithToken = function (userOrCredentials, password) {
         var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
-        var credentials = null;
-        var authenticationToken = null;
-        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
-            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
-        }
-        else if (Token.Factory.hasRequiredValues(userOrTokenOrCredentials)) {
-            credentials = userOrTokenOrCredentials;
-        }
-        else {
-            return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
-        }
+        var tokenOrCredentials = Utils.isString(userOrCredentials) ?
+            new UsernameAndPasswordToken_1.default(userOrCredentials, password) :
+            TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
+                userOrCredentials :
+                new Errors.IllegalArgumentError("The token provided in not valid.");
+        if (tokenOrCredentials instanceof Error)
+            return Promise.reject(tokenOrCredentials);
         this.clearAuthentication();
-        return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
-            credentials = _credentials;
+        var newCredentials;
+        return authenticator.authenticate(tokenOrCredentials).then(function (credentials) {
+            newCredentials = credentials;
             if (PersistedUser.Factory.is(credentials.user))
                 return credentials.user;
             return _this.getAuthenticatedUser(authenticator);
         }).then(function (persistedUser) {
             _this._authenticatedUser = persistedUser;
-            credentials.user = persistedUser;
             _this.authenticator = authenticator;
-            return credentials;
+            newCredentials.user = persistedUser;
+            return newCredentials;
         });
     };
     Class.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        return this.context.documents.get("users/me/", requestOptions).then(function (_a) {
-            var userDocument = _a[0], response = _a[1];
-            return userDocument;
+        return this.context.documents
+            .get("users/me/", requestOptions)
+            .then(function (_a) {
+            var persistedUser = _a[0];
+            return persistedUser;
         });
     };
     return Class;

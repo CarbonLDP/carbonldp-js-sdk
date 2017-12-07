@@ -15,7 +15,7 @@ import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
-import * as Token from "./Auth/Token";
+import * as TokenCredentials from "./Auth/TokenCredentials";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as User from "./Auth/User";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
@@ -189,11 +189,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Token",
-		"Carbon.Auth.Token"
+		"TokenCredentials",
+		"Carbon.Auth.TokenCredentials"
 	), ():void => {
-		expect( Auth.Token ).toBeDefined();
-		expect( Auth.Token ).toBe( Token );
+		expect( Auth.TokenCredentials ).toBeDefined();
+		expect( Auth.TokenCredentials ).toBe( TokenCredentials );
 	} );
 
 	it( reexports(
@@ -597,11 +597,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"authenticate",
-			"Authenticate the user with a `username` and `password`. Uses the `TOKEN` method for the authentication.", [
+			"Authenticate the user with a `username` and `password`. Uses the `Carbon.Auth.Method.TOKEN` method for the authentication.", [
 				{ name: "username", type: "string" },
 				{ name: "password", type: "string" },
 			],
-			{ type: "Promise<Carbon.Auth.Token.Class>" }
+			{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
 		), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
 				protected _baseURI:string;
@@ -620,7 +620,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			//noinspection JSIgnoredPromiseFromCall
 			auth.authenticate( "myUer@user.com", "myAwesomePassword" );
 
-			expect( spy ).toHaveBeenCalledWith( "TOKEN", "myUer@user.com", "myAwesomePassword" );
+			expect( spy ).toHaveBeenCalledWith( Auth.Method.TOKEN, "myUer@user.com", "myAwesomePassword" );
 		} );
 
 		describe( method(
@@ -645,7 +645,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			it( hasSignature(
 				"Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.", [
-					{ name: "method", type: "'BASIC'" },
+					{ name: "method", type: "Carbon.Auth.Method.BASIC" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
@@ -730,11 +730,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			it( hasSignature(
 				"Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
-					{ name: "method", type: "'TOKEN'" },
+					{ name: "method", type: "Carbon.Auth.Method.TOKEN" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let auth:Auth.Class = new Auth.Class( context );
 
@@ -747,7 +747,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spies:any = {
-					success: ( _auth:Auth.Class, credentials:Token.Class ):void => {
+					success: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 						expect( credentials.key ).toEqual( "token-value" );
 
@@ -821,7 +821,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( Auth.Method.TOKEN, "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:Token.Class ):void => {
+				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
 					spies.success( auth01, credentials );
 				} ) );
 
@@ -845,11 +845,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 			} );
 
 			it( hasSignature(
-				"Authenticates the user with a `Carbon.Auth.Token.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
-					{ name: "method", type: "'TOKEN'" },
-					{ name: "token", type: "Carbon.Auth.Token.Class" },
+				"Authenticates the user with a `Carbon.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
+					{ name: "method", type: "Carbon.Auth.Method.TOKEN" },
+					{ name: "token", type: "Carbon.Auth.TokenCredentials.Class" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
 					status: 200,
@@ -881,11 +881,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 
 				let date:Date;
-				let token:Token.Class;
+				let token:TokenCredentials.Class;
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 				let spies:any = {
-					success01: ( _auth:Auth.Class, credentials:Token.Class ):void => {
+					success01: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
 						expect( credentials.key ).toEqual( token.key );
 						expect( _auth.isAuthenticated() ).toBe( true );
 
@@ -893,7 +893,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expect( credentials.user ).toBe( _auth.authenticatedUser );
 						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
-					success02: ( _auth:Auth.Class, credentials:Token.Class ):void => {
+					success02: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
 						expect( credentials.key ).toEqual( token.key );
 						expect( _auth.isAuthenticated() ).toBe( true );
 
@@ -920,7 +920,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				};
 				promise = auth01.authenticateUsing( Auth.Method.TOKEN, token );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:Token.Class ):void => {
+				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
 					spies.success01( auth01, credentials );
 				} ) );
 
@@ -936,9 +936,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
-				promise = auth02.authenticateUsing( Auth.Method.TOKEN, <Token.Class> getFromStorage() );
+				promise = auth02.authenticateUsing( Auth.Method.TOKEN, <TokenCredentials.Class> getFromStorage() );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:Token.Class ):void => {
+				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
 					spies.success02( auth01, credentials );
 				} ) );
 

@@ -21,26 +21,16 @@ exports.SCHEMA = {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.is = function (value) {
-        return (Resource.Factory.is(value)
-            && Factory.hasClassProperties(value));
+    Factory.is = function (object) {
+        return Resource.Factory.is(object)
+            && Factory.hasClassProperties(object);
     };
     Factory.hasClassProperties = function (object) {
-        return (Utils.hasPropertyDefined(object, "key")
-            && Utils.hasPropertyDefined(object, "expirationTime")
-            && Utils.hasPropertyDefined(object, "user"));
-    };
-    Factory.hasRequiredValues = function (object) {
-        return (Utils.hasProperty(object, "key")
-            && Utils.hasProperty(object, "expirationTime"));
-    };
-    Factory.decorate = function (object) {
-        if (this.hasClassProperties(object))
-            return object;
-        return object;
+        return Utils.hasPropertyDefined(object, "key")
+            && Utils.hasPropertyDefined(object, "expirationTime");
     };
     return Factory;
 }());
 exports.Factory = Factory;
 
-//# sourceMappingURL=Token.js.map
+//# sourceMappingURL=TokenCredentials.js.map

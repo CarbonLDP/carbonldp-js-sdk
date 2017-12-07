@@ -22,7 +22,8 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Auth.Authenticator.Class", [
-			"T extends Carbon.Auth.AuthenticationToken.Class",
+			"T extends object",
+			"W extends object",
 		],
 		"Interface that represents the base of an authentication token."
 	), ():void => {
@@ -37,7 +38,6 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"authenticate",
-			[ "T extends Object", "W extends Object" ],
 			"Performs an authentication and stores the credentials for future use.", [
 				{ name: "authenticationToken", type: "T", description: "The token that will be used to perform the authentication." },
 			],

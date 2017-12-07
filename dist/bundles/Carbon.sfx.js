@@ -4405,10 +4405,10 @@ var Roles = __webpack_require__(223);
 exports.Roles = Roles;
 var Ticket = __webpack_require__(224);
 exports.Ticket = Ticket;
-var Token = __webpack_require__(103);
-exports.Token = Token;
 var TokenAuthenticator_1 = __webpack_require__(225);
 exports.TokenAuthenticator = TokenAuthenticator_1.default;
+var TokenCredentials = __webpack_require__(103);
+exports.TokenCredentials = TokenCredentials;
 var User = __webpack_require__(237);
 exports.User = User;
 var UsernameAndPasswordToken_1 = __webpack_require__(104);
@@ -4457,12 +4457,12 @@ var Class = (function () {
     Class.prototype.authenticate = function (username, password) {
         return this.authenticateUsing(Method.TOKEN, username, password);
     };
-    Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
+    Class.prototype.authenticateUsing = function (method, userOrCredentials, password) {
         switch (method) {
             case Method.BASIC:
-                return this.authenticateWithBasic(userOrTokenOrCredentials, password);
+                return this.authenticateWithBasic(userOrCredentials, password);
             case Method.TOKEN:
-                return this.authenticateWithToken(userOrTokenOrCredentials, password);
+                return this.authenticateWithToken(userOrCredentials, password);
             default:
                 return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
         }
@@ -4518,7 +4518,7 @@ var Class = (function () {
     Class.prototype.getAuthenticatedURL = function (uri, requestOptions) {
         var resourceURI = this.context.resolve(uri);
         return this.createTicket(resourceURI, requestOptions).then(function (_a) {
-            var ticket = _a[0], response = _a[1];
+            var ticket = _a[0];
             resourceURI += RDF.URI.Util.hasQuery(resourceURI) ? "&" : "?";
             resourceURI += "ticket=" + ticket.ticketKey;
             return resourceURI;
@@ -4527,52 +4527,50 @@ var Class = (function () {
     Class.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;
         var authenticator = this.authenticators[Method.BASIC];
-        var authenticationToken;
-        authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+        var authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
         this.clearAuthentication();
-        var credentials;
-        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
-            credentials = _credentials;
+        var newCredentials;
+        return authenticator.authenticate(authenticationToken).then(function (credentials) {
+            newCredentials = credentials;
             return _this.getAuthenticatedUser(authenticator);
         }).then(function (persistedUser) {
             _this._authenticatedUser = persistedUser;
             _this.authenticator = authenticator;
-            return credentials;
+            return newCredentials;
         });
     };
-    Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+    Class.prototype.authenticateWithToken = function (userOrCredentials, password) {
         var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
-        var credentials = null;
-        var authenticationToken = null;
-        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
-            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
-        }
-        else if (Token.Factory.hasRequiredValues(userOrTokenOrCredentials)) {
-            credentials = userOrTokenOrCredentials;
-        }
-        else {
-            return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
-        }
+        var tokenOrCredentials = Utils.isString(userOrCredentials) ?
+            new UsernameAndPasswordToken_1.default(userOrCredentials, password) :
+            TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
+                userOrCredentials :
+                new Errors.IllegalArgumentError("The token provided in not valid.");
+        if (tokenOrCredentials instanceof Error)
+            return Promise.reject(tokenOrCredentials);
         this.clearAuthentication();
-        return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
-            credentials = _credentials;
+        var newCredentials;
+        return authenticator.authenticate(tokenOrCredentials).then(function (credentials) {
+            newCredentials = credentials;
             if (PersistedUser.Factory.is(credentials.user))
                 return credentials.user;
             return _this.getAuthenticatedUser(authenticator);
         }).then(function (persistedUser) {
             _this._authenticatedUser = persistedUser;
-            credentials.user = persistedUser;
             _this.authenticator = authenticator;
-            return credentials;
+            newCredentials.user = persistedUser;
+            return newCredentials;
         });
     };
     Class.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        return this.context.documents.get("users/me/", requestOptions).then(function (_a) {
-            var userDocument = _a[0], response = _a[1];
-            return userDocument;
+        return this.context.documents
+            .get("users/me/", requestOptions)
+            .then(function (_a) {
+            var persistedUser = _a[0];
+            return persistedUser;
         });
     };
     return Class;
@@ -7131,7 +7129,7 @@ var Class = (function () {
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
-        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(Auth.TokenCredentials.RDF_CLASS, Auth.TokenCredentials.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
         this.extendObjectSchema(SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA);
@@ -9117,23 +9115,13 @@ exports.SCHEMA = {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.is = function (value) {
-        return (Resource.Factory.is(value)
-            && Factory.hasClassProperties(value));
+    Factory.is = function (object) {
+        return Resource.Factory.is(object)
+            && Factory.hasClassProperties(object);
     };
     Factory.hasClassProperties = function (object) {
-        return (Utils.hasPropertyDefined(object, "key")
-            && Utils.hasPropertyDefined(object, "expirationTime")
-            && Utils.hasPropertyDefined(object, "user"));
-    };
-    Factory.hasRequiredValues = function (object) {
-        return (Utils.hasProperty(object, "key")
-            && Utils.hasProperty(object, "expirationTime"));
-    };
-    Factory.decorate = function (object) {
-        if (this.hasClassProperties(object))
-            return object;
-        return object;
+        return Utils.hasPropertyDefined(object, "key")
+            && Utils.hasPropertyDefined(object, "expirationTime");
     };
     return Factory;
 }());
@@ -16920,10 +16908,10 @@ var LDP = __webpack_require__(34);
 var NS = __webpack_require__(1);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
-var BasicAuthenticator_1 = __webpack_require__(79);
-var Token = __webpack_require__(103);
-var UsernameAndPasswordToken = __webpack_require__(104);
 var Utils = __webpack_require__(0);
+var BasicAuthenticator_1 = __webpack_require__(79);
+var TokenCredentials = __webpack_require__(103);
+var UsernameAndPasswordToken = __webpack_require__(104);
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {
@@ -16935,22 +16923,22 @@ var Class = (function () {
     Class.prototype.isAuthenticated = function () {
         return !!this._credentials && this._credentials.expirationTime > new Date();
     };
-    Class.prototype.authenticate = function (authenticationOrCredentials) {
+    Class.prototype.authenticate = function (tokenOrCredentials) {
         var _this = this;
-        if (authenticationOrCredentials instanceof UsernameAndPasswordToken.Class)
-            return this.basicAuthenticator.authenticate(authenticationOrCredentials).then(function () {
+        if (tokenOrCredentials instanceof UsernameAndPasswordToken.Class)
+            return this.basicAuthenticator.authenticate(tokenOrCredentials).then(function () {
                 return _this.createToken();
             }).then(function (_a) {
-                var token = _a[0], response = _a[1];
+                var tokenCredentials = _a[0];
                 _this.basicAuthenticator.clearAuthentication();
-                _this._credentials = token;
-                return token;
+                _this._credentials = tokenCredentials;
+                return tokenCredentials;
             });
-        var credentials = authenticationOrCredentials;
+        var credentials = tokenOrCredentials;
         if (Utils.isString(credentials.expirationTime))
-            authenticationOrCredentials.expirationTime = new Date(credentials.expirationTime);
+            tokenOrCredentials.expirationTime = new Date(credentials.expirationTime);
         if (credentials.expirationTime <= new Date())
-            return Promise.reject(new Errors.IllegalArgumentError("The token provided in not valid."));
+            return Promise.reject(new Errors.IllegalArgumentError("The token has already expired."));
         this._credentials = credentials;
         return Promise.resolve(credentials);
     };
@@ -16975,11 +16963,11 @@ var Class = (function () {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);
-            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, Token.RDF_CLASS); });
+            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, TokenCredentials.RDF_CLASS); });
             if (tokenResources.length === 0)
-                throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
+                throw new HTTP.Errors.BadResponseError("No '" + TokenCredentials.RDF_CLASS + "' was returned.", response);
             if (tokenResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
+                throw new HTTP.Errors.BadResponseError("Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response);
             var token = tokenResources[0];
             var userDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });

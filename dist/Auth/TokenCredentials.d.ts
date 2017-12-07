@@ -6,12 +6,10 @@ export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Resource.Class {
     key: string;
     expirationTime: Date;
-    user: PersistedUser.Class;
+    user?: PersistedUser.Class;
 }
 export declare class Factory {
-    static is(value: any): boolean;
-    static hasClassProperties(object: Object): boolean;
-    static hasRequiredValues(object: Object): boolean;
-    static decorate<T extends Object>(object: T): T & Class;
+    static is(object: object): object is Class;
+    static hasClassProperties(object: object): object is Class;
 }
 export default Class;

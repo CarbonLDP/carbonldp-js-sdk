@@ -7,10 +7,10 @@ var LDP = require("./../LDP");
 var NS = require("./../NS");
 var RDF = require("./../RDF");
 var Resource = require("./../Resource");
-var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var Token = require("./Token");
-var UsernameAndPasswordToken = require("./UsernameAndPasswordToken");
 var Utils = require("./../Utils");
+var BasicAuthenticator_1 = require("./BasicAuthenticator");
+var TokenCredentials = require("./TokenCredentials");
+var UsernameAndPasswordToken = require("./UsernameAndPasswordToken");
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {
@@ -22,22 +22,22 @@ var Class = (function () {
     Class.prototype.isAuthenticated = function () {
         return !!this._credentials && this._credentials.expirationTime > new Date();
     };
-    Class.prototype.authenticate = function (authenticationOrCredentials) {
+    Class.prototype.authenticate = function (tokenOrCredentials) {
         var _this = this;
-        if (authenticationOrCredentials instanceof UsernameAndPasswordToken.Class)
-            return this.basicAuthenticator.authenticate(authenticationOrCredentials).then(function () {
+        if (tokenOrCredentials instanceof UsernameAndPasswordToken.Class)
+            return this.basicAuthenticator.authenticate(tokenOrCredentials).then(function () {
                 return _this.createToken();
             }).then(function (_a) {
-                var token = _a[0], response = _a[1];
+                var tokenCredentials = _a[0];
                 _this.basicAuthenticator.clearAuthentication();
-                _this._credentials = token;
-                return token;
+                _this._credentials = tokenCredentials;
+                return tokenCredentials;
             });
-        var credentials = authenticationOrCredentials;
+        var credentials = tokenOrCredentials;
         if (Utils.isString(credentials.expirationTime))
-            authenticationOrCredentials.expirationTime = new Date(credentials.expirationTime);
+            tokenOrCredentials.expirationTime = new Date(credentials.expirationTime);
         if (credentials.expirationTime <= new Date())
-            return Promise.reject(new Errors.IllegalArgumentError("The token provided in not valid."));
+            return Promise.reject(new Errors.IllegalArgumentError("The token has already expired."));
         this._credentials = credentials;
         return Promise.resolve(credentials);
     };
@@ -62,11 +62,11 @@ var Class = (function () {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);
-            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, Token.RDF_CLASS); });
+            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, TokenCredentials.RDF_CLASS); });
             if (tokenResources.length === 0)
-                throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
+                throw new HTTP.Errors.BadResponseError("No '" + TokenCredentials.RDF_CLASS + "' was returned.", response);
             if (tokenResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
+                throw new HTTP.Errors.BadResponseError("Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response);
             var token = tokenResources[0];
             var userDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
