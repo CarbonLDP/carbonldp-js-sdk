@@ -44,8 +44,8 @@ var Resource = require("./Resource");
 var Utils = require("./Utils");
 var Method;
 (function (Method) {
-    Method[Method["BASIC"] = 0] = "BASIC";
-    Method[Method["TOKEN"] = 1] = "TOKEN";
+    Method["BASIC"] = "BASIC";
+    Method["TOKEN"] = "TOKEN";
 })(Method = exports.Method || (exports.Method = {}));
 var Class = (function () {
     function Class(context) {
@@ -74,13 +74,13 @@ var Class = (function () {
             (askParent && !!this.context.parentContext && !!this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated()));
     };
     Class.prototype.authenticate = function (username, password) {
-        return this.authenticateUsing("TOKEN", username, password);
+        return this.authenticateUsing(Method.TOKEN, username, password);
     };
     Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
         switch (method) {
-            case "BASIC":
+            case Method.BASIC:
                 return this.authenticateWithBasic(userOrTokenOrCredentials, password);
-            case "TOKEN":
+            case Method.TOKEN:
                 return this.authenticateWithToken(userOrTokenOrCredentials, password);
             default:
                 return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));

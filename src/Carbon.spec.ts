@@ -66,7 +66,6 @@ describe( module( "Carbon" ), ():void => {
 			carbon = new Carbon.Class( "example.com", true );
 
 			myCarbon = new Carbon.Class( "my-carbonldp.example.com", false, {
-				"auth.method": Auth.Method.TOKEN,
 				"system.container": ".my-system/",
 				"system.roles.container": "my-roles/",
 			} );

@@ -21,8 +21,8 @@ import Context from "./Context";
 import * as HTTP from "./HTTP";
 export { ACE, ACL, User, Users, Authenticator, BasicAuthenticator, Credentials, PersistedACE, PersistedACL, PersistedCredentials, PersistedRole, PersistedUser, Role, Roles, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
-    BASIC = 0,
-    TOKEN = 1,
+    BASIC = "BASIC",
+    TOKEN = "TOKEN",
 }
 export declare class Class {
     users: Users.Class;
@@ -35,9 +35,9 @@ export declare class Class {
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<Token.Class>;
-    authenticateUsing(method: "BASIC", username: string, password: string): Promise<UsernameAndPasswordCredentials>;
-    authenticateUsing(method: "TOKEN", username: string, password: string): Promise<Token.Class>;
-    authenticateUsing(method: "TOKEN", token: Token.Class): Promise<Token.Class>;
+    authenticateUsing(method: Method.BASIC, username: string, password: string): Promise<UsernameAndPasswordCredentials>;
+    authenticateUsing(method: Method.TOKEN, username: string, password: string): Promise<Token.Class>;
+    authenticateUsing(method: Method.TOKEN, token: Token.Class): Promise<Token.Class>;
     addAuthentication(requestOptions: HTTP.Request.Options): void;
     clearAuthentication(): void;
     createTicket(uri: string, requestOptions?: HTTP.Request.Options): Promise<[Ticket.Class, HTTP.Response.Class]>;

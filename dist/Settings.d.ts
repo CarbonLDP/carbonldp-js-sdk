@@ -1,6 +1,4 @@
-import * as Auth from "./Auth";
 export interface Class {
-    "auth.method"?: Auth.Method;
     "system.container"?: string;
     "system.platform.metadata"?: string;
     "system.instance.metadata"?: string;

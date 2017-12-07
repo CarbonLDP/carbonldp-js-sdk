@@ -1,22 +1,7 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	module,
-	clazz,
-	enumeration,
-	method,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasProperty,
-	hasDefaultExport,
-	reexports,
-	hasEnumeral,
-	hasSignature,
-} from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
+
+import * as Auth from "./Auth";
+import DefaultExport from "./Auth";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
 import Authenticator from "./Auth/Authenticator";
@@ -41,11 +26,26 @@ import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as URI from "./RDF/URI";
+
+import {
+	clazz,
+	enumeration,
+	hasConstructor,
+	hasDefaultExport,
+	hasEnumeral,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+	reexports,
+	STATIC,
+} from "./test/JasmineExtender";
+
 import * as Utils from "./Utils";
 
-
-import * as Auth from "./Auth";
-import DefaultExport from "./Auth";
 
 describe( module( "Carbon/Auth" ), ():void => {
 
@@ -703,7 +703,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				// Expected behavior
 				let auth01:Auth.Class = new Auth.Class( context );
-				promise = auth01.authenticateUsing( "BASIC", username, password );
+				promise = auth01.authenticateUsing( Auth.Method.BASIC, username, password );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( ( credentials:UsernameAndPasswordCredentials ):void => {
 					spies.success( auth01, credentials );
@@ -711,7 +711,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
-				promise = auth02.authenticateUsing( "BASIC" as any, {} as any );
+				promise = auth02.authenticateUsing( Auth.Method.BASIC as any, {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -819,7 +819,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				// Expected behavior
 				let auth01:Auth.Class = new Auth.Class( context );
-				promise = auth01.authenticateUsing( "TOKEN", "myUser@user.con", "myAwesomePassword" );
+				promise = auth01.authenticateUsing( Auth.Method.TOKEN, "myUser@user.con", "myAwesomePassword" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( ( credentials:Token.Class ):void => {
 					spies.success( auth01, credentials );
@@ -827,7 +827,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 				// Wrong parameters
 				let auth02:Auth.Class = new Auth.Class( context );
-				promise = auth02.authenticateUsing( "TOKEN", {} as any );
+				promise = auth02.authenticateUsing( Auth.Method.TOKEN, {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
@@ -918,7 +918,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					key: "dG9rZW4tdmFsdWU=",
 					types: [ NS.CS.Class.Token ],
 				};
-				promise = auth01.authenticateUsing( "TOKEN", token );
+				promise = auth01.authenticateUsing( Auth.Method.TOKEN, token );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( ( credentials:Token.Class ):void => {
 					spies.success01( auth01, credentials );
@@ -936,7 +936,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
-				promise = auth02.authenticateUsing( "TOKEN", <Token.Class> getFromStorage() );
+				promise = auth02.authenticateUsing( Auth.Method.TOKEN, <Token.Class> getFromStorage() );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( ( credentials:Token.Class ):void => {
 					spies.success02( auth01, credentials );
@@ -952,12 +952,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 					key: "dG9rZW4tdmFsdWU=",
 					types: [ NS.CS.Class.Token ],
 				};
-				promise = auth03.authenticateUsing( "TOKEN", token );
+				promise = auth03.authenticateUsing( Auth.Method.TOKEN, token );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 
 				// Wrong parameters
-				promise = auth03.authenticateUsing( "TOKEN", {} as any );
+				promise = auth03.authenticateUsing( Auth.Method.TOKEN, {} as any );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spies.fail ) );
 

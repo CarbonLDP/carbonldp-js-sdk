@@ -51,8 +51,8 @@ export {
 };
 
 export enum Method {
-	BASIC,
-	TOKEN,
+	BASIC = "BASIC",
+	TOKEN = "TOKEN",
 }
 
 export class Class {
@@ -86,23 +86,23 @@ export class Class {
 
 	isAuthenticated( askParent:boolean = true ):boolean {
 		return (
-			( this.authenticator && this.authenticator.isAuthenticated() ) ||
-			( askParent && ! ! this.context.parentContext && ! ! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated() )
+			(this.authenticator && this.authenticator.isAuthenticated()) ||
+			(askParent && ! ! this.context.parentContext && ! ! this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated())
 		);
 	}
 
 	authenticate( username:string, password:string ):Promise<Token.Class> {
-		return this.authenticateUsing( "TOKEN", username, password );
+		return this.authenticateUsing( Method.TOKEN, username, password );
 	}
 
-	authenticateUsing( method:"BASIC", username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
-	authenticateUsing( method:"TOKEN", username:string, password:string ):Promise<Token.Class>;
-	authenticateUsing( method:"TOKEN", token:Token.Class ):Promise<Token.Class>;
-	authenticateUsing( method:string, userOrTokenOrCredentials:any, password?:string ):Promise<UsernameAndPasswordCredentials | Token.Class> {
+	authenticateUsing( method:Method.BASIC, username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
+	authenticateUsing( method:Method.TOKEN, username:string, password:string ):Promise<Token.Class>;
+	authenticateUsing( method:Method.TOKEN, token:Token.Class ):Promise<Token.Class>;
+	authenticateUsing( method:Method, userOrTokenOrCredentials:any, password?:string ):Promise<UsernameAndPasswordCredentials | Token.Class> {
 		switch( method ) {
-			case "BASIC":
+			case Method.BASIC:
 				return this.authenticateWithBasic( userOrTokenOrCredentials, password );
-			case "TOKEN":
+			case Method.TOKEN:
 				return this.authenticateWithToken( userOrTokenOrCredentials, password );
 			default:
 				return Promise.reject( new Errors.IllegalArgumentError( `No exists the authentication method '${method}'` ) );
@@ -206,7 +206,7 @@ export class Class {
 		}
 
 		this.clearAuthentication();
-		return authenticator.authenticate( ( authenticationToken ) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
+		return authenticator.authenticate( (authenticationToken) ? authenticationToken : <any> credentials ).then( ( _credentials:Token.Class ) => {
 			credentials = _credentials;
 
 			if( PersistedUser.Factory.is( credentials.user ) ) return credentials.user;
