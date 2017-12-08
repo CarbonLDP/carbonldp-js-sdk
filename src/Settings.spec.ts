@@ -9,16 +9,15 @@ import {
 	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import * as Auth from "./Auth";
 
-import * as settings from "./Settings";
+import * as Settings from "./Settings";
 import defaultExport from "./Settings";
 
 describe( module( "Carbon/Settings" ), ():void => {
 
 	it( isDefined(), ():void => {
-		expect( settings ).toBeDefined();
-		expect( Utils.isObject( settings ) ).toBe( true );
+		expect( Settings ).toBeDefined();
+		expect( Utils.isObject( Settings ) ).toBe( true );
 	} );
 
 	describe( interfaze(
@@ -49,10 +48,13 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"system.credentials.container",
+			"system.security.container",
 			"string",
-			"Relative URI to any context, that indicates the slug of the user's credentials container."
-		), ():void => {} );
+			"IRI slug of the container of the security related resources."
+		), ():void => {
+			const target:Settings.Class[ "system.security.container" ] = "" as string;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -75,6 +77,7 @@ describe( module( "Carbon/Settings" ), ():void => {
 		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
 		* system.container: \`".system/"\`
 		* system.users.container: \`"users/"\`
+		* system.security.container: \`"security/"\`
 		* system.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
 		`
@@ -91,8 +94,8 @@ describe( module( "Carbon/Settings" ), ():void => {
 		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
 		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
 
-		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.credentials.container" ] ).toBe( "credentials/" );
+		expect( defaultExport[ "system.security.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.security.container" ] ).toBe( "security/" );
 
 		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
 		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );

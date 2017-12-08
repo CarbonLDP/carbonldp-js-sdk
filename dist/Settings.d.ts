@@ -3,7 +3,7 @@ export interface Class {
     "system.platform.metadata"?: string;
     "system.instance.metadata"?: string;
     "system.users.container"?: string;
-    "system.credentials.container"?: string;
+    "system.security.container"?: string;
     "system.roles.container"?: string;
     "vocabulary"?: string;
 }

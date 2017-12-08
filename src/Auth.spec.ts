@@ -1400,6 +1400,68 @@ describe( module( "Carbon/Auth" ), ():void => {
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
+		describe( method( INSTANCE, "_resolveSecurityURL" ), ():void => {
+
+			it( hasSignature(
+				"Resolve the relative URI provided in accordance of the security container defined in the settings.",
+				[
+					{ name: "relativeURI", type: "string", description: "The relative URI to be resolved" },
+				],
+				{ type: "string" }
+			), ():void => {
+			} );
+
+
+			let context:AbstractContext;
+			let auth:Auth.Class;
+			beforeEach( ():void => {
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "https://example.com/";
+				};
+				auth = context.auth;
+			} );
+
+			it( "should throw error when no `system.security.container` defined", ():void => {
+				const helper:( relativeURI:string ) => void = relativeURI => () => {
+					auth._resolveSecurityURL( relativeURI );
+				};
+
+				expect( helper( "relative/" ) ).toThrowError( Errors.IllegalStateError, "The \"system.security.container\" setting hasn't been defined." );
+				expect( helper( "https://example.com/not-relative/" ) ).toThrowError( Errors.IllegalStateError, "The \"system.security.container\" setting hasn't been defined." );
+			} );
+
+			it( "should throw error when no `system.container` defined", ():void => {
+				context.setSetting( "system.security.container", "security/" );
+				const helper:( relativeURI:string ) => void = relativeURI => () => {
+					auth._resolveSecurityURL( relativeURI );
+				};
+
+				expect( helper( "relative/" ) ).toThrowError( Errors.IllegalStateError, "The \"system.container\" setting hasn't been defined." );
+				expect( helper( "https://example.com/not-relative/" ) ).toThrowError( Errors.IllegalStateError, "The \"system.container\" setting hasn't been defined." );
+			} );
+
+			it( "should resolve the relative URI provided", ():void => {
+				context.setSetting( "system.container", ".system/" );
+				context.setSetting( "system.security.container", "security/" );
+
+				expect( auth._resolveSecurityURL( "relative/" ) ).toBe( "https://example.com/.system/security/relative/" );
+				expect( auth._resolveSecurityURL( "another-relative/" ) ).toBe( "https://example.com/.system/security/another-relative/" );
+			} );
+
+			it( "should throw error when absolute URI is under the security URI", ():void => {
+				context.setSetting( "system.container", ".system/" );
+				context.setSetting( "system.security.container", "security/" );
+				const helper:( relativeURI:string ) => void = relativeURI => () => {
+					auth._resolveSecurityURL( relativeURI );
+				};
+
+				expect( helper( "https://example.com/absolute/" ) ).toThrowError( Errors.IllegalArgumentError, `The provided URI "https://example.com/absolute/" doesn't belong to the security container.` );
+				expect( helper( "https://example.com/.system/absolute/" ) ).toThrowError( Errors.IllegalArgumentError, "The provided URI \"https://example.com/.system/absolute/\" doesn't belong to the security container." );
+				expect( helper( "https://example.com/.system/not-security/absolute/" ) ).toThrowError( Errors.IllegalArgumentError, "The provided URI \"https://example.com/.system/not-security/absolute/\" doesn't belong to the security container." );
+			} );
+
+		} );
+
 	} );
 
 	it( hasDefaultExport( "Carbon.Auth.Class" ), ():void => {

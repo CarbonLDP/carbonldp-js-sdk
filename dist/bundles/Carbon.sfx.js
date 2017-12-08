@@ -4439,12 +4439,11 @@ var Class = (function () {
     }
     Object.defineProperty(Class.prototype, "authenticatedUser", {
         get: function () {
-            if (!this._authenticatedUser) {
-                if (this.context.parentContext && this.context.parentContext.auth)
-                    return this.context.parentContext.auth.authenticatedUser;
-                return null;
-            }
-            return this._authenticatedUser;
+            if (this._authenticatedUser)
+                return this._authenticatedUser;
+            if (this.context.parentContext)
+                return this.context.parentContext.auth.authenticatedUser;
+            return null;
         },
         enumerable: true,
         configurable: true
@@ -4523,6 +4522,15 @@ var Class = (function () {
             resourceURI += "ticket=" + ticket.ticketKey;
             return resourceURI;
         });
+    };
+    Class.prototype._resolveSecurityURL = function (relativeURI) {
+        if (!this.context.hasSetting("system.security.container"))
+            throw new Errors.IllegalStateError("The \"system.security.container\" setting hasn't been defined.");
+        var securityContainer = this.context.resolveSystemURI(this.context.getSetting("system.security.container"));
+        var securityURI = RDF.URI.Util.resolve(securityContainer, relativeURI);
+        if (!securityURI.startsWith(securityContainer))
+            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the security container.");
+        return securityURI;
     };
     Class.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;
@@ -22647,7 +22655,7 @@ exports.defaultSettings = {
     "system.platform.metadata": "platform/",
     "system.instance.metadata": "instance/",
     "system.users.container": "users/",
-    "system.credentials.container": "credentials/",
+    "system.security.container": "security/",
     "system.roles.container": "roles/",
     "vocabulary": "vocabulary/#",
 };

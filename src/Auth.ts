@@ -1,4 +1,3 @@
-import Token from "sparqler/tokens/Token";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
 import Authenticator from "./Auth/Authenticator";
@@ -67,11 +66,10 @@ export class Class {
 	private authenticator:Authenticator<object, object>;
 
 	public get authenticatedUser():PersistedUser.Class {
-		if( ! this._authenticatedUser ) {
-			if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedUser;
-			return null;
-		}
-		return this._authenticatedUser;
+		if( this._authenticatedUser ) return this._authenticatedUser;
+		if( this.context.parentContext ) return this.context.parentContext.auth.authenticatedUser;
+
+		return null;
 	}
 
 	constructor( context:Context ) {
@@ -171,6 +169,16 @@ export class Class {
 
 			return resourceURI;
 		} );
+	}
+
+	_resolveSecurityURL( relativeURI:string ):string {
+		if( ! this.context.hasSetting( "system.security.container" ) ) throw new Errors.IllegalStateError( `The "system.security.container" setting hasn't been defined.` );
+		const securityContainer:string = this.context.resolveSystemURI( this.context.getSetting( "system.security.container" ) );
+
+		const securityURI:string = RDF.URI.Util.resolve( securityContainer, relativeURI );
+		if( ! securityURI.startsWith( securityContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the security container.` );
+
+		return securityURI;
 	}
 
 	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {

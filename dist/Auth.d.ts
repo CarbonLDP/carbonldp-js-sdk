@@ -42,6 +42,7 @@ export declare class Class {
     clearAuthentication(): void;
     createTicket(uri: string, requestOptions?: HTTP.Request.Options): Promise<[Ticket.Class, HTTP.Response.Class]>;
     getAuthenticatedURL(uri: string, requestOptions?: HTTP.Request.Options): Promise<string>;
+    _resolveSecurityURL(relativeURI: string): string;
     private authenticateWithBasic(username, password);
     private authenticateWithToken(userOrCredentials, password?);
     private getAuthenticatedUser(authenticator);
