@@ -16977,7 +16977,7 @@ var Class = (function (_super) {
             basicAuthenticator.addAuthentication(requestOptions);
             HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
             HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-            var tokensURI = _this.context.resolveSystemURI(exports.TOKEN_CONTAINER);
+            var tokensURI = _this.context.auth._resolveSecurityURL(exports.TOKEN_CONTAINER);
             return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
         })
             .then(function (_a) {

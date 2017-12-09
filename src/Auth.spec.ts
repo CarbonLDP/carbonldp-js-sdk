@@ -24,6 +24,7 @@ import * as Users from "./Auth/Users";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import * as Resource from "./Resource";
 import * as NS from "./NS";
 import * as URI from "./RDF/URI";
 
@@ -627,20 +628,14 @@ describe( module( "Carbon/Auth" ), ():void => {
 			INSTANCE,
 			"authenticateUsing"
 		), ():void => {
+
 			let context:AbstractContext;
-
 			beforeEach( ():void => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				context = new MockedContext();
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "http://example.com/";
+				};
+				context.setSetting( "system.container", ".system/" );
+				context.setSetting( "system.security.container", "security/" );
 			} );
 
 			it( hasSignature(
@@ -735,7 +730,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					{ name: "password", type: "string" },
 				],
 				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
+			), ( done:DoneFn ):void => {
 				let auth:Auth.Class = new Auth.Class( context );
 
 				expect( auth.authenticateUsing ).toBeDefined();
@@ -748,7 +743,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promise:Promise<any>;
 				let spies:any = {
 					success: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
-						expect( _auth.isAuthenticated() ).toBe( true );
 						expect( credentials.key ).toEqual( "token-value" );
 
 						expect( _auth.authenticatedUser ).toBeTruthy();
@@ -762,59 +756,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
-				jasmine.Ajax.stubRequest( "http://example.com/.system/auth-tokens/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
-						"@id": "_:00",
-						"@type": [
-							"${ NS.C.Class.ResponseMetadata }",
-							"${ NS.C.Class.VolatileResource }"
-						],
-						"${ NS.C.Predicate.documentMetadata }": [ {
-							"@id": "_:01"
-						} ]
-					}, {
-						"@id": "_:01",
-						"@type": [
-							"${ NS.C.Class.DocumentMetadata }",
-							"${ NS.C.Class.VolatileResource }"
-						],
-						"${ NS.C.Predicate.eTag }": [ {
-							"@value": "\\"1234567890\\""
-						} ],
-						"${ NS.C.Predicate.relatedDocument }": [ {
-							"@id": "http://example.com/users/my-user/"
-						} ]
-					}, {
-						"@id": "_:02",
-						"@type": [
-							"${ NS.CS.Class.Token }",
-							"${ NS.C.Class.VolatileResource }"
-						],
-						"${ NS.CS.Predicate.tokenKey }": [ {
-							"@value": "token-value"
-						} ],
-						"${ NS.CS.Predicate.expirationTime }": {
-							"@value": "${ date.toISOString() }",
-							"@type": "${ NS.XSD.DataType.dateTime }"
-						},
-						"${ NS.CS.Predicate.credentialsOf }": [ {
-							"@id": "http://example.com/users/my-user/"
-						} ]
-					}, {
-						"@id": "http://example.com/users/my-user/",
-						"@graph": [ {
-							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ NS.CS.Class.User }" ],
-							"${ NS.CS.Predicate.namae }": [ {
-								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
-							} ],
-							"${ NS.CS.Predicate.credentials }": [ {
-								"@id": "http://example.com/.system/credentials/my-user-credentials/"
-							} ]
-						} ]
-					} ]`,
+				spyOn( TokenAuthenticator.prototype, "authenticate" ).and.callFake( ():Promise<TokenCredentials.Class> => {
+					return Promise.resolve( Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: date,
+						user: PersistedUser.Factory.decorate( {
+							_etag: "\"1-123445\"",
+							name: "My User Name",
+						}, context.documents ),
+					} ) );
 				} );
 
 				// Expected behavior
@@ -1410,7 +1360,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 				{ type: "string" }
 			), ():void => {
 			} );
-
 
 			let context:AbstractContext;
 			let auth:Auth.Class;

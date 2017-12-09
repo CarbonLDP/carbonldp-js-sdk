@@ -57,7 +57,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 				HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 				HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-				const tokensURI:string = this.context.resolveSystemURI( TOKEN_CONTAINER );
+				const tokensURI:string = this.context.auth._resolveSecurityURL( TOKEN_CONTAINER );
 				return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
 			} )
 			.then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
