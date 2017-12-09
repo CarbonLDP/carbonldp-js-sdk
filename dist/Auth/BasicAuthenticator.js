@@ -1,47 +1,44 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = require("../Utils");
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
+var Authenticator_1 = require("./Authenticator");
 var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
-var Class = (function () {
+var Class = (function (_super) {
+    __extends(Class, _super);
     function Class() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Class.prototype.isAuthenticated = function () {
-        return !!this.credentials;
-    };
     Class.prototype.authenticate = function (authenticationToken) {
         var _this = this;
-        if (authenticationToken === null)
-            throw new Errors.IllegalArgumentError("The authenticationToken cannot be null.");
-        return new Promise(function (resolve, reject) {
+        return Utils_1.promiseMethod(function () {
+            if (authenticationToken === null)
+                throw new Errors.IllegalArgumentError("The authenticationToken cannot be null.");
             if (!authenticationToken.username)
                 throw new Errors.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
                 throw new Errors.IllegalArgumentError("The password cannot be empty.");
             _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
-            resolve(_this.credentials);
+            return _this.credentials;
         });
     };
-    Class.prototype.addAuthentication = function (requestOptions) {
-        if (!this.isAuthenticated())
-            throw new Errors.IllegalStateError("The authenticator isn't authenticated.");
-        var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        this.addBasicAuthenticationHeader(headers);
-        return requestOptions;
-    };
-    Class.prototype.clearAuthentication = function () {
-        this.credentials = null;
-    };
-    Class.prototype.addBasicAuthenticationHeader = function (headers) {
-        if (headers.has("authorization"))
-            return;
-        var header = new HTTP.Header.Class();
-        headers.set("authorization", header);
+    Class.prototype.getHeaderValue = function () {
         var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
-        header.values.push(new HTTP.Header.Value(authorization));
+        return new HTTP.Header.Value(authorization);
     };
     return Class;
-}());
+}(Authenticator_1.default));
 exports.Class = Class;
 function toB64(str) {
     return (typeof btoa !== "undefined") ? btoa(str) : new Buffer(str).toString("base64");

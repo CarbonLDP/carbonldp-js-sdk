@@ -1,8 +1,10 @@
-import * as HTTP from "./../HTTP";
-export interface Class<T extends object, W extends object> {
+import * as HTTP from "../HTTP";
+export declare abstract class Class<T extends object, W extends object> {
+    protected abstract credentials: W;
     isAuthenticated(): boolean;
-    authenticate(authenticationToken: T): Promise<W>;
+    abstract authenticate(authenticationToken: T): Promise<W>;
     clearAuthentication(): void;
     addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+    protected abstract getHeaderValue(): HTTP.Header.Value;
 }
 export default Class;

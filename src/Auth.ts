@@ -62,7 +62,7 @@ export class Class {
 	protected _authenticatedUser:PersistedUser.Class;
 
 	private context:Context;
-	private authenticators:Authenticator<object, object>[];
+	private authenticators:{ [ P in Method ]:Authenticator<object, object> };
 	private authenticator:Authenticator<object, object>;
 
 	public get authenticatedUser():PersistedUser.Class {
@@ -78,9 +78,10 @@ export class Class {
 
 		this.context = context;
 
-		this.authenticators = [];
-		this.authenticators[ Method.BASIC ] = new BasicAuthenticator();
-		this.authenticators[ Method.TOKEN ] = new TokenAuthenticator( this.context );
+		this.authenticators = {
+			[ Method.BASIC ]: new BasicAuthenticator(),
+			[ Method.TOKEN ]: new TokenAuthenticator( this.context ),
+		};
 	}
 
 	isAuthenticated( askParent:boolean = true ):boolean {

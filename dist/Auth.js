@@ -4,6 +4,8 @@ var ACE = require("./Auth/ACE");
 exports.ACE = ACE;
 var ACL = require("./Auth/ACL");
 exports.ACL = ACL;
+var Authenticator_1 = require("./Auth/Authenticator");
+exports.Authenticator = Authenticator_1.default;
 var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
 exports.BasicAuthenticator = BasicAuthenticator_1.default;
 var Credentials = require("./Auth/Credentials");
@@ -52,9 +54,11 @@ var Class = (function () {
         this.roles = new Roles.Class(this.context);
         this.users = new Users.Class(this.context);
         this.context = context;
-        this.authenticators = [];
-        this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
-        this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
+        this.authenticators = (_a = {},
+            _a[Method.BASIC] = new BasicAuthenticator_1.default(),
+            _a[Method.TOKEN] = new TokenAuthenticator_1.default(this.context),
+            _a);
+        var _a;
     }
     Object.defineProperty(Class.prototype, "authenticatedUser", {
         get: function () {

@@ -14,6 +14,7 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as NS from "./../NS";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
@@ -74,50 +75,82 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			expect( authenticator instanceof TokenAuthenticator.Class ).toEqual( true );
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"isAuthenticated",
-			"Returns true if the instance contains stored credentials.",
-			{ type: "boolean" }
-		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
+		describe( method( INSTANCE, "isAuthenticated" ), ():void => {
+
+			it( hasSignature(
+				"Returns true if the instance contains stored credentials.",
+				{ type: "boolean" }
+			), ():void => {} );
+
+			function createAuthenticatorWith( credentials?:TokenCredentials.Class ):TokenAuthenticator.Class {
+				return new class extends TokenAuthenticator.Class {
+					constructor() {
+						super( context );
+						if( credentials ) this.credentials = credentials;
+					}
+				};
 			}
 
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
+			let context:AbstractContext;
+			beforeEach( ():void => {
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "https://example.com/";
+				};
+			} );
 
-			expect( "isAuthenticated" in authenticator ).toEqual( true );
-			expect( Utils.isFunction( authenticator.isAuthenticated ) ).toEqual( true );
+			it( "should exists", ():void => {
+				expect( TokenAuthenticator.Class.prototype.isAuthenticated ).toBeDefined();
+				expect( TokenAuthenticator.Class.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
+			} );
 
-			expect( authenticator.isAuthenticated() ).toBe( false );
+			it( "should return false when no credentials", ():void => {
+				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith();
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
 
-			let expirationTime:Date = new Date();
-			expirationTime.setDate( expirationTime.getDate() + 1 );
-			(<any> authenticator)._credentials = {
-				key: "token-value",
-				expirationTime: expirationTime,
-			};
-			expect( authenticator.isAuthenticated() ).toBe( true );
+			it( "should return false when null credentials", ():void => {
+				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( null );
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
 
-			(<any> authenticator)._credentials = {
-				key: "token-value",
-				expirationTime: new Date(),
-			};
-			expect( authenticator.isAuthenticated() ).toBe( false );
+			it( "should return true when not expired credentials", ():void => {
+				const expirationTime:Date = new Date();
+				expirationTime.setDate( expirationTime.getDate() + 1 );
 
-			expirationTime = new Date();
-			expirationTime.setDate( expirationTime.getDate() - 1 );
-			(<any> authenticator)._credentials = {
-				key: "token-value",
-				expirationTime: expirationTime,
-			};
-			expect( authenticator.isAuthenticated() ).toBe( false );
+				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					key: "token-value",
+					expirationTime,
+				} );
+
+				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				expect( authenticator.isAuthenticated() ).toBe( true );
+			} );
+
+			it( "should return true when expired credentials with by current time", ():void => {
+				const expirationTime:Date = new Date();
+				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					key: "token-value",
+					expirationTime,
+				} );
+
+				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
+
+			it( "should return true when expired credentials with by one day", ():void => {
+				const expirationTime:Date = new Date();
+				expirationTime.setDate( expirationTime.getDate() - 1 );
+
+				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					key: "token-value",
+					expirationTime,
+				} );
+
+				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
+
 		} );
 
 		describe( method(
@@ -419,7 +452,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
+				(<any> authenticator).credentials = {
 					key: "token-value",
 					expirationTime: expirationTime,
 				};
@@ -459,7 +492,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
+				(<any> authenticator).credentials = {
 					key: "token-value",
 					expirationTime: expirationTime,
 				};
@@ -503,7 +536,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
+				(<any> authenticator).credentials = {
 					key: "token-value",
 					expirationTime: expirationTime,
 				};
@@ -551,7 +584,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
+				(<any> authenticator).credentials = {
 					key: "token-value",
 					expirationTime: expirationTime,
 				};
@@ -600,7 +633,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
+				(<any> authenticator).credentials = {
 					key: "token-value",
 					expirationTime: expirationTime,
 				};
