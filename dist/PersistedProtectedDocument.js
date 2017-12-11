@@ -1,10 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTP = require("./HTTP");
-var Auth = require("./Auth");
+var tokens_1 = require("sparqler/tokens");
 var NS = require("./NS");
 var PersistedDocument = require("./PersistedDocument");
-var Resource = require("./Resource");
 var Utils = require("./Utils");
 var Factory = (function () {
     function Factory() {
@@ -36,24 +34,26 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function getACL(requestOptions) {
-    var protectedDocument = this;
-    var aclPromise;
-    if (protectedDocument.isResolved()) {
-        aclPromise = Promise.resolve(protectedDocument.accessControlList);
-    }
-    else {
-        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.Predicate.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
-            var results = _a[0];
-            return results.bindings[0].acl;
-        });
-    }
-    return aclPromise.then(function (acl) {
-        return protectedDocument._documents.get(acl.id, requestOptions);
-    }).then(function (_a) {
-        var acl = _a[0], response = _a[1];
-        if (!Resource.Util.hasType(acl, Auth.ACL.RDF_CLASS))
-            throw new HTTP.Errors.BadResponseError("The response does not contains a " + Auth.ACL.RDF_CLASS + " object.", response);
-        return [acl, response];
+    if (requestOptions === void 0) { requestOptions = {}; }
+    if (this.isResolved())
+        return this._documents.get(this.accessControlList.id, requestOptions);
+    var aclGraphVar = new tokens_1.VariableToken("g");
+    var aclGetter = new tokens_1.SubjectToken(new tokens_1.IRIToken(this.id))
+        .addPredicate(new tokens_1.PredicateToken(new tokens_1.IRIToken(NS.CS.Predicate.accessControlList))
+        .addObject(aclGraphVar));
+    var aclContent = new tokens_1.SubjectToken(new tokens_1.VariableToken("s"))
+        .addPredicate(new tokens_1.PredicateToken(new tokens_1.VariableToken("p"))
+        .addObject(new tokens_1.VariableToken("o")));
+    var query = new tokens_1.QueryToken(new tokens_1.ConstructToken()
+        .addTriple(aclContent)
+        .addPattern(aclGetter)
+        .addPattern(new tokens_1.GraphToken(aclGraphVar)
+        .addPattern(aclContent)));
+    return this._documents
+        ._getConstructDocuments(this.id, requestOptions, query)
+        .then(function (_a) {
+        var documents = _a[0], response = _a[1];
+        return [documents[0], response];
     });
 }
 

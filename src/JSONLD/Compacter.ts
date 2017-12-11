@@ -1,11 +1,17 @@
-import { DigestedObjectSchema, Resolver } from "../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	Resolver
+} from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
 import * as Pointer from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
-import { PartialMetadata, QueryContextBuilder } from "../SPARQL/QueryDocument";
+import {
+	PartialMetadata,
+	QueryContextBuilder
+} from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
 
@@ -42,7 +48,9 @@ export class Class {
 		return this.compactDocuments<T>( rdfDocuments )[ 0 ];
 	}
 
-	compactDocuments<T extends PersistedDocument.Class>( rdfDocuments:RDFDocument.Class[], mainDocuments:RDFDocument.Class[] = rdfDocuments ):T[] {
+	compactDocuments<T extends PersistedDocument.Class>( rdfDocuments:RDFDocument.Class[], mainDocuments?:RDFDocument.Class[] ):T[] {
+		if( ! mainDocuments || ! mainDocuments.length ) mainDocuments = rdfDocuments;
+
 		rdfDocuments.forEach( rdfDocument => {
 			const [ [ documentNode ], fragmentNodes ] = RDFDocument.Util.getNodes( rdfDocument );
 			const targetDocument:PersistedDocument.Class = this.getResource( documentNode, this.documents, true );

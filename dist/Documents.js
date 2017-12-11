@@ -593,6 +593,50 @@ var Class = (function () {
         this.compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;
     };
+    Class.prototype._getConstructDocuments = function (uri, requestOptions, query, queryContext, targetName, targetDocument) {
+        var _this = this;
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
+        var response;
+        return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
+            var jsonldString = _a[0], _response = _a[1];
+            response = _response;
+            return new JSONLD.Parser.Class().parse(jsonldString);
+        }).then(function (rdfNodes) {
+            var freeResources = _this._getFreeResources(rdfNodes
+                .filter(function (node) { return !RDF.Document.Factory.is(node); }));
+            var targetSet = new Set(freeResources
+                .getResources()
+                .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
+                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; }));
+            var targetETag = targetDocument && targetDocument._etag;
+            if (targetDocument)
+                targetDocument._etag = void 0;
+            freeResources
+                .getResources()
+                .filter(LDP.ResponseMetadata.Factory.is)
+                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
+                .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
+                .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
+                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument];
+                var eTag = documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag];
+                if (relatedDocument._etag === void 0)
+                    relatedDocument._etag = eTag;
+                if (relatedDocument._etag !== eTag)
+                    relatedDocument._etag = null;
+            }); });
+            if (targetDocument && targetETag === targetDocument._etag)
+                return [[targetDocument], null];
+            var rdfDocuments = rdfNodes
+                .filter(RDF.Document.Factory.is);
+            var targetDocuments = rdfDocuments
+                .filter(function (x) { return targetSet.has(x["@id"]); });
+            var documents = new JSONLD.Compacter
+                .Class(_this, targetName, queryContext)
+                .compactDocuments(rdfDocuments, targetDocuments);
+            return [documents, response];
+        });
+    };
     Class.prototype._parseErrorResponse = function (response) {
         var _this = this;
         if (response instanceof Error)
@@ -759,7 +803,6 @@ var Class = (function () {
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
     Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
-        var _this = this;
         var metadataVar = queryContext.getVariable("metadata");
         var construct = (_a = new tokens_1.ConstructToken()
             .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -783,47 +826,7 @@ var Class = (function () {
                     construct.addTriple(pattern);
             });
         })(constructPatterns);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
-        var response;
-        return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
-            var jsonldString = _a[0], _response = _a[1];
-            response = _response;
-            return new JSONLD.Parser.Class().parse(jsonldString);
-        }).then(function (rdfNodes) {
-            var freeResources = _this._getFreeResources(rdfNodes
-                .filter(function (node) { return !RDF.Document.Factory.is(node); }));
-            var targetSet = new Set(freeResources
-                .getResources()
-                .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; }));
-            var targetETag = targetDocument && targetDocument._etag;
-            if (targetDocument)
-                targetDocument._etag = void 0;
-            freeResources
-                .getResources()
-                .filter(LDP.ResponseMetadata.Factory.is)
-                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
-                .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
-                .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
-                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument];
-                var eTag = documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag];
-                if (relatedDocument._etag === void 0)
-                    relatedDocument._etag = eTag;
-                if (relatedDocument._etag !== eTag)
-                    relatedDocument._etag = null;
-            }); });
-            if (targetDocument && targetETag === targetDocument._etag)
-                return [[targetDocument], null];
-            var rdfDocuments = rdfNodes
-                .filter(RDF.Document.Factory.is);
-            var targetDocuments = rdfDocuments
-                .filter(function (x) { return targetSet.has(x["@id"]); });
-            var documents = new JSONLD.Compacter
-                .Class(_this, targetName, queryContext)
-                .compactDocuments(rdfDocuments, targetDocuments);
-            return [documents, response];
-        });
+        return this._getConstructDocuments(uri, requestOptions, query, queryContext, targetName, targetDocument);
         var _a, _b;
     };
     Class.prototype.persistChildDocument = function (parentURI, childObject, slug, requestOptions) {

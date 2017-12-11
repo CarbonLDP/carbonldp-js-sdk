@@ -712,6 +712,59 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return freeResourcesDocument;
 	}
 
+	_getConstructDocuments<T extends object>( uri:string, requestOptions:HTTP.Request.Options, query:QueryToken, queryContext?:QueryContext.Class, targetName?:string, targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
+
+		let response:HTTP.Response.Class;
+		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
+			response = _response;
+			return new JSONLD.Parser.Class().parse( jsonldString );
+
+		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfNodes:RDF.Node.Class[] ) => {
+			const freeResources:FreeResources.Class = this._getFreeResources( rdfNodes
+				.filter( node => ! RDF.Document.Factory.is( node ) )
+			);
+
+			const targetSet:Set<string> = new Set( freeResources
+				.getResources()
+				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
+				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id )
+			);
+
+			const targetETag:string = targetDocument && targetDocument._etag;
+			if( targetDocument ) targetDocument._etag = void 0;
+
+			freeResources
+				.getResources()
+				.filter( LDP.ResponseMetadata.Factory.is )
+				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
+				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
+				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
+					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ];
+					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ];
+
+					if( relatedDocument._etag === void 0 ) relatedDocument._etag = eTag;
+					if( relatedDocument._etag !== eTag ) relatedDocument._etag = null;
+				} ) );
+
+			if( targetDocument && targetETag === targetDocument._etag )
+				return [ [ targetDocument ], null ];
+
+			const rdfDocuments:RDF.Document.Class[] = rdfNodes
+				.filter<any>( RDF.Document.Factory.is );
+
+			const targetDocuments:RDF.Document.Class[] = rdfDocuments
+				.filter( x => targetSet.has( x[ "@id" ] ) );
+
+			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
+				.Class( this, targetName, queryContext )
+				.compactDocuments( rdfDocuments, targetDocuments );
+
+			return [ documents, response ];
+		} );
+	}
+
 	_parseErrorResponse<T extends object>( response:HTTP.Response.Class | Error ):any {
 		if( response instanceof Error ) return Promise.reject( response );
 
@@ -942,56 +995,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			} );
 		})( constructPatterns );
 
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
-
-		let response:HTTP.Response.Class;
-		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
-			response = _response;
-			return new JSONLD.Parser.Class().parse( jsonldString );
-
-		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfNodes:RDF.Node.Class[] ) => {
-			const freeResources:FreeResources.Class = this._getFreeResources( rdfNodes
-				.filter( node => ! RDF.Document.Factory.is( node ) )
-			);
-
-			const targetSet:Set<string> = new Set( freeResources
-				.getResources()
-				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id )
-			);
-
-			const targetETag:string = targetDocument && targetDocument._etag;
-			if( targetDocument ) targetDocument._etag = void 0;
-
-			freeResources
-				.getResources()
-				.filter( LDP.ResponseMetadata.Factory.is )
-				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
-				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
-				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
-					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ];
-					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ];
-
-					if( relatedDocument._etag === void 0 ) relatedDocument._etag = eTag;
-					if( relatedDocument._etag !== eTag ) relatedDocument._etag = null;
-				} ) );
-
-			if( targetDocument && targetETag === targetDocument._etag )
-				return [ [ targetDocument ], null ];
-
-			const rdfDocuments:RDF.Document.Class[] = rdfNodes
-				.filter<any>( RDF.Document.Factory.is );
-
-			const targetDocuments:RDF.Document.Class[] = rdfDocuments
-				.filter( x => targetSet.has( x[ "@id" ] ) );
-
-			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-				.Class( this, targetName, queryContext )
-				.compactDocuments( rdfDocuments, targetDocuments );
-
-			return [ documents, response ];
-		} );
+		return this._getConstructDocuments( uri, requestOptions, query, queryContext, targetName, targetDocument );
 	}
 
 

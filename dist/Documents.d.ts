@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import { QueryClause } from "sparqler/Clauses";
+import { QueryToken } from "sparqler/tokens";
 import * as AccessPoint from "./AccessPoint";
 import Context from "./Context";
 import * as FreeResources from "./FreeResources";
@@ -13,7 +14,7 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
-import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
+import { QueryContext, QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
@@ -83,6 +84,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     onMemberRemoved(uriPattern: string, onEvent: (message: Messaging.Message.Class) => void, onError: (error: Error) => void): void;
     _getPersistedDocument<T extends object>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
     _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
+    _getConstructDocuments<T extends object>(uri: string, requestOptions: HTTP.Request.Options, query: QueryToken, queryContext?: QueryContext.Class, targetName?: string, targetDocument?: T & PersistedDocument.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     _parseErrorResponse<T extends object>(response: HTTP.Response.Class | Error): any;
     private getFullDocument<T>(uri, requestOptions);
     private getPartialDocument<T>(uri, requestOptions, queryBuilderFn?);
