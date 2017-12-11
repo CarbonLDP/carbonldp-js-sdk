@@ -1,6 +1,6 @@
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import * as PersistedDocument from "./../PersistedDocument";
 import * as Utils from "./../Utils";
 import * as VolatileResource from "./VolatileResource";
 import * as Map from "./Map";
@@ -24,7 +24,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends VolatileResource.Class {
-	relatedDocument:Pointer.Class;
+	relatedDocument:PersistedDocument.Class;
 	eTag?:string;
 	bNodesMap?:Map.Class<BlankNode, BlankNode>;
 }

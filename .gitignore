@@ -7,6 +7,9 @@
 src/**/*.js
 src/**/*.map
 
+test/jasmine-ajax-node/*.js
+test/jasmine-ajax-node/*.map
+
 # Typings
 **/typings/
 
@@ -21,6 +24,7 @@ reports/
 # IntelliJ
 .idea/workspace.xml
 .idea/dictionaries
+.idea/shelf
 # *.iml
 # *.iws
 

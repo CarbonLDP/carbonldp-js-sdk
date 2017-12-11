@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Fragment = require("./Fragment");
 var ObjectSchema = require("./ObjectSchema");
 var PersistedResource = require("./PersistedResource");
 var RDF = require("./RDF");
@@ -30,9 +31,12 @@ function extendRemoveType(superFunction) {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.decorate = function (fragment, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        PersistedResource.Factory.decorate(fragment, snapshot);
+    Factory.is = function (object) {
+        return PersistedResource.Factory.hasClassProperties(object)
+            && Fragment.Factory.hasClassProperties(object);
+    };
+    Factory.decorate = function (fragment) {
+        PersistedResource.Factory.decorate(fragment);
         Object.defineProperties(fragment, {
             "addType": {
                 writable: false,

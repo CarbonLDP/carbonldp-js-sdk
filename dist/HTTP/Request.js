@@ -1,9 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
 var Header = require("./Header");
 var Method_1 = require("./Method");
-var NS = require("./../NS");
 var Response_1 = require("./Response");
 var Utils = require("./../Utils");
 function forEachHeaders(headers, setHeader) {
@@ -66,9 +72,8 @@ function sendWithNode(method, url, body, options) {
             var HTTP = parsedURL.protocol === "http:" ? require("http") : require("https");
             var requestOptions = {
                 protocol: parsedURL.protocol,
-                host: parsedURL.host,
                 hostname: parsedURL.hostname,
-                port: parseFloat(parsedURL.port),
+                port: parsedURL.port,
                 path: parsedURL.path,
                 method: method,
                 headers: {},
@@ -202,12 +207,16 @@ var Util = (function () {
         headers.set("content-type", new Header.Class(contentType));
         return requestOptions;
     };
-    Util.setIfMatchHeader = function (etag, requestOptions) {
+    Util.setIfMatchHeader = function (eTag, requestOptions) {
+        if (!eTag)
+            return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("if-match", new Header.Class(etag));
+        headers.set("if-match", new Header.Class(eTag));
         return requestOptions;
     };
     Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
+        if (!eTag)
+            return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("if-none-match", new Header.Class(eTag));
         return requestOptions;
@@ -217,23 +226,12 @@ var Util = (function () {
         prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
         return requestOptions;
     };
-    Util.setPreferredRetrievalResource = function (typeOfRequest, requestOptions) {
+    Util.setPreferredRetrieval = function (retrievalType, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        var preferType;
-        switch (typeOfRequest) {
-            case "Created":
-                preferType = NS.C.Class.CreatedResource;
-                break;
-            case "Modified":
-                preferType = NS.C.Class.ModifiedResource;
-                break;
-            default:
-                throw new Errors.IllegalArgumentError("Invalid type of request: '" + typeOfRequest + "'.");
-        }
-        prefer.values.push(new Header.Value("return=representation; " + preferType));
+        prefer.values.push(new Header.Value("return=" + retrievalType));
         return requestOptions;
     };
-    Util.setContainerRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
+    Util.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
         if (returnRepresentation === void 0) { returnRepresentation = true; }
         var prefer = Util.getHeader("prefer", requestOptions, true);
         var representation = returnRepresentation ? "return=representation; " : "";
@@ -256,6 +254,13 @@ var Util = (function () {
             || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
             || Utils.hasPropertyDefined(object, "timeout")
             || Utils.hasPropertyDefined(object, "request");
+    };
+    Util.cloneOptions = function (options) {
+        var clone = __assign({}, options, { headers: new Map() });
+        if (options.headers)
+            options.headers
+                .forEach(function (value, key) { return clone.headers.set(key, new Header.Class(value.values.slice())); });
+        return clone;
     };
     return Util;
 }());

@@ -41,18 +41,20 @@ export declare class DigestedPropertyDefinition {
 }
 export interface Resolver {
     getGeneralSchema(): DigestedObjectSchema;
-    getSchemaFor(object: Object): DigestedObjectSchema;
+    getSchemaFor(object: Object, path?: string): DigestedObjectSchema;
 }
 export declare class Digester {
-    static digestSchema(schemas: Class[]): DigestedObjectSchema;
-    static digestSchema(schema: Class): DigestedObjectSchema;
+    static digestSchema(schemas: Class[], vocab?: string): DigestedObjectSchema;
+    static digestSchema(schema: Class, vocab?: string): DigestedObjectSchema;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+    static digestPropertyDefinition(digestedSchema: DigestedObjectSchema, propertyName: string, propertyDefinition: PropertyDefinition, vocab?: string): DigestedPropertyDefinition;
     static resolvePrefixedURI(uri: string, digestedSchema: DigestedObjectSchema): string;
+    private static _resolveURI(uri, digestedSchema, vocab?);
     private static _resolvePrefixedURI(uri, digestedSchema);
-    private static digestSingleSchema(schema);
+    private static digestSingleSchema(schema, vocab?);
     private static resolvePrefixedURIs(digestedSchema);
 }
 export declare class Util {
-    static resolveURI(uri: string, schema: DigestedObjectSchema): string;
+    static resolveURI(uri: string, schema: DigestedObjectSchema, vocab?: string): string;
 }
 export default Class;

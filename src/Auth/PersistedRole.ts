@@ -1,11 +1,9 @@
-import * as Context from "./../Context";
 import * as Documents from "./../Documents";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
@@ -21,15 +19,11 @@ export interface Class extends PersistedProtectedDocument.Class {
 
 	users?:Pointer.Class[];
 
-	createChild<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+	createChild<T extends object>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
-	createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
-
-	listUsers( requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]>;
+	createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
 	getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
-
-	getUsers<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
 
 	addUser( user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 
@@ -45,7 +39,6 @@ export class Factory {
 	static hasClassProperties( object:Object ):boolean {
 		return Utils.hasPropertyDefined( object, "_roles" )
 			&& Utils.hasFunction( object, "createChild" )
-			&& Utils.hasFunction( object, "listUsers" )
 			&& Utils.hasFunction( object, "getUsers" )
 			&& Utils.hasFunction( object, "addUser" )
 			&& Utils.hasFunction( object, "addUsers" )
@@ -65,28 +58,18 @@ export class Factory {
 
 		PersistedProtectedDocument.Factory.decorate( persistedRole, documents );
 
-		// TODO: Fix
-		const context:Context.Class = (documents as any as { context:Context.Class }).context;
-		const roles:Roles.Class = context ? context.auth.roles : null;
-
 		Object.defineProperties( persistedRole, {
 			"_roles": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: roles,
+				value: documents[ "context" ] ? documents[ "context" ].auth.roles : null,
 			},
 			"createChild": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
 				value: createChild,
-			},
-			"listUsers": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-				value: listUsers,
 			},
 			"getUsers": {
 				writable: true,
@@ -125,23 +108,17 @@ export class Factory {
 
 }
 
-function createChild<T>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild<T>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
-function createChild<T>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]> {
+function createChild<T extends object>( role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
+function createChild<T extends object>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]> {
 	checkState( this );
 	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
 }
 
-function listUsers( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
-	checkState( this );
-	return this._roles.listUsers( this.id, requestOptions );
-}
-
 function getUsers<T>( requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
-function getUsers<T>( retrievalPreferences?:RetrievalPreferences.Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]>;
-function getUsers<T>( this:Class, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]> {
+function getUsers<T>( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], HTTP.Response.Class ]> {
 	checkState( this );
-	return this._roles.getUsers( this.id, retrievalPreferencesOrRequestOptions, requestOptions );
+	return this._roles.getUsers( this.id, requestOptions );
 }
 
 function addUser( this:Class, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {

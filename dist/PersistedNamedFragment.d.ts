@@ -5,6 +5,6 @@ export interface Class extends PersistedFragment.Class, NamedFragment.Class {
     document: PersistedDocument.Class;
 }
 export declare class Factory {
-    static decorate<T extends NamedFragment.Class>(fragment: T, snapshot?: Object): T & Class;
+    static decorate<T extends NamedFragment.Class>(fragment: T): T & Class;
 }
 export default Class;

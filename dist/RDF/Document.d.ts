@@ -20,6 +20,8 @@ export declare class Util {
     static getFragmentResources(document: Node.Class[], documentResourceURI?: string): Node.Class[];
     static getFragmentResources(document: Class, documentResourceURI?: string): Node.Class[];
     static getBNodeResources(document: Class): Node.Class[];
+    static getNodes(rdfDocument: Class): [Node.Class[], Node.Class[]];
+    private static isNodeFragment(node);
 }
 export declare class Parser implements HTTP.Parser.Class<Class[]> {
     parse(input: string): Promise<any>;

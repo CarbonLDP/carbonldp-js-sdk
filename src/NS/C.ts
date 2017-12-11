@@ -9,8 +9,6 @@ export class Class {
 
 	static get ChildCreated():string { return namespace + "ChildCreatedEvent"; }
 
-	static get CreatedResource():string { return namespace + "CreatedResource"; }
-
 	static get Document():string { return namespace + "Document"; }
 
 	static get DocumentCreatedDetails():string { return namespace + "DocumentCreatedEventDetails"; }
@@ -20,6 +18,10 @@ export class Class {
 	static get DocumentMetadata():string { return namespace + "DocumentMetadata"; }
 
 	static get DocumentModified():string { return namespace + "DocumentModified"; }
+
+	static get ErrorResponse():string { return namespace + "ErrorResponse"; }
+
+	static get Error():string { return namespace + "Error"; }
 
 	static get Instance():string { return namespace + "Instance"; }
 
@@ -33,8 +35,6 @@ export class Class {
 
 	static get MemberRemovedDetails():string { return namespace + "MemberRemovedEventDetails"; }
 
-	static get ModifiedResource():string { return namespace + "ModifiedResource"; }
-
 	static get NonReadableMembershipResourceTriples():string { return namespace + "NonReadableMembershipResourceTriples"; }
 
 	static get Platform():string { return namespace + "Platform"; }
@@ -45,25 +45,27 @@ export class Class {
 
 	static get PreferContainmentTriples():string { return namespace + "PreferContainmentTriples"; }
 
+	static get PreferDocumentETags():string { return namespace + "PreferDocumentETags"; }
+
 	static get PreferMembershipResources():string { return namespace + "PreferMembershipResources"; }
 
 	static get PreferMembershipTriples():string { return namespace + "PreferMembershipTriples"; }
 
+	static get PreferResultsContext():string { return namespace + "PreferResultsContext"; }
+
 	static get PreferSelectedMembershipTriples():string { return namespace + "PreferSelectedMembershipTriples"; }
 
-	static get VolatileResource():string { return namespace + "VolatileResource"; }
+	static get QueryMetadata():string { return namespace + "QueryMetadata"; }
 
 	static get RDFRepresentation():string { return namespace + "RDFRepresentation"; }
 
 	static get RemoveMemberAction():string { return namespace + "RemoveMemberAction"; }
 
-	static get ErrorResponse():string { return namespace + "ErrorResponse"; }
-
-	static get Error():string { return namespace + "Error"; }
-
 	static get ResponseMetadata():string { return namespace + "ResponseMetadata"; }
 
 	static get ValidationError():string { return namespace + "ValidationError"; }
+
+	static get VolatileResource():string { return namespace + "VolatileResource"; }
 }
 
 export class Predicate {

@@ -5,11 +5,11 @@ declare function isDefined(value: any): boolean;
 declare function isNull(value: any): boolean;
 declare function isArray(object: any): boolean;
 declare function isString(value: any): value is string;
-declare function isBoolean(value: any): boolean;
-declare function isNumber(value: any): boolean;
+declare function isBoolean(value: any): value is boolean;
+declare function isNumber(value: any): value is number;
 declare function isInteger(value: any): boolean;
 declare function isDouble(value: any): boolean;
-declare function isDate(date: any): boolean;
+declare function isDate(date: any): date is Date;
 declare function isObject(object: any): object is object;
 declare function isPlainObject(object: Object): boolean;
 declare function isFunction(value: any): value is Function;
@@ -18,6 +18,7 @@ declare function parseBoolean(value: string): boolean;
 declare function extend(target: Object, ...objects: Object[]): Object;
 declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
 export declare function promiseMethod<T>(fn: () => T | Promise<T>): Promise<T>;
+export declare function mapTupleArray<T, W>(tuples: [T, W][]): [T[], W[]];
 declare class A {
     static from<T>(iterator: Iterator<T>): Array<T>;
     static joinWithoutDuplicates<T>(...arrays: Array<Array<T>>): Array<T>;
@@ -42,7 +43,6 @@ declare class O {
     }, ignore?: {
         [key: string]: boolean;
     }): boolean;
-    static shallowUpdate<T extends object>(target: object, source: T): T;
     static areShallowlyEqual(object1: Object, object2: Object): boolean;
 }
 declare class S {

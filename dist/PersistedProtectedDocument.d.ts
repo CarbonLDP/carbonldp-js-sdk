@@ -1,7 +1,7 @@
-import * as HTTP from "./HTTP";
 import * as Auth from "./Auth";
-import * as PersistedDocument from "./PersistedDocument";
 import * as Documents from "./Documents";
+import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 export interface Class extends PersistedDocument.Class {
     accessControlList?: Pointer.Class;

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( C.Class ).toBeDefined();
 			expect( Utils.isFunction( C.Class ) ).toBe( true );
-			expect( Object.keys( C.Class ).length ).toBe( 32 );
+			expect( Object.keys( C.Class ).length ).toBe( 33 );
 		} );
 
 		it( hasProperty(
@@ -84,17 +84,6 @@ describe( module(
 			expect( Utils.isString( C.Class.ChildCreated ) ).toBe( true );
 
 			expect( C.Class.ChildCreated ).toBe( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"CreatedResource",
-			"string"
-		), ():void => {
-			expect( C.Class.CreatedResource ).toBeDefined();
-			expect( Utils.isString( C.Class.CreatedResource ) ).toBe( true );
-
-			expect( C.Class.CreatedResource ).toBe( "https://carbonldp.com/ns/v1/platform#CreatedResource" );
 		} );
 
 		it( hasProperty(
@@ -150,6 +139,28 @@ describe( module(
 			expect( Utils.isString( C.Class.DocumentModified ) ).toBe( true );
 
 			expect( C.Class.DocumentModified ).toBe( "https://carbonldp.com/ns/v1/platform#DocumentModified" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ErrorResponse",
+			"string"
+		), ():void => {
+			expect( C.Class.ErrorResponse ).toBeDefined();
+			expect( Utils.isString( C.Class.ErrorResponse ) ).toBe( true );
+
+			expect( C.Class.ErrorResponse ).toBe( "https://carbonldp.com/ns/v1/platform#ErrorResponse" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"Error",
+			"string"
+		), ():void => {
+			expect( C.Class.Error ).toBeDefined();
+			expect( Utils.isString( C.Class.Error ) ).toBe( true );
+
+			expect( C.Class.Error ).toBe( "https://carbonldp.com/ns/v1/platform#Error" );
 		} );
 
 		it( hasProperty(
@@ -220,17 +231,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"ModifiedResource",
-			"string"
-		), ():void => {
-			expect( C.Class.ModifiedResource ).toBeDefined();
-			expect( Utils.isString( C.Class.ModifiedResource ) ).toBe( true );
-
-			expect( C.Class.ModifiedResource ).toBe( "https://carbonldp.com/ns/v1/platform#ModifiedResource" );
-		} );
-
-		it( hasProperty(
-			STATIC,
 			"NonReadableMembershipResourceTriples",
 			"string"
 		), ():void => {
@@ -286,6 +286,17 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
+			"PreferDocumentETags",
+			"string"
+		), ():void => {
+			expect( C.Class.PreferDocumentETags ).toBeDefined();
+			expect( Utils.isString( C.Class.PreferDocumentETags ) ).toBe( true );
+
+			expect( C.Class.PreferDocumentETags ).toBe( "https://carbonldp.com/ns/v1/platform#PreferDocumentETags" );
+		} );
+
+		it( hasProperty(
+			STATIC,
 			"PreferMembershipResources",
 			"string"
 		), ():void => {
@@ -308,13 +319,24 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"VolatileResource",
+			"PreferResultsContext",
 			"string"
 		), ():void => {
-			expect( C.Class.VolatileResource ).toBeDefined();
-			expect( Utils.isString( C.Class.VolatileResource ) ).toBe( true );
+			expect( C.Class.PreferResultsContext ).toBeDefined();
+			expect( Utils.isString( C.Class.PreferResultsContext ) ).toBe( true );
 
-			expect( C.Class.VolatileResource ).toBe( "https://carbonldp.com/ns/v1/platform#VolatileResource" );
+			expect( C.Class.PreferResultsContext ).toBe( "https://carbonldp.com/ns/v1/platform#PreferResultsContext" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"QueryMetadata",
+			"string"
+		), ():void => {
+			expect( C.Class.QueryMetadata ).toBeDefined();
+			expect( Utils.isString( C.Class.QueryMetadata ) ).toBe( true );
+
+			expect( C.Class.QueryMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#QueryMetadata" );
 		} );
 
 		it( hasProperty(
@@ -341,28 +363,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"ErrorResponse",
-			"string"
-		), ():void => {
-			expect( C.Class.ErrorResponse ).toBeDefined();
-			expect( Utils.isString( C.Class.ErrorResponse ) ).toBe( true );
-
-			expect( C.Class.ErrorResponse ).toBe( "https://carbonldp.com/ns/v1/platform#ErrorResponse" );
-		} );
-
-		it( hasProperty(
-			STATIC,
-			"Error",
-			"string"
-		), ():void => {
-			expect( C.Class.Error ).toBeDefined();
-			expect( Utils.isString( C.Class.Error ) ).toBe( true );
-
-			expect( C.Class.Error ).toBe( "https://carbonldp.com/ns/v1/platform#Error" );
-		} );
-
-		it( hasProperty(
-			STATIC,
 			"ResponseMetadata",
 			"string"
 		), ():void => {
@@ -381,6 +381,17 @@ describe( module(
 			expect( Utils.isString( C.Class.ValidationError ) ).toBe( true );
 
 			expect( C.Class.ValidationError ).toBe( "https://carbonldp.com/ns/v1/platform#ValidationError" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"VolatileResource",
+			"string"
+		), ():void => {
+			expect( C.Class.VolatileResource ).toBeDefined();
+			expect( Utils.isString( C.Class.VolatileResource ) ).toBe( true );
+
+			expect( C.Class.VolatileResource ).toBe( "https://carbonldp.com/ns/v1/platform#VolatileResource" );
 		} );
 
 	} );

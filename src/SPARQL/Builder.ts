@@ -1,50 +1,30 @@
+import { SPARQLER } from "sparqler";
+import { Container, FinishClause } from "sparqler/clauses";
+import { finishDecorator } from "sparqler/clauses/decorators";
+
 import Documents from "./../Documents";
-
-import SELECTResults from "./SELECTResults";
-import RawResults from "./RawResults";
-
 import HTTPResponse from "./../HTTP/Response";
+import RawResults from "./RawResults";
+import SELECTResults from "./SELECTResults";
 
-import SPARQLER from "sparqler";
+export interface ExecuteSelect extends FinishClause {
+	execute<T extends object>():Promise<[ SELECTResults<T>, HTTPResponse ]>;
 
-declare module "sparqler/Clauses" {
-
-	export interface FinishSelect {
-		execute<T>():Promise<[ SELECTResults<T>, HTTPResponse ]>;
-		executeRaw():Promise<[ RawResults, HTTPResponse ]>;
-	}
-
+	executeRaw():Promise<[ RawResults, HTTPResponse ]>;
 }
 
-declare module "sparqler/SPARQLER" {
-
-	export interface SPARQLER {
-		_documents:Documents;
-		_entryPoint:string;
+export class Class extends SPARQLER<ExecuteSelect> {
+	constructor( documents:Documents, entryPoint:string ) {
+		super( <W extends object>( container:Container<ExecuteSelect>, object:W ):W & ExecuteSelect => {
+			const finishObject:FinishClause & W = finishDecorator( container, object );
+			return Object.assign( finishObject, {
+				execute: <T extends object>():Promise<[ SELECTResults<T>, HTTPResponse ]> =>
+					documents.executeSELECTQuery<T>( entryPoint, finishObject.toCompactString() ),
+				executeRaw: ():Promise<[ RawResults, HTTPResponse ]> =>
+					documents.executeRawSELECTQuery( entryPoint, finishObject.toCompactString() ),
+			} );
+		} );
 	}
-
 }
 
-// Add execute functions to the query builder
-let queryPrototype:any = SPARQLER.prototype;
-let superInit:Function = queryPrototype.initInterfaces;
-queryPrototype.initInterfaces = function():void {
-	superInit.call( this );
-	let self:SPARQLER = this as SPARQLER;
-
-	// Add execution of select
-	this.interfaces.finishSelect = {
-		execute: function<T>():Promise<[ SELECTResults<T>, HTTPResponse ]> {
-			return self._documents.executeSELECTQuery<T>( self._entryPoint, self.toCompactString() );
-		},
-		executeRaw: function():Promise<[ RawResults, HTTPResponse ]> {
-			return self._documents.executeRawSELECTQuery( self._entryPoint, self.toCompactString() );
-		},
-	};
-};
-
-export {
-	SPARQLER as Class
-};
-
-export default SPARQLER;
+export default Class;

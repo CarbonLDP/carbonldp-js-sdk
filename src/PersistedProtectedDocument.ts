@@ -1,11 +1,19 @@
-import * as HTTP from "./HTTP";
+import {
+	ConstructToken,
+	GraphToken,
+	IRIToken,
+	PredicateToken,
+	QueryToken,
+	SubjectToken,
+	VariableToken,
+} from "sparqler/tokens";
+
 import * as Auth from "./Auth";
+import * as Documents from "./Documents";
+import * as HTTP from "./HTTP";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
-import * as Documents from "./Documents";
 import * as Pointer from "./Pointer";
-import * as Resource from "./Resource";
-import SELECTResults from "./SPARQL/SELECTResults";
 import * as Utils from "./Utils";
 
 export interface Class extends PersistedDocument.Class {
@@ -48,31 +56,32 @@ export class Factory {
 
 }
 
-interface ACLResult {
-	acl:Pointer.Class;
-}
+function getACL( this:Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]> {
+	if( this.isResolved() ) return this._documents.get( this.accessControlList.id, requestOptions );
 
-function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]> {
-	let protectedDocument:Class = <Class> this;
+	const aclGraphVar:VariableToken = new VariableToken( "g" );
 
-	let aclPromise:Promise<Pointer.Class>;
+	const aclGetter:SubjectToken = new SubjectToken( new IRIToken( this.id ) )
+		.addPredicate( new PredicateToken( new IRIToken( NS.CS.Predicate.accessControlList ) )
+			.addObject( aclGraphVar ) );
 
-	if( protectedDocument.isResolved() ) {
-		aclPromise = Promise.resolve( protectedDocument.accessControlList );
-	} else {
-		aclPromise = protectedDocument.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {
-			<${ protectedDocument.id }> <${ NS.CS.Predicate.accessControlList }> ?acl.
-		}` ).then( ( [ results ]:[ SELECTResults<ACLResult>, HTTP.Response.Class ] ) => {
-			return results.bindings[ 0 ].acl;
+	const aclContent:SubjectToken = new SubjectToken( new VariableToken( "s" ) )
+		.addPredicate( new PredicateToken( new VariableToken( "p" ) )
+			.addObject( new VariableToken( "o" ) ) );
+
+	const query:QueryToken = new QueryToken( new ConstructToken()
+		.addTriple( aclContent )
+		.addPattern( aclGetter )
+		.addPattern( new GraphToken( aclGraphVar )
+			.addPattern( aclContent )
+		)
+	);
+
+	return this._documents
+		._getConstructDocuments<Auth.PersistedACL.Class>( this.id, requestOptions, query )
+		.then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => {
+			return [ documents[ 0 ], response ];
 		} );
-	}
-
-	return aclPromise.then( ( acl:Pointer.Class ) => {
-		return protectedDocument._documents.get( acl.id, requestOptions );
-	} ).then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
-		if( ! Resource.Util.hasType( acl, Auth.ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
-		return [ acl, response ];
-	} );
 }
 
 export default Class;

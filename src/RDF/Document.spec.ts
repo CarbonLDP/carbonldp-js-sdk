@@ -72,7 +72,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object is a `Carbon.RDF.Document.Class` object.", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -216,7 +216,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns an array of with the object provided, if it is an RDF Document.", [
-					{ name: "object", type: "Object" },
+					{ name: "object", type: "object" },
 				],
 				{ type: "Carbon.RDF.Document.Class[]" }
 			), ():void => {
@@ -285,7 +285,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns all the resources that not are RDF Documents from the RDF like object provided.", [
-					{ name: "object", type: "Object" },
+					{ name: "object", type: "object" },
 				],
 				{ type: "Carbon.RDF.Node.Class" }
 			), ():void => {

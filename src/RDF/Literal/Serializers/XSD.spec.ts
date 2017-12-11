@@ -508,7 +508,7 @@ describe( module(
 			expect( serializer.serialize( "" ) ).toBe( "" );
 			expect( serializer.serialize( true ) ).toBe( "true" );
 			expect( serializer.serialize( false ) ).toBe( "false" );
-			expect( serializer.serialize( function():string { return "some"; } ) ).toBe( 'function () { return "some"; }' );
+			expect( serializer.serialize( function():string { return "some"; } ) ).toMatch( /function[^]*return.*some/ );
 			expect( serializer.serialize( undefined ) ).toBe( "undefined" );
 			expect( serializer.serialize( null ) ).toBe( "null" );
 		} );

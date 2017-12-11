@@ -280,7 +280,7 @@ function normalize():void {
 }
 
 export class Factory {
-	static hasClassProperties( documentResource:Object ):boolean {
+	static hasClassProperties( documentResource:object ):boolean {
 		return (
 			Utils.isObject( documentResource ) &&
 
@@ -300,18 +300,17 @@ export class Factory {
 		);
 	}
 
-	static is( object:Object ):boolean {
-		return (
-			Resource.Factory.is( object ) &&
+	static is( object:object ):object is Class {
+		return Resource.Factory.is( object ) &&
 			Factory.hasClassProperties( object )
-		);
+			;
 	}
 
 	static create():Class {
 		return Factory.createFrom( {} );
 	}
 
-	static createFrom<T extends Object>( object:T ):T & Class {
+	static createFrom<T extends object>( object:T ):T & Class {
 		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The object provided is already a Document" );
 
 		let resource:Resource.Class = <any> object;
@@ -323,7 +322,7 @@ export class Factory {
 		return document;
 	}
 
-	static decorate<T extends Object>( object:T ):T & Class {
+	static decorate<T extends object>( object:T ):T & Class {
 		Resource.Factory.decorate( object );
 
 		if( Factory.hasClassProperties( object ) ) return <any> object;

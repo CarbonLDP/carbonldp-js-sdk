@@ -220,8 +220,8 @@ var Factory = (function () {
             Utils.hasFunction(documentResource, "toJSON"));
     };
     Factory.is = function (object) {
-        return (Resource.Factory.is(object) &&
-            Factory.hasClassProperties(object));
+        return Resource.Factory.is(object) &&
+            Factory.hasClassProperties(object);
     };
     Factory.create = function () {
         return Factory.createFrom({});

@@ -1,31 +1,28 @@
+import { QueryToken } from "sparqler/tokens";
+
+import AbstractContext from "./AbstractContext";
+import * as PersistedACL from "./Auth/PersistedACL";
+import * as Documents from "./Documents";
+import * as PersistedDocument from "./PersistedDocument";
+import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+
 import {
-	INSTANCE,
-	STATIC,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
+	extendsClass,
+	hasDefaultExport,
 	hasMethod,
 	hasProperty,
-	extendsClass,
-	decoratedObject,
-	hasDefaultExport,
+	hasSignature,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
 } from "./test/JasmineExtender";
-import AbstractContext from "./AbstractContext";
-import * as Document from "./Document";
-import * as Documents from "./Documents";
-import * as HTTP from "./HTTP";
-import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedDocument from "./PersistedDocument";
-import * as Utils from "./Utils";
 
-import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
-import DefaultExport from "./PersistedProtectedDocument";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 
@@ -39,6 +36,19 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 		"Interface that represents a persisted protected document."
 	), ():void => {
 
+		let context:AbstractContext;
+		beforeEach( ():void => {
+			jasmine.Ajax.install();
+
+			context = new class extends AbstractContext {
+				protected _baseURI:string = "https://example.com/";
+			};
+		} );
+
+		afterEach( ():void => {
+			jasmine.Ajax.uninstall();
+		} );
+
 		it( extendsClass( "Carbon.PersistedDocument.Class" ), ():void => {} );
 
 		it( hasProperty(
@@ -48,19 +58,148 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			"A reference to the ACL of the document."
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getACL",
-			"Obtains and resolve the ACL of the actual document.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
-			],
-			{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "getACL" ), ():void => {
+
+			it( hasSignature(
+				"Obtains and resolve the ACL of the actual document.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const document:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate(
+					context.documents.getPointer( "http://example.com/resource/" ),
+					context.documents
+				);
+
+				expect( document.getACL ).toBeDefined();
+				expect( document.getACL ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call get when document resolved", ( done:DoneFn ):void => {
+				const document:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate(
+					Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {
+						_resolved: true,
+						accessControlList: context.documents.getPointer( "https://example.com/resource/.acl/" ),
+					} ),
+					context.documents
+				);
+
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( "spy called" ) );
+
+				document.getACL()
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( returned => {
+						expect( returned ).toBe( "spy called" );
+
+						expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/.acl/", jasmine.any( Object ) );
+
+						done();
+					} );
+			} );
+
+			it( "should call execute query when not resolved", ( done:DoneFn ):void => {
+				const document:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate(
+					Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {
+						_resolved: false,
+					} ),
+					context.documents
+				);
+
+				const spy:jasmine.Spy = spyOn( context.documents, "_getConstructDocuments" )
+					.and.returnValue( Promise.reject( "spy called" ) );
+
+				document.getACL()
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( returned => {
+						expect( returned ).toBe( "spy called" );
+
+						expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", jasmine.any( Object ), jasmine.any( QueryToken ) );
+
+						done();
+					} );
+			} );
+
+			it( "should construct correct query", ( done:DoneFn ):void => {
+				const document:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate(
+					Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {
+						_resolved: false,
+					} ),
+					context.documents
+				);
+
+				const spy:jasmine.Spy = spyOn( context.documents, "_getConstructDocuments" )
+					.and.returnValue( Promise.reject( "spy called" ) );
+
+				document.getACL()
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( () => {
+						const query:QueryToken = spy
+							.calls
+							.mostRecent()
+							.args
+							.find( arg => arg instanceof QueryToken );
+
+						expect( query.toString() ).toBe( "" +
+							"CONSTRUCT { " +
+							"" + "?s ?p ?o " +
+							"} " +
+							"WHERE { " +
+							"" + `<https://example.com/resource/> <https://carbonldp.com/ns/v1/security#accessControlList> ?g. ` +
+							"" + "GRAPH ?g { " +
+							"" + "" + "?s ?p ?o " +
+							"" + "} " +
+							"}"
+						);
+
+						done();
+					} );
+			} );
+
+			it( "should return the queried ACL", ( done:DoneFn ):void => {
+				const document:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate(
+					Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {
+						_resolved: false,
+					} ),
+					context.documents
+				);
+
+				const mockACL:PersistedACL.Class = PersistedACL.Factory.decorate(
+					PersistedDocument.Factory.createFrom( Object.assign( context.documents.getPointer( "https://example.com/resource/.acl/" ), {
+							accessTo: document,
+						} ),
+						"https://example.com/resource/.acl/",
+						context.documents
+					)
+				);
+				spyOn( context.documents, "_getConstructDocuments" )
+					.and.returnValue( Promise.resolve( [ [ mockACL ], null ] ) );
+
+				document.getACL()
+					.then( ( [ persistedACL, response ] ) => {
+						expect( response ).toBeNull();
+
+						expect( persistedACL ).toBe( mockACL );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+		} );
 
 	} );
 
 	it( hasDefaultExport( "Carbon.PersistedProtectedDocument.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
+		let defaultExport:PersistedProtectedDocument.default = <any> {};
 		let defaultTarget:PersistedProtectedDocument.Class;
 
 		defaultTarget = defaultExport;
@@ -164,206 +303,6 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			expect( protectedDocument.getACL ).not.toBe( fn );
 
 			expect( persistedDocumentSpy ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		describe( decoratedObject(
-			"The object decorated by `Carbon.PersistedProtectedDocument.Factory.decorate()` method.", [
-				"Carbon.PersistedProtectedDocument.Class",
-			]
-		), ():void => {
-			let protectedDocument:PersistedProtectedDocument.Class;
-			let documents:Documents.Class;
-
-			beforeAll( ():void => {
-				jasmine.Ajax.install();
-			} );
-
-			beforeEach( ():void => {
-				class MockContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-				let context:AbstractContext = new MockContext();
-				documents = context.documents;
-
-				let document:Document.Class = Document.Factory.createFrom( {
-					id: "http://example.com/resource/",
-					accessControlList: documents.getPointer( "http://example.com/resource/~acl/" ),
-					_resolved: true,
-				} );
-				protectedDocument = PersistedProtectedDocument.Factory.decorate( document, documents );
-			} );
-
-			afterAll( ():void => {
-				jasmine.Ajax.uninstall();
-			} );
-
-			it( hasMethod(
-				INSTANCE,
-				"getACL",
-				"Obtains and resolve the ACL of the actual document.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
-				],
-				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( protectedDocument.getACL ).toBeDefined();
-				expect( Utils.isFunction( protectedDocument.getACL ) ).toBe( true );
-
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "POST" ).andReturn( {
-					status: 200,
-					responseText: `{
-						"head": {
-							"vars": [
-								"acl"
-							]
-						},
-						"results": {
-							"bindings": [
-								{
-									"acl": {
-										"type": "uri",
-										"value": "http://example.com/resource/~acl/"
-									}
-								}
-							]
-						}
-					}`,
-				} );
-				jasmine.Ajax.stubRequest( "http://example.com/resource/~acl/" ).andReturn( {
-					responseHeaders: {
-						"ETag": `"1234567890"`,
-					},
-					responseText: `[
-						{
-							"@graph": [
-								{
-									"@id": "_:1",
-									"@type": [
-										"https://carbonldp.com/ns/v1/security#AccessControlEntry"
-									],
-									"https://carbonldp.com/ns/v1/security#granting": [
-										{
-											"@type": "http://www.w3.org/2001/XMLSchema#boolean",
-											"@value": "true"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#permission": [
-										{
-											"@id": "http://example.com/ns#READ"
-										},
-										{
-											"@id": "http://example.com/ns#WRITE"
-										},
-										{
-											"@id": "http://example.com/ns#CREATE"
-										},
-										{
-											"@id": "http://example.com/ns#DELETE"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subject": [
-										{
-											"@id": "https://example.com/.system/roles/my-role/"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subjectClass": [
-										{
-											"@id": "https://carbonldp.com/ns/v1/security#Role"
-										}
-									]
-								},
-								{
-									"@id": "_:2",
-									"@type": [
-										"https://carbonldp.com/ns/v1/security#AccessControlEntry"
-									],
-									"https://carbonldp.com/ns/v1/security#granting": [
-										{
-											"@type": "http://www.w3.org/2001/XMLSchema#boolean",
-											"@value": "true"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#permission": [
-										{
-											"@id": "http://example.com/ns#READ"
-										},
-										{
-											"@id": "http://example.com/ns#WRITE"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subject": [
-										{
-											"@id": "https://example.com/.system/roles/my-role/"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subjectClass": [
-										{
-											"@id": "https://carbonldp.com/ns/v1/security#Role"
-										}
-									]
-								},
-								{
-									"@id": "http://example.com/resource/~acl/",
-									"@type": [
-										"https://carbonldp.com/ns/v1/security#AccessControlList"
-									],
-									"https://carbonldp.com/ns/v1/security#accessControlEntry": [
-										{
-											"@id": "_:1"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#accessTo": [
-										{
-											"@id": "http://example.com/resource/"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#inheritableEntry": [
-										{
-											"@id": "_:2"
-										}
-									]
-								}
-							],
-							"@id": "http://example.com/resource/~acl/"
-						}
-					]`,
-				} );
-
-				let promises:Promise<any>[] = [];
-
-				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
-					expect( acl ).toBeDefined();
-					expect( response ).toBeDefined();
-
-					expect( PersistedACL.Factory.hasClassProperties( acl ) ).toBe( true );
-					expect( acl.entries ).toBeDefined();
-					expect( acl.entries.length ).toBe( 1 );
-					expect( acl.inheritableEntries ).toBeDefined();
-					expect( acl.inheritableEntries.length ).toBe( 1 );
-					expect( acl.accessTo.id ).toBe( protectedDocument.id );
-				} ) );
-
-				const unresolvedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( { id: "http://example.com/resource/" }, documents );
-				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
-					expect( acl ).toBeDefined();
-					expect( response ).toBeDefined();
-
-					expect( PersistedACL.Factory.hasClassProperties( acl ) ).toBe( true );
-					expect( acl.entries ).toBeDefined();
-					expect( acl.entries.length ).toBe( 1 );
-					expect( acl.inheritableEntries ).toBeDefined();
-					expect( acl.inheritableEntries.length ).toBe( 1 );
-					expect( acl.accessTo.id ).toBe( protectedDocument.id );
-				} ) );
-
-				Promise.all( promises ).then( done ).catch( done.fail );
-			} );
-
 		} );
 
 	} );

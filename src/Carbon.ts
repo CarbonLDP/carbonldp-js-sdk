@@ -8,6 +8,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
@@ -38,6 +39,7 @@ export class Class extends AbstractContext.Class {
 	static HTTP:typeof HTTP = HTTP;
 	static JSONLD:typeof JSONLD = JSONLD;
 	static LDP:typeof LDP = LDP;
+	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static NS:typeof NS = NS;
@@ -93,7 +95,7 @@ export class Class extends AbstractContext.Class {
 		return this.getDocumentMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
 	}
 
-	private getDocumentMetadata<T>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {
+	private getDocumentMetadata<T extends object>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {
 		if( ! this.hasSetting( metadataSetting ) )
 			return Promise.reject( new Errors.IllegalStateError( `The "${ metadataSetting }" setting hasn't been defined.` ) );
 
