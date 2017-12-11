@@ -128,9 +128,9 @@ export class Class {
 	}
 
 	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
-		let resourceURI:string = this.context.resolve( uri );
+		const resourceURI:string = this.context.resolve( uri );
 
-		let freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
+		const freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
 		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
 
 		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
@@ -138,27 +138,27 @@ export class Class {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
-		return Promise.resolve().then( () => {
-			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
-			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() )
-				.catch( response => this.context.documents._parseErrorResponse( response ) );
-		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+		return Utils
+			.promiseMethod( () => {
+				const containerURI:string = this._resolveSecurityURL( Ticket.TICKETS_CONTAINER );
+				return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() );
+			} )
+			.then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+				const freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
-			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
+				const ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
+				if( ticketNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
+				if( ticketNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
 
-			if( ticketNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
-			if( ticketNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
+				const expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
+				const ticket:Ticket.Class = <any> Resource.Factory.create();
 
-			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
-			let ticket:Ticket.Class = <any> Resource.Factory.create();
+				const digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
+				this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
-			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
-
-			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
-
-			return [ ticket, response ];
-		} );
+				return [ ticket, response ];
+			} )
+			.catch( error => this.context.documents._parseErrorResponse( error ) );
 	}
 
 	getAuthenticatedURL( uri:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
