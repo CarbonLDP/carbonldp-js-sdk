@@ -14,12 +14,12 @@ import * as Ticket from "./Auth/Ticket";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import UsernameAndPasswordCredentials from "./Auth/BasicCredentials";
+import BasicToken from "./Auth/BasicToken";
 import * as Users from "./Auth/Users";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
-export { ACE, ACL, User, Users, Authenticator, BasicAuthenticator, Credentials, PersistedACE, PersistedACL, PersistedCredentials, PersistedRole, PersistedUser, Role, Roles, Ticket, TokenCredentials, TokenAuthenticator, UsernameAndPasswordToken };
+export { ACE, ACL, User, Users, Authenticator, BasicAuthenticator, Credentials, PersistedACE, PersistedACL, PersistedCredentials, PersistedRole, PersistedUser, Role, Roles, Ticket, TokenCredentials, TokenAuthenticator, BasicToken };
 export declare enum Method {
     BASIC = "BASIC",
     TOKEN = "TOKEN",

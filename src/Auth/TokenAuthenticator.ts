@@ -12,11 +12,11 @@ import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as BasicToken from "./BasicToken";
 
 export const TOKEN_CONTAINER:string = "auth-tokens/";
 
-export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCredentials.Class> {
+export class Class extends Authenticator<BasicToken.Class, TokenCredentials.Class> {
 
 	protected context:Context.Class;
 	protected credentials:TokenCredentials.Class;
@@ -30,7 +30,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 		return super.isAuthenticated() && this.credentials.expirationTime > new Date();
 	}
 
-	authenticate( tokenOrCredentials:UsernameAndPasswordToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
+	authenticate( tokenOrCredentials:BasicToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
 		return this
 			.getCredentials( tokenOrCredentials )
 			.then( ( credentials:TokenCredentials.Class ) => {
@@ -45,7 +45,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 		return new HTTP.Header.Value( "Token " + this.credentials.key );
 	}
 
-	private getCredentials( tokenOrCredentials:UsernameAndPasswordToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
+	private getCredentials( tokenOrCredentials:BasicToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
 		if( TokenCredentials.Factory.hasClassProperties( tokenOrCredentials ) ) return Promise.resolve( tokenOrCredentials );
 
 		const basicAuthenticator:BasicAuthenticator = new BasicAuthenticator();

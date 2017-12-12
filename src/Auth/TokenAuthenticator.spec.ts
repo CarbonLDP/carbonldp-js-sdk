@@ -24,7 +24,7 @@ import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
 
 import * as TokenCredentials from "./TokenCredentials";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import BasicToken from "./BasicToken";
 
 describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
@@ -42,7 +42,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		"Carbon.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.",
 		[
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class, Carbon.Auth.TokenCredentials.Class>",
+			"Carbon.Auth.Authenticator.Class<Carbon.Auth.BasicToken.Class, Carbon.Auth.TokenCredentials.Class>",
 		]
 	), ():void => {
 
@@ -155,7 +155,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			it( hasSignature(
 				"When a token is provided credentials will be requested, in other case the credentials provided will be validated and stored.",
 				[
-					{ name: "tokenOrCredentials", type: "Carbon.Auth.UsernameAndPasswordToken | Carbon.Auth.TokenCredentials.Class" },
+					{ name: "tokenOrCredentials", type: "Carbon.Auth.BasicToken | Carbon.Auth.TokenCredentials.Class" },
 				],
 				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
 			), ():void => {} );
@@ -235,7 +235,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 				authenticator
-					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.authenticate( new BasicToken( "user", "pass" ) )
 					.then( ( token:TokenCredentials.Class ):void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
@@ -260,7 +260,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 				authenticator
-					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.authenticate( new BasicToken( "user", "pass" ) )
 					.then( () => {
 						done.fail( "Should not resolve" );
 					} )

@@ -32,8 +32,8 @@ var TokenCredentials = require("./Auth/TokenCredentials");
 exports.TokenCredentials = TokenCredentials;
 var User = require("./Auth/User");
 exports.User = User;
-var UsernameAndPasswordToken_1 = require("./Auth/UsernameAndPasswordToken");
-exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
+var BasicToken_1 = require("./Auth/BasicToken");
+exports.BasicToken = BasicToken_1.default;
 var Users = require("./Auth/Users");
 exports.Users = Users;
 var Errors = require("./Errors");
@@ -160,7 +160,7 @@ var Class = (function () {
     Class.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;
         var authenticator = this.authenticators[Method.BASIC];
-        var authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+        var authenticationToken = new BasicToken_1.default(username, password);
         this.clearAuthentication();
         var newCredentials;
         return authenticator.authenticate(authenticationToken).then(function (credentials) {
@@ -176,7 +176,7 @@ var Class = (function () {
         var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
         var tokenOrCredentials = Utils.isString(userOrCredentials) ?
-            new UsernameAndPasswordToken_1.default(userOrCredentials, password) :
+            new BasicToken_1.default(userOrCredentials, password) :
             TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
                 userOrCredentials :
                 new Errors.IllegalArgumentError("The token provided in not valid.");

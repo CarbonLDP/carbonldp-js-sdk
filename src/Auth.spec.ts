@@ -16,8 +16,8 @@ import * as Ticket from "./Auth/Ticket";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import BasicCredentials from "./Auth/BasicCredentials";
+import BasicToken from "./Auth/BasicToken";
 import * as Users from "./Auth/Users";
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
@@ -204,11 +204,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"UsernameAndPasswordToken",
-		"Carbon.Auth.UsernameAndPasswordToken"
+		"BasicToken",
+		"Carbon.Auth.BasicToken"
 	), ():void => {
-		expect( Auth.UsernameAndPasswordToken ).toBeDefined();
-		expect( Auth.UsernameAndPasswordToken ).toBe( UsernameAndPasswordToken );
+		expect( Auth.BasicToken ).toBeDefined();
+		expect( Auth.BasicToken ).toBe( BasicToken );
 	} );
 
 	describe( enumeration(
@@ -640,7 +640,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<Carbon.Auth.UsernameAndPasswordCredentials.Class>" }
+				{ type: "Promise<Carbon.Auth.BasicCredentials.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				jasmine.Ajax.stubRequest( "http://example.com/users/me/", null, "GET" ).andReturn( {
 					status: 200,
@@ -676,7 +676,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promise:Promise<any>;
 
 				let spies:any = {
-					success: ( _auth:Auth.Class, credentials:UsernameAndPasswordCredentials ):void => {
+					success: ( _auth:Auth.Class, credentials:BasicCredentials ):void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 
 						expect( credentials.username ).toEqual( username );
@@ -696,7 +696,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( Auth.Method.BASIC, username, password );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:UsernameAndPasswordCredentials ):void => {
+				promises.push( promise.then( ( credentials:BasicCredentials ):void => {
 					spies.success( auth01, credentials );
 				} ) );
 

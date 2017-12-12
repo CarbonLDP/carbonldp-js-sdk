@@ -14,8 +14,8 @@ import * as Ticket from "./Auth/Ticket";
 import TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
+import UsernameAndPasswordCredentials from "./Auth/BasicCredentials";
+import BasicToken from "./Auth/BasicToken";
 import * as Users from "./Auth/Users";
 
 import Context from "./Context";
@@ -47,7 +47,7 @@ export {
 	Ticket,
 	TokenCredentials,
 	TokenAuthenticator,
-	UsernameAndPasswordToken
+	BasicToken
 };
 
 export enum Method {
@@ -184,7 +184,7 @@ export class Class {
 
 	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {
 		const authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ Method.BASIC ];
-		const authenticationToken:UsernameAndPasswordToken = new UsernameAndPasswordToken( username, password );
+		const authenticationToken:BasicToken = new BasicToken( username, password );
 
 		this.clearAuthentication();
 
@@ -203,8 +203,8 @@ export class Class {
 
 	private authenticateWithToken( userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<TokenCredentials.Class> {
 		const authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
-		const tokenOrCredentials:UsernameAndPasswordToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
-			new UsernameAndPasswordToken( userOrCredentials, password ) :
+		const tokenOrCredentials:BasicToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
+			new BasicToken( userOrCredentials, password ) :
 			TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ?
 				userOrCredentials :
 				new Errors.IllegalArgumentError( "The token provided in not valid." );

@@ -14,7 +14,7 @@ var Utils_1 = require("../Utils");
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var Authenticator_1 = require("./Authenticator");
-var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
+var BasicCredentials = require("./BasicCredentials");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -29,7 +29,7 @@ var Class = (function (_super) {
                 throw new Errors.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
                 throw new Errors.IllegalArgumentError("The password cannot be empty.");
-            _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
+            _this.credentials = new BasicCredentials.Class(authenticationToken.username, authenticationToken.password);
             return _this.credentials;
         });
     };

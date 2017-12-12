@@ -20,4 +20,4 @@ var Class = (function () {
 exports.Class = Class;
 exports.default = Class;
 
-//# sourceMappingURL=UsernameAndPasswordToken.js.map
+//# sourceMappingURL=BasicCredentials.js.map
