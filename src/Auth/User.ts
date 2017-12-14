@@ -39,6 +39,8 @@ function setCredentials( this:Class, email?:string, password?:string ):UsernameA
 		.Factory.create( email, password );
 
 	this.credentials = this.createFragment( credentials );
+	this.credentials.addType( NS.C.Class.VolatileResource );
+
 	return this.credentials;
 }
 

@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 19 );
+			expect( Object.keys( CS.Class ).length ).toBe( 20 );
 		} );
 
 		it( hasProperty(
@@ -95,6 +95,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.CreateChild ) ).toBe( true );
 
 			expect( CS.Class.CreateChild ).toBe( "https://carbonldp.com/ns/v1/security#CreateChild" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"CredentialsSet",
+			"string"
+		), ():void => {
+			expect( CS.Class.CredentialsSet ).toBeDefined();
+			expect( Utils.isString( CS.Class.CredentialsSet ) ).toBe( true );
+
+			expect( CS.Class.CredentialsSet ).toBe( "https://carbonldp.com/ns/v1/security#CredentialsSet" );
 		} );
 
 		it( hasProperty(

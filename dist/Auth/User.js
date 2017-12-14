@@ -23,6 +23,7 @@ function setCredentials(email, password) {
     var credentials = UsernameAndPasswordCredentials
         .Factory.create(email, password);
     this.credentials = this.createFragment(credentials);
+    this.credentials.addType(NS.C.Class.VolatileResource);
     return this.credentials;
 }
 var Factory = (function () {

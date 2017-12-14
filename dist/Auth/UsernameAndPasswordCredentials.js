@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("./../Errors");
-var VolatileResource = require("./../LDP/VolatileResource");
 var NS = require("./../NS");
+var Resource = require("./../Resource");
 exports.RDF_CLASS = NS.CS.Class.UsernameAndPasswordCredentials;
 exports.SCHEMA = {
     "username": {
@@ -21,7 +21,7 @@ var Factory = (function () {
         return Factory.createFrom({}, username, password);
     };
     Factory.createFrom = function (object, username, password) {
-        var credentials = VolatileResource.Factory.createFrom(object);
+        var credentials = Resource.Factory.createFrom(object);
         if (!username)
             throw new Errors_1.IllegalArgumentError("The credentials username cannot be empty.");
         if (!password)

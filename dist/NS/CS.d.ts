@@ -5,6 +5,7 @@ declare class Class {
     static readonly AllOrigins: string;
     static readonly CreateAccessPoint: string;
     static readonly CreateChild: string;
+    static readonly CredentialsSet: string;
     static readonly Delete: string;
     static readonly Download: string;
     static readonly Extend: string;

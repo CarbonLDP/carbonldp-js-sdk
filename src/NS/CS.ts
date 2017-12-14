@@ -11,6 +11,8 @@ class Class {
 
 	static get CreateChild():string { return namespace + "CreateChild"; }
 
+	static get CredentialsSet():string { return namespace + "CredentialsSet"; }
+
 	static get Delete():string { return namespace + "Delete"; }
 
 	static get Download():string { return namespace + "Download"; }

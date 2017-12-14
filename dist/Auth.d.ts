@@ -4,6 +4,7 @@ import * as Authenticator from "./Auth/Authenticator";
 import * as BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as BasicCredentials from "./Auth/BasicCredentials";
 import * as BasicToken from "./Auth/BasicToken";
+import * as CredentialsSet from "./Auth/CredentialsSet";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedRole from "./Auth/PersistedRole";
@@ -18,7 +19,7 @@ import * as UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCrede
 import * as Users from "./Auth/Users";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
-export { ACE, ACL, Authenticator, BasicAuthenticator, BasicCredentials, BasicToken, PersistedACE, PersistedACL, PersistedRole, PersistedUser, Role, Roles, Ticket, TokenAuthenticator, TokenCredentials, User, UsernameAndPasswordCredentials, Users };
+export { ACE, ACL, Authenticator, BasicAuthenticator, BasicCredentials, BasicToken, CredentialsSet, PersistedACE, PersistedACL, PersistedRole, PersistedUser, Role, Roles, Ticket, TokenAuthenticator, TokenCredentials, User, UsernameAndPasswordCredentials, Users };
 export declare enum Method {
     BASIC = "BASIC",
     TOKEN = "TOKEN",

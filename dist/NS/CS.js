@@ -30,6 +30,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "CredentialsSet", {
+        get: function () { return namespace + "CredentialsSet"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "Delete", {
         get: function () { return namespace + "Delete"; },
         enumerable: true,

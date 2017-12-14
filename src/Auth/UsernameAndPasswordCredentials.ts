@@ -1,7 +1,7 @@
 import { IllegalArgumentError } from "./../Errors";
-import * as VolatileResource from "./../LDP/VolatileResource";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
+import * as Resource from "./../Resource";
 
 export const RDF_CLASS:string = NS.CS.Class.UsernameAndPasswordCredentials;
 
@@ -16,7 +16,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends VolatileResource.Class {
+export interface Class extends Resource.Class {
 	username:string;
 	password:string;
 }
@@ -27,7 +27,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends object>( object:T, username:string, password:string ):T & Class {
-		const credentials:T & VolatileResource.Class = VolatileResource.Factory.createFrom<T>( object );
+		const credentials:T & Resource.Class = Resource.Factory.createFrom<T>( object );
 
 		if( ! username ) throw new IllegalArgumentError( "The credentials username cannot be empty." );
 		if( ! password ) throw new IllegalArgumentError( "The credentials password cannot be empty." );

@@ -12,8 +12,8 @@ import {
 } from "../test/JasmineExtender";
 
 import * as Errors from "./../Errors";
-import * as VolatileResource from "./../LDP/VolatileResource";
 import * as NS from "./../NS";
+import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
@@ -62,8 +62,8 @@ describe( module( "Carbon/Auth/UsernameAndPasswordCredentials" ), ():void => {
 		"Interface that represents an in-memory UsernameAndPasswordCredentials of a user."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.VolatileResource.Class" ), ():void => {
-			const target:VolatileResource.Class = {} as UsernameAndPasswordCredentials.Class;
+		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
+			const target:Resource.Class = {} as UsernameAndPasswordCredentials.Class;
 			expect( target ).toBeDefined();
 		} );
 
