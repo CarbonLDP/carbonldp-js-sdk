@@ -48,10 +48,10 @@ export class Factory {
 	}
 
 	static create( name:string, description?:string ):Class {
-		return Factory.createFrom<Object>( {}, name, description );
+		return Factory.createFrom<object>( {}, name, description );
 	}
 
-	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
+	static createFrom<T extends object>( object:T, name:string, description?:string ):T & Class {
 		if( ! Document.Factory.hasClassProperties( object ) )
 			object = Document.Factory.createFrom( object );
 

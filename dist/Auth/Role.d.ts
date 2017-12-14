@@ -10,6 +10,6 @@ export declare class Factory {
     static hasClassProperties(object: Object): boolean;
     static is(object: Object): boolean;
     static create(name: string, description?: string): Class;
-    static createFrom<T extends Object>(object: T, name: string, description?: string): T & Class;
+    static createFrom<T extends object>(object: T, name: string, description?: string): T & Class;
 }
 export default Class;

@@ -391,7 +391,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.Document.Class` object.", [
-				{ name: "documentResource", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {

@@ -8,6 +8,7 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	OPTIONAL,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
@@ -95,6 +96,13 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			"name",
 			"string",
 			"A descriptive name for the role."
+		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"description",
+			"string",
+			"An optional large description of the role."
 		), ():void => {} );
 
 	} );
@@ -197,7 +205,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"createFrom",
-			[ "T extends Object" ],
+			[ "T extends object" ],
 			"Create a `Carbon.Auth.Role.Class` object with the object provided.", [
 				{ name: "object", type: "T", description: "Object where to create the new role." },
 				{ name: "name", type: "string", description: "The name of the role to create." },

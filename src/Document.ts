@@ -280,23 +280,23 @@ function normalize():void {
 }
 
 export class Factory {
-	static hasClassProperties( documentResource:object ):boolean {
+	static hasClassProperties( object:object ):object is Class {
 		return (
-			Utils.isObject( documentResource ) &&
+			Utils.isObject( object ) &&
 
-			Utils.hasPropertyDefined( documentResource, "_fragmentsIndex" ) &&
+			Utils.hasPropertyDefined( object, "_fragmentsIndex" ) &&
 
-			Utils.hasFunction( documentResource, "_normalize" ) &&
-			Utils.hasFunction( documentResource, "_removeFragment" ) &&
+			Utils.hasFunction( object, "_normalize" ) &&
+			Utils.hasFunction( object, "_removeFragment" ) &&
 
-			Utils.hasFunction( documentResource, "hasFragment" ) &&
-			Utils.hasFunction( documentResource, "getFragment" ) &&
-			Utils.hasFunction( documentResource, "getNamedFragment" ) &&
-			Utils.hasFunction( documentResource, "getFragments" ) &&
-			Utils.hasFunction( documentResource, "createFragment" ) &&
-			Utils.hasFunction( documentResource, "createNamedFragment" ) &&
-			Utils.hasFunction( documentResource, "removeNamedFragment" ) &&
-			Utils.hasFunction( documentResource, "toJSON" )
+			Utils.hasFunction( object, "hasFragment" ) &&
+			Utils.hasFunction( object, "getFragment" ) &&
+			Utils.hasFunction( object, "getNamedFragment" ) &&
+			Utils.hasFunction( object, "getFragments" ) &&
+			Utils.hasFunction( object, "createFragment" ) &&
+			Utils.hasFunction( object, "createNamedFragment" ) &&
+			Utils.hasFunction( object, "removeNamedFragment" ) &&
+			Utils.hasFunction( object, "toJSON" )
 		);
 	}
 
@@ -323,9 +323,9 @@ export class Factory {
 	}
 
 	static decorate<T extends object>( object:T ):T & Class {
-		Resource.Factory.decorate( object );
+		if( Factory.hasClassProperties( object ) ) return object;
 
-		if( Factory.hasClassProperties( object ) ) return <any> object;
+		Resource.Factory.decorate( object );
 
 		Object.defineProperties( object, {
 			"_fragmentsIndex": {
@@ -442,7 +442,7 @@ function convertNestedObjects( parent:Class, actual:any, fragmentsTracker:Set<st
 			continue;
 		}
 
-		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? RDF.URI.Util.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "" );
+		idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? RDF.URI.Util.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "");
 		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
 
 		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );

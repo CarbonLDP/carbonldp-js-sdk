@@ -3067,19 +3067,19 @@ function normalize() {
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (documentResource) {
-        return (Utils.isObject(documentResource) &&
-            Utils.hasPropertyDefined(documentResource, "_fragmentsIndex") &&
-            Utils.hasFunction(documentResource, "_normalize") &&
-            Utils.hasFunction(documentResource, "_removeFragment") &&
-            Utils.hasFunction(documentResource, "hasFragment") &&
-            Utils.hasFunction(documentResource, "getFragment") &&
-            Utils.hasFunction(documentResource, "getNamedFragment") &&
-            Utils.hasFunction(documentResource, "getFragments") &&
-            Utils.hasFunction(documentResource, "createFragment") &&
-            Utils.hasFunction(documentResource, "createNamedFragment") &&
-            Utils.hasFunction(documentResource, "removeNamedFragment") &&
-            Utils.hasFunction(documentResource, "toJSON"));
+    Factory.hasClassProperties = function (object) {
+        return (Utils.isObject(object) &&
+            Utils.hasPropertyDefined(object, "_fragmentsIndex") &&
+            Utils.hasFunction(object, "_normalize") &&
+            Utils.hasFunction(object, "_removeFragment") &&
+            Utils.hasFunction(object, "hasFragment") &&
+            Utils.hasFunction(object, "getFragment") &&
+            Utils.hasFunction(object, "getNamedFragment") &&
+            Utils.hasFunction(object, "getFragments") &&
+            Utils.hasFunction(object, "createFragment") &&
+            Utils.hasFunction(object, "createNamedFragment") &&
+            Utils.hasFunction(object, "removeNamedFragment") &&
+            Utils.hasFunction(object, "toJSON"));
     };
     Factory.is = function (object) {
         return Resource.Factory.is(object) &&
@@ -3099,9 +3099,9 @@ var Factory = (function () {
         return document;
     };
     Factory.decorate = function (object) {
-        Resource.Factory.decorate(object);
         if (Factory.hasClassProperties(object))
             return object;
+        Resource.Factory.decorate(object);
         Object.defineProperties(object, {
             "_fragmentsIndex": {
                 writable: false,
