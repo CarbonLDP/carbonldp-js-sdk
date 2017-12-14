@@ -136,8 +136,8 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "childRole", {
-        get: function () { return namespace + "childRole"; },
+    Object.defineProperty(Predicate, "child", {
+        get: function () { return namespace + "child"; },
         enumerable: true,
         configurable: true
     });
@@ -196,8 +196,8 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "parentRole", {
-        get: function () { return namespace + "parentRole"; },
+    Object.defineProperty(Predicate, "parent", {
+        get: function () { return namespace + "parent"; },
         enumerable: true,
         configurable: true
     });

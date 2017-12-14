@@ -14,12 +14,12 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.description,
         "@type": NS.XSD.DataType.string,
     },
-    "parentRole": {
-        "@id": NS.CS.Predicate.parentRole,
+    "parent": {
+        "@id": NS.CS.Predicate.parent,
         "@type": "@id",
     },
-    "childRoles": {
-        "@id": NS.CS.Predicate.childRole,
+    "children": {
+        "@id": NS.CS.Predicate.child,
         "@type": "@id",
         "@container": "@set",
     },

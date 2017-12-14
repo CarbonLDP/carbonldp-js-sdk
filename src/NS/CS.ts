@@ -53,7 +53,7 @@ class Predicate {
 
 	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
 
-	static get childRole():string { return namespace + "childRole"; }
+	static get child():string { return namespace + "child"; }
 
 	static get credentials():string { return namespace + "credentials"; }
 
@@ -77,7 +77,7 @@ class Predicate {
 
 	static get namae():string { return namespace + "name"; }
 
-	static get parentRole():string { return namespace + "parentRole"; }
+	static get parent():string { return namespace + "parent"; }
 
 	static get password():string { return namespace + "password"; }
 

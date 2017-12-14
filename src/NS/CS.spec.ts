@@ -336,10 +336,10 @@ describe( module(
 			"childRole",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.childRole ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.childRole ) ).toBe( true );
+			expect( CS.Predicate.child ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.child ) ).toBe( true );
 
-			expect( CS.Predicate.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
+			expect( CS.Predicate.child ).toBe( "https://carbonldp.com/ns/v1/security#child" );
 		} );
 
 		it( hasProperty(
@@ -468,10 +468,10 @@ describe( module(
 			"parentRole",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.parentRole ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.parentRole ) ).toBe( true );
+			expect( CS.Predicate.parent ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.parent ) ).toBe( true );
 
-			expect( CS.Predicate.parentRole ).toBe( "https://carbonldp.com/ns/v1/security#parentRole" );
+			expect( CS.Predicate.parent ).toBe( "https://carbonldp.com/ns/v1/security#parent" );
 		} );
 
 		it( hasProperty(

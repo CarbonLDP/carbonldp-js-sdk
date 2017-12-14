@@ -13448,8 +13448,8 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "childRole", {
-        get: function () { return namespace + "childRole"; },
+    Object.defineProperty(Predicate, "child", {
+        get: function () { return namespace + "child"; },
         enumerable: true,
         configurable: true
     });
@@ -13508,8 +13508,8 @@ var Predicate = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Predicate, "parentRole", {
-        get: function () { return namespace + "parentRole"; },
+    Object.defineProperty(Predicate, "parent", {
+        get: function () { return namespace + "parent"; },
         enumerable: true,
         configurable: true
     });
@@ -16837,12 +16837,12 @@ exports.SCHEMA = {
         "@id": NS.CS.Predicate.description,
         "@type": NS.XSD.DataType.string,
     },
-    "parentRole": {
-        "@id": NS.CS.Predicate.parentRole,
+    "parent": {
+        "@id": NS.CS.Predicate.parent,
         "@type": "@id",
     },
-    "childRoles": {
-        "@id": NS.CS.Predicate.childRole,
+    "children": {
+        "@id": NS.CS.Predicate.child,
         "@type": "@id",
         "@container": "@set",
     },

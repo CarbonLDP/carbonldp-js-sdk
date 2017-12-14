@@ -27,7 +27,7 @@ declare class Predicate {
     static readonly accessControlList: string;
     static readonly accessTo: string;
     static readonly allowsOrigin: string;
-    static readonly childRole: string;
+    static readonly child: string;
     static readonly credentials: string;
     static readonly credentialsOf: string;
     static readonly description: string;
@@ -39,7 +39,7 @@ declare class Predicate {
     static readonly ldapServer: string;
     static readonly ldapUserDN: string;
     static readonly namae: string;
-    static readonly parentRole: string;
+    static readonly parent: string;
     static readonly password: string;
     static readonly permission: string;
     static readonly rootContainer: string;

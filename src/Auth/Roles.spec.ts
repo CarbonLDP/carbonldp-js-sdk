@@ -267,7 +267,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						"${ NS.CS.Predicate.name }": [ {
 							"@value": "A Role"
 						} ],
-						"${ NS.CS.Predicate.parentRole }": [ {
+						"${ NS.CS.Predicate.parent }": [ {
 							"@id": "https://example.com/.system/roles/parent-role/"
 						} ]
 					} ]

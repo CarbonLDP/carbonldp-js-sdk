@@ -1,25 +1,24 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
-} from "./../test/JasmineExtender";
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC,
+} from "../test/JasmineExtender";
+
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
 import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 
 import * as Role from "./Role";
-import DefaultExport from "./Role";
+
 
 describe( module( "Carbon/Auth/Role" ), ():void => {
 
@@ -28,45 +27,54 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		expect( Utils.isObject( Role ) ).toBe( true );
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( Role.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( Role.SCHEMA ) ).toBe( true );
+	it( hasProperty( STATIC, "RDF_CLASS", "string" ), ():void => {
+		expect( Role.RDF_CLASS ).toEqual( jasmine.any( String ) );
+		expect( Role.RDF_CLASS ).toBe( NS.CS.Class.Role );
+	} );
 
-		expect( Utils.hasProperty( Role.SCHEMA, "name" ) ).toBe( true );
-		expect( Role.SCHEMA[ "name" ] ).toEqual( {
-			"@id": NS.CS.Predicate.namae,
-			"@type": NS.XSD.DataType.string,
+	describe( property( STATIC, "SCHEMA", "Carbon.ObjectSchema.Class" ), ():void => {
+
+		it( "should exists", ():void => {
+			expect( Role.SCHEMA ).toEqual( jasmine.any( Object ) );
 		} );
 
-		expect( Utils.hasProperty( Role.SCHEMA, "description" ) ).toBe( true );
-		expect( Role.SCHEMA[ "description" ] ).toEqual( {
-			"@id": NS.CS.Predicate.description,
-			"@type": NS.XSD.DataType.string,
+		it( "should have cs:name property", ():void => {
+			expect( Role.SCHEMA[ "name" ] ).toEqual( {
+				"@id": NS.CS.Predicate.namae,
+				"@type": NS.XSD.DataType.string,
+			} );
 		} );
 
-		expect( Utils.hasProperty( Role.SCHEMA, "parentRole" ) ).toBe( true );
-		expect( Role.SCHEMA[ "parentRole" ] ).toEqual( {
-			"@id": NS.CS.Predicate.parentRole,
-			"@type": "@id",
+		it( "should have cs:description property", ():void => {
+			expect( Role.SCHEMA[ "description" ] ).toEqual( {
+				"@id": NS.CS.Predicate.description,
+				"@type": NS.XSD.DataType.string,
+			} );
 		} );
 
-		expect( Utils.hasProperty( Role.SCHEMA, "childRoles" ) ).toBe( true );
-		expect( Role.SCHEMA[ "childRoles" ] ).toEqual( {
-			"@id": NS.CS.Predicate.childRole,
-			"@type": "@id",
-			"@container": "@set",
+		it( "should have cs:parent property", ():void => {
+			expect( Role.SCHEMA[ "parent" ] ).toEqual( {
+				"@id": NS.CS.Predicate.parent,
+				"@type": "@id",
+			} );
 		} );
 
-		expect( Utils.hasProperty( Role.SCHEMA, "users" ) ).toBe( true );
-		expect( Role.SCHEMA[ "users" ] ).toEqual( {
-			"@id": NS.CS.Predicate.user,
-			"@type": "@id",
-			"@container": "@set",
+		it( "should have cs:child property", ():void => {
+			expect( Role.SCHEMA[ "children" ] ).toEqual( {
+				"@id": NS.CS.Predicate.child,
+				"@type": "@id",
+				"@container": "@set",
+			} );
 		} );
+
+		it( "should have cs:user property", ():void => {
+			expect( Role.SCHEMA[ "users" ] ).toEqual( {
+				"@id": NS.CS.Predicate.user,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+		} );
+
 	} );
 
 	describe( interfaze(
@@ -203,6 +211,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			interface TheRole {
 				myProperty?:string;
 			}
+
 			interface MyRole extends Role.Class, TheRole {}
 
 			let role:MyRole;
@@ -234,11 +243,8 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 	} );
 
 	it( hasDefaultExport( "Carbon.Auth.Role.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Role.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+		const target:Role.default = {} as Role.Class;
+		expect( target ).toBeDefined();
 	} );
 
 } );
