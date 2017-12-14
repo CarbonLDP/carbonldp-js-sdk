@@ -39,7 +39,7 @@ describe( module(
 		it( isDefined(), ():void => {
 			expect( CS.Class ).toBeDefined();
 			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 20 );
+			expect( Object.keys( CS.Class ).length ).toBe( 21 );
 		} );
 
 		it( hasProperty(
@@ -139,6 +139,17 @@ describe( module(
 			expect( Utils.isString( CS.Class.Extend ) ).toBe( true );
 
 			expect( CS.Class.Extend ).toBe( "https://carbonldp.com/ns/v1/security#Extend" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"LDAPCredentials",
+			"string"
+		), ():void => {
+			expect( CS.Class.LDAPCredentials ).toBeDefined();
+			expect( Utils.isString( CS.Class.LDAPCredentials ) ).toBe( true );
+
+			expect( CS.Class.LDAPCredentials ).toBe( "https://carbonldp.com/ns/v1/security#LDAPCredentials" );
 		} );
 
 		it( hasProperty(
@@ -273,7 +284,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 24 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 26 );
 		} );
 
 		it( hasProperty(
@@ -417,6 +428,28 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.inheritableEntry ) ).toBe( true );
 
 			expect( CS.Predicate.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ldapServer",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.ldapServer ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.ldapServer ) ).toBe( true );
+
+			expect( CS.Predicate.ldapServer ).toBe( "https://carbonldp.com/ns/v1/security#ldapServer" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"ldapUserDN",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.ldapUserDN ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.ldapUserDN ) ).toBe( true );
+
+			expect( CS.Predicate.ldapUserDN ).toBe( "https://carbonldp.com/ns/v1/security#ldapUserDN" );
 		} );
 
 		it( hasProperty(

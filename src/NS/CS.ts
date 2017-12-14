@@ -19,6 +19,8 @@ class Class {
 
 	static get Extend():string { return namespace + "Extend"; }
 
+	static get LDAPCredentials():string { return namespace + "LDAPCredentials"; }
+
 	static get ManageSecurity():string { return namespace + "ManageSecurity"; }
 
 	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
@@ -68,6 +70,10 @@ class Predicate {
 	static get granting():string { return namespace + "granting"; }
 
 	static get inheritableEntry():string { return namespace + "inheritableEntry"; }
+
+	static get ldapServer():string { return namespace + "ldapServer"; }
+
+	static get ldapUserDN():string { return namespace + "ldapUserDN"; }
 
 	static get namae():string { return namespace + "name"; }
 

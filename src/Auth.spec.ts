@@ -8,6 +8,7 @@ import * as BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as BasicCredentials from "./Auth/BasicCredentials";
 import * as BasicToken from "./Auth/BasicToken";
 import * as CredentialsSet from "./Auth/CredentialsSet";
+import * as LDAPCredentials from "./Auth/LDAPCredentials";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedRole from "./Auth/PersistedRole";
@@ -112,6 +113,15 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.CredentialsSet ).toBeDefined();
 		expect( Auth.CredentialsSet ).toBe( CredentialsSet );
+	} );
+
+	it( reexports(
+		STATIC,
+		"LDAPCredentials",
+		"Carbon.Auth.LDAPCredentials"
+	), ():void => {
+		expect( Auth.LDAPCredentials ).toBeDefined();
+		expect( Auth.LDAPCredentials ).toBe( LDAPCredentials );
 	} );
 
 	it( reexports(

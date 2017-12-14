@@ -9,6 +9,7 @@ declare class Class {
     static readonly Delete: string;
     static readonly Download: string;
     static readonly Extend: string;
+    static readonly LDAPCredentials: string;
     static readonly ManageSecurity: string;
     static readonly ProtectedDocument: string;
     static readonly Read: string;
@@ -35,6 +36,8 @@ declare class Predicate {
     static readonly forIRI: string;
     static readonly granting: string;
     static readonly inheritableEntry: string;
+    static readonly ldapServer: string;
+    static readonly ldapUserDN: string;
     static readonly namae: string;
     static readonly parentRole: string;
     static readonly password: string;

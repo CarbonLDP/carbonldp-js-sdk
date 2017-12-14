@@ -1,7 +1,9 @@
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
+import * as LDAPCredentials from "./LDAPCredentials";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+
 
 export const RDF_CLASS:string = NS.CS.Class.CredentialsSet;
 
@@ -19,7 +21,7 @@ export const SCHEMA:ObjectSchema.Class = {
 
 export interface Class {
 	user:Pointer.Class;
-	credentials:UsernameAndPasswordCredentials.Class[];
+	credentials:( UsernameAndPasswordCredentials.Class | LDAPCredentials.Class )[];
 }
 
 export default Class;

@@ -163,8 +163,9 @@ var Class = (function () {
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.TokenCredentials.RDF_CLASS, Auth.TokenCredentials.SCHEMA);
-        this.extendObjectSchema(Auth.UsernameAndPasswordCredentials.RDF_CLASS, Auth.UsernameAndPasswordCredentials.SCHEMA);
         this.extendObjectSchema(Auth.CredentialsSet.RDF_CLASS, Auth.CredentialsSet.SCHEMA);
+        this.extendObjectSchema(Auth.UsernameAndPasswordCredentials.RDF_CLASS, Auth.UsernameAndPasswordCredentials.SCHEMA);
+        this.extendObjectSchema(Auth.LDAPCredentials.RDF_CLASS, Auth.LDAPCredentials.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
         this.extendObjectSchema(SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA);

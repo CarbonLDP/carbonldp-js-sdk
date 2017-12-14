@@ -5,6 +5,7 @@ import * as BasicAuthenticator from "./Auth/BasicAuthenticator";
 import * as BasicCredentials from "./Auth/BasicCredentials";
 import * as BasicToken from "./Auth/BasicToken";
 import * as CredentialsSet from "./Auth/CredentialsSet";
+import * as LDAPCredentials from "./Auth/LDAPCredentials";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedRole from "./Auth/PersistedRole";
@@ -37,6 +38,7 @@ export {
 	BasicCredentials,
 	BasicToken,
 	CredentialsSet,
+	LDAPCredentials,
 	PersistedACE,
 	PersistedACL,
 	PersistedRole,

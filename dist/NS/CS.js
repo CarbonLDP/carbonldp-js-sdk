@@ -50,6 +50,11 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Class, "LDAPCredentials", {
+        get: function () { return namespace + "LDAPCredentials"; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Class, "ManageSecurity", {
         get: function () { return namespace + "ManageSecurity"; },
         enumerable: true,
@@ -173,6 +178,16 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "inheritableEntry", {
         get: function () { return namespace + "inheritableEntry"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "ldapServer", {
+        get: function () { return namespace + "ldapServer"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "ldapUserDN", {
+        get: function () { return namespace + "ldapUserDN"; },
         enumerable: true,
         configurable: true
     });

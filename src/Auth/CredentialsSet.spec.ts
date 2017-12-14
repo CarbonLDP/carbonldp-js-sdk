@@ -11,7 +11,9 @@ import {
 import * as NS from "./../NS";
 import * as Pointer from "./../Pointer";
 import * as CredentialsSet from "./CredentialsSet";
+import * as LDAPCredentials from "./LDAPCredentials";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+
 
 describe( module( "Carbon/Auth/CredentialsSet" ), ():void => {
 
@@ -63,8 +65,8 @@ describe( module( "Carbon/Auth/CredentialsSet" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasProperty( OPTIONAL, "credentials", "Carbon.Auth.UsernameAndPasswordCredentials.Class[]" ), ():void => {
-			const target:CredentialsSet.Class[ "credentials" ] = []  as UsernameAndPasswordCredentials.Class[];
+		it( hasProperty( OPTIONAL, "credentials", "( Carbon.Auth.UsernameAndPasswordCredentials.Class | Carbon.Auth.LDAPCredentials.Class )[]" ), ():void => {
+			const target:CredentialsSet.Class[ "credentials" ] = []  as ( UsernameAndPasswordCredentials.Class | LDAPCredentials.Class )[];
 			expect( target ).toBeDefined();
 		} );
 
