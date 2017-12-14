@@ -1,12 +1,11 @@
+import { promiseMethod } from "../Utils";
 import * as Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
-import * as Credentials from "./Credentials";
-import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
-import { promiseMethod } from "../Utils";
+import * as User from "./User";
 
 export class Class {
 	private context:Context.Class;
@@ -15,65 +14,82 @@ export class Class {
 		this.context = context;
 	}
 
-	register( email:string, password:string, enabled?:boolean ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
-		const credentials:Credentials.Class = Credentials.Factory.create( email, password );
-		credentials.enabled = enabled;
+	register( email:string, password:string, disabled?:boolean ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
+		return this.registerWith( {}, email, password, disabled );
+	}
+
+	registerWith<T extends object>( userObject:T, email:string, password:string, disabled?:boolean ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
-			const containerURI:string = this.getCredentialsContainerURI();
-			return this.context.documents.createChildAndRetrieve<PersistedCredentials.Class>( containerURI, credentials as any );
-		} ).then<[ PersistedUser.Class, HTTP.Response.Class ]>( ( [ persistedCredentials, response ] ) => {
-			return [ persistedCredentials.user, response ];
+			const requestUser:T & User.Class = User.Factory.createFrom( userObject, disabled );
+			requestUser.setCredentials( email, password );
+
+			const containerURI:string = this.resolveURI();
+			return this
+				.context
+				.documents
+				.createChildAndRetrieve<any>( containerURI, requestUser )
+				;
 		} );
 	}
 
 	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
-		return new Promise( resolve =>
-			resolve( this.context.documents.get( this.resolveURI( userURI ), requestOptions ) )
-		);
-	}
+		return promiseMethod( () => {
+			const uri:string = this.resolveURI( userURI );
 
-	enableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
-		return this.changeEnabledStatus( userURI, true, requestOptions );
-	}
-
-	disableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
-		return this.changeEnabledStatus( userURI, false, requestOptions );
-	}
-
-	delete( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
-		return new Promise( resolve =>
-			resolve( this.context.documents.delete( this.resolveURI( userURI ), requestOptions ) )
-		);
-	}
-
-	private changeEnabledStatus( userURI:string, value:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
-		return Promise.resolve().then( () => {
-			const absoluteUserURI:string = this.resolveURI( userURI );
-			const userPointer:Pointer.Class = this.context.documents.getPointer( absoluteUserURI );
-			const persistedUser:PersistedUser.Class = PersistedUser.Factory.decorate( userPointer, this.context.documents );
-
-			if( value ) return persistedUser.enableCredentials( requestOptions );
-			return persistedUser.disableCredentials( requestOptions );
+			return this
+				.context
+				.documents
+				.get<PersistedUser.Class>( uri, requestOptions );
 		} );
 	}
 
-	private resolveURI( relativeURI:string ):string {
-		const usersContainer:string = this.getContainerURI();
+	enable( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+		return this
+			.getPersistedUser( userURI )
+			.then( persistedUser => {
+				return persistedUser.enable( requestOptions );
+			} );
+	}
+
+	disable( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+		return this
+			.getPersistedUser( userURI )
+			.then( persistedUser => {
+				return persistedUser.disable( requestOptions );
+			} );
+	}
+
+	delete( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+		return promiseMethod( () => {
+			const uri:string = this.resolveURI( userURI );
+
+			return this
+				.context
+				.documents
+				.delete( uri, requestOptions );
+		} );
+	}
+
+	private getPersistedUser( userURI:string ):Promise<PersistedUser.Class> {
+		return promiseMethod( () => {
+			const userID:string = this.resolveURI( userURI );
+			const userPointer:Pointer.Class = this.context.documents.getPointer( userID );
+			return PersistedUser.Factory.decorate( userPointer, this.context.documents );
+		} );
+	}
+
+	private resolveURI( relativeURI?:string ):string {
+		if( ! this.context.hasSetting( "users.container" ) ) throw new Errors.IllegalStateError( `The "users.container" setting hasn't been defined.` );
+		const usersContainer:string = this.context.resolve( this.context.getSetting( "users.container" ) );
+
+		if( ! relativeURI ) return usersContainer;
+
 		const absoluteRoleURI:string = URI.Util.resolve( usersContainer, relativeURI );
-		if( ! absoluteRoleURI.startsWith( usersContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" isn't a valid Carbon LDP user.` );
+		if( ! absoluteRoleURI.startsWith( usersContainer ) ) throw new Errors.IllegalArgumentError( `The URI "${ relativeURI }" isn't a valid user URI.` );
 
 		return absoluteRoleURI;
 	}
 
-	private getContainerURI():string {
-		if( ! this.context.hasSetting( "system.users.container" ) ) throw new Errors.IllegalStateError( `The "system.users.container" setting hasn't been defined.` );
-		return this.context.resolve( this.context.getSetting( "system.users.container" ) );
-	}
-
-	private getCredentialsContainerURI():string {
-		if( ! this.context.hasSetting( "system.credentials.container" ) ) throw new Errors.IllegalStateError( `The "system.credentials.container" setting hasn't been defined.` );
-		return this.context.resolveSystemURI( this.context.getSetting( "system.credentials.container" ) );
-	}
 }
 
 export default Class;

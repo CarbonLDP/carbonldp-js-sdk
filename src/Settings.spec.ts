@@ -11,7 +11,6 @@ import {
 import * as Utils from "./Utils";
 
 import * as Settings from "./Settings";
-import defaultExport from "./Settings";
 
 describe( module( "Carbon/Settings" ), ():void => {
 
@@ -27,9 +26,9 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"auth.method",
-			"Carbon.Auth.Method",
-			"(Not supported) Indicates the default method of authentication to use."
+			"vocabulary",
+			"string",
+			"URI to be used as the default vocabulary. If a relative one is provided, the URI will be resolved by the context were it has been requested."
 		), ():void => {} );
 
 		it( hasProperty(
@@ -37,13 +36,6 @@ describe( module( "Carbon/Settings" ), ():void => {
 			"system.container",
 			"string",
 			"URI relative to the domain that indicates the slug of the system container."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"system.users.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the users container."
 		), ():void => {} );
 
 		it( hasProperty(
@@ -58,16 +50,16 @@ describe( module( "Carbon/Settings" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"system.roles.container",
+			"users.container",
 			"string",
-			"Relative URI to any context, that indicates the slug of the roles container."
+			"Relative URI to any context, that indicates the slug of the users container."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
-			"vocabulary",
+			"system.roles.container",
 			"string",
-			"URI to be used as the default vocabulary. If a relative one is provided, the URI will be resolved by the context were it has been requested."
+			"Relative URI to any context, that indicates the slug of the roles container."
 		), ():void => {} );
 
 	} );
@@ -75,30 +67,34 @@ describe( module( "Carbon/Settings" ), ():void => {
 	it( hasDefaultExport(
 		"Carbon.settings", `
 		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
-		* system.container: \`".system/"\`
-		* system.users.container: \`"users/"\`
-		* system.security.container: \`"security/"\`
-		* system.roles.container: \`"roles/"\`
 		* vocabulary: \`"vocabulary/#"\`
+		* system.container: \`".system/"\`
+		* system.security.container: \`"security/"\`
+		* users.container: \`"users/"\`
+		* system.roles.container: \`"roles/"\`
 		`
 	), ():void => {
+		const defaultExport:Settings.Class = Settings.default;
+
 		expect( defaultExport ).toBeDefined();
 		expect( Utils.isObject( defaultExport ) ).toBe( true );
 
 		expect( defaultExport[ "system.container" ] ).toBeDefined();
 		expect( defaultExport[ "system.container" ] ).toBe( ".system/" );
 
-		expect( defaultExport[ "system.roles.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.roles.container" ] ).toBe( "roles/" );
+		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
+		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );
 
-		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
 
 		expect( defaultExport[ "system.security.container" ] ).toBeDefined();
 		expect( defaultExport[ "system.security.container" ] ).toBe( "security/" );
 
-		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
-		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );
+		expect( defaultExport[ "users.container" ] ).toBeDefined();
+		expect( defaultExport[ "users.container" ] ).toBe( "users/" );
+
+		expect( defaultExport[ "system.roles.container" ] ).toBeDefined();
+		expect( defaultExport[ "system.roles.container" ] ).toBe( "roles/" );
+
 	} );
 
 } );

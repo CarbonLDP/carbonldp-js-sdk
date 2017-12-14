@@ -5,7 +5,6 @@ declare class Class {
     static readonly AllOrigins: string;
     static readonly CreateAccessPoint: string;
     static readonly CreateChild: string;
-    static readonly Credentials: string;
     static readonly Delete: string;
     static readonly Download: string;
     static readonly Extend: string;
@@ -19,6 +18,7 @@ declare class Class {
     static readonly Update: string;
     static readonly Upload: string;
     static readonly User: string;
+    static readonly UsernameAndPasswordCredentials: string;
 }
 declare class Predicate {
     static readonly accessControlEntry: string;
@@ -44,5 +44,6 @@ declare class Predicate {
     static readonly ticketKey: string;
     static readonly tokenKey: string;
     static readonly user: string;
+    static readonly username: string;
 }
 export { namespace, Class, Predicate };

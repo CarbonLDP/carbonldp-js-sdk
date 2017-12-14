@@ -60,3 +60,14 @@ declare class UUID {
     static generate(): string;
 }
 export { hasFunction, hasProperty, hasPropertyDefined, isDefined, isNull, isArray, isString, isBoolean, isNumber, isInteger, isDouble, isDate, isObject, isPlainObject, isFunction, isMap, parseBoolean, extend, forEachOwnProperty, O, S, A, M, UUID };
+export declare type Diff<T extends string, U extends string> = ({
+    [P in T]: P;
+} & {
+    [P in U]: never;
+} & {
+    [x: string]: never;
+})[T];
+export declare type Minus<T, U> = Pick<T, Diff<keyof T, keyof U>>;
+export declare type StrictMinus<T, U> = {
+    [P in Diff<keyof T, keyof U>]: T[P];
+};

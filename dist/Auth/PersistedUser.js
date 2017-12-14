@@ -1,73 +1,70 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
+var Utils_1 = require("../Utils");
 var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
-var Utils = require("./../Utils");
-var PersistedCredentials = require("./PersistedCredentials");
+var User = require("./User");
+function enable(requestOptions) {
+    return changeAvailability.call(this, "enabled", requestOptions);
+}
+exports.enable = enable;
+function disable(requestOptions) {
+    return changeAvailability.call(this, "disabled", requestOptions);
+}
+exports.disable = disable;
+function changeAvailability(flag, requestOptions) {
+    var _this = this;
+    var responses = [];
+    return this
+        .resolve()
+        .then(function (_a) {
+        var response = _a[1];
+        if (response)
+            responses.push(response);
+        _this[flag] = true;
+        var reverse = flag === "enabled" ? "disabled" : "enabled";
+        delete _this[reverse];
+        return _this.save(requestOptions);
+    })
+        .then(function (_a) {
+        var response = _a[1];
+        responses.push(response);
+        return [_this, responses];
+    });
+}
 var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.isObject(object)
-            && Utils.hasFunction(object, "enableCredentials")
-            && Utils.hasFunction(object, "disableCredentials");
+        return Utils_1.isObject(object)
+            && Utils_1.hasFunction(object, "enable")
+            && Utils_1.hasFunction(object, "disable");
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
+            && User.Factory.hasClassProperties(object)
             && PersistedProtectedDocument.Factory.is(object);
     };
     Factory.decorate = function (object, documents) {
-        var persistedUser = object;
-        if (Factory.hasClassProperties(persistedUser))
-            return persistedUser;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(persistedUser))
-            PersistedProtectedDocument.Factory.decorate(persistedUser, documents);
-        Object.defineProperties(persistedUser, {
-            "enableCredentials": {
-                writable: false,
-                enumerable: false,
+        if (Factory.hasClassProperties(object))
+            return object;
+        User.Factory.decorate(object);
+        PersistedProtectedDocument.Factory.decorate(object, documents);
+        var persistedUser = Object.defineProperties(object, {
+            "enable": {
                 configurable: true,
-                value: changeEnabledCredentials.bind(persistedUser, true),
+                writable: true,
+                value: enable,
             },
-            "disableCredentials": {
-                writable: false,
-                enumerable: false,
+            "disable": {
                 configurable: true,
-                value: changeEnabledCredentials.bind(persistedUser, false),
+                writable: true,
+                value: disable,
             },
         });
-        if (persistedUser.credentials)
-            PersistedCredentials.Factory.decorate(persistedUser.credentials, documents);
         return persistedUser;
     };
     return Factory;
 }());
 exports.Factory = Factory;
-function changeEnabledCredentials(enabled, requestOptions) {
-    var _this = this;
-    var promise = "credentials" in this ?
-        Promise.resolve() : obtainCredentials(this);
-    var responses = [];
-    return promise.then(function (response) {
-        if (response)
-            responses.push(response);
-        if (enabled)
-            return _this.credentials.enable(requestOptions);
-        return _this.credentials.disable(requestOptions);
-    }).then(function (_a) {
-        var _credentials = _a[0], credentialsResponses = _a[1];
-        responses.push.apply(responses, credentialsResponses);
-        return [_this, responses];
-    });
-}
-function obtainCredentials(user) {
-    return user
-        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + NS.CS.Predicate.credentials + ">?c}}")
-        .then(function (_a) {
-        var credentialsBinding = _a[0].bindings[0], response = _a[1];
-        user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding.credentials, user._documents);
-        return response;
-    });
-}
 
 //# sourceMappingURL=PersistedUser.js.map

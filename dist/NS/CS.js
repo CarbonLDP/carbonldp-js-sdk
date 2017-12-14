@@ -30,11 +30,6 @@ var Class = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class, "Credentials", {
-        get: function () { return namespace + "Credentials"; },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Class, "Delete", {
         get: function () { return namespace + "Delete"; },
         enumerable: true,
@@ -97,6 +92,11 @@ var Class = (function () {
     });
     Object.defineProperty(Class, "User", {
         get: function () { return namespace + "User"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Class, "UsernameAndPasswordCredentials", {
+        get: function () { return namespace + "UsernameAndPasswordCredentials"; },
         enumerable: true,
         configurable: true
     });
@@ -218,6 +218,11 @@ var Predicate = (function () {
     });
     Object.defineProperty(Predicate, "user", {
         get: function () { return namespace + "user"; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Predicate, "username", {
+        get: function () { return namespace + "username"; },
         enumerable: true,
         configurable: true
     });

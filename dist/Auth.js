@@ -4,18 +4,18 @@ var ACE = require("./Auth/ACE");
 exports.ACE = ACE;
 var ACL = require("./Auth/ACL");
 exports.ACL = ACL;
-var Authenticator_1 = require("./Auth/Authenticator");
-exports.Authenticator = Authenticator_1.default;
-var BasicAuthenticator_1 = require("./Auth/BasicAuthenticator");
-exports.BasicAuthenticator = BasicAuthenticator_1.default;
-var Credentials = require("./Auth/Credentials");
-exports.Credentials = Credentials;
+var Authenticator = require("./Auth/Authenticator");
+exports.Authenticator = Authenticator;
+var BasicAuthenticator = require("./Auth/BasicAuthenticator");
+exports.BasicAuthenticator = BasicAuthenticator;
+var BasicCredentials = require("./Auth/BasicCredentials");
+exports.BasicCredentials = BasicCredentials;
+var BasicToken = require("./Auth/BasicToken");
+exports.BasicToken = BasicToken;
 var PersistedACE = require("./Auth/PersistedACE");
 exports.PersistedACE = PersistedACE;
 var PersistedACL = require("./Auth/PersistedACL");
 exports.PersistedACL = PersistedACL;
-var PersistedCredentials = require("./Auth/PersistedCredentials");
-exports.PersistedCredentials = PersistedCredentials;
 var PersistedRole = require("./Auth/PersistedRole");
 exports.PersistedRole = PersistedRole;
 var PersistedUser = require("./Auth/PersistedUser");
@@ -26,14 +26,14 @@ var Roles = require("./Auth/Roles");
 exports.Roles = Roles;
 var Ticket = require("./Auth/Ticket");
 exports.Ticket = Ticket;
-var TokenAuthenticator_1 = require("./Auth/TokenAuthenticator");
-exports.TokenAuthenticator = TokenAuthenticator_1.default;
+var TokenAuthenticator = require("./Auth/TokenAuthenticator");
+exports.TokenAuthenticator = TokenAuthenticator;
 var TokenCredentials = require("./Auth/TokenCredentials");
 exports.TokenCredentials = TokenCredentials;
 var User = require("./Auth/User");
 exports.User = User;
-var BasicToken_1 = require("./Auth/BasicToken");
-exports.BasicToken = BasicToken_1.default;
+var UsernameAndPasswordCredentials = require("./Auth/UsernameAndPasswordCredentials");
+exports.UsernameAndPasswordCredentials = UsernameAndPasswordCredentials;
 var Users = require("./Auth/Users");
 exports.Users = Users;
 var Errors = require("./Errors");
@@ -55,8 +55,8 @@ var Class = (function () {
         this.users = new Users.Class(this.context);
         this.context = context;
         this.authenticators = (_a = {},
-            _a[Method.BASIC] = new BasicAuthenticator_1.default(),
-            _a[Method.TOKEN] = new TokenAuthenticator_1.default(this.context),
+            _a[Method.BASIC] = new BasicAuthenticator.Class(),
+            _a[Method.TOKEN] = new TokenAuthenticator.Class(this.context),
             _a);
         var _a;
     }
@@ -160,7 +160,7 @@ var Class = (function () {
     Class.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;
         var authenticator = this.authenticators[Method.BASIC];
-        var authenticationToken = new BasicToken_1.default(username, password);
+        var authenticationToken = new BasicToken.Class(username, password);
         this.clearAuthentication();
         var newCredentials;
         return authenticator.authenticate(authenticationToken).then(function (credentials) {
@@ -176,7 +176,7 @@ var Class = (function () {
         var _this = this;
         var authenticator = this.authenticators[Method.TOKEN];
         var tokenOrCredentials = Utils.isString(userOrCredentials) ?
-            new BasicToken_1.default(userOrCredentials, password) :
+            new BasicToken.Class(userOrCredentials, password) :
             TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
                 userOrCredentials :
                 new Errors.IllegalArgumentError("The token provided in not valid.");

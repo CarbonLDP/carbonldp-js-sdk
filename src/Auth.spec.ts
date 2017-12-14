@@ -1,24 +1,25 @@
 import AbstractContext from "./AbstractContext";
+
 import * as Auth from "./Auth";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import Authenticator from "./Auth/Authenticator";
-import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as Credentials from "./Auth/Credentials";
+import * as Authenticator from "./Auth/Authenticator";
+import * as BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as BasicCredentials from "./Auth/BasicCredentials";
+import * as BasicToken from "./Auth/BasicToken";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
 import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
-import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
-import BasicCredentials from "./Auth/BasicCredentials";
-import BasicToken from "./Auth/BasicToken";
+import * as UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import * as Users from "./Auth/Users";
+
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
 import * as NS from "./NS";
@@ -71,24 +72,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"User",
-		"Carbon.Auth.User"
-	), ():void => {
-		expect( Auth.User ).toBeDefined();
-		expect( Auth.User ).toBe( User );
-	} );
-
-	it( reexports(
-		STATIC,
-		"Users",
-		"Carbon.Auth.Users"
-	), ():void => {
-		expect( Auth.Users ).toBeDefined();
-		expect( Auth.Users ).toBe( Users );
-	} );
-
-	it( reexports(
-		STATIC,
 		"Authenticator",
 		"Carbon.Auth.Authenticator"
 	), ():void => {
@@ -105,11 +88,20 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Credentials",
-		"Carbon.Auth.Credentials"
+		"BasicCredentials",
+		"Carbon.Auth.BasicCredentials"
 	), ():void => {
-		expect( Auth.Credentials ).toBeDefined();
-		expect( Auth.Credentials ).toBe( Credentials );
+		expect( Auth.BasicCredentials ).toBeDefined();
+		expect( Auth.BasicCredentials ).toBe( BasicCredentials );
+	} );
+
+	it( reexports(
+		STATIC,
+		"BasicToken",
+		"Carbon.Auth.BasicToken"
+	), ():void => {
+		expect( Auth.BasicToken ).toBeDefined();
+		expect( Auth.BasicToken ).toBe( BasicToken );
 	} );
 
 	it( reexports(
@@ -132,11 +124,11 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"PersistedCredentials",
-		"Carbon.Auth.PersistedCredentials"
+		"PersistedRole",
+		"Carbon.Auth.PersistedRole"
 	), ():void => {
-		expect( Auth.PersistedCredentials ).toBeDefined();
-		expect( Auth.PersistedCredentials ).toBe( PersistedCredentials );
+		expect( Auth.PersistedRole ).toBeDefined();
+		expect( Auth.PersistedRole ).toBe( PersistedRole );
 	} );
 
 	it( reexports(
@@ -146,15 +138,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.PersistedUser ).toBeDefined();
 		expect( Auth.PersistedUser ).toBe( PersistedUser );
-	} );
-
-	it( reexports(
-		STATIC,
-		"PersistedRole",
-		"Carbon.Auth.PersistedRole"
-	), ():void => {
-		expect( Auth.PersistedRole ).toBeDefined();
-		expect( Auth.PersistedRole ).toBe( PersistedRole );
 	} );
 
 	it( reexports(
@@ -186,15 +169,6 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"TokenCredentials",
-		"Carbon.Auth.TokenCredentials"
-	), ():void => {
-		expect( Auth.TokenCredentials ).toBeDefined();
-		expect( Auth.TokenCredentials ).toBe( TokenCredentials );
-	} );
-
-	it( reexports(
-		STATIC,
 		"TokenAuthenticator",
 		"Carbon.Auth.TokenAuthenticator"
 	), ():void => {
@@ -204,11 +178,38 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"BasicToken",
-		"Carbon.Auth.BasicToken"
+		"TokenCredentials",
+		"Carbon.Auth.TokenCredentials"
 	), ():void => {
-		expect( Auth.BasicToken ).toBeDefined();
-		expect( Auth.BasicToken ).toBe( BasicToken );
+		expect( Auth.TokenCredentials ).toBeDefined();
+		expect( Auth.TokenCredentials ).toBe( TokenCredentials );
+	} );
+
+	it( reexports(
+		STATIC,
+		"User",
+		"Carbon.Auth.User"
+	), ():void => {
+		expect( Auth.User ).toBeDefined();
+		expect( Auth.User ).toBe( User );
+	} );
+
+	it( reexports(
+		STATIC,
+		"UsernameAndPasswordCredentials",
+		"Carbon.Auth.UsernameAndPasswordCredentials"
+	), ():void => {
+		expect( Auth.UsernameAndPasswordCredentials ).toBeDefined();
+		expect( Auth.UsernameAndPasswordCredentials ).toBe( UsernameAndPasswordCredentials );
+	} );
+
+	it( reexports(
+		STATIC,
+		"Users",
+		"Carbon.Auth.Users"
+	), ():void => {
+		expect( Auth.Users ).toBeDefined();
+		expect( Auth.Users ).toBe( Users );
 	} );
 
 	describe( enumeration(
@@ -676,7 +677,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let promise:Promise<any>;
 
 				let spies:any = {
-					success: ( _auth:Auth.Class, credentials:BasicCredentials ):void => {
+					success: ( _auth:Auth.Class, credentials:BasicCredentials.Class ):void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 
 						expect( credentials.username ).toEqual( username );
@@ -696,7 +697,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let auth01:Auth.Class = new Auth.Class( context );
 				promise = auth01.authenticateUsing( Auth.Method.BASIC, username, password );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:BasicCredentials ):void => {
+				promises.push( promise.then( ( credentials:BasicCredentials.Class ):void => {
 					spies.success( auth01, credentials );
 				} ) );
 
@@ -752,7 +753,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
 				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
-				spyOn( TokenAuthenticator.prototype, "authenticate" ).and.callFake( ():Promise<TokenCredentials.Class> => {
+				spyOn( TokenAuthenticator.Class.prototype, "authenticate" ).and.callFake( ():Promise<TokenCredentials.Class> => {
 					return Promise.resolve( Resource.Factory.createFrom( {
 						key: "token-value",
 						expirationTime: date,

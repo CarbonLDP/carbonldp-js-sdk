@@ -11,8 +11,6 @@ class Class {
 
 	static get CreateChild():string { return namespace + "CreateChild"; }
 
-	static get Credentials():string { return namespace + "Credentials"; }
-
 	static get Delete():string { return namespace + "Delete"; }
 
 	static get Download():string { return namespace + "Download"; }
@@ -38,6 +36,8 @@ class Class {
 	static get Upload():string { return namespace + "Upload"; }
 
 	static get User():string { return namespace + "User"; }
+
+	static get UsernameAndPasswordCredentials():string { return namespace + "UsernameAndPasswordCredentials"; }
 }
 
 class Predicate {
@@ -86,6 +86,8 @@ class Predicate {
 	static get tokenKey():string { return namespace + "tokenKey"; }
 
 	static get user():string { return namespace + "user"; }
+
+	static get username():string { return namespace + "username"; }
 }
 
 export {

@@ -10,6 +10,11 @@ var Factory = (function () {
         return Resource.Factory.is(object)
             && object.hasType(exports.RDF_CLASS);
     };
+    Factory.createFrom = function (object) {
+        var resource = Resource.Factory.createFrom(object);
+        resource.addType(exports.RDF_CLASS);
+        return resource;
+    };
     return Factory;
 }());
 exports.Factory = Factory;

@@ -12,8 +12,6 @@ var RDF = require("./NS/RDF");
 exports.RDF = RDF;
 var SHACL = require("./NS/SHACL");
 exports.SHACL = SHACL;
-var VCARD = require("./NS/VCARD");
-exports.VCARD = VCARD;
 var XSD = require("./NS/XSD");
 exports.XSD = XSD;
 

@@ -99,17 +99,6 @@ describe( module(
 
 		it( hasProperty(
 			STATIC,
-			"Credentials",
-			"string"
-		), ():void => {
-			expect( CS.Class.Credentials ).toBeDefined();
-			expect( Utils.isString( CS.Class.Credentials ) ).toBe( true );
-
-			expect( CS.Class.Credentials ).toBe( "https://carbonldp.com/ns/v1/security#Credentials" );
-		} );
-
-		it( hasProperty(
-			STATIC,
 			"Delete",
 			"string"
 		), ():void => {
@@ -251,6 +240,17 @@ describe( module(
 			expect( CS.Class.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
 		} );
 
+		it( hasProperty(
+			STATIC,
+			"UsernameAndPasswordCredentials",
+			"string"
+		), ():void => {
+			expect( CS.Class.UsernameAndPasswordCredentials ).toBeDefined();
+			expect( Utils.isString( CS.Class.UsernameAndPasswordCredentials ) ).toBe( true );
+
+			expect( CS.Class.UsernameAndPasswordCredentials ).toBe( "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials" );
+		} );
+
 	} );
 
 	describe( clazz(
@@ -262,7 +262,7 @@ describe( module(
 			expect( CS.Predicate ).toBeDefined();
 			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
 
-			expect( Object.keys( CS.Predicate ).length ).toBe( 23 );
+			expect( Object.keys( CS.Predicate ).length ).toBe( 24 );
 		} );
 
 		it( hasProperty(
@@ -516,6 +516,17 @@ describe( module(
 			expect( Utils.isString( CS.Predicate.user ) ).toBe( true );
 
 			expect( CS.Predicate.user ).toBe( "https://carbonldp.com/ns/v1/security#user" );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"username",
+			"string"
+		), ():void => {
+			expect( CS.Predicate.username ).toBeDefined();
+			expect( Utils.isString( CS.Predicate.username ) ).toBe( true );
+
+			expect( CS.Predicate.username ).toBe( "https://carbonldp.com/ns/v1/security#username" );
 		} );
 
 	} );

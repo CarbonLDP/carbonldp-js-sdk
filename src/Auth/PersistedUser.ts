@@ -1,86 +1,90 @@
+import {
+	hasFunction,
+	isObject,
+	Minus,
+} from "../Utils";
+import * as Document from "./../Document";
 import * as Documents from "./../Documents";
 import * as HTTP from "./../HTTP";
-import * as NS from "./../NS";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as Pointer from "./../Pointer";
-import * as SELECTResults from "./../SPARQL/SELECTResults";
-import * as Utils from "./../Utils";
-import * as PersistedCredentials from "./PersistedCredentials";
+import * as User from "./User";
 
-export interface Class extends PersistedProtectedDocument.Class {
-	name?:string;
-	credentials?:PersistedCredentials.Class;
+export interface Class extends Minus<User.Class, Document.Class>, PersistedProtectedDocument.Class {
+	enable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
 
-	enableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
-
-	disableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	disable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
 }
 
+
+export function enable( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
+	return changeAvailability.call( this, "enabled", requestOptions );
+}
+
+export function disable( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
+	return changeAvailability.call( this, "disabled", requestOptions );
+}
+
+function changeAvailability( this:Class, flag:"enabled" | "disabled", requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
+	const responses:HTTP.Response.Class[] = [];
+
+	return this
+		.resolve()
+		.then( ( [ , response ] ) => {
+			if( response ) responses.push( response );
+
+			this[ flag ] = true;
+
+			const reverse:"disabled" | "enabled" = flag === "enabled" ? "disabled" : "enabled";
+			delete this[ reverse ];
+
+			return this.save( requestOptions );
+		} )
+		.then<[ Class, HTTP.Response.Class[] ]>( ( [ , response ] ) => {
+			responses.push( response );
+
+			return [ this, responses ];
+		} )
+		;
+}
+
+
 export class Factory {
-	static hasClassProperties( object:Object ):boolean {
-		return Utils.isObject( object )
-			&& Utils.hasFunction( object, "enableCredentials" )
-			&& Utils.hasFunction( object, "disableCredentials" )
+	static hasClassProperties( object:object ):object is Class {
+		return isObject( object )
+			&& hasFunction( object, "enable" )
+			&& hasFunction( object, "disable" )
 			;
 	}
 
-	static is( object:Object ):boolean {
+	static is( object:object ):object is Class {
 		return Factory.hasClassProperties( object )
+			&& User.Factory.hasClassProperties( object )
 			&& PersistedProtectedDocument.Factory.is( object )
 			;
 	}
 
 	static decorate<T extends object>( object:T, documents:Documents.Class ):Class & T {
-		const persistedUser:T & Class = <any> object;
+		if( Factory.hasClassProperties( object ) ) return object;
 
-		if( Factory.hasClassProperties( persistedUser ) ) return persistedUser;
-		if( ! PersistedProtectedDocument.Factory.hasClassProperties( persistedUser ) ) PersistedProtectedDocument.Factory.decorate( persistedUser, documents );
+		User.Factory.decorate( object );
+		PersistedProtectedDocument.Factory.decorate( object, documents );
 
-		Object.defineProperties( persistedUser, {
-			"enableCredentials": {
-				writable: false,
-				enumerable: false,
+		const persistedUser:T & Class = Object.defineProperties( object, {
+			"enable": {
 				configurable: true,
-				value: changeEnabledCredentials.bind( persistedUser, true ),
+				writable: true,
+				value: enable,
 			},
-			"disableCredentials": {
-				writable: false,
-				enumerable: false,
+			"disable": {
 				configurable: true,
-				value: changeEnabledCredentials.bind( persistedUser, false ),
+				writable: true,
+				value: disable,
 			},
 		} );
-		if( persistedUser.credentials ) PersistedCredentials.Factory.decorate( persistedUser.credentials, documents );
 
 		return persistedUser;
 	}
 
-}
-
-function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	const promise:Promise<void | HTTP.Response.Class> = "credentials" in this ?
-		Promise.resolve() : obtainCredentials( this );
-
-	let responses:HTTP.Response.Class[] = [];
-	return promise.then( ( response ) => {
-		if( response ) responses.push( response );
-
-		if( enabled ) return this.credentials.enable( requestOptions );
-		return this.credentials.disable( requestOptions );
-	} ).then<[ Class, HTTP.Response.Class[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => {
-		responses.push( ...credentialsResponses );
-
-		return [ this, responses ];
-	} );
-}
-
-function obtainCredentials( user:Class ):Promise<HTTP.Response.Class> {
-	return user
-		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.Predicate.credentials}>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer.Class }>, HTTP.Response.Class ] ) => {
-			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
-			return response;
-		} );
 }
 
 export default Class;

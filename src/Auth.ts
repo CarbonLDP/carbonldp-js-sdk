@@ -1,21 +1,20 @@
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import Authenticator from "./Auth/Authenticator";
-import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as Credentials from "./Auth/Credentials";
+import * as Authenticator from "./Auth/Authenticator";
+import * as BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as BasicCredentials from "./Auth/BasicCredentials";
+import * as BasicToken from "./Auth/BasicToken";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
 import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
-import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/BasicCredentials";
-import BasicToken from "./Auth/BasicToken";
+import * as UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import * as Users from "./Auth/Users";
 
 import Context from "./Context";
@@ -32,22 +31,22 @@ import * as Utils from "./Utils";
 export {
 	ACE,
 	ACL,
-	User,
-	Users,
 	Authenticator,
 	BasicAuthenticator,
-	Credentials,
+	BasicCredentials,
+	BasicToken,
 	PersistedACE,
 	PersistedACL,
-	PersistedCredentials,
 	PersistedRole,
 	PersistedUser,
 	Role,
 	Roles,
 	Ticket,
-	TokenCredentials,
 	TokenAuthenticator,
-	BasicToken
+	TokenCredentials,
+	User,
+	UsernameAndPasswordCredentials,
+	Users,
 };
 
 export enum Method {
@@ -62,8 +61,8 @@ export class Class {
 	protected _authenticatedUser:PersistedUser.Class;
 
 	private context:Context;
-	private authenticators:{ [ P in Method ]:Authenticator<object, object> };
-	private authenticator:Authenticator<object, object>;
+	private authenticators:{ [ P in Method ]:Authenticator.Class<object, object> };
+	private authenticator:Authenticator.Class<object, object>;
 
 	public get authenticatedUser():PersistedUser.Class {
 		if( this._authenticatedUser ) return this._authenticatedUser;
@@ -79,8 +78,8 @@ export class Class {
 		this.context = context;
 
 		this.authenticators = {
-			[ Method.BASIC ]: new BasicAuthenticator(),
-			[ Method.TOKEN ]: new TokenAuthenticator( this.context ),
+			[ Method.BASIC ]: new BasicAuthenticator.Class(),
+			[ Method.TOKEN ]: new TokenAuthenticator.Class( this.context ),
 		};
 	}
 
@@ -95,10 +94,10 @@ export class Class {
 		return this.authenticateUsing( Method.TOKEN, username, password );
 	}
 
-	authenticateUsing( method:Method.BASIC, username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
+	authenticateUsing( method:Method.BASIC, username:string, password:string ):Promise<BasicCredentials.Class>;
 	authenticateUsing( method:Method.TOKEN, username:string, password:string ):Promise<TokenCredentials.Class>;
 	authenticateUsing( method:Method.TOKEN, token:TokenCredentials.Class ):Promise<TokenCredentials.Class>;
-	authenticateUsing( method:Method, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<UsernameAndPasswordCredentials | TokenCredentials.Class> {
+	authenticateUsing( method:Method, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<BasicCredentials.Class | TokenCredentials.Class> {
 		switch( method ) {
 			case Method.BASIC:
 				return this.authenticateWithBasic( userOrCredentials as string, password );
@@ -182,14 +181,14 @@ export class Class {
 		return securityURI;
 	}
 
-	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {
-		const authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ Method.BASIC ];
-		const authenticationToken:BasicToken = new BasicToken( username, password );
+	private authenticateWithBasic( username:string, password:string ):Promise<BasicCredentials.Class> {
+		const authenticator:BasicAuthenticator.Class = <BasicAuthenticator.Class> this.authenticators[ Method.BASIC ];
+		const authenticationToken:BasicToken.Class = new BasicToken.Class( username, password );
 
 		this.clearAuthentication();
 
-		let newCredentials:UsernameAndPasswordCredentials;
-		return authenticator.authenticate( authenticationToken ).then( ( credentials:UsernameAndPasswordCredentials ) => {
+		let newCredentials:BasicCredentials.Class;
+		return authenticator.authenticate( authenticationToken ).then( ( credentials:BasicCredentials.Class ) => {
 			newCredentials = credentials;
 
 			return this.getAuthenticatedUser( authenticator );
@@ -202,9 +201,9 @@ export class Class {
 	}
 
 	private authenticateWithToken( userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<TokenCredentials.Class> {
-		const authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ Method.TOKEN ];
-		const tokenOrCredentials:BasicToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
-			new BasicToken( userOrCredentials, password ) :
+		const authenticator:TokenAuthenticator.Class = <TokenAuthenticator.Class> this.authenticators[ Method.TOKEN ];
+		const tokenOrCredentials:BasicToken.Class | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
+			new BasicToken.Class( userOrCredentials, password ) :
 			TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ?
 				userOrCredentials :
 				new Errors.IllegalArgumentError( "The token provided in not valid." );
@@ -227,7 +226,7 @@ export class Class {
 		} );
 	}
 
-	private getAuthenticatedUser( authenticator:Authenticator<object, object> ):Promise<PersistedUser.Class> {
+	private getAuthenticatedUser( authenticator:Authenticator.Class<object, object> ):Promise<PersistedUser.Class> {
 		const requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
 

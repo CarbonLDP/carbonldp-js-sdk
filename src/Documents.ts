@@ -97,7 +97,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			decorators.set( Auth.ACL.RDF_CLASS, Auth.PersistedACL.Factory.decorate );
 			decorators.set( Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate );
 			decorators.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate );
-			decorators.set( Auth.Credentials.RDF_CLASS, Auth.PersistedCredentials.Factory.decorate );
 		}
 
 		this._documentDecorators = decorators;

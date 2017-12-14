@@ -1,25 +1,24 @@
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
-import Authenticator from "./Auth/Authenticator";
-import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as Credentials from "./Auth/Credentials";
+import * as Authenticator from "./Auth/Authenticator";
+import * as BasicAuthenticator from "./Auth/BasicAuthenticator";
+import * as BasicCredentials from "./Auth/BasicCredentials";
+import * as BasicToken from "./Auth/BasicToken";
 import * as PersistedACE from "./Auth/PersistedACE";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedCredentials from "./Auth/PersistedCredentials";
 import * as PersistedRole from "./Auth/PersistedRole";
 import * as PersistedUser from "./Auth/PersistedUser";
 import * as Role from "./Auth/Role";
 import * as Roles from "./Auth/Roles";
 import * as Ticket from "./Auth/Ticket";
-import TokenAuthenticator from "./Auth/TokenAuthenticator";
+import * as TokenAuthenticator from "./Auth/TokenAuthenticator";
 import * as TokenCredentials from "./Auth/TokenCredentials";
 import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/BasicCredentials";
-import BasicToken from "./Auth/BasicToken";
+import * as UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import * as Users from "./Auth/Users";
 import Context from "./Context";
 import * as HTTP from "./HTTP";
-export { ACE, ACL, User, Users, Authenticator, BasicAuthenticator, Credentials, PersistedACE, PersistedACL, PersistedCredentials, PersistedRole, PersistedUser, Role, Roles, Ticket, TokenCredentials, TokenAuthenticator, BasicToken };
+export { ACE, ACL, Authenticator, BasicAuthenticator, BasicCredentials, BasicToken, PersistedACE, PersistedACL, PersistedRole, PersistedUser, Role, Roles, Ticket, TokenAuthenticator, TokenCredentials, User, UsernameAndPasswordCredentials, Users };
 export declare enum Method {
     BASIC = "BASIC",
     TOKEN = "TOKEN",
@@ -35,7 +34,7 @@ export declare class Class {
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<TokenCredentials.Class>;
-    authenticateUsing(method: Method.BASIC, username: string, password: string): Promise<UsernameAndPasswordCredentials>;
+    authenticateUsing(method: Method.BASIC, username: string, password: string): Promise<BasicCredentials.Class>;
     authenticateUsing(method: Method.TOKEN, username: string, password: string): Promise<TokenCredentials.Class>;
     authenticateUsing(method: Method.TOKEN, token: TokenCredentials.Class): Promise<TokenCredentials.Class>;
     addAuthentication(requestOptions: HTTP.Request.Options): void;
