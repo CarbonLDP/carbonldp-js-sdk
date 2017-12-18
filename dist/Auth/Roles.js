@@ -1,58 +1,76 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = require("../Utils");
 var Errors = require("./../Errors");
 var HTTP = require("./../HTTP");
 var URI = require("./../RDF/URI");
 var PersistedRole = require("./PersistedRole");
-var Utils = require("./../Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;
     }
     Class.prototype.createChild = function (parentRole, role, slugOrRequestOptions, requestOptions) {
         var _this = this;
-        var parentURI = Utils.isString(parentRole) ? parentRole : parentRole.id;
-        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+        var slug = Utils_1.isString(slugOrRequestOptions) ? slugOrRequestOptions : void 0;
         requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-        var containerURI;
-        var persistedRole;
-        var responseCreated;
-        return Utils.promiseMethod(function () {
-            containerURI = _this.getContainerURI();
-            parentURI = URI.Util.resolve(containerURI, parentURI);
-            if (!URI.Util.isBaseOf(containerURI, parentURI))
-                throw new Errors.IllegalArgumentError("The parent role provided is not a valid role.");
-            return _this.context.documents.exists(parentURI);
+        var parentURI = Utils_1.isString(parentRole) ? parentRole : parentRole.id;
+        var responses = [];
+        return Utils_1.promiseMethod(function () {
+            parentURI = _this.resolveURI(parentURI);
+            return _this.context
+                .documents
+                .exists(parentURI);
         }).then(function (_a) {
-            var exists = _a[0], response = _a[1];
+            var exists = _a[0];
             if (!exists)
-                throw new Errors.IllegalArgumentError("The parent role provided doesn't exist.");
-            return _this.context.documents.createChild(containerURI, role, slug, requestOptions);
+                throw new Errors.IllegalArgumentError("The parent role \"" + parentURI + "\" doesn't exists.");
+            var container = _this.resolveURI();
+            return _this.context
+                .documents
+                .createChild(container, role, slug, requestOptions);
         }).then(function (_a) {
-            var newRole = _a[0], response = _a[1];
-            responseCreated = response;
-            persistedRole = PersistedRole.Factory.decorate(newRole, _this.context.documents);
-            return _this.context.documents.addMember(parentURI, newRole);
-        }).then(function (response) {
-            return [persistedRole, responseCreated];
+            var document = _a[0], response = _a[1];
+            responses.push(response);
+            return _this.context
+                .documents
+                .addMember(parentURI, document);
+        }).then(function () {
+            var persistedRole = PersistedRole.Factory.decorate(role, _this.context.documents);
+            return [persistedRole, responses[0]];
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {
         var _this = this;
-        return Utils.promiseMethod(function () {
-            return _this.context.documents.get(_this.resolveURI(roleURI), requestOptions);
+        return Utils_1.promiseMethod(function () {
+            var uri = _this.resolveURI(roleURI);
+            return _this.context
+                .documents
+                .get(uri, requestOptions);
         });
     };
-    Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
-        throw new Errors.NotImplementedError("To be re-implemented in milestone:Security");
+    Class.prototype.getUsers = function (roleURI, queryBuilderFnOrOptions, queryBuilderFn) {
+        var _this = this;
+        return this
+            .getUsersAccessPoint(roleURI)
+            .then(function (accessPoint) {
+            return _this
+                .context
+                .documents
+                .getMembers(accessPoint.id, queryBuilderFnOrOptions, queryBuilderFn);
+        });
     };
     Class.prototype.addUser = function (roleURI, user, requestOptions) {
         return this.addUsers(roleURI, [user], requestOptions);
     };
     Class.prototype.addUsers = function (roleURI, users, requestOptions) {
         var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
-            return _this.context.documents.addMembers(accessPoint.id, users, requestOptions);
+        return this
+            .getUsersAccessPoint(roleURI)
+            .then(function (accessPoint) {
+            return _this
+                .context
+                .documents
+                .addMembers(accessPoint.id, users, requestOptions);
         });
     };
     Class.prototype.removeUser = function (roleURI, user, requestOptions) {
@@ -60,31 +78,37 @@ var Class = (function () {
     };
     Class.prototype.removeUsers = function (roleURI, users, requestOptions) {
         var _this = this;
-        return this.getUsersAccessPoint(roleURI).then(function (accessPoint) {
-            return _this.context.documents.removeMembers(accessPoint.id, users, requestOptions);
+        return this
+            .getUsersAccessPoint(roleURI)
+            .then(function (accessPoint) {
+            return _this
+                .context
+                .documents
+                .removeMembers(accessPoint.id, users, requestOptions);
         });
-    };
-    Class.prototype.resolveURI = function (relativeURI) {
-        var rolesContainer = this.getContainerURI();
-        var absoluteRoleURI = URI.Util.resolve(rolesContainer, relativeURI);
-        if (!absoluteRoleURI.startsWith(rolesContainer))
-            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" isn't a valid Carbon LDP role.");
-        return absoluteRoleURI;
     };
     Class.prototype.getUsersAccessPoint = function (roleURI) {
         var _this = this;
-        return Utils.promiseMethod(function () {
+        return Utils_1.promiseMethod(function () {
             var uri = _this.resolveURI(roleURI);
-            return _this.context.documents.executeSELECTQuery(uri, "PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<" + uri + ">:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}");
+            return _this.context
+                .documents
+                .executeSELECTQuery(uri, "PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<" + uri + ">:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}");
         }).then(function (_a) {
-            var selectResults = _a[0], response = _a[1];
+            var selectResults = _a[0];
             return selectResults.bindings[0].accessPoint;
         });
     };
-    Class.prototype.getContainerURI = function () {
-        if (!this.context.hasSetting("system.roles.container"))
-            throw new Errors.IllegalStateError("The \"system.roles.container\" setting hasn't been defined.");
-        return this.context.resolveSystemURI(this.context.getSetting("system.roles.container"));
+    Class.prototype.resolveURI = function (relativeURI) {
+        if (!this.context.hasSetting("system.security.roles.container"))
+            throw new Errors.IllegalStateError("The \"system.security.roles.container\" setting hasn't been defined.");
+        var containerURI = this.context.auth._resolveSecurityURL(this.context.getSetting("system.security.roles.container"));
+        if (!relativeURI)
+            return containerURI;
+        var absoluteURI = URI.Util.resolve(containerURI, relativeURI);
+        if (!absoluteURI.startsWith(containerURI))
+            throw new Errors.IllegalArgumentError("The URI \"" + relativeURI + "\" isn't a valid role URI.");
+        return absoluteURI;
     };
     return Class;
 }());
