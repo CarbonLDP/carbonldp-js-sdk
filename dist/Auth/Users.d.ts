@@ -7,8 +7,8 @@ export declare class Class {
     constructor(context: Context.Class);
     register(email: string, password: string, disabled?: boolean): Promise<[PersistedUser.Class, HTTP.Response.Class]>;
     registerWith<T extends object>(userObject: T, email: string, password: string, disabled?: boolean): Promise<[T & PersistedUser.Class, HTTP.Response.Class]>;
-    get(userURI: string, requestOptions?: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[PersistedUser.Class, HTTP.Response.Class]>;
-    get(userURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[PersistedUser.Class, HTTP.Response.Class]>;
+    get<T extends object>(userURI: string, requestOptions?: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedUser.Class, HTTP.Response.Class]>;
+    get<T extends object>(userURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedUser.Class, HTTP.Response.Class]>;
     enable(userURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedUser.Class, HTTP.Response.Class[]]>;
     disable(userURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedUser.Class, HTTP.Response.Class[]]>;
     delete(userURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;

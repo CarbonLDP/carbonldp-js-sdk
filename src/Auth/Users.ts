@@ -33,16 +33,16 @@ export class Class {
 		} );
 	}
 
-	get( userURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]>;
-	get( userURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]>;
-	get( userURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
+	get<T extends object>( userURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]>;
+	get<T extends object>( userURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]>;
+	get<T extends object>( userURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			const uri:string = this.resolveURI( userURI );
 
 			return this
 				.context
 				.documents
-				.get<PersistedUser.Class>( uri, queryBuilderFnOrOptions, queryBuilderFn );
+				.get<T & PersistedUser.Class>( uri, queryBuilderFnOrOptions, queryBuilderFn );
 		} );
 	}
 

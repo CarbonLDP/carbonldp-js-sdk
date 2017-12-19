@@ -313,6 +313,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		describe( method( INSTANCE, "get" ), ():void => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the user specified from the current context.", [
 					{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
@@ -322,6 +323,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the user specified from the current context.", [
 					{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
