@@ -7745,7 +7745,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "_roles")
+        return Utils.isObject(object)
             && Utils.hasFunction(object, "createChild")
             && Utils.hasFunction(object, "getUsers")
             && Utils.hasFunction(object, "addUser")
@@ -7758,17 +7758,10 @@ var Factory = (function () {
             && PersistedProtectedDocument.Factory.is(object);
     };
     Factory.decorate = function (object, documents) {
-        var persistedRole = object;
-        if (Factory.hasClassProperties(persistedRole))
-            return persistedRole;
-        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
-        Object.defineProperties(persistedRole, {
-            "_roles": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: documents["context"] ? documents["context"].auth.roles : null,
-            },
+        if (Factory.hasClassProperties(object))
+            return object;
+        PersistedProtectedDocument.Factory.decorate(object, documents);
+        return Object.defineProperties(object, {
             "createChild": {
                 writable: true,
                 enumerable: false,
@@ -7806,38 +7799,58 @@ var Factory = (function () {
                 value: removeUsers,
             },
         });
-        return persistedRole;
     };
     return Factory;
 }());
 exports.Factory = Factory;
 function createChild(role, slugOrRequestOptions, requestOptions) {
-    checkState(this);
-    return this._roles.createChild(this.id, role, slugOrRequestOptions, requestOptions);
+    var _this = this;
+    return getRolesClass(this)
+        .then(function (roles) {
+        return roles.createChild(_this.id, role, slugOrRequestOptions, requestOptions);
+    });
 }
-function getUsers(requestOptions) {
-    checkState(this);
-    return this._roles.getUsers(this.id, requestOptions);
+function getUsers(queryBuilderFnOrOptions, queryBuilderFn) {
+    var _this = this;
+    return getRolesClass(this)
+        .then(function (roles) {
+        return roles.getUsers(_this.id, queryBuilderFnOrOptions, queryBuilderFn);
+    });
 }
 function addUser(user, requestOptions) {
-    checkState(this);
-    return this._roles.addUsers(this.id, [user], requestOptions);
+    var _this = this;
+    return getRolesClass(this)
+        .then(function (roles) {
+        return roles.addUser(_this.id, user, requestOptions);
+    });
 }
 function addUsers(users, requestOptions) {
-    checkState(this);
-    return this._roles.addUsers(this.id, users, requestOptions);
+    var _this = this;
+    return getRolesClass(this)
+        .then(function (roles) {
+        return roles.addUsers(_this.id, users, requestOptions);
+    });
 }
 function removeUser(user, requestOptions) {
-    checkState(this);
-    return this._roles.removeUsers(this.id, [user], requestOptions);
+    var _this = this;
+    return getRolesClass(this)
+        .then(function (roles) {
+        return roles.removeUser(_this.id, user, requestOptions);
+    });
 }
 function removeUsers(users, requestOptions) {
-    checkState(this);
-    return this._roles.removeUsers(this.id, users, requestOptions);
+    var _this = this;
+    return getRolesClass(this)
+        .then(function (roles) {
+        return roles.removeUsers(_this.id, users, requestOptions);
+    });
 }
-function checkState(role) {
-    if (!role._roles)
-        throw new Errors.IllegalStateError("The context of the current role, does not support roles management.");
+function getRolesClass(role) {
+    return Utils.promiseMethod(function () {
+        if (!role._documents["context"])
+            throw new Errors.IllegalStateError("The context of the role doesn't support roles management.");
+        return role._documents["context"].auth.roles;
+    });
 }
 
 

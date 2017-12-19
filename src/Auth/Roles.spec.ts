@@ -24,10 +24,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		expect( Roles ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"Carbon.Auth.Roles.Class",
-		"Class that manage the roles of a Carbon LDP."
-	), ():void => {
+	describe( clazz( "Carbon.Auth.Roles.Class", "Class that manage the roles of a Carbon LDP." ), ():void => {
 
 		let roles:Roles.Class;
 		let context:AbstractContext;
@@ -65,23 +62,23 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		describe( method( INSTANCE, "createChild" ), ():void => {
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+				[ "T extends object" ],
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
 					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
-					{ name: "role", type: "T", description: "The appRole that wants to persist." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.NewRole", description: "The appRole that wants to persist." },
 					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
 
-			xit( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+			it( hasSignature(
+				[ "T extends object" ],
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
 					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
-					{ name: "role", type: "T", description: "The appRole that wants to persist." },
+					{ name: "role", type: "T & Carbon.Auth.Roles.NewRole", description: "The appRole that wants to persist." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
@@ -329,10 +326,22 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		describe( method( INSTANCE, "getUsers" ), ():void => {
 
 			it( hasSignature(
-				[ "T" ],
-				"Retrieves an array of resolved pointers for all the users of the specified role.", [
+				[ "T extends object" ],
+				"Retrieves an array of resolved pointers for all the users of the specified role.",
+				[
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the users retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<[ (T & Carbon.Auth.PersistedUser.Class)[], Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Retrieves an array of resolved pointers for all the users of the specified role.",
+				[
+					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the users retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.Auth.PersistedUser.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -838,9 +847,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport(
-		"Carbon.Auth.Roles.Class"
-	), ():void => {
+	it( hasDefaultExport( "Carbon.Auth.Roles.Class" ), ():void => {
 		expect( Roles.default ).toBeDefined();
 		expect( Roles.default ).toBe( Roles.Class );
 	} );
