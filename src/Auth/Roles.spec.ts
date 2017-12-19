@@ -231,10 +231,20 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		describe( method( INSTANCE, "get" ), ():void => {
 
 			it( hasSignature(
-				[ "T" ],
+				[ "T extends object" ],
 				"Retrieves a role from the current context.", [
 					{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Retrieves a role from the current context.", [
+					{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -274,7 +284,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 
-			it( "should get the role", ( done:DoneFn ):void => {
+			it( "should call documents.get", ( done:DoneFn ):void => {
 				const spy:jasmine.Spy = spyOn( context.documents, "get" )
 					.and.returnValue( Promise.reject( { fake: "Error" } ) );
 
@@ -284,7 +294,76 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						done.fail( "Should not resolve" );
 					} )
 					.catch( () => {
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/.system/security/roles/a-role/", void 0 );
+						expect( spy ).toHaveBeenCalled();
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should resolve the role URI", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				roles
+					.get( "a-role/" )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( () => {
+						expect( spy.calls.mostRecent().args[ 0 ] ).toEqual( "https://example.com/.system/security/roles/a-role/" );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should pass on the options", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				roles
+					.get( "a-role/", { timeout: 5050 } )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( () => {
+						expect( spy.calls.mostRecent().args[ 1 ] ).toEqual( { timeout: 5050 } );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should pass on the query builder", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				roles
+					.get( "a-role/", _ => _ )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( () => {
+						expect( spy.calls.mostRecent().args[ 1 ] ).toEqual( jasmine.any( Function ) );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should pass int he options and query builder", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				roles
+					.get( "a-role/", { timeout: 5050 }, _ => _ )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( () => {
+						expect( spy.calls.mostRecent().args[ 1 ] ).toEqual( { timeout: 5050 } );
+						expect( spy.calls.mostRecent().args[ 2 ] ).toEqual( jasmine.any( Function ) );
 
 						done();
 					} )

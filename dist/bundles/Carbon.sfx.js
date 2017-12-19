@@ -16939,13 +16939,13 @@ var Class = (function () {
             return [persistedRole, responses[0]];
         });
     };
-    Class.prototype.get = function (roleURI, requestOptions) {
+    Class.prototype.get = function (roleURI, queryBuilderFnOrOptions, queryBuilderFn) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var uri = _this.resolveURI(roleURI);
             return _this.context
                 .documents
-                .get(uri, requestOptions);
+                .get(uri, queryBuilderFnOrOptions, queryBuilderFn);
         });
     };
     Class.prototype.getUsers = function (roleURI, queryBuilderFnOrOptions, queryBuilderFn) {
