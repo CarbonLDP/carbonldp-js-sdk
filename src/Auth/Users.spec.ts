@@ -316,6 +316,15 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				"Retrieves the user specified from the current context.", [
 					{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Retrieves the user specified from the current context.", [
+					{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -361,6 +370,66 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 						const uri:string = spy.calls.mostRecent().args[ 0 ];
 						expect( uri ).toBe( "https://example.com/users/my-user/" );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should pass on the options", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				const users:Users.Class = new Users.Class( context );
+				users
+					.get( "my-user/", { timeout: 5050 } )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( error => {
+						if( error ) done.fail( error );
+
+						expect( spy ).toHaveBeenCalledWith( "https://example.com/users/my-user/", { timeout: 5050 }, void 0 );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should pass on the query builder", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				const users:Users.Class = new Users.Class( context );
+				users
+					.get( "my-user/", _ => _ )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( error => {
+						if( error ) done.fail( error );
+
+						expect( spy ).toHaveBeenCalledWith( "https://example.com/users/my-user/", jasmine.any( Function ), void 0 );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should pass on the options and query builder", ( done:DoneFn ):void => {
+				const spy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.reject( null ) );
+
+				const users:Users.Class = new Users.Class( context );
+				users
+					.get( "my-user/", { timeout: 5050 }, _ => _ )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( error => {
+						if( error ) done.fail( error );
+
+						expect( spy ).toHaveBeenCalledWith( "https://example.com/users/my-user/", { timeout: 5050 }, jasmine.any( Function ) );
 
 						done();
 					} )

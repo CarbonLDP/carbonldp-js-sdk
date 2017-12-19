@@ -4,6 +4,7 @@ import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
 import * as URI from "./../RDF/URI";
+import { QueryDocumentBuilder } from "./../SPARQL/QueryDocument";
 import * as PersistedUser from "./PersistedUser";
 import * as User from "./User";
 
@@ -32,14 +33,16 @@ export class Class {
 		} );
 	}
 
-	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
+	get( userURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]>;
+	get( userURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]>;
+	get( userURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			const uri:string = this.resolveURI( userURI );
 
 			return this
 				.context
 				.documents
-				.get<PersistedUser.Class>( uri, requestOptions );
+				.get<PersistedUser.Class>( uri, queryBuilderFnOrOptions, queryBuilderFn );
 		} );
 	}
 

@@ -17494,14 +17494,14 @@ var Class = (function () {
                 .createChildAndRetrieve(containerURI, requestUser);
         });
     };
-    Class.prototype.get = function (userURI, requestOptions) {
+    Class.prototype.get = function (userURI, queryBuilderFnOrOptions, queryBuilderFn) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var uri = _this.resolveURI(userURI);
             return _this
                 .context
                 .documents
-                .get(uri, requestOptions);
+                .get(uri, queryBuilderFnOrOptions, queryBuilderFn);
         });
     };
     Class.prototype.enable = function (userURI, requestOptions) {
