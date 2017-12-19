@@ -4455,8 +4455,8 @@ var Method;
 })(Method = exports.Method || (exports.Method = {}));
 var Class = (function () {
     function Class(context) {
-        this.roles = new Roles.Class(this.context);
-        this.users = new Users.Class(this.context);
+        this.roles = new Roles.Class(context);
+        this.users = new Users.Class(context);
         this.context = context;
         this.authenticators = (_a = {},
             _a[Method.BASIC] = new BasicAuthenticator.Class(),
@@ -4490,7 +4490,7 @@ var Class = (function () {
             case Method.TOKEN:
                 return this.authenticateWithToken(userOrCredentials, password);
             default:
-                return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
+                return Promise.reject(new Errors.IllegalArgumentError("Unsupported authentication method \"" + method + "\""));
         }
     };
     Class.prototype.addAuthentication = function (requestOptions) {
@@ -4583,7 +4583,7 @@ var Class = (function () {
             new BasicToken.Class(userOrCredentials, password) :
             TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
                 userOrCredentials :
-                new Errors.IllegalArgumentError("The token provided in not valid.");
+                new Errors.IllegalArgumentError("The token credentials provided in not valid.");
         if (tokenOrCredentials instanceof Error)
             return Promise.reject(tokenOrCredentials);
         this.clearAuthentication();
@@ -4603,8 +4603,8 @@ var Class = (function () {
     Class.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        return this.context.documents
-            .get("users/me/", requestOptions)
+        return this.users
+            .get("me/", requestOptions)
             .then(function (_a) {
             var persistedUser = _a[0];
             return persistedUser;

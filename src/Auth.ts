@@ -76,8 +76,8 @@ export class Class {
 	}
 
 	constructor( context:Context ) {
-		this.roles = new Roles.Class( this.context );
-		this.users = new Users.Class( this.context );
+		this.roles = new Roles.Class( context );
+		this.users = new Users.Class( context );
 
 		this.context = context;
 
@@ -108,7 +108,7 @@ export class Class {
 			case Method.TOKEN:
 				return this.authenticateWithToken( userOrCredentials, password );
 			default:
-				return Promise.reject( new Errors.IllegalArgumentError( `No exists the authentication method '${method}'` ) );
+				return Promise.reject( new Errors.IllegalArgumentError( `Unsupported authentication method "${method}"` ) );
 		}
 	}
 
@@ -210,7 +210,7 @@ export class Class {
 			new BasicToken.Class( userOrCredentials, password ) :
 			TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ?
 				userOrCredentials :
-				new Errors.IllegalArgumentError( "The token provided in not valid." );
+				new Errors.IllegalArgumentError( "The token credentials provided in not valid." );
 
 		if( tokenOrCredentials instanceof Error ) return Promise.reject( tokenOrCredentials );
 		this.clearAuthentication();
@@ -234,8 +234,8 @@ export class Class {
 		const requestOptions:HTTP.Request.Options = {};
 		authenticator.addAuthentication( requestOptions );
 
-		return this.context.documents
-			.get<PersistedUser.Class>( "users/me/", requestOptions )
+		return this.users
+			.get( "me/", requestOptions )
 			.then( ( [ persistedUser ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => persistedUser );
 	}
 

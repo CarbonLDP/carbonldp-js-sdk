@@ -641,19 +641,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			expect( spy ).toHaveBeenCalledWith( Auth.Method.TOKEN, "myUer@user.com", "myAwesomePassword" );
 		} );
 
-		describe( method(
-			INSTANCE,
-			"authenticateUsing"
-		), ():void => {
-
-			let context:AbstractContext;
-			beforeEach( ():void => {
-				context = new class extends AbstractContext {
-					protected _baseURI:string = "http://example.com/";
-				};
-				context.setSetting( "system.container", ".system/" );
-				context.setSetting( "system.security.container", "security/" );
-			} );
+		describe( method( INSTANCE, "authenticateUsing" ), ():void => {
 
 			it( hasSignature(
 				"Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.", [
@@ -662,83 +650,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					{ name: "password", type: "string" },
 				],
 				{ type: "Promise<Carbon.Auth.BasicCredentials.Class>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/users/me/", null, "GET" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"ETag": "1234567890",
-						"Content-Location": "http://example.com/users/my-user/",
-					},
-					responseText: `[ {
-						"@id": "http://example.com/users/my-user/",
-						"@graph": [ {
-							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ NS.CS.Class.User }" ],
-							"${ NS.CS.Predicate.namae }": [ {
-								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
-							} ],
-							"${ NS.CS.Predicate.credentials }": [ {
-								"@id": "http://example.com/.system/credentials/my-user-credentials/"
-							} ]
-						} ]
-					} ]`,
-				} );
-
-				let auth:Auth.Class = new Auth.Class( context );
-
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
-
-				let username:string = "myUser@user.com";
-				let password:string = "myAwesomePassword";
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				let spies:any = {
-					success: ( _auth:Auth.Class, credentials:BasicCredentials.Class ):void => {
-						expect( _auth.isAuthenticated() ).toBe( true );
-
-						expect( credentials.username ).toEqual( username );
-						expect( credentials.password ).toEqual( password );
-
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					fail: ( error ):void => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-				// Expected behavior
-				let auth01:Auth.Class = new Auth.Class( context );
-				promise = auth01.authenticateUsing( Auth.Method.BASIC, username, password );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:BasicCredentials.Class ):void => {
-					spies.success( auth01, credentials );
-				} ) );
-
-				// Wrong parameters
-				let auth02:Auth.Class = new Auth.Class( context );
-				promise = auth02.authenticateUsing( Auth.Method.BASIC as any, {} as any );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				// Nonexistent authentication type
-				let auth03:Auth.Class = new Auth.Class( context );
-				promise = auth03.authenticateUsing( "Error" as any, username, password );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 2 );
-					done();
-				}, done.fail );
-			} );
+			), ():void => {} );
 
 			it( hasSignature(
 				"Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
@@ -747,69 +659,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					{ name: "password", type: "string" },
 				],
 				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
-			), ( done:DoneFn ):void => {
-				let auth:Auth.Class = new Auth.Class( context );
-
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
-
-				let date:Date = new Date();
-				date.setDate( date.getDate() + 1 );
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let spies:any = {
-					success: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
-						expect( credentials.key ).toEqual( "token-value" );
-
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( credentials.user ).toBe( _auth.authenticatedUser );
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					fail: ( error ):void => {
-						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-				spyOn( TokenAuthenticator.Class.prototype, "authenticate" ).and.callFake( ():Promise<TokenCredentials.Class> => {
-					return Promise.resolve( Resource.Factory.createFrom( {
-						key: "token-value",
-						expirationTime: date,
-						user: PersistedUser.Factory.decorate( {
-							_etag: "\"1-123445\"",
-							name: "My User Name",
-						}, context.documents ),
-					} ) );
-				} );
-
-				// Expected behavior
-				let auth01:Auth.Class = new Auth.Class( context );
-				promise = auth01.authenticateUsing( Auth.Method.TOKEN, "myUser@user.con", "myAwesomePassword" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
-					spies.success( auth01, credentials );
-				} ) );
-
-				// Wrong parameters
-				let auth02:Auth.Class = new Auth.Class( context );
-				promise = auth02.authenticateUsing( Auth.Method.TOKEN, {} as any );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				// Nonexistent authentication method
-				let auth03:Auth.Class = new Auth.Class( context );
-				promise = auth03.authenticateUsing( "Error" as any, "myUser@user.con", "myAwesomePassword" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 2 );
-					done();
-				}, done.fail );
-			} );
+			), ():void => {} );
 
 			it( hasSignature(
 				"Authenticates the user with a `Carbon.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
@@ -817,128 +667,349 @@ describe( module( "Carbon/Auth" ), ():void => {
 					{ name: "token", type: "Carbon.Auth.TokenCredentials.Class" },
 				],
 				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"ETag": "1234567890",
-						"Content-Location": "http://example.com/users/my-user/",
-					},
-					responseText: `[ {
-						"@id": "http://example.com/users/my-user/",
-						"@graph": [ {
-							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ NS.CS.Class.User }" ],
-							"${ NS.CS.Predicate.namae }": [ {
-								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
-							} ],
-							"${ NS.CS.Predicate.credentials }": [ {
-								"@id": "http://example.com/.system/credentials/my-user-credentials/"
-							} ]
-						} ]
-					} ]`,
+			), ():void => {} );
+
+
+			let context:AbstractContext;
+			beforeEach( ():void => {
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "https://example.com/";
+				};
+				context.setSetting( "users.container", "users/" );
+				context.setSetting( "system.container", ".system/" );
+				context.setSetting( "system.security.container", "security/" );
+			} );
+
+			it( "should exists", ():void => {
+				expect( Auth.Class.prototype.authenticateUsing ).toBeDefined();
+				expect( Auth.Class.prototype.authenticateUsing ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should reject if invalid method", ( done:DoneFn ):void => {
+				const auth:Auth.Class = new Auth.Class( context );
+
+				auth
+					.authenticateUsing( "Error" as any, "username", "password" )
+					.then( () => {
+						done.fail( "Should not resolve" );
+					} )
+					.catch( error => {
+						expect( () => { throw error; } ).toThrowError( Errors.IllegalArgumentError, "Unsupported authentication method \"Error\"" );
+
+						done();
+					} )
+				;
+			} );
+
+
+			describe( "When BASIC method", ():void => {
+
+				it( "should get authenticated user with `Users` class", ( done:DoneFn ):void => {
+					const auth:Auth.Class = new Auth.Class( context );
+
+					const spy:jasmine.Spy = spyOn( auth.users, "get" )
+						.and.returnValue( Promise.reject( null ) );
+
+					auth
+						.authenticateUsing( Auth.Method.BASIC, "username", "password" )
+						.then( () => {
+							done.fail( "Should not resolve" );
+						} )
+						.catch( error => {
+							if( error ) done.fail( error );
+
+							expect( spy ).toHaveBeenCalledWith( "me/", jasmine.any( Object ) );
+
+							done();
+						} )
+					;
 				} );
-				let auth01:Auth.Class = new Auth.Class( context );
-				let auth02:Auth.Class = new Auth.Class( context );
 
-				expect( auth01.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
-				expect( auth01.isAuthenticated() ).toBe( false );
+				it( "should store authenticated user", ( done:DoneFn ):void => {
+					const auth:Auth.Class = new Auth.Class( context );
+
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate(
+						context.documents.getPointer( "https://example.com/users/a-user/" ),
+						context.documents
+					);
+					spyOn( auth.users, "get" )
+						.and.returnValue( Promise.resolve( [ user, null ] ) );
+
+					auth
+						.authenticateUsing( Auth.Method.BASIC, "username", "password" )
+						.then( () => {
+							expect( auth.authenticatedUser ).toBe( user );
+
+							done();
+						} )
+						.catch( done.fail )
+					;
+				} );
+
+				it( "should return the credentials", ( done:DoneFn ):void => {
+					const auth:Auth.Class = new Auth.Class( context );
+
+					spyOn( auth.users, "get" )
+						.and.returnValue( Promise.resolve( [ null, null ] ) );
+
+					auth
+						.authenticateUsing( Auth.Method.BASIC, "username", "password" )
+						.then( ( credentials ) => {
+							expect( credentials ).toEqual( jasmine.any( BasicCredentials.Class ) );
+							expect( credentials.username ).toBe( "username" );
+							expect( credentials.password ).toBe( "password" );
+
+							done();
+						} )
+						.catch( done.fail )
+					;
+				} );
+
+			} );
+
+			describe( "When TOKEN method and username/password", ():void => {
+
+				it( "should authenticate with the TokenAuthenticator", ( done:DoneFn ):void => {
+					const spy:jasmine.Spy = spyOn( TokenAuthenticator.Class.prototype, "authenticate" )
+						.and.returnValue( Promise.reject( null ) );
+
+					const auth:Auth.Class = new Auth.Class( context );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, "username", "password" )
+						.then( () => {
+							done.fail( "Should not resolve" );
+						} )
+						.catch( error => {
+							if( error ) done.fail( error );
+
+							const token:BasicToken.Class = new BasicToken.Class( "username", "password" );
+							expect( spy ).toHaveBeenCalledWith( token );
+
+							done();
+						} )
+					;
+				} );
+
+				it( "should return the credentials", ( done:DoneFn ):void => {
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+						user: PersistedUser.Factory.decorate( {
+							_resolved: true,
+							_etag: "\"1-123445\"",
+							name: "My User Name",
+						}, context.documents ),
+					} );
+
+					spyOn( TokenAuthenticator.Class.prototype, "authenticate" )
+						.and.returnValue( Promise.resolve( credentials ) );
+
+					const auth:Auth.Class = new Auth.Class( context );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, "username", "password" )
+						.then( ( returned ) => {
+							expect( returned ).toBe( credentials );
+
+							done();
+						} )
+						.catch( done.fail )
+					;
+				} );
+
+				it( "should get authenticated user when no valid user in credentials", ( done:DoneFn ):void => {
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+					} );
+
+					spyOn( TokenAuthenticator.Class.prototype, "authenticate" )
+						.and.returnValue( Promise.resolve( credentials ) );
+					spyOn( TokenAuthenticator.Class.prototype, "addAuthentication" )
+						.and.returnValue( null );
+
+					const auth:Auth.Class = new Auth.Class( context );
+
+					const spy:jasmine.Spy = spyOn( auth.users, "get" )
+						.and.returnValue( Promise.reject( null ) );
 
 
-				let date:Date;
-				let token:TokenCredentials.Class;
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let spies:any = {
-					success01: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
-						expect( credentials.key ).toEqual( token.key );
-						expect( _auth.isAuthenticated() ).toBe( true );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, "username", "password" )
+						.then( () => {
+							done.fail( "Should not resolve" );
+						} )
+						.catch( ( error ) => {
+							if( error ) done.fail( error );
 
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( credentials.user ).toBe( _auth.authenticatedUser );
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					success02: ( _auth:Auth.Class, credentials:TokenCredentials.Class ):void => {
-						expect( credentials.key ).toEqual( token.key );
-						expect( _auth.isAuthenticated() ).toBe( true );
+							expect( spy ).toHaveBeenCalledWith( "me/", jasmine.any( Object ) );
 
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( credentials.user ).toBe( _auth.authenticatedUser );
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					fail: ( error ):void => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
-					},
-				};
-				let spySuccess01:jasmine.Spy = spyOn( spies, "success01" ).and.callThrough();
-				let spySuccess02:jasmine.Spy = spyOn( spies, "success02" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+							done();
+						} )
+					;
+				} );
 
-				// Expected behavior
-				date = new Date();
-				date.setDate( date.getDate() + 1 );
-				token = <any> {
-					expirationTime: date,
-					id: "_:BlankNode",
-					key: "dG9rZW4tdmFsdWU=",
-					types: [ NS.CS.Class.Token ],
-				};
-				promise = auth01.authenticateUsing( Auth.Method.TOKEN, token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
-					spies.success01( auth01, credentials );
-				} ) );
+				it( "should store authenticated user", ( done:DoneFn ):void => {
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+					} );
 
-				// Expected behavior. If expirationDate is a string the method parse it to a Date object
-				date = new Date();
-				date.setDate( date.getDate() + 1 );
-				let getFromStorage:Function = ():Object => {
-					let storedToken:any = {
-						expirationTime: date.toISOString(),
-						id: "_:BlankNode",
-						key: "dG9rZW4tdmFsdWU=",
-						types: [ NS.CS.Class.Token ],
-					};
-					return JSON.parse( JSON.stringify( storedToken ) );
-				};
-				promise = auth02.authenticateUsing( Auth.Method.TOKEN, <TokenCredentials.Class> getFromStorage() );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
-					spies.success02( auth01, credentials );
-				} ) );
+					spyOn( TokenAuthenticator.Class.prototype, "authenticate" )
+						.and.returnValue( Promise.resolve( credentials ) );
+					spyOn( TokenAuthenticator.Class.prototype, "addAuthentication" )
+						.and.returnValue( null );
 
-				// ExpirationDate has been reached
-				let auth03:Auth.Class = new Auth.Class( context );
-				date = new Date();
-				date.setDate( date.getDate() - 1 );
-				token = <any> {
-					expirationTime: date,
-					id: "_:BlankNode",
-					key: "dG9rZW4tdmFsdWU=",
-					types: [ NS.CS.Class.Token ],
-				};
-				promise = auth03.authenticateUsing( Auth.Method.TOKEN, token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+					const auth:Auth.Class = new Auth.Class( context );
 
-				// Wrong parameters
-				promise = auth03.authenticateUsing( Auth.Method.TOKEN, {} as any );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
 
-				// Nonexistent authentication method
-				promise = auth03.authenticateUsing( "Error" as any, token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+					const user:PersistedUser.Class = PersistedUser.Factory.decorate(
+						context.documents.getPointer( "https://example.com/users/a-user/" ),
+						context.documents
+					);
+					spyOn( auth.users, "get" )
+						.and.returnValue( Promise.resolve( [ user, null ] ) );
 
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess01.calls.count() ).toBe( 1 );
-					expect( spySuccess02.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 3 );
-					done();
-				}, done.fail );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, "username", "password" )
+						.then( () => {
+							expect( auth.authenticatedUser ).toBe( user );
+
+							done();
+						} )
+						.catch( done.fail )
+					;
+				} );
+
+			} );
+
+			describe( "When TOKEN method and credentials", ():void => {
+
+				it( "should reject when invalid token credentials", ( done:DoneFn ):void => {
+					const auth:Auth.Class = new Auth.Class( context );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, {} as any )
+						.then( () => {
+							done.fail( "Should not resolve" );
+						} )
+						.catch( error => {
+							expect( () => { throw error; } ).toThrowError( Errors.IllegalArgumentError, "The token credentials provided in not valid." );
+
+							done();
+						} )
+					;
+				} );
+
+				it( "should authenticate with the TokenAuthenticator", ( done:DoneFn ):void => {
+					const spy:jasmine.Spy = spyOn( TokenAuthenticator.Class.prototype, "authenticate" )
+						.and.returnValue( Promise.reject( null ) );
+
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+						user: PersistedUser.Factory.decorate( {
+							_resolved: true,
+							_etag: "\"1-123445\"",
+							name: "My User Name",
+						}, context.documents ),
+					} );
+
+					const auth:Auth.Class = new Auth.Class( context );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, credentials )
+						.then( () => {
+							done.fail( "Should not resolve" );
+						} )
+						.catch( error => {
+							if( error ) done.fail( error );
+
+							expect( spy ).toHaveBeenCalledWith( credentials );
+
+							done();
+						} )
+					;
+				} );
+
+				it( "should return the credentials", ( done:DoneFn ):void => {
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+						user: PersistedUser.Factory.decorate( {
+							_resolved: true,
+							_etag: "\"1-123445\"",
+							name: "My User Name",
+						}, context.documents ),
+					} );
+
+					const auth:Auth.Class = new Auth.Class( context );
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, credentials )
+						.then( ( returned ) => {
+							expect( returned ).toBe( credentials );
+
+							done();
+						} )
+						.catch( done.fail )
+					;
+				} );
+
+				it( "should store authenticated user", ( done:DoneFn ):void => {
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+						user: PersistedUser.Factory.decorate(
+							context.documents.getPointer( "https://example.com/users/a-user/" ),
+							context.documents
+						),
+					} );
+
+					spyOn( TokenAuthenticator.Class.prototype, "authenticate" )
+						.and.returnValue( Promise.resolve( credentials ) );
+					spyOn( TokenAuthenticator.Class.prototype, "addAuthentication" )
+						.and.returnValue( null );
+
+					const auth:Auth.Class = new Auth.Class( context );
+
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, credentials )
+						.then( () => {
+							expect( auth.authenticatedUser ).toBe( credentials.user );
+
+							done();
+						} )
+						.catch( done.fail )
+					;
+				} );
+
+				it( "should get authenticated user when no valid user in credentials", ( done:DoneFn ):void => {
+					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+						key: "token-value",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
+					} );
+
+					spyOn( TokenAuthenticator.Class.prototype, "addAuthentication" )
+						.and.returnValue( null );
+
+					const auth:Auth.Class = new Auth.Class( context );
+
+					const spy:jasmine.Spy = spyOn( auth.users, "get" )
+						.and.returnValue( Promise.reject( null ) );
+
+
+					auth
+						.authenticateUsing( Auth.Method.TOKEN, credentials )
+						.then( () => {
+							done.fail( "Should not resolve" );
+						} )
+						.catch( ( error ) => {
+							if( error ) done.fail( error );
+
+							expect( spy ).toHaveBeenCalledWith( "me/", jasmine.any( Object ) );
+
+							done();
+						} )
+					;
+				} );
+
 			} );
 
 		} );
