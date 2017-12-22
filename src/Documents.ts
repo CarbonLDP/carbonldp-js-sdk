@@ -727,11 +727,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				const eTag:string = HTTP.Response.Util.getETag( response );
 				if( eTag === null ) throw new HTTP.Errors.BadResponseError( "The response doesn't contain an ETag", response );
 
+				let targetURI:string = uri;
 				const locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
-				if( ! locationHeader || locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response must contain one Content-Location header.", response );
+				if( locationHeader ) {
+					if( ! locationHeader || locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response must contain one Content-Location header.", response );
 
-				const targetURI:string = "" + locationHeader;
-				if( ! targetURI ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+					const locationString:string = "" + locationHeader;
+					if( ! locationString ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+					targetURI = locationString;
+				}
 
 				const rdfDocument:RDF.Document.Class = this.getRDFDocument( targetURI, rdfDocuments, response );
 				if( rdfDocument === null ) throw new HTTP.Errors.BadResponseError( "No document was returned.", response );

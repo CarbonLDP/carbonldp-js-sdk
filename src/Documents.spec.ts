@@ -806,7 +806,6 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 200,
 						responseHeaders: {
 							"ETag": "162458126348712643",
-							"Content-Location": "https://example.com/resource/",
 						},
 						responseText: `{
 							"@id": "https://example.com/resource/",
@@ -933,6 +932,74 @@ describe( module( "Carbon/Documents" ), ():void => {
 							})();
 
 						})();
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should retrieve document of content-location header", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "GET" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"ETag": "162458126348712643",
+							"Content-Location": "https://example.com/another-resource/",
+						},
+						responseText: `{
+							"@id": "https://example.com/another-resource/",
+							"@graph": [
+								{
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#string": [ { "@value": "Document Resource" } ]
+								}
+							]
+						}`,
+					} );
+
+					context.extendObjectSchema( {
+						"ex": "https://example.com/ns#",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
+						"string": {
+							"@id": "ex:string",
+							"@type": "xsd:string",
+						},
+						"date": {
+							"@id": "ex:date",
+							"@type": "xsd:dateTime",
+						},
+						"numberList": {
+							"@id": "ex:numberList",
+							"@type": "xsd:integer",
+							"@container": "@list",
+						},
+						"languageMap": {
+							"@id": "ex:languageMap",
+							"@container": "@language",
+						},
+						"pointer": {
+							"@id": "ex:pointer",
+							"@type": "@id",
+						},
+						"pointerList": {
+							"@id": "ex:pointerList",
+							"@type": "@id",
+							"@container": "@list",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					} );
+
+					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
+						expect( document ).toBeDefined();
+						expect( Utils.isObject( document ) ).toEqual( true );
+
+						expect( response ).toBeDefined();
+						expect( Utils.isObject( response ) ).toEqual( true );
+
+						expect( document.id ).toBe( "https://example.com/another-resource/" );
+						expect( document[ "string" ] ).toBe( "Document Resource" );
 
 						done();
 					} ).catch( done.fail );
