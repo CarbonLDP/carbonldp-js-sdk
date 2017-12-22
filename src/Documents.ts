@@ -730,7 +730,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				let targetURI:string = uri;
 				const locationHeader:HTTP.Header.Class = response.getHeader( "Content-Location" );
 				if( locationHeader ) {
-					if( ! locationHeader || locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response must contain one Content-Location header.", response );
+					if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response must contain one Content-Location header.", response );
 
 					const locationString:string = "" + locationHeader;
 					if( ! locationString ) throw new HTTP.Errors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );

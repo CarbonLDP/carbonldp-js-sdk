@@ -9995,7 +9995,7 @@ var Class = (function () {
             var targetURI = uri;
             var locationHeader = response.getHeader("Content-Location");
             if (locationHeader) {
-                if (!locationHeader || locationHeader.values.length !== 1)
+                if (locationHeader.values.length !== 1)
                     throw new HTTP.Errors.BadResponseError("The response must contain one Content-Location header.", response);
                 var locationString = "" + locationHeader;
                 if (!locationString)
