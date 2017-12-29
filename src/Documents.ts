@@ -1,4 +1,4 @@
-import { QueryClause } from "sparqler/Clauses";
+import { QueryClause } from "sparqler/clauses";
 import { BindToken, ConstructToken, IRIToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";

@@ -1,4 +1,4 @@
-import { QueryClause } from "sparqler/Clauses";
+import { QueryClause } from "sparqler/clauses";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";

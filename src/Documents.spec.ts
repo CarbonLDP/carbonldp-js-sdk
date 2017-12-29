@@ -1,4 +1,4 @@
-import { QueryClause } from "sparqler/Clauses";
+import { QueryClause } from "sparqler/clauses";
 
 import * as TokensModule from "sparqler/tokens";
 import { BindToken, ConstructToken, FilterToken, IRIToken, LimitToken, LiteralToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, PrefixToken, QueryToken, SelectToken, SubjectToken, ValuesToken, VariableToken } from "sparqler/tokens";
