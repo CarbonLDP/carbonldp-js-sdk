@@ -10160,6 +10160,8 @@ var Class = (function () {
                 .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
                 .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
                 .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
+                if (!documentMetadata)
+                    return;
                 var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument];
                 var eTag = documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag];
                 if (relatedDocument._etag === void 0)

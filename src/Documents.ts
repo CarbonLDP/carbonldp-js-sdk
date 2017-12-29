@@ -937,6 +937,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
 				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
 				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
+					if( ! documentMetadata ) return;
+
 					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ];
 					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ];
 
