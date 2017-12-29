@@ -31,7 +31,7 @@
     "@types/jasmine-ajax": "^3.1.36",
     "@types/nock": "^8.2.1",
     "@types/node": "^8.0.31",
-    "@types/sockjs-client": "^1.0.32",
+    "@types/sockjs-client": "1.0.32",
     "@types/webpack": "^3.0.12",
     "@types/webpack-env": "^1.13.1",
     "awesome-typescript-loader": "^3.0.4-rc.0",

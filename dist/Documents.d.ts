@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { QueryClause } from "sparqler/Clauses";
+import { QueryClause } from "sparqler/clauses";
 import * as AccessPoint from "./AccessPoint";
 import Context from "./Context";
 import * as FreeResources from "./FreeResources";
