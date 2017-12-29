@@ -9,7 +9,10 @@ export interface Options {
     timeout?: number;
     request?: XMLHttpRequest;
 }
-export interface ContainerRetrievalPreferences {
+export interface GETOptions extends Options {
+    ensureLatest?: boolean;
+}
+export interface RetrievalPreferences {
     include?: string[];
     omit?: string[];
 }
@@ -43,11 +46,12 @@ export declare class Util {
     static getHeader(headerName: string, requestOptions: Options, initialize?: boolean): Header.Class;
     static setAcceptHeader(accept: string, requestOptions: Options): Options;
     static setContentTypeHeader(contentType: string, requestOptions: Options): Options;
-    static setIfMatchHeader(etag: string, requestOptions: Options): Options;
+    static setIfMatchHeader(eTag: string, requestOptions: Options): Options;
     static setIfNoneMatchHeader(eTag: string, requestOptions: Options): Options;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: Options): Options;
-    static setPreferredRetrievalResource(typeOfRequest: "Created" | "Modified", requestOptions: Options): Options;
-    static setContainerRetrievalPreferences(preferences: ContainerRetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
+    static setPreferredRetrieval(retrievalType: "representation" | "minimal", requestOptions: Options): Options;
+    static setRetrievalPreferences(preferences: RetrievalPreferences, requestOptions: Options, returnRepresentation?: boolean): Options;
     static setSlug(slug: string, requestOptions: Options): Options;
-    static isOptions(object: Object): boolean;
+    static isOptions(object: Object): object is Options;
+    static cloneOptions(options: Options): Options;
 }

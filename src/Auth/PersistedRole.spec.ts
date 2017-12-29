@@ -24,7 +24,6 @@ import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Pointer from "./../Pointer";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
@@ -99,15 +98,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			), ():void => {} );
 
 		} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"listUsers",
-			"Retrieves an array of unresolved pointers for all the users of the role.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-			],
-			{ type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
-		), ():void => {} );
 
 		describe( method(
 			OBLIGATORY,
@@ -202,7 +192,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				name: null,
 				users: null,
 				createChild: ():void => {},
-				listUsers: ():void => {},
 				getUsers: ():void => {},
 				addUser: ():void => {},
 				addUsers: ():void => {},
@@ -226,10 +215,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			delete object.createChild;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
 			object.createChild = ():void => {};
-
-			delete object.listUsers;
-			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
-			object.listUsers = ():void => {};
 
 			delete object.getUsers;
 			expect( PersistedRole.Factory.hasClassProperties( object ) ).toBe( false );
@@ -256,7 +241,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.Class` object", [
-				{ name: "object", type: "Object" },
+				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -271,7 +256,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				name: null,
 				users: null,
 				createChild: ():void => {},
-				listUsers: ():void => {},
 				getUsers: ():void => {},
 				addUser: ():void => {},
 				addUsers: ():void => {},
@@ -354,8 +338,8 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			), ():void => {
 
 				it( isDefined(), ():void => {
-					expect( role.listUsers ).toBeDefined();
-					expect( Utils.isFunction( role.listUsers ) ).toBe( true );
+					expect( role.createChild ).toBeDefined();
+					expect( Utils.isFunction( role.createChild ) ).toBe( true );
 				} );
 
 				it( hasSignature(
@@ -415,32 +399,6 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"listUsers",
-				"Retrieves an array of unresolved pointers for all the users of the role.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-				],
-				{ type: "Promise<[ Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {
-				expect( role.listUsers ).toBeDefined();
-				expect( Utils.isFunction( role.listUsers ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( roles, "listUsers" );
-
-				//noinspection JSIgnoredPromiseFromCall
-				role.listUsers();
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
-
-				let options:HTTP.Request.Options = { timeout: 5050 };
-				//noinspection JSIgnoredPromiseFromCall
-				role.listUsers( options );
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
-
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
-				expect( () => role.listUsers() ).toThrowError( Errors.IllegalStateError );
-			} );
-
 			describe( method(
 				INSTANCE,
 				"getUsers"
@@ -464,42 +422,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 					//noinspection JSIgnoredPromiseFromCall
 					role.getUsers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
 
 					let options:HTTP.Request.Options = { timeout: 5050 };
 					//noinspection JSIgnoredPromiseFromCall
 					role.getUsers( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options, undefined );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
 				} );
 
-				it( hasSignature(
-					"Retrieves an array of resolved pointers for the users of the role, in accordance of the retrievalPreferences provided.", [
-						{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-					],
-					{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					let spy:jasmine.Spy = spyOn( roles, "getUsers" );
-
-					//noinspection JSIgnoredPromiseFromCall
-					role.getUsers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined, undefined );
-
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-					//noinspection JSIgnoredPromiseFromCall
-					role.getUsers( retrievalPreferences );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", retrievalPreferences, undefined );
-
-					let options:HTTP.Request.Options = { timeout: 5050 };
-					//noinspection JSIgnoredPromiseFromCall
-					role.getUsers( retrievalPreferences, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", retrievalPreferences, options );
-
-				} );
 			} );
 
 			it( hasMethod(

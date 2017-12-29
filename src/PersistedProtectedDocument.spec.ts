@@ -237,6 +237,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				jasmine.Ajax.stubRequest( "http://example.com/resource/~acl/" ).andReturn( {
 					responseHeaders: {
 						"ETag": `"1234567890"`,
+						"Content-Location": "http://example.com/resource/~acl/",
 					},
 					responseText: `[
 						{

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = require("./../NS");
 var VolatileResource = require("./VolatileResource");
-var Utils = require("./../Utils");
 exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
 exports.SCHEMA = {
     "documentsMetadata": {
@@ -16,7 +15,6 @@ var Factory = (function () {
     }
     Factory.is = function (object) {
         return VolatileResource.Factory.is(object)
-            && Utils.hasProperty(object, "documentsMetadata")
             && object.hasType(exports.RDF_CLASS);
     };
     return Factory;

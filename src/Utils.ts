@@ -28,11 +28,11 @@ function isString( value:any ):value is string {
 	return typeof value === "string" || value instanceof String;
 }
 
-function isBoolean( value:any ):boolean {
+function isBoolean( value:any ):value is boolean {
 	return typeof value === "boolean";
 }
 
-function isNumber( value:any ):boolean {
+function isNumber( value:any ):value is number {
 	return typeof value === "number" || value instanceof Number;
 }
 
@@ -46,7 +46,7 @@ function isDouble( value:any ):boolean {
 	return value % 1 !== 0;
 }
 
-function isDate( date:any ):boolean {
+function isDate( date:any ):date is Date {
 	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
@@ -132,6 +132,18 @@ export function promiseMethod<T>( fn:() => T | Promise<T> ):Promise<T> {
 	return new Promise<T>( resolve => resolve( fn() ) );
 }
 
+export function mapTupleArray<T, W>( tuples:[ T, W ][] ):[ T[], W[] ] {
+	const firsts:T[] = [];
+	const seconds:W[] = [];
+
+	tuples.forEach( tuple => {
+		firsts.push( tuple[ 0 ] );
+		seconds.push( tuple[ 1 ] );
+	} );
+
+	return [ firsts, seconds ];
+}
+
 class A {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];
@@ -201,20 +213,6 @@ class O {
 
 	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
 		return internalAreEqual( object1, object2, config, [ object1 ], [ object2 ], ignore );
-	}
-
-	static shallowUpdate<T extends object>( target:object, source:T ):T {
-		let keys:string[] = A.joinWithoutDuplicates( Object.keys( source ), Object.keys( target ) );
-
-		for( let key of keys ) {
-			if( hasProperty( source, key ) ) {
-				target[ key ] = source[ key ];
-			} else {
-				delete target[ key ];
-			}
-		}
-
-		return target as T;
 	}
 
 	static areShallowlyEqual( object1:Object, object2:Object ):boolean {

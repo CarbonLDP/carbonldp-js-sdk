@@ -1,10 +1,7 @@
-import * as Errors from "./../Errors";
 import * as Header from "./Header";
 import Method from "./Method";
-import * as NS from "./../NS";
 import Parser from "./Parser";
 import Response from "./Response";
-
 import * as Utils from "./../Utils";
 
 import { RequestOptions, ClientRequest, IncomingMessage } from "http";
@@ -17,7 +14,11 @@ export interface Options {
 	request?:XMLHttpRequest;
 }
 
-export interface ContainerRetrievalPreferences {
+export interface GETOptions extends Options {
+	ensureLatest?:boolean;
+}
+
+export interface RetrievalPreferences {
 	include?:string[];
 	omit?:string[];
 }
@@ -93,9 +94,8 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 			let requestOptions:RequestOptions & { withCredentials:boolean } = {
 				protocol: parsedURL.protocol,
-				host: parsedURL.host,
 				hostname: parsedURL.hostname,
-				port: parseFloat( parsedURL.port ),
+				port: parsedURL.port,
 				path: parsedURL.path,
 				method: method,
 				headers: {},
@@ -245,13 +245,17 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setIfMatchHeader( etag:string, requestOptions:Options ):Options {
+	static setIfMatchHeader( eTag:string, requestOptions:Options ):Options {
+		if( ! eTag ) return;
+
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "if-match", new Header.Class( etag ) );
+		headers.set( "if-match", new Header.Class( eTag ) );
 		return requestOptions;
 	}
 
 	static setIfNoneMatchHeader( eTag:string, requestOptions:Options ):Options {
+		if( ! eTag ) return;
+
 		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
 		headers.set( "if-none-match", new Header.Class( eTag ) );
 		return requestOptions;
@@ -264,26 +268,14 @@ export class Util {
 		return requestOptions;
 	}
 
-	static setPreferredRetrievalResource( typeOfRequest:"Created" | "Modified", requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:Options ):Options {
+		const prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 
-		let preferType:string;
-		switch( typeOfRequest ) {
-			case "Created":
-				preferType = NS.C.Class.CreatedResource;
-				break;
-			case "Modified":
-				preferType = NS.C.Class.ModifiedResource;
-				break;
-			default:
-				throw new Errors.IllegalArgumentError( `Invalid type of request: '${ typeOfRequest }'.` );
-		}
-
-		prefer.values.push( new Header.Value( `return=representation; ${ preferType }` ) );
+		prefer.values.push( new Header.Value( `return=${ retrievalType }` ) );
 		return requestOptions;
 	}
 
-	static setContainerRetrievalPreferences( preferences:ContainerRetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
+	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
 		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 		let representation:string = returnRepresentation ? "return=representation; " : "";
 
@@ -304,11 +296,23 @@ export class Util {
 		return requestOptions;
 	}
 
-	static isOptions( object:Object ):boolean {
+	static isOptions( object:Object ):object is Options {
 		return Utils.hasPropertyDefined( object, "headers" )
 			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
 			|| Utils.hasPropertyDefined( object, "timeout" )
 			|| Utils.hasPropertyDefined( object, "request" );
+	}
+
+	static cloneOptions( options:Options ):Options {
+		const clone:Options = {
+			...options,
+			headers: new Map(),
+		};
+
+		if( options.headers ) options.headers
+			.forEach( ( value, key ) => clone.headers.set( key, new Header.Class( value.values.slice() ) ) );
+
+		return clone;
 	}
 
 }

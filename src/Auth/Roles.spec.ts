@@ -15,7 +15,6 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
-import * as RetrievalPreferences from "./../RetrievalPreferences";
 import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
@@ -258,7 +257,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@id": "http://example.com/.system/roles/a-role/",
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/",
-						"@type": [ "http://example.com/ns#Role" ],
+						"@type": [
+							"${ NS.C.Class.Document }",
+							"http://example.com/ns#Role"
+						 ],
 						"${ NS.C.Predicate.accessPoint }": [ {
 							"@id": "https://dev.carbonldp.com/.system/roles/a-role/users/"
 						} ],
@@ -272,9 +274,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} ]`,
 				responseHeaders: {
 					"ETag": `"1234567890"`,
+					"Content-Location": "http://example.com/.system/roles/a-role/",
 				},
 			} );
-			context.documents.documentDecorators.set( "http://example.com/ns#Role", { decorator: PersistedRole.Factory.decorate, parameters: [ roles ] } );
+			context.documents.documentDecorators.set( "http://example.com/ns#Role", PersistedRole.Factory.decorate );
 
 			let spies:any = {
 				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
@@ -322,119 +325,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"listUsers",
-			"Retrieves an array of unresolved pointers for all the users of the specified role.", [
-				{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-			],
-			{ type: "Promise<[ Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( roles.listUsers ).toBeDefined();
-			expect( Utils.isFunction( roles.listUsers ) ).toBe( true );
-
-			jasmine.Ajax.stubRequest( "http://example.com/.system/roles/a-role/", null, "POST" ).andReturn( {
-				status: 200,
-				responseText: `{
-					"head": {
-						"vars": [
-							"accessPoint"
-						]
-					},
-					"results": {
-						"bindings": [
-							{
-								"accessPoint": {
-									"type": "uri",
-									"value": "http://example.com/.system/roles/a-role/users/"
-								}
-							}
-						]
-					}
-				}`,
-			} );
-			jasmine.Ajax.stubRequest( "http://example.com/.system/roles/a-role/users/", null, "GET" ).andReturn( {
-				status: 200,
-				responseText: `[ {
-					"@graph": [ {
-						"@id": "http://example.com/.system/roles/a-role/",
-						"${ NS.CS.Predicate.user }": [ {
-							"@id": "http://example.com/users/an-user/"
-						} ]
-					} ],
-					"@id": "http://example.com/.system/roles/a-role/"
-				}, {
-					"@graph": [ {
-						"@id": "http://example.com/.system/roles/a-role/users/",
-						"@type": [ "http://www.w3.org/ns/ldp#RDFSource", "http://www.w3.org/ns/ldp#DirectContainer", "http://www.w3.org/ns/ldp#Container" ],
-						"http://www.w3.org/ns/ldp#hasMemberRelation": [ {
-							"@id": "${ NS.CS.Predicate.user }"
-						} ],
-						"http://www.w3.org/ns/ldp#membershipResource": [ {
-							"@id": "http://example.com/.system/roles/a-role/"
-						} ]
-					} ],
-					"@id": "http://example.com/.system/roles/a-role/users/"
-				} ]`,
-			} );
-
-			roles.listUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
-				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "system.roles.container", "roles/" );
-
-				let spies:any = {
-					success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
-						expect( pointers ).toBeTruthy();
-						expect( pointers.length ).toBe( 1 );
-						expect( pointers[ 0 ].id ).toBe( "http://example.com/users/an-user/" );
-
-						expect( response ).toBeTruthy();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
-
-					},
-					error: function( error:Error ):void {
-						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-
-				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyCreate:jasmine.Spy = spyOn( context.documents, "listMembers" ).and.callThrough();
-
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let options:HTTP.Request.Options = {
-					timeout: 5555,
-				};
-
-				promise = roles.listUsers( "a-role/", options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
-
-				promise = roles.listUsers( "http://example.com/.system/roles/a-role/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
-
-				promise = roles.listUsers( "role-not-found/", options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.error ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
-					expect( spyError ).toHaveBeenCalledTimes( 1 );
-
-					expect( spyCreate ).toHaveBeenCalledTimes( 2 );
-					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", options );
-					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", undefined );
-					done();
-				} ).catch( done.fail );
-
-			} );
-
-		} );
-
-		describe( method(
+		xdescribe( method(
 			INSTANCE,
 			"getUsers"
 		), ():void => {
@@ -510,6 +401,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 								{
 									"@id": "http://example.com/.system/roles/a-role/users/",
 									"@type": [
+										"${ NS.C.Class.Document }",
 										"http://www.w3.org/ns/ldp#RDFSource",
 										"http://www.w3.org/ns/ldp#DirectContainer",
 										"http://www.w3.org/ns/ldp#Container"
@@ -532,6 +424,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/users/an-user/",
+									"@type": [ "${ NS.C.Class.Document }" ],
 									"http://www.w3.org/2001/vcard-rdf/3.0#email": [
 										{
 											"@value": "an-user@example.com"
@@ -613,77 +506,6 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", options, undefined );
 						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", undefined, undefined );
-						done();
-					} ).catch( done.fail );
-
-				} );
-
-			} );
-
-			it( hasSignature(
-				[ "T" ],
-				"Retrieves an array of resolved pointers for the users of the role, in accordance of the retrievalPreferences provided.", [
-					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-				],
-				// TODO: Change to `PersistedUser`
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				roles.getUsers( "http://example.com/.system/roles/a-role/" ).then( done.fail ).catch( ( stateError:Error ) => {
-					expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-					context.setSetting( "system.roles.container", "roles/" );
-
-					let spies:any = {
-						success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
-							expect( pointers ).toBeTruthy();
-							expect( pointers.length ).toBe( 1 );
-							expect( pointers[ 0 ].id ).toBe( "http://example.com/users/an-user/" );
-							expect( pointers[ 0 ].isResolved() ).toBe( true );
-
-							expect( response ).toBeTruthy();
-							expect( response instanceof HTTP.Response.Class ).toBe( true );
-
-						},
-						error: function( error:Error ):void {
-							expect( error instanceof Errors.IllegalArgumentError );
-						},
-					};
-
-					let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
-					let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-					let spyCreate:jasmine.Spy = spyOn( context.documents, "getMembers" ).and.callThrough();
-
-					let promises:Promise<any>[] = [];
-					let promise:Promise<any>;
-					let options:HTTP.Request.Options = {
-						timeout: 5555,
-					};
-					let retrievalPreferences:RetrievalPreferences.Class = {
-						limit: 10,
-						offset: 0,
-						orderBy: [ { "@id": "http://example.com/ns#string", "@type": "string" } ],
-					};
-
-					promise = roles.getUsers( "a-role/", retrievalPreferences, options );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( spies.success ) );
-
-					promise = roles.getUsers( "http://example.com/.system/roles/a-role/", retrievalPreferences );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.then( spies.success ) );
-
-					promise = roles.getUsers( "role-not-found/", retrievalPreferences );
-					expect( promise instanceof Promise ).toBe( true );
-					promises.push( promise.catch( spies.error ) );
-
-					Promise.all( promises ).then( ():void => {
-						expect( spySuccess ).toHaveBeenCalledTimes( 2 );
-						expect( spyError ).toHaveBeenCalledTimes( 1 );
-
-						expect( spyCreate ).toHaveBeenCalledTimes( 2 );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", retrievalPreferences, options );
-						expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/users/", retrievalPreferences, undefined );
 						done();
 					} ).catch( done.fail );
 

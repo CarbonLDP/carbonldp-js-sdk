@@ -63,8 +63,8 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 	} );
 
 	describe( interfaze(
-		"Carbon.HTTP.Request.ContainerRetrievalPreferences",
-		"Object used at `Carbon.HTTP.Request.Util.setContainerRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
+		"Carbon.HTTP.Request.RetrievalPreferences",
+		"Object used at `Carbon.HTTP.Request.Util.setRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
 	), ():void => {
 
 		it( hasProperty(
@@ -74,7 +74,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"Prefer URIs that indicates some specific information should be returned in the request's response."
 		), ():void => {
 			let include:string[] = [ "http://example.com/ns#Some-Prefer" ];
-			let preferences:Request.ContainerRetrievalPreferences = {};
+			let preferences:Request.RetrievalPreferences = {};
 
 			preferences.include = include;
 			expect( preferences.include ).toEqual( jasmine.any( Array ) );
@@ -88,7 +88,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"Prefer URIs that indicates some specific information should NOT be included in the request's response."
 		), ():void => {
 			let omit:string[] = [ "http://example.com/ns#Some-Prefer" ];
-			let preferences:Request.ContainerRetrievalPreferences = {};
+			let preferences:Request.RetrievalPreferences = {};
 
 			preferences.omit = omit;
 			expect( preferences.omit ).toEqual( jasmine.any( Array ) );
@@ -1218,38 +1218,33 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		it( hasMethod(
 			STATIC,
-			"setPreferredRetrievalResource",
-			"Set a Prefer header which indicates to the platform to retrieve the server resource in the same request.", [
-				{ name: "typeOfRequest", type: `"Created" | "Modified"`, description: "The type of the request, where to retrieve the resource, is been made." },
+			"setPreferredRetrieval",
+			"Set a Prefer header which indicates to the platform to type of retrieval to make.", [
+				{ name: "retrievalType", type: `"representation" | "minimal"`, description: `If "representation" is chosen the platform must retrieve the entire resource; otherwise when "minimal" is sent the minimal data will be returned generally an empty one.` },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 			],
 			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
-			expect( Request.Util.setPreferredRetrievalResource ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setPreferredRetrievalResource ) ).toBe( true );
+			expect( Request.Util.setPreferredRetrieval ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.setPreferredRetrieval ) ).toBe( true );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrievalResource( "Created", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
+			options = Request.Util.setPreferredRetrieval( "representation", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation" ) );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource" ) );
-
-			optionsWithHeaders = Request.Util.setPreferredRetrievalResource( "Created", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "return=representation; https://carbonldp.com/ns/v1/platform#CreatedResource" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
-
+			options = Request.Util.setPreferredRetrieval( "minimal", options );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=minimal" ) );
 
 			options = {
 				headers: new Map()
 					.set( "prefer", new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
 			};
-			options = Request.Util.setPreferredRetrievalResource( "Modified", options );
+			options = Request.Util.setPreferredRetrieval( "representation", options );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual(
 				new Header.Class(
 					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
-					"return=representation; https://carbonldp.com/ns/v1/platform#ModifiedResource"
+					"return=representation"
 				)
 			);
 		} );
@@ -1276,19 +1271,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		it( hasMethod(
 			STATIC,
-			"setContainerRetrievalPreferences",
+			"setRetrievalPreferences",
 			"Set a Prefer header with `return=representation` in an options object request.", [
-				{ name: "preference", type: "Carbon.HTTP.Request.ContainerRetrievalPreferences" },
+				{ name: "preference", type: "Carbon.HTTP.Request.RetrievalPreferences" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." },
 			],
 			{ type: "Carbon.HTTP.Request.Options" }
 		), ():void => {
-			expect( Request.Util.setContainerRetrievalPreferences ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setContainerRetrievalPreferences ) ).toBe( true );
+			expect( Request.Util.setRetrievalPreferences ).toBeDefined();
+			expect( Utils.isFunction( Request.Util.setRetrievalPreferences ) ).toBe( true );
 
-			let preferencesEmpty:Request.ContainerRetrievalPreferences = {};
-			let preferencesIncludeNormal:Request.ContainerRetrievalPreferences = {
+			let preferencesEmpty:Request.RetrievalPreferences = {};
+			let preferencesIncludeNormal:Request.RetrievalPreferences = {
 				include: [
 					NS.LDP.Class.PreferMinimalContainer,
 					NS.LDP.Class.PreferMembership,
@@ -1296,10 +1291,10 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 			let preferencesIncludeString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
 			let preferencesIncludeStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}"`;
-			let preferencesIncludeEmpty:Request.ContainerRetrievalPreferences = {
+			let preferencesIncludeEmpty:Request.RetrievalPreferences = {
 				include: [],
 			};
-			let preferencesOmitNormal:Request.ContainerRetrievalPreferences = {
+			let preferencesOmitNormal:Request.RetrievalPreferences = {
 				omit: [
 					NS.LDP.Class.PreferContainment,
 					NS.C.Class.PreferContainmentResources,
@@ -1308,10 +1303,10 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 			let preferencesOmitString:string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesOmitStringNoRepresentation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesOmitEmpty:Request.ContainerRetrievalPreferences = {
+			let preferencesOmitEmpty:Request.RetrievalPreferences = {
 				omit: [],
 			};
-			let preferencesFullNormal:Request.ContainerRetrievalPreferences = {
+			let preferencesFullNormal:Request.RetrievalPreferences = {
 				include: [
 					NS.LDP.Class.PreferMinimalContainer,
 					NS.LDP.Class.PreferMembership,
@@ -1324,32 +1319,32 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 			let preferencesFullString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
 			let preferencesFullStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesFullEmpty:Request.ContainerRetrievalPreferences = {
+			let preferencesFullEmpty:Request.RetrievalPreferences = {
 				include: [],
 				omit: [],
 			};
 
-			options = Request.Util.setContainerRetrievalPreferences( preferencesEmpty, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesEmpty, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
 
-			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeString );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitNormal, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitString );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
+			options = Request.Util.setRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
 
-			options = Request.Util.setContainerRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
+			options = Request.Util.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentation );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
+			options = Request.Util.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentation );
-			options = Request.Util.setContainerRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
+			options = Request.Util.setRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentation );
 
 		} );

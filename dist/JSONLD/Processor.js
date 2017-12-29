@@ -206,7 +206,7 @@ var Class = (function () {
             return schema.vocab + uri;
         }
         if (relativeTo.base)
-            RDF.URI.Util.resolve(schema.base, uri);
+            return RDF.URI.Util.resolve(schema.base, uri);
         return uri;
     };
     Class.expandLanguageMap = function (languageMap) {
