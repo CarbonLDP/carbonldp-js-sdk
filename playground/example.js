@@ -64,7 +64,7 @@
 
 			// carbon.auth.authenticate( "admin@carbonldp.com", "hello" ).then( () => {
 			Promise.resolve().then( () => {
-				return carbon.documents.getMembers( "container/" );
+				return carbon.documents.getMembers( "posts/", _ => _.withType( "None" ) );
 			} ).then( ( data ) => {
 				console.log( data );
 				done();
