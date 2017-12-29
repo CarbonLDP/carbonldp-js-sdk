@@ -23,7 +23,7 @@
   "dependencies": {
     "file-type": "^6.1.0",
     "sockjs-client": "^1.1.4",
-    "sparqler": "^0.3.0",
+    "sparqler": "0.3.0",
     "webstomp-client": "^1.2.0"
   }
 }
