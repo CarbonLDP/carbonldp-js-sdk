@@ -7799,14 +7799,14 @@ function off(event, onEvent, onError) {
 function one(event, onEvent, onError) {
     return this._documents.one(event, this.id, onEvent, onError);
 }
-function onDocumentCreated(onEvent, onError) {
-    return this._documents.onDocumentCreated(this.id, onEvent, onError);
+function onAccessPointCreated(onEvent, onError) {
+    return this._documents.onAccessPointCreated(this.id, onEvent, onError);
 }
 function onChildCreated(onEvent, onError) {
     return this._documents.onChildCreated(this.id, onEvent, onError);
 }
-function onAccessPointCreated(onEvent, onError) {
-    return this._documents.onAccessPointCreated(this.id, onEvent, onError);
+function onDocumentCreated(onEvent, onError) {
+    return this._documents.onDocumentCreated(this.id, onEvent, onError);
 }
 function onDocumentModified(onEvent, onError) {
     return this._documents.onDocumentModified(this.id, onEvent, onError);
