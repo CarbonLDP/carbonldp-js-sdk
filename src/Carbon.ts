@@ -60,7 +60,7 @@ export class Class extends AbstractContext.Class {
 
 	/* tslint:enable: variable-name */
 
-	static get version():string { return "1.0.0-alpha.5"; }
+	static get version():string { return "1.0.0-alpha.6"; }
 
 	// noinspection JSMethodCanBeStatic
 	get version():string { return Class.version; }

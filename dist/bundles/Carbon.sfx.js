@@ -10507,7 +10507,7 @@ var AddToken = (function () {
         this.triples = [];
     }
     AddToken.prototype.toString = function () {
-        return "Add { " + utils_1.joinPatterns(this.triples) + " . }.";
+        return "Add { " + utils_1.joinPatterns(this.triples) + ". }.";
     };
     return AddToken;
 }());
@@ -10518,7 +10518,7 @@ var DeleteToken = (function () {
         this.triples = [];
     }
     DeleteToken.prototype.toString = function () {
-        return "Delete { " + utils_1.joinPatterns(this.triples) + " . }.";
+        return "Delete { " + utils_1.joinPatterns(this.triples) + ". }.";
     };
     return DeleteToken;
 }());
@@ -12834,7 +12834,7 @@ var Class = (function (_super) {
         return _this;
     }
     Object.defineProperty(Class, "version", {
-        get: function () { return "1.0.0-alpha.5"; },
+        get: function () { return "1.0.0-alpha.6"; },
         enumerable: true,
         configurable: true
     });
