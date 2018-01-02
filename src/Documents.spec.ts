@@ -8708,10 +8708,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							`Add { ` +
 							`` + `<https://example.com/resource/> a <https://example.com/ns#NewType>. ` +
 							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 3". ` +
-							`` + `_:blank-node <https://example.com/ns#string> "string -1" ` +
+							`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
 							`}. ` +
 							`Delete { ` +
-							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1" ` +
+							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1". ` +
 							`}.` +
 							``
 						);
@@ -8795,10 +8795,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							`Add { ` +
 							`` + `<https://example.com/resource/> a <https://example.com/ns#NewType>. ` +
 							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 3". ` +
-							`` + `_:blank-node <https://example.com/ns#string> "string -1" ` +
+							`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
 							`}. ` +
 							`Delete { ` +
-							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1" ` +
+							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1". ` +
 							`}.` +
 							``
 						);
@@ -10261,10 +10261,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							`Add { ` +
 							`` + `<https://example.com/resource/> a <https://example.com/ns#NewType>. ` +
 							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 3". ` +
-							`` + `_:blank-node <https://example.com/ns#string> "string -1" ` +
+							`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
 							`}. ` +
 							`Delete { ` +
-							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1" ` +
+							`` + `<https://example.com/resource/#fragment> <https://example.com/ns#string> "string 1". ` +
 							`}.` +
 							``
 						);

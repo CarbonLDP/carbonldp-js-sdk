@@ -2476,12 +2476,12 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					`UpdateList resource:fragment <http://example.org/vocab#property2> 3..3 ( "s-1" "s-2" "s-3" ). ` +
 					`Add { ` +
 					`` + `resource:fragment <http://example.org/vocab#property1> "10"^^xsd:integer. ` +
-					`` + `_:blank-node <http://example.org/vocab#property2> "add string" ` +
+					`` + `_:blank-node <http://example.org/vocab#property2> "add string". ` +
 					`}. ` +
 					`Delete { ` +
 					`` + `<http://example.org/resource/> <http://example.org/vocab#property1> "string"; ` +
 					`` + `` + `<http://example.org/vocab#property2> (). ` +
-					`` + `_:blank-node <http://example.org/vocab#property1> "delete string" ` +
+					`` + `_:blank-node <http://example.org/vocab#property1> "delete string". ` +
 					`}.` +
 					``
 				);

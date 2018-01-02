@@ -58,7 +58,7 @@ export class AddToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Add { ${ joinPatterns( this.triples ) } . }.`;
+		return `Add { ${ joinPatterns( this.triples ) }. }.`;
 	}
 }
 
@@ -71,7 +71,7 @@ export class DeleteToken implements TokenNode {
 	}
 
 	toString():string {
-		return `Delete { ${ joinPatterns( this.triples ) } . }.`;
+		return `Delete { ${ joinPatterns( this.triples ) }. }.`;
 	}
 }
 
