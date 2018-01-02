@@ -4,9 +4,8 @@ var PersistedFragment = require("./PersistedFragment");
 var Factory = (function () {
     function Factory() {
     }
-    Factory.decorate = function (fragment, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        PersistedFragment.Factory.decorate(fragment, snapshot);
+    Factory.decorate = function (fragment) {
+        PersistedFragment.Factory.decorate(fragment);
         return fragment;
     };
     return Factory;

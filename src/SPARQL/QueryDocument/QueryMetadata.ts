@@ -9,6 +9,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	"target": {
 		"@id": NS.C.Predicate.target,
 		"@type": "@id",
+		"@container": "@set",
 	},
 };
 

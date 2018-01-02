@@ -8,6 +8,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
@@ -35,6 +36,7 @@ export declare class Class extends AbstractContext.Class {
     static HTTP: typeof HTTP;
     static JSONLD: typeof JSONLD;
     static LDP: typeof LDP;
+    static LDPatch: typeof LDPatch;
     static Messaging: typeof Messaging;
     static NamedFragment: typeof NamedFragment;
     static NS: typeof NS;

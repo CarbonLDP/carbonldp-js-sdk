@@ -1,4 +1,3 @@
-import { Url } from "url";
 import * as Utils from "../Utils";
 
 export interface SuiteDescriptor {

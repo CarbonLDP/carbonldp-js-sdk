@@ -24,6 +24,7 @@ reports/
 # IntelliJ
 .idea/workspace.xml
 .idea/dictionaries
+.idea/shelf
 # *.iml
 # *.iws
 

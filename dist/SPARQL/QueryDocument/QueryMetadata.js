@@ -7,6 +7,7 @@ exports.SCHEMA = {
     "target": {
         "@id": NS.C.Predicate.target,
         "@type": "@id",
+        "@container": "@set",
     },
 };
 var Factory = (function () {

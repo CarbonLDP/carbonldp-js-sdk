@@ -35,9 +35,8 @@ var Factory = (function () {
         return PersistedResource.Factory.hasClassProperties(object)
             && Fragment.Factory.hasClassProperties(object);
     };
-    Factory.decorate = function (fragment, snapshot) {
-        if (snapshot === void 0) { snapshot = {}; }
-        PersistedResource.Factory.decorate(fragment, snapshot);
+    Factory.decorate = function (fragment) {
+        PersistedResource.Factory.decorate(fragment);
         Object.defineProperties(fragment, {
             "addType": {
                 writable: false,

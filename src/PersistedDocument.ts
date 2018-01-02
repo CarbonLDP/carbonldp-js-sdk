@@ -60,7 +60,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 
 	save<T extends object>( requestOptions?:HTTP.Request.Options ):Promise<[ T & Class, HTTP.Response.Class ]>;
 
-	saveAndRefresh<T extends object>():Promise<[ T & Class, HTTP.Response.Class ]>;
+	saveAndRefresh<T extends object>():Promise<[ T & Class, HTTP.Response.Class[] ]>;
 
 	delete():Promise<HTTP.Response.Class>;
 
@@ -250,7 +250,7 @@ function save<T extends Class>( requestOptions?:HTTP.Request.Options ):Promise<[
 	return this._documents.save( this, requestOptions );
 }
 
-function saveAndRefresh<T extends Class>( this:T ):Promise<[ T, HTTP.Response.Class ]> {
+function saveAndRefresh<T extends Class>( this:T ):Promise<[ T, HTTP.Response.Class[] ]> {
 	return this._documents.saveAndRefresh<T>( this );
 }
 
@@ -433,25 +433,24 @@ export class Factory {
 			;
 	}
 
-	static create( uri:string, documents:Documents, snapshot:object = {} ):Class {
-		let document:Document.Class = Document.Factory.create();
-		document.id = uri;
-
-		return Factory.decorate( document, documents, snapshot );
+	static create( uri:string, documents:Documents ):Class {
+		return Factory.createFrom( {}, uri, documents );
 	}
 
-	static createFrom<T extends object>( object:T, uri:string, documents:Documents, snapshot:object = {} ):T & Class {
-		let document:T & Class = Factory.decorate<T>( object, documents, snapshot );
+	static createFrom<T extends object>( object:T, uri:string, documents:Documents ):T & Class {
+		let document:T & Class = Factory.decorate<T>( object, documents );
+
 		document.id = uri;
+		document._normalize();
 
 		return document;
 	}
 
-	static decorate<T extends object>( object:T, documents:Documents, snapshot:object = {} ):T & Class {
+	static decorate<T extends object>( object:T, documents:Documents ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
 		Document.Factory.decorate( object );
-		PersistedResource.Factory.decorate( object, snapshot );
+		PersistedResource.Factory.decorate( <T & Document.Class> object );
 		ServiceAwareDocument.Factory.decorate( <T & Document.Class> object, documents );
 		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument.Class> object );
 

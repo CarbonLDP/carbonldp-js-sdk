@@ -1,5 +1,17 @@
 import { QueryClause } from "sparqler/clauses";
-import { BindToken, ConstructToken, IRIToken, OptionalToken, PatternToken, PredicateToken, QueryToken, SelectToken, SubjectToken, TripleToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import {
+	BindToken,
+	ConstructToken,
+	IRIToken,
+	OptionalToken,
+	PatternToken,
+	PredicateToken,
+	QueryToken,
+	SelectToken,
+	SubjectToken,
+	ValuesToken,
+	VariableToken,
+} from "sparqler/tokens";
 
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -11,8 +23,12 @@ import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { createDestination, validateEventContext } from "./Messaging/Utils";
+import {
+	createDestination,
+	validateEventContext,
+} from "./Messaging/Utils";
 import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -27,10 +43,23 @@ import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
-import { QueryContext, QueryContextBuilder, QueryContextPartial, QueryDocumentBuilder, QueryDocumentsBuilder, QueryProperty } from "./SPARQL/QueryDocument";
-import { createPropertyPatterns, createTypesPattern } from "./SPARQL/QueryDocument/Utils";
+import {
+	QueryContext,
+	QueryContextBuilder,
+	QueryContextPartial,
+	QueryDocumentBuilder,
+	QueryDocumentsBuilder,
+	QueryProperty,
+} from "./SPARQL/QueryDocument";
+import {
+	createPropertyPatterns,
+	createTypesPattern,
+} from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
-import { mapTupleArray, promiseMethod } from "./Utils";
+import {
+	mapTupleArray,
+	promiseMethod,
+} from "./Utils";
 
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 
@@ -291,11 +320,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
 		if( typeof Blob !== "undefined" ) {
-			if( ! ( data instanceof Blob ) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
+			if( ! (data instanceof Blob) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
 			HTTP.Request.Util.setContentTypeHeader( (<Blob> data).type, requestOptions );
 
 		} else {
-			if( ! ( data instanceof Buffer ) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
+			if( ! (data instanceof Buffer) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
 			const fileType:( buffer:Buffer ) => { ext:string, mime:string } = require( "file-type" );
 
 			let bufferType:{ ext:string, mime:string } = fileType( <Buffer> data );
@@ -431,17 +460,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
+
 	save<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
-			if( ! persistedDocument.isPartial() ) {
-				HTTP.Request.Util.setPreferredRetrieval( "minimal", requestOptions );
-				return this.saveFullDocument( persistedDocument, requestOptions );
-			} else {
-				// TODO: in branch #182: LD Patch
-				throw new Errors.NotImplementedError( "To be implemented with LD Patch" );
-			}
+			HTTP.Request.Util.setPreferredRetrieval( "minimal", requestOptions );
+			return this.patchDocument<T>( persistedDocument, requestOptions );
 		} );
 	}
 
@@ -455,17 +480,23 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]> {
+		const responses:HTTP.Response.Class[] = [];
 		return promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
-			if( ! persistedDocument.isPartial() ) {
-				HTTP.Request.Util.setPreferredRetrieval( "representation", requestOptions );
-				return this.saveFullDocument<T>( persistedDocument, requestOptions );
-			} else {
-				// TODO: in branch #182: LD Patch
-				throw new Errors.NotImplementedError( "To be implemented with LD Patch" );
-			}
+			const cloneOptions:HTTP.Request.Options = HTTP.Request.Util.cloneOptions( requestOptions );
+			HTTP.Request.Util.setPreferredRetrieval( persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions );
+
+			return this.patchDocument<T>( persistedDocument, cloneOptions );
+		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ , response ] ) => {
+			if( ! persistedDocument.isPartial() ) return [ persistedDocument, response ];
+
+			responses.push( response );
+			return this.refreshPartialDocument<T>( persistedDocument, requestOptions );
+		} ).then<[ T & PersistedDocument.Class, HTTP.Response.Class[] ]>( ( [ , response ] ) => {
+			responses.push( response );
+			return [ persistedDocument, responses ];
 		} );
 	}
 
@@ -502,7 +533,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
-		return ( "@id" in object ) ?
+		return ("@id" in object) ?
 			this.getDigestedObjectSchemaForExpandedObject( object ) :
 			this.getDigestedObjectSchemaForDocument( <any> object );
 	}
@@ -631,7 +662,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	off( event:Messaging.Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:Messaging.MemberAdded.Class ) => void, onError:( error:Error ) => void ):void;
 	off( event:Messaging.Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void;
 	off( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void;
-	off<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T) => void, onError:( error:Error ) => void ):void {
+	off<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
@@ -707,7 +738,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	_parseErrorResponse<T extends object>( response:HTTP.Response.Class | Error ):any {
 		if( response instanceof Error ) return Promise.reject( response );
 
-		if( ! ( response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has( response.status ) ) )
+		if( ! (response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has( response.status )) )
 			return Promise.reject( new HTTP.Errors.UnknownError( response.data, response ) );
 
 		const error:HTTP.Errors.Error = new (HTTP.Errors.statusCodeMap.get( response.status ))( response.data, response );
@@ -792,20 +823,26 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 
-	private saveFullDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
+	private patchDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
 		if( ! persistedDocument.isDirty() ) return Promise.resolve<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( [ persistedDocument, null ] );
 		if( persistedDocument.isLocallyOutDated() ) throw new Errors.IllegalStateError( "Cannot save an outdated document." );
-		persistedDocument._normalize();
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
-		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+		this.setDefaultRequestOptions( requestOptions );
+		HTTP.Request.Util.setContentTypeHeader( "text/ldpatch", requestOptions );
 		HTTP.Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
-		const body:string = persistedDocument.toJSON( this, this.jsonldConverter );
+		persistedDocument._normalize();
+		const deltaCreator:LDPatch.DeltaCreator.Class = new LDPatch.DeltaCreator.Class( this.jsonldConverter );
+		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource.Class ) => {
+			const schema:ObjectSchema.DigestedObjectSchema = this.getSchemaFor( resource );
+			deltaCreator.addResource( schema, resource._snapshot, resource );
+		} );
 
-		return this.sendRequest( HTTP.Method.PUT, uri, requestOptions, body )
+		const body:string = deltaCreator.getPatch();
+
+		return this.sendRequest( HTTP.Method.PATCH, uri, requestOptions, body )
 			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 				return this.applyResponseData( persistedDocument, response );
 			} );
@@ -945,10 +982,14 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				.filter( node => ! RDF.Document.Factory.is( node ) )
 			);
 
+
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
 				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id )
+				.map( x => this.context ? x.target : x[ NS.C.Predicate.target ] )
+				// Alternative to flatMap
+				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
+				.map( x => x.id )
 			);
 
 			const targetETag:string = targetDocument && targetDocument._etag;
@@ -1131,23 +1172,43 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
-		let types:string[] = Resource.Util.getTypes( document );
-
-		return this.getDigestedObjectSchema( types, document.id );
+		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
+			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
+			return this.getSchemaWith( schemas );
+		} else {
+			const types:string[] = Resource.Util.getTypes( document );
+			return this.getDigestedObjectSchema( types, document.id );
+		}
 	}
 
 	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
 
-		let objectSchemas:ObjectSchema.DigestedObjectSchema[] = [ this.context.getObjectSchema() ];
-		if( Utils.isDefined( objectID ) && ! RDF.URI.Util.hasFragment( objectID ) && ! RDF.URI.Util.isBNodeID( objectID ) && objectTypes.indexOf( Document.RDF_CLASS ) === - 1 ) objectTypes = objectTypes.concat( Document.RDF_CLASS );
+		if(
+			Utils.isDefined( objectID ) &&
+			! RDF.URI.Util.hasFragment( objectID ) &&
+			! RDF.URI.Util.isBNodeID( objectID ) &&
+			objectTypes.indexOf( Document.RDF_CLASS ) === - 1
+		)
+			objectTypes = objectTypes.concat( Document.RDF_CLASS );
 
-		for( let type of objectTypes ) {
-			if( this.context.hasObjectSchema( type ) ) objectSchemas.push( this.context.getObjectSchema( type ) );
-		}
+		const schemas:ObjectSchema.DigestedObjectSchema[] = objectTypes
+			.filter( type => this.context.hasObjectSchema( type ) )
+			.map( type => this.context.getObjectSchema( type ) )
+		;
 
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( objectSchemas );
-		if( this.context.hasSetting( "vocabulary" ) ) digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
+		return this.getSchemaWith( schemas );
+	}
+
+	private getSchemaWith( objectSchemas:ObjectSchema.DigestedObjectSchema[] ):ObjectSchema.DigestedObjectSchema {
+		const digestedSchema:ObjectSchema.DigestedObjectSchema =
+			ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				this.context.getObjectSchema(),
+				...objectSchemas,
+			] );
+
+		if( this.context.hasSetting( "vocabulary" ) )
+			digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
 
 		return digestedSchema;
 	}
@@ -1169,11 +1230,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return uri;
 	}
 
-	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel:string ):HTTP.Request.Options {
+	private setDefaultRequestOptions( requestOptions:HTTP.Request.Options, interactionModel?:string ):HTTP.Request.Options {
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( interactionModel ) HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
 
 		return requestOptions;
 	}

@@ -26,6 +26,7 @@ import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
+import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
@@ -212,6 +213,15 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.LDP ).toBeDefined();
 			expect( Carbon.Class.LDP ).toBe( LDP );
+		} );
+
+		it( reexports(
+			STATIC,
+			"LDPatch",
+			"Carbon/LDPatch"
+		), ():void => {
+			expect( Carbon.Class.LDPatch ).toBeDefined();
+			expect( Carbon.Class.LDPatch ).toBe( LDPatch );
 		} );
 
 		it( reexports(

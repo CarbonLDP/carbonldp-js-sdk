@@ -9,6 +9,7 @@ var FreeResources = require("./FreeResources");
 var HTTP = require("./HTTP");
 var JSONLD = require("./JSONLD");
 var LDP = require("./LDP");
+var LDPatch = require("./LDPatch");
 var Messaging = require("./Messaging");
 var Utils_1 = require("./Messaging/Utils");
 var NS = require("./NS");
@@ -16,6 +17,7 @@ var ObjectSchema = require("./ObjectSchema");
 var PersistedDocument = require("./PersistedDocument");
 var PersistedFragment = require("./PersistedFragment");
 var PersistedProtectedDocument = require("./PersistedProtectedDocument");
+var PersistedResource = require("./PersistedResource");
 var Pointer = require("./Pointer");
 var ProtectedDocument = require("./ProtectedDocument");
 var RDF = require("./RDF");
@@ -362,13 +364,8 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
-            if (!persistedDocument.isPartial()) {
-                HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
-                return _this.saveFullDocument(persistedDocument, requestOptions);
-            }
-            else {
-                throw new Errors.NotImplementedError("To be implemented with LD Patch");
-            }
+            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            return _this.patchDocument(persistedDocument, requestOptions);
         });
     };
     Class.prototype.refresh = function (persistedDocument, requestOptions) {
@@ -385,16 +382,23 @@ var Class = (function () {
     Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
+        var responses = [];
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
-            if (!persistedDocument.isPartial()) {
-                HTTP.Request.Util.setPreferredRetrieval("representation", requestOptions);
-                return _this.saveFullDocument(persistedDocument, requestOptions);
-            }
-            else {
-                throw new Errors.NotImplementedError("To be implemented with LD Patch");
-            }
+            var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+            HTTP.Request.Util.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
+            return _this.patchDocument(persistedDocument, cloneOptions);
+        }).then(function (_a) {
+            var response = _a[1];
+            if (!persistedDocument.isPartial())
+                return [persistedDocument, response];
+            responses.push(response);
+            return _this.refreshPartialDocument(persistedDocument, requestOptions);
+        }).then(function (_a) {
+            var response = _a[1];
+            responses.push(response);
+            return [persistedDocument, responses];
         });
     };
     Class.prototype.delete = function (documentURI, requestOptions) {
@@ -670,19 +674,24 @@ var Class = (function () {
             return [documents[0], response];
         });
     };
-    Class.prototype.saveFullDocument = function (persistedDocument, requestOptions) {
+    Class.prototype.patchDocument = function (persistedDocument, requestOptions) {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
         if (!persistedDocument.isDirty())
             return Promise.resolve([persistedDocument, null]);
         if (persistedDocument.isLocallyOutDated())
             throw new Errors.IllegalStateError("Cannot save an outdated document.");
-        persistedDocument._normalize();
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        this.setDefaultRequestOptions(requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("text/ldpatch", requestOptions);
         HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
-        var body = persistedDocument.toJSON(this, this.jsonldConverter);
-        return this.sendRequest(HTTP.Method.PUT, uri, requestOptions, body)
+        persistedDocument._normalize();
+        var deltaCreator = new LDPatch.DeltaCreator.Class(this.jsonldConverter);
+        [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
+            var schema = _this.getSchemaFor(resource);
+            deltaCreator.addResource(schema, resource._snapshot, resource);
+        });
+        var body = deltaCreator.getPatch();
+        return this.sendRequest(HTTP.Method.PATCH, uri, requestOptions, body)
             .then(function (response) {
             return _this.applyResponseData(persistedDocument, response);
         });
@@ -791,7 +800,9 @@ var Class = (function () {
             var targetSet = new Set(freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; }));
+                .map(function (x) { return _this.context ? x.target : x[NS.C.Predicate.target]; })
+                .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
+                .map(function (x) { return x.id; }));
             var targetETag = targetDocument && targetDocument._etag;
             if (targetDocument)
                 targetDocument._etag = void 0;
@@ -942,21 +953,33 @@ var Class = (function () {
         return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
-        var types = Resource.Util.getTypes(document);
-        return this.getDigestedObjectSchema(types, document.id);
+        if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
+            var schemas = [document._partialMetadata.schema];
+            return this.getSchemaWith(schemas);
+        }
+        else {
+            var types = Resource.Util.getTypes(document);
+            return this.getDigestedObjectSchema(types, document.id);
+        }
     };
     Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
+        var _this = this;
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var objectSchemas = [this.context.getObjectSchema()];
-        if (Utils.isDefined(objectID) && !RDF.URI.Util.hasFragment(objectID) && !RDF.URI.Util.isBNodeID(objectID) && objectTypes.indexOf(Document.RDF_CLASS) === -1)
+        if (Utils.isDefined(objectID) &&
+            !RDF.URI.Util.hasFragment(objectID) &&
+            !RDF.URI.Util.isBNodeID(objectID) &&
+            objectTypes.indexOf(Document.RDF_CLASS) === -1)
             objectTypes = objectTypes.concat(Document.RDF_CLASS);
-        for (var _i = 0, objectTypes_1 = objectTypes; _i < objectTypes_1.length; _i++) {
-            var type = objectTypes_1[_i];
-            if (this.context.hasObjectSchema(type))
-                objectSchemas.push(this.context.getObjectSchema(type));
-        }
-        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas(objectSchemas);
+        var schemas = objectTypes
+            .filter(function (type) { return _this.context.hasObjectSchema(type); })
+            .map(function (type) { return _this.context.getObjectSchema(type); });
+        return this.getSchemaWith(schemas);
+    };
+    Class.prototype.getSchemaWith = function (objectSchemas) {
+        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+            this.context.getObjectSchema()
+        ].concat(objectSchemas));
         if (this.context.hasSetting("vocabulary"))
             digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
         return digestedSchema;
@@ -985,8 +1008,9 @@ var Class = (function () {
     Class.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
+        if (interactionModel)
+            HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
         return requestOptions;
     };
     Class.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {

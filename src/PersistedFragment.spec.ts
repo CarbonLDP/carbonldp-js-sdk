@@ -69,7 +69,6 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.", [
 				{ name: "fragment", type: "T extends Carbon.Fragment.Class", description: "The Fragment object to convert into a persisted one." },
-				{ name: "snapshot", type: "Object", optional: true, description: "A shallow copy of the fragment, which will be used to track its changes." },
 			]
 		), ():void => {
 			expect( PersistedFragment.Factory.decorate ).toBeDefined();
@@ -81,7 +80,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			let persistedFragment:PersistedFragment.Class = PersistedFragment.Factory.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
-			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment, jasmine.any( Object ) );
+			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
 		} );
 
 		describe( decoratedObject(
@@ -101,6 +100,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 						this.setSetting( "system.container", ".system/" );
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				context.setSetting( "vocabulary", "vocab#" );
 				context.extendObjectSchema( {

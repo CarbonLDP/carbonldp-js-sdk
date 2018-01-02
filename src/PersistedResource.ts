@@ -5,7 +5,7 @@ import * as Utils from "./Utils";
 export interface Class extends Resource.Class {
 	_partialMetadata?:PartialMetadata.Class;
 
-	_snapshot:Object;
+	_snapshot:Resource.Class;
 	_syncSnapshot:() => void;
 
 	isDirty():boolean;
@@ -16,18 +16,17 @@ export interface Class extends Resource.Class {
 	isPartial():boolean;
 }
 
-function syncSnapshot():void {
-	let resource:Class & Resource.Class = this;
-	resource._snapshot = Utils.O.clone( resource, { arrays: true } );
+function syncSnapshot( this:Class ):void {
+	this._snapshot = Utils.O.clone( this, { arrays: true } );
 
-	if( "id" in resource ) (resource._snapshot as Resource.Class).id = resource.id;
-	if( "types" in resource ) (resource._snapshot as Resource.Class).types = Utils.O.clone( resource.types );
+	this._snapshot.id = this.id;
+	this._snapshot.types = this.types.slice();
 }
 
 function isDirty():boolean {
 	let resource:Class & Resource.Class = this;
 
-	if( ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true }, { id: true, types: true } ) ) return true;
+	if( ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true } ) ) return true;
 
 	let response:boolean = false;
 	if( "id" in resource ) response = response || (resource._snapshot as Resource.Class).id !== resource.id;
@@ -61,7 +60,7 @@ export class Factory {
 		);
 	}
 
-	static decorate<T extends Object>( object:T, snapshot:Object = {} ):T & Class {
+	static decorate<T extends Resource.Class>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
 		let persistedResource:T & Class = <any> object;
@@ -71,7 +70,7 @@ export class Factory {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: snapshot,
+				value: {},
 			},
 			"_syncSnapshot": {
 				writable: false,

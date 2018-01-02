@@ -7,8 +7,8 @@ export interface Class extends PersistedFragment.Class, NamedFragment.Class {
 }
 
 export class Factory {
-	static decorate<T extends NamedFragment.Class>( fragment:T, snapshot:Object = {} ):T & Class {
-		PersistedFragment.Factory.decorate( fragment, snapshot );
+	static decorate<T extends NamedFragment.Class>( fragment:T ):T & Class {
+		PersistedFragment.Factory.decorate( fragment );
 
 		return <any> fragment;
 	}

@@ -65,7 +65,6 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.", [
 				{ name: "fragment", type: "T extends Carbon.NamedFragment.Class", description: "The NamedFragment object to convert into a persisted one." },
-				{ name: "snapshot", type: "Object", optional: true, description: "A shallow copy of the fragment, which will be used to track its changes." },
 			]
 		), ():void => {
 			expect( PersistedNamedFragment.Factory.decorate ).toBeDefined();
@@ -77,7 +76,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 			let persistedFragment:PersistedNamedFragment.Class = PersistedNamedFragment.Factory.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
-			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment, jasmine.any( Object ) );
+			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
 		} );
 
 	} );

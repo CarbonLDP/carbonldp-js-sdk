@@ -58,7 +58,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     refresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
-    saveAndRefresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    saveAndRefresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class[]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
@@ -107,7 +107,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     _parseErrorResponse<T extends object>(response: HTTP.Response.Class | Error): any;
     private getFullDocument<T>(uri, requestOptions);
     private getPartialDocument<T>(uri, requestOptions, queryBuilderFn?);
-    private saveFullDocument<T>(persistedDocument, requestOptions);
+    private patchDocument<T>(persistedDocument, requestOptions);
     private refreshFullDocument<T>(persistedDocument, requestOptions);
     private refreshPartialDocument<T>(persistedDocument, requestOptions);
     private executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
@@ -125,8 +125,9 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
     private getDigestedObjectSchema(objectTypes, objectID);
+    private getSchemaWith(objectSchemas);
     private getRequestURI(uri);
-    private setDefaultRequestOptions(requestOptions, interactionModel);
+    private setDefaultRequestOptions(requestOptions, interactionModel?);
     private updateFromPreferenceApplied<T>(persistedDocument, rdfDocuments, response);
     private _parseMembers(pointers);
     private applyResponseData<T>(persistedProtectedDocument, response);
