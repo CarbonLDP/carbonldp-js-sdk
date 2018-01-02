@@ -662,7 +662,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	off( event:Messaging.Event.MEMBER_ADDED, uriPattern:string, onEvent:( message:Messaging.MemberAdded.Class ) => void, onError:( error:Error ) => void ):void;
 	off( event:Messaging.Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void;
 	off( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void;
-	off<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T) => void, onError:( error:Error ) => void ):void {
+	off<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
@@ -982,10 +982,14 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				.filter( node => ! RDF.Document.Factory.is( node ) )
 			);
 
+
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
 				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => this.context ? x.target.id : x[ NS.C.Predicate.target ].id )
+				.map( x => this.context ? x.target : x[ NS.C.Predicate.target ] )
+				// Alternative to flatMap
+				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
+				.map( x => x.id )
 			);
 
 			const targetETag:string = targetDocument && targetDocument._etag;

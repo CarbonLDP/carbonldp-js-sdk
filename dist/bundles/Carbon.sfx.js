@@ -10151,7 +10151,9 @@ var Class = (function () {
             var targetSet = new Set(freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return _this.context ? x.target.id : x[NS.C.Predicate.target].id; }));
+                .map(function (x) { return _this.context ? x.target : x[NS.C.Predicate.target]; })
+                .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
+                .map(function (x) { return x.id; }));
             var targetETag = targetDocument && targetDocument._etag;
             if (targetDocument)
                 targetDocument._etag = void 0;
@@ -16660,6 +16662,7 @@ exports.SCHEMA = {
     "target": {
         "@id": NS.C.Predicate.target,
         "@type": "@id",
+        "@container": "@set",
     },
 };
 var Factory = (function () {
