@@ -42,6 +42,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		expect( QueryMetadata.SCHEMA[ "target" ] ).toEqual( {
 			"@id": NS.C.Predicate.target,
 			"@type": "@id",
+			"@container": "@set",
 		} );
 	} );
 

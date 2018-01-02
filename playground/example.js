@@ -196,12 +196,22 @@
 		} ) );
 
 		it( `can modify partial documents`, async( async function() {
+			let [ [ child ] ] = await carbon2.documents.getChildren( parent.id, _ => _
+				.withType( "ex:Child" )
+				.properties( {
+					"index": {
+						"query": _ => _
+							.values( _.value( 4 ) )
+					}
+				} )
+			);
+
 			child.index = 100;
 			child.somethingElse = "Hello world!";
 
 			await child.save();
 
-			const [ freshChild ] = await carbon2.get( child.id );
+			const [ freshChild ] = await carbon2.documents.get( child.id );
 
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
