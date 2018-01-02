@@ -127,10 +127,10 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 				expect( token.toString() ).toBe( `` +
 					`@prefix profile: <http://ogp.me/ns/profile#>. ` +
 					`@prefix ex: <http://example.org/vocab#>. ` +
-					`Delete { <#> profile:first_name "Tim" }. ` +
+					`Delete { <#> profile:first_name "Tim" . }. ` +
 					`Add { ` +
 					`<#> profile:first_name "Timothy";` +
-					` profile:image <https://example.org/tim.jpg> ` +
+					` profile:image <https://example.org/tim.jpg> .` +
 					`}. ` +
 					`UpdateList <#> ex:preferredLanguages 1..2 ( "fr-CH" ).` +
 					``
