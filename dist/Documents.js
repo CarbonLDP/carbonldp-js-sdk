@@ -756,9 +756,15 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
-        if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
-            throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        if (queryBuilderFn) {
+            targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
+            if (queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
+                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        }
+        else {
+            targetProperty.setType(QueryDocument_1.QueryProperty.PropertyType.FULL);
+            targetProperty.addPattern(Utils_2.createGraphPattern(queryContext, targetProperty.name));
+        }
         var constructPatterns = targetProperty.getPatterns();
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
@@ -776,7 +782,7 @@ var Class = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         (function triplesAdder(patterns) {
             patterns.forEach(function (pattern) {
-                if (pattern.token === "optional")
+                if (pattern.token === "optional" || pattern.token === "graph")
                     return triplesAdder(pattern.patterns);
                 if (pattern.token !== "subject")
                     return;

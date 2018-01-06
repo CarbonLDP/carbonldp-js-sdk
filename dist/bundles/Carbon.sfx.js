@@ -5882,6 +5882,14 @@ function createTypesPattern(context, resourcePath) {
         .addObject(context.getVariable(resourcePath + ".types"))));
 }
 exports.createTypesPattern = createTypesPattern;
+function createGraphPattern(context, resourcePath) {
+    var resourceGraph = context.getVariable(resourcePath + "._graph");
+    return new tokens_1.GraphToken(resourceGraph)
+        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath))
+        .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
+        .addObject(context.getVariable(resourcePath + "._object"))));
+}
+exports.createGraphPattern = createGraphPattern;
 
 
 /***/ }),
@@ -8103,11 +8111,17 @@ exports.default = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var ObjectSchema_1 = __webpack_require__(13);
+var PropertyType;
+(function (PropertyType) {
+    PropertyType[PropertyType["FULL"] = 0] = "FULL";
+    PropertyType[PropertyType["PARTIAL"] = 1] = "PARTIAL";
+})(PropertyType = exports.PropertyType || (exports.PropertyType = {}));
 var Class = (function () {
     function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
         this._optional = true;
+        this._type = PropertyType.PARTIAL;
         this._context = context;
         this._patterns = [];
     }
@@ -8138,6 +8152,13 @@ var Class = (function () {
     };
     Class.prototype.setOptional = function (optional) {
         this._optional = optional;
+        return this;
+    };
+    Class.prototype.getType = function () {
+        return this._type;
+    };
+    Class.prototype.setType = function (type) {
+        this._type = type;
         return this;
     };
     Class.prototype.getTriple = function () {
@@ -10107,9 +10128,15 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
-        if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
-            throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        if (queryBuilderFn) {
+            targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
+            if (queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
+                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        }
+        else {
+            targetProperty.setType(QueryDocument_1.QueryProperty.PropertyType.FULL);
+            targetProperty.addPattern(Utils_2.createGraphPattern(queryContext, targetProperty.name));
+        }
         var constructPatterns = targetProperty.getPatterns();
         return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
@@ -10127,7 +10154,7 @@ var Class = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         (function triplesAdder(patterns) {
             patterns.forEach(function (pattern) {
-                if (pattern.token === "optional")
+                if (pattern.token === "optional" || pattern.token === "graph")
                     return triplesAdder(pattern.patterns);
                 if (pattern.token !== "subject")
                     return;
@@ -15651,6 +15678,8 @@ var Class = (function () {
             var _a;
         });
         if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
+            if (!this.resolver.isPartial(path))
+                return;
             resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(schema, resource._partialMetadata);
         }
     };
@@ -16485,12 +16514,24 @@ var Class = (function (_super) {
         }
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0)
+        if (path === void 0 || !this.isPartial(path))
             return _super.prototype.getSchemaFor.call(this, object);
         var property = this._propertiesMap.get(path);
         if (!property)
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return property.getSchema();
+    };
+    Class.prototype.isPartial = function (path) {
+        if (this._propertiesMap.has(path)) {
+            var property = this._propertiesMap.get(path);
+            return property.getType() === QueryProperty.PropertyType.PARTIAL;
+        }
+        var parentPath = path
+            .split(".")
+            .slice(0, -1)
+            .join(".");
+        var parent = this._propertiesMap.get(parentPath);
+        return !!parent && parent.getType() === QueryProperty.PropertyType.PARTIAL;
     };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;

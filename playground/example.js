@@ -115,6 +115,15 @@
 
 			expect( retrievedChildren.length ).toEqual( childrenToCreate );
 
+			for( let i = 0; i < childrenToCreate; i ++ ) {
+				const type = i % 2 === 0 ? "http://example.org/ns#Even" : "http://example.org/ns#Odd";
+
+				expect( retrievedChildren ).toContain( jasmine.objectContaining( {
+					types: jasmine.arrayContaining( [ "http://example.org/ns#Child", type ] ),
+					index: i + 1,
+				} ) );
+			}
+
 			children = retrievedChildren;
 		} ) );
 

@@ -1,6 +1,9 @@
 import * as Context from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
-import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	DigestedPropertyDefinition
+} from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
 import { getLevelRegExp } from "./Utils";
@@ -55,12 +58,27 @@ export class Class extends QueryContext.Class {
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
-		if( path === void 0 ) return super.getSchemaFor( object );
+		if( path === void 0 || ! this.isPartial( path ) )
+			return super.getSchemaFor( object );
 
 		const property:QueryProperty.Class = this._propertiesMap.get( path );
 		if( ! property ) throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
 
 		return property.getSchema();
+	}
+
+	isPartial( path:string ):boolean {
+		if( this._propertiesMap.has( path ) ) {
+			const property:QueryProperty.Class = this._propertiesMap.get( path );
+			return property.getType() === QueryProperty.PropertyType.PARTIAL;
+		}
+
+		const parentPath:string = path
+			.split( "." )
+			.slice( 0, - 1 )
+			.join( "." );
+		const parent:QueryProperty.Class = this._propertiesMap.get( parentPath );
+		return ! ! parent && parent.getType() === QueryProperty.PropertyType.PARTIAL;
 	}
 
 	private _getTypeSchemas():DigestedObjectSchema[] {

@@ -52,6 +52,7 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
+	createGraphPattern,
 	createPropertyPatterns,
 	createTypesPattern,
 } from "./SPARQL/QueryDocument/Utils";
@@ -928,10 +929,16 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-		targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
+		if( queryBuilderFn ) {
+			targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
 
-		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
-			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
+			if( queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
+				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
+
+		} else {
+			targetProperty.setType( QueryProperty.PropertyType.FULL );
+			targetProperty.addPattern( createGraphPattern( queryContext, targetProperty.name ) );
+		}
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
 		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
@@ -957,7 +964,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		(function triplesAdder( patterns:PatternToken[] ):void {
 			patterns.forEach( ( pattern:PatternToken ) => {
-				if( pattern.token === "optional" )
+				if( pattern.token === "optional" || pattern.token === "graph" )
 					return triplesAdder( pattern.patterns );
 
 				if( pattern.token !== "subject" ) return;
@@ -981,7 +988,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const freeResources:FreeResources.Class = this._getFreeResources( rdfNodes
 				.filter( node => ! RDF.Document.Factory.is( node ) )
 			);
-
 
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()

@@ -33,5 +33,13 @@ function createTypesPattern(context, resourcePath) {
         .addObject(context.getVariable(resourcePath + ".types"))));
 }
 exports.createTypesPattern = createTypesPattern;
+function createGraphPattern(context, resourcePath) {
+    var resourceGraph = context.getVariable(resourcePath + "._graph");
+    return new tokens_1.GraphToken(resourceGraph)
+        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath))
+        .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
+        .addObject(context.getVariable(resourcePath + "._object"))));
+}
+exports.createGraphPattern = createGraphPattern;
 
 //# sourceMappingURL=Utils.js.map

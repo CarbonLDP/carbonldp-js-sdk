@@ -1,5 +1,5 @@
 import { DigestedPropertyDefinition } from "../../ObjectSchema";
-import { FilterToken, IRIToken, OptionalToken, PatternToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import { FilterToken, GraphToken, IRIToken, OptionalToken, PatternToken, PredicateToken, PrefixedNameToken, SubjectToken, VariableToken } from "sparqler/tokens";
 import * as QueryContext from "./QueryContext";
 
 export function getLevelRegExp( property:string ):RegExp {
@@ -37,4 +37,15 @@ export function createTypesPattern( context:QueryContext.Class, resourcePath:str
 				.addObject( context.getVariable( `${ resourcePath }.types` ) )
 			)
 		);
+}
+
+export function createGraphPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
+	const resourceGraph:VariableToken = context.getVariable( `${ resourcePath }._graph` );
+
+	return new GraphToken( resourceGraph )
+		.addPattern( new SubjectToken( context.getVariable( resourcePath ) )
+			.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
+				.addObject( context.getVariable( `${ resourcePath }._object` ) ) )
+		)
+		;
 }

@@ -4,12 +4,20 @@ import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryVariable from "./QueryVariable";
 
+export enum PropertyType {
+	FULL,
+	PARTIAL,
+}
+
 export class Class {
 	readonly name:string;
 	readonly variable:QueryVariable.Class;
 
 	private _context:QueryContext.Class;
+
 	private _optional:boolean;
+	private _type?:PropertyType;
+
 	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
@@ -18,6 +26,7 @@ export class Class {
 		this.variable = context.getVariable( name );
 
 		this._optional = true;
+		this._type = PropertyType.PARTIAL;
 
 		this._context = context;
 		this._patterns = [];
@@ -51,6 +60,15 @@ export class Class {
 
 	setOptional( optional:boolean ):this {
 		this._optional = optional;
+		return this;
+	}
+
+	getType():PropertyType {
+		return this._type;
+	}
+
+	setType( type:PropertyType ):this {
+		this._type = type;
 		return this;
 	}
 
