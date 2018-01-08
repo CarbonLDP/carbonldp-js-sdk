@@ -446,6 +446,17 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		} );
 
+		describe( method( OBLIGATORY, "listChildren" ), ():void => {
+
+			it( hasSignature(
+				"Retrieves the empty children of the document.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
+			), ():void => {} );
+
+		} );
+
 		describe( method( OBLIGATORY, "getChildren" ), ():void => {
 
 			it( hasSignature(
@@ -713,6 +724,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				createChildren: ():void => {},
 				createChildAndRetrieve: ():void => {},
 				createChildrenAndRetrieve: ():void => {},
+				listChildren: ():void => {},
 				getChildren: ():void => {},
 				getMembers: ():void => {},
 				removeMember: ():void => {},
@@ -807,6 +819,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			delete document.createChildrenAndRetrieve;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChildrenAndRetrieve = ():void => {};
+
+			delete document.listChildren;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.listChildren = ():void => {};
 
 			delete document.getChildren;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -907,6 +923,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				createChildren: ():void => {},
 				createChildAndRetrieve: ():void => {},
 				createChildrenAndRetrieve: ():void => {},
+				listChildren: ():void => {},
 				getChildren: ():void => {},
 				getMembers: ():void => {},
 				removeMember: ():void => {},

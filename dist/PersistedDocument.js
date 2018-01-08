@@ -140,6 +140,9 @@ function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions)
 function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
     return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
 }
+function listChildren(requestOptions) {
+    return this._documents.listChildren(this.id, requestOptions);
+}
 function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
     return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
 }
@@ -205,6 +208,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "createChildren")
             && Utils.hasFunction(object, "createChildAndRetrieve")
             && Utils.hasFunction(object, "createChildrenAndRetrieve")
+            && Utils.hasFunction(object, "listChildren")
             && Utils.hasFunction(object, "getChildren")
             && Utils.hasFunction(object, "getMembers")
             && Utils.hasFunction(object, "removeMember")
@@ -411,6 +415,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createAccessPoints,
+            },
+            "listChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listChildren,
             },
             "getChildren": {
                 writable: false,

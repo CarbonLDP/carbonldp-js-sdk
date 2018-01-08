@@ -3767,6 +3767,9 @@ function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions)
 function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
     return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
 }
+function listChildren(requestOptions) {
+    return this._documents.listChildren(this.id, requestOptions);
+}
 function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
     return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
 }
@@ -3832,6 +3835,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "createChildren")
             && Utils.hasFunction(object, "createChildAndRetrieve")
             && Utils.hasFunction(object, "createChildrenAndRetrieve")
+            && Utils.hasFunction(object, "listChildren")
             && Utils.hasFunction(object, "getChildren")
             && Utils.hasFunction(object, "getMembers")
             && Utils.hasFunction(object, "removeMember")
@@ -4038,6 +4042,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: createAccessPoints,
+            },
+            "listChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listChildren,
             },
             "getChildren": {
                 writable: false,
@@ -9566,6 +9576,21 @@ var Class = (function () {
             }));
         }).then(Utils_3.mapTupleArray);
     };
+    Class.prototype.listChildren = function (parentURI, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return Utils_3.promiseMethod(function () {
+            parentURI = _this.getRequestURI(parentURI);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var childrenVar = queryContext.getVariable("child");
+            var pattens = [
+                new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                    .addObject(childrenVar)),
+            ];
+            return _this.executeSelectPatterns(parentURI, requestOptions, queryContext, "child", pattens);
+        });
+    };
     Class.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
@@ -10118,7 +10143,7 @@ var Class = (function () {
                 var _a;
             });
         })(constructPatterns, persistedDocument, targetName);
-        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
+        return this.executeConstructPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
             .then(function (_a) {
             var documents = _a[0], response = _a[1];
             return [documents[0], response];
@@ -10138,9 +10163,9 @@ var Class = (function () {
             targetProperty.addPattern(Utils_2.createGraphPattern(queryContext, targetProperty.name));
         }
         var constructPatterns = targetProperty.getPatterns();
-        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
+        return this.executeConstructPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
-    Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
+    Class.prototype.executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;
         var metadataVar = queryContext.getVariable("metadata");
         var construct = (_a = new tokens_1.ConstructToken()
@@ -10208,6 +10233,25 @@ var Class = (function () {
             var documents = new JSONLD.Compacter
                 .Class(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
+            return [documents, response];
+        });
+        var _a, _b;
+    };
+    Class.prototype.executeSelectPatterns = function (uri, requestOptions, queryContext, targetName, selectPatterns) {
+        var _this = this;
+        var targetVar = queryContext.getVariable(targetName);
+        var select = (_a = new tokens_1.SelectToken()
+            .addVariable(targetVar)).addPattern.apply(_a, selectPatterns);
+        var query = (_b = new tokens_1.QueryToken(select)).addPrologues.apply(_b, queryContext.getPrologues());
+        return this
+            .executeSELECTQuery(uri, query.toString(), requestOptions)
+            .then(function (_a) {
+            var results = _a[0], response = _a[1];
+            var name = targetVar.toString().slice(1);
+            var documents = results
+                .bindings
+                .map(function (x) { return x[name]; })
+                .map(function (x) { return PersistedDocument.Factory.decorate(x, _this); });
             return [documents, response];
         });
         var _a, _b;

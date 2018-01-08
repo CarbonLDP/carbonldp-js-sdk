@@ -7,6 +7,7 @@
 
 	const carbon1 = new Carbon( "localhost:8083", false );
 	const carbon2 = new Carbon( "localhost:8083", false );
+	const carbon3 = new Carbon( "localhost:8083", false );
 
 	const prefixes = {
 		"acl": "http://www.w3.org/ns/auth/acl#",
@@ -125,6 +126,15 @@
 			}
 
 			children = retrievedChildren;
+		} ) );
+
+		it( "can list the children", async( async function() {
+			const [ shallowChildren ] = await carbon3.documents.listChildren( parent.id );
+
+			expect( shallowChildren.length ).toEqual( childrenToCreate );
+
+			children = shallowChildren;
+			console.log( "List", children );
 		} ) );
 
 		it( "can remove one member", async( async function() {

@@ -39,6 +39,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     createChildAndRetrieve<T extends object>(parentURI: string, childObject: T, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedProtectedDocument.Class, HTTP.Response.Class]>;
     createChildrenAndRetrieve<T extends object>(parentURI: string, childrenObjects: T[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
     createChildrenAndRetrieve<T extends object>(parentURI: string, childrenObjects: T[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class[]]>;
+    listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getChildren<T extends object>(parentURI: string, requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getChildren<T extends object>(parentURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
@@ -111,7 +112,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private refreshFullDocument<T>(persistedDocument, requestOptions);
     private refreshPartialDocument<T>(persistedDocument, requestOptions);
     private executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
-    private executeQueryPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument?);
+    private executeConstructPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument?);
+    private executeSelectPatterns(uri, requestOptions, queryContext, targetName, selectPatterns);
     private persistChildDocument<T>(parentURI, childObject, slug, requestOptions);
     private persistAccessPoint<T>(documentURI, accessPoint, slug, requestOptions);
     private persistDocument<T, W>(parentURI, slug, document, requestOptions);

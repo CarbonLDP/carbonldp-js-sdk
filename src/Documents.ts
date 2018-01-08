@@ -255,6 +255,25 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then( mapTupleArray );
 	}
 
+
+	listChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		return promiseMethod( () => {
+			parentURI = this.getRequestURI( parentURI );
+
+			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const childrenVar:VariableToken = queryContext.getVariable( "child" );
+
+			const pattens:PatternToken[] = [
+				new SubjectToken( queryContext.compactIRI( parentURI ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.contains ) )
+						.addObject( childrenVar )
+					),
+			];
+
+			return this.executeSelectPatterns( parentURI, requestOptions, queryContext, "child", pattens );
+		} );
+	}
+
 	getChildren<T extends object>( parentURI:string, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
@@ -916,7 +935,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			} );
 		})( constructPatterns, persistedDocument, targetName );
 
-		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
+		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
 			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
 
@@ -941,10 +960,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
-		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
+		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
 	}
 
-	private executeQueryPatterns<T extends object>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+	private executeConstructPatterns<T extends object>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
@@ -1031,6 +1050,29 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			return [ documents, response ];
 		} );
+	}
+
+	private executeSelectPatterns( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		const targetVar:VariableToken = queryContext.getVariable( targetName );
+		const select:SelectToken = new SelectToken()
+			.addVariable( targetVar )
+			.addPattern( ...selectPatterns )
+		;
+
+		const query:QueryToken = new QueryToken( select as any )
+			.addPrologues( ...queryContext.getPrologues() );
+
+		return this
+			.executeSELECTQuery( uri, query.toString(), requestOptions )
+			.then<[ PersistedDocument.Class[], HTTP.Response.Class ]>( ( [ results, response ] ) => {
+				const name:string = targetVar.toString().slice( 1 );
+				const documents:PersistedDocument.Class[] = results
+					.bindings
+					.map( x => x[ name ] as Pointer.Class )
+					.map( x => PersistedDocument.Factory.decorate( x, this ) );
+
+				return [ documents, response ];
+			} );
 	}
 
 

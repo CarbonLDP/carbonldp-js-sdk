@@ -60,6 +60,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     createAccessPoint<T extends object>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
+    listChildren(requestOptions: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
     getChildren<T extends object>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getMembers<T extends object>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
