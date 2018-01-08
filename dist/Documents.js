@@ -196,7 +196,6 @@ var Class = (function () {
     };
     Class.prototype.listChildren = function (parentURI, requestOptions) {
         var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
@@ -285,6 +284,27 @@ var Class = (function () {
             var locationURI = locationHeader.values[0].toString();
             var pointer = _this.getPointer(locationURI);
             return [pointer, response];
+        });
+    };
+    Class.prototype.listMembers = function (uri, requestOptions) {
+        var _this = this;
+        return Utils_3.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var memberVar = queryContext.getVariable("member");
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var pattens = [
+                new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                    .addObject(membershipResource))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                    .addObject(hasMemberRelation)),
+                new tokens_1.SubjectToken(membershipResource)
+                    .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                    .addObject(memberVar)),
+            ];
+            return _this.executeSelectPatterns(uri, requestOptions, queryContext, "member", pattens);
         });
     };
     Class.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {

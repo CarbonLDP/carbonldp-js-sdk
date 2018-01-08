@@ -256,7 +256,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 
-	listChildren( parentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+	listChildren( parentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
 
@@ -368,6 +368,36 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let pointer:Pointer.Class = this.getPointer( locationURI );
 
 			return [ pointer, response ];
+		} );
+	}
+
+
+	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		return promiseMethod( () => {
+			uri = this.getRequestURI( uri );
+
+			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const memberVar:VariableToken = queryContext.getVariable( "member" );
+
+			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
+			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
+			const pattens:PatternToken[] = [
+				new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
+						.addObject( membershipResource )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
+						.addObject( hasMemberRelation )
+					)
+				,
+				new SubjectToken( membershipResource )
+					.addPredicate( new PredicateToken( hasMemberRelation )
+						.addObject( memberVar )
+					)
+				,
+			];
+
+			return this.executeSelectPatterns( uri, requestOptions, queryContext, "member", pattens );
 		} );
 	}
 

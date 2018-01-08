@@ -3764,11 +3764,14 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
+function listChildren(requestOptions) {
+    return this._documents.listChildren(this.id, requestOptions);
+}
 function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
     return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
 }
-function listChildren(requestOptions) {
-    return this._documents.listChildren(this.id, requestOptions);
+function listMembers(requestOptions) {
+    return this._documents.listMembers(this.id, requestOptions);
 }
 function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
     return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
@@ -3837,6 +3840,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "createChildrenAndRetrieve")
             && Utils.hasFunction(object, "listChildren")
             && Utils.hasFunction(object, "getChildren")
+            && Utils.hasFunction(object, "listMembers")
             && Utils.hasFunction(object, "getMembers")
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
@@ -4054,6 +4058,12 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: getChildren,
+            },
+            "listMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listMembers,
             },
             "getMembers": {
                 writable: false,
@@ -9578,7 +9588,6 @@ var Class = (function () {
     };
     Class.prototype.listChildren = function (parentURI, requestOptions) {
         var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
             var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
@@ -9667,6 +9676,27 @@ var Class = (function () {
             var locationURI = locationHeader.values[0].toString();
             var pointer = _this.getPointer(locationURI);
             return [pointer, response];
+        });
+    };
+    Class.prototype.listMembers = function (uri, requestOptions) {
+        var _this = this;
+        return Utils_3.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var memberVar = queryContext.getVariable("member");
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var pattens = [
+                new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                    .addObject(membershipResource))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                    .addObject(hasMemberRelation)),
+                new tokens_1.SubjectToken(membershipResource)
+                    .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                    .addObject(memberVar)),
+            ];
+            return _this.executeSelectPatterns(uri, requestOptions, queryContext, "member", pattens);
         });
     };
     Class.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {

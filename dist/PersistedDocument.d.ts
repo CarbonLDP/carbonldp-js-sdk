@@ -63,6 +63,7 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     listChildren(requestOptions: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
     getChildren<T extends object>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    listMembers(requestOptions: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
     getMembers<T extends object>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;

@@ -132,9 +132,6 @@
 			const [ shallowChildren ] = await carbon3.documents.listChildren( parent.id );
 
 			expect( shallowChildren.length ).toEqual( childrenToCreate );
-
-			children = shallowChildren;
-			console.log( "List", children );
 		} ) );
 
 		it( "can remove one member", async( async function() {

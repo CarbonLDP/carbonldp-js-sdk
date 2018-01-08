@@ -3888,7 +3888,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
 								"}",
 
-								jasmine.any( Object )
+								void 0
 							);
 							done();
 						} );
@@ -4026,7 +4026,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
 								"}",
 
-								jasmine.any( Object )
+								void 0
 							);
 							done();
 						} );
@@ -6721,6 +6721,312 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 		} );
 
+
+		describe( method( INSTANCE, "listMembers" ), () => {
+
+			it( hasSignature(
+				"Retrieves the empty members of a document.", [
+					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
+			), () => {} );
+
+			it( isDefined(), () => {
+				expect( Documents.Class.prototype.listMembers ).toBeDefined();
+				expect( Documents.Class.prototype.listMembers ).toEqual( jasmine.any( Function ) );
+			} );
+
+			describe( "When Documents has a specified context", ():void => {
+
+				let context:AbstractContext;
+				let documents:Documents.Class;
+				beforeEach( () => {
+					context = new class extends AbstractContext {
+						_baseURI:string = "https://example.com/";
+					};
+					context.setSetting( "vocabulary", "https://example.com/ns#" );
+					documents = context.documents;
+				} );
+
+				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "http://not-example.com" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
+						done();
+					} );
+				} );
+
+				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.listMembers( "https://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+
+				it( "should send a select query", ( done:DoneFn ):void => {
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "https://schema.org/property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} );
+
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeSELECTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.listMembers( "https://example.com/resource/" )
+						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
+						.catch( ( error ) => {
+							if( error ) done.fail( error );
+
+							expect( sendSpy ).toHaveBeenCalledWith(
+								"https://example.com/resource/",
+
+								"SELECT ?member WHERE { " +
+								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
+								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
+								"" + "?membershipResource ?hasMemberRelation ?member " +
+								"}",
+
+								void 0
+							);
+
+							done();
+						} );
+				} );
+
+				it( "should return the members", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `{
+							"head": {
+								"vars": [
+									"member"
+								]
+							},
+							"results": {
+								"bindings": [
+									{
+										"member": {
+											"type": "uri",
+											"value": "https://example.com/resource/child1/"
+										}
+									},
+									{
+										"member": {
+											"type": "uri",
+											"value": "https://example.com/resource/child2/"
+										}
+									}
+								]
+							}
+						}`,
+					} );
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "schema:Resource", {
+						"property1": {
+							"@id": "https://schema.org/property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} );
+
+					documents
+						.listMembers( "https://example.com/resource/" )
+						.then( ( [ myDocuments, response ] ) => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+
+							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": void 0,
+								"_resolved": false,
+							} ) );
+
+							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": void 0,
+								"_resolved": false,
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+			} );
+
+			describe( "When Documents does not have a context", ():void => {
+
+				let documents:Documents.Class;
+				beforeEach( () => {
+					documents = new Documents.Class();
+				} );
+
+				it( "should reject if URI is relative", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "relative-uri/" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support relative URIs." );
+						done();
+					} );
+				} );
+
+				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
+					const promise:Promise<any> = documents.listMembers( "prefix:the-uri" );
+					promise.then( () => {
+						done.fail( "Should not resolve promise." );
+					} ).catch( error => {
+						expect( error.message ).toBe( "This Documents instance doesn't support prefixed URIs." );
+						done();
+					} );
+				} );
+
+				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+						status: 500,
+						responseText: "",
+					} );
+
+					const error:Error = new Error( "Error message" );
+					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+
+					documents.listMembers( "http://example.com/" ).then( () => {
+						done.fail( "Should not resolve" );
+					} ).catch( _error => {
+						expect( spy ).toHaveBeenCalled();
+
+						expect( _error ).toBeDefined();
+						expect( _error ).toBe( error );
+
+						done();
+					} );
+				} );
+
+
+				it( "should send a select query", ( done:DoneFn ):void => {
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeSELECTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.listMembers( "https://example.com/resource/" )
+						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
+						.catch( ( error ) => {
+							if( error ) done.fail( error );
+
+							expect( sendSpy ).toHaveBeenCalledWith(
+								"https://example.com/resource/",
+
+								"SELECT ?member WHERE { " +
+								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
+								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
+								"" + "?membershipResource ?hasMemberRelation ?member " +
+								"}",
+
+								void 0
+							);
+							done();
+						} );
+				} );
+
+				it( "should return the children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `{
+							"head": {
+								"vars": [
+									"member"
+								]
+							},
+							"results": {
+								"bindings": [
+									{
+										"member": {
+											"type": "uri",
+											"value": "https://example.com/resource/child1/"
+										}
+									},
+									{
+										"member": {
+											"type": "uri",
+											"value": "https://example.com/resource/child2/"
+										}
+									}
+								]
+							}
+						}`,
+					} );
+
+					documents
+						.listMembers( "https://example.com/resource/" )
+						.then( ( [ myDocuments, response ] ) => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+
+							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": void 0,
+								"_resolved": false,
+							} ) );
+
+							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": void 0,
+								"_resolved": false,
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+			} );
+
+		} );
+
 		describe( method( INSTANCE, "getMembers" ), () => {
 
 			it( hasSignature(
@@ -8277,6 +8583,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 		} );
+
 
 		describe( method(
 			INSTANCE,
