@@ -978,16 +978,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-		if( queryBuilderFn ) {
-			targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
+		targetProperty.setType( queryBuilderFn ?
+			QueryProperty.PropertyType.PARTIAL :
+			QueryProperty.PropertyType.FULL
+		);
 
-			if( queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
-				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
-
-		} else {
-			targetProperty.setType( QueryProperty.PropertyType.FULL );
-			targetProperty.addPattern( createGraphPattern( queryContext, targetProperty.name ) );
-		}
+		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
+			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
 		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );

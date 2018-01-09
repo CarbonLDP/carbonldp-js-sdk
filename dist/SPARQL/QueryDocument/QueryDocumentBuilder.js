@@ -5,12 +5,15 @@ var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
 var Errors_1 = require("./../../Errors");
 var QueryObject = require("./QueryObject");
+var QueryProperty = require("./QueryProperty");
 var QueryValue = require("./QueryValue");
 var Utils_2 = require("./Utils");
 var inherit = Object.freeze({});
+var all = Object.freeze({});
 var Class = (function () {
     function Class(queryContext, property) {
         this.inherit = inherit;
+        this.all = all;
         this._context = queryContext;
         this._document = property;
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
@@ -20,15 +23,17 @@ var Class = (function () {
     Class.prototype.property = function (name) {
         if (name === void 0)
             return this._document;
-        var originalName = name;
-        var path = this._document.name;
-        while (path) {
-            name = path + "." + originalName;
-            if (this._context.hasProperty(name))
-                return this._context.getProperty(name);
-            path = path.split(".").slice(0, -1).join(".");
+        var parent = this._document.name;
+        while (parent) {
+            var parentPath = parent + "." + name;
+            if (this._context.hasProperty(parentPath))
+                return this._context.getProperty(parentPath);
+            parent = parent
+                .split(".")
+                .slice(0, -1)
+                .join(".");
         }
-        throw new Errors_1.IllegalArgumentError("The \"" + originalName + "\" property was not declared.");
+        throw new Errors_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
     Class.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
@@ -52,6 +57,10 @@ var Class = (function () {
         return this;
     };
     Class.prototype.properties = function (propertiesSchema) {
+        if (propertiesSchema === all) {
+            this._document.setType(QueryProperty.PropertyType.FULL);
+            return this;
+        }
         for (var propertyName in propertiesSchema) {
             var queryPropertySchema = propertiesSchema[propertyName];
             var propertyDefinition = Utils_1.isObject(queryPropertySchema) ? queryPropertySchema : { "@id": queryPropertySchema };
@@ -60,8 +69,9 @@ var Class = (function () {
             var property = (_a = this._context
                 .addProperty(name_1)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name_1, digestedDefinition));
             if ("query" in propertyDefinition) {
-                if (digestedDefinition.literal === false)
-                    property.addPattern(Utils_2.createTypesPattern(this._context, name_1));
+                if (digestedDefinition.literal === false && property.getType() === void 0) {
+                    property.setType(QueryProperty.PropertyType.PARTIAL);
+                }
                 var builder = new Class(this._context, property);
                 if (builder !== propertyDefinition["query"].call(void 0, builder))
                     throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");

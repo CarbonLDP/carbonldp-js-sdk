@@ -1,11 +1,26 @@
 import AbstractContext from "../../AbstractContext";
-import { ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester } from "../../ObjectSchema";
-import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
+import {
+	ContainerType,
+	DigestedObjectSchema,
+	DigestedPropertyDefinition,
+	Digester
+} from "../../ObjectSchema";
+import {
+	clazz,
+	constructor,
+	extendsClass,
+	hasDefaultExport,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
 import * as URI from "./../../RDF/URI";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryContextBuilder";
 import { Class as QueryContextBuilder } from "./QueryContextBuilder";
-import QueryProperty from "./QueryProperty";
+import QueryProperty, { PropertyType } from "./QueryProperty";
+import { IllegalArgumentError } from "../../Errors";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
@@ -387,11 +402,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				expect( QueryContextBuilder.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return the schema of the property defined by the path", ():void => {
+			it( "should return the schema of the property path when partial", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
 				const helper:( name:string ) => void = name => {
-					const property:QueryProperty = queryContext.addProperty( name );
+					const property:QueryProperty = queryContext
+						.addProperty( name )
+						.setType( PropertyType.PARTIAL );
 					const spy:jasmine.Spy = spyOn( property, "getSchema" ).and.returnValue( null );
 
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
@@ -401,6 +418,68 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 				helper( "property" );
 				helper( "property.another-one" );
+			} );
+
+			it( "should return the schema from context when full", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const spy:jasmine.Spy = spyOn( queryContext.context.documents, "getSchemaFor" ).and.returnValue( null );
+				const helper:( name:string ) => void = name => {
+					queryContext
+						.addProperty( name )
+						.setType( PropertyType.FULL );
+
+					const returnedValue:any = queryContext.getSchemaFor( {}, name );
+					expect( spy ).toHaveBeenCalled();
+					expect( returnedValue ).toBeNull();
+				};
+
+				helper( "property" );
+				helper( "property.another-one" );
+			} );
+
+			it( "should throw error when no type", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const helper:( name:string ) => void = name => () => {
+					queryContext
+						.addProperty( name )
+						.setType( void 0 );
+
+					queryContext.getSchemaFor( {}, name );
+				};
+
+				expect( helper( "property" ) ).toThrowError( IllegalArgumentError, `Property "property" is not a resource.` );
+				expect( helper( "property.another-one" ) ).toThrowError( IllegalArgumentError, `Property "property.another-one" is not a resource.` );
+			} );
+
+			it( "should throw error when not exits", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const helper:( name:string ) => void = name => () => {
+					queryContext.getSchemaFor( {}, name );
+				};
+
+				expect( helper( "property" ) ).toThrowError( IllegalArgumentError, `Schema path "property" does not exists.` );
+				expect( helper( "property.another-one" ) ).toThrowError( IllegalArgumentError, `Schema path "property.another-one" does not exists.` );
+			} );
+
+			it( "should return the schema from the context when not exits and parent is full", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const spy:jasmine.Spy = spyOn( queryContext.context.documents, "getSchemaFor" ).and.returnValue( null );
+				const helper:( parent:string, name:string ) => void = ( parent, child ) => {
+					queryContext
+						.addProperty( parent )
+						.setType( PropertyType.FULL );
+
+					const returnedValue:any = queryContext.getSchemaFor( {}, `${ parent }.${ child }` );
+					expect( spy ).toHaveBeenCalled();
+					expect( returnedValue ).toBeNull();
+				};
+
+				helper( "property-1", "child-1" );
+				helper( "property-2", "child-2" );
 			} );
 
 		} );

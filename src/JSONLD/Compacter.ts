@@ -11,7 +11,6 @@ import { Util as URIUtils } from "../RDF/URI";
 import {
 	PartialMetadata,
 	QueryContextBuilder,
-	QueryProperty
 } from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";

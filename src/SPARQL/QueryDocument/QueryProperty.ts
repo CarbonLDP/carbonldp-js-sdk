@@ -1,8 +1,16 @@
-import { OptionalToken, PatternToken, SubjectToken } from "sparqler/tokens";
+import {
+	OptionalToken,
+	PatternToken,
+	SubjectToken
+} from "sparqler/tokens";
 
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryVariable from "./QueryVariable";
+import {
+	createGraphPattern,
+	createTypesPattern
+} from "./Utils";
 
 export enum PropertyType {
 	FULL,
@@ -26,7 +34,6 @@ export class Class {
 		this.variable = context.getVariable( name );
 
 		this._optional = true;
-		this._type = PropertyType.PARTIAL;
 
 		this._context = context;
 		this._patterns = [];
@@ -38,10 +45,20 @@ export class Class {
 	}
 
 	getPatterns():PatternToken[] {
-		if( ! this._optional ) return this._patterns;
+		let patterns:PatternToken[] = this._patterns.slice();
+
+		if( this._type !== void 0 ) {
+			const fn:typeof createTypesPattern | typeof createGraphPattern =
+				this._type === PropertyType.PARTIAL ? createTypesPattern : createGraphPattern;
+
+			const index:number = patterns.findIndex( pattern => pattern === void 0 );
+			patterns[ index ] = fn( this._context, this.name );
+		}
+
+		if( ! this._optional ) return patterns;
 
 		return [ new OptionalToken()
-			.addPattern( ...this._patterns ),
+			.addPattern( ...patterns ),
 		];
 	}
 
@@ -68,7 +85,9 @@ export class Class {
 	}
 
 	setType( type:PropertyType ):this {
+		if( this._type === void 0 ) this._patterns.push( void 0 );
 		this._type = type;
+
 		return this;
 	}
 

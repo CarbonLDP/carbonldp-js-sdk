@@ -62,24 +62,33 @@ var Class = (function (_super) {
         }
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0 || !this.isPartial(path))
+        if (path === void 0)
             return _super.prototype.getSchemaFor.call(this, object);
-        var property = this._propertiesMap.get(path);
-        if (!property)
-            throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
-        return property.getSchema();
-    };
-    Class.prototype.isPartial = function (path) {
-        if (this._propertiesMap.has(path)) {
-            var property = this._propertiesMap.get(path);
-            return property.getType() === QueryProperty.PropertyType.PARTIAL;
+        var property = this.getProperty(path);
+        if (property) {
+            switch (property.getType()) {
+                case QueryProperty.PropertyType.PARTIAL:
+                    return this.getProperty(path).getSchema();
+                case QueryProperty.PropertyType.FULL:
+                    return _super.prototype.getSchemaFor.call(this, object);
+                default:
+                    throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
+            }
         }
-        var parentPath = path
+        var parent = this.getProperty(path
             .split(".")
             .slice(0, -1)
-            .join(".");
-        var parent = this._propertiesMap.get(parentPath);
-        return !!parent && parent.getType() === QueryProperty.PropertyType.PARTIAL;
+            .join("."));
+        if (!parent || parent.getType() !== QueryProperty.PropertyType.FULL)
+            throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
+        return _super.prototype.getSchemaFor.call(this, object);
+    };
+    Class.prototype.isPartial = function (path) {
+        if (!this.hasProperty(path))
+            return false;
+        return this
+            .getProperty(path)
+            .getType() === QueryProperty.PropertyType.PARTIAL;
     };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;

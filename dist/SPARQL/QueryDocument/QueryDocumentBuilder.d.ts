@@ -6,6 +6,7 @@ import * as QueryProperty from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
 export declare class Class {
     inherit: Readonly<{}>;
+    all: Readonly<{}>;
     protected _context: QueryContextBuilder.Class;
     protected _document: QueryProperty.Class;
     private _typesTriple;

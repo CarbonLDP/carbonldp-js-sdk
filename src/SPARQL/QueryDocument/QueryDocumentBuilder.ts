@@ -1,8 +1,25 @@
-import { FilterToken, IRIToken, LiteralToken, PredicateToken, PrefixedNameToken, SubjectToken, TermToken, ValuesToken } from "sparqler/tokens";
+import {
+	FilterToken,
+	IRIToken,
+	LiteralToken,
+	PredicateToken,
+	PrefixedNameToken,
+	SubjectToken,
+	TermToken,
+	ValuesToken,
+} from "sparqler/tokens";
 
-import { DigestedObjectSchema, DigestedPropertyDefinition, Digester, PropertyDefinition } from "../../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	DigestedPropertyDefinition,
+	Digester,
+	PropertyDefinition,
+} from "../../ObjectSchema";
 import { isObject } from "../../Utils";
-import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
+import {
+	IllegalArgumentError,
+	IllegalStateError,
+} from "./../../Errors";
 import * as Pointer from "./../../Pointer";
 import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
@@ -10,12 +27,15 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
-import { createPropertyPatterns, createTypesPattern } from "./Utils";
+import { createPropertyPatterns } from "./Utils";
 
 const inherit:Readonly<{}> = Object.freeze( {} );
 
+const all:Readonly<{}> = Object.freeze( {} );
+
 export class Class {
 	inherit:Readonly<{}> = inherit;
+	all:Readonly<{}> = all;
 
 	protected _context:QueryContextBuilder.Class;
 	protected _document:QueryProperty.Class;
@@ -38,16 +58,19 @@ export class Class {
 	property( name?:string ):QueryProperty.Class {
 		if( name === void 0 ) return this._document;
 
-		const originalName:string = name;
+		let parent:string = this._document.name;
+		while( parent ) {
+			const parentPath:string = `${ parent }.${ name }`;
+			if( this._context.hasProperty( parentPath ) )
+				return this._context.getProperty( parentPath );
 
-		let path:string = this._document.name;
-		while( path ) {
-			name = `${ path }.${ originalName }`;
-			if( this._context.hasProperty( name ) ) return this._context.getProperty( name );
-			path = path.split( "." ).slice( 0, - 1 ).join( "." );
+			parent = parent
+				.split( "." )
+				.slice( 0, - 1 )
+				.join( "." );
 		}
 
-		throw new IllegalArgumentError( `The "${ originalName }" property was not declared.` );
+		throw new IllegalArgumentError( `The "${ name }" property was not declared.` );
 	}
 
 	value( value:string | number | boolean | Date ):QueryValue.Class {
@@ -78,6 +101,11 @@ export class Class {
 	}
 
 	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
+		if( propertiesSchema === all ) {
+			this._document.setType( QueryProperty.PropertyType.FULL );
+			return this;
+		}
+
 		for( const propertyName in propertiesSchema ) {
 			const queryPropertySchema:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
 			const propertyDefinition:QueryPropertySchema.Class = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
@@ -95,8 +123,9 @@ export class Class {
 				) );
 
 			if( "query" in propertyDefinition ) {
-				if( digestedDefinition.literal === false )
-					property.addPattern( createTypesPattern( this._context, name ) );
+				if( digestedDefinition.literal === false && property.getType() === void 0 ) {
+					property.setType( QueryProperty.PropertyType.PARTIAL );
+				}
 
 				const builder:Class = new Class( this._context, property );
 				if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
