@@ -144,7 +144,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					builder.property( "name" );
 				} catch {}
 
-				expect( spy ).toHaveBeenCalledTimes( 4 );
 				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.path3.name" );
 				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.name" );
 				expect( spy ).toHaveBeenCalledWith( "document.path1.name" );

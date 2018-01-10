@@ -4344,6 +4344,87 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} );
 				} );
 
+				it( "should send a filtered full construct query", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "https://schema.org/property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} );
+
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => {
+						return _
+							.properties( _.all )
+							.orderBy( _.property( "property2" ) )
+							.limit( 10 )
+							.offset( 5 )
+							;
+					} )
+						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
+						.catch( ( error ) => {
+							if( error ) done.fail( error );
+
+							expect( sendSpy ).toHaveBeenCalledWith(
+								"https://example.com/resource/",
+								"PREFIX schema: <https://schema.org/> " +
+								"CONSTRUCT {" +
+								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
+								"" + ` <${ NS.C.Predicate.target }> ?child.` +
+
+								" ?child ?child___predicate ?child___object " +
+
+								"} WHERE {" +
+								" BIND(BNODE() AS ?metadata)." +
+
+								" {" +
+								"" + " SELECT ?child WHERE {" +
+								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
+								"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+								"" + " }" +
+								"" + " ORDER BY ?child__property2" +
+								"" + " LIMIT 10" +
+								"" + " OFFSET 5" +
+								" }." +
+
+								" GRAPH ?child___graph {" +
+								"" + " ?child ?child___predicate ?child___object" +
+								" }." +
+
+								" OPTIONAL {" +
+								"" + " ?child schema:property-2 ?child__property2." +
+								"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+								" }" +
+
+								" " +
+								"}",
+
+								jasmine.objectContaining( {
+									headers: new Map( [
+										[ "prefer", new HTTP.Header.Class( [
+											new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										] ) ],
+									] ),
+								} )
+							);
+							done();
+						} );
+				} );
+
 				it( "should send a correct filtered construct query", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;

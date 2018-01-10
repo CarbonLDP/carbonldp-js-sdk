@@ -27,7 +27,10 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
-import { createPropertyPatterns } from "./Utils";
+import {
+	createPropertyPatterns,
+	getParentPath,
+} from "./Utils";
 
 const inherit:Readonly<{}> = Object.freeze( {} );
 
@@ -37,7 +40,8 @@ export class Class {
 	inherit:Readonly<{}> = inherit;
 	all:Readonly<{}> = all;
 
-	protected _context:QueryContextBuilder.Class;
+	readonly _context:QueryContextBuilder.Class;
+
 	protected _document:QueryProperty.Class;
 
 	private _typesTriple:SubjectToken;
@@ -47,6 +51,8 @@ export class Class {
 
 	constructor( queryContext:QueryContextBuilder.Class, property:QueryProperty.Class ) {
 		this._context = queryContext;
+
+		property._builder = this;
 		this._document = property;
 
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
@@ -60,14 +66,20 @@ export class Class {
 
 		let parent:string = this._document.name;
 		while( parent ) {
-			const parentPath:string = `${ parent }.${ name }`;
-			if( this._context.hasProperty( parentPath ) )
-				return this._context.getProperty( parentPath );
+			const fullPath:string = `${ parent }.${ name }`;
 
-			parent = parent
-				.split( "." )
-				.slice( 0, - 1 )
-				.join( "." );
+			if( this._context.hasProperty( fullPath ) ) return this._context.getProperty( fullPath );
+
+			const directPath:string = getParentPath( fullPath );
+			if( this._context.hasProperty( directPath ) ) {
+				const direct:QueryProperty.Class = this._context.getProperty( directPath );
+				if( direct.getType() === QueryProperty.PropertyType.FULL ) {
+					const propertyName:string = fullPath.substr( directPath.length + 1 );
+					return direct._builder._addProperty( propertyName, inherit );
+				}
+			}
+
+			parent = getParentPath( parent );
 		}
 
 		throw new IllegalArgumentError( `The "${ name }" property was not declared.` );
@@ -110,29 +122,7 @@ export class Class {
 			const queryPropertySchema:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
 			const propertyDefinition:QueryPropertySchema.Class = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
 
-			const digestedDefinition:DigestedPropertyDefinition = this.addPropertyDefinition( propertyName, propertyDefinition );
-			const name:string = `${ this._document.name }.${ propertyName }`;
-
-			const property:QueryProperty.Class = this._context
-				.addProperty( name )
-				.addPattern( ...createPropertyPatterns(
-					this._context,
-					this._document.name,
-					name,
-					digestedDefinition
-				) );
-
-			if( "query" in propertyDefinition ) {
-				if( digestedDefinition.literal === false && property.getType() === void 0 ) {
-					property.setType( QueryProperty.PropertyType.PARTIAL );
-				}
-
-				const builder:Class = new Class( this._context, property );
-				if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
-					throw new IllegalArgumentError( "The provided query builder was not returned" );
-			}
-
-			this._document.addPattern( ...property.getPatterns() );
+			this._addProperty( propertyName, propertyDefinition );
 		}
 
 		return this;
@@ -161,14 +151,40 @@ export class Class {
 		let property:QueryProperty.Class = this._document;
 		while( property.isOptional() ) {
 			property.setOptional( false );
-			property = this._context.getProperty( property.name
-				.split( "." )
-				.slice( 0, - 1 )
-				.join( "." )
-			);
+
+			const parentPath:string = getParentPath( property.name );
+			property = this._context.getProperty( parentPath );
 		}
 
 		return this;
+	}
+
+	_addProperty( propertyName:string, propertyDefinition:QueryPropertySchema.Class ):QueryProperty.Class {
+		const digestedDefinition:DigestedPropertyDefinition = this.addPropertyDefinition( propertyName, propertyDefinition );
+		const name:string = `${ this._document.name }.${ propertyName }`;
+
+		const property:QueryProperty.Class = this._context
+			.addProperty( name )
+			.addPattern( ...createPropertyPatterns(
+				this._context,
+				this._document.name,
+				name,
+				digestedDefinition
+			) );
+
+		if( "query" in propertyDefinition ) {
+			if( digestedDefinition.literal === false ) {
+				property.setType( QueryProperty.PropertyType.PARTIAL );
+			}
+
+			const builder:Class = new Class( this._context, property );
+			if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
+				throw new IllegalArgumentError( "The provided query builder was not returned" );
+		}
+
+		this._document.addPattern( ...property.getPatterns() );
+
+		return property;
 	}
 
 	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {

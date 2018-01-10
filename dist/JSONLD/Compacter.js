@@ -5,6 +5,7 @@ var Pointer = require("../Pointer");
 var RDFDocument = require("../RDF/Document");
 var URI_1 = require("../RDF/URI");
 var QueryDocument_1 = require("../SPARQL/QueryDocument");
+var Utils_1 = require("../SPARQL/QueryDocument/Utils");
 function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
@@ -78,7 +79,8 @@ var Class = (function () {
             var _a;
         });
         if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
-            if (!this.resolver.isPartial(path))
+            var mainPath = "document" in resource ? Utils_1.getParentPath(path) : path;
+            if (!this.resolver.isPartial(mainPath))
                 return;
             resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(schema, resource._partialMetadata);
         }

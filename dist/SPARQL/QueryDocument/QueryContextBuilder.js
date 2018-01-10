@@ -75,10 +75,7 @@ var Class = (function (_super) {
                     throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
             }
         }
-        var parent = this.getProperty(path
-            .split(".")
-            .slice(0, -1)
-            .join("."));
+        var parent = this.getProperty(Utils_1.getParentPath(path));
         if (!parent || parent.getType() !== QueryProperty.PropertyType.FULL)
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return _super.prototype.getSchemaFor.call(this, object);

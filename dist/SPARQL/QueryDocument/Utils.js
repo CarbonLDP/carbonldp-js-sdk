@@ -41,5 +41,12 @@ function createGraphPattern(context, resourcePath) {
         .addObject(context.getVariable(resourcePath + "._object"))));
 }
 exports.createGraphPattern = createGraphPattern;
+function getParentPath(path) {
+    return path
+        .split(".")
+        .slice(0, -1)
+        .join(".");
+}
+exports.getParentPath = getParentPath;
 
 //# sourceMappingURL=Utils.js.map

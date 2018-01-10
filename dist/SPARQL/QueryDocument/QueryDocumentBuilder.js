@@ -15,6 +15,7 @@ var Class = (function () {
         this.inherit = inherit;
         this.all = all;
         this._context = queryContext;
+        property._builder = this;
         this._document = property;
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
         this._values = new tokens_1.ValuesToken().addValues(property.variable);
@@ -25,13 +26,18 @@ var Class = (function () {
             return this._document;
         var parent = this._document.name;
         while (parent) {
-            var parentPath = parent + "." + name;
-            if (this._context.hasProperty(parentPath))
-                return this._context.getProperty(parentPath);
-            parent = parent
-                .split(".")
-                .slice(0, -1)
-                .join(".");
+            var fullPath = parent + "." + name;
+            if (this._context.hasProperty(fullPath))
+                return this._context.getProperty(fullPath);
+            var directPath = Utils_2.getParentPath(fullPath);
+            if (this._context.hasProperty(directPath)) {
+                var direct = this._context.getProperty(directPath);
+                if (direct.getType() === QueryProperty.PropertyType.FULL) {
+                    var propertyName = fullPath.substr(directPath.length + 1);
+                    return direct._builder._addProperty(propertyName, inherit);
+                }
+            }
+            parent = Utils_2.getParentPath(parent);
         }
         throw new Errors_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
@@ -64,22 +70,9 @@ var Class = (function () {
         for (var propertyName in propertiesSchema) {
             var queryPropertySchema = propertiesSchema[propertyName];
             var propertyDefinition = Utils_1.isObject(queryPropertySchema) ? queryPropertySchema : { "@id": queryPropertySchema };
-            var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
-            var name_1 = this._document.name + "." + propertyName;
-            var property = (_a = this._context
-                .addProperty(name_1)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name_1, digestedDefinition));
-            if ("query" in propertyDefinition) {
-                if (digestedDefinition.literal === false && property.getType() === void 0) {
-                    property.setType(QueryProperty.PropertyType.PARTIAL);
-                }
-                var builder = new Class(this._context, property);
-                if (builder !== propertyDefinition["query"].call(void 0, builder))
-                    throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
-            }
-            (_b = this._document).addPattern.apply(_b, property.getPatterns());
+            this._addProperty(propertyName, propertyDefinition);
         }
         return this;
-        var _a, _b;
     };
     Class.prototype.filter = function (constraint) {
         var baseName = this._document.name.split(".")[0];
@@ -105,13 +98,28 @@ var Class = (function () {
         var property = this._document;
         while (property.isOptional()) {
             property.setOptional(false);
-            property = this._context.getProperty(property.name
-                .split(".")
-                .slice(0, -1)
-                .join("."));
+            var parentPath = Utils_2.getParentPath(property.name);
+            property = this._context.getProperty(parentPath);
         }
         return this;
         var _a;
+    };
+    Class.prototype._addProperty = function (propertyName, propertyDefinition) {
+        var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
+        var name = this._document.name + "." + propertyName;
+        var property = (_a = this._context
+            .addProperty(name)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
+        if ("query" in propertyDefinition) {
+            if (digestedDefinition.literal === false) {
+                property.setType(QueryProperty.PropertyType.PARTIAL);
+            }
+            var builder = new Class(this._context, property);
+            if (builder !== propertyDefinition["query"].call(void 0, builder))
+                throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
+        }
+        (_b = this._document).addPattern.apply(_b, property.getPatterns());
+        return property;
+        var _a, _b;
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
         var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;

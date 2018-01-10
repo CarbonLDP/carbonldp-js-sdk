@@ -6,6 +6,7 @@ import {
 
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
+import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryVariable from "./QueryVariable";
 import {
 	createGraphPattern,
@@ -20,6 +21,8 @@ export enum PropertyType {
 export class Class {
 	readonly name:string;
 	readonly variable:QueryVariable.Class;
+
+	_builder:QueryDocumentBuilder.Class;
 
 	private _context:QueryContext.Class;
 

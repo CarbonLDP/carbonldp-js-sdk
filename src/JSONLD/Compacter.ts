@@ -14,6 +14,7 @@ import {
 } from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
+import { getParentPath } from "../SPARQL/QueryDocument/Utils";
 
 function getRelativeID( node:RDFNode.Class ):string {
 	const id:string = node[ "@id" ];
@@ -119,7 +120,9 @@ export class Class {
 		} );
 
 		if( this.resolver instanceof QueryContextBuilder.Class ) {
-			if( ! this.resolver.isPartial( path ) ) return;
+			const mainPath:string = "document" in resource ? getParentPath( path ) : path;
+			if( ! this.resolver.isPartial( mainPath ) ) return;
+
 			resource._partialMetadata = new PartialMetadata.Class( schema, resource._partialMetadata );
 		}
 	}

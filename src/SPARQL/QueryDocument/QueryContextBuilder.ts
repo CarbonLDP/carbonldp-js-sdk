@@ -2,11 +2,14 @@ import * as Context from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
-	DigestedPropertyDefinition
+	DigestedPropertyDefinition,
 } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
-import { getLevelRegExp } from "./Utils";
+import {
+	getLevelRegExp,
+	getParentPath,
+} from "./Utils";
 
 export class Class extends QueryContext.Class {
 
@@ -74,12 +77,7 @@ export class Class extends QueryContext.Class {
 			}
 		}
 
-		const parent:QueryProperty.Class = this.getProperty( path
-			.split( "." )
-			.slice( 0, - 1 )
-			.join( "." )
-		);
-
+		const parent:QueryProperty.Class = this.getProperty( getParentPath( path ) );
 		if( ! parent || parent.getType() !== QueryProperty.PropertyType.FULL )
 			throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
 
