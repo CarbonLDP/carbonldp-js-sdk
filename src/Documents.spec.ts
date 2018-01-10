@@ -1083,13 +1083,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?document.` +
 
-							" ?document a ?document__types." +
-							" ?document <https://example.com/ns#property-1> ?document__property1." +
-							" ?document schema:property-2 ?document__property2." +
+							" ?document a ?document__types;" +
+							"" + " <https://example.com/ns#property-1> ?document__property1;" +
+							"" + " schema:property-2 ?document__property2." +
 
-							" ?document__property2 a ?document__property2__types." +
-							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-							" ?document__property2 schema:property-3 ?document__property2__property3 " +
+							" ?document__property2 a ?document__property2__types;" +
+							"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+							"" + " schema:property-3 ?document__property2__property3 " +
 
 							"} WHERE {" +
 							" BIND(BNODE() AS ?metadata)." +
@@ -1890,13 +1890,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?document.` +
 
-							" ?document a ?document__types." +
-							" ?document <https://example.com/ns#property-1> ?document__property1." +
-							" ?document <https://schema.org/property-2> ?document__property2." +
+							" ?document a ?document__types;" +
+							"" + " <https://example.com/ns#property-1> ?document__property1;" +
+							"" + " <https://schema.org/property-2> ?document__property2." +
 
-							" ?document__property2 a ?document__property2__types." +
-							" ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-							" ?document__property2 <https://schema.org/property-3> ?document__property2__property3 " +
+							" ?document__property2 a ?document__property2__types;" +
+							"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+							"" + " <https://schema.org/property-3> ?document__property2__property3 " +
 
 							"} WHERE {" +
 							" BIND(BNODE() AS ?metadata)." +
@@ -4221,13 +4221,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?child.` +
 
-							" ?child a ?child__types." +
-							" ?child <https://example.com/ns#property-1> ?child__property1." +
-							" ?child schema:property-2 ?child__property2." +
+							" ?child a ?child__types;" +
+							"" + " <https://example.com/ns#property-1> ?child__property1;" +
+							"" + " schema:property-2 ?child__property2." +
 
-							" ?child__property2 a ?child__property2__types." +
-							" ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
-							" ?child__property2 schema:property-3 ?child__property2__property3 " +
+							" ?child__property2 a ?child__property2__types;" +
+							"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
+							"" + " schema:property-3 ?child__property2__property3 " +
 
 							"} WHERE {" +
 							" BIND(BNODE() AS ?metadata)." +
@@ -4507,13 +4507,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "child__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "child" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
 										.addObject( variableHelper( "child__property1" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "child" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
 										.addObject( variableHelper( "child__property2" ) )
 									)
@@ -4522,13 +4518,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "child__property2__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
 										.addObject( variableHelper( "child__property2__property2" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 										.addObject( variableHelper( "child__property2__property3" ) )
 									)
@@ -5280,13 +5272,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?child.` +
 
-							" ?child a ?child__types." +
-							" ?child <https://example.com/ns#property-1> ?child__property1." +
-							" ?child <https://schema.org/property-2> ?child__property2." +
+							" ?child a ?child__types;" +
+							"" + " <https://example.com/ns#property-1> ?child__property1;" +
+							"" + " <https://schema.org/property-2> ?child__property2." +
 
-							" ?child__property2 a ?child__property2__types." +
-							" ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
-							" ?child__property2 <https://schema.org/property-3> ?child__property2__property3 " +
+							" ?child__property2 a ?child__property2__types;" +
+							"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
+							"" + " <https://schema.org/property-3> ?child__property2__property3 " +
 
 							"} WHERE {" +
 							" BIND(BNODE() AS ?metadata)." +
@@ -7240,13 +7232,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?member.` +
 
-							" ?member a ?member__types." +
-							" ?member <https://example.com/ns#property-1> ?member__property1." +
-							" ?member schema:property-2 ?member__property2." +
+							" ?member a ?member__types;" +
+							"" + " <https://example.com/ns#property-1> ?member__property1;" +
+							"" + " schema:property-2 ?member__property2." +
 
-							" ?member__property2 a ?member__property2__types." +
-							" ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
-							" ?member__property2 schema:property-3 ?member__property2__property3 " +
+							" ?member__property2 a ?member__property2__types;" +
+							"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
+							"" + " schema:property-3 ?member__property2__property3 " +
 
 							"} WHERE {" +
 							" BIND(BNODE() AS ?metadata)." +
@@ -7449,13 +7441,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "member__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "member" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
 										.addObject( variableHelper( "member__property1" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "member" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
 										.addObject( variableHelper( "member__property2" ) )
 									)
@@ -7464,13 +7452,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "member__property2__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
 										.addObject( variableHelper( "member__property2__property2" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 										.addObject( variableHelper( "member__property2__property3" ) )
 									)
@@ -8230,13 +8214,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 							"" + ` <${ NS.C.Predicate.target }> ?member.` +
 
-							" ?member a ?member__types." +
-							" ?member <https://example.com/ns#property-1> ?member__property1." +
-							" ?member <https://schema.org/property-2> ?member__property2." +
+							" ?member a ?member__types;" +
+							"" + " <https://example.com/ns#property-1> ?member__property1;" +
+							"" + " <https://schema.org/property-2> ?member__property2." +
 
-							" ?member__property2 a ?member__property2__types." +
-							" ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
-							" ?member__property2 <https://schema.org/property-3> ?member__property2__property3 " +
+							" ?member__property2 a ?member__property2__types;" +
+							"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
+							"" + " <https://schema.org/property-3> ?member__property2__property3 " +
 
 							"} WHERE {" +
 							" BIND(BNODE() AS ?metadata)." +
@@ -10393,40 +10377,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "document__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
 										.addObject( variableHelper( "document__property4" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
 										.addObject( variableHelper( "document__property2" ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+										.addObject( variableHelper( "document__property1" ) )
 									)
 								)
 								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "document__property2__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 										.addObject( variableHelper( "document__property2__property3" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-5" ) )
 										.addObject( variableHelper( "document__property2__property5" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
 										.addObject( variableHelper( "document__property2__property2" ) )
-									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
-										.addObject( variableHelper( "document__property1" ) )
 									)
 								)
 
@@ -11014,40 +10986,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "document__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-4" ) )
 										.addObject( variableHelper( "document__property4" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-2" ) )
 										.addObject( variableHelper( "document__property2" ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
+										.addObject( variableHelper( "document__property1" ) )
 									)
 								)
 								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "document__property2__types" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-3" ) )
 										.addObject( variableHelper( "document__property2__property3" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://schema.org/property-5" ) )
 										.addObject( variableHelper( "document__property2__property5" ) )
 									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document__property2" ) )
 									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-2" ) )
 										.addObject( variableHelper( "document__property2__property2" ) )
-									)
-								)
-								.addTriple( new SubjectToken( variableHelper( "document" ) )
-									.addPredicate( new PredicateToken( new IRIToken( "https://example.com/ns#property-1" ) )
-										.addObject( variableHelper( "document__property1" ) )
 									)
 								)
 

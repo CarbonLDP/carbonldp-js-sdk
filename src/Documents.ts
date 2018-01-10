@@ -9,6 +9,7 @@ import {
 	QueryToken,
 	SelectToken,
 	SubjectToken,
+	TokenNode,
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
@@ -55,9 +56,12 @@ import {
 	createGraphPattern,
 	createPropertyPatterns,
 	createTypesPattern,
+	getAllTriples,
+	isFullTriple,
 } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import {
+	isObject,
 	mapTupleArray,
 	promiseMethod,
 } from "./Utils";
@@ -1008,19 +1012,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const query:QueryToken = new QueryToken( construct )
 			.addPrologues( ...queryContext.getPrologues() );
 
-		(function triplesAdder( patterns:PatternToken[] ):void {
-			patterns.forEach( ( pattern:PatternToken ) => {
-				if( pattern.token === "optional" || pattern.token === "graph" )
-					return triplesAdder( pattern.patterns );
-
-				if( pattern.token !== "subject" ) return;
-
-				const valid:boolean = pattern.predicates
-					.map( predicate => predicate.objects )
-					.some( objects => objects.some( object => object.token === "variable" ) );
-				if( valid ) construct.addTriple( pattern );
-			} );
-		})( constructPatterns );
+		const triples:SubjectToken[] = getAllTriples( constructPatterns );
+		construct.addTriple( ...triples );
 
 		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
 		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );

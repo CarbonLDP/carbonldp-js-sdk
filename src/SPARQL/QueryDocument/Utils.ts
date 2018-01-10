@@ -1,4 +1,3 @@
-import { DigestedPropertyDefinition } from "../../ObjectSchema";
 import {
 	FilterToken,
 	GraphToken,
@@ -10,6 +9,9 @@ import {
 	SubjectToken,
 	VariableToken
 } from "sparqler/tokens";
+
+import { DigestedPropertyDefinition } from "../../ObjectSchema";
+import { isObject } from "../../Utils";
 import * as QueryContext from "./QueryContext";
 
 export function getLevelRegExp( property:string ):RegExp {
@@ -66,4 +68,50 @@ export function getParentPath( path:string ):string {
 		.slice( 0, - 1 )
 		.join( "." )
 		;
+}
+
+export function isFullTriple( triple:SubjectToken ):boolean {
+	return triple
+		.predicates
+		.map( x => x.predicate )
+		.some( x => isObject( x ) && x.token === "variable" )
+		;
+}
+
+export function getAllTriples( patterns:PatternToken[] ):SubjectToken[] {
+	const subjectsMap:Map<string, SubjectToken> = new Map();
+	internalTripleAdder( subjectsMap, patterns );
+
+	return Array.from( subjectsMap.values() );
+}
+
+function internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:PatternToken[] ):void {
+	patterns.forEach( ( pattern:PatternToken ) => {
+		if( pattern.token === "optional" || pattern.token === "graph" )
+			return internalTripleAdder( subjectsMap, pattern.patterns );
+
+		if( pattern.token !== "subject" ) return;
+
+		const valid:boolean = pattern.predicates
+			.map( predicate => predicate.objects )
+			.some( objects => objects.some( object => object.token === "variable" ) );
+
+		if( valid ) {
+			const subject:SubjectToken = getSubject( subjectsMap, pattern );
+			if( isFullTriple( subject ) ) return;
+
+			if( isFullTriple( pattern ) ) subject.predicates.length = 0;
+			subject.predicates.push( ...pattern.predicates );
+		}
+	} );
+}
+
+function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToken ):SubjectToken {
+	const subjectStr:string = original.subject.toString();
+	if( subjectsMap.has( subjectStr ) ) return subjectsMap.get( subjectStr );
+
+	const subject:SubjectToken = new SubjectToken( original.subject );
+	subjectsMap.set( subjectStr, subject );
+
+	return subject;
 }

@@ -4307,6 +4307,7 @@ exports.joinPatterns = function (patterns) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
+var Utils_1 = __webpack_require__(0);
 function getLevelRegExp(property) {
     if (property)
         property += ".";
@@ -4354,6 +4355,47 @@ function getParentPath(path) {
         .join(".");
 }
 exports.getParentPath = getParentPath;
+function isFullTriple(triple) {
+    return triple
+        .predicates
+        .map(function (x) { return x.predicate; })
+        .some(function (x) { return Utils_1.isObject(x) && x.token === "variable"; });
+}
+exports.isFullTriple = isFullTriple;
+function getAllTriples(patterns) {
+    var subjectsMap = new Map();
+    internalTripleAdder(subjectsMap, patterns);
+    return Array.from(subjectsMap.values());
+}
+exports.getAllTriples = getAllTriples;
+function internalTripleAdder(subjectsMap, patterns) {
+    patterns.forEach(function (pattern) {
+        if (pattern.token === "optional" || pattern.token === "graph")
+            return internalTripleAdder(subjectsMap, pattern.patterns);
+        if (pattern.token !== "subject")
+            return;
+        var valid = pattern.predicates
+            .map(function (predicate) { return predicate.objects; })
+            .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
+        if (valid) {
+            var subject = getSubject(subjectsMap, pattern);
+            if (isFullTriple(subject))
+                return;
+            if (isFullTriple(pattern))
+                subject.predicates.length = 0;
+            (_a = subject.predicates).push.apply(_a, pattern.predicates);
+        }
+        var _a;
+    });
+}
+function getSubject(subjectsMap, original) {
+    var subjectStr = original.subject.toString();
+    if (subjectsMap.has(subjectStr))
+        return subjectsMap.get(subjectStr);
+    var subject = new tokens_1.SubjectToken(original.subject);
+    subjectsMap.set(subjectStr, subject);
+    return subject;
+}
 
 
 /***/ }),
@@ -10236,19 +10278,8 @@ var Class = (function () {
             .addObject(queryContext.getVariable(targetName))))
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
-        (function triplesAdder(patterns) {
-            patterns.forEach(function (pattern) {
-                if (pattern.token === "optional" || pattern.token === "graph")
-                    return triplesAdder(pattern.patterns);
-                if (pattern.token !== "subject")
-                    return;
-                var valid = pattern.predicates
-                    .map(function (predicate) { return predicate.objects; })
-                    .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
-                if (valid)
-                    construct.addTriple(pattern);
-            });
-        })(constructPatterns);
+        var triples = Utils_2.getAllTriples(constructPatterns);
+        construct.addTriple.apply(construct, triples);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
         var response;

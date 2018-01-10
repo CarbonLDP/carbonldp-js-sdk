@@ -811,19 +811,8 @@ var Class = (function () {
             .addObject(queryContext.getVariable(targetName))))
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
-        (function triplesAdder(patterns) {
-            patterns.forEach(function (pattern) {
-                if (pattern.token === "optional" || pattern.token === "graph")
-                    return triplesAdder(pattern.patterns);
-                if (pattern.token !== "subject")
-                    return;
-                var valid = pattern.predicates
-                    .map(function (predicate) { return predicate.objects; })
-                    .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
-                if (valid)
-                    construct.addTriple(pattern);
-            });
-        })(constructPatterns);
+        var triples = Utils_2.getAllTriples(constructPatterns);
+        construct.addTriple.apply(construct, triples);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
         var response;
