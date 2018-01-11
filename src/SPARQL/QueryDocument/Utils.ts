@@ -52,10 +52,8 @@ export function createTypesPattern( context:QueryContext.Class, resourcePath:str
 }
 
 export function createGraphPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
-	const resourceGraph:VariableToken = context.getVariable( `${ resourcePath }._graph` );
-
-	return new GraphToken( resourceGraph )
-		.addPattern( new SubjectToken( context.getVariable( resourcePath ) )
+	return new GraphToken( context.getVariable( resourcePath ) )
+		.addPattern( new SubjectToken( context.getVariable( `${ resourcePath }._subject` ) )
 			.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
 				.addObject( context.getVariable( `${ resourcePath }._object` ) ) )
 		)
