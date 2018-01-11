@@ -5,7 +5,6 @@ var Pointer = require("../Pointer");
 var RDFDocument = require("../RDF/Document");
 var URI_1 = require("../RDF/URI");
 var QueryDocument_1 = require("../SPARQL/QueryDocument");
-var Utils_1 = require("../SPARQL/QueryDocument/Utils");
 function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
@@ -79,10 +78,12 @@ var Class = (function () {
             var _a;
         });
         if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
-            var mainPath = "document" in resource ? Utils_1.getParentPath(path) : path;
-            if (!this.resolver.isPartial(mainPath))
+            var type = this.resolver.hasProperty(path) ?
+                this.resolver.getProperty(path).getType() : void 0;
+            if (type !== QueryDocument_1.QueryProperty.PropertyType.PARTIAL
+                && type !== QueryDocument_1.QueryProperty.PropertyType.ALL)
                 return;
-            resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(schema, resource._partialMetadata);
+            resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(type === QueryDocument_1.QueryProperty.PropertyType.ALL ? QueryDocument_1.PartialMetadata.ALL : schema, resource._partialMetadata);
         }
     };
     Class.prototype.getResource = function (node, containerLibrary, isDocument) {

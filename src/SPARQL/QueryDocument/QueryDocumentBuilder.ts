@@ -32,13 +32,13 @@ import {
 	getParentPath,
 } from "./Utils";
 
-const inherit:Readonly<{}> = Object.freeze( {} );
+const INHERIT:Readonly<{}> = Object.freeze( {} );
 
-const all:Readonly<{}> = Object.freeze( {} );
+export const ALL:Readonly<{}> = Object.freeze( {} );
 
 export class Class {
-	inherit:Readonly<{}> = inherit;
-	all:Readonly<{}> = all;
+	inherit:Readonly<{}> = INHERIT;
+	all:Readonly<{}> = ALL;
 
 	readonly _context:QueryContextBuilder.Class;
 
@@ -76,7 +76,7 @@ export class Class {
 				const directType:QueryProperty.PropertyType = direct.getType();
 				if( directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL ) {
 					const propertyName:string = fullPath.substr( directPath.length + 1 );
-					return direct._builder._addProperty( propertyName, inherit );
+					return direct._builder._addProperty( propertyName, INHERIT );
 				}
 			}
 
@@ -114,7 +114,7 @@ export class Class {
 	}
 
 	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
-		if( propertiesSchema === all ) {
+		if( propertiesSchema === ALL ) {
 			this._document.setType( QueryProperty.PropertyType.ALL );
 			return this;
 		}

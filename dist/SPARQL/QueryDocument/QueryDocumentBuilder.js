@@ -8,12 +8,12 @@ var QueryObject = require("./QueryObject");
 var QueryProperty = require("./QueryProperty");
 var QueryValue = require("./QueryValue");
 var Utils_2 = require("./Utils");
-var inherit = Object.freeze({});
-var all = Object.freeze({});
+var INHERIT = Object.freeze({});
+exports.ALL = Object.freeze({});
 var Class = (function () {
     function Class(queryContext, property) {
-        this.inherit = inherit;
-        this.all = all;
+        this.inherit = INHERIT;
+        this.all = exports.ALL;
         this._context = queryContext;
         property._builder = this;
         this._document = property;
@@ -35,7 +35,7 @@ var Class = (function () {
                 var directType = direct.getType();
                 if (directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
-                    return direct._builder._addProperty(propertyName, inherit);
+                    return direct._builder._addProperty(propertyName, INHERIT);
                 }
             }
             parent = Utils_2.getParentPath(parent);
@@ -64,7 +64,7 @@ var Class = (function () {
         return this;
     };
     Class.prototype.properties = function (propertiesSchema) {
-        if (propertiesSchema === all) {
+        if (propertiesSchema === exports.ALL) {
             this._document.setType(QueryProperty.PropertyType.ALL);
             return this;
         }

@@ -85,15 +85,6 @@ export class Class extends QueryContext.Class {
 		return super.getSchemaFor( object );
 	}
 
-	isPartial( path:string ):boolean {
-		if( ! this.hasProperty( path ) ) return false;
-
-		return this
-			.getProperty( path )
-			.getType() === QueryProperty.PropertyType.PARTIAL
-			;
-	}
-
 	private _getTypeSchemas():DigestedObjectSchema[] {
 		if( this._schemas ) return this._schemas;
 

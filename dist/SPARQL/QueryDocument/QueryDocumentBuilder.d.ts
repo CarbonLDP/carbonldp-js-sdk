@@ -5,6 +5,7 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
+export declare const ALL: Readonly<{}>;
 export declare class Class {
     inherit: Readonly<{}>;
     all: Readonly<{}>;

@@ -11,6 +11,7 @@ import { Util as URIUtils } from "../RDF/URI";
 import {
 	PartialMetadata,
 	QueryContextBuilder,
+	QueryProperty,
 } from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
@@ -120,10 +121,17 @@ export class Class {
 		} );
 
 		if( this.resolver instanceof QueryContextBuilder.Class ) {
-			const mainPath:string = "document" in resource ? getParentPath( path ) : path;
-			if( ! this.resolver.isPartial( mainPath ) ) return;
+			const type:QueryProperty.PropertyType = this.resolver.hasProperty( path ) ?
+				this.resolver.getProperty( path ).getType() : void 0;
 
-			resource._partialMetadata = new PartialMetadata.Class( schema, resource._partialMetadata );
+			if( type !== QueryProperty.PropertyType.PARTIAL
+				&& type !== QueryProperty.PropertyType.ALL
+			) return;
+
+			resource._partialMetadata = new PartialMetadata.Class(
+				type === QueryProperty.PropertyType.ALL ? PartialMetadata.ALL : schema,
+				resource._partialMetadata
+			);
 		}
 	}
 

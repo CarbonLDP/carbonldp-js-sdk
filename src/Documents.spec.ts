@@ -4344,7 +4344,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} );
 				} );
 
-				it( "should send a filtered full construct query", ( done:DoneFn ):void => {
+				it( "should send a filtered .ALL construct query", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
 						property2:{};
@@ -4963,6 +4963,167 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} ) );
 						done();
 					} ).catch( done.fail );
+				} );
+
+				it( "should return .ALL children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/child1/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/child1/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://schema.org/Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/child2/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/child2/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://schema.org/Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property3:string;
+							property4:number;
+						};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "schema:Resource", {
+						"property1": {
+							"@id": "https://schema.org/property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} );
+					context.extendObjectSchema( "schema:Fragment", {
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} );
+
+					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
+						.then( ( [ myDocuments, response ] ) => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+							for( const document of myDocuments ) {
+								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( document.isPartial() ).toBe( true );
+							}
+
+							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": "\"1-12345\"",
+								"property1": "value 1",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 1",
+								"property4": 12345,
+							} ) as any );
+
+							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": "\"2-12345\"",
+								"property1": "value 2",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 2",
+								"property4": 67890,
+							} ) as any );
+
+							done();
+						} )
+						.catch( done.fail );
 				} );
 
 				it( "should return partial children with partial relations", ( done:DoneFn ):void => {
@@ -7357,6 +7518,87 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} );
 				} );
 
+				it( "should send a filtered .ALL construct query", ( done:DoneFn ):void => {
+					interface MyDocument {
+						property1:string;
+						property2:{};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "Resource", {
+						"property1": {
+							"@id": "https://schema.org/property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} );
+
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" ).and.returnValue( Promise.reject( null ) );
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => {
+						return _
+							.properties( _.all )
+							.orderBy( _.property( "property2" ) )
+							.limit( 10 )
+							.offset( 5 )
+							;
+					} )
+						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
+						.catch( ( error ) => {
+							if( error ) done.fail( error );
+
+							expect( sendSpy ).toHaveBeenCalledWith(
+								"https://example.com/resource/",
+								"PREFIX schema: <https://schema.org/> " +
+								"CONSTRUCT {" +
+								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
+								"" + ` <${ NS.C.Predicate.target }> ?member.` +
+
+								" ?member ?member___predicate ?member___object " +
+
+								"} WHERE {" +
+								" BIND(BNODE() AS ?metadata)." +
+
+								" {" +
+								"" + " SELECT ?member WHERE {" +
+								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+								"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+								"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
+								"" + " }" +
+								"" + " ORDER BY ?member__property2" +
+								"" + " LIMIT 10" +
+								"" + " OFFSET 5" +
+								" }." +
+
+								" ?member ?member___predicate ?member___object." +
+
+								" OPTIONAL {" +
+								"" + " ?member schema:property-2 ?member__property2." +
+								"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+								" }" +
+
+								" " +
+								"}",
+
+								jasmine.objectContaining( {
+									headers: new Map( [
+										[ "prefer", new HTTP.Header.Class( [
+											new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										] ) ],
+									] ),
+								} )
+							);
+							done();
+						} );
+				} );
+
 				it( "should send a correct filtered construct query", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
@@ -7905,6 +8147,167 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} ) );
 						done();
 					} ).catch( done.fail );
+				} );
+
+				it( "should return .ALL members", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ NS.C.Class.VolatileResource }",
+								"${ NS.C.Class.QueryMetadata }"
+							],
+							"${ NS.C.Predicate.target }": [ {
+								"@id":"${ context.baseURI }resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ NS.C.Class.ResponseMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ NS.C.Class.DocumentMetadata }",
+								"${ NS.C.Class.VolatileResource }"
+							],
+							"${ NS.C.Predicate.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ NS.C.Predicate.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/child1/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/child1/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://schema.org/Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							} ]
+						}, {
+							"@id": "${ context.baseURI }resource/child2/",
+							"@graph": [ {
+								"@id": "${ context.baseURI }resource/child2/",
+								"@type": [
+									"${ NS.C.Class.Document }",
+									"https://schema.org/Resource",
+									"${ NS.LDP.Class.BasicContainer }",
+									"${ NS.LDP.Class.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property3:string;
+							property4:number;
+						};
+					}
+
+					context.extendObjectSchema( {
+						"schema": "https://schema.org/",
+					} );
+					context.extendObjectSchema( "schema:Resource", {
+						"property1": {
+							"@id": "https://schema.org/property-1",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} );
+					context.extendObjectSchema( "schema:Fragment", {
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": NS.XSD.DataType.string,
+						},
+						"property4": {
+							"@id": "https://schema.org/property-4",
+							"@type": NS.XSD.DataType.integer,
+						},
+					} );
+
+					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
+						.then( ( [ myDocuments, response ] ) => {
+							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+							for( const document of myDocuments ) {
+								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( document.isPartial() ).toBe( true );
+							}
+
+							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": "\"1-12345\"",
+								"property1": "value 1",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 1",
+								"property4": 12345,
+							} ) as any );
+
+							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+								"_etag": "\"2-12345\"",
+								"property1": "value 2",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 2",
+								"property4": 67890,
+							} ) as any );
+
+							done();
+						} )
+						.catch( done.fail );
 				} );
 
 				it( "should return partial members with partial relations", ( done:DoneFn ):void => {

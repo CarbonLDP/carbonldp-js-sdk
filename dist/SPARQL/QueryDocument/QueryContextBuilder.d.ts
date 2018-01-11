@@ -13,7 +13,6 @@ export declare class Class extends QueryContext.Class {
     getProperties(name: string): QueryProperty.Class[];
     getInheritTypeDefinition(existingSchema: DigestedObjectSchema, propertyName: string, propertyURI?: string): DigestedPropertyDefinition;
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
-    isPartial(path: string): boolean;
     private _getTypeSchemas();
 }
 export default Class;

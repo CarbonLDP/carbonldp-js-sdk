@@ -81,13 +81,6 @@ var Class = (function (_super) {
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return _super.prototype.getSchemaFor.call(this, object);
     };
-    Class.prototype.isPartial = function (path) {
-        if (!this.hasProperty(path))
-            return false;
-        return this
-            .getProperty(path)
-            .getType() === QueryProperty.PropertyType.PARTIAL;
-    };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;
         if (this._schemas)
