@@ -73,7 +73,8 @@ export class Class {
 			const directPath:string = getParentPath( fullPath );
 			if( this._context.hasProperty( directPath ) ) {
 				const direct:QueryProperty.Class = this._context.getProperty( directPath );
-				if( direct.getType() === QueryProperty.PropertyType.FULL ) {
+				const directType:QueryProperty.PropertyType = direct.getType();
+				if( directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL ) {
 					const propertyName:string = fullPath.substr( directPath.length + 1 );
 					return direct._builder._addProperty( propertyName, inherit );
 				}
@@ -114,7 +115,7 @@ export class Class {
 
 	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
 		if( propertiesSchema === all ) {
-			this._document.setType( QueryProperty.PropertyType.FULL );
+			this._document.setType( QueryProperty.PropertyType.ALL );
 			return this;
 		}
 

@@ -60,6 +60,14 @@ export function createGraphPattern( context:QueryContext.Class, resourcePath:str
 		;
 }
 
+export function createAllPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
+	return new SubjectToken( context.getVariable( resourcePath ) )
+		.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
+			.addObject( context.getVariable( `${ resourcePath }._object` ) )
+		)
+		;
+}
+
 export function getParentPath( path:string ):string {
 	return path
 		.split( "." )

@@ -4347,6 +4347,12 @@ function createGraphPattern(context, resourcePath) {
         .addObject(context.getVariable(resourcePath + "._object"))));
 }
 exports.createGraphPattern = createGraphPattern;
+function createAllPattern(context, resourcePath) {
+    return new tokens_1.SubjectToken(context.getVariable(resourcePath))
+        .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
+        .addObject(context.getVariable(resourcePath + "._object")));
+}
+exports.createAllPattern = createAllPattern;
 function getParentPath(path) {
     return path
         .split(".")
@@ -5974,6 +5980,7 @@ var PropertyType;
 (function (PropertyType) {
     PropertyType[PropertyType["FULL"] = 0] = "FULL";
     PropertyType[PropertyType["PARTIAL"] = 1] = "PARTIAL";
+    PropertyType[PropertyType["ALL"] = 2] = "ALL";
 })(PropertyType = exports.PropertyType || (exports.PropertyType = {}));
 var Class = (function () {
     function Class(context, name) {
@@ -5995,7 +6002,8 @@ var Class = (function () {
     Class.prototype.getPatterns = function () {
         var patterns = this._patterns.slice();
         if (this._type !== void 0) {
-            var fn = this._type === PropertyType.PARTIAL ? Utils_1.createTypesPattern : Utils_1.createGraphPattern;
+            var fn = this._type === PropertyType.PARTIAL ? Utils_1.createTypesPattern :
+                this._type === PropertyType.FULL ? Utils_1.createGraphPattern : Utils_1.createAllPattern;
             var index = patterns.findIndex(function (pattern) { return pattern === void 0; });
             patterns[index] = fn(this._context, this.name);
         }
@@ -8289,7 +8297,8 @@ var Class = (function () {
             var directPath = Utils_2.getParentPath(fullPath);
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
-                if (direct.getType() === QueryProperty.PropertyType.FULL) {
+                var directType = direct.getType();
+                if (directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
                     return direct._builder._addProperty(propertyName, inherit);
                 }
@@ -8321,7 +8330,7 @@ var Class = (function () {
     };
     Class.prototype.properties = function (propertiesSchema) {
         if (propertiesSchema === all) {
-            this._document.setType(QueryProperty.PropertyType.FULL);
+            this._document.setType(QueryProperty.PropertyType.ALL);
             return this;
         }
         for (var propertyName in propertiesSchema) {
@@ -16657,6 +16666,7 @@ var Class = (function (_super) {
                 case QueryProperty.PropertyType.PARTIAL:
                     return this.getProperty(path).getSchema();
                 case QueryProperty.PropertyType.FULL:
+                case QueryProperty.PropertyType.ALL:
                     return _super.prototype.getSchemaFor.call(this, object);
                 default:
                     throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");

@@ -7,6 +7,7 @@ var PropertyType;
 (function (PropertyType) {
     PropertyType[PropertyType["FULL"] = 0] = "FULL";
     PropertyType[PropertyType["PARTIAL"] = 1] = "PARTIAL";
+    PropertyType[PropertyType["ALL"] = 2] = "ALL";
 })(PropertyType = exports.PropertyType || (exports.PropertyType = {}));
 var Class = (function () {
     function Class(context, name) {
@@ -28,7 +29,8 @@ var Class = (function () {
     Class.prototype.getPatterns = function () {
         var patterns = this._patterns.slice();
         if (this._type !== void 0) {
-            var fn = this._type === PropertyType.PARTIAL ? Utils_1.createTypesPattern : Utils_1.createGraphPattern;
+            var fn = this._type === PropertyType.PARTIAL ? Utils_1.createTypesPattern :
+                this._type === PropertyType.FULL ? Utils_1.createGraphPattern : Utils_1.createAllPattern;
             var index = patterns.findIndex(function (pattern) { return pattern === void 0; });
             patterns[index] = fn(this._context, this.name);
         }

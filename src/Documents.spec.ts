@@ -4400,9 +4400,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"" + " OFFSET 5" +
 								" }." +
 
-								" GRAPH ?child___graph {" +
-								"" + " ?child ?child___predicate ?child___object" +
-								" }." +
+								" ?child ?child___predicate ?child___object." +
 
 								" OPTIONAL {" +
 								"" + " ?child schema:property-2 ?child__property2." +

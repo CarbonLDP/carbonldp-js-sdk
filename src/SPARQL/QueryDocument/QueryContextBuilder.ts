@@ -70,6 +70,7 @@ export class Class extends QueryContext.Class {
 					return this.getProperty( path ).getSchema();
 
 				case QueryProperty.PropertyType.FULL:
+				case QueryProperty.PropertyType.ALL:
 					return super.getSchemaFor( object );
 
 				default:

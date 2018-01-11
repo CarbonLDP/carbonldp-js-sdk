@@ -32,7 +32,8 @@ var Class = (function () {
             var directPath = Utils_2.getParentPath(fullPath);
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
-                if (direct.getType() === QueryProperty.PropertyType.FULL) {
+                var directType = direct.getType();
+                if (directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
                     return direct._builder._addProperty(propertyName, inherit);
                 }
@@ -64,7 +65,7 @@ var Class = (function () {
     };
     Class.prototype.properties = function (propertiesSchema) {
         if (propertiesSchema === all) {
-            this._document.setType(QueryProperty.PropertyType.FULL);
+            this._document.setType(QueryProperty.PropertyType.ALL);
             return this;
         }
         for (var propertyName in propertiesSchema) {

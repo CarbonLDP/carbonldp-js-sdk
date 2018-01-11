@@ -70,6 +70,7 @@ var Class = (function (_super) {
                 case QueryProperty.PropertyType.PARTIAL:
                     return this.getProperty(path).getSchema();
                 case QueryProperty.PropertyType.FULL:
+                case QueryProperty.PropertyType.ALL:
                     return _super.prototype.getSchemaFor.call(this, object);
                 default:
                     throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");

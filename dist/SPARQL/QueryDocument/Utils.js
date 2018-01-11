@@ -41,6 +41,12 @@ function createGraphPattern(context, resourcePath) {
         .addObject(context.getVariable(resourcePath + "._object"))));
 }
 exports.createGraphPattern = createGraphPattern;
+function createAllPattern(context, resourcePath) {
+    return new tokens_1.SubjectToken(context.getVariable(resourcePath))
+        .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
+        .addObject(context.getVariable(resourcePath + "._object")));
+}
+exports.createAllPattern = createAllPattern;
 function getParentPath(path) {
     return path
         .split(".")

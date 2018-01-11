@@ -9,6 +9,7 @@ import * as QueryContext from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryVariable from "./QueryVariable";
 import {
+	createAllPattern,
 	createGraphPattern,
 	createTypesPattern
 } from "./Utils";
@@ -16,6 +17,7 @@ import {
 export enum PropertyType {
 	FULL,
 	PARTIAL,
+	ALL,
 }
 
 export class Class {
@@ -51,8 +53,9 @@ export class Class {
 		let patterns:PatternToken[] = this._patterns.slice();
 
 		if( this._type !== void 0 ) {
-			const fn:typeof createTypesPattern | typeof createGraphPattern =
-				this._type === PropertyType.PARTIAL ? createTypesPattern : createGraphPattern;
+			const fn:( context:QueryContext.Class, resourcePath:string ) => PatternToken =
+				this._type === PropertyType.PARTIAL ? createTypesPattern :
+					this._type === PropertyType.FULL ? createGraphPattern : createAllPattern;
 
 			const index:number = patterns.findIndex( pattern => pattern === void 0 );
 			patterns[ index ] = fn( this._context, this.name );

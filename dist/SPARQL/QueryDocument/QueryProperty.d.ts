@@ -6,6 +6,7 @@ import * as QueryVariable from "./QueryVariable";
 export declare enum PropertyType {
     FULL = 0,
     PARTIAL = 1,
+    ALL = 2,
 }
 export declare class Class {
     readonly name: string;
