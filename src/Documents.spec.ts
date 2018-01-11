@@ -4314,7 +4314,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 								"" + ` <${ NS.C.Predicate.target }> ?child.` +
 
-								" ?child ?child___predicate ?child___object " +
+								" ?child___subject ?child___predicate ?child___object " +
 
 								"} WHERE {" +
 								" BIND(BNODE() AS ?metadata)." +
@@ -4325,8 +4325,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"" + " }" +
 								" }." +
 
-								" GRAPH ?child___graph {" +
-								"" + " ?child ?child___predicate ?child___object" +
+								" GRAPH ?child {" +
+								"" + " ?child___subject ?child___predicate ?child___object" +
 								" } " +
 
 								"}",
@@ -7254,7 +7254,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
 								"" + ` <${ NS.C.Predicate.target }> ?member.` +
 
-								" ?member ?member___predicate ?member___object " +
+								" ?member___subject ?member___predicate ?member___object " +
 
 								"} WHERE {" +
 								" BIND(BNODE() AS ?metadata)." +
@@ -7267,8 +7267,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"" + " }" +
 								" }." +
 
-								" GRAPH ?member___graph {" +
-								"" + " ?member ?member___predicate ?member___object" +
+								" GRAPH ?member {" +
+								"" + " ?member___subject ?member___predicate ?member___object" +
 								" } " +
 
 								"}",
