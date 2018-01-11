@@ -53,6 +53,7 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
+	createAllPattern,
 	createGraphPattern,
 	createPropertyPatterns,
 	createTypesPattern,
@@ -940,12 +941,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		;
 
 		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
-			parentAdder.addPattern( new OptionalToken()
-				.addPattern( new SubjectToken( queryContext.getVariable( parentName ) )
-					.addPredicate( new PredicateToken( "a" )
-						.addObject( queryContext.getVariable( `${ parentName }.types` ) ) )
-				)
-			);
+			if( resource._partialMetadata.schema === SPARQL.QueryDocument.PartialMetadata.ALL ) {
+				parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
+				return;
+			}
+
+			parentAdder.addPattern( createTypesPattern( queryContext, parentName ) );
 
 			resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 				const path:string = `${ parentName }.${ propertyName }`;

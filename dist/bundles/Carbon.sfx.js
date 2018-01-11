@@ -10238,10 +10238,11 @@ var Class = (function () {
             .addPattern(new tokens_1.ValuesToken()
             .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(uri)));
         (function createRefreshQuery(parentAdder, resource, parentName) {
-            parentAdder.addPattern(new tokens_1.OptionalToken()
-                .addPattern(new tokens_1.SubjectToken(queryContext.getVariable(parentName))
-                .addPredicate(new tokens_1.PredicateToken("a")
-                .addObject(queryContext.getVariable(parentName + ".types")))));
+            if (resource._partialMetadata.schema === SPARQL.QueryDocument.PartialMetadata.ALL) {
+                parentAdder.addPattern(Utils_2.createAllPattern(queryContext, parentName));
+                return;
+            }
+            parentAdder.addPattern(Utils_2.createTypesPattern(queryContext, parentName));
             resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
                 var path = parentName + "." + propertyName;
                 var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_2.createPropertyPatterns(queryContext, parentName, path, digestedProperty));
