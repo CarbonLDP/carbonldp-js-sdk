@@ -95,5 +95,14 @@ function getSubject(subjectsMap, original) {
     subjectsMap.set(subjectStr, subject);
     return subject;
 }
+function getPathValue(element, path) {
+    if (element === void 0 || !path)
+        return element;
+    var _a = path.split("."), propName = _a[0], restParts = _a.slice(1);
+    var property = element[propName];
+    var restPath = restParts.join(".");
+    return getPathValue(property, restPath);
+}
+exports.getPathValue = getPathValue;
 
 //# sourceMappingURL=Utils.js.map

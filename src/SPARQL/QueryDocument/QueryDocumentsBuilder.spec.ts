@@ -1,8 +1,29 @@
-import { LimitToken, OffsetToken, OptionalToken, OrderToken, PredicateToken, PrefixedNameToken, SelectToken, SubjectToken, VariableToken } from "sparqler/tokens";
+import {
+	LimitToken,
+	OffsetToken,
+	OptionalToken,
+	OrderToken,
+	PredicateToken,
+	PrefixedNameToken,
+	SelectToken,
+	SubjectToken,
+	VariableToken
+} from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { clazz, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "./../../Errors";
 import QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as Module from "./QueryDocumentsBuilder";
@@ -424,6 +445,81 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 						)
 					,
 				] ) as any );
+			} );
+
+			it( "should store the order path", ():void => {
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
+
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
+					)
+				);
+
+				builder.orderBy( property );
+				expect( builder._orderData ).toEqual( {
+					path: "property",
+					flow: void 0,
+				} );
+			} );
+
+			it( "should store the order flow", ():void => {
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
+
+				const property:QueryProperty.Class = new QueryProperty.Class( queryContext, "member.property" );
+				property.addPattern( new SubjectToken( baseProperty.variable )
+					.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+						.addObject( property.variable )
+					)
+				);
+
+				builder.orderBy( property, "DESC" );
+				expect( builder._orderData ).toEqual( {
+					path: "property",
+					flow: "DESC",
+				} );
+			} );
+
+			it( "should not store the order data when invalid property", ():void => {
+				const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
+				const helper:( name:string ) => void = name => () => {
+					if( ! queryContext.hasProperty( name ) ) queryContext.addProperty( name );
+
+					const property:QueryProperty.Class = queryContext.getProperty( name );
+					builder.orderBy( property );
+				};
+
+				expect( helper( "member.property" ) ).toThrow();
+				expect( builder._orderData ).toBeUndefined();
+				expect( helper( "member.property-2" ) ).toThrow();
+				expect( builder._orderData ).toBeUndefined();
+
+				expect( helper( "member.property.sub-property" ) ).toThrow();
+				expect( builder._orderData ).toBeUndefined();
+				expect( helper( "member.property.sub-property-2" ) ).toThrow();
+				expect( builder._orderData ).toBeUndefined();
+
+				queryContext
+					.getProperty( "member.property.sub-property" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
+						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path" ) )
+							.addObject( queryContext.getVariable( "member.property.sub-property" ) )
+						)
+					)
+				;
+				queryContext
+					.getProperty( "member.property.sub-property-2" )
+					.addPattern( new SubjectToken( queryContext.getVariable( "member.property" ) )
+						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:path-2" ) )
+							.addObject( queryContext.getVariable( "member.property.sub-property-2" ) )
+						)
+					)
+				;
+				expect( helper( "member.property.sub-property" ) ).toThrow();
+				expect( builder._orderData ).toBeUndefined();
+				expect( helper( "member.property.sub-property-2" ) ).toThrow();
+				expect( builder._orderData ).toBeUndefined();
 			} );
 
 		} );

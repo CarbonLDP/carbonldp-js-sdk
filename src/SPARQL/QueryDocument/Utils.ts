@@ -121,3 +121,14 @@ function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToke
 
 	return subject;
 }
+
+export function getPathValue( element:any, path:string ):any {
+	if( element === void 0 || ! path ) return element;
+
+	const [ propName, ...restParts ] = path.split( "." );
+
+	const property:any = element[ propName ];
+	const restPath:string = restParts.join( "." );
+
+	return getPathValue( property, restPath );
+}

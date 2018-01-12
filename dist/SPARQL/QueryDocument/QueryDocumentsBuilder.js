@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var Errors_1 = require("./../../Errors");
 var QueryDocumentBuilder = require("./QueryDocumentBuilder");
+var Utils_1 = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -22,13 +23,22 @@ var Class = (function (_super) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
             throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+        this._orderData = void 0;
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
             select.modifiers.splice(orderIndex, 1);
             var optionalIndex = select.patterns.findIndex(function (pattern) { return pattern.token === "optional"; });
             select.patterns.splice(optionalIndex, 1);
         }
-        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, parseFlowString(flow)));
+        var validatedFlow = parseFlowString(flow);
+        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, validatedFlow));
+        var orderData = {
+            path: property.name
+                .split(".")
+                .slice(1)
+                .join("."),
+            flow: validatedFlow,
+        };
         var propertyPatternsPath;
         while (property !== this._document) {
             var propertyTriple = property && property.getTriple();
@@ -39,11 +49,9 @@ var Class = (function (_super) {
             if (propertyPatternsPath)
                 propertyPattern.addPattern(propertyPatternsPath);
             propertyPatternsPath = propertyPattern;
-            property = this._context.getProperty(property.name
-                .split(".")
-                .slice(0, -1)
-                .join("."));
+            property = this._context.getProperty(Utils_1.getParentPath(property.name));
         }
+        this._orderData = orderData;
         select.addPattern(propertyPatternsPath);
         return this;
     };

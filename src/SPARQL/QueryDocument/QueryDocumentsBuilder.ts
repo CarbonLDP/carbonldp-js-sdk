@@ -1,15 +1,34 @@
-import { LimitToken, OffsetToken, OptionalToken, OrderToken, SelectToken, SubjectToken } from "sparqler/tokens";
+import {
+	LimitToken,
+	OffsetToken,
+	OptionalToken,
+	OrderToken,
+	SelectToken,
+	SubjectToken
+} from "sparqler/tokens";
 
-import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
+import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "./../../Errors";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryProperty from "./QueryProperty";
+import { getParentPath } from "./Utils";
+
+export interface OrderData {
+	path:string;
+	flow?:"ASC" | "DESC";
+}
 
 export class Class extends QueryDocumentBuilder.Class {
+
+	_orderData?:OrderData;
 
 	orderBy( property:QueryProperty.Class, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
 		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
 		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
 
+		this._orderData = void 0;
 		const orderIndex:number = select.modifiers.findIndex( pattern => pattern.token === "order" );
 
 		if( orderIndex !== - 1 ) {
@@ -19,7 +38,16 @@ export class Class extends QueryDocumentBuilder.Class {
 			select.patterns.splice( optionalIndex, 1 );
 		}
 
-		select.modifiers.unshift( new OrderToken( property.variable, parseFlowString( flow ) ) );
+		const validatedFlow:"ASC" | "DESC" = parseFlowString( flow );
+		select.modifiers.unshift( new OrderToken( property.variable, validatedFlow ) );
+
+		const orderData:OrderData = {
+			path: property.name
+				.split( "." )
+				.slice( 1 )
+				.join( "." ),
+			flow: validatedFlow,
+		};
 
 		let propertyPatternsPath:OptionalToken;
 		while( property !== this._document ) {
@@ -32,13 +60,10 @@ export class Class extends QueryDocumentBuilder.Class {
 			if( propertyPatternsPath ) propertyPattern.addPattern( propertyPatternsPath );
 			propertyPatternsPath = propertyPattern;
 
-			property = this._context.getProperty( property.name
-				.split( "." )
-				.slice( 0, - 1 )
-				.join( "." )
-			);
+			property = this._context.getProperty( getParentPath( property.name ) );
 		}
 
+		this._orderData = orderData;
 		select.addPattern( propertyPatternsPath );
 
 		return this;
