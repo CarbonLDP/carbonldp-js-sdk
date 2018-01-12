@@ -9,3 +9,4 @@ export declare function createAllPattern(context: QueryContext.Class, resourcePa
 export declare function getParentPath(path: string): string;
 export declare function isFullTriple(triple: SubjectToken): boolean;
 export declare function getAllTriples(patterns: PatternToken[]): SubjectToken[];
+export declare function getPathValue(element: any, path: string): any;

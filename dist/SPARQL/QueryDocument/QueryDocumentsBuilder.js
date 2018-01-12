@@ -13,19 +13,47 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var Errors_1 = require("./../../Errors");
 var QueryDocumentBuilder = require("./QueryDocumentBuilder");
+var Utils_1 = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Class.prototype.orderBy = function (property) {
-        return this._orderBy(property);
-    };
-    Class.prototype.orderAscendantBy = function (property) {
-        return this._orderBy(property, "ASC");
-    };
-    Class.prototype.orderDescendantBy = function (property) {
-        return this._orderBy(property, "DESC");
+    Class.prototype.orderBy = function (property, flow) {
+        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
+        if (!select)
+            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+        this._orderData = void 0;
+        var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
+        if (orderIndex !== -1) {
+            select.modifiers.splice(orderIndex, 1);
+            var optionalIndex = select.patterns.findIndex(function (pattern) { return pattern.token === "optional"; });
+            select.patterns.splice(optionalIndex, 1);
+        }
+        var validatedFlow = parseFlowString(flow);
+        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, validatedFlow));
+        var orderData = {
+            path: property.name
+                .split(".")
+                .slice(1)
+                .join("."),
+            flow: validatedFlow,
+        };
+        var propertyPatternsPath;
+        while (property !== this._document) {
+            var propertyTriple = property && property.getTriple();
+            if (!propertyTriple)
+                throw new Errors_1.IllegalArgumentError("The property \"" + property.name + "\" is not a valid property defined by the builder.");
+            var propertyPattern = new tokens_1.OptionalToken()
+                .addPattern(propertyTriple);
+            if (propertyPatternsPath)
+                propertyPattern.addPattern(propertyPatternsPath);
+            propertyPatternsPath = propertyPattern;
+            property = this._context.getProperty(Utils_1.getParentPath(property.name));
+        }
+        this._orderData = orderData;
+        select.addPattern(propertyPatternsPath);
+        return this;
     };
     Class.prototype.limit = function (limit) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
@@ -47,38 +75,26 @@ var Class = (function (_super) {
         select.modifiers.push(new tokens_1.OffsetToken(offset));
         return this;
     };
-    Class.prototype._orderBy = function (property, flow) {
-        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
-        if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
-        var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
-        if (orderIndex !== -1) {
-            select.modifiers.splice(orderIndex, 1);
-            var optionalIndex = select.patterns.findIndex(function (pattern) { return pattern.token === "optional"; });
-            select.patterns.splice(optionalIndex, 1);
-        }
-        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, flow));
-        var propertyPatternsPath;
-        while (property !== this._document) {
-            var propertyTriple = property && property.getTriple();
-            if (!propertyTriple)
-                throw new Errors_1.IllegalArgumentError("The property \"" + property.name + "\" is not a valid property defined by the builder.");
-            var propertyPattern = new tokens_1.OptionalToken()
-                .addPattern(propertyTriple);
-            if (propertyPatternsPath)
-                propertyPattern.addPattern(propertyPatternsPath);
-            propertyPatternsPath = propertyPattern;
-            property = this._context.getProperty(property.name
-                .split(".")
-                .slice(0, -1)
-                .join("."));
-        }
-        select.addPattern(propertyPatternsPath);
-        return this;
-    };
     return Class;
 }(QueryDocumentBuilder.Class));
 exports.Class = Class;
+function parseFlowString(flow) {
+    if (flow === void 0)
+        return void 0;
+    var upperCase = flow
+        .toUpperCase();
+    switch (upperCase) {
+        case "ASC":
+        case "DESC":
+            return upperCase;
+        case "ASCENDING":
+        case "DESCENDING":
+            return upperCase
+                .slice(0, -6);
+        default:
+            throw new Errors_1.IllegalArgumentError("Invalid flow order.");
+    }
+}
 exports.default = Class;
 
 //# sourceMappingURL=QueryDocumentsBuilder.js.map

@@ -798,7 +798,29 @@ var Class = (function () {
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();
-        return this.executeConstructPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
+        return this
+            .executeConstructPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns)
+            .then(function (returned) {
+            if (queryBuilder instanceof QueryDocument_1.QueryDocumentsBuilder.Class && queryBuilder._orderData) {
+                var _a = queryBuilder._orderData, path_1 = _a.path, flow = _a.flow;
+                var inverter_1 = flow === "DESC" ? -1 : 1;
+                returned[0].sort(function (a, b) {
+                    var aValue = Utils_2.getPathValue(a, path_1);
+                    var bValue = Utils_2.getPathValue(b, path_1);
+                    if (aValue === bValue)
+                        return 0;
+                    if (aValue === void 0)
+                        return -1 * inverter_1;
+                    if (bValue === void 0)
+                        return inverter_1;
+                    if (aValue < bValue)
+                        return -1 * inverter_1;
+                    if (aValue > bValue)
+                        return inverter_1;
+                });
+            }
+            return returned;
+        });
     };
     Class.prototype.executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;

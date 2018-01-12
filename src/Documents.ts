@@ -9,7 +9,6 @@ import {
 	QueryToken,
 	SelectToken,
 	SubjectToken,
-	TokenNode,
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
@@ -54,17 +53,15 @@ import {
 } from "./SPARQL/QueryDocument";
 import {
 	createAllPattern,
-	createGraphPattern,
 	createPropertyPatterns,
 	createTypesPattern,
 	getAllTriples,
-	isFullTriple,
+	getPathValue,
 } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import {
-	isObject,
 	mapTupleArray,
-	promiseMethod,
+	promiseMethod
 } from "./Utils";
 
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
@@ -992,7 +989,30 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
-		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
+		return this
+			.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns )
+			.then( ( returned ) => {
+				if( queryBuilder instanceof QueryDocumentsBuilder.Class && queryBuilder._orderData ) {
+					const { path, flow } = queryBuilder._orderData;
+					const inverter:number = flow === "DESC" ? - 1 : 1;
+
+					returned[ 0 ].sort( ( a, b ) => {
+						const aValue:any = getPathValue( a, path );
+						const bValue:any = getPathValue( b, path );
+
+						if( aValue === bValue ) return 0;
+
+						if( aValue === void 0 ) return - 1 * inverter;
+						if( bValue === void 0 ) return inverter;
+
+						if( aValue < bValue ) return - 1 * inverter;
+						if( aValue > bValue ) return inverter;
+					} );
+				}
+
+				return returned;
+			} )
+			;
 	}
 
 	private executeConstructPatterns<T extends object>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
