@@ -11,10 +11,11 @@ import { Util as URIUtils } from "../RDF/URI";
 import {
 	PartialMetadata,
 	QueryContextBuilder,
-	QueryProperty
+	QueryProperty,
 } from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
+import { getParentPath } from "../SPARQL/QueryDocument/Utils";
 
 function getRelativeID( node:RDFNode.Class ):string {
 	const id:string = node[ "@id" ];
@@ -120,8 +121,17 @@ export class Class {
 		} );
 
 		if( this.resolver instanceof QueryContextBuilder.Class ) {
-			if( ! this.resolver.isPartial( path ) ) return;
-			resource._partialMetadata = new PartialMetadata.Class( schema, resource._partialMetadata );
+			const type:QueryProperty.PropertyType = this.resolver.hasProperty( path ) ?
+				this.resolver.getProperty( path ).getType() : void 0;
+
+			if( type !== QueryProperty.PropertyType.PARTIAL
+				&& type !== QueryProperty.PropertyType.ALL
+			) return;
+
+			resource._partialMetadata = new PartialMetadata.Class(
+				type === QueryProperty.PropertyType.ALL ? PartialMetadata.ALL : schema,
+				resource._partialMetadata
+			);
 		}
 	}
 

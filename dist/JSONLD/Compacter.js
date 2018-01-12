@@ -78,9 +78,12 @@ var Class = (function () {
             var _a;
         });
         if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
-            if (!this.resolver.isPartial(path))
+            var type = this.resolver.hasProperty(path) ?
+                this.resolver.getProperty(path).getType() : void 0;
+            if (type !== QueryDocument_1.QueryProperty.PropertyType.PARTIAL
+                && type !== QueryDocument_1.QueryProperty.PropertyType.ALL)
                 return;
-            resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(schema, resource._partialMetadata);
+            resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(type === QueryDocument_1.QueryProperty.PropertyType.ALL ? QueryDocument_1.PartialMetadata.ALL : schema, resource._partialMetadata);
         }
     };
     Class.prototype.getResource = function (node, containerLibrary, isDocument) {

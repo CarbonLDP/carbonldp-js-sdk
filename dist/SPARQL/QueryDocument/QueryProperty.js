@@ -2,17 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
+var Utils_1 = require("./Utils");
 var PropertyType;
 (function (PropertyType) {
     PropertyType[PropertyType["FULL"] = 0] = "FULL";
     PropertyType[PropertyType["PARTIAL"] = 1] = "PARTIAL";
+    PropertyType[PropertyType["ALL"] = 2] = "ALL";
 })(PropertyType = exports.PropertyType || (exports.PropertyType = {}));
 var Class = (function () {
     function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
         this._optional = true;
-        this._type = PropertyType.PARTIAL;
         this._context = context;
         this._patterns = [];
     }
@@ -26,9 +27,16 @@ var Class = (function () {
         var _a;
     };
     Class.prototype.getPatterns = function () {
+        var patterns = this._patterns.slice();
+        if (this._type !== void 0) {
+            var fn = this._type === PropertyType.PARTIAL ? Utils_1.createTypesPattern :
+                this._type === PropertyType.FULL ? Utils_1.createGraphPattern : Utils_1.createAllPattern;
+            var index = patterns.findIndex(function (pattern) { return pattern === void 0; });
+            patterns[index] = fn(this._context, this.name);
+        }
         if (!this._optional)
-            return this._patterns;
-        return [(_a = new tokens_1.OptionalToken()).addPattern.apply(_a, this._patterns),];
+            return patterns;
+        return [(_a = new tokens_1.OptionalToken()).addPattern.apply(_a, patterns),];
         var _a;
     };
     Class.prototype.getSchema = function () {
@@ -49,6 +57,8 @@ var Class = (function () {
         return this._type;
     };
     Class.prototype.setType = function (type) {
+        if (this._type === void 0)
+            this._patterns.push(void 0);
         this._type = type;
         return this;
     };

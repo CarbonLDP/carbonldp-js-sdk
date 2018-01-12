@@ -105,6 +105,32 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		} );
 
+		describe( property( INSTANCE, "all", "Readonly<{}>", "Property to describe the fetching of the entire resource properties." ), ():void => {
+
+			it( "should exists", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				expect( builder.all ).toBeDefined();
+				expect( builder.all ).toEqual( jasmine.any( Object ) );
+			} );
+
+			it( "should be frozen", ():void => {
+				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				expect( builder.all ).toBeDefined();
+				expect( Object.isFrozen( builder.all ) ).toBe( true );
+			} );
+
+			it( "should be the same for every builder", ():void => {
+				const builder1:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder2:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+				const builder3:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
+
+				expect( builder1.all ).toBe( builder2.all );
+				expect( builder1.all ).toBe( builder3.all );
+				expect( builder2.all ).toBe( builder3.all );
+			} );
+
+		} );
+
 		describe( method( INSTANCE, "property" ), ():void => {
 
 			it( hasSignature(
@@ -144,7 +170,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					builder.property( "name" );
 				} catch {}
 
-				expect( spy ).toHaveBeenCalledTimes( 4 );
 				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.path3.name" );
 				expect( spy ).toHaveBeenCalledWith( "document.path1.path2.name" );
 				expect( spy ).toHaveBeenCalledWith( "document.path1.name" );

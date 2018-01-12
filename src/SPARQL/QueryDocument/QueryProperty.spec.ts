@@ -141,7 +141,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			it( "should return the patterns array when isn't optional", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" )
 					.setOptional( false );
-				expect( queryProperty.getPatterns() ).toBe( queryProperty[ "_patterns" ] );
+				expect( queryProperty.getPatterns() ).toEqual( queryProperty[ "_patterns" ] );
 			} );
 
 			it( "should return the patterns as optional array when is optional", ():void => {

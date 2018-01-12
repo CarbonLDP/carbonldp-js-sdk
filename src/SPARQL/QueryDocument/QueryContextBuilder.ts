@@ -2,11 +2,14 @@ import * as Context from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
-	DigestedPropertyDefinition
+	DigestedPropertyDefinition,
 } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
-import { getLevelRegExp } from "./Utils";
+import {
+	getLevelRegExp,
+	getParentPath,
+} from "./Utils";
 
 export class Class extends QueryContext.Class {
 
@@ -58,27 +61,28 @@ export class Class extends QueryContext.Class {
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
-		if( path === void 0 || ! this.isPartial( path ) )
-			return super.getSchemaFor( object );
+		if( path === void 0 ) return super.getSchemaFor( object );
 
-		const property:QueryProperty.Class = this._propertiesMap.get( path );
-		if( ! property ) throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
+		const property:QueryProperty.Class = this.getProperty( path );
+		if( property ) {
+			switch( property.getType() ) {
+				case QueryProperty.PropertyType.PARTIAL:
+					return this.getProperty( path ).getSchema();
 
-		return property.getSchema();
-	}
+				case QueryProperty.PropertyType.FULL:
+				case QueryProperty.PropertyType.ALL:
+					return super.getSchemaFor( object );
 
-	isPartial( path:string ):boolean {
-		if( this._propertiesMap.has( path ) ) {
-			const property:QueryProperty.Class = this._propertiesMap.get( path );
-			return property.getType() === QueryProperty.PropertyType.PARTIAL;
+				default:
+					throw new IllegalArgumentError( `Property "${ path }" is not a resource.` );
+			}
 		}
 
-		const parentPath:string = path
-			.split( "." )
-			.slice( 0, - 1 )
-			.join( "." );
-		const parent:QueryProperty.Class = this._propertiesMap.get( parentPath );
-		return ! ! parent && parent.getType() === QueryProperty.PropertyType.PARTIAL;
+		const parent:QueryProperty.Class = this.getProperty( getParentPath( path ) );
+		if( ! parent || parent.getType() !== QueryProperty.PropertyType.FULL )
+			throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
+
+		return super.getSchemaFor( object );
 	}
 
 	private _getTypeSchemas():DigestedObjectSchema[] {

@@ -763,10 +763,11 @@ var Class = (function () {
             .addPattern(new tokens_1.ValuesToken()
             .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(uri)));
         (function createRefreshQuery(parentAdder, resource, parentName) {
-            parentAdder.addPattern(new tokens_1.OptionalToken()
-                .addPattern(new tokens_1.SubjectToken(queryContext.getVariable(parentName))
-                .addPredicate(new tokens_1.PredicateToken("a")
-                .addObject(queryContext.getVariable(parentName + ".types")))));
+            if (resource._partialMetadata.schema === SPARQL.QueryDocument.PartialMetadata.ALL) {
+                parentAdder.addPattern(Utils_2.createAllPattern(queryContext, parentName));
+                return;
+            }
+            parentAdder.addPattern(Utils_2.createTypesPattern(queryContext, parentName));
             resource._partialMetadata.schema.properties.forEach(function (digestedProperty, propertyName) {
                 var path = parentName + "." + propertyName;
                 var propertyPattern = (_a = new tokens_1.OptionalToken()).addPattern.apply(_a, Utils_2.createPropertyPatterns(queryContext, parentName, path, digestedProperty));
@@ -791,15 +792,11 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        if (queryBuilderFn) {
-            targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
-            if (queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
-                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
-        }
-        else {
-            targetProperty.setType(QueryDocument_1.QueryProperty.PropertyType.FULL);
-            targetProperty.addPattern(Utils_2.createGraphPattern(queryContext, targetProperty.name));
-        }
+        targetProperty.setType(queryBuilderFn ?
+            QueryDocument_1.QueryProperty.PropertyType.PARTIAL :
+            QueryDocument_1.QueryProperty.PropertyType.FULL);
+        if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
+            throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();
         return this.executeConstructPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
@@ -815,19 +812,8 @@ var Class = (function () {
             .addObject(queryContext.getVariable(targetName))))
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
-        (function triplesAdder(patterns) {
-            patterns.forEach(function (pattern) {
-                if (pattern.token === "optional" || pattern.token === "graph")
-                    return triplesAdder(pattern.patterns);
-                if (pattern.token !== "subject")
-                    return;
-                var valid = pattern.predicates
-                    .map(function (predicate) { return predicate.objects; })
-                    .some(function (objects) { return objects.some(function (object) { return object.token === "variable"; }); });
-                if (valid)
-                    construct.addTriple(pattern);
-            });
-        })(constructPatterns);
+        var triples = Utils_2.getAllTriples(constructPatterns);
+        construct.addTriple.apply(construct, triples);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
         HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
         var response;

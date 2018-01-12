@@ -1,12 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
+var ObjectSchema_1 = require("../../ObjectSchema");
 var URI = require("../../RDF/URI");
+exports.ALL = Object.freeze(new ObjectSchema_1.DigestedObjectSchema());
 var Class = (function () {
     function Class(schema, previousPartial) {
         this.schema = previousPartial ? this.mergeSchemas(previousPartial.schema, schema) : schema;
     }
     Class.prototype.mergeSchemas = function (oldSchema, newSchema) {
+        if (newSchema === exports.ALL || oldSchema === exports.ALL)
+            return exports.ALL;
         oldSchema.prefixes.forEach(function (oldURI, namespace) {
             if (!newSchema.prefixes.has(namespace))
                 return newSchema.prefixes.set(namespace, oldURI);

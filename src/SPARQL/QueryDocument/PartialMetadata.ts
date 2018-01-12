@@ -1,6 +1,11 @@
 import { IllegalArgumentError } from "../../Errors";
-import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	DigestedPropertyDefinition,
+} from "../../ObjectSchema";
 import * as URI from "../../RDF/URI";
+
+export const ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
 
 export class Class {
 	readonly schema:DigestedObjectSchema;
@@ -10,6 +15,8 @@ export class Class {
 	}
 
 	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
+		if( newSchema === ALL || oldSchema === ALL ) return ALL;
+
 		oldSchema.prefixes.forEach( ( oldURI, namespace ) => {
 			if( ! newSchema.prefixes.has( namespace ) ) return newSchema.prefixes.set( namespace, oldURI );
 

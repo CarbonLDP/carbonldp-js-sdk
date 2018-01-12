@@ -9,6 +9,7 @@ import {
 	QueryToken,
 	SelectToken,
 	SubjectToken,
+	TokenNode,
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
@@ -52,12 +53,16 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
+	createAllPattern,
 	createGraphPattern,
 	createPropertyPatterns,
 	createTypesPattern,
+	getAllTriples,
+	isFullTriple,
 } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import {
+	isObject,
 	mapTupleArray,
 	promiseMethod,
 } from "./Utils";
@@ -936,12 +941,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		;
 
 		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
-			parentAdder.addPattern( new OptionalToken()
-				.addPattern( new SubjectToken( queryContext.getVariable( parentName ) )
-					.addPredicate( new PredicateToken( "a" )
-						.addObject( queryContext.getVariable( `${ parentName }.types` ) ) )
-				)
-			);
+			if( resource._partialMetadata.schema === SPARQL.QueryDocument.PartialMetadata.ALL ) {
+				parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
+				return;
+			}
+
+			parentAdder.addPattern( createTypesPattern( queryContext, parentName ) );
 
 			resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 				const path:string = `${ parentName }.${ propertyName }`;
@@ -978,16 +983,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-		if( queryBuilderFn ) {
-			targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
+		targetProperty.setType( queryBuilderFn ?
+			QueryProperty.PropertyType.PARTIAL :
+			QueryProperty.PropertyType.FULL
+		);
 
-			if( queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
-				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
-
-		} else {
-			targetProperty.setType( QueryProperty.PropertyType.FULL );
-			targetProperty.addPattern( createGraphPattern( queryContext, targetProperty.name ) );
-		}
+		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
+			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
 		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
@@ -1011,19 +1013,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const query:QueryToken = new QueryToken( construct )
 			.addPrologues( ...queryContext.getPrologues() );
 
-		(function triplesAdder( patterns:PatternToken[] ):void {
-			patterns.forEach( ( pattern:PatternToken ) => {
-				if( pattern.token === "optional" || pattern.token === "graph" )
-					return triplesAdder( pattern.patterns );
-
-				if( pattern.token !== "subject" ) return;
-
-				const valid:boolean = pattern.predicates
-					.map( predicate => predicate.objects )
-					.some( objects => objects.some( object => object.token === "variable" ) );
-				if( valid ) construct.addTriple( pattern );
-			} );
-		})( constructPatterns );
+		const triples:SubjectToken[] = getAllTriples( constructPatterns );
+		construct.addTriple( ...triples );
 
 		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
 		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
