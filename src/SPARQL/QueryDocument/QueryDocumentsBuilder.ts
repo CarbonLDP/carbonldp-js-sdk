@@ -6,16 +6,42 @@ import * as QueryProperty from "./QueryProperty";
 
 export class Class extends QueryDocumentBuilder.Class {
 
-	orderBy( property:QueryProperty.Class ):this {
-		return this._orderBy( property );
-	}
+	orderBy( property:QueryProperty.Class, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
+		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
+		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
 
-	orderAscendantBy( property:QueryProperty.Class ):this {
-		return this._orderBy( property, "ASC" );
-	}
+		const orderIndex:number = select.modifiers.findIndex( pattern => pattern.token === "order" );
 
-	orderDescendantBy( property:QueryProperty.Class ):this {
-		return this._orderBy( property, "DESC" );
+		if( orderIndex !== - 1 ) {
+			select.modifiers.splice( orderIndex, 1 );
+
+			const optionalIndex:number = select.patterns.findIndex( pattern => pattern.token === "optional" );
+			select.patterns.splice( optionalIndex, 1 );
+		}
+
+		select.modifiers.unshift( new OrderToken( property.variable, parseFlowString( flow ) ) );
+
+		let propertyPatternsPath:OptionalToken;
+		while( property !== this._document ) {
+			const propertyTriple:SubjectToken = property && property.getTriple();
+			if( ! propertyTriple ) throw new IllegalArgumentError( `The property "${ property.name }" is not a valid property defined by the builder.` );
+
+			const propertyPattern:OptionalToken = new OptionalToken()
+				.addPattern( propertyTriple );
+
+			if( propertyPatternsPath ) propertyPattern.addPattern( propertyPatternsPath );
+			propertyPatternsPath = propertyPattern;
+
+			property = this._context.getProperty( property.name
+				.split( "." )
+				.slice( 0, - 1 )
+				.join( "." )
+			);
+		}
+
+		select.addPattern( propertyPatternsPath );
+
+		return this;
 	}
 
 	limit( limit:number ):this {
@@ -41,42 +67,26 @@ export class Class extends QueryDocumentBuilder.Class {
 		return this;
 	}
 
-	private _orderBy( property:QueryProperty.Class, flow?:"ASC" | "DESC" ):this {
-		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
-		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
+}
 
-		const orderIndex:number = select.modifiers.findIndex( pattern => pattern.token === "order" );
+function parseFlowString( flow?:"ASC" | "DESC" | "ascending" | "descending" ):"ASC" | "DESC" {
+	if( flow === void 0 ) return void 0;
 
-		if( orderIndex !== - 1 ) {
-			select.modifiers.splice( orderIndex, 1 );
+	const upperCase:"ASC" | "DESC" | "ASCENDING" | "DESCENDING" = flow
+		.toUpperCase() as any;
 
-			const optionalIndex:number = select.patterns.findIndex( pattern => pattern.token === "optional" );
-			select.patterns.splice( optionalIndex, 1 );
-		}
+	switch( upperCase ) {
+		case "ASC":
+		case "DESC":
+			return upperCase;
 
-		select.modifiers.unshift( new OrderToken( property.variable, flow ) );
+		case "ASCENDING":
+		case "DESCENDING":
+			return upperCase
+				.slice( 0, - 6 ) as "ASC" | "DESC";
 
-		let propertyPatternsPath:OptionalToken;
-		while( property !== this._document ) {
-			const propertyTriple:SubjectToken = property && property.getTriple();
-			if( ! propertyTriple ) throw new IllegalArgumentError( `The property "${ property.name }" is not a valid property defined by the builder.` );
-
-			const propertyPattern:OptionalToken = new OptionalToken()
-				.addPattern( propertyTriple );
-
-			if( propertyPatternsPath ) propertyPattern.addPattern( propertyPatternsPath );
-			propertyPatternsPath = propertyPattern;
-
-			property = this._context.getProperty( property.name
-				.split( "." )
-				.slice( 0, - 1 )
-				.join( "." )
-			);
-		}
-
-		select.addPattern( propertyPatternsPath );
-
-		return this;
+		default:
+			throw new IllegalArgumentError( "Invalid flow order." );
 	}
 }
 
