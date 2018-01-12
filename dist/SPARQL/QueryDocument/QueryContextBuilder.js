@@ -62,12 +62,24 @@ var Class = (function (_super) {
         }
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0)
+        if (path === void 0 || !this.isPartial(path))
             return _super.prototype.getSchemaFor.call(this, object);
         var property = this._propertiesMap.get(path);
         if (!property)
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return property.getSchema();
+    };
+    Class.prototype.isPartial = function (path) {
+        if (this._propertiesMap.has(path)) {
+            var property = this._propertiesMap.get(path);
+            return property.getType() === QueryProperty.PropertyType.PARTIAL;
+        }
+        var parentPath = path
+            .split(".")
+            .slice(0, -1)
+            .join(".");
+        var parent = this._propertiesMap.get(parentPath);
+        return !!parent && parent.getType() === QueryProperty.PropertyType.PARTIAL;
     };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;

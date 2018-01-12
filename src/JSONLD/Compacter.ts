@@ -1,11 +1,18 @@
-import { DigestedObjectSchema, Resolver } from "../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	Resolver
+} from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
 import * as Pointer from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
-import { PartialMetadata, QueryContextBuilder } from "../SPARQL/QueryDocument";
+import {
+	PartialMetadata,
+	QueryContextBuilder,
+	QueryProperty
+} from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
 
@@ -113,6 +120,7 @@ export class Class {
 		} );
 
 		if( this.resolver instanceof QueryContextBuilder.Class ) {
+			if( ! this.resolver.isPartial( path ) ) return;
 			resource._partialMetadata = new PartialMetadata.Class( schema, resource._partialMetadata );
 		}
 	}

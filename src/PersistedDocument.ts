@@ -105,9 +105,15 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 	createAccessPoints<T extends object>( accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 
 
+	listChildren( requestOptions:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]>;
+
+
 	getChildren<T extends object>( requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+
+
+	listMembers( requestOptions:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]>;
 
 
 	getMembers<T extends object>( requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
@@ -321,10 +327,19 @@ function createAccessPoints<T extends object>( this:Class, accessPoints:(T & Acc
 }
 
 
+function listChildren( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]> {
+	return this._documents.listChildren( this.id, requestOptions );
+}
+
 function getChildren<T extends object>( this:Class, requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 function getChildren<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 function getChildren<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
 	return this._documents.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
+}
+
+
+function listMembers( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]> {
+	return this._documents.listMembers( this.id, requestOptions );
 }
 
 function getMembers<T extends object>( this:Class, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
@@ -407,7 +422,9 @@ export class Factory {
 			&& Utils.hasFunction( object, "createChildren" )
 			&& Utils.hasFunction( object, "createChildAndRetrieve" )
 			&& Utils.hasFunction( object, "createChildrenAndRetrieve" )
+			&& Utils.hasFunction( object, "listChildren" )
 			&& Utils.hasFunction( object, "getChildren" )
+			&& Utils.hasFunction( object, "listMembers" )
 			&& Utils.hasFunction( object, "getMembers" )
 			&& Utils.hasFunction( object, "removeMember" )
 			&& Utils.hasFunction( object, "removeMembers" )
@@ -634,11 +651,23 @@ export class Factory {
 				configurable: true,
 				value: createAccessPoints,
 			},
+			"listChildren": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: listChildren,
+			},
 			"getChildren": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
 				value: getChildren,
+			},
+			"listMembers": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: listMembers,
 			},
 			"getMembers": {
 				writable: false,

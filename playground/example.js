@@ -7,6 +7,7 @@
 
 	const carbon1 = new Carbon( "localhost:8083", false );
 	const carbon2 = new Carbon( "localhost:8083", false );
+	const carbon3 = new Carbon( "localhost:8083", false );
 
 	const prefixes = {
 		"acl": "http://www.w3.org/ns/auth/acl#",
@@ -115,7 +116,22 @@
 
 			expect( retrievedChildren.length ).toEqual( childrenToCreate );
 
+			for( let i = 0; i < childrenToCreate; i ++ ) {
+				const type = i % 2 === 0 ? "http://example.org/ns#Even" : "http://example.org/ns#Odd";
+
+				expect( retrievedChildren ).toContain( jasmine.objectContaining( {
+					types: jasmine.arrayContaining( [ "http://example.org/ns#Child", type ] ),
+					index: i + 1,
+				} ) );
+			}
+
 			children = retrievedChildren;
+		} ) );
+
+		it( "can list the children", async( async function() {
+			const [ shallowChildren ] = await carbon3.documents.listChildren( parent.id );
+
+			expect( shallowChildren.length ).toEqual( childrenToCreate );
 		} ) );
 
 		it( "can remove one member", async( async function() {

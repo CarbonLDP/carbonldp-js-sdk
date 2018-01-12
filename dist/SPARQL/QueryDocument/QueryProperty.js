@@ -2,11 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
+var PropertyType;
+(function (PropertyType) {
+    PropertyType[PropertyType["FULL"] = 0] = "FULL";
+    PropertyType[PropertyType["PARTIAL"] = 1] = "PARTIAL";
+})(PropertyType = exports.PropertyType || (exports.PropertyType = {}));
 var Class = (function () {
     function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
         this._optional = true;
+        this._type = PropertyType.PARTIAL;
         this._context = context;
         this._patterns = [];
     }
@@ -37,6 +43,13 @@ var Class = (function () {
     };
     Class.prototype.setOptional = function (optional) {
         this._optional = optional;
+        return this;
+    };
+    Class.prototype.getType = function () {
+        return this._type;
+    };
+    Class.prototype.setType = function (type) {
+        this._type = type;
         return this;
     };
     Class.prototype.getTriple = function () {

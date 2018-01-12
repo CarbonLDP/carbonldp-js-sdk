@@ -446,6 +446,17 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 		} );
 
+		describe( method( OBLIGATORY, "listChildren" ), ():void => {
+
+			it( hasSignature(
+				"Retrieves the empty children of the document.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
+			), ():void => {} );
+
+		} );
+
 		describe( method( OBLIGATORY, "getChildren" ), ():void => {
 
 			it( hasSignature(
@@ -463,6 +474,18 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
+			), ():void => {} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "listMembers" ), ():void => {
+
+			it( hasSignature(
+				"Retrieves the empty members of the document.", [
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+				],
+				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -487,6 +510,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			), ():void => {} );
 
 		} );
+
 
 		describe( method(
 			OBLIGATORY,
@@ -713,7 +737,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				createChildren: ():void => {},
 				createChildAndRetrieve: ():void => {},
 				createChildrenAndRetrieve: ():void => {},
+				listChildren: ():void => {},
 				getChildren: ():void => {},
+				listMembers: ():void => {},
 				getMembers: ():void => {},
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
@@ -808,9 +834,17 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.createChildrenAndRetrieve = ():void => {};
 
+			delete document.listChildren;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.listChildren = ():void => {};
+
 			delete document.getChildren;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.getChildren = ():void => {};
+
+			delete document.listMembers;
+			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
+			document.listMembers = ():void => {};
 
 			delete document.getMembers;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
@@ -907,7 +941,9 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				createChildren: ():void => {},
 				createChildAndRetrieve: ():void => {},
 				createChildrenAndRetrieve: ():void => {},
+				listChildren: ():void => {},
 				getChildren: ():void => {},
+				listMembers: ():void => {},
 				getMembers: ():void => {},
 				removeMember: ():void => {},
 				removeMembers: ():void => {},

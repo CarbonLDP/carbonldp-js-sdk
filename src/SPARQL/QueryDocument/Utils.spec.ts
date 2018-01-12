@@ -88,4 +88,23 @@ describe( module( "Carbon/SPARQL/QueryDocument/Utils" ), ():void => {
 
 	} );
 
+	describe( method( INSTANCE, "createGraphPattern" ), ():void => {
+
+		it( hasSignature(
+			"Creates the graph pattern of a complete query.",
+			[
+				{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where to obtains the information for the patterns." },
+				{ name: "resourcePath", type: "string", description: "Path of the parent property/resource to create graph pattern." },
+			],
+			{ type: "SPARQL/tokens/PatternToken" }
+		), ():void => {
+		} );
+
+		it( "should exists", ():void => {
+			expect( Utils.createTypesPattern ).toBeDefined();
+			expect( Utils.createTypesPattern ).toEqual( jasmine.any( Function ) );
+		} );
+
+	} );
+
 } );

@@ -52,6 +52,7 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
+	createGraphPattern,
 	createPropertyPatterns,
 	createTypesPattern,
 } from "./SPARQL/QueryDocument/Utils";
@@ -254,6 +255,25 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then( mapTupleArray );
 	}
 
+
+	listChildren( parentURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		return promiseMethod( () => {
+			parentURI = this.getRequestURI( parentURI );
+
+			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const childrenVar:VariableToken = queryContext.getVariable( "child" );
+
+			const pattens:PatternToken[] = [
+				new SubjectToken( queryContext.compactIRI( parentURI ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.contains ) )
+						.addObject( childrenVar )
+					),
+			];
+
+			return this.executeSelectPatterns( parentURI, requestOptions, queryContext, "child", pattens );
+		} );
+	}
+
 	getChildren<T extends object>( parentURI:string, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>;
 	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
@@ -348,6 +368,36 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			let pointer:Pointer.Class = this.getPointer( locationURI );
 
 			return [ pointer, response ];
+		} );
+	}
+
+
+	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		return promiseMethod( () => {
+			uri = this.getRequestURI( uri );
+
+			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const memberVar:VariableToken = queryContext.getVariable( "member" );
+
+			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
+			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
+			const pattens:PatternToken[] = [
+				new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
+						.addObject( membershipResource )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
+						.addObject( hasMemberRelation )
+					)
+				,
+				new SubjectToken( membershipResource )
+					.addPredicate( new PredicateToken( hasMemberRelation )
+						.addObject( memberVar )
+					)
+				,
+			];
+
+			return this.executeSelectPatterns( uri, requestOptions, queryContext, "member", pattens );
 		} );
 	}
 
@@ -915,7 +965,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			} );
 		})( constructPatterns, persistedDocument, targetName );
 
-		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
+		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
 			.then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
 
@@ -928,16 +978,22 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
-		targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
+		if( queryBuilderFn ) {
+			targetProperty.addPattern( createTypesPattern( queryContext, targetProperty.name ) );
 
-		if( queryBuilderFn && queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
-			throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
+			if( queryBuilderFn.call( void 0, queryBuilder ) !== queryBuilder )
+				throw new Errors.IllegalArgumentError( "The provided query builder was not returned" );
+
+		} else {
+			targetProperty.setType( QueryProperty.PropertyType.FULL );
+			targetProperty.addPattern( createGraphPattern( queryContext, targetProperty.name ) );
+		}
 
 		const constructPatterns:PatternToken[] = targetProperty.getPatterns();
-		return this.executeQueryPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
+		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns );
 	}
 
-	private executeQueryPatterns<T extends object>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
+	private executeConstructPatterns<T extends object>( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]> {
 		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
@@ -957,7 +1013,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		(function triplesAdder( patterns:PatternToken[] ):void {
 			patterns.forEach( ( pattern:PatternToken ) => {
-				if( pattern.token === "optional" )
+				if( pattern.token === "optional" || pattern.token === "graph" )
 					return triplesAdder( pattern.patterns );
 
 				if( pattern.token !== "subject" ) return;
@@ -981,7 +1037,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const freeResources:FreeResources.Class = this._getFreeResources( rdfNodes
 				.filter( node => ! RDF.Document.Factory.is( node ) )
 			);
-
 
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
@@ -1025,6 +1080,29 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			return [ documents, response ];
 		} );
+	}
+
+	private executeSelectPatterns( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
+		const targetVar:VariableToken = queryContext.getVariable( targetName );
+		const select:SelectToken = new SelectToken()
+			.addVariable( targetVar )
+			.addPattern( ...selectPatterns )
+		;
+
+		const query:QueryToken = new QueryToken( select as any )
+			.addPrologues( ...queryContext.getPrologues() );
+
+		return this
+			.executeSELECTQuery( uri, query.toString(), requestOptions )
+			.then<[ PersistedDocument.Class[], HTTP.Response.Class ]>( ( [ results, response ] ) => {
+				const name:string = targetVar.toString().slice( 1 );
+				const documents:PersistedDocument.Class[] = results
+					.bindings
+					.map( x => x[ name ] as Pointer.Class )
+					.map( x => PersistedDocument.Factory.decorate( x, this ) );
+
+				return [ documents, response ];
+			} );
 	}
 
 

@@ -3764,8 +3764,14 @@ function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
 function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
     return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
 }
+function listChildren(requestOptions) {
+    return this._documents.listChildren(this.id, requestOptions);
+}
 function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
     return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
+}
+function listMembers(requestOptions) {
+    return this._documents.listMembers(this.id, requestOptions);
 }
 function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
     return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
@@ -3832,7 +3838,9 @@ var Factory = (function () {
             && Utils.hasFunction(object, "createChildren")
             && Utils.hasFunction(object, "createChildAndRetrieve")
             && Utils.hasFunction(object, "createChildrenAndRetrieve")
+            && Utils.hasFunction(object, "listChildren")
             && Utils.hasFunction(object, "getChildren")
+            && Utils.hasFunction(object, "listMembers")
             && Utils.hasFunction(object, "getMembers")
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
@@ -4039,11 +4047,23 @@ var Factory = (function () {
                 configurable: true,
                 value: createAccessPoints,
             },
+            "listChildren": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listChildren,
+            },
             "getChildren": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
                 value: getChildren,
+            },
+            "listMembers": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: listMembers,
             },
             "getMembers": {
                 writable: false,
@@ -5882,6 +5902,13 @@ function createTypesPattern(context, resourcePath) {
         .addObject(context.getVariable(resourcePath + ".types"))));
 }
 exports.createTypesPattern = createTypesPattern;
+function createGraphPattern(context, resourcePath) {
+    return new tokens_1.GraphToken(context.getVariable(resourcePath))
+        .addPattern(new tokens_1.SubjectToken(context.getVariable(resourcePath + "._subject"))
+        .addPredicate(new tokens_1.PredicateToken(context.getVariable(resourcePath + "._predicate"))
+        .addObject(context.getVariable(resourcePath + "._object"))));
+}
+exports.createGraphPattern = createGraphPattern;
 
 
 /***/ }),
@@ -8103,11 +8130,17 @@ exports.default = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var ObjectSchema_1 = __webpack_require__(13);
+var PropertyType;
+(function (PropertyType) {
+    PropertyType[PropertyType["FULL"] = 0] = "FULL";
+    PropertyType[PropertyType["PARTIAL"] = 1] = "PARTIAL";
+})(PropertyType = exports.PropertyType || (exports.PropertyType = {}));
 var Class = (function () {
     function Class(context, name) {
         this.name = name;
         this.variable = context.getVariable(name);
         this._optional = true;
+        this._type = PropertyType.PARTIAL;
         this._context = context;
         this._patterns = [];
     }
@@ -8138,6 +8171,13 @@ var Class = (function () {
     };
     Class.prototype.setOptional = function (optional) {
         this._optional = optional;
+        return this;
+    };
+    Class.prototype.getType = function () {
+        return this._type;
+    };
+    Class.prototype.setType = function (type) {
+        this._type = type;
         return this;
     };
     Class.prototype.getTriple = function () {
@@ -9545,6 +9585,20 @@ var Class = (function () {
             }));
         }).then(Utils_3.mapTupleArray);
     };
+    Class.prototype.listChildren = function (parentURI, requestOptions) {
+        var _this = this;
+        return Utils_3.promiseMethod(function () {
+            parentURI = _this.getRequestURI(parentURI);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var childrenVar = queryContext.getVariable("child");
+            var pattens = [
+                new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                    .addObject(childrenVar)),
+            ];
+            return _this.executeSelectPatterns(parentURI, requestOptions, queryContext, "child", pattens);
+        });
+    };
     Class.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
@@ -9621,6 +9675,27 @@ var Class = (function () {
             var locationURI = locationHeader.values[0].toString();
             var pointer = _this.getPointer(locationURI);
             return [pointer, response];
+        });
+    };
+    Class.prototype.listMembers = function (uri, requestOptions) {
+        var _this = this;
+        return Utils_3.promiseMethod(function () {
+            uri = _this.getRequestURI(uri);
+            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var memberVar = queryContext.getVariable("member");
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var pattens = [
+                new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                    .addObject(membershipResource))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                    .addObject(hasMemberRelation)),
+                new tokens_1.SubjectToken(membershipResource)
+                    .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                    .addObject(memberVar)),
+            ];
+            return _this.executeSelectPatterns(uri, requestOptions, queryContext, "member", pattens);
         });
     };
     Class.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
@@ -10097,7 +10172,7 @@ var Class = (function () {
                 var _a;
             });
         })(constructPatterns, persistedDocument, targetName);
-        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
+        return this.executeConstructPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
             .then(function (_a) {
             var documents = _a[0], response = _a[1];
             return [documents[0], response];
@@ -10107,13 +10182,19 @@ var Class = (function () {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
-        targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
-        if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
-            throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        if (queryBuilderFn) {
+            targetProperty.addPattern(Utils_2.createTypesPattern(queryContext, targetProperty.name));
+            if (queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
+                throw new Errors.IllegalArgumentError("The provided query builder was not returned");
+        }
+        else {
+            targetProperty.setType(QueryDocument_1.QueryProperty.PropertyType.FULL);
+            targetProperty.addPattern(Utils_2.createGraphPattern(queryContext, targetProperty.name));
+        }
         var constructPatterns = targetProperty.getPatterns();
-        return this.executeQueryPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
+        return this.executeConstructPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns);
     };
-    Class.prototype.executeQueryPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
+    Class.prototype.executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;
         var metadataVar = queryContext.getVariable("metadata");
         var construct = (_a = new tokens_1.ConstructToken()
@@ -10127,7 +10208,7 @@ var Class = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         (function triplesAdder(patterns) {
             patterns.forEach(function (pattern) {
-                if (pattern.token === "optional")
+                if (pattern.token === "optional" || pattern.token === "graph")
                     return triplesAdder(pattern.patterns);
                 if (pattern.token !== "subject")
                     return;
@@ -10181,6 +10262,25 @@ var Class = (function () {
             var documents = new JSONLD.Compacter
                 .Class(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
+            return [documents, response];
+        });
+        var _a, _b;
+    };
+    Class.prototype.executeSelectPatterns = function (uri, requestOptions, queryContext, targetName, selectPatterns) {
+        var _this = this;
+        var targetVar = queryContext.getVariable(targetName);
+        var select = (_a = new tokens_1.SelectToken()
+            .addVariable(targetVar)).addPattern.apply(_a, selectPatterns);
+        var query = (_b = new tokens_1.QueryToken(select)).addPrologues.apply(_b, queryContext.getPrologues());
+        return this
+            .executeSELECTQuery(uri, query.toString(), requestOptions)
+            .then(function (_a) {
+            var results = _a[0], response = _a[1];
+            var name = targetVar.toString().slice(1);
+            var documents = results
+                .bindings
+                .map(function (x) { return x[name]; })
+                .map(function (x) { return PersistedDocument.Factory.decorate(x, _this); });
             return [documents, response];
         });
         var _a, _b;
@@ -15651,6 +15751,8 @@ var Class = (function () {
             var _a;
         });
         if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
+            if (!this.resolver.isPartial(path))
+                return;
             resource._partialMetadata = new QueryDocument_1.PartialMetadata.Class(schema, resource._partialMetadata);
         }
     };
@@ -16485,12 +16587,24 @@ var Class = (function (_super) {
         }
     };
     Class.prototype.getSchemaFor = function (object, path) {
-        if (path === void 0)
+        if (path === void 0 || !this.isPartial(path))
             return _super.prototype.getSchemaFor.call(this, object);
         var property = this._propertiesMap.get(path);
         if (!property)
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return property.getSchema();
+    };
+    Class.prototype.isPartial = function (path) {
+        if (this._propertiesMap.has(path)) {
+            var property = this._propertiesMap.get(path);
+            return property.getType() === QueryProperty.PropertyType.PARTIAL;
+        }
+        var parentPath = path
+            .split(".")
+            .slice(0, -1)
+            .join(".");
+        var parent = this._propertiesMap.get(parentPath);
+        return !!parent && parent.getType() === QueryProperty.PropertyType.PARTIAL;
     };
     Class.prototype._getTypeSchemas = function () {
         var _this = this;
