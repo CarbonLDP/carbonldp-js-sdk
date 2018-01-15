@@ -8307,7 +8307,7 @@ var Class = (function () {
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
                 var directType = direct.getType();
-                if (directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL) {
+                if (directType === QueryProperty.PropertyType.FULL || directType === QueryProperty.PropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
                     return direct._builder._addProperty(propertyName, INHERIT);
                 }
@@ -16808,6 +16808,7 @@ var Class = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     Class.prototype.orderBy = function (property, flow) {
+        var propertyObj = this.property(property);
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
             throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
@@ -16819,25 +16820,25 @@ var Class = (function (_super) {
             select.patterns.splice(optionalIndex, 1);
         }
         var validatedFlow = parseFlowString(flow);
-        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, validatedFlow));
+        select.modifiers.unshift(new tokens_1.OrderToken(propertyObj.variable, validatedFlow));
         var orderData = {
-            path: property.name
+            path: propertyObj.name
                 .split(".")
                 .slice(1)
                 .join("."),
             flow: validatedFlow,
         };
         var propertyPatternsPath;
-        while (property !== this._document) {
-            var propertyTriple = property && property.getTriple();
+        while (propertyObj !== this._document) {
+            var propertyTriple = propertyObj && propertyObj.getTriple();
             if (!propertyTriple)
-                throw new Errors_1.IllegalArgumentError("The property \"" + property.name + "\" is not a valid property defined by the builder.");
+                throw new Errors_1.IllegalArgumentError("The property \"" + propertyObj.name + "\" is not a valid property defined by the builder.");
             var propertyPattern = new tokens_1.OptionalToken()
                 .addPattern(propertyTriple);
             if (propertyPatternsPath)
                 propertyPattern.addPattern(propertyPatternsPath);
             propertyPatternsPath = propertyPattern;
-            property = this._context.getProperty(Utils_1.getParentPath(property.name));
+            propertyObj = this._context.getProperty(Utils_1.getParentPath(propertyObj.name));
         }
         this._orderData = orderData;
         select.addPattern(propertyPatternsPath);

@@ -24,7 +24,9 @@ export class Class extends QueryDocumentBuilder.Class {
 
 	_orderData?:OrderData;
 
-	orderBy( property:QueryProperty.Class, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
+	orderBy( property:string, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
+		let propertyObj:QueryProperty.Class = this.property( property );
+
 		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
 		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );
 
@@ -39,10 +41,10 @@ export class Class extends QueryDocumentBuilder.Class {
 		}
 
 		const validatedFlow:"ASC" | "DESC" = parseFlowString( flow );
-		select.modifiers.unshift( new OrderToken( property.variable, validatedFlow ) );
+		select.modifiers.unshift( new OrderToken( propertyObj.variable, validatedFlow ) );
 
 		const orderData:OrderData = {
-			path: property.name
+			path: propertyObj.name
 				.split( "." )
 				.slice( 1 )
 				.join( "." ),
@@ -50,9 +52,9 @@ export class Class extends QueryDocumentBuilder.Class {
 		};
 
 		let propertyPatternsPath:OptionalToken;
-		while( property !== this._document ) {
-			const propertyTriple:SubjectToken = property && property.getTriple();
-			if( ! propertyTriple ) throw new IllegalArgumentError( `The property "${ property.name }" is not a valid property defined by the builder.` );
+		while( propertyObj !== this._document ) {
+			const propertyTriple:SubjectToken = propertyObj && propertyObj.getTriple();
+			if( ! propertyTriple ) throw new IllegalArgumentError( `The property "${ propertyObj.name }" is not a valid property defined by the builder.` );
 
 			const propertyPattern:OptionalToken = new OptionalToken()
 				.addPattern( propertyTriple );
@@ -60,7 +62,7 @@ export class Class extends QueryDocumentBuilder.Class {
 			if( propertyPatternsPath ) propertyPattern.addPattern( propertyPatternsPath );
 			propertyPatternsPath = propertyPattern;
 
-			property = this._context.getProperty( getParentPath( property.name ) );
+			propertyObj = this._context.getProperty( getParentPath( propertyObj.name ) );
 		}
 
 		this._orderData = orderData;

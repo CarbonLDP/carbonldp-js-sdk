@@ -33,7 +33,7 @@ var Class = (function () {
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
                 var directType = direct.getType();
-                if (directType === QueryProperty.PropertyType.FULL || QueryProperty.PropertyType.ALL) {
+                if (directType === QueryProperty.PropertyType.FULL || directType === QueryProperty.PropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
                     return direct._builder._addProperty(propertyName, INHERIT);
                 }
