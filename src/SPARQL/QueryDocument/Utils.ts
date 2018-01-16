@@ -13,6 +13,7 @@ import {
 import { DigestedPropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
 import * as QueryContext from "./QueryContext";
+import { Factory as PoinerFactory } from "../../Pointer";
 
 export function getLevelRegExp( property:string ):RegExp {
 	if( property ) property += ".";
@@ -123,7 +124,11 @@ function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToke
 }
 
 export function getPathValue( element:any, path:string ):any {
-	if( element === void 0 || ! path ) return element;
+	if( element === void 0 ) return element;
+	if( ! path ) {
+		if( PoinerFactory.is( element ) ) return element.id;
+		return element;
+	}
 
 	const [ propName, ...restParts ] = path.split( "." );
 

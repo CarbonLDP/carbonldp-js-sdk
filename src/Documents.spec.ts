@@ -4208,7 +4208,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-						.orderBy( _.property( "property2" ) )
+						.orderBy( "property2" )
 						.limit( 10 )
 						.offset( 5 )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
@@ -4369,7 +4369,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => {
 						return _
 							.properties( _.all )
-							.orderBy( _.property( "property2" ) )
+							.orderBy( "property2" )
 							.limit( 10 )
 							.offset( 5 )
 							;
@@ -4477,7 +4477,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								,
 							},
 						} )
-						.orderBy( _.property( "property2" ) )
+						.orderBy( "property2" )
 						.limit( 10 )
 						.offset( 5 )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
@@ -4760,7 +4760,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-						.orderBy( _.property( "property2.property2" ), "DESC" )
+						.orderBy( "property2.property2", "DESC" )
 					).then( ( [ myDocuments, response ] ) => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
@@ -5588,7 +5588,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-						.orderBy( _.property( "property2" ) )
+						.orderBy( "property2" )
 						.limit( 10 )
 						.offset( 5 )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
@@ -7547,7 +7547,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-						.orderBy( _.property( "property2" ) )
+						.orderBy( "property2" )
 						.limit( 10 )
 						.offset( 5 )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
@@ -7712,7 +7712,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => {
 						return _
 							.properties( _.all )
-							.orderBy( _.property( "property2" ) )
+							.orderBy( "property2" )
 							.limit( 10 )
 							.offset( 5 )
 							;
@@ -7822,7 +7822,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								,
 							},
 						} )
-						.orderBy( _.property( "property2" ) )
+						.orderBy( "property2" )
 						.limit( 10 )
 						.offset( 5 )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
@@ -8629,7 +8629,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-						.orderBy( _.property( "property2.property2" ), "DESC" )
+						.orderBy( "property2.property2", "DESC" )
 					).then( ( [ myDocuments, response ] ) => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
@@ -8941,7 +8941,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-						.orderBy( _.property( "property2" ) )
+						.orderBy( "property2" )
 						.limit( 10 )
 						.offset( 5 )
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {

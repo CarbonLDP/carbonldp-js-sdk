@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../../Utils");
+var Pointer_1 = require("../../Pointer");
 function getLevelRegExp(property) {
     if (property)
         property += ".";
@@ -96,8 +97,13 @@ function getSubject(subjectsMap, original) {
     return subject;
 }
 function getPathValue(element, path) {
-    if (element === void 0 || !path)
+    if (element === void 0)
         return element;
+    if (!path) {
+        if (Pointer_1.Factory.is(element))
+            return element.id;
+        return element;
+    }
     var _a = path.split("."), propName = _a[0], restParts = _a.slice(1);
     var property = element[propName];
     var restPath = restParts.join(".");
