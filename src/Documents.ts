@@ -52,11 +52,12 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
+	areDifferentType,
 	createAllPattern,
 	createPropertyPatterns,
 	createTypesPattern,
 	getAllTriples,
-	getPathValue,
+	getPathProperty,
 } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import {
@@ -996,14 +997,42 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					const { path, flow } = queryBuilder._orderData;
 					const inverter:number = flow === "DESC" ? - 1 : 1;
 
-					returned[ 0 ].sort( ( a, b ) => {
-						const aValue:any = getPathValue( a, path );
-						const bValue:any = getPathValue( b, path );
+					returned[ 0 ].sort( ( a:any, b:any ) => {
+						a = getPathProperty( a, path );
+						b = getPathProperty( b, path );
+
+						const aValue:any = Pointer.Factory.is( a ) ? a.id : a;
+						const bValue:any = Pointer.Factory.is( b ) ? b.id : b;
 
 						if( aValue === bValue ) return 0;
 
 						if( aValue === void 0 ) return - 1 * inverter;
 						if( bValue === void 0 ) return inverter;
+
+						if( ! areDifferentType( a, b ) ) {
+							if( Pointer.Factory.is( a ) ) {
+								const aIsBNode:boolean = RDF.URI.Util.isBNodeID( aValue );
+								const bIsBNode:boolean = RDF.URI.Util.isBNodeID( bValue );
+
+								if( aIsBNode && ! bIsBNode ) return - 1 * inverter;
+								if( bIsBNode && ! aIsBNode ) return inverter;
+							}
+						} else {
+							if( Pointer.Factory.is( a ) ) return - 1 * inverter;
+							if( Pointer.Factory.is( b ) ) return inverter;
+
+							if( Utils.isNumber( a ) ) return - 1 * inverter;
+							if( Utils.isNumber( b ) ) return inverter;
+
+							if( Utils.isDate( a ) ) return - 1 * inverter;
+							if( Utils.isDate( b ) ) return inverter;
+
+							if( Utils.isBoolean( a ) ) return - 1 * inverter;
+							if( Utils.isBoolean( b ) ) return inverter;
+
+							if( Utils.isString( a ) ) return - 1 * inverter;
+							if( Utils.isString( b ) ) return inverter;
+						}
 
 						if( aValue < bValue ) return - 1 * inverter;
 						if( aValue > bValue ) return inverter;

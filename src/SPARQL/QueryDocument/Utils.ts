@@ -123,17 +123,20 @@ function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToke
 	return subject;
 }
 
-export function getPathValue( element:any, path:string ):any {
-	if( element === void 0 ) return element;
-	if( ! path ) {
-		if( PoinerFactory.is( element ) ) return element.id;
-		return element;
-	}
+export function getPathProperty( element:any, path:string ):any {
+	if( element === void 0 || ! path ) return element;
 
 	const [ propName, ...restParts ] = path.split( "." );
 
 	const property:any = element[ propName ];
 	const restPath:string = restParts.join( "." );
 
-	return getPathValue( property, restPath );
+	return getPathProperty( property, restPath );
+}
+
+export function areDifferentType( a:any, b:any ):boolean {
+	if( typeof a !== typeof b ) return true;
+	if( typeof a === "object" ) return a instanceof Date !== b instanceof Date;
+
+	return false;
 }

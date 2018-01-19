@@ -930,7 +930,7 @@ exports.Value = Value;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var Utils = __webpack_require__(0);
 function addType(type) {
     this.types.push(type);
@@ -1085,117 +1085,6 @@ module.exports.EventEmitter = EventEmitter;
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(3);
-var Utils = __webpack_require__(0);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return (Utils.hasPropertyDefined(object, "_id") &&
-            Utils.hasPropertyDefined(object, "_resolved") &&
-            Utils.hasPropertyDefined(object, "id") &&
-            Utils.hasFunction(object, "isResolved") &&
-            Utils.hasPropertyDefined(object, "resolve"));
-    };
-    Factory.is = function (value) {
-        return (Utils.isObject(value) &&
-            Factory.hasClassProperties(value));
-    };
-    Factory.create = function (id) {
-        return Factory.createFrom({}, id);
-    };
-    Factory.createFrom = function (object, id) {
-        var pointer = object;
-        pointer.id = id || pointer.id;
-        return Factory.decorate(pointer);
-    };
-    Factory.decorate = function (object) {
-        var pointer = object;
-        if (Factory.hasClassProperties(object))
-            return pointer;
-        Object.defineProperties(pointer, {
-            "_id": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: pointer.id,
-            },
-            "_resolved": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: !!pointer._resolved,
-            },
-            "id": {
-                enumerable: false,
-                configurable: true,
-                get: function () {
-                    if (!this._id)
-                        return "";
-                    return this._id || "";
-                },
-                set: function (value) {
-                    this._id = value;
-                },
-            },
-            "isResolved": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: function () {
-                    return this._resolved;
-                },
-            },
-            "resolve": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: function () {
-                    return Promise.reject(new Errors.NotImplementedError("A simple pointer cannot be resolved by it self."));
-                },
-            },
-        });
-        return pointer;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.areEqual = function (pointer1, pointer2) {
-        return pointer1.id === pointer2.id;
-    };
-    Util.getIDs = function (pointers) {
-        var ids = [];
-        for (var _i = 0, pointers_1 = pointers; _i < pointers_1.length; _i++) {
-            var pointer = pointers_1[_i];
-            ids.push(pointer.id);
-        }
-        return ids;
-    };
-    Util.resolveAll = function (pointers) {
-        var promises = pointers.map(function (pointer) { return pointer.resolve(); });
-        return Promise
-            .all(promises)
-            .then(function (results) {
-            var resolvedPointers = results.map(function (result) { return result[0]; });
-            var responses = results.map(function (result) { return result[1]; });
-            return [resolvedPointers, responses];
-        });
-    };
-    return Util;
-}());
-exports.Util = Util;
-
-
-/***/ }),
-/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1434,6 +1323,117 @@ var Util = (function () {
             uri = (schema.vocab || vocab) + uri;
         }
         return uri;
+    };
+    return Util;
+}());
+exports.Util = Util;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = __webpack_require__(3);
+var Utils = __webpack_require__(0);
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.hasClassProperties = function (object) {
+        return (Utils.hasPropertyDefined(object, "_id") &&
+            Utils.hasPropertyDefined(object, "_resolved") &&
+            Utils.hasPropertyDefined(object, "id") &&
+            Utils.hasFunction(object, "isResolved") &&
+            Utils.hasPropertyDefined(object, "resolve"));
+    };
+    Factory.is = function (value) {
+        return (Utils.isObject(value) &&
+            Factory.hasClassProperties(value));
+    };
+    Factory.create = function (id) {
+        return Factory.createFrom({}, id);
+    };
+    Factory.createFrom = function (object, id) {
+        var pointer = object;
+        pointer.id = id || pointer.id;
+        return Factory.decorate(pointer);
+    };
+    Factory.decorate = function (object) {
+        var pointer = object;
+        if (Factory.hasClassProperties(object))
+            return pointer;
+        Object.defineProperties(pointer, {
+            "_id": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: pointer.id,
+            },
+            "_resolved": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: !!pointer._resolved,
+            },
+            "id": {
+                enumerable: false,
+                configurable: true,
+                get: function () {
+                    if (!this._id)
+                        return "";
+                    return this._id || "";
+                },
+                set: function (value) {
+                    this._id = value;
+                },
+            },
+            "isResolved": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: function () {
+                    return this._resolved;
+                },
+            },
+            "resolve": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: function () {
+                    return Promise.reject(new Errors.NotImplementedError("A simple pointer cannot be resolved by it self."));
+                },
+            },
+        });
+        return pointer;
+    };
+    return Factory;
+}());
+exports.Factory = Factory;
+var Util = (function () {
+    function Util() {
+    }
+    Util.areEqual = function (pointer1, pointer2) {
+        return pointer1.id === pointer2.id;
+    };
+    Util.getIDs = function (pointers) {
+        var ids = [];
+        for (var _i = 0, pointers_1 = pointers; _i < pointers_1.length; _i++) {
+            var pointer = pointers_1[_i];
+            ids.push(pointer.id);
+        }
+        return ids;
+    };
+    Util.resolveAll = function (pointers) {
+        var promises = pointers.map(function (pointer) { return pointer.resolve(); });
+        return Promise
+            .all(promises)
+            .then(function (results) {
+            var resolvedPointers = results.map(function (result) { return result[0]; });
+            var responses = results.map(function (result) { return result[1]; });
+            return [resolvedPointers, responses];
+        });
     };
     return Util;
 }());
@@ -2869,8 +2869,8 @@ var Errors = __webpack_require__(3);
 var Converter_1 = __webpack_require__(63);
 var NamedFragment = __webpack_require__(100);
 var NS = __webpack_require__(1);
-var ObjectSchema = __webpack_require__(13);
-var Pointer = __webpack_require__(12);
+var ObjectSchema = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
 var Utils = __webpack_require__(0);
@@ -3630,11 +3630,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __webpack_require__(24);
 var HTTP = __webpack_require__(16);
 var MessagingDocument = __webpack_require__(84);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var PersistedFragment = __webpack_require__(44);
 var PersistedNamedFragment = __webpack_require__(85);
 var PersistedResource = __webpack_require__(45);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var URI = __webpack_require__(19);
 var ServiceAwareDocument = __webpack_require__(193);
@@ -4308,7 +4308,6 @@ exports.joinPatterns = function (patterns) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(0);
-var Pointer_1 = __webpack_require__(12);
 function getLevelRegExp(property) {
     if (property)
         property += ".";
@@ -4402,20 +4401,23 @@ function getSubject(subjectsMap, original) {
     subjectsMap.set(subjectStr, subject);
     return subject;
 }
-function getPathValue(element, path) {
-    if (element === void 0)
+function getPathProperty(element, path) {
+    if (element === void 0 || !path)
         return element;
-    if (!path) {
-        if (Pointer_1.Factory.is(element))
-            return element.id;
-        return element;
-    }
     var _a = path.split("."), propName = _a[0], restParts = _a.slice(1);
     var property = element[propName];
     var restPath = restParts.join(".");
-    return getPathValue(property, restPath);
+    return getPathProperty(property, restPath);
 }
-exports.getPathValue = getPathValue;
+exports.getPathProperty = getPathProperty;
+function areDifferentType(a, b) {
+    if (typeof a !== typeof b)
+        return true;
+    if (typeof a === "object")
+        return a instanceof Date !== b instanceof Date;
+    return false;
+}
+exports.areDifferentType = areDifferentType;
 
 
 /***/ }),
@@ -4837,7 +4839,7 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment = __webpack_require__(43);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var PersistedResource = __webpack_require__(45);
 var RDF = __webpack_require__(9);
 function resolveURI(uri) {
@@ -5740,7 +5742,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(32);
 var tokens_1 = __webpack_require__(4);
 var Errors_1 = __webpack_require__(3);
-var ObjectSchema_1 = __webpack_require__(13);
+var ObjectSchema_1 = __webpack_require__(12);
 var QueryVariable = __webpack_require__(93);
 var Class = (function () {
     function Class(context) {
@@ -5989,7 +5991,7 @@ exports.default = RightSymbol;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
-var ObjectSchema_1 = __webpack_require__(13);
+var ObjectSchema_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(36);
 var PropertyType;
 (function (PropertyType) {
@@ -6093,9 +6095,9 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var NS = __webpack_require__(1);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var Utils = __webpack_require__(0);
 var Class = (function () {
@@ -7156,7 +7158,7 @@ var Documents = __webpack_require__(106);
 var Errors = __webpack_require__(3);
 var LDP = __webpack_require__(37);
 var Messaging = __webpack_require__(67);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var ProtectedDocument = __webpack_require__(126);
 var RDF = __webpack_require__(9);
 var RDFRepresentation = __webpack_require__(301);
@@ -7403,7 +7405,7 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ACE = __webpack_require__(76);
 var NS = __webpack_require__(1);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var Utils = __webpack_require__(0);
 exports.RDF_CLASS = NS.CS.Class.AccessControlList;
 exports.SCHEMA = {
@@ -8281,7 +8283,7 @@ exports.default = Class;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
-var ObjectSchema_1 = __webpack_require__(13);
+var ObjectSchema_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 var Errors_1 = __webpack_require__(3);
 var QueryObject = __webpack_require__(95);
@@ -8538,7 +8540,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var InvalidJSONLDSyntaxError_1 = __webpack_require__(79);
 var Errors = __webpack_require__(3);
 var HTTP = __webpack_require__(16);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var RDF = __webpack_require__(9);
 var Utils = __webpack_require__(0);
 var MAX_CONTEXT_URLS = 10;
@@ -9319,7 +9321,7 @@ exports.default = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var Converter_1 = __webpack_require__(63);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
 var Utils = __webpack_require__(0);
@@ -9503,12 +9505,12 @@ var LDPatch = __webpack_require__(108);
 var Messaging = __webpack_require__(67);
 var Utils_1 = __webpack_require__(125);
 var NS = __webpack_require__(1);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var PersistedDocument = __webpack_require__(31);
 var PersistedFragment = __webpack_require__(44);
 var PersistedProtectedDocument = __webpack_require__(47);
 var PersistedResource = __webpack_require__(45);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var ProtectedDocument = __webpack_require__(126);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
@@ -10295,14 +10297,48 @@ var Class = (function () {
                 var _a = queryBuilder._orderData, path_1 = _a.path, flow = _a.flow;
                 var inverter_1 = flow === "DESC" ? -1 : 1;
                 returned[0].sort(function (a, b) {
-                    var aValue = Utils_2.getPathValue(a, path_1);
-                    var bValue = Utils_2.getPathValue(b, path_1);
+                    a = Utils_2.getPathProperty(a, path_1);
+                    b = Utils_2.getPathProperty(b, path_1);
+                    var aValue = Pointer.Factory.is(a) ? a.id : a;
+                    var bValue = Pointer.Factory.is(b) ? b.id : b;
                     if (aValue === bValue)
                         return 0;
                     if (aValue === void 0)
                         return -1 * inverter_1;
                     if (bValue === void 0)
                         return inverter_1;
+                    if (!Utils_2.areDifferentType(a, b)) {
+                        if (Pointer.Factory.is(a)) {
+                            var aIsBNode = RDF.URI.Util.isBNodeID(aValue);
+                            var bIsBNode = RDF.URI.Util.isBNodeID(bValue);
+                            if (aIsBNode && !bIsBNode)
+                                return -1 * inverter_1;
+                            if (bIsBNode && !aIsBNode)
+                                return inverter_1;
+                        }
+                    }
+                    else {
+                        if (Pointer.Factory.is(a))
+                            return -1 * inverter_1;
+                        if (Pointer.Factory.is(b))
+                            return inverter_1;
+                        if (Utils.isNumber(a))
+                            return -1 * inverter_1;
+                        if (Utils.isNumber(b))
+                            return inverter_1;
+                        if (Utils.isDate(a))
+                            return -1 * inverter_1;
+                        if (Utils.isDate(b))
+                            return inverter_1;
+                        if (Utils.isBoolean(a))
+                            return -1 * inverter_1;
+                        if (Utils.isBoolean(b))
+                            return inverter_1;
+                        if (Utils.isString(a))
+                            return -1 * inverter_1;
+                        if (Utils.isString(b))
+                            return inverter_1;
+                    }
                     if (aValue < bValue)
                         return -1 * inverter_1;
                     if (aValue > bValue)
@@ -12220,8 +12256,13 @@ function toCompactString() {
             --index;
         }
     }
-    if (baseTokens)
-        tokens.unshift.apply(tokens, baseTokens);
+    if (baseTokens) {
+        var baseString = baseTokens.reduce(function (res, token, index, thisArray) {
+            var nextToken = thisArray[index + 1];
+            return res + token.getTokenValue(tokens_2.TokenFormat.PRETTY, nextToken);
+        }, "") + "\n";
+        tokens.unshift(new tokens_2.StringLiteral(baseString));
+    }
     return tokens.reduce(function (res, token, index, thisArray) {
         var nextToken = thisArray[index + 1];
         if (nextToken === tokens_1.EMPTY_SEPARATOR)
@@ -13012,12 +13053,12 @@ var LDPatch = __webpack_require__(108);
 var Messaging = __webpack_require__(67);
 var NamedFragment = __webpack_require__(100);
 var NS = __webpack_require__(1);
-var ObjectSchema = __webpack_require__(13);
+var ObjectSchema = __webpack_require__(12);
 var PersistedDocument = __webpack_require__(31);
 var PersistedFragment = __webpack_require__(44);
 var PersistedNamedFragment = __webpack_require__(85);
 var PersistedResource = __webpack_require__(45);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
 var SDKContext = __webpack_require__(75);
@@ -15781,7 +15822,7 @@ exports.stringSerializer = new StringSerializer();
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument = __webpack_require__(31);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDFDocument = __webpack_require__(55);
 var URI_1 = __webpack_require__(19);
 var QueryDocument_1 = __webpack_require__(56);
@@ -15945,7 +15986,7 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
-var ObjectSchema_1 = __webpack_require__(13);
+var ObjectSchema_1 = __webpack_require__(12);
 var URI = __webpack_require__(19);
 exports.ALL = Object.freeze(new ObjectSchema_1.DigestedObjectSchema());
 var Class = (function () {
@@ -16957,7 +16998,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ACL = __webpack_require__(77);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var Utils = __webpack_require__(0);
 var Factory = (function () {
     function Factory() {
@@ -17165,7 +17206,7 @@ exports.default = Class;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var Pointer = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var Resource = __webpack_require__(10);
 var URI = __webpack_require__(19);
 exports.TICKETS_CONTAINER = "auth-tickets/";
@@ -17773,8 +17814,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(32);
 var tokens_1 = __webpack_require__(4);
 var NS_1 = __webpack_require__(1);
-var ObjectSchema_1 = __webpack_require__(13);
-var Pointer = __webpack_require__(12);
+var ObjectSchema_1 = __webpack_require__(12);
+var Pointer = __webpack_require__(13);
 var RDF_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
 var Tokens_1 = __webpack_require__(109);
