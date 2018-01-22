@@ -12220,8 +12220,13 @@ function toCompactString() {
             --index;
         }
     }
-    if (baseTokens)
-        tokens.unshift.apply(tokens, baseTokens);
+    if (baseTokens) {
+        var baseString = baseTokens.reduce(function (res, token, index, thisArray) {
+            var nextToken = thisArray[index + 1];
+            return res + token.getTokenValue(tokens_2.TokenFormat.PRETTY, nextToken);
+        }, "") + "\n";
+        tokens.unshift(new tokens_2.StringLiteral(baseString));
+    }
     return tokens.reduce(function (res, token, index, thisArray) {
         var nextToken = thisArray[index + 1];
         if (nextToken === tokens_1.EMPTY_SEPARATOR)
