@@ -466,6 +466,11 @@ var Class = (function () {
             schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
         return schema;
     };
+    Class.prototype.hasSchemaFor = function (object, path) {
+        if (path !== void 0)
+            return false;
+        return "@id" in object || "id" in object;
+    };
     Class.prototype.getSchemaFor = function (object) {
         return ("@id" in object) ?
             this.getDigestedObjectSchemaForExpandedObject(object) :

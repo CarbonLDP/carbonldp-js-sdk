@@ -41,7 +41,8 @@ export declare class DigestedPropertyDefinition {
 }
 export interface Resolver {
     getGeneralSchema(): DigestedObjectSchema;
-    getSchemaFor(object: Object, path?: string): DigestedObjectSchema;
+    hasSchemaFor(object: object, path?: string): boolean;
+    getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
 export declare class Digester {
     static digestSchema(schemas: Class[], vocab?: string): DigestedObjectSchema;
