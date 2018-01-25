@@ -75,6 +75,11 @@ var Class = (function () {
             return new ObjectSchema_1.DigestedObjectSchema();
         return this.context.documents.getGeneralSchema();
     };
+    Class.prototype.hasSchemaFor = function (object, path) {
+        if (!this.context)
+            return false;
+        return this.context.documents.hasSchemaFor(object);
+    };
     Class.prototype.getSchemaFor = function (object, path) {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();

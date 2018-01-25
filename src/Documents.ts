@@ -585,7 +585,12 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return schema;
 	}
 
-	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
+	hasSchemaFor( object:object, path?:string ):boolean {
+		if( path !== void 0 ) return false;
+		return "@id" in object || "id" in object;
+	}
+
+	getSchemaFor( object:object ):ObjectSchema.DigestedObjectSchema {
 		return ("@id" in object) ?
 			this.getDigestedObjectSchemaForExpandedObject( object ) :
 			this.getDigestedObjectSchemaForDocument( <any> object );

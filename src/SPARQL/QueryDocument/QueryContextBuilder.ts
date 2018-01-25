@@ -60,6 +60,14 @@ export class Class extends QueryContext.Class {
 		}
 	}
 
+	hasSchemaFor( object:object, path?:string ):boolean {
+		if( path === void 0 ) return super.hasSchemaFor( object );
+		if( ! this.hasProperty( path ) ) return false;
+
+		const property:QueryProperty.Class = this.getProperty( path );
+		return property.getType() !== void 0;
+	}
+
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( path === void 0 ) return super.getSchemaFor( object );
 

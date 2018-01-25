@@ -1452,9 +1452,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 					).then( ( [ document ] ) => {
 						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
-							"@vocab": "https://example.com/ns#",
 							"property1": {
-								"@id": "property-1",
+								"@id": "https://example.com/ns#property-1",
 								"@type": NS.XSD.DataType.string,
 							},
 							"property2": {
@@ -1465,9 +1464,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
-							"@vocab": "https://example.com/ns#",
 							"property2": {
-								"@id": "property-2",
+								"@id": "https://example.com/ns#property-2",
 								"@type": NS.XSD.DataType.integer,
 							},
 							"property3": {
@@ -1622,9 +1620,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} ).then( ( [ document ] ) => {
 						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
-							"@vocab": "https://example.com/ns#",
 							"property4": {
-								"@id": "property-4",
+								"@id": "https://example.com/ns#property-4",
 								"@type": NS.XSD.DataType.boolean,
 							},
 							"property2": {
@@ -1632,14 +1629,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": "@id",
 							},
 							"property1": {
-								"@id": "property-1",
+								"@id": "https://example.com/ns#property-1",
 								"@type": NS.XSD.DataType.string,
 							},
 						} ) );
 
 						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
-							"@vocab": "https://example.com/ns#",
 							"property3": {
 								"@id": "https://schema.org/property-3",
 								"@type": NS.XSD.DataType.string,
@@ -1649,7 +1645,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": NS.XSD.DataType.dateTime,
 							},
 							"property2": {
-								"@id": "property-2",
+								"@id": "https://example.com/ns#property-2",
 								"@type": NS.XSD.DataType.integer,
 							},
 						} ) );
