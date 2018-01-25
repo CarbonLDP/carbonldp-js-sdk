@@ -61,6 +61,14 @@ var Class = (function (_super) {
             return digestedProperty;
         }
     };
+    Class.prototype.hasSchemaFor = function (object, path) {
+        if (path === void 0)
+            return _super.prototype.hasSchemaFor.call(this, object);
+        if (!this.hasProperty(path))
+            return false;
+        var property = this.getProperty(path);
+        return property.getType() !== void 0;
+    };
     Class.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
             return _super.prototype.getSchemaFor.call(this, object);

@@ -6,22 +6,22 @@ var URI = require("../../RDF/URI");
 exports.ALL = Object.freeze(new ObjectSchema_1.DigestedObjectSchema());
 var Class = (function () {
     function Class(schema, previousPartial) {
-        this.schema = previousPartial ? this.mergeSchemas(previousPartial.schema, schema) : schema;
+        this.schema = this.mergeSchemas(previousPartial ? previousPartial.schema : new ObjectSchema_1.DigestedObjectSchema(), schema);
     }
     Class.prototype.mergeSchemas = function (oldSchema, newSchema) {
         if (newSchema === exports.ALL || oldSchema === exports.ALL)
             return exports.ALL;
-        oldSchema.prefixes.forEach(function (oldURI, namespace) {
-            if (!newSchema.prefixes.has(namespace))
-                return newSchema.prefixes.set(namespace, oldURI);
-            var newURI = newSchema.prefixes.get(namespace);
-            if (newURI.stringValue !== oldURI.stringValue)
+        newSchema.prefixes.forEach(function (newURI, namespace) {
+            if (!oldSchema.prefixes.has(namespace))
+                return oldSchema.prefixes.set(namespace, newURI);
+            var oldURI = oldSchema.prefixes.get(namespace);
+            if (oldURI.stringValue !== newURI.stringValue)
                 throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different values: \"" + oldURI.stringValue + "\", \"" + newURI.stringValue + "\"");
         });
-        oldSchema.properties.forEach(function (oldDefinition, propertyName) {
-            if (!newSchema.properties.has(propertyName))
-                return newSchema.properties.set(propertyName, oldDefinition);
-            var newDefinition = newSchema.properties.get(propertyName);
+        newSchema.properties.forEach(function (newDefinition, propertyName) {
+            if (!oldSchema.properties.has(propertyName))
+                return oldSchema.properties.set(propertyName, newDefinition);
+            var oldDefinition = oldSchema.properties.get(propertyName);
             for (var key in newDefinition) {
                 var newValue = newDefinition[key] instanceof URI.Class ? newDefinition[key].stringValue : newDefinition[key];
                 var oldValue = oldDefinition[key] instanceof URI.Class ? oldDefinition[key].stringValue : oldDefinition[key];
@@ -29,7 +29,7 @@ var Class = (function () {
                     throw new Errors_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\"");
             }
         });
-        return newSchema;
+        return oldSchema;
     };
     return Class;
 }());
