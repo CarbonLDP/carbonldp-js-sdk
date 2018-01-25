@@ -1,9 +1,20 @@
-import { isPrefixed, isRelative } from "sparqler/iri";
-import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import {
+	isPrefixed,
+	isRelative
+} from "sparqler/iri";
+import {
+	IRIToken,
+	PrefixedNameToken,
+	PrefixToken
+} from "sparqler/tokens";
 
 import * as Context from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
-import { DigestedObjectSchema, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
+import {
+	DigestedObjectSchema,
+	Resolver,
+	Util as SchemaUtils
+} from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
 
 export class Class implements Resolver {
@@ -89,6 +100,11 @@ export class Class implements Resolver {
 	getGeneralSchema():DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();
 		return this.context.documents.getGeneralSchema();
+	}
+
+	hasSchemaFor( object:object, path?:string ):boolean {
+		if( ! this.context ) return false;
+		return this.context.documents.hasSchemaFor( object );
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {

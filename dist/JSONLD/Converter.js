@@ -52,19 +52,19 @@ var Class = (function () {
         }
         return uri;
     };
-    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary) {
+    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary, strict) {
         if (pointerLibrary === void 0) { pointerLibrary = null; }
         var targetObjectOrObjects = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
         var digestedSchema = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
         pointerLibrary = !pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
         if (!Utils.isArray(expandedObjectOrObjects))
-            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary);
+            return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, digestedSchema, pointerLibrary, strict);
         var expandedObjects = expandedObjectOrObjects;
         var targetObjects = !!targetObjectOrObjects ? targetObjectOrObjects : [];
         for (var i = 0, length_1 = expandedObjects.length; i < length_1; i++) {
             var expandedObject = expandedObjects[i];
             var targetObject = targetObjects[i] = !!targetObjects[i] ? targetObjects[i] : {};
-            this.compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
+            this.compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary, strict);
         }
         return targetObjects;
     };
@@ -313,7 +313,7 @@ var Class = (function () {
         serializedValue = this.literalSerializers.get(literalType).serialize(literalValue);
         return { "@value": serializedValue, "@type": literalType };
     };
-    Class.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary) {
+    Class.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary, strict) {
         var _this = this;
         var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
         if (!expandedObject["@id"])
@@ -333,6 +333,8 @@ var Class = (function () {
                 definition = digestedSchema.properties.get(propertyName);
             }
             else {
+                if (strict)
+                    return;
                 if (digestedSchema.vocab !== null)
                     propertyName = RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab);
                 definition = new ObjectSchema.DigestedPropertyDefinition();

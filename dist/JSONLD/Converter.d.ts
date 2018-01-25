@@ -8,7 +8,7 @@ export declare class Class {
     private static getPropertyURI(propertyName, definition, vocab);
     constructor(literalSerializers?: Map<string, RDF.Literal.Serializer>);
     compact(expandedObjects: Object[], targetObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
-    compact(expandedObject: Object, targetObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
+    compact(expandedObject: Object, targetObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library, strict?: boolean): Object;
     compact(expandedObjects: Object[], digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object[];
     compact(expandedObject: Object, digestedSchema: ObjectSchema.DigestedObjectSchema, pointerLibrary: Pointer.Library): Object;
     expand(compactedObjects: Object[], generalSchema: ObjectSchema.DigestedObjectSchema, digestedSchema: ObjectSchema.DigestedObjectSchema): RDF.Node.Class[];
@@ -30,7 +30,7 @@ export declare class Class {
     private expandArray(propertyValue, generalSchema, digestedSchema);
     private expandValue(propertyValue, generalSchema, digestedSchema);
     private expandLiteral(literalValue);
-    private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary);
+    private compactSingle(expandedObject, targetObject, digestedSchema, pointerLibrary, strict?);
     private getPropertyContainerType(propertyValues);
     private getPropertyValue(expandedObject, propertyURI, propertyDefinition, pointerLibrary);
     private getPropertyURINameMap(digestedSchema);
