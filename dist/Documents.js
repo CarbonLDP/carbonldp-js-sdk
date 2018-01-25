@@ -810,14 +810,48 @@ var Class = (function () {
                 var _a = queryBuilder._orderData, path_1 = _a.path, flow = _a.flow;
                 var inverter_1 = flow === "DESC" ? -1 : 1;
                 returned[0].sort(function (a, b) {
-                    var aValue = Utils_2.getPathValue(a, path_1);
-                    var bValue = Utils_2.getPathValue(b, path_1);
+                    a = Utils_2.getPathProperty(a, path_1);
+                    b = Utils_2.getPathProperty(b, path_1);
+                    var aValue = Pointer.Factory.is(a) ? a.id : a;
+                    var bValue = Pointer.Factory.is(b) ? b.id : b;
                     if (aValue === bValue)
                         return 0;
                     if (aValue === void 0)
                         return -1 * inverter_1;
                     if (bValue === void 0)
                         return inverter_1;
+                    if (!Utils_2.areDifferentType(a, b)) {
+                        if (Pointer.Factory.is(a)) {
+                            var aIsBNode = RDF.URI.Util.isBNodeID(aValue);
+                            var bIsBNode = RDF.URI.Util.isBNodeID(bValue);
+                            if (aIsBNode && !bIsBNode)
+                                return -1 * inverter_1;
+                            if (bIsBNode && !aIsBNode)
+                                return inverter_1;
+                        }
+                    }
+                    else {
+                        if (Pointer.Factory.is(a))
+                            return -1 * inverter_1;
+                        if (Pointer.Factory.is(b))
+                            return inverter_1;
+                        if (Utils.isNumber(a))
+                            return -1 * inverter_1;
+                        if (Utils.isNumber(b))
+                            return inverter_1;
+                        if (Utils.isDate(a))
+                            return -1 * inverter_1;
+                        if (Utils.isDate(b))
+                            return inverter_1;
+                        if (Utils.isBoolean(a))
+                            return -1 * inverter_1;
+                        if (Utils.isBoolean(b))
+                            return inverter_1;
+                        if (Utils.isString(a))
+                            return -1 * inverter_1;
+                        if (Utils.isString(b))
+                            return inverter_1;
+                    }
                     if (aValue < bValue)
                         return -1 * inverter_1;
                     if (aValue > bValue)
