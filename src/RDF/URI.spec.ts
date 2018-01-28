@@ -1,77 +1,22 @@
+import * as ObjectSchema from "./../ObjectSchema";
 import {
-	STATIC,
-	INSTANCE,
-
-	module,
 	clazz,
-	method,
-
-	hasConstructor,
-	isDefined,
 	hasMethod,
 	hasSignature,
-	hasProperty,
-	hasDefaultExport,
+	isDefined,
+	method,
+	module,
+	STATIC,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as ObjectSchema from "./../ObjectSchema";
 
 import * as URI from "./URI";
-import DefaultExport from "./URI";
 
 describe( module( "Carbon/RDF/URI" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( URI ).toBeDefined();
 		expect( Utils.isObject( URI ) ).toBe( true );
-	} );
-
-	describe( clazz( "Carbon.RDF.URI.Class", "Wrapper class for a URI string value." ), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( URI.Class ).toBeDefined();
-			expect( Utils.isFunction( URI.Class ) ).toBe( true );
-		} );
-
-		it( hasConstructor( [
-			{ name: "stringValue", type: "string", description: "The string that represents the URI." },
-		] ), ():void => {
-			let uri:URI.Class = new URI.Class( "http://example.com/resource/" );
-
-			expect( ! ! uri ).toBe( true );
-			expect( uri instanceof URI.Class ).toBe( true );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"stringValue",
-			"string",
-			"The string value of the URI object."
-		), ():void => {
-			let uri:URI.Class = new URI.Class( "http://example.com/resource/" );
-
-			expect( uri.stringValue ).toBe( "http://example.com/resource/" );
-
-			uri.stringValue = "http://example.com/another-resource/";
-			expect( uri.stringValue ).toBe( "http://example.com/another-resource/" );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			"Returns a string that represents the URI of the class.",
-			{ type: "string" }
-		), ():void => {
-			let stringURI:string = "http://example.com/resource/";
-			let uri:URI.Class = new URI.Class( stringURI );
-
-			expect( "toString" in uri ).toBe( true );
-			expect( Utils.isFunction( uri.toString ) ).toBe( true );
-
-			expect( uri.toString() ).toEqual( stringURI );
-		} );
-
-
 	} );
 
 	describe( clazz( "Carbon.RDF.URI.Util", "Class with useful functions to manage URI strings." ), ():void => {
@@ -585,11 +530,6 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				expect( "prefix" in URI.Util ).toBe( true );
 				expect( Utils.isFunction( URI.Util.prefix ) ).toBe( true );
 
-
-				let resourceURI:string = "http://example.com/resource/";
-				let anotherResourceURI:string = "http://another_example.com/resource/";
-				let prefixResourceURI:string = "prefix:resource/";
-
 				let schema:ObjectSchema.Class = {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"prefix": "http://example.com/",
@@ -607,21 +547,16 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 					},
 				};
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-				let anotherDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( anotherSchema );
+				let anotherDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( anotherSchema, digestedSchema );
 
-				expect( URI.Util.prefix( resourceURI, digestedSchema ) ).toBe( prefixResourceURI );
-				expect( URI.Util.prefix( resourceURI, anotherDigestedSchema ) ).toBe( resourceURI );
-				expect( URI.Util.prefix( anotherResourceURI, digestedSchema ) ).toBe( anotherResourceURI );
-				expect( URI.Util.prefix( prefixResourceURI, digestedSchema ) ).toBe( prefixResourceURI );
+				expect( URI.Util.prefix( "http://example.com/resource/", digestedSchema ) ).toBe( "prefix:resource/" );
+				expect( URI.Util.prefix( "http://example.com/resource/", anotherDigestedSchema ) ).toBe( "http://example.com/resource/" );
+				expect( URI.Util.prefix( "http://another_example.com/resource/", digestedSchema ) ).toBe( "http://another_example.com/resource/" );
+				expect( URI.Util.prefix( "prefix:resource/", digestedSchema ) ).toBe( "prefix:resource/" );
 			} );
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "Carbon.RDF.URI.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( URI.Class );
 	} );
 
 } );

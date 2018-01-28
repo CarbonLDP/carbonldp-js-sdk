@@ -98,7 +98,7 @@ var Class = (function () {
         var schemaAddedProperties = addedProperties
             .filter(function (x) { return schema.properties.has(x); });
         schemaAddedProperties
-            .map(function (x) { return schema.properties.get(x).uri.stringValue; })
+            .map(function (x) { return schema.properties.get(x).uri; })
             .forEach(function (x) { return delete node[x]; });
         return schemaAddedProperties;
     };

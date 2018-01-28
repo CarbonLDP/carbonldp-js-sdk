@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
-var ObjectSchema = require("./../ObjectSchema");
 var NS = require("./../NS");
+var ObjectSchema = require("./../ObjectSchema");
 var Pointer = require("./../Pointer");
 var RDF = require("./../RDF");
 var Utils = require("./../Utils");
@@ -77,7 +77,7 @@ var Class = (function () {
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, generalSchema); });
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, digestedSchema, generalSchema); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
@@ -92,7 +92,7 @@ var Class = (function () {
             }
             else if (RDF.URI.Util.isAbsolute(propertyName) || digestedSchema.vocab !== null) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
+                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, digestedSchema, generalSchema);
             }
             if (!expandedValue || !expandedPropertyName)
                 return;
@@ -255,14 +255,14 @@ var Class = (function () {
         if (!id) {
             return null;
         }
-        id = ObjectSchema.Digester.resolvePrefixedURI(id, generalSchema);
+        id = ObjectSchema.Util.resolvePrefixedURI(id, generalSchema);
         if (generalSchema.properties.has(id)) {
             var definition = generalSchema.properties.get(id);
             if (definition.uri)
-                id = definition.uri.stringValue;
+                id = definition.uri;
         }
-        if (notPointer && !!digestedSchema.vocab)
-            id = ObjectSchema.Util.resolveURI(id, generalSchema);
+        if (notPointer)
+            id = ObjectSchema.Util.resolveURI(id, digestedSchema, generalSchema);
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, generalSchema, digestedSchema) {

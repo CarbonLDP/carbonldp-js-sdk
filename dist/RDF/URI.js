@@ -2,16 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = require("./../Errors");
 var Utils = require("./../Utils");
-var Class = (function () {
-    function Class(stringValue) {
-        this.stringValue = stringValue;
-    }
-    Class.prototype.toString = function () {
-        return this.stringValue;
-    };
-    return Class;
-}());
-exports.Class = Class;
 var Util = (function () {
     function Util() {
     }
@@ -146,11 +136,9 @@ var Util = (function () {
         return uri.substring(uri.indexOf("://") + 3);
     };
     Util.prefix = function (uri, prefixOrObjectSchema, prefixURI) {
-        if (prefixURI === void 0) { prefixURI = null; }
-        var objectSchema = !Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
-        var prefix = Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
-        if (objectSchema !== null)
-            return prefixWithObjectSchema(uri, objectSchema);
+        if (!Utils.isString(prefixOrObjectSchema))
+            return prefixWithObjectSchema(uri, prefixOrObjectSchema);
+        var prefix = prefixOrObjectSchema;
         if (Util.isPrefixed(uri) || !uri.startsWith(prefixURI))
             return uri;
         return prefix + ":" + uri.substring(prefixURI.length);
@@ -159,19 +147,15 @@ var Util = (function () {
 }());
 exports.Util = Util;
 function prefixWithObjectSchema(uri, objectSchema) {
-    var prefixEntries = objectSchema.prefixes.entries();
-    while (true) {
-        var result = prefixEntries.next();
-        if (result.done)
-            return uri;
-        var _a = result.value, prefix = _a[0], prefixURI = _a[1];
-        if (!Util.isAbsolute(prefixURI.toString()))
+    for (var _i = 0, _a = Array.from(objectSchema.prefixes.entries()); _i < _a.length; _i++) {
+        var _b = _a[_i], prefix = _b[0], prefixURI = _b[1];
+        if (!Util.isAbsolute(prefixURI))
             continue;
-        if (!uri.startsWith(prefixURI.toString()))
+        if (!uri.startsWith(prefixURI))
             continue;
-        return Util.prefix(uri, prefix, prefixURI.toString());
+        return Util.prefix(uri, prefix, prefixURI);
     }
+    return uri;
 }
-exports.default = Class;
 
 //# sourceMappingURL=URI.js.map

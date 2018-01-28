@@ -1,9 +1,4 @@
 import * as ObjectSchema from "./../ObjectSchema";
-export declare class Class {
-    stringValue: string;
-    constructor(stringValue: string);
-    toString(): string;
-}
 export declare class Util {
     static hasFragment(uri: string): boolean;
     static hasQuery(uri: string): boolean;
@@ -25,4 +20,3 @@ export declare class Util {
     static prefix(uri: string, prefix: string, prefixURI: string): string;
     static prefix(uri: string, objectSchema: ObjectSchema.DigestedObjectSchema): string;
 }
-export default Class;

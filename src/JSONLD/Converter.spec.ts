@@ -434,7 +434,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Type-2" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#MyType" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/ns#Another-Type" );
-				expect( expandedObject[ "@type" ] ).toContain( "another:Another-Namespace-Type" );
+				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/another-namespace#Another-Namespace-Type" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/my-vocabulary#Another-Another-Type" );
 
 				let property:RDF.Literal.Class[] | RDF.Node.Class[] | [ RDF.List.Class ];

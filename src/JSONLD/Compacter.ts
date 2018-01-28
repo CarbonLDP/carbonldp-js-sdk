@@ -150,7 +150,7 @@ export class Class {
 		;
 
 		schemaAddedProperties
-			.map( x => schema.properties.get( x ).uri.stringValue )
+			.map( x => schema.properties.get( x ).uri )
 			.forEach( x => delete node[ x ] );
 
 		return schemaAddedProperties;

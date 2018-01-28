@@ -1,30 +1,24 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasSignature,
-	hasProperty,
-	enumeration,
-	hasEnumeral,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
-
 import * as ObjectSchema from "./ObjectSchema";
 import DefaultExport from "./ObjectSchema";
+import {
+	clazz,
+	enumeration,
+	hasConstructor,
+	hasDefaultExport,
+	hasEnumeral,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/ObjectSchema" ), ():void => {
 
@@ -252,17 +246,6 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.size ).toBe( 0 );
 		} );
 
-		it( hasProperty(
-			INSTANCE,
-			"prefixedURIs",
-			"Map<string, Carbon.RDF.URI.Class[]>",
-			"Map with the prefixed URIs used in the schema for an easy access to its absolute URI."
-		), ():void => {
-			expect( digestedSchema.prefixedURIs ).toBeDefined();
-			expect( Utils.isMap( digestedSchema.prefixedURIs ) ).toBe( true );
-			expect( digestedSchema.prefixedURIs.size ).toBe( 0 );
-		} );
-
 	} );
 
 	describe( clazz(
@@ -374,35 +357,30 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 				expect( digestedSchema.prefixes.size ).toEqual( 3 );
 				expect( digestedSchema.prefixes.has( "skos" ) ).toEqual( true );
-				expect( digestedSchema.prefixes.get( "skos" ) instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.prefixes.get( "skos" ).toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
+				expect( digestedSchema.prefixes.get( "skos" ) ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
 
 				expect( digestedSchema.properties.size ).toEqual( 4 );
 				expect( digestedSchema.properties.has( "hasTopConcept" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).literal ).toEqual( false );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).literalType ).toEqual( null );
-				expect( digestedSchema.properties.get( "hasTopConcept" ).uri instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "hasTopConcept" ).uri.toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
+				expect( digestedSchema.properties.get( "hasTopConcept" ).uri ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toBeUndefined();
 
 				expect( digestedSchema.properties.has( "name" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ).literal ).toEqual( true );
-				expect( digestedSchema.properties.get( "name" ).literalType instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "name" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
-				expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
+				expect( digestedSchema.properties.get( "name" ).literalType ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
+				expect( digestedSchema.properties.get( "name" ).uri ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 				expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 
 				expect( digestedSchema.properties.has( "elementWithoutID" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "elementWithoutID" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).literal ).toEqual( true );
-				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
-				expect( digestedSchema.properties.get( "elementWithoutID" ).uri.toString() ).toBe( "elementWithoutID" );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).literalType ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
+				expect( digestedSchema.properties.get( "elementWithoutID" ).uri ).toBe( "elementWithoutID" );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
 				expect( digestedSchema.properties.get( "elementWithoutID" ).language ).toBeUndefined();
 			} );
@@ -419,15 +397,15 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				let schemas:ObjectSchema.Class[] = [
 					{
 						"skos": "http://www.w3.org/2004/02/skos/core#",
-						"dct": "http://purl.org/dc/terms/",
-						"xsd": "http://www.w3.org/2001/XMLSchema#",
-					},
-					{
 						"hasTopConcept": {
 							"@id": "skos:hasTopConcept",
 							"@type": "@id",
 							"@container": "@set",
 						},
+					},
+					{
+						"dct": "http://purl.org/dc/terms/",
+						"xsd": "http://www.w3.org/2001/XMLSchema#",
 						"name": {
 							"@id": "dct:name",
 							"@type": "xsd:string",
@@ -443,26 +421,22 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 				expect( digestedSchema.prefixes.size ).toEqual( 3 );
 				expect( digestedSchema.prefixes.has( "skos" ) ).toEqual( true );
-				expect( digestedSchema.prefixes.get( "skos" ) instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.prefixes.get( "skos" ).toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
+				expect( digestedSchema.prefixes.get( "skos" ) ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
 
 				expect( digestedSchema.properties.size ).toEqual( 3 );
 				expect( digestedSchema.properties.has( "hasTopConcept" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).literal ).toEqual( false );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).literalType ).toEqual( null );
-				expect( digestedSchema.properties.get( "hasTopConcept" ).uri instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "hasTopConcept" ).uri.toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
+				expect( digestedSchema.properties.get( "hasTopConcept" ).uri ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
 				expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toBeUndefined();
 
 				expect( digestedSchema.properties.has( "name" ) ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 				expect( digestedSchema.properties.get( "name" ).literal ).toEqual( true );
-				expect( digestedSchema.properties.get( "name" ).literalType instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "name" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
-				expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
-				expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://purl.org/dc/terms/name" );
+				expect( digestedSchema.properties.get( "name" ).literalType ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
+				expect( digestedSchema.properties.get( "name" ).uri ).toEqual( "http://purl.org/dc/terms/name" );
 				expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 				expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 			} );
@@ -521,38 +495,31 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 			expect( digestedSchema.prefixes.size ).toEqual( 4 );
 			expect( digestedSchema.prefixes.has( "skos" ) ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "skos" ) instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "skos" ).toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
+			expect( digestedSchema.prefixes.get( "skos" ) ).toEqual( "http://www.w3.org/2004/02/skos/core#" );
 
 			expect( digestedSchema.prefixes.has( "xsd" ) ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "xsd" ) instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "xsd" ).toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#" );
+			expect( digestedSchema.prefixes.get( "xsd" ) ).toEqual( "http://www.w3.org/2001/XMLSchema#" );
 
 			expect( digestedSchema.prefixes.has( "dct" ) ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "dct" ) instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "dct" ).toString() ).toEqual( "http://purl.org/dc/terms/" );
+			expect( digestedSchema.prefixes.get( "dct" ) ).toEqual( "http://purl.org/dc/terms/" );
 
 			expect( digestedSchema.prefixes.has( "ex" ) ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "ex" ) instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.prefixes.get( "ex" ).toString() ).toEqual( "http://example.com/ns#" );
+			expect( digestedSchema.prefixes.get( "ex" ) ).toEqual( "http://example.com/ns#" );
 
 			expect( digestedSchema.properties.size ).toEqual( 3 );
 			expect( digestedSchema.properties.has( "hasTopConcept" ) ).toEqual( true );
 			expect( digestedSchema.properties.get( "hasTopConcept" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 			expect( digestedSchema.properties.get( "hasTopConcept" ).literal ).toEqual( false );
 			expect( digestedSchema.properties.get( "hasTopConcept" ).literalType ).toEqual( null );
-			expect( digestedSchema.properties.get( "hasTopConcept" ).uri instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.properties.get( "hasTopConcept" ).uri.toString() ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
+			expect( digestedSchema.properties.get( "hasTopConcept" ).uri ).toEqual( "http://www.w3.org/2004/02/skos/core#hasTopConcept" );
 			expect( digestedSchema.properties.get( "hasTopConcept" ).containerType ).toEqual( ObjectSchema.ContainerType.SET );
 			expect( digestedSchema.properties.get( "hasTopConcept" ).language ).toBeUndefined();
 
 			expect( digestedSchema.properties.has( "name" ) ).toEqual( true );
 			expect( digestedSchema.properties.get( "name" ) instanceof ObjectSchema.DigestedPropertyDefinition ).toEqual( true );
 			expect( digestedSchema.properties.get( "name" ).literal ).toEqual( true );
-			expect( digestedSchema.properties.get( "name" ).literalType instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.properties.get( "name" ).literalType.toString() ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
-			expect( digestedSchema.properties.get( "name" ).uri instanceof RDF.URI.Class ).toEqual( true );
-			expect( digestedSchema.properties.get( "name" ).uri.toString() ).toEqual( "http://example.com/ns#name" );
+			expect( digestedSchema.properties.get( "name" ).literalType ).toEqual( "http://www.w3.org/2001/XMLSchema#string" );
+			expect( digestedSchema.properties.get( "name" ).uri ).toEqual( "http://example.com/ns#name" );
 			expect( digestedSchema.properties.get( "name" ).containerType ).toEqual( null );
 			expect( digestedSchema.properties.get( "name" ).language ).toBeUndefined();
 		} );

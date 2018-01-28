@@ -2,18 +2,6 @@ import * as Errors from "./../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
-export class Class {
-	stringValue:string;
-
-	constructor( stringValue:string ) {
-		this.stringValue = stringValue;
-	}
-
-	toString():string {
-		return this.stringValue;
-	}
-}
-
 export class Util {
 	static hasFragment( uri:string ):boolean {
 		return uri.indexOf( "#" ) !== - 1;
@@ -160,11 +148,9 @@ export class Util {
 
 	static prefix( uri:string, prefix:string, prefixURI:string ):string;
 	static prefix( uri:string, objectSchema:ObjectSchema.DigestedObjectSchema ):string;
-	static prefix( uri:string, prefixOrObjectSchema:any, prefixURI:string = null ):string {
-		let objectSchema:ObjectSchema.DigestedObjectSchema = ! Utils.isString( prefixOrObjectSchema ) ? prefixOrObjectSchema : null;
-		let prefix:string = Utils.isString( prefixOrObjectSchema ) ? prefixOrObjectSchema : null;
-
-		if( objectSchema !== null ) return prefixWithObjectSchema( uri, objectSchema );
+	static prefix( uri:string, prefixOrObjectSchema:any, prefixURI?:string ):string {
+		if( ! Utils.isString( prefixOrObjectSchema ) ) return prefixWithObjectSchema( uri, prefixOrObjectSchema );
+		const prefix:string = prefixOrObjectSchema;
 
 		if( Util.isPrefixed( uri ) || ! uri.startsWith( prefixURI ) )
 			return uri;
@@ -174,17 +160,12 @@ export class Util {
 }
 
 function prefixWithObjectSchema( uri:string, objectSchema:ObjectSchema.DigestedObjectSchema ):string {
-	let prefixEntries:IterableIterator<[ string, Class ]> = objectSchema.prefixes.entries();
-	while( true ) {
-		let result:IteratorResult<[ string, Class ]> = prefixEntries.next();
-		if( result.done ) return uri;
+	for( const [ prefix, prefixURI ]  of Array.from( objectSchema.prefixes.entries() ) ) {
+		if( ! Util.isAbsolute( prefixURI ) ) continue;
+		if( ! uri.startsWith( prefixURI ) ) continue;
 
-		let [ prefix, prefixURI ]:[ string, Class ] = result.value;
-		if( ! Util.isAbsolute( prefixURI.toString() ) ) continue;
-		if( ! uri.startsWith( prefixURI.toString() ) ) continue;
-
-		return Util.prefix( uri, prefix, prefixURI.toString() );
+		return Util.prefix( uri, prefix, prefixURI );
 	}
-}
 
-export default Class;
+	return uri;
+}

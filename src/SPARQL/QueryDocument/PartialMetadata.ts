@@ -3,7 +3,6 @@ import {
 	DigestedObjectSchema,
 	DigestedPropertyDefinition,
 } from "../../ObjectSchema";
-import * as URI from "../../RDF/URI";
 
 export const ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
 
@@ -20,8 +19,8 @@ export class Class {
 		newSchema.prefixes.forEach( ( newURI, namespace ) => {
 			if( ! oldSchema.prefixes.has( namespace ) ) return oldSchema.prefixes.set( namespace, newURI );
 
-			const oldURI:URI.Class = oldSchema.prefixes.get( namespace );
-			if( oldURI.stringValue !== newURI.stringValue ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI.stringValue }", "${ newURI.stringValue }"` );
+			const oldURI:string = oldSchema.prefixes.get( namespace );
+			if( oldURI !== newURI ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI}", "${ newURI}"` );
 		} );
 
 		newSchema.properties.forEach( ( newDefinition, propertyName ) => {
@@ -29,8 +28,8 @@ export class Class {
 
 			const oldDefinition:DigestedPropertyDefinition = oldSchema.properties.get( propertyName );
 			for( const key in newDefinition ) {
-				const newValue:any = newDefinition[ key ] instanceof URI.Class ? newDefinition[ key ].stringValue : newDefinition[ key ];
-				const oldValue:any = oldDefinition[ key ] instanceof URI.Class ? oldDefinition[ key ].stringValue : oldDefinition[ key ];
+				const newValue:any = newDefinition[ key ];
+				const oldValue:any = oldDefinition[ key ];
 
 				if( newValue !== oldValue ) throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }"` );
 			}

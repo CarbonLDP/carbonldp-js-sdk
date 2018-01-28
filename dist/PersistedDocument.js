@@ -299,9 +299,7 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        id = ObjectSchema.Util.resolvePrefixedURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
                         return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
@@ -316,9 +314,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.getPointer;
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        ObjectSchema.Util.resolvePrefixedURI(id, this._documents.getGeneralSchema());
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
                         return this._documents.getPointer(id);
@@ -333,9 +329,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.inScope;
                     return function (idOrPointer) {
                         var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-                        if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
-                        }
+                        uri = ObjectSchema.Util.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
                         if (superFunction.call(this, uri))
                             return true;
                         return this._documents.inScope(uri);

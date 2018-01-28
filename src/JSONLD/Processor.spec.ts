@@ -449,9 +449,9 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 			STATIC,
 			"expand",
 			"Static method that expand a compacted JSON-LD object.", [
-				{ name: "input", type: "Object", description: "The compacted JSON-LD object to expand." },
+				{ name: "input", type: "object", description: "The compacted JSON-LD object to expand." },
 			],
-			{ type: "Promise<Array<Object>>" }
+			{ type: "Promise<object[]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( Processor.Class.expand ).toBeDefined();
 			expect( Utils.isFunction( Processor.Class.expand ) ).toBe( true );
@@ -654,7 +654,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 					"@type": "Create",
 					"actor": {
 						"@type": "Person",
-						"@id": "acct:sally@example.org",
+						"@id": "acct.sally@example.org",
 						"displayName": "Sally",
 					},
 					"object": {

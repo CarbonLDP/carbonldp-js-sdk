@@ -26,13 +26,7 @@ var Class = (function () {
         return this.context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
     Class.prototype.expandIRI = function (iri) {
-        if (this.context) {
-            var vocab = this.context.hasSetting("vocabulary") ? this.context.resolve(this.context.getSetting("vocabulary")) : void 0;
-            iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
-        }
-        if (iri_1.isPrefixed(iri))
-            throw new Errors_1.IllegalArgumentError("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
-        return iri;
+        return ObjectSchema_1.Util.resolveURI(iri, this.context && this.context.getObjectSchema());
     };
     Class.prototype.compactIRI = function (iri) {
         if (!this.context) {
@@ -47,7 +41,7 @@ var Class = (function () {
         var localName;
         if (!iri_1.isPrefixed(iri)) {
             for (var _i = 0, _a = Array.from(schema.prefixes.entries()); _i < _a.length; _i++) {
-                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1].stringValue;
+                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1];
                 if (!iri.startsWith(prefixURI))
                     continue;
                 namespace = prefixName;
@@ -61,8 +55,8 @@ var Class = (function () {
         namespace = prefixedName.namespace;
         if (!this._prefixesMap.has(namespace)) {
             if (!schema.prefixes.has(namespace))
-                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
-            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace).stringValue);
+                throw new Errors_1.IllegalArgumentError("The URI \"" + iri + "\" cannot be resolved, its prefix \"" + namespace + "\" has not been declared.");
+            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace));
             this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
         }
         return prefixedName;

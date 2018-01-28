@@ -917,7 +917,7 @@ var List = __webpack_require__(65);
 exports.List = List;
 var Node = __webpack_require__(64);
 exports.Node = Node;
-var URI = __webpack_require__(19);
+var URI = __webpack_require__(20);
 exports.URI = URI;
 var Value = __webpack_require__(99);
 exports.Value = Value;
@@ -1112,7 +1112,6 @@ var DigestedObjectSchema = (function () {
         this.language = null;
         this.prefixes = new Map();
         this.properties = new Map();
-        this.prefixedURIs = new Map();
     }
     return DigestedObjectSchema;
 }());
@@ -1131,32 +1130,27 @@ exports.DigestedPropertyDefinition = DigestedPropertyDefinition;
 var Digester = (function () {
     function Digester() {
     }
-    Digester.digestSchema = function (schemaOrSchemas, vocab) {
-        schemaOrSchemas = Utils.isArray(schemaOrSchemas) ? schemaOrSchemas : [schemaOrSchemas];
-        var digestedSchemas = [];
-        for (var _i = 0, _a = schemaOrSchemas; _i < _a.length; _i++) {
-            var schema = _a[_i];
-            digestedSchemas.push(Digester.digestSingleSchema(schema, vocab));
-        }
+    Digester.digestSchema = function (schemaOrSchemas, generalSchema) {
+        var schemas = Array.isArray(schemaOrSchemas) ? schemaOrSchemas : [schemaOrSchemas];
+        var digestedSchemas = schemas
+            .map(function (schema) { return Digester.digestSingleSchema(schema, generalSchema); });
         return Digester.combineDigestedObjectSchemas(digestedSchemas);
     };
     Digester.combineDigestedObjectSchemas = function (digestedSchemas) {
         if (digestedSchemas.length === 0)
             throw new Errors.IllegalArgumentError("At least one DigestedObjectSchema needs to be specified.");
-        var combinedSchema = new DigestedObjectSchema();
-        combinedSchema.vocab = digestedSchemas[0].vocab;
-        combinedSchema.base = digestedSchemas[0].base;
-        combinedSchema.language = digestedSchemas[0].language;
+        var target = new DigestedObjectSchema();
+        target.vocab = digestedSchemas[0].vocab;
+        target.base = digestedSchemas[0].base;
+        target.language = digestedSchemas[0].language;
         for (var _i = 0, digestedSchemas_1 = digestedSchemas; _i < digestedSchemas_1.length; _i++) {
             var digestedSchema = digestedSchemas_1[_i];
-            Utils.M.extend(combinedSchema.prefixes, digestedSchema.prefixes);
-            Utils.M.extend(combinedSchema.prefixedURIs, digestedSchema.prefixedURIs);
-            Utils.M.extend(combinedSchema.properties, digestedSchema.properties);
+            Utils.M.extend(target.prefixes, digestedSchema.prefixes);
+            Utils.M.extend(target.properties, digestedSchema.properties);
         }
-        Digester.resolvePrefixedURIs(combinedSchema);
-        return combinedSchema;
+        return target;
     };
-    Digester.digestPropertyDefinition = function (digestedSchema, propertyName, propertyDefinition, vocab) {
+    Digester.digestPropertyDefinition = function (digestedSchema, propertyName, propertyDefinition, generalSchema) {
         var digestedDefinition = new DigestedPropertyDefinition();
         if ("@id" in propertyDefinition) {
             if (RDF.URI.Util.isPrefixed(propertyName))
@@ -1164,8 +1158,7 @@ var Digester = (function () {
             if (!Utils.isString(propertyDefinition["@id"]))
                 throw new Errors.IllegalArgumentError("@id needs to point to a string");
         }
-        digestedDefinition.uri = new RDF.URI.Class(propertyDefinition["@id"] || propertyName);
-        Digester._resolveURI(digestedDefinition.uri, digestedSchema, vocab);
+        digestedDefinition.uri = Util.resolveURI(propertyDefinition["@id"] || propertyName, digestedSchema, generalSchema);
         if ("@type" in propertyDefinition) {
             if (!Utils.isString(propertyDefinition["@type"]))
                 throw new Errors.IllegalArgumentError("@type needs to point to a string");
@@ -1175,10 +1168,9 @@ var Digester = (function () {
             }
             else {
                 digestedDefinition.literal = true;
-                var type = Digester._resolvePrefixedURI(new RDF.URI.Class(propertyDefinition["@type"]), digestedSchema);
-                if (RDF.URI.Util.isRelative(type.stringValue) && type.stringValue in NS.XSD.DataType)
-                    type.stringValue = NS.XSD.DataType[type.stringValue];
-                digestedDefinition.literalType = type;
+                var type = propertyDefinition["@type"];
+                digestedDefinition.literalType = RDF.URI.Util.isRelative(type) && type in NS.XSD.DataType ?
+                    NS.XSD.DataType[type] : Util.resolveURI(type, digestedSchema, generalSchema);
             }
         }
         if ("@language" in propertyDefinition) {
@@ -1206,42 +1198,7 @@ var Digester = (function () {
         }
         return digestedDefinition;
     };
-    Digester.resolvePrefixedURI = function (uri, digestedSchema) {
-        if (uri === null)
-            return null;
-        if (!RDF.URI.Util.isPrefixed(uri))
-            return uri;
-        var _a = uri.split(":"), prefix = _a[0], slug = _a[1];
-        if (digestedSchema.prefixes.has(prefix)) {
-            uri = digestedSchema.prefixes.get(prefix) + slug;
-        }
-        return uri;
-    };
-    Digester._resolveURI = function (uri, digestedSchema, vocab) {
-        uri.stringValue = Util.resolveURI(uri.stringValue, digestedSchema, vocab);
-        if (RDF.URI.Util.isPrefixed(uri.stringValue)) {
-            var prefix = uri.stringValue.split(":")[0];
-            if (!digestedSchema.prefixedURIs.has(prefix))
-                digestedSchema.prefixedURIs.set(prefix, []);
-            digestedSchema.prefixedURIs.get(prefix).push(uri);
-        }
-        return uri;
-    };
-    Digester._resolvePrefixedURI = function (uri, digestedSchema) {
-        if (uri.stringValue === null || !RDF.URI.Util.isPrefixed(uri.stringValue))
-            return uri;
-        var _a = uri.stringValue.split(":"), prefix = _a[0], slug = _a[1];
-        if (digestedSchema.prefixes.has(prefix)) {
-            uri.stringValue = digestedSchema.prefixes.get(prefix) + slug;
-        }
-        else {
-            if (!digestedSchema.prefixedURIs.has(prefix))
-                digestedSchema.prefixedURIs.set(prefix, []);
-            digestedSchema.prefixedURIs.get(prefix).push(uri);
-        }
-        return uri;
-    };
-    Digester.digestSingleSchema = function (schema, vocab) {
+    Digester.digestSingleSchema = function (schema, generalSchema) {
         var digestedSchema = new DigestedObjectSchema();
         for (var _i = 0, _a = ["@base", "@vocab"]; _i < _a.length; _i++) {
             var propertyName = _a[_i];
@@ -1261,6 +1218,7 @@ var Digester = (function () {
                 throw new Errors.InvalidJSONLDSyntaxError("The value of '@language' must be a string or null.");
             digestedSchema.language = value;
         }
+        var properties = [];
         for (var propertyName in schema) {
             if (!schema.hasOwnProperty(propertyName))
                 continue;
@@ -1278,32 +1236,21 @@ var Digester = (function () {
             if (Utils.isString(propertyValue)) {
                 if (RDF.URI.Util.isPrefixed(propertyName))
                     throw new Errors.IllegalArgumentError("A prefixed property cannot be equal to another URI.");
-                var uri = new RDF.URI.Class(propertyValue);
-                if (RDF.URI.Util.isPrefixed(uri.stringValue))
-                    uri = Digester._resolvePrefixedURI(uri, digestedSchema);
+                var uri = Util.resolveURI(propertyValue, digestedSchema);
                 digestedSchema.prefixes.set(propertyName, uri);
             }
             else if (!!propertyValue && Utils.isObject(propertyValue)) {
-                var digestedDefinition = Digester.digestPropertyDefinition(digestedSchema, propertyName, propertyValue, vocab);
-                digestedSchema.properties.set(propertyName, digestedDefinition);
+                properties.push([propertyName, propertyValue]);
             }
             else {
                 throw new Errors.IllegalArgumentError("ObjectSchema Properties can only have string values or object values.");
             }
         }
-        Digester.resolvePrefixedURIs(digestedSchema);
-        return digestedSchema;
-    };
-    Digester.resolvePrefixedURIs = function (digestedSchema) {
-        digestedSchema.prefixes.forEach(function (prefixValue, prefixName) {
-            if (!digestedSchema.prefixedURIs.has(prefixName))
-                return;
-            var prefixedURIs = digestedSchema.prefixedURIs.get(prefixName);
-            for (var _i = 0, prefixedURIs_1 = prefixedURIs; _i < prefixedURIs_1.length; _i++) {
-                var prefixedURI = prefixedURIs_1[_i];
-                Digester._resolvePrefixedURI(prefixedURI, digestedSchema);
-            }
-            digestedSchema.prefixedURIs.delete(prefixName);
+        properties.forEach(function (_a) {
+            var propertyName = _a[0], definition = _a[1];
+            var digestedDefinition = Digester
+                .digestPropertyDefinition(digestedSchema, propertyName, definition, generalSchema);
+            digestedSchema.properties.set(propertyName, digestedDefinition);
         });
         return digestedSchema;
     };
@@ -1313,16 +1260,32 @@ exports.Digester = Digester;
 var Util = (function () {
     function Util() {
     }
-    Util.resolveURI = function (uri, schema, vocab) {
+    Util.resolveURI = function (uri, schema, generalSchema) {
         if (RDF.URI.Util.isAbsolute(uri))
             return uri;
-        if (RDF.URI.Util.isPrefixed(uri)) {
-            uri = Digester.resolvePrefixedURI(uri, schema);
-        }
-        else if (schema.vocab !== null || vocab) {
-            uri = (schema.vocab || vocab) + uri;
-        }
+        if (RDF.URI.Util.isPrefixed(uri))
+            return Util._resolvePrefixedName(uri, schema, generalSchema);
+        return Util._resolveRelativeURI(uri, schema, generalSchema);
+    };
+    Util.resolvePrefixedURI = function (uri, schema) {
+        if (!RDF.URI.Util.isPrefixed(uri))
+            return uri;
+        return this._resolvePrefixedName(uri, schema);
+    };
+    Util._resolveRelativeURI = function (uri, schema, generalSchema) {
+        if (schema && schema.vocab !== null)
+            return schema.vocab + uri;
+        if (generalSchema && generalSchema.vocab !== null)
+            return generalSchema.vocab + uri;
         return uri;
+    };
+    Util._resolvePrefixedName = function (uri, schema, generalSchema) {
+        var _a = uri.split(":"), namespace = _a[0], localName = _a[1];
+        if (schema && schema.prefixes.has(namespace))
+            return schema.prefixes.get(namespace) + localName;
+        if (generalSchema && generalSchema.prefixes.has(namespace))
+            return generalSchema.prefixes.get(namespace) + localName;
+        throw new Errors.IllegalArgumentError("The URI \"" + uri + "\" cannot be resolved, its prefix \"" + namespace + "\" has not been declared.");
     };
     return Util;
 }());
@@ -1603,188 +1566,6 @@ __export(__webpack_require__(297));
 
 /***/ }),
 /* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __webpack_require__(3);
-var Utils = __webpack_require__(0);
-var Class = (function () {
-    function Class(stringValue) {
-        this.stringValue = stringValue;
-    }
-    Class.prototype.toString = function () {
-        return this.stringValue;
-    };
-    return Class;
-}());
-exports.Class = Class;
-var Util = (function () {
-    function Util() {
-    }
-    Util.hasFragment = function (uri) {
-        return uri.indexOf("#") !== -1;
-    };
-    Util.hasQuery = function (uri) {
-        return uri.indexOf("?") !== -1;
-    };
-    Util.hasProtocol = function (uri) {
-        return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
-    };
-    Util.isAbsolute = function (uri) {
-        return Utils.S.startsWith(uri, "http://")
-            || Utils.S.startsWith(uri, "https://")
-            || Utils.S.startsWith(uri, "://");
-    };
-    Util.isRelative = function (uri) {
-        return !Util.isAbsolute(uri);
-    };
-    Util.isBNodeID = function (uri) {
-        return Utils.S.startsWith(uri, "_:");
-    };
-    Util.generateBNodeID = function () {
-        return "_:" + Utils.UUID.generate();
-    };
-    Util.isPrefixed = function (uri) {
-        return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
-    };
-    Util.isFragmentOf = function (fragmentURI, uri) {
-        if (!Util.hasFragment(fragmentURI))
-            return false;
-        return Util.getDocumentURI(fragmentURI) === uri;
-    };
-    Util.isBaseOf = function (baseURI, uri) {
-        if (baseURI === uri)
-            return true;
-        if (baseURI === "")
-            return true;
-        if (Util.isRelative(uri) && !Util.isPrefixed(uri))
-            return true;
-        if (uri.startsWith(baseURI)) {
-            if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
-                return true;
-            var relativeURI = uri.substring(baseURI.length);
-            if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
-                return true;
-        }
-        return false;
-    };
-    Util.getRelativeURI = function (absoluteURI, base) {
-        if (!absoluteURI.startsWith(base))
-            return absoluteURI;
-        return absoluteURI.substring(base.length);
-    };
-    Util.getDocumentURI = function (uri) {
-        var parts = uri.split("#");
-        if (parts.length > 2)
-            throw new Error("IllegalArgument: The URI provided has more than one # sign.");
-        return parts[0];
-    };
-    Util.getFragment = function (uri) {
-        var parts = uri.split("#");
-        if (parts.length < 2)
-            return null;
-        if (parts.length > 2)
-            throw new Error("IllegalArgument: The URI provided has more than one # sign.");
-        return parts[1];
-    };
-    Util.getSlug = function (uri) {
-        var uriParts = uri.split("#");
-        if (uriParts.length === 2)
-            return Util.getSlug(uriParts[1]);
-        if (uriParts.length > 2)
-            throw new Errors.IllegalArgumentError("Invalid URI: The uri contains two '#' symbols.");
-        uri = uriParts[0];
-        if (uri === "")
-            return uri;
-        if (uri === "/")
-            return uri;
-        var parts = uri.split("/");
-        if (parts[parts.length - 1] === "") {
-            return parts[parts.length - 2] + "/";
-        }
-        else {
-            return parts[parts.length - 1];
-        }
-    };
-    Util.getParameters = function (uri) {
-        var parameters = new Map();
-        if (!Util.hasQuery(uri))
-            return parameters;
-        uri.replace(/^.*\?/, "").split("&").forEach(function (param) {
-            var parts = param.replace(/\+/g, " ").split("=");
-            var key = parts.shift();
-            var val = parts.length > 0 ? parts.join("=") : null;
-            if (!parameters.has(key)) {
-                parameters.set(key, val);
-            }
-            else {
-                parameters.set(key, [].concat(parameters.get(key), val));
-            }
-        });
-        return parameters;
-    };
-    Util.resolve = function (parentURI, childURI) {
-        if (!parentURI || Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
-            return childURI;
-        var protocol = parentURI.substr(0, parentURI.indexOf("://") + 3);
-        var path = parentURI.substr(parentURI.indexOf("://") + 3, parentURI.length - 1);
-        if (path.lastIndexOf("/") === -1)
-            path += "/";
-        if (Utils.S.startsWith(childURI, "?") || Utils.S.startsWith(childURI, "#")) {
-            if (Util.hasQuery(path))
-                path = path.substr(0, path.indexOf("?"));
-            if (Util.hasFragment(path) && (!Utils.S.startsWith(childURI, "?") || Utils.S.endsWith(path, "#")))
-                path = Util.getDocumentURI(path);
-        }
-        else {
-            path = path.substr(0, path.lastIndexOf("/") + 1);
-            if (!Utils.S.endsWith(path, "?") && !Utils.S.endsWith(path, "#") && !Utils.S.endsWith(path, "/"))
-                path += "/";
-        }
-        if (Utils.S.startsWith(childURI, "/")) {
-            childURI = childURI.substr(1, childURI.length);
-        }
-        return protocol + path + childURI;
-    };
-    Util.removeProtocol = function (uri) {
-        if (!Util.hasProtocol(uri))
-            return uri;
-        return uri.substring(uri.indexOf("://") + 3);
-    };
-    Util.prefix = function (uri, prefixOrObjectSchema, prefixURI) {
-        if (prefixURI === void 0) { prefixURI = null; }
-        var objectSchema = !Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
-        var prefix = Utils.isString(prefixOrObjectSchema) ? prefixOrObjectSchema : null;
-        if (objectSchema !== null)
-            return prefixWithObjectSchema(uri, objectSchema);
-        if (Util.isPrefixed(uri) || !uri.startsWith(prefixURI))
-            return uri;
-        return prefix + ":" + uri.substring(prefixURI.length);
-    };
-    return Util;
-}());
-exports.Util = Util;
-function prefixWithObjectSchema(uri, objectSchema) {
-    var prefixEntries = objectSchema.prefixes.entries();
-    while (true) {
-        var result = prefixEntries.next();
-        if (result.done)
-            return uri;
-        var _a = result.value, prefix = _a[0], prefixURI = _a[1];
-        if (!Util.isAbsolute(prefixURI.toString()))
-            continue;
-        if (!uri.startsWith(prefixURI.toString()))
-            continue;
-        return Util.prefix(uri, prefix, prefixURI.toString());
-    }
-}
-exports.default = Class;
-
-
-/***/ }),
-/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
@@ -2692,6 +2473,172 @@ exports.default = Class;
 }).call(this);
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(265)(module), __webpack_require__(7)))
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Errors = __webpack_require__(3);
+var Utils = __webpack_require__(0);
+var Util = (function () {
+    function Util() {
+    }
+    Util.hasFragment = function (uri) {
+        return uri.indexOf("#") !== -1;
+    };
+    Util.hasQuery = function (uri) {
+        return uri.indexOf("?") !== -1;
+    };
+    Util.hasProtocol = function (uri) {
+        return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
+    };
+    Util.isAbsolute = function (uri) {
+        return Utils.S.startsWith(uri, "http://")
+            || Utils.S.startsWith(uri, "https://")
+            || Utils.S.startsWith(uri, "://");
+    };
+    Util.isRelative = function (uri) {
+        return !Util.isAbsolute(uri);
+    };
+    Util.isBNodeID = function (uri) {
+        return Utils.S.startsWith(uri, "_:");
+    };
+    Util.generateBNodeID = function () {
+        return "_:" + Utils.UUID.generate();
+    };
+    Util.isPrefixed = function (uri) {
+        return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
+    };
+    Util.isFragmentOf = function (fragmentURI, uri) {
+        if (!Util.hasFragment(fragmentURI))
+            return false;
+        return Util.getDocumentURI(fragmentURI) === uri;
+    };
+    Util.isBaseOf = function (baseURI, uri) {
+        if (baseURI === uri)
+            return true;
+        if (baseURI === "")
+            return true;
+        if (Util.isRelative(uri) && !Util.isPrefixed(uri))
+            return true;
+        if (uri.startsWith(baseURI)) {
+            if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
+                return true;
+            var relativeURI = uri.substring(baseURI.length);
+            if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
+                return true;
+        }
+        return false;
+    };
+    Util.getRelativeURI = function (absoluteURI, base) {
+        if (!absoluteURI.startsWith(base))
+            return absoluteURI;
+        return absoluteURI.substring(base.length);
+    };
+    Util.getDocumentURI = function (uri) {
+        var parts = uri.split("#");
+        if (parts.length > 2)
+            throw new Error("IllegalArgument: The URI provided has more than one # sign.");
+        return parts[0];
+    };
+    Util.getFragment = function (uri) {
+        var parts = uri.split("#");
+        if (parts.length < 2)
+            return null;
+        if (parts.length > 2)
+            throw new Error("IllegalArgument: The URI provided has more than one # sign.");
+        return parts[1];
+    };
+    Util.getSlug = function (uri) {
+        var uriParts = uri.split("#");
+        if (uriParts.length === 2)
+            return Util.getSlug(uriParts[1]);
+        if (uriParts.length > 2)
+            throw new Errors.IllegalArgumentError("Invalid URI: The uri contains two '#' symbols.");
+        uri = uriParts[0];
+        if (uri === "")
+            return uri;
+        if (uri === "/")
+            return uri;
+        var parts = uri.split("/");
+        if (parts[parts.length - 1] === "") {
+            return parts[parts.length - 2] + "/";
+        }
+        else {
+            return parts[parts.length - 1];
+        }
+    };
+    Util.getParameters = function (uri) {
+        var parameters = new Map();
+        if (!Util.hasQuery(uri))
+            return parameters;
+        uri.replace(/^.*\?/, "").split("&").forEach(function (param) {
+            var parts = param.replace(/\+/g, " ").split("=");
+            var key = parts.shift();
+            var val = parts.length > 0 ? parts.join("=") : null;
+            if (!parameters.has(key)) {
+                parameters.set(key, val);
+            }
+            else {
+                parameters.set(key, [].concat(parameters.get(key), val));
+            }
+        });
+        return parameters;
+    };
+    Util.resolve = function (parentURI, childURI) {
+        if (!parentURI || Util.isAbsolute(childURI) || Util.isBNodeID(childURI) || Util.isPrefixed(childURI))
+            return childURI;
+        var protocol = parentURI.substr(0, parentURI.indexOf("://") + 3);
+        var path = parentURI.substr(parentURI.indexOf("://") + 3, parentURI.length - 1);
+        if (path.lastIndexOf("/") === -1)
+            path += "/";
+        if (Utils.S.startsWith(childURI, "?") || Utils.S.startsWith(childURI, "#")) {
+            if (Util.hasQuery(path))
+                path = path.substr(0, path.indexOf("?"));
+            if (Util.hasFragment(path) && (!Utils.S.startsWith(childURI, "?") || Utils.S.endsWith(path, "#")))
+                path = Util.getDocumentURI(path);
+        }
+        else {
+            path = path.substr(0, path.lastIndexOf("/") + 1);
+            if (!Utils.S.endsWith(path, "?") && !Utils.S.endsWith(path, "#") && !Utils.S.endsWith(path, "/"))
+                path += "/";
+        }
+        if (Utils.S.startsWith(childURI, "/")) {
+            childURI = childURI.substr(1, childURI.length);
+        }
+        return protocol + path + childURI;
+    };
+    Util.removeProtocol = function (uri) {
+        if (!Util.hasProtocol(uri))
+            return uri;
+        return uri.substring(uri.indexOf("://") + 3);
+    };
+    Util.prefix = function (uri, prefixOrObjectSchema, prefixURI) {
+        if (!Utils.isString(prefixOrObjectSchema))
+            return prefixWithObjectSchema(uri, prefixOrObjectSchema);
+        var prefix = prefixOrObjectSchema;
+        if (Util.isPrefixed(uri) || !uri.startsWith(prefixURI))
+            return uri;
+        return prefix + ":" + uri.substring(prefixURI.length);
+    };
+    return Util;
+}());
+exports.Util = Util;
+function prefixWithObjectSchema(uri, objectSchema) {
+    for (var _i = 0, _a = Array.from(objectSchema.prefixes.entries()); _i < _a.length; _i++) {
+        var _b = _a[_i], prefix = _b[0], prefixURI = _b[1];
+        if (!Util.isAbsolute(prefixURI))
+            continue;
+        if (!uri.startsWith(prefixURI))
+            continue;
+        return Util.prefix(uri, prefix, prefixURI);
+    }
+    return uri;
+}
+
 
 /***/ }),
 /* 21 */
@@ -3636,7 +3583,7 @@ var PersistedNamedFragment = __webpack_require__(85);
 var PersistedResource = __webpack_require__(45);
 var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
-var URI = __webpack_require__(19);
+var URI = __webpack_require__(20);
 var ServiceAwareDocument = __webpack_require__(193);
 var Utils = __webpack_require__(0);
 function extendIsDirty(superFunction) {
@@ -3926,9 +3873,7 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        id = ObjectSchema.Util.resolvePrefixedURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
                         return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
@@ -3943,9 +3888,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.getPointer;
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        ObjectSchema.Util.resolvePrefixedURI(id, this._documents.getGeneralSchema());
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
                         return this._documents.getPointer(id);
@@ -3960,9 +3903,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.inScope;
                     return function (idOrPointer) {
                         var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-                        if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
-                        }
+                        uri = ObjectSchema.Util.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
                         if (superFunction.call(this, uri))
                             return true;
                         return this._documents.inScope(uri);
@@ -4317,7 +4258,7 @@ function getLevelRegExp(property) {
 exports.getLevelRegExp = getLevelRegExp;
 function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
-    var propertyIRI = context.compactIRI(uri.stringValue);
+    var propertyIRI = context.compactIRI(uri);
     var resource = context.getVariable(resourcePath);
     var propertyObject = context.getVariable(propertyPath);
     var propertyPatterns = [new tokens_1.SubjectToken(resource)
@@ -4326,7 +4267,7 @@ function createPropertyPatterns(context, resourcePath, propertyPath, propertyDef
     ];
     if (literalType !== null)
         propertyPatterns
-            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType.stringValue)));
+            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType)));
     if (pointerType !== null)
         propertyPatterns
             .push(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
@@ -4518,7 +4459,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var eventUtils = __webpack_require__(22)
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , browser = __webpack_require__(39)
   ;
 
@@ -5576,7 +5517,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var JSONLD = __webpack_require__(30);
 var Node = __webpack_require__(64);
 var Utils = __webpack_require__(0);
-var URI = __webpack_require__(19);
+var URI = __webpack_require__(20);
 var Factory = (function () {
     function Factory() {
     }
@@ -5765,13 +5706,7 @@ var Class = (function () {
         return this.context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
     Class.prototype.expandIRI = function (iri) {
-        if (this.context) {
-            var vocab = this.context.hasSetting("vocabulary") ? this.context.resolve(this.context.getSetting("vocabulary")) : void 0;
-            iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
-        }
-        if (iri_1.isPrefixed(iri))
-            throw new Errors_1.IllegalArgumentError("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
-        return iri;
+        return ObjectSchema_1.Util.resolveURI(iri, this.context && this.context.getObjectSchema());
     };
     Class.prototype.compactIRI = function (iri) {
         if (!this.context) {
@@ -5786,7 +5721,7 @@ var Class = (function () {
         var localName;
         if (!iri_1.isPrefixed(iri)) {
             for (var _i = 0, _a = Array.from(schema.prefixes.entries()); _i < _a.length; _i++) {
-                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1].stringValue;
+                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1];
                 if (!iri.startsWith(prefixURI))
                     continue;
                 namespace = prefixName;
@@ -5800,8 +5735,8 @@ var Class = (function () {
         namespace = prefixedName.namespace;
         if (!this._prefixesMap.has(namespace)) {
             if (!schema.prefixes.has(namespace))
-                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
-            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace).stringValue);
+                throw new Errors_1.IllegalArgumentError("The URI \"" + iri + "\" cannot be resolved, its prefix \"" + namespace + "\" has not been declared.");
+            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace));
             this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
         }
         return prefixedName;
@@ -6100,8 +6035,8 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var ObjectSchema = __webpack_require__(12);
 var NS = __webpack_require__(1);
+var ObjectSchema = __webpack_require__(12);
 var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var Utils = __webpack_require__(0);
@@ -6176,7 +6111,7 @@ var Class = (function () {
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, generalSchema); });
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, digestedSchema, generalSchema); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
@@ -6191,7 +6126,7 @@ var Class = (function () {
             }
             else if (RDF.URI.Util.isAbsolute(propertyName) || digestedSchema.vocab !== null) {
                 expandedValue = _this.expandPropertyValue(value, generalSchema, digestedSchema);
-                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, generalSchema);
+                expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, digestedSchema, generalSchema);
             }
             if (!expandedValue || !expandedPropertyName)
                 return;
@@ -6354,14 +6289,14 @@ var Class = (function () {
         if (!id) {
             return null;
         }
-        id = ObjectSchema.Digester.resolvePrefixedURI(id, generalSchema);
+        id = ObjectSchema.Util.resolvePrefixedURI(id, generalSchema);
         if (generalSchema.properties.has(id)) {
             var definition = generalSchema.properties.get(id);
             if (definition.uri)
-                id = definition.uri.stringValue;
+                id = definition.uri;
         }
-        if (notPointer && !!digestedSchema.vocab)
-            id = ObjectSchema.Util.resolveURI(id, generalSchema);
+        if (notPointer)
+            id = ObjectSchema.Util.resolveURI(id, digestedSchema, generalSchema);
         return { "@id": id };
     };
     Class.prototype.expandArray = function (propertyValue, generalSchema, digestedSchema) {
@@ -7237,19 +7172,26 @@ var Class = (function () {
             return null;
         }
         else {
-            if (!!this.generalObjectSchema)
-                return this.generalObjectSchema;
-            if (!!this.parentContext)
-                return this.parentContext.getObjectSchema();
-            throw new Errors.IllegalStateError();
+            if (!this.generalObjectSchema) {
+                if (!this.parentContext)
+                    throw new Errors.IllegalStateError();
+                var generalSchema = this.parentContext.getObjectSchema();
+                if (!this.hasSetting("vocabulary"))
+                    return generalSchema;
+                this.generalObjectSchema = ObjectSchema.Digester
+                    .combineDigestedObjectSchemas([generalSchema]);
+            }
+            if (this.generalObjectSchema.vocab === null && this.hasSetting("vocabulary"))
+                this.generalObjectSchema.vocab = this.resolve(this.getSetting("vocabulary"));
+            return this.generalObjectSchema;
         }
     };
     Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
+        var digestedSchema = ObjectSchema.Digester
+            .digestSchema(objectSchema, this.getObjectSchema());
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -7337,9 +7279,7 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
-        var vocab = this.hasSetting("vocabulary") ?
-            this.resolve(this.getSetting("vocabulary")) : null;
-        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
+        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema());
     };
     return Class;
 }());
@@ -8739,11 +8679,11 @@ var Class = (function () {
         if (uri === null || Class.isKeyword(uri) || RDF.URI.Util.isAbsolute(uri))
             return uri;
         if (schema.properties.has(uri))
-            return schema.properties.get(uri).uri.stringValue;
+            return schema.properties.get(uri).uri;
         if (RDF.URI.Util.isPrefixed(uri))
-            return ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
+            return ObjectSchema.Util.resolvePrefixedURI(uri, schema);
         if (schema.prefixes.has(uri))
-            return schema.prefixes.get(uri).stringValue;
+            return schema.prefixes.get(uri);
         if (relativeTo.vocab) {
             if (schema.vocab === null)
                 return null;
@@ -8802,7 +8742,7 @@ var Class = (function () {
             return value;
         var expandedValue = {};
         if (!!definition.literalType) {
-            expandedValue["@type"] = definition.literalType.stringValue;
+            expandedValue["@type"] = definition.literalType;
         }
         else if (Utils.isString(value)) {
             var language = Utils.isDefined(definition.language) ? definition.language : context.language;
@@ -9569,8 +9509,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(id))
-                id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
+            id = ObjectSchema.Util.resolvePrefixedURI(id, this.context.getObjectSchema());
             if (RDF.URI.Util.isRelative(id))
                 return true;
             if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
@@ -9960,10 +9899,8 @@ var Class = (function () {
     Class.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var schema = ObjectSchema.Digester.combineDigestedObjectSchemas([this.context.getObjectSchema()]);
-        if (this.context.hasSetting("vocabulary"))
-            schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return schema;
+        return ObjectSchema.Digester
+            .combineDigestedObjectSchemas([this.context.getObjectSchema()]);
     };
     Class.prototype.hasSchemaFor = function (object, path) {
         if (path !== void 0)
@@ -10056,12 +9993,12 @@ var Class = (function () {
         var builder = new Builder_1.default(this, this.getRequestURI(documentURI));
         if (!!this.context) {
             builder = builder.base(this.context.baseURI);
-            if (this.context.hasSetting("vocabulary")) {
-                builder = builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
-            }
-            var schema = this.context.getObjectSchema();
-            schema.prefixes.forEach(function (uri, prefix) {
-                builder = builder.prefix(prefix, uri.stringValue);
+            var generalSchema = this.context.getObjectSchema();
+            if (generalSchema.vocab !== null)
+                builder = builder.vocab(generalSchema.vocab);
+            generalSchema.prefixes
+                .forEach(function (uri, prefix) {
+                builder = builder.prefix(prefix, uri);
             });
         }
         return builder;
@@ -10501,8 +10438,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(uri))
-                uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
+            uri = ObjectSchema.Util.resolvePrefixedURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -10561,7 +10497,7 @@ var Class = (function () {
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
         if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
-            return this.getSchemaWith(schemas);
+            return this._getContextSchemaWith(schemas);
         }
         else {
             var types = Resource.Util.getTypes(document);
@@ -10580,15 +10516,12 @@ var Class = (function () {
         var schemas = objectTypes
             .filter(function (type) { return _this.context.hasObjectSchema(type); })
             .map(function (type) { return _this.context.getObjectSchema(type); });
-        return this.getSchemaWith(schemas);
+        return this._getContextSchemaWith(schemas);
     };
-    Class.prototype.getSchemaWith = function (objectSchemas) {
-        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+    Class.prototype._getContextSchemaWith = function (objectSchemas) {
+        return ObjectSchema.Digester.combineDigestedObjectSchemas([
             this.context.getObjectSchema()
         ].concat(objectSchemas));
-        if (this.context.hasSetting("vocabulary"))
-            digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return digestedSchema;
     };
     Class.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri)) {
@@ -10597,9 +10530,7 @@ var Class = (function () {
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());
-            if (RDF.URI.Util.isPrefixed(uri))
-                throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
+            uri = ObjectSchema.Util.resolvePrefixedURI(uri, this.context.getObjectSchema());
         }
         else if (RDF.URI.Util.isRelative(uri)) {
             if (!this.context)
@@ -11813,7 +11744,7 @@ module.exports = EventSourceTransport;
 //    http://stevesouders.com/misc/test-postmessage.php
 
 var inherits = __webpack_require__(2)
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , version = __webpack_require__(119)
   , urlUtils = __webpack_require__(14)
@@ -12051,7 +11982,7 @@ module.exports = global.location || {
 
 var inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , XHRLocalObject = __webpack_require__(38)
   , InfoAjax = __webpack_require__(124)
   ;
@@ -12091,7 +12022,7 @@ module.exports = InfoReceiverIframe;
 
 var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(2)
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , objectUtils = __webpack_require__(72)
   ;
 
@@ -12146,7 +12077,7 @@ module.exports = InfoAjax;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
-var URI_1 = __webpack_require__(19);
+var URI_1 = __webpack_require__(20);
 var Service_1 = __webpack_require__(110);
 function validateEventContext(context) {
     if (!(context && context.messaging instanceof Service_1.default))
@@ -12268,8 +12199,13 @@ function toCompactString() {
             --index;
         }
     }
-    if (baseTokens)
-        tokens.unshift.apply(tokens, baseTokens);
+    if (baseTokens) {
+        var baseString = baseTokens.reduce(function (res, token, index, thisArray) {
+            var nextToken = thisArray[index + 1];
+            return res + token.getTokenValue(tokens_2.TokenFormat.PRETTY, nextToken);
+        }, "") + "\n";
+        tokens.unshift(new tokens_2.StringLiteral(baseString));
+    }
     return tokens.reduce(function (res, token, index, thisArray) {
         var nextToken = thisArray[index + 1];
         if (nextToken === tokens_1.EMPTY_SEPARATOR)
@@ -15831,7 +15767,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument = __webpack_require__(31);
 var Pointer = __webpack_require__(13);
 var RDFDocument = __webpack_require__(55);
-var URI_1 = __webpack_require__(19);
+var URI_1 = __webpack_require__(20);
 var QueryDocument_1 = __webpack_require__(56);
 function getRelativeID(node) {
     var id = node["@id"];
@@ -15926,7 +15862,7 @@ var Class = (function () {
         var schemaAddedProperties = addedProperties
             .filter(function (x) { return schema.properties.has(x); });
         schemaAddedProperties
-            .map(function (x) { return schema.properties.get(x).uri.stringValue; })
+            .map(function (x) { return schema.properties.get(x).uri; })
             .forEach(function (x) { return delete node[x]; });
         return schemaAddedProperties;
     };
@@ -16017,7 +15953,6 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var ObjectSchema_1 = __webpack_require__(12);
-var URI = __webpack_require__(19);
 exports.ALL = Object.freeze(new ObjectSchema_1.DigestedObjectSchema());
 var Class = (function () {
     function Class(schema, previousPartial) {
@@ -16030,16 +15965,16 @@ var Class = (function () {
             if (!oldSchema.prefixes.has(namespace))
                 return oldSchema.prefixes.set(namespace, newURI);
             var oldURI = oldSchema.prefixes.get(namespace);
-            if (oldURI.stringValue !== newURI.stringValue)
-                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different values: \"" + oldURI.stringValue + "\", \"" + newURI.stringValue + "\"");
+            if (oldURI !== newURI)
+                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different values: \"" + oldURI + "\", \"" + newURI + "\"");
         });
         newSchema.properties.forEach(function (newDefinition, propertyName) {
             if (!oldSchema.properties.has(propertyName))
                 return oldSchema.properties.set(propertyName, newDefinition);
             var oldDefinition = oldSchema.properties.get(propertyName);
             for (var key in newDefinition) {
-                var newValue = newDefinition[key] instanceof URI.Class ? newDefinition[key].stringValue : newDefinition[key];
-                var oldValue = oldDefinition[key] instanceof URI.Class ? oldDefinition[key].stringValue : oldDefinition[key];
+                var newValue = newDefinition[key];
+                var oldValue = oldDefinition[key];
                 if (newValue !== oldValue)
                     throw new Errors_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\"");
             }
@@ -16766,7 +16701,7 @@ var Class = (function (_super) {
             if (!schema.properties.has(propertyName))
                 continue;
             var digestedProperty = schema.properties.get(propertyName);
-            if (propertyURI && digestedProperty.uri.stringValue !== propertyURI)
+            if (propertyURI && digestedProperty.uri !== propertyURI)
                 continue;
             return digestedProperty;
         }
@@ -17146,7 +17081,7 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var HTTP = __webpack_require__(16);
-var URI = __webpack_require__(19);
+var URI = __webpack_require__(20);
 var PersistedRole = __webpack_require__(102);
 var Utils = __webpack_require__(0);
 var Class = (function () {
@@ -17246,7 +17181,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
 var Pointer = __webpack_require__(13);
 var Resource = __webpack_require__(10);
-var URI = __webpack_require__(19);
+var URI = __webpack_require__(20);
 exports.TICKETS_CONTAINER = "auth-tickets/";
 exports.RDF_CLASS = NS.CS.Class.Ticket;
 exports.SCHEMA = {
@@ -17762,7 +17697,7 @@ exports.Factory = Factory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
-var URI = __webpack_require__(19);
+var URI = __webpack_require__(20);
 var Credentials = __webpack_require__(83);
 var PersistedUser = __webpack_require__(66);
 var Utils_1 = __webpack_require__(0);
@@ -17854,7 +17789,6 @@ var tokens_1 = __webpack_require__(4);
 var NS_1 = __webpack_require__(1);
 var ObjectSchema_1 = __webpack_require__(12);
 var Pointer = __webpack_require__(13);
-var RDF_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
 var Tokens_1 = __webpack_require__(109);
 var typesDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
@@ -17955,8 +17889,7 @@ var Class = (function () {
     Class.prototype.getPropertyIRI = function (schema, propertyName) {
         var propertyDefinition = schema.properties.get(propertyName);
         var uri = propertyDefinition && propertyDefinition.uri ?
-            propertyDefinition.uri.stringValue :
-            propertyName;
+            propertyDefinition.uri : propertyName;
         return this.compactIRI(schema, uri);
     };
     Class.prototype.getObjects = function (value, schema, definition) {
@@ -17995,7 +17928,7 @@ var Class = (function () {
             var value = languageMap[key];
             var tempDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
             tempDefinition.language = key;
-            tempDefinition.literalType = new RDF_1.URI.Class(NS_1.XSD.DataType.string);
+            tempDefinition.literalType = NS_1.XSD.DataType.string;
             return _this.expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
@@ -18009,8 +17942,7 @@ var Class = (function () {
     };
     Class.prototype.expandLiteral = function (value, schema, definition) {
         var type = definition && definition.literalType ?
-            definition.literalType.stringValue :
-            guessType(value);
+            definition.literalType : guessType(value);
         if (!this.jsonldConverter.literalSerializers.has(type))
             return null;
         value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
@@ -18027,11 +17959,11 @@ var Class = (function () {
         var matchPrefix = Array.from(schema.prefixes.entries())
             .find(function (_a) {
             var prefixURI = _a[1];
-            return iri.startsWith(prefixURI.stringValue);
+            return iri.startsWith(prefixURI);
         });
         if (matchPrefix === void 0)
             return new tokens_1.IRIToken(iri);
-        var namespace = matchPrefix[0], prefixIRI = matchPrefix[1].stringValue;
+        var namespace = matchPrefix[0], prefixIRI = matchPrefix[1];
         return new tokens_1.PrefixedNameToken(namespace, iri.substr(prefixIRI.length));
     };
     Class.prototype.addPrefixFrom = function (object, schema) {
@@ -18047,7 +17979,7 @@ var Class = (function () {
         var namespace = object.namespace;
         if (this.prefixesMap.has(namespace))
             return;
-        var iri = schema.prefixes.get(namespace).stringValue;
+        var iri = schema.prefixes.get(namespace);
         this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(iri)));
     };
     return Class;
@@ -19962,7 +19894,7 @@ __webpack_require__(273);
 
 var URL = __webpack_require__(111)
   , inherits = __webpack_require__(2)
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , random = __webpack_require__(27)
   , escape = __webpack_require__(274)
   , urlUtils = __webpack_require__(14)
@@ -20806,7 +20738,7 @@ defineProperties(StringPrototype, {
 "use strict";
 
 
-var JSON3 = __webpack_require__(20);
+var JSON3 = __webpack_require__(19);
 
 // Some extra characters that Chrome gets wrong, and substitutes with
 // something else on the wire.
@@ -21121,7 +21053,7 @@ module.exports = XHRFake;
 
 var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(2)
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , utils = __webpack_require__(22)
   , IframeTransport = __webpack_require__(118)
   , InfoReceiverIframe = __webpack_require__(123)
@@ -21198,7 +21130,7 @@ module.exports = InfoIframe;
 
 var urlUtils = __webpack_require__(14)
   , eventUtils = __webpack_require__(22)
-  , JSON3 = __webpack_require__(20)
+  , JSON3 = __webpack_require__(19)
   , FacadeJS = __webpack_require__(283)
   , InfoIframeReceiver = __webpack_require__(123)
   , iframeUtils = __webpack_require__(40)
@@ -21305,7 +21237,7 @@ module.exports = function(SockJS, availableTransports) {
 "use strict";
 
 
-var JSON3 = __webpack_require__(20)
+var JSON3 = __webpack_require__(19)
   , iframeUtils = __webpack_require__(40)
   ;
 

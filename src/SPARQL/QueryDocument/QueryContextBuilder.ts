@@ -55,7 +55,7 @@ export class Class extends QueryContext.Class {
 			if( ! schema.properties.has( propertyName ) ) continue;
 			const digestedProperty:DigestedPropertyDefinition = schema.properties.get( propertyName );
 
-			if( propertyURI && digestedProperty.uri.stringValue !== propertyURI ) continue;
+			if( propertyURI && digestedProperty.uri !== propertyURI ) continue;
 			return digestedProperty;
 		}
 	}

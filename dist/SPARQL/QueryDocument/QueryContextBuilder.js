@@ -56,7 +56,7 @@ var Class = (function (_super) {
             if (!schema.properties.has(propertyName))
                 continue;
             var digestedProperty = schema.properties.get(propertyName);
-            if (propertyURI && digestedProperty.uri.stringValue !== propertyURI)
+            if (propertyURI && digestedProperty.uri !== propertyURI)
                 continue;
             return digestedProperty;
         }

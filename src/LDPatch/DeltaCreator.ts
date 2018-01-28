@@ -23,7 +23,6 @@ import {
 	PointerType,
 } from "../ObjectSchema";
 import * as Pointer from "../Pointer";
-import { URI } from "../RDF";
 import * as Resource from "../Resource";
 import {
 	isBoolean,
@@ -190,8 +189,7 @@ export class Class {
 	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
 		const propertyDefinition:DigestedPropertyDefinition = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
-			propertyDefinition.uri.stringValue :
-			propertyName;
+			propertyDefinition.uri : propertyName;
 
 		return this.compactIRI( schema, uri );
 	}
@@ -237,7 +235,7 @@ export class Class {
 
 			const tempDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
 			tempDefinition.language = key;
-			tempDefinition.literalType = new URI.Class( XSD.DataType.string );
+			tempDefinition.literalType = XSD.DataType.string;
 
 			return this.expandLiteral( value, schema, tempDefinition );
 		} ).filter( isValidValue );
@@ -254,8 +252,7 @@ export class Class {
 
 	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):LiteralToken {
 		const type:string = definition && definition.literalType ?
-			definition.literalType.stringValue :
-			guessType( value );
+			definition.literalType : guessType( value );
 
 		if( ! this.jsonldConverter.literalSerializers.has( type ) ) return null;
 
@@ -271,12 +268,12 @@ export class Class {
 	private compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
 		if( isRelative( iri ) && schema.vocab ) iri = schema.vocab + iri;
 
-		const matchPrefix:[ string, URI.Class ] = Array.from( schema.prefixes.entries() )
-			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI.stringValue ) );
+		const matchPrefix:[ string, string ] = Array.from( schema.prefixes.entries() )
+			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI ) );
 
 		if( matchPrefix === void 0 ) return new IRIToken( iri );
 
-		const [ namespace, { stringValue: prefixIRI } ] = matchPrefix;
+		const [ namespace, prefixIRI ] = matchPrefix;
 		return new PrefixedNameToken( namespace, iri.substr( prefixIRI.length ) );
 	}
 
@@ -294,7 +291,7 @@ export class Class {
 		const namespace:string = object.namespace;
 		if( this.prefixesMap.has( namespace ) ) return;
 
-		const iri:string = schema.prefixes.get( namespace ).stringValue;
+		const iri:string = schema.prefixes.get( namespace );
 		this.prefixesMap.set( namespace, new PrefixToken( namespace, new IRIToken( iri ) ) );
 	}
 

@@ -804,7 +804,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -2275,7 +2275,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -2411,7 +2411,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -2786,7 +2786,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -3057,7 +3057,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -3514,7 +3514,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -3829,7 +3829,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -4138,7 +4138,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -6087,7 +6087,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -6484,7 +6484,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -7022,7 +7022,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -7161,7 +7161,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -7477,7 +7477,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -9474,7 +9474,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -9670,7 +9670,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -9859,7 +9859,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -10055,7 +10055,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -10244,7 +10244,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -10383,7 +10383,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							done.fail( "Should not resolve promise." );
 						} )
 						.catch( error => {
-							expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+							expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 							done();
 						} );
 				} );
@@ -10847,7 +10847,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -12039,7 +12039,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							done.fail( "Should not resolve promise." );
 						} )
 						.catch( error => {
-							expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+							expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 							done();
 						} );
 				} );
@@ -12732,7 +12732,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -12884,7 +12884,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13000,7 +13000,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13156,7 +13156,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13312,7 +13312,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13469,7 +13469,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13625,7 +13625,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13781,7 +13781,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );
@@ -13937,7 +13937,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
+						expect( error.message ).toBe( `The URI "prefix:the-uri" cannot be resolved, its prefix "prefix" has not been declared.` );
 						done();
 					} );
 				} );

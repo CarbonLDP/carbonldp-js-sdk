@@ -13,7 +13,6 @@ import {
 import { DigestedPropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
 import * as QueryContext from "./QueryContext";
-import { Factory as PoinerFactory } from "../../Pointer";
 
 export function getLevelRegExp( property:string ):RegExp {
 	if( property ) property += ".";
@@ -25,7 +24,7 @@ export function getLevelRegExp( property:string ):RegExp {
 export function createPropertyPatterns( context:QueryContext.Class, resourcePath:string, propertyPath:string, propertyDefinition:DigestedPropertyDefinition ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
-	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri.stringValue );
+	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri );
 
 	const resource:VariableToken = context.getVariable( resourcePath );
 	const propertyObject:VariableToken = context.getVariable( propertyPath );
@@ -36,7 +35,7 @@ export function createPropertyPatterns( context:QueryContext.Class, resourcePath
 	];
 
 	if( literalType !== null ) propertyPatterns
-		.push( new FilterToken( `datatype( ${ propertyObject } ) = ${ context.compactIRI( literalType.stringValue ) }` ) );
+		.push( new FilterToken( `datatype( ${ propertyObject } ) = ${ context.compactIRI( literalType ) }` ) );
 	if( pointerType !== null ) propertyPatterns
 		.push( new FilterToken( `! isLiteral( ${ propertyObject } )` ) );
 
