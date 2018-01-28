@@ -900,6 +900,95 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				} ) );
 			} );
 
+			it( "should compact same related document by partial property when query resolver", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				queryResolver
+					.addProperty( "target" )
+					.setType( QueryProperty.PropertyType.PARTIAL )
+				;
+				queryResolver
+					.addProperty( "target.pointer" )
+					.setType( QueryProperty.PropertyType.PARTIAL )
+				;
+
+				spyOn( queryResolver, "getSchemaFor" ).and
+					.callFake( ( _object, path ) => {
+						return path === "target" ?
+							Digester.digestSchema( {
+								"pointer": {
+									"@id": "https://example.com/ns#pointer",
+									"@type": "@id",
+								},
+							} ) :
+							Digester.digestSchema( {
+								"string": {
+									"@id": "https://example.com/ns#string",
+									"@type": "string",
+								},
+							} );
+					} );
+
+				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+
+				interface Expected {
+					pointer:{
+						string:string;
+					};
+				}
+
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+					{
+						"@id": "https://example.com/resource-1/",
+						"@graph": [ {
+							"@id": "https://example.com/resource-1/",
+							"https://example.com/ns#pointer": [ {
+								"@id": "https://example.com/shared-resource/",
+							} ],
+						} as RDFNode.Class ],
+					},
+					{
+						"@id": "https://example.com/resource-2/",
+						"@graph": [ {
+							"@id": "https://example.com/resource-2/",
+							"https://example.com/ns#pointer": [ {
+								"@id": "https://example.com/shared-resource/",
+							} ],
+						} as RDFNode.Class ],
+					},
+					{
+						"@id": "https://example.com/shared-resource/",
+						"@graph": [ {
+							"@id": "https://example.com/shared-resource/",
+							"https://example.com/ns#string": [ {
+								"@value": "shared value",
+							} ],
+						} as RDFNode.Class ],
+					},
+				], [
+					{ "@id": "https://example.com/resource-1/" } as any,
+					{ "@id": "https://example.com/resource-2/" } as any,
+				] );
+
+				expect( compacted ).toEqual( [
+					{
+						pointer: {
+							string: "shared value",
+						},
+					},
+					{
+						pointer: {
+							string: "shared value",
+						},
+					},
+				] );
+
+				expect( compacted[ 0 ].pointer ).toBe( compacted[ 1 ].pointer );
+				expect( compacted[ 0 ].pointer as any as PersistedDocument.Class ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/shared-resource/",
+				} ) );
+			} );
+
 		} );
 
 	} );

@@ -12268,8 +12268,13 @@ function toCompactString() {
             --index;
         }
     }
-    if (baseTokens)
-        tokens.unshift.apply(tokens, baseTokens);
+    if (baseTokens) {
+        var baseString = baseTokens.reduce(function (res, token, index, thisArray) {
+            var nextToken = thisArray[index + 1];
+            return res + token.getTokenValue(tokens_2.TokenFormat.PRETTY, nextToken);
+        }, "") + "\n";
+        tokens.unshift(new tokens_2.StringLiteral(baseString));
+    }
     return tokens.reduce(function (res, token, index, thisArray) {
         var nextToken = thisArray[index + 1];
         if (nextToken === tokens_1.EMPTY_SEPARATOR)
@@ -15923,12 +15928,8 @@ var Class = (function () {
             (_a = resource[key]).push.apply(_a, values);
             var _a;
         });
-        var schemaAddedProperties = addedProperties
+        return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
-        schemaAddedProperties
-            .map(function (x) { return schema.properties.get(x).uri.stringValue; })
-            .forEach(function (x) { return delete node[x]; });
-        return schemaAddedProperties;
     };
     Class.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);
