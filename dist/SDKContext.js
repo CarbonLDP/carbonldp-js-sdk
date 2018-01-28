@@ -78,19 +78,26 @@ var Class = (function () {
             return null;
         }
         else {
-            if (!!this.generalObjectSchema)
-                return this.generalObjectSchema;
-            if (!!this.parentContext)
-                return this.parentContext.getObjectSchema();
-            throw new Errors.IllegalStateError();
+            if (!this.generalObjectSchema) {
+                if (!this.parentContext)
+                    throw new Errors.IllegalStateError();
+                var generalSchema = this.parentContext.getObjectSchema();
+                if (!this.hasSetting("vocabulary"))
+                    return generalSchema;
+                this.generalObjectSchema = ObjectSchema.Digester
+                    .combineDigestedObjectSchemas([generalSchema]);
+            }
+            if (this.generalObjectSchema.vocab === null && this.hasSetting("vocabulary"))
+                this.generalObjectSchema.vocab = this.resolve(this.getSetting("vocabulary"));
+            return this.generalObjectSchema;
         }
     };
     Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
+        var digestedSchema = ObjectSchema.Digester
+            .digestSchema(objectSchema, this.getObjectSchema());
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -178,9 +185,7 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
-        var vocab = this.hasSetting("vocabulary") ?
-            this.resolve(this.getSetting("vocabulary")) : null;
-        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
+        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema());
     };
     return Class;
 }());

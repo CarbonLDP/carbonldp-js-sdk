@@ -50,14 +50,7 @@ export class Class implements Resolver {
 	}
 
 	expandIRI( iri:string ):string {
-		if( this.context ) {
-			const vocab:string = this.context.hasSetting( "vocabulary" ) ? this.context.resolve( this.context.getSetting( "vocabulary" ) ) : void 0;
-			iri = SchemaUtils.resolveURI( iri, this.context.getObjectSchema(), vocab );
-		}
-
-		if( isPrefixed( iri ) ) throw new IllegalArgumentError( `Prefix "${ iri.split( ":" )[ 0 ] }" has not been declared.` );
-
-		return iri;
+		return SchemaUtils.resolveURI( iri, this.context && this.context.getObjectSchema() );
 	}
 
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
@@ -72,7 +65,7 @@ export class Class implements Resolver {
 		let namespace:string;
 		let localName:string;
 		if( ! isPrefixed( iri ) ) {
-			for( const [ prefixName, { stringValue: prefixURI } ] of Array.from( schema.prefixes.entries() ) ) {
+			for( const [ prefixName, prefixURI ] of Array.from( schema.prefixes.entries() ) ) {
 				if( ! iri.startsWith( prefixURI ) ) continue;
 				namespace = prefixName;
 				localName = iri.substr( prefixURI.length );
@@ -85,8 +78,8 @@ export class Class implements Resolver {
 
 		namespace = prefixedName.namespace;
 		if( ! this._prefixesMap.has( namespace ) ) {
-			if( ! schema.prefixes.has( namespace ) ) throw new IllegalArgumentError( `Prefix "${ namespace }" has not been declared.` );
-			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ).stringValue );
+			if( ! schema.prefixes.has( namespace ) ) throw new IllegalArgumentError( `The URI "${ iri }" cannot be resolved, its prefix "${ namespace }" has not been declared.` );
+			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ) );
 			this._prefixesMap.set( namespace, new PrefixToken( namespace, prefixIRI ) );
 		}
 

@@ -70,8 +70,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(id))
-                id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
+            id = ObjectSchema.Util.resolvePrefixedURI(id, this.context.getObjectSchema());
             if (RDF.URI.Util.isRelative(id))
                 return true;
             if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
@@ -461,10 +460,8 @@ var Class = (function () {
     Class.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var schema = ObjectSchema.Digester.combineDigestedObjectSchemas([this.context.getObjectSchema()]);
-        if (this.context.hasSetting("vocabulary"))
-            schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return schema;
+        return ObjectSchema.Digester
+            .combineDigestedObjectSchemas([this.context.getObjectSchema()]);
     };
     Class.prototype.hasSchemaFor = function (object, path) {
         if (path !== void 0)
@@ -557,12 +554,12 @@ var Class = (function () {
         var builder = new Builder_1.default(this, this.getRequestURI(documentURI));
         if (!!this.context) {
             builder = builder.base(this.context.baseURI);
-            if (this.context.hasSetting("vocabulary")) {
-                builder = builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
-            }
-            var schema = this.context.getObjectSchema();
-            schema.prefixes.forEach(function (uri, prefix) {
-                builder = builder.prefix(prefix, uri.stringValue);
+            var generalSchema = this.context.getObjectSchema();
+            if (generalSchema.vocab !== null)
+                builder = builder.vocab(generalSchema.vocab);
+            generalSchema.prefixes
+                .forEach(function (uri, prefix) {
+                builder = builder.prefix(prefix, uri);
             });
         }
         return builder;
@@ -1002,8 +999,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(uri))
-                uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
+            uri = ObjectSchema.Util.resolvePrefixedURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -1062,7 +1058,7 @@ var Class = (function () {
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
         if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
-            return this.getSchemaWith(schemas);
+            return this._getContextSchemaWith(schemas);
         }
         else {
             var types = Resource.Util.getTypes(document);
@@ -1081,15 +1077,12 @@ var Class = (function () {
         var schemas = objectTypes
             .filter(function (type) { return _this.context.hasObjectSchema(type); })
             .map(function (type) { return _this.context.getObjectSchema(type); });
-        return this.getSchemaWith(schemas);
+        return this._getContextSchemaWith(schemas);
     };
-    Class.prototype.getSchemaWith = function (objectSchemas) {
-        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+    Class.prototype._getContextSchemaWith = function (objectSchemas) {
+        return ObjectSchema.Digester.combineDigestedObjectSchemas([
             this.context.getObjectSchema()
         ].concat(objectSchemas));
-        if (this.context.hasSetting("vocabulary"))
-            digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return digestedSchema;
     };
     Class.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri)) {
@@ -1098,9 +1091,7 @@ var Class = (function () {
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());
-            if (RDF.URI.Util.isPrefixed(uri))
-                throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
+            uri = ObjectSchema.Util.resolvePrefixedURI(uri, this.context.getObjectSchema());
         }
         else if (RDF.URI.Util.isRelative(uri)) {
             if (!this.context)

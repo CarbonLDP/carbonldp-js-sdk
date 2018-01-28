@@ -182,9 +182,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				} );
 				const queryContext:QueryContext = new QueryContext( context );
 				const helper:( iri:string ) => void = ( iri:string ) => () => queryContext.expandIRI( iri );
-				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
-				expect( helper( "ex:another_resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
-				expect( helper( "schema2:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "schema2" has not been declared.` );
+				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `The URI "ex:resource" cannot be resolved, its prefix "ex" has not been declared.` );
+				expect( helper( "ex:another_resource" ) ).toThrowError( IllegalArgumentError, `The URI "ex:another_resource" cannot be resolved, its prefix "ex" has not been declared.` );
+				expect( helper( "schema2:resource" ) ).toThrowError( IllegalArgumentError, `The URI "schema2:resource" cannot be resolved, its prefix "schema2" has not been declared.` );
 			} );
 
 		} );
@@ -210,8 +210,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
 				const helper:( prefixed:string ) => void = prefixed => () => queryContext.compactIRI( prefixed );
 
-				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
-				expect( helper( "schema:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "schema" has not been declared.` );
+				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `The URI "ex:resource" cannot be resolved, its prefix "ex" has not been declared.` );
+				expect( helper( "schema:resource" ) ).toThrowError( IllegalArgumentError, `The URI "schema:resource" cannot be resolved, its prefix "schema" has not been declared.` );
 			} );
 
 			it( "should return IRI when absolute and no prefix match", ():void => {

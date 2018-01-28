@@ -195,11 +195,11 @@ var Class = (function () {
         if (uri === null || Class.isKeyword(uri) || RDF.URI.Util.isAbsolute(uri))
             return uri;
         if (schema.properties.has(uri))
-            return schema.properties.get(uri).uri.stringValue;
+            return schema.properties.get(uri).uri;
         if (RDF.URI.Util.isPrefixed(uri))
-            return ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
+            return ObjectSchema.Util.resolvePrefixedURI(uri, schema);
         if (schema.prefixes.has(uri))
-            return schema.prefixes.get(uri).stringValue;
+            return schema.prefixes.get(uri);
         if (relativeTo.vocab) {
             if (schema.vocab === null)
                 return null;
@@ -258,7 +258,7 @@ var Class = (function () {
             return value;
         var expandedValue = {};
         if (!!definition.literalType) {
-            expandedValue["@type"] = definition.literalType.stringValue;
+            expandedValue["@type"] = definition.literalType;
         }
         else if (Utils.isString(value)) {
             var language = Utils.isDefined(definition.language) ? definition.language : context.language;

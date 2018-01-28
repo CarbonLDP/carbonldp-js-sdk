@@ -1,5 +1,5 @@
 export declare class Class {
-    static expand(input: Object): Promise<Array<Object>>;
+    static expand(input: object): Promise<object[]>;
     private static getTargetFromLinkHeader(header);
     private static findContextURLs(input, contexts, base, replace?);
     private static retrieveContexts(input, contextsRequested, base);

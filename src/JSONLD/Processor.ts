@@ -9,7 +9,7 @@ const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
 
 export class Class {
-	static expand( input:Object ):Promise<Array<Object>> {
+	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
 		return this.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
@@ -194,9 +194,9 @@ export class Class {
 	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
 		if( uri === null || Class.isKeyword( uri ) || RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-		if( schema.properties.has( uri ) ) return schema.properties.get( uri ).uri.stringValue;
-		if( RDF.URI.Util.isPrefixed( uri ) ) return ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
-		if( schema.prefixes.has( uri ) ) return schema.prefixes.get( uri ).stringValue;
+		if( schema.properties.has( uri ) ) return schema.properties.get( uri ).uri;
+		if( RDF.URI.Util.isPrefixed( uri ) ) return ObjectSchema.Util.resolvePrefixedURI( uri, schema );
+		if( schema.prefixes.has( uri ) ) return schema.prefixes.get( uri );
 
 		if( relativeTo.vocab ) {
 			if( schema.vocab === null ) return null;
@@ -256,7 +256,7 @@ export class Class {
 
 		let expandedValue:Object = {};
 		if( ! ! definition.literalType ) {
-			expandedValue[ "@type" ] = definition.literalType.stringValue;
+			expandedValue[ "@type" ] = definition.literalType;
 		} else if( Utils.isString( value ) ) {
 			let language:string = Utils.isDefined( definition.language ) ? definition.language : context.language;
 			if( language !== null ) expandedValue[ "@language" ] = language;
@@ -283,7 +283,7 @@ export class Class {
 			let container:ObjectSchema.ContainerType = Class.getContainer( context, activeProperty );
 			insideList = insideList || container === ObjectSchema.ContainerType.LIST;
 
-			let expandedElement:Array<Object> = [];
+			let expandedElement:object[] = [];
 			for( let item of (<Array<any>> element) ) {
 				let expandedItem:any = Class.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;

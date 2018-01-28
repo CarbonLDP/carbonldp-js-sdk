@@ -96,10 +96,20 @@ export class Class implements Context.Class {
 			return null;
 		} else {
 			// General schema
-			if( ! ! this.generalObjectSchema ) return this.generalObjectSchema;
-			if( ! ! this.parentContext ) return this.parentContext.getObjectSchema();
+			if( ! this.generalObjectSchema ) {
+				if( ! this.parentContext ) throw new Errors.IllegalStateError();
 
-			throw new Errors.IllegalStateError();
+				const generalSchema:ObjectSchema.DigestedObjectSchema = this.parentContext.getObjectSchema();
+				if( ! this.hasSetting( "vocabulary" ) ) return generalSchema;
+
+				this.generalObjectSchema = ObjectSchema.Digester
+					.combineDigestedObjectSchemas( [ generalSchema ] );
+			}
+
+			if( this.generalObjectSchema.vocab === null && this.hasSetting( "vocabulary" ) )
+				this.generalObjectSchema.vocab = this.resolve( this.getSetting( "vocabulary" ) );
+
+			return this.generalObjectSchema;
 		}
 	}
 
@@ -109,8 +119,8 @@ export class Class implements Context.Class {
 		let type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 
-		const vocab:string = this.hasSetting( "vocabulary" ) ? this.resolve( this.getSetting( "vocabulary" ) ) : void 0;
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema, vocab );
+		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester
+			.digestSchema( objectSchema, this.getObjectSchema() );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -208,9 +218,7 @@ export class Class implements Context.Class {
 	}
 
 	private resolveTypeURI( uri:string ):string {
-		const vocab:string = this.hasSetting( "vocabulary" ) ?
-			this.resolve( this.getSetting( "vocabulary" ) ) : null;
-		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
+		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema() );
 	}
 }
 

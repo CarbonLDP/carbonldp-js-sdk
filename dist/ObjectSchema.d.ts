@@ -1,4 +1,3 @@
-import * as RDF from "./RDF";
 export interface PropertyDefinition {
     "@id"?: string;
     "@type"?: string;
@@ -26,15 +25,14 @@ export declare class DigestedObjectSchema {
     base: string;
     language: string;
     vocab: string;
-    prefixes: Map<string, RDF.URI.Class>;
+    prefixes: Map<string, string>;
     properties: Map<string, DigestedPropertyDefinition>;
-    prefixedURIs: Map<string, RDF.URI.Class[]>;
     constructor();
 }
 export declare class DigestedPropertyDefinition {
-    uri: RDF.URI.Class;
+    uri: string;
     literal: boolean;
-    literalType: RDF.URI.Class;
+    literalType: string;
     pointerType: PointerType;
     language: string;
     containerType: ContainerType;
@@ -45,17 +43,16 @@ export interface Resolver {
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
 export declare class Digester {
-    static digestSchema(schemas: Class[], vocab?: string): DigestedObjectSchema;
-    static digestSchema(schema: Class, vocab?: string): DigestedObjectSchema;
+    static digestSchema(schemas: Class[], generalSchema?: DigestedObjectSchema): DigestedObjectSchema;
+    static digestSchema(schema: Class, generalSchema?: DigestedObjectSchema): DigestedObjectSchema;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-    static digestPropertyDefinition(digestedSchema: DigestedObjectSchema, propertyName: string, propertyDefinition: PropertyDefinition, vocab?: string): DigestedPropertyDefinition;
-    static resolvePrefixedURI(uri: string, digestedSchema: DigestedObjectSchema): string;
-    private static _resolveURI(uri, digestedSchema, vocab?);
-    private static _resolvePrefixedURI(uri, digestedSchema);
-    private static digestSingleSchema(schema, vocab?);
-    private static resolvePrefixedURIs(digestedSchema);
+    static digestPropertyDefinition(digestedSchema: DigestedObjectSchema, propertyName: string, propertyDefinition: PropertyDefinition, generalSchema?: DigestedObjectSchema): DigestedPropertyDefinition;
+    private static digestSingleSchema(schema, generalSchema?);
 }
 export declare class Util {
-    static resolveURI(uri: string, schema: DigestedObjectSchema, vocab?: string): string;
+    static resolveURI(uri: string, schema: DigestedObjectSchema, generalSchema?: DigestedObjectSchema): string;
+    static resolvePrefixedURI(uri: string, schema: DigestedObjectSchema): string;
+    private static _resolveRelativeURI(uri, schema, generalSchema?);
+    private static _resolvePrefixedName(uri, schema, generalSchema?);
 }
 export default Class;

@@ -1,6 +1,6 @@
 import * as Errors from "./../Errors";
-import * as ObjectSchema from "./../ObjectSchema";
 import * as NS from "./../NS";
+import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
@@ -89,7 +89,7 @@ export class Class {
 		let expandedObject:any = {};
 
 		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => ObjectSchema.Util.resolveURI( type, generalSchema ) );
+		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => ObjectSchema.Util.resolveURI( type, digestedSchema, generalSchema ) );
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
@@ -104,7 +104,7 @@ export class Class {
 
 			} else if( RDF.URI.Util.isAbsolute( propertyName ) || digestedSchema.vocab !== null ) {
 				expandedValue = this.expandPropertyValue( value, generalSchema, digestedSchema );
-				expandedPropertyName = ObjectSchema.Util.resolveURI( propertyName, generalSchema );
+				expandedPropertyName = ObjectSchema.Util.resolveURI( propertyName, digestedSchema, generalSchema );
 			}
 
 			if( ! expandedValue || ! expandedPropertyName ) return;
@@ -297,14 +297,14 @@ export class Class {
 			return null;
 		}
 
-		id = ObjectSchema.Digester.resolvePrefixedURI( id, generalSchema );
+		id = ObjectSchema.Util.resolvePrefixedURI( id, generalSchema );
 
 		if( generalSchema.properties.has( id ) ) {
 			let definition:ObjectSchema.DigestedPropertyDefinition = generalSchema.properties.get( id );
-			if( definition.uri ) id = definition.uri.stringValue;
+			if( definition.uri ) id = definition.uri;
 		}
 
-		if( notPointer && ! ! digestedSchema.vocab ) id = ObjectSchema.Util.resolveURI( id, generalSchema );
+		if( notPointer ) id = ObjectSchema.Util.resolveURI( id, digestedSchema, generalSchema );
 
 		return { "@id": id };
 	}

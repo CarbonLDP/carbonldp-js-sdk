@@ -13,7 +13,6 @@ var tokens_1 = require("sparqler/tokens");
 var NS_1 = require("../NS");
 var ObjectSchema_1 = require("../ObjectSchema");
 var Pointer = require("../Pointer");
-var RDF_1 = require("../RDF");
 var Utils_1 = require("../Utils");
 var Tokens_1 = require("./Tokens");
 var typesDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
@@ -114,8 +113,7 @@ var Class = (function () {
     Class.prototype.getPropertyIRI = function (schema, propertyName) {
         var propertyDefinition = schema.properties.get(propertyName);
         var uri = propertyDefinition && propertyDefinition.uri ?
-            propertyDefinition.uri.stringValue :
-            propertyName;
+            propertyDefinition.uri : propertyName;
         return this.compactIRI(schema, uri);
     };
     Class.prototype.getObjects = function (value, schema, definition) {
@@ -154,7 +152,7 @@ var Class = (function () {
             var value = languageMap[key];
             var tempDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
             tempDefinition.language = key;
-            tempDefinition.literalType = new RDF_1.URI.Class(NS_1.XSD.DataType.string);
+            tempDefinition.literalType = NS_1.XSD.DataType.string;
             return _this.expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
@@ -168,8 +166,7 @@ var Class = (function () {
     };
     Class.prototype.expandLiteral = function (value, schema, definition) {
         var type = definition && definition.literalType ?
-            definition.literalType.stringValue :
-            guessType(value);
+            definition.literalType : guessType(value);
         if (!this.jsonldConverter.literalSerializers.has(type))
             return null;
         value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
@@ -186,11 +183,11 @@ var Class = (function () {
         var matchPrefix = Array.from(schema.prefixes.entries())
             .find(function (_a) {
             var prefixURI = _a[1];
-            return iri.startsWith(prefixURI.stringValue);
+            return iri.startsWith(prefixURI);
         });
         if (matchPrefix === void 0)
             return new tokens_1.IRIToken(iri);
-        var namespace = matchPrefix[0], prefixIRI = matchPrefix[1].stringValue;
+        var namespace = matchPrefix[0], prefixIRI = matchPrefix[1];
         return new tokens_1.PrefixedNameToken(namespace, iri.substr(prefixIRI.length));
     };
     Class.prototype.addPrefixFrom = function (object, schema) {
@@ -206,7 +203,7 @@ var Class = (function () {
         var namespace = object.namespace;
         if (this.prefixesMap.has(namespace))
             return;
-        var iri = schema.prefixes.get(namespace).stringValue;
+        var iri = schema.prefixes.get(namespace);
         this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(iri)));
     };
     return Class;

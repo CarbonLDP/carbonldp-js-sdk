@@ -1,26 +1,25 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	module,
-	clazz,
-	method,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasProperty,
-	hasSignature,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import * as Auth from "./Auth";
-import Documents from "./Documents";
 import Context from "./Context";
+import Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 
 import * as SDKContext from "./SDKContext";
 import DefaultExport from "./SDKContext";
+
+import {
+	clazz,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/SDKContext" ), ():void => {
 
@@ -44,28 +43,6 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		let context:SDKContext.Class;
 		beforeEach( ():void => {
 			context = new SDKContext.Class();
-			jasmine.addMatchers( {
-				// Custom handler for Map as Jasmine does not support it yet
-				toEqual: function( util:any ):any {
-					return {
-						compare: function( actual:any, expected:any ):any {
-							return { pass: util.equals( actual, expected, [ compareMap ] ) };
-						},
-					};
-
-					function compareMap( actual:any, expected:any ):any {
-						if( actual instanceof Map ) {
-							let pass:any = actual.size === expected.size;
-							if( pass ) {
-								actual.forEach( ( v, k ) => { pass = pass && util.equals( v, expected.get( k ) ); } );
-							}
-							return pass;
-						} else {
-							return undefined;
-						}
-					}
-				},
-			} );
 		} );
 
 		it( hasConstructor(), ():void => {
@@ -150,6 +127,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					this.settings.set( "a.setting", "my setting" );
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 
 			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( true );
@@ -175,6 +153,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					this.settings.set( "a.setting", "my setting" );
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 
 			expect( mockedContext.getSetting( "a.setting" ) ).toBe( "my setting" );
@@ -215,6 +194,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					this.settings.set( "a.setting", "my setting" );
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 
 			mockedContext.deleteSetting( "a.setting" );
@@ -237,6 +217,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
@@ -253,6 +234,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 			mockedContext.setSetting( "vocabulary", "vocab#" );
 
@@ -290,6 +272,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
@@ -303,6 +286,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 			mockedContext.setSetting( "vocabulary", "vocab#" );
 
@@ -315,7 +299,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			returnedSchema = mockedContext.getObjectSchema();
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toEqual( ObjectSchema.Digester.digestSchema( rawObjectSchema ) );
+			expect( returnedSchema ).toEqual( ObjectSchema.Digester.digestSchema( [ { "@vocab": "http://example.com/vocab#" }, rawObjectSchema ] ) );
 
 			// Schema by type
 			expect( context.getObjectSchema( "http://example.com/ns#MyType" ) ).toBeNull();
@@ -323,12 +307,12 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 			expect( returnedSchema ).toBe( objectSchemaMyType );
 
-			expect( context.getObjectSchema( "ex:MyType" ) ).toBeNull();
+			expect( () => context.getObjectSchema( "ex:Another-Type" ) ).toThrowError( `The URI "ex:Another-Type" cannot be resolved, its prefix "ex" has not been declared.` );
 			returnedSchema = mockedContext.getObjectSchema( "ex:MyType" );
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 			expect( returnedSchema ).toBe( objectSchemaMyType );
 
-			expect( context.getObjectSchema( "exTypes:Another-Type" ) ).toBeNull();
+			expect( () => context.getObjectSchema( "exTypes:Another-Type" ) ).toThrowError( `The URI "exTypes:Another-Type" cannot be resolved, its prefix "exTypes" has not been declared.` );
 			returnedSchema = mockedContext.getObjectSchema( "exTypes:Another-Type" );
 			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
 			expect( returnedSchema ).toBe( objectSchemaAnotherType );
@@ -355,6 +339,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 						return "http://example.com/" + uri;
 					}
 				}
+
 				context = new MockedSDKContext();
 				context.setSetting( "vocabulary", "vocab#" );
 				context.extendObjectSchema( {
@@ -397,8 +382,14 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
 
 				// Prefixed Type
+				expect( () => context.extendObjectSchema( "ex:Another-Type", objectSchema ) ).toThrowError( `The URI "ex:Another-Type" cannot be resolved, its prefix "ex" has not been declared.` );
+				context.extendObjectSchema( {
+					"ex": "http://example.com/ns#",
+				} );
+
 				context.extendObjectSchema( "ex:Another-Type", objectSchema );
-				expect( context.hasObjectSchema( "http://example.com/ns#Another-Type" ) ).toBe( false );
+				expect( context.hasObjectSchema( "ex:Another-Type" ) ).toBe( true );
+				expect( context.hasObjectSchema( "http://example.com/ns#Another-Type" ) ).toBe( true );
 
 				digestedSchema = context.getObjectSchema( "ex:Another-Type" );
 				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
@@ -475,6 +466,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				},
 			};
 			let objectSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
+
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
@@ -482,6 +474,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 
 			// Type schema

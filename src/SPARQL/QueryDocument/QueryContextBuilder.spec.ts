@@ -1,4 +1,5 @@
 import AbstractContext from "../../AbstractContext";
+import { IllegalArgumentError } from "../../Errors";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -15,12 +16,10 @@ import {
 	method,
 	module
 } from "../../test/JasmineExtender";
-import * as URI from "./../../RDF/URI";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryContextBuilder";
 import { Class as QueryContextBuilder } from "./QueryContextBuilder";
 import QueryProperty, { PropertyType } from "./QueryProperty";
-import { IllegalArgumentError } from "../../Errors";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
@@ -46,6 +45,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
+			context.extendObjectSchema( {
+				"ex": "http://example.com/ns#",
+			} );
 		} );
 
 		describe( constructor(), ():void => {
@@ -290,7 +292,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-property" ),
+					uri: "http://example.com/ns#type-property",
 				} ) );
 			} );
 
@@ -312,23 +314,24 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property", "http://example.com/ns#type-2-property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-2-property" ),
+					uri: "http://example.com/ns#type-2-property",
 					literal: false,
 				} ) );
 			} );
 
 			it( "should find in parent context", ():void => {
 				context = new (context.constructor as { new( context:AbstractContext ) })( context );
-				context.parentContext.extendObjectSchema( "ex:Type", {
+				context.parentContext.extendObjectSchema( {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "http://example.com/ns#",
+				} );
+				context.parentContext.extendObjectSchema( "ex:Type", {
 					"property": {
 						"@id": "ex:type-1-property",
 						"@type": "xsd:string",
 					},
 				} );
 				context.extendObjectSchema( "ex:AnotherType", {
-					"ex": "http://example.com/ns#",
 					"property": {
 						"@id": "ex:type-2-property",
 						"@type": "@id",
@@ -338,17 +341,19 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property", "http://example.com/ns#type-1-property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-1-property" ),
+					uri: "http://example.com/ns#type-1-property",
 					literal: true,
-					literalType: new URI.Class( "http://www.w3.org/2001/XMLSchema#string" ),
+					literalType: "http://www.w3.org/2001/XMLSchema#string",
 				} ) );
 			} );
 
 			it( "should find first in the provided schema", ():void => {
 				context = new (context.constructor as { new( context:AbstractContext ) })( context );
-				context.parentContext.extendObjectSchema( "ex:Type", {
+				context.parentContext.extendObjectSchema( {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "http://example.com/ns#",
+				} );
+				context.parentContext.extendObjectSchema( "ex:Type", {
 					"property": {
 						"@id": "ex:type-1-property",
 						"@type": "xsd:string",
@@ -375,9 +380,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( schema, "property", "http://example.com/ns#type-1-property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-1-property" ),
+					uri: "http://example.com/ns#type-1-property",
 					literal: true,
-					literalType: new URI.Class( "http://www.w3.org/2001/XMLSchema#string" ),
+					literalType: "http://www.w3.org/2001/XMLSchema#string",
 					containerType: ContainerType.SET,
 				} ) );
 			} );

@@ -1,12 +1,35 @@
-import { FilterToken, IRIToken, LiteralToken, OptionalToken, PredicateToken, PrefixedNameToken, SubjectToken, ValuesToken } from "sparqler/tokens";
+import {
+	FilterToken,
+	IRIToken,
+	LiteralToken,
+	OptionalToken,
+	PredicateToken,
+	PrefixedNameToken,
+	SubjectToken,
+	ValuesToken,
+} from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
-import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module, property } from "../../test/JasmineExtender";
+import {
+	DigestedObjectSchema,
+	Digester,
+} from "../../ObjectSchema";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasSignature,
+	INSTANCE,
+	method,
+	module,
+	property,
+} from "../../test/JasmineExtender";
 import * as Document from "./../../Document";
-import { IllegalArgumentError, IllegalStateError } from "./../../Errors";
+import {
+	IllegalArgumentError,
+	IllegalStateError,
+} from "./../../Errors";
 import * as Pointer from "./../../Pointer";
-import * as URI from "./../../RDF/URI";
 import QueryContextBuilder from "./QueryContextBuilder";
 import * as Module from "./QueryDocumentBuilder";
 import { Class as QueryDocumentBuilder } from "./QueryDocumentBuilder";
@@ -325,7 +348,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( builder[ "_schema" ].properties ).not.toBe( schema1.properties );
 				expect( builder[ "_schema" ].properties.has( "property-1" ) ).toBe( true );
 				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/vocab#property-1" ),
+					uri: "http://example.com/vocab#property-1",
 				} ) );
 
 				builder.withType( "Type-2" );
@@ -333,11 +356,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( builder[ "_schema" ].properties ).not.toBe( schema2.properties );
 				expect( builder[ "_schema" ].properties.has( "property-1" ) ).toBe( true );
 				expect( builder[ "_schema" ].properties.get( "property-1" ) ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/vocab#property-2.1" ),
+					uri: "http://example.com/vocab#property-2.1",
 				} ) );
 				expect( builder[ "_schema" ].properties.has( "property-2" ) ).toBe( true );
 				expect( builder[ "_schema" ].properties.get( "property-2" ) ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/vocab#property-2" ),
+					uri: "http://example.com/vocab#property-2",
 				} ) );
 			} );
 
@@ -431,30 +454,30 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"defaultProperty",
 					jasmine.objectContaining( {
-						uri: new URI.Class( "http://example.com/vocab#defaultProperty" ),
+						uri: "http://example.com/vocab#defaultProperty",
 					} ) as any,
 				] ] ) ) );
 
 				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"inheritProperty",
 					jasmine.objectContaining( {
-						uri: new URI.Class( "http://example.com/ns#inheritProperty" ),
+						uri: "http://example.com/ns#inheritProperty",
 					} ) as any,
 				] ] ) ) );
 
 				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"extendedProperty",
 					jasmine.objectContaining( {
-						uri: new URI.Class( "http://example.com/ns#extendedProperty" ),
+						uri: "http://example.com/ns#extendedProperty",
 						literal: true,
-						literalType: new URI.Class( "http://www.w3.org/2001/XMLSchema#string" ),
+						literalType: "http://www.w3.org/2001/XMLSchema#string",
 					} ) as any,
 				] ] ) ) );
 
 				expect( baseProperty.getSchema().properties ).toEqual( jasmine.objectContaining( new Map( [ [
 					"inlineProperty",
 					jasmine.objectContaining( {
-						uri: new URI.Class( "http://example.com/ns#inlineProperty" ),
+						uri: "http://example.com/ns#inlineProperty",
 					} ) as any,
 				] ] ) ) );
 			} );
