@@ -13094,7 +13094,7 @@ var Class = (function (_super) {
         return _this;
     }
     Object.defineProperty(Class, "version", {
-        get: function () { return "1.0.0-alpha.9"; },
+        get: function () { return "1.0.0-alpha.10"; },
         enumerable: true,
         configurable: true
     });
@@ -22583,9 +22583,15 @@ function vocab(iri) {
 }
 function prefix(name, iri) {
     var iriResolver = new IRIResolver_1.IRIResolver(this._iriResolver);
+    var previousIndex = iriResolver._prefixes.has(name) ?
+        this._tokens.findIndex(function (token) { return token instanceof tokens_2.StringLiteral && token["value"] === name; }) :
+        -1;
     iriResolver._prefixes.set(name, false);
     var tokens = [tokens_1.PREFIX, new tokens_2.StringLiteral(name), tokens_1.PREFIX_SYMBOL, tokens_1.OPEN_IRI, new tokens_2.StringLiteral(iri), tokens_1.CLOSE_IRI];
     var container = new Container_1.Container(this, tokens, iriResolver);
+    if (previousIndex !== -1) {
+        container._tokens.splice(previousIndex - 1, 6);
+    }
     return queryDecorator(container, {});
 }
 function queryDecorator(container, object) {

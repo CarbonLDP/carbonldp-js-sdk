@@ -53,7 +53,7 @@ var Class = (function (_super) {
         return _this;
     }
     Object.defineProperty(Class, "version", {
-        get: function () { return "1.0.0-alpha.9"; },
+        get: function () { return "1.0.0-alpha.10"; },
         enumerable: true,
         configurable: true
     });
