@@ -145,15 +145,9 @@ export class Class {
 			resource[ key ].push( ...values );
 		} );
 
-		const schemaAddedProperties:string[] = addedProperties
+		return addedProperties
 			.filter( x => schema.properties.has( x ) )
-		;
-
-		schemaAddedProperties
-			.map( x => schema.properties.get( x ).uri.stringValue )
-			.forEach( x => delete node[ x ] );
-
-		return schemaAddedProperties;
+			;
 	}
 
 	private getResource<T extends PersistedResource.Class>( node:RDFNode.Class, containerLibrary:Pointer.Library, isDocument?:boolean ):T {

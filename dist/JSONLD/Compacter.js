@@ -95,12 +95,8 @@ var Class = (function () {
             (_a = resource[key]).push.apply(_a, values);
             var _a;
         });
-        var schemaAddedProperties = addedProperties
+        return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
-        schemaAddedProperties
-            .map(function (x) { return schema.properties.get(x).uri.stringValue; })
-            .forEach(function (x) { return delete node[x]; });
-        return schemaAddedProperties;
     };
     Class.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);
