@@ -25,7 +25,7 @@ function isNull(value) {
 }
 exports.isNull = isNull;
 function isArray(object) {
-    return object instanceof Array;
+    return Array.isArray(object);
 }
 exports.isArray = isArray;
 function isString(value) {

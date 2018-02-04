@@ -17,7 +17,7 @@ import {
 	SelectToken,
 	SubjectToken,
 	ValuesToken,
-	VariableToken,
+	VariableToken
 } from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
@@ -58,6 +58,12 @@ import {
 	OPTIONAL,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+
+function createPartialMetadata( schema:ObjectSchema.Class ):SPARQL.QueryDocument.PartialMetadata.Class {
+	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+	digestedSchema.properties.forEach( definition => ObjectSchema.Util.resolveProperty( digestedSchema, definition, true ) );
+	return new SPARQL.QueryDocument.PartialMetadata.Class( digestedSchema );
+}
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -432,13 +438,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "_:2",
 							"@type": [ "${ NS.C.Class.Error }" ],
 							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
 								"@value": "code-01"
 							} ],
 							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
 								"@value": "Message 01"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
-									"@id": "_:4"
+								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
@@ -452,7 +460,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@value": "Message 02"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
-									"@id": "_:6"
+								"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
@@ -547,9 +555,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "_:3",
 							"@type": [ "${ NS.C.Class.Error }" ],
 							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
 								"@value": "code-02"
 							} ],
 							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
 								"@value": "Message 02"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
@@ -621,13 +631,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "_:2",
 							"@type": [ "${ NS.C.Class.Error }" ],
 							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
 								"@value": "code-01"
 							} ],
 							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
 								"@value": "Message 01"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
-									"@id": "_:4"
+								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
@@ -1732,7 +1744,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
@@ -1746,13 +1758,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 
 					persistedDocument.property2 = persistedDocument.createFragment(
 						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
 						"_:1"
 					);
-					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument.property2._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -1766,7 +1778,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-2",
 							"@type": NS.XSD.DataType.integer,
 						},
-					} ) );
+					} );
 
 					Utils.promiseMethod( () => {
 						return documents.get<MyDocument>( "https://example.com/resource/", _ => _
@@ -1879,7 +1891,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( () => {
+					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
+						if( error ) done.fail( error );
+
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
@@ -10634,7 +10648,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
 								string: [ "string 1" ],
 								number: 100,
-								_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								_partialMetadata: createPartialMetadata( {
 									"string": {
 										"@type": NS.XSD.DataType.string,
 										"@container": "@set",
@@ -10645,9 +10659,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"number": {
 										"@type": NS.XSD.DataType.integer,
 									},
-								} ) ),
+								} ),
 							} ],
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"string": {
 									"@type": NS.XSD.DataType.string,
 									"@container": "@set",
@@ -10655,16 +10669,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"pointer": {
 									"@type": "@id",
 								},
-							} ) ),
+							} ),
 						},
-						_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						_partialMetadata: createPartialMetadata( {
 							"list": {
 								"@container": "@list",
 							},
 							"pointer": {
 								"@type": "@id",
 							},
-						} ) ),
+						} ),
 					}, "https://example.com/resource/", documents );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
@@ -11045,10 +11059,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
-							"@id": "property-4",
+							"@id": "https://example.com/ns#property-4",
 							"@type": NS.XSD.DataType.boolean,
 						},
 						"property2": {
@@ -11056,16 +11070,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": "@id",
 						},
 						"property1": {
-							"@id": "property-1",
+							"@id": "https://example.com/ns#property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 
 					persistedDocument.property2 = persistedDocument.createFragment(
 						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
 						"_:1"
 					);
-					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument.property2._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -11076,10 +11090,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": NS.XSD.DataType.dateTime,
 						},
 						"property2": {
-							"@id": "property-2",
+							"@id": "https://example.com/ns#property-2",
 							"@type": NS.XSD.DataType.integer,
 						},
-					} ) );
+					} );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -11246,7 +11260,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument[ "_partialMetadata" ] = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
@@ -11260,7 +11274,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 					persistedDocument.property2[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( SPARQL.QueryDocument.PartialMetadata.ALL );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
@@ -11457,10 +11471,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property2: null,
 							property3: "non query-value",
 							property4: true,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
-									"@id": "property-1",
+									"@id": "https://example.com/ns#property-1",
 									"@type": NS.XSD.DataType.string,
 								},
 								"property2": {
@@ -11468,10 +11482,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@type": "@id",
 								},
 								"property4": {
-									"@id": "property-4",
+									"@id": "https://example.com/ns#property-4",
 									"@type": NS.XSD.DataType.boolean,
 								},
-							} ) ),
+							} ),
 						} ),
 						"https://example.com/resource/",
 						documents
@@ -11482,10 +11496,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property3: "sub-value",
 							property5: new Date( "2000-01-01" ),
 							property2: 12345,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
-									"@id": "property-2",
+									"@id": "https://example.com/ns#property-2",
 									"@type": NS.XSD.DataType.integer,
 								},
 								"property3": {
@@ -11496,7 +11510,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@id": "https://schema.org/property-5",
 									"@type": NS.XSD.DataType.dateTime,
 								},
-							} ) ),
+							} ),
 						},
 						"_:1"
 					);
@@ -11618,7 +11632,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property2: null,
 							property3: "non query-value",
 							property4: true,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "property-1",
@@ -11632,7 +11646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@id": "property-4",
 									"@type": NS.XSD.DataType.boolean,
 								},
-							} ) ),
+							} ),
 						} ),
 						"https://example.com/resource/",
 						documents
@@ -11643,7 +11657,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property3: "sub-value",
 							property5: new Date( "2000-01-01" ),
 							property2: 12345,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "property-2",
@@ -11657,7 +11671,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@id": "https://schema.org/property-5",
 									"@type": NS.XSD.DataType.dateTime,
 								},
-							} ) ),
+							} ),
 						},
 						"_:1"
 					);
@@ -11808,10 +11822,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
-							"@id": "property-4",
+							"@id": "https://example.com/ns#property-4",
 							"@type": NS.XSD.DataType.boolean,
 						},
 						"property2": {
@@ -11819,16 +11833,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": "@id",
 						},
 						"property1": {
-							"@id": "property-1",
+							"@id": "https://example.com/ns#property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 
 					persistedDocument.property2 = persistedDocument.createFragment(
 						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
 						"_:1"
 					);
-					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument.property2._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -11839,10 +11853,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": NS.XSD.DataType.dateTime,
 						},
 						"property2": {
-							"@id": "property-2",
+							"@id": "https://example.com/ns#property-2",
 							"@type": NS.XSD.DataType.integer,
 						},
-					} ) );
+					} );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -12502,10 +12516,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								property3: "sub-value",
 								property5: new Date( "2000-01-01" ),
 								property2: 12345,
-								_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								_partialMetadata: createPartialMetadata( {
 									"@vocab": "https://example.com/ns#",
 									"property2": {
-										"@id": "property-2",
+										"@id": "https://example.com/ns#property-2",
 										"@type": NS.XSD.DataType.integer,
 									},
 									"property3": {
@@ -12516,12 +12530,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 										"@id": "https://schema.org/property-5",
 										"@type": NS.XSD.DataType.dateTime,
 									},
-								} ) ),
+								} ),
 							},
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
-									"@id": "property-1",
+									"@id": "https://example.com/ns#property-1",
 									"@type": NS.XSD.DataType.string,
 								},
 								"property2": {
@@ -12529,10 +12543,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@type": "@id",
 								},
 								"property4": {
-									"@id": "property-4",
+									"@id": "https://example.com/ns#property-4",
 									"@type": NS.XSD.DataType.boolean,
 								},
-							} ) ),
+							} ),
 						} ),
 						`${ context.baseURI }resource/`,
 						documents

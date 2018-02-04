@@ -14,6 +14,7 @@ import {
 	DigestedPropertyDefinition,
 	Digester,
 	PropertyDefinition,
+	Util as SchemaUtils,
 } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
 import {
@@ -97,7 +98,7 @@ export class Class {
 	withType( type:string ):this {
 		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
-		type = this._context.expandIRI( type );
+		type = SchemaUtils.resolveURI( type, this._schema, { vocab: true, base: true } );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
 			this._document.addPattern( this._typesTriple );
 
@@ -189,14 +190,13 @@ export class Class {
 	}
 
 	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
-		const uri:string = "@id" in propertyDefinition ? this._context.expandIRI( propertyDefinition[ "@id" ] ) : void 0;
+		const digestedDefinition:DigestedPropertyDefinition = Digester.digestProperty( propertyName, propertyDefinition, this._schema );
 
+		const uri:string = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
 		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
-		const digestedDefinition:DigestedPropertyDefinition = Digester.digestPropertyDefinition( this._schema, propertyName, propertyDefinition );
-
 		if( inheritDefinition ) {
 			for( const key in inheritDefinition ) {
-				if( key !== "uri" && digestedDefinition[ key ] !== null ) continue;
+				if( digestedDefinition[ key ] !== null && key !== "uri" ) continue;
 				digestedDefinition[ key ] = inheritDefinition[ key ];
 			}
 		}

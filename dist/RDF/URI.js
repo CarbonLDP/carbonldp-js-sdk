@@ -165,11 +165,11 @@ function prefixWithObjectSchema(uri, objectSchema) {
         if (result.done)
             return uri;
         var _a = result.value, prefix = _a[0], prefixURI = _a[1];
-        if (!Util.isAbsolute(prefixURI.toString()))
+        if (!Util.isAbsolute(prefixURI))
             continue;
-        if (!uri.startsWith(prefixURI.toString()))
+        if (!uri.startsWith(prefixURI))
             continue;
-        return Util.prefix(uri, prefix, prefixURI.toString());
+        return Util.prefix(uri, prefix, prefixURI);
     }
 }
 exports.default = Class;

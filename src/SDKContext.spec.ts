@@ -275,6 +275,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			// Mocked Context
 			let rawObjectSchema:ObjectSchema.Class = {
+				"@vocab": "http://example.com/vocab#",
 				"ex": "http://example.com/ns#",
 				"exTypes": "http://example.com/types#",
 				"xsd": "http://www.w3.org/2001/XMLSchema#",

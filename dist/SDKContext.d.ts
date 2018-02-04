@@ -25,7 +25,7 @@ export declare class Class implements Context.Class {
     protected extendGeneralObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema): void;
     protected extendTypeObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema, type: string): void;
     private registerDefaultObjectSchemas();
-    private resolveTypeURI(uri);
+    private _resolveTypeURI(uri);
 }
 export declare const instance: Class;
 export default instance;
