@@ -9,6 +9,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
@@ -21,14 +22,12 @@ export class Class implements Context.Class {
 
 	get parentContext():Context.Class { return null; }
 
-	protected settings:Map<string, any>;
+	protected settings:Settings.ContextSettings;
 
 	protected generalObjectSchema:ObjectSchema.DigestedObjectSchema;
 	protected typeObjectSchemaMap:Map<string, ObjectSchema.DigestedObjectSchema>;
 
 	constructor() {
-		this.settings = new Map<string, any>();
-
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
@@ -62,22 +61,17 @@ export class Class implements Context.Class {
 	}
 
 	hasSetting( name:string ):boolean {
-		return ( this.settings.has( name ) )
-			|| ( ! ! this.parentContext && this.parentContext.hasSetting( name ) );
+		return false;
 	}
 
 	getSetting( name:string ):any {
-		if( this.settings.has( name ) ) return this.settings.get( name );
-		if( this.parentContext && this.parentContext.hasSetting( name ) ) return this.parentContext.getSetting( name );
 		return null;
 	}
 
 	setSetting( name:string, value:any ):void {
-		this.settings.set( name, value );
 	}
 
 	deleteSetting( name:string ):void {
-		this.settings.delete( name );
 	}
 
 	hasObjectSchema( type:string ):boolean {

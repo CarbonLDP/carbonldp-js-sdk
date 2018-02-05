@@ -14220,7 +14220,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
@@ -14241,7 +14241,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const destinationString:string = "destination/*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" );
 
@@ -14386,7 +14386,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
@@ -14407,7 +14407,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const destinationString:string = "destination/*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
 
@@ -14510,7 +14510,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14530,7 +14530,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `off` method when the notification has been resolved", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const offSpy:jasmine.Spy = spyOn( carbon.documents, "off" );
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" )
@@ -14554,7 +14554,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" )
 					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
@@ -14593,7 +14593,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14634,7 +14634,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14675,7 +14675,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14716,7 +14716,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14757,7 +14757,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14798,7 +14798,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14839,7 +14839,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 

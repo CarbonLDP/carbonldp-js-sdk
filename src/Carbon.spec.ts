@@ -14,6 +14,7 @@ import {
 	reexports,
 	hasDefaultExport,
 	hasSignature,
+	constructor,
 } from "./test/JasmineExtender";
 
 import * as AbstractContext from "./AbstractContext";
@@ -63,14 +64,6 @@ describe( module( "Carbon" ), ():void => {
 		let myCarbon:Carbon.Class;
 
 		beforeEach( ():void => {
-			carbon = new Carbon.Class( "example.com", true );
-
-			myCarbon = new Carbon.Class( "my-carbonldp.example.com", false, {
-				"auth.method": Auth.Method.TOKEN,
-				"system.container": ".my-system/",
-				"system.roles.container": "my-roles/",
-			} );
-
 			jasmine.Ajax.install();
 		} );
 
@@ -377,17 +370,193 @@ describe( module( "Carbon" ), ():void => {
 			expect( Carbon.Class.Utils ).toBe( Utils );
 		} );
 
-		it( hasConstructor( [
-			{ name: "domain", type: "string", description: "Domain of your Carbon LDP." },
-			{ name: "ssl", type: "boolean", optional: true, defaultValue: "true", description: "If the domain is under secure connection. If not set it is considered `true`." },
-			{ name: "settings", type: "Carbon.Settings.Class", optional: true, description: "Optional configuration settings. You can also use `setSetting()` method later on." },
-		] ), ():void => {
-			// Instantiated in BeforeEach
-			expect( carbon ).toBeTruthy();
-			expect( carbon instanceof Carbon.Class ).toBe( true );
 
-			expect( myCarbon ).toBeTruthy();
-			expect( myCarbon instanceof Carbon.Class ).toBe( true );
+		fdescribe( constructor(), ():void => {
+
+			it( hasSignature( [
+				{ name: "url", type: "string", description: "The URL where the platform instance is located on." },
+			] ), ():void => {} );
+
+			it( hasSignature( [
+				{ name: "settings", type: "Carbon.Settings.Class", description: "A settings object to fully configure the Carbon instance." },
+			] ), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( Carbon.Class.constructor ).toBeDefined();
+				expect( Carbon.Class.constructor ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should be instantiable", ():void => {
+				const target:Carbon.Class = new Carbon.Class( "https://example.com/" );
+
+				expect( target ).toBeDefined();
+				expect( target ).toEqual( jasmine.any( Carbon.Class ) );
+			} );
+
+			it( "should throw error when URL has not protocol", ():void => {
+				const helper:( url:string ) => () => void = url => () => {
+					new Carbon.Class( url );
+				};
+
+				expect( helper( "example.com/" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+				expect( helper( "localhost" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+				expect( helper( "127.0.0.1" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+			} );
+
+			it( "should throw error when URL has invalid protocol", ():void => {
+				const helper:( url:string ) => () => void = url => () => {
+					new Carbon.Class( url );
+				};
+
+				expect( helper( "ftp://example.com/" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+				expect( helper( "://127.0.0.1" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
+			} );
+
+			it( "should assign the URL as the base URI with slash at the end", ():void => {
+				const helper:( url:string, uri:string ) => void = ( url, uri ) => {
+					const carbon:Carbon.Class = new Carbon.Class( url );
+					expect( carbon.baseURI ).toBe( uri );
+				};
+
+				helper( "https://example.com/", "https://example.com/" );
+				helper( "https://example.com", "https://example.com/" );
+
+				helper( "https://localhost:8083/", "https://localhost:8083/" );
+				helper( "https://localhost:8083", "https://localhost:8083/" );
+			} );
+
+
+			it( "should throw error when invalid host property", ():void => {
+				const helper:( settings:Settings.Class ) => void = settings => () => {
+					new Carbon.Class( settings );
+				};
+
+				expect( helper( { host: null } ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
+				expect( helper( { host: void 0 } ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
+				expect( helper( { host: {} } as any ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
+			} );
+
+			it( "should throw error when invalid host with protocol", ():void => {
+				const helper:( settings:Settings.Class ) => void = settings => () => {
+					new Carbon.Class( settings );
+				};
+
+				expect( helper( { host: "http://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
+				expect( helper( { host: "https://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
+				expect( helper( { host: "ftps://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
+			} );
+
+			it( "should throw error when invalid host with port", ():void => {
+				const helper:( settings:Settings.Class ) => void = settings => () => {
+					new Carbon.Class( settings );
+				};
+
+				expect( helper( { host: "example.com:80" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a port." );
+				expect( helper( { host: "example.com:8083" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a port." );
+			} );
+
+			it( "should create base URI with settings host", ():void => {
+				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+					const carbon:Carbon.Class = new Carbon.Class( settings );
+					expect( carbon.baseURI ).toBe( uri );
+				};
+
+				helper( { host: "example.com" }, "https://example.com/" );
+				helper( { host: "example.com/" }, "https://example.com/" );
+			} );
+
+			it( "should create base URI with settings host and ssl", ():void => {
+				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+					const carbon:Carbon.Class = new Carbon.Class( settings );
+					expect( carbon.baseURI ).toBe( uri );
+				};
+
+				helper( { host: "example.com", ssl: false }, "http://example.com/" );
+				helper( { host: "example.com/", ssl: true }, "https://example.com/" );
+			} );
+
+			it( "should create base URI with settings host and port", ():void => {
+				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+					const carbon:Carbon.Class = new Carbon.Class( settings );
+					expect( carbon.baseURI ).toBe( uri );
+				};
+
+				helper( { host: "example.com", port: 8083 }, "https://example.com:8083/" );
+				helper( { host: "example.com/", port: 80 }, "https://example.com:80/" );
+			} );
+
+			it( "should create base URI with settings host, ssl and port", ():void => {
+				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+					const carbon:Carbon.Class = new Carbon.Class( settings );
+					expect( carbon.baseURI ).toBe( uri );
+				};
+
+				helper( { host: "example.com", ssl: false, port: 8083 }, "http://example.com:8083/" );
+				helper( { host: "example.com/", ssl: true, port: 80 }, "https://example.com:80/" );
+			} );
+
+			it( "should create base URI with settings host, ssl and port", ():void => {
+				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+					const carbon:Carbon.Class = new Carbon.Class( settings );
+					expect( carbon.baseURI ).toBe( uri );
+				};
+
+				helper( { host: "example.com", ssl: false, port: 8083 }, "http://example.com:8083/" );
+				helper( { host: "example.com/", ssl: true, port: 80 }, "https://example.com:80/" );
+			} );
+
+
+			it( "should have the default settings when url provided", ():void => {
+				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				expect( carbon[ "settings" ] ).toEqual( {
+					vocabulary: "vocabulary/#",
+					paths: {
+						system: {
+							slug: ".system/",
+							paths: {
+								platform: "platform/",
+								instance: "instance/",
+								credentials: "credentials/",
+								users: "users/",
+								roles: "roles/",
+							},
+						},
+					},
+				} );
+			} );
+
+			it( "should merge when settings provided", ():void => {
+				const carbon:Carbon.Class = new Carbon.Class( {
+					host: "example.com",
+					vocabulary: "https://schema.org/",
+					paths: {
+						system: {
+							slug: "https://secure.example.com/",
+							paths: {
+								users: null,
+							},
+						},
+						users: "agents/",
+					},
+				} );
+
+				expect( carbon[ "settings" ] ).toEqual( {
+					vocabulary: "https://schema.org/",
+					paths: {
+						system: {
+							slug: "https://secure.example.com/",
+							paths: {
+								platform: "platform/",
+								instance: "instance/",
+								credentials: "credentials/",
+								roles: "roles/",
+							},
+						},
+						users: "agents/",
+					},
+				} );
+			} );
+
 		} );
 
 		it( hasMethod(

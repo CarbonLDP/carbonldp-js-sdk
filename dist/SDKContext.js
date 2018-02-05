@@ -15,7 +15,6 @@ var SPARQL = require("./SPARQL");
 var System = require("./System");
 var Class = (function () {
     function Class() {
-        this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
         this.auth = new Auth.Class(this);
@@ -45,21 +44,14 @@ var Class = (function () {
         return systemURI;
     };
     Class.prototype.hasSetting = function (name) {
-        return (this.settings.has(name))
-            || (!!this.parentContext && this.parentContext.hasSetting(name));
+        return false;
     };
     Class.prototype.getSetting = function (name) {
-        if (this.settings.has(name))
-            return this.settings.get(name);
-        if (this.parentContext && this.parentContext.hasSetting(name))
-            return this.parentContext.getSetting(name);
         return null;
     };
     Class.prototype.setSetting = function (name, value) {
-        this.settings.set(name, value);
     };
     Class.prototype.deleteSetting = function (name) {
-        this.settings.delete(name);
     };
     Class.prototype.hasObjectSchema = function (type) {
         type = this.resolveTypeURI(type);

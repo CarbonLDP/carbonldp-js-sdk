@@ -179,36 +179,43 @@ class A {
 
 class O {
 
-	static extend<T extends Object, W extends Object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):T & W {
+	static extend<T extends object, W extends object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T & W {
 		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return null;
 
-		let clone:T & W = <any> target;
-		(<any> source).__CarbonSDK_circularReferenceFlag = clone;
+		(<any> source).__CarbonSDK_circularReferenceFlag = target;
 
-		for( let key of Object.keys( source ) ) {
+		for( const key of Object.keys( source ) ) {
 			if( isFunction( source[ key ] ) || key === "__CarbonSDK_circularReferenceFlag" ) continue;
-			if( key in ignore ) continue;
 
 			let property:any = source[ key ];
-			if( isArray( property ) && config.arrays ||
-				isPlainObject( property ) && config.objects ) {
-
-				property = property.__CarbonSDK_circularReferenceFlag || O.clone( property, config );
+			if( isArray( property ) && config.arrays || isPlainObject( property ) && config.objects ) {
+				if( "__CarbonSDK_circularReferenceFlag" in property ) {
+					property = property.__CarbonSDK_circularReferenceFlag;
+				} else {
+					property = ! ( key in target ) || target[ key ].constructor !== property.constructor ?
+						O.clone( property, config ) :
+						O.extend( target[ key ], property, config );
+				}
 			}
 
-			clone[ key ] = property;
+			if( property === null ) {
+				if( target[ key ] ) delete target[ key ];
+				continue;
+			}
+
+			target[ key ] = property;
 		}
 
 		delete (<any> source).__CarbonSDK_circularReferenceFlag;
-		return clone;
+		return target as T & W;
 	}
 
-	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):T {
+	static clone<T extends Object>( object:T, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T {
 		let isAnArray:boolean = isArray( object );
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
 		let clone:T = <T> ( isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ) );
-		return O.extend<T, T>( clone, object, config, ignore );
+		return O.extend<T, T>( clone, object, config );
 	}
 
 	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
