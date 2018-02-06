@@ -214,7 +214,7 @@ export class Class implements Context.Class {
 	}
 
 	private resolveTypeURI( uri:string ):string {
-		const vocab:string = null;
+		const vocab:string = this.settings && this.settings.vocabulary ? this.resolve( this.settings.vocabulary ) : null;
 		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
 	}
 }

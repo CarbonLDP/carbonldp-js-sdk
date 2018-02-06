@@ -7535,7 +7535,7 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
-        var vocab = null;
+        var vocab = this.settings && this.settings.vocabulary ? this.resolve(this.settings.vocabulary) : null;
         return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
     };
     return Class;

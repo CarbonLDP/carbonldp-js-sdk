@@ -44,7 +44,7 @@ import {
 
 import * as Utils from "./Utils";
 
-fdescribe( module( "Carbon" ), ():void => {
+describe( module( "Carbon" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Carbon ).toBeDefined();
