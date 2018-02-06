@@ -70,11 +70,7 @@ export class Class {
 
 	getSchema():DigestedObjectSchema {
 		if( this._schema ) return this._schema;
-
-		this._schema = new DigestedObjectSchema();
-		this._schema.vocab = this._context.expandIRI( "" ) || null;
-
-		return this._schema;
+		return this._schema = new DigestedObjectSchema();
 	}
 
 	isOptional():boolean {

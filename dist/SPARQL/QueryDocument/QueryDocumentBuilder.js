@@ -51,7 +51,7 @@ var Class = (function () {
     Class.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
             throw new Errors_1.IllegalStateError("Types must be specified before the properties.");
-        type = this._context.expandIRI(type);
+        type = ObjectSchema_1.Util.resolveURI(type, this._schema, { vocab: true, base: true });
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addPattern(this._typesTriple);
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
@@ -123,12 +123,12 @@ var Class = (function () {
         var _a, _b;
     };
     Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
-        var uri = "@id" in propertyDefinition ? this._context.expandIRI(propertyDefinition["@id"]) : void 0;
+        var digestedDefinition = ObjectSchema_1.Digester.digestProperty(propertyName, propertyDefinition, this._schema);
+        var uri = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
         var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);
-        var digestedDefinition = ObjectSchema_1.Digester.digestPropertyDefinition(this._schema, propertyName, propertyDefinition);
         if (inheritDefinition) {
             for (var key in inheritDefinition) {
-                if (key !== "uri" && digestedDefinition[key] !== null)
+                if (digestedDefinition[key] !== null && key !== "uri")
                     continue;
                 digestedDefinition[key] = inheritDefinition[key];
             }

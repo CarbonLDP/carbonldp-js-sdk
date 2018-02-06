@@ -132,17 +132,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( "http://www.w3.org/2001/XMLSchema#string" );
 			} );
 
-			it( "should call to expandIRI method", ():void => {
-				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( queryContext, "expandIRI" );
-
-				queryContext.serializeLiteral( "xsd:string", "value" );
-				expect( spy ).toHaveBeenCalledWith( "xsd:string" );
-			} );
-
 		} );
 
-		describe( method( INSTANCE, "expandIRI" ), ():void => {
+		/*describe( method( INSTANCE, "expandIRI" ), ():void => {
 
 			it( hasSignature(
 				"Resolved the relative or prefixed IRI in an absolute one.",
@@ -187,7 +179,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( helper( "schema2:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "schema2" has not been declared.` );
 			} );
 
-		} );
+		} );*/
 
 		describe( method( INSTANCE, "compactIRI" ), ():void => {
 

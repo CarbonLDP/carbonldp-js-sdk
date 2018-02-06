@@ -20,8 +20,8 @@ function isNull( value:any ):boolean {
 	return value === null;
 }
 
-function isArray( object:any ):boolean {
-	return object instanceof Array;
+function isArray( object:any ):object is Array<any> {
+	return Array.isArray( object );
 }
 
 function isString( value:any ):value is string {

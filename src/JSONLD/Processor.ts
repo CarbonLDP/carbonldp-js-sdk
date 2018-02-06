@@ -9,7 +9,8 @@ const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
 
 export class Class {
-	static expand( input:Object ):Promise<Array<Object>> {
+
+	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
 		return this.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
@@ -191,20 +192,9 @@ export class Class {
 		return true;
 	}
 
-	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
-		if( uri === null || Class.isKeyword( uri ) || RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		if( schema.properties.has( uri ) ) return schema.properties.get( uri ).uri.stringValue;
-		if( RDF.URI.Util.isPrefixed( uri ) ) return ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
-		if( schema.prefixes.has( uri ) ) return schema.prefixes.get( uri ).stringValue;
-
-		if( relativeTo.vocab ) {
-			if( schema.vocab === null ) return null;
-			return schema.vocab + uri;
-		}
-		if( relativeTo.base ) return RDF.URI.Util.resolve( schema.base, uri );
-
-		return uri;
+	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string {
+		if( Class.isKeyword( uri ) ) return uri;
+		return ObjectSchema.Util.resolveURI( uri, schema, relativeTo );
 	}
 
 	private static expandLanguageMap( languageMap:any ):any {
@@ -230,7 +220,7 @@ export class Class {
 
 	private static getContainer( context:ObjectSchema.DigestedObjectSchema, property:string ):ObjectSchema.ContainerType {
 		if( context.properties.has( property ) ) return context.properties.get( property ).containerType;
-		return undefined;
+		return void 0;
 	}
 
 	private static expandValue( context:ObjectSchema.DigestedObjectSchema, value:any, propertyName:string ):any {
@@ -255,8 +245,8 @@ export class Class {
 		if( Class.isKeyword( propertyName ) ) return value;
 
 		let expandedValue:Object = {};
-		if( ! ! definition.literalType ) {
-			expandedValue[ "@type" ] = definition.literalType.stringValue;
+		if( definition.literalType ) {
+			expandedValue[ "@type" ] = ObjectSchema.Util.resolveURI( definition.literalType, context, { vocab: true, base: true } );
 		} else if( Utils.isString( value ) ) {
 			let language:string = Utils.isDefined( definition.language ) ? definition.language : context.language;
 			if( language !== null ) expandedValue[ "@language" ] = language;
@@ -283,25 +273,26 @@ export class Class {
 			let container:ObjectSchema.ContainerType = Class.getContainer( context, activeProperty );
 			insideList = insideList || container === ObjectSchema.ContainerType.LIST;
 
-			let expandedElement:Array<Object> = [];
-			for( let item of (<Array<any>> element) ) {
+			const expanded:object[] = [];
+			for( let item of element as any[] ) {
 				let expandedItem:any = Class.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
 				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new Error( "Lists of lists are not permitted." );
 
 				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
-				Array.prototype.push.apply( expandedElement, expandedItem );
+				expanded.push( ...expandedItem );
 			}
-			return expandedElement;
+			return expanded;
 		}
 
 		// Expand current context
 		if( "@context" in element ) {
-			context = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-				ObjectSchema.Digester.digestSchema( element[ "@context" ] ),
-				context,
-			] );
+			context = ObjectSchema.Digester
+				.combineDigestedObjectSchemas( [
+					context,
+					ObjectSchema.Digester.digestSchema( element[ "@context" ] ),
+				] );
 		}
 
 		// Recursively expand the object
@@ -437,6 +428,10 @@ export class Class {
 
 		return false;
 	}
+
+}
+
+export class Util {
 
 }
 

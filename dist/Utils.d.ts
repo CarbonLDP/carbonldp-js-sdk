@@ -3,7 +3,7 @@ declare function hasProperty(object: Object, property: string): boolean;
 declare function hasPropertyDefined(object: Object, property: string): boolean;
 declare function isDefined(value: any): boolean;
 declare function isNull(value: any): boolean;
-declare function isArray(object: any): boolean;
+declare function isArray(object: any): object is Array<any>;
 declare function isString(value: any): value is string;
 declare function isBoolean(value: any): value is boolean;
 declare function isNumber(value: any): value is number;
