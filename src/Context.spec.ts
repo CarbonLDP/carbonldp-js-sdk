@@ -67,38 +67,11 @@ describe( module( "Carbon/Context" ), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
-			"hasSetting",
-			"Returns if the context contains the provided setting.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
+			"_resolvePath",
+			"Resolves the path provided into an URL using the `path` settings of the context.", [
+				{ name: "path", type: "string", description: "The dot notation string that refers the path declared in the settings of the context." },
 			],
-			{ type: "boolean", description: "A boolean indicating if the setting exists in the current context." }
-		), ():void => {} );
-
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getSetting",
-			"Returns the value of the setting looked for.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-			],
-			{ type: "any", description: "The value of the setting looked for." }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"setSetting",
-			"Set a setting in the current context.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-				{ name: "value", type: "any", description: "The value to store as the setting specified." },
-			]
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"deleteSetting",
-			"Deletes the setting specified by the name provided from the current context.", [
-				{ name: "name", type: "string", description: "Name of the setting to delete." },
-			]
+			{ type: "string", description: "The absolute URI of the path provided." }
 		), ():void => {} );
 
 		it( hasMethod(

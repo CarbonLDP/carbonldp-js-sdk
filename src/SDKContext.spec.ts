@@ -20,7 +20,8 @@ import Context from "./Context";
 import * as ObjectSchema from "./ObjectSchema";
 
 import * as SDKContext from "./SDKContext";
-import DefaultExport from "./SDKContext";
+import { ContextSettings } from "./Settings";
+import { IllegalStateError } from "./Errors";
 
 describe( module( "Carbon/SDKContext" ), ():void => {
 
@@ -131,91 +132,232 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			expect( context.resolve( "a/relative/uri/" ) ).toBe( "a/relative/uri/" );
 		} );
 
-		xit( hasMethod(
-			INSTANCE,
-			"hasSetting",
-			"Returns true if the setting sought for has been assign.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( context.hasSetting ).toBeDefined();
-			expect( Utils.isFunction( context.hasSetting ) ).toBe( true );
+		fdescribe( method( INSTANCE, "_resolvePath" ), ():void => {
 
-			expect( context.hasSetting( "a.setting" ) ).toBe( false );
+			it( hasSignature(
+				"Resolves the path provided into an URL using the `path` settings of the context.",
+				[
+					{ name: "path", type: "string", description: "The dot notation string that refers the path declared in the settings of the context." },
+				],
+				{ type: "string", description: "The absolute URI of the path provided." }
+			), ():void => {} );
 
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-				}
+			it( "should exists", ():void => {
+				expect( SDKContext.Class.prototype._resolvePath ).toBeDefined();
+				expect( SDKContext.Class.prototype._resolvePath ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			function createContext( settings:ContextSettings = {} ):SDKContext.Class {
+				return new class extends SDKContext.Class {
+					get baseURI():string { return "https://example.com/"; }
+
+					protected settings:ContextSettings = settings;
+				};
 			}
-			let mockedContext:Context = new MyContext();
 
-			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( true );
-			expect( mockedContext.hasSetting( "another.setting" ) ).toBe( false );
-		} );
+			it( "should throw error when no settings paths", ():void => {
+				const context:SDKContext.Class = createContext( {} );
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
 
-		xit( hasMethod(
-			INSTANCE,
-			"getSetting",
-			"Returns the value of the setting looked for.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-			],
-			{ type: "any", description: "The value of the setting looked for. If no setting with the name specified exists, this value will be `null`." }
-		), ():void => {
-			expect( context.getSetting ).toBeDefined();
-			expect( Utils.isFunction( context.getSetting ) ).toBeDefined();
+				expect( helper( "document" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+			} );
 
-			expect( context.getSetting( "a.setting " ) ).toBeNull();
+			it( "should throw error when path not found in first level", ():void => {
+				const context:SDKContext.Class = createContext( { paths: {} } );
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
 
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-				}
-			}
-			let mockedContext:Context = new MyContext();
+				expect( helper( "document" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+			} );
 
-			expect( mockedContext.getSetting( "a.setting" ) ).toBe( "my setting" );
-			expect( mockedContext.getSetting( "another.setting" ) ).toBeNull();
-		} );
+			it( "should throw error when path not found in second level string", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: "document/",
+					},
+				} );
 
-		xit( hasMethod(
-			INSTANCE,
-			"setSetting",
-			"Set a setting in the current context.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-				{ name: "value", type: "any", description: "The value to store as the setting specified." },
-			]
-		), ():void => {
-			expect( context.setSetting ).toBeDefined();
-			expect( Utils.isFunction( context.setSetting ) ).toBe( true );
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
 
-			context.setSetting( "a.setting", "my setting" );
-			expect( context.hasSetting( "a.setting" ) ).toBe( true );
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
 
-			context.setSetting( "a.setting", "the same setting" );
-			expect( context.getSetting( "a.setting" ) ).toBe( "the same setting" );
-		} );
+			it( "should throw error when path not found in parent level object without paths", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+						},
+					},
+				} );
 
-		xit( hasMethod(
-			INSTANCE,
-			"deleteSetting",
-			"Deletes the setting specified by the name provided from the current context.", [
-				{ name: "name", type: "string", description: "Name of the setting to delete." },
-			]
-		), ():void => {
-			expect( context.deleteSetting ).toBeDefined();
-			expect( Utils.isFunction( context.deleteSetting ) ).toBe( true );
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
 
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-				}
-			}
-			let mockedContext:Context = new MyContext();
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
 
-			mockedContext.deleteSetting( "a.setting" );
-			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( false );
+			it( "should throw error when path not found in parent level object with empty paths", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
+
+			it( "should throw error when path not found in parent level object with not target path", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								another: "another/",
+							},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
+
+			it( "should throw error when no slug in parent level object", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							paths: {
+								subDocument: "document-1/",
+							},
+						} as any,
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+			} );
+
+			it( "should throw error when no slug in target level object", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								subDocument: {} as any,
+							},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" doesn't have a slug set.` );
+			} );
+
+			it( "should throw error when no slug in target level object", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								subDocument: {} as any,
+							},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" doesn't have a slug set.` );
+			} );
+
+
+			it( "should resolve first level path string", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: "document/",
+					},
+				} );
+
+				expect( context._resolvePath( "document" ) ).toBe( "https://example.com/document/" );
+			} );
+
+			it( "should resolve first level path object", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+						},
+					},
+				} );
+
+				expect( context._resolvePath( "document" ) ).toBe( "https://example.com/document/" );
+			} );
+
+			it( "should resolve second level path string", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: { subDocument: "sub-document-1/" },
+						},
+					},
+				} );
+
+				expect( context._resolvePath( "document.subDocument" ) ).toBe( "https://example.com/document/sub-document-1/" );
+			} );
+
+			it( "should resolve second level path object", ():void => {
+				const context:SDKContext.Class = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								subDocument: {
+									slug: "sub-document-1/",
+								},
+							},
+						},
+					},
+				} );
+
+				expect( context._resolvePath( "document.subDocument" ) ).toBe( "https://example.com/document/sub-document-1/" );
+			} );
+
 		} );
 
 		it( hasMethod(
@@ -234,6 +376,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
@@ -250,8 +393,9 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
-			mockedContext.setSetting( "vocabulary", "vocab#" );
+			// mockedContext.setSetting( "vocabulary", "vocab#" );
 
 			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
 			expect( mockedContext.hasObjectSchema( "ex:MyType" ) ).toBe( true );
@@ -287,6 +431,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
@@ -300,8 +445,9 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					return "http://example.com/" + uri;
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
-			mockedContext.setSetting( "vocabulary", "vocab#" );
+			// mockedContext.setSetting( "vocabulary", "vocab#" );
 
 			let returnedSchema:ObjectSchema.DigestedObjectSchema;
 
@@ -352,8 +498,9 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 						return "http://example.com/" + uri;
 					}
 				}
+
 				context = new MockedSDKContext();
-				context.setSetting( "vocabulary", "vocab#" );
+				// context.setSetting( "vocabulary", "vocab#" );
 				context.extendObjectSchema( {
 					"exTypes": "http://example.com/types#",
 				} );
@@ -472,6 +619,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				},
 			};
 			let objectSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
+
 			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
@@ -479,6 +627,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
 				}
 			}
+
 			let mockedContext:Context = new MyContext();
 
 			// Type schema
@@ -512,8 +661,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 	it( hasDefaultExport(
 		"Carbon.SDKContext.instance"
 	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( SDKContext.instance );
+		expect( SDKContext.default ).toBeDefined();
+		expect( SDKContext.default ).toBe( SDKContext.instance );
 	} );
 
 } );

@@ -6,6 +6,5 @@ export declare abstract class Class extends SDKContext.Class {
     protected _parentContext: Context;
     readonly parentContext: Context;
     constructor(parentContext?: Context);
-    resolve(relativeURI: string): string;
 }
 export default Class;

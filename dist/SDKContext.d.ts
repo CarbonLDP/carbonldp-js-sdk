@@ -13,11 +13,7 @@ export declare class Class implements Context.Class {
     protected typeObjectSchemaMap: Map<string, ObjectSchema.DigestedObjectSchema>;
     constructor();
     resolve(relativeURI: string): string;
-    resolveSystemURI(relativeURI: string): string;
-    hasSetting(name: string): boolean;
-    getSetting(name: string): any;
-    setSetting(name: string, value: any): void;
-    deleteSetting(name: string): void;
+    _resolvePath(path: string): string;
     hasObjectSchema(type: string): boolean;
     getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
     extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;

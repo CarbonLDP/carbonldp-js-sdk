@@ -13,6 +13,7 @@ var RDFRepresentation = require("./RDFRepresentation");
 var SHACL = require("./SHACL");
 var SPARQL = require("./SPARQL");
 var System = require("./System");
+var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class() {
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
@@ -32,26 +33,26 @@ var Class = (function () {
         configurable: true
     });
     Class.prototype.resolve = function (relativeURI) {
-        return relativeURI;
+        return RDF.URI.Util.resolve(this.baseURI, relativeURI);
     };
-    Class.prototype.resolveSystemURI = function (relativeURI) {
-        if (!this.hasSetting("system.container"))
-            throw new Errors.IllegalStateError("The \"system.container\" setting hasn't been defined.");
-        var systemContainer = this.resolve(this.getSetting("system.container"));
-        var systemURI = RDF.URI.Util.resolve(systemContainer, relativeURI);
-        if (!systemURI.startsWith(systemContainer))
-            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP.");
-        return systemURI;
-    };
-    Class.prototype.hasSetting = function (name) {
-        return false;
-    };
-    Class.prototype.getSetting = function (name) {
-        return null;
-    };
-    Class.prototype.setSetting = function (name, value) {
-    };
-    Class.prototype.deleteSetting = function (name) {
+    Class.prototype._resolvePath = function (path) {
+        var leftSearchedPaths = path.split(".");
+        var currentSearchedPaths = [];
+        var url = "";
+        var documentPaths = this.settings.paths;
+        while (leftSearchedPaths.length) {
+            var containerKey = leftSearchedPaths.shift();
+            currentSearchedPaths.push(containerKey);
+            var containerPath = documentPaths ? documentPaths[containerKey] : null;
+            if (!containerPath)
+                throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" hasn't been declared.");
+            var slug = Utils_1.isString(containerPath) ? containerPath : containerPath.slug;
+            if (!slug)
+                throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
+            url = RDF.URI.Util.resolve(url, slug);
+            documentPaths = Utils_1.isString(containerPath) ? null : containerPath.paths;
+        }
+        return this.resolve(url);
     };
     Class.prototype.hasObjectSchema = function (type) {
         type = this.resolveTypeURI(type);
@@ -81,7 +82,7 @@ var Class = (function () {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
+        var vocab = void 0;
         var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
@@ -170,8 +171,7 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     Class.prototype.resolveTypeURI = function (uri) {
-        var vocab = this.hasSetting("vocabulary") ?
-            this.resolve(this.getSetting("vocabulary")) : null;
+        var vocab = null;
         return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
     };
     return Class;

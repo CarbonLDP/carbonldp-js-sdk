@@ -13,6 +13,7 @@ import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
+import { isString } from "./Utils";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -38,40 +39,51 @@ export class Class implements Context.Class {
 	}
 
 	resolve( relativeURI:string ):string {
-		return relativeURI;
+		return RDF.URI.Util.resolve( this.baseURI, relativeURI );
 	}
 
 	/**
-	 * Resolve the URI provided in the scope of the system container of a Carbon LDP.
+	 * Resolves the path provided into an URL using the `path` settings of the context.
+	 * If such path does hasn't been declared an IllegalStateError will be thrown.
 	 *
-	 * If no `system.container` setting has been set an IllegalStateError will be thrown.
-	 * If the URI provided is outside the system container an IllegalArgumentError will be thrown.
+	 * Example: The path `system.platform` with the default setting:
+	 * ```javascript
+	 * {
+	 *  paths: {
+	 *      system: {
+	 *          slug: ".system/",
+	 *          paths: { platform: "platform/" }
+	 *      }
+	 *  }
+	 * }```,
+	 * This should resolve to something like `https://example.com/.system/platform/`.
 	 *
-	 * @param relativeURI Relative URI to be resolved.
-	 * @returns The absolute URI that has been resolved.
+	 * @param path The dot notation string that refers the path declared in the settings
+	 * of the context.
+	 *
+	 * @returns The absolute URI of the path provided.
 	 */
-	resolveSystemURI( relativeURI:string ):string {
-		if( ! this.hasSetting( "system.container" ) ) throw new Errors.IllegalStateError( `The "system.container" setting hasn't been defined.` );
-		const systemContainer:string = this.resolve( this.getSetting( "system.container" ) );
+	_resolvePath( path:string ):string {
+		const leftSearchedPaths:string[] = path.split( "." );
+		const currentSearchedPaths:string[] = [];
 
-		const systemURI:string = RDF.URI.Util.resolve( systemContainer, relativeURI );
-		if( ! systemURI.startsWith( systemContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the system container of your Carbon LDP.` );
+		let url:string = "";
+		let documentPaths:Settings.DocumentPaths[ "paths" ] = this.settings.paths;
+		while( leftSearchedPaths.length ) {
+			const containerKey:string = leftSearchedPaths.shift();
+			currentSearchedPaths.push( containerKey );
 
-		return systemURI;
-	}
+			const containerPath:string | Settings.DocumentPaths = documentPaths ? documentPaths[ containerKey ] : null;
+			if( ! containerPath ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" hasn't been declared.` );
 
-	hasSetting( name:string ):boolean {
-		return false;
-	}
+			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
+			if( ! slug ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
 
-	getSetting( name:string ):any {
-		return null;
-	}
+			url = RDF.URI.Util.resolve( url, slug );
+			documentPaths = isString( containerPath ) ? null : containerPath.paths;
+		}
 
-	setSetting( name:string, value:any ):void {
-	}
-
-	deleteSetting( name:string ):void {
+		return this.resolve( url );
 	}
 
 	hasObjectSchema( type:string ):boolean {
@@ -103,7 +115,7 @@ export class Class implements Context.Class {
 		let type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 
-		const vocab:string = this.hasSetting( "vocabulary" ) ? this.resolve( this.getSetting( "vocabulary" ) ) : void 0;
+		const vocab:string = void 0;
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema, vocab );
 
 		if( ! type ) {
@@ -202,8 +214,7 @@ export class Class implements Context.Class {
 	}
 
 	private resolveTypeURI( uri:string ):string {
-		const vocab:string = this.hasSetting( "vocabulary" ) ?
-			this.resolve( this.getSetting( "vocabulary" ) ) : null;
+		const vocab:string = null;
 		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
 	}
 }
