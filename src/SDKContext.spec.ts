@@ -2,7 +2,6 @@ import * as Auth from "./Auth";
 import * as Documents from "./Documents";
 import { IllegalStateError } from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
-import * as RDF from "./RDF";
 import * as SDKContext from "./SDKContext";
 import { ContextSettings } from "./Settings";
 
@@ -109,7 +108,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 
 		function createContext( settings?:ContextSettings, generalSchema?:ObjectSchema.DigestedObjectSchema, schemasMap?:Map<string, ObjectSchema.DigestedObjectSchema> ):ExtendedContext {
 			return new class extends SDKContext.Class {
-				get baseURI():string { return "https://example.com"; }
+				get baseURI():string { return "https://example.com/"; }
 
 				get _generalSchema():ObjectSchema.DigestedObjectSchema { return this.generalObjectSchema; }
 
@@ -412,7 +411,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 			it( "should return true when prefixed type with defined prefix in general", ():void => {
 				const context:SDKContext.Class = createContext(
 					null,
-					createSchema( { prefixes: new Map( [ [ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ] ] ) } ),
+					createSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
 					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
 				);
 
@@ -475,7 +474,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 				const context:SDKContext.Class = createContext(
 					null,
-					createSchema( { prefixes: new Map( [ [ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ] ] ) } ),
+					createSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
 					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
 				);
 
@@ -495,18 +494,80 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 				expect( context.getObjectSchema( "MyType" ) ).toBe( schema );
 			} );
 
-			it( "should return general schema when no null", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					prefixes: new Map( [
-						[ "schema", new RDF.URI.Class( "https://schema.org/" ) ],
-					] ),
-				} );
+			it( "should return general schema with base", ():void => {
 				const context:SDKContext.Class = createContext(
 					null,
-					schema
+					createSchema( {
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
 				);
 
-				expect( context.getObjectSchema() ).toBe( schema );
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://example.com/",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+			it( "should not replace base in general schema when already set", ():void => {
+				const context:SDKContext.Class = createContext(
+					null,
+					createSchema( {
+						base: "https://not-example.com/",
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://not-example.com/",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+			it( "should return general schema with vocab when setting set", ():void => {
+				const context:SDKContext.Class = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					createSchema( {
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://example.com/",
+					vocab: "https://example.com/ns#",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+			it( "should not replace vocab in general schema when already set and setting set", ():void => {
+				const context:SDKContext.Class = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					createSchema( {
+						vocab: "https://example.com/another-ns#",
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://example.com/",
+					vocab: "https://example.com/another-ns#",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
 			} );
 
 		} );
@@ -542,7 +603,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 				expect( schemasMap ).toEqual( new Map( [ [
 					"https://example.com/ns#Type",
 					createSchema( {
-						prefixes: new Map( [ [ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ] ] ),
+						prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
 					} ),
 				] ] ) );
 			} );
@@ -553,7 +614,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 					null,
 					createSchema( {
 						prefixes: new Map( [
-							[ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ],
+							[ "ex", "https://example.com/ns#" ],
 						] ),
 					} ),
 					schemasMap
@@ -566,7 +627,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 				expect( schemasMap ).toEqual( new Map( [ [
 					"https://example.com/ns#Type",
 					createSchema( {
-						prefixes: new Map( [ [ "schema", new RDF.URI.Class( "https://schema.org/" ) ] ] ),
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
 					} ),
 				] ] ) );
 			} );
@@ -586,7 +647,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 				expect( schemasMap ).toEqual( new Map( [ [
 					"https://example.com/ns#Type",
 					createSchema( {
-						prefixes: new Map( [ [ "schema", new RDF.URI.Class( "https://schema.org/" ) ] ] ),
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
 					} ),
 				] ] ) );
 			} );
@@ -594,7 +655,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 			it( "should merge when type schema exists", ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createSchema( {
-						prefixes: new Map( [ [ "schema", new RDF.URI.Class( "https://schema.org/" ) ] ] ),
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
 					} ) ],
 				] );
 				const context:SDKContext.Class = createContext( null, null, schemasMap );
@@ -607,8 +668,8 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 					"https://example.com/ns#Type",
 					createSchema( {
 						prefixes: new Map( [
-							[ "schema", new RDF.URI.Class( "https://schema.org/" ) ],
-							[ "rdfs", new RDF.URI.Class( "http://www.w3.org/2000/01/rdf-schema#" ) ],
+							[ "schema", "https://schema.org/" ],
+							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
 						] ),
 					} ),
 				] ] ) );
@@ -619,7 +680,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 					null,
 					createSchema( {
 						prefixes: new Map( [
-							[ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ],
+							[ "ex", "https://example.com/ns#" ],
 						] ),
 					} )
 				);
@@ -630,8 +691,8 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 
 				expect( context._generalSchema ).toEqual( createSchema( {
 					prefixes: new Map( [
-						[ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ],
-						[ "schema", new RDF.URI.Class( "https://schema.org/" ) ],
+						[ "ex", "https://example.com/ns#" ],
+						[ "schema", "https://schema.org/" ],
 					] ),
 				} ) );
 			} );
@@ -673,7 +734,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 					null,
 					createSchema( {
 						prefixes: new Map( [
-							[ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ],
+							[ "ex", "https://example.com/ns#" ],
 						] ),
 					} ),
 					schemasMap
@@ -703,7 +764,7 @@ fdescribe( module( "Carbon/SDKContext" ), ():void => {
 					createSchema( {
 						base: "https://example.com/",
 						prefixes: new Map( [
-							[ "ex", new RDF.URI.Class( "https://example.com/ns#" ) ],
+							[ "ex", "https://example.com/ns#" ],
 						] ),
 					} )
 				);

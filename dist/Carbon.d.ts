@@ -63,6 +63,6 @@ export declare class Class extends AbstractContext.Class {
     constructor(settings: Settings.Class);
     getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
     getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;
-    private getDocumentMetadata<T>(metadataSetting);
+    private _getDocumentMetadata<T>(metadataPath);
 }
 export default Class;

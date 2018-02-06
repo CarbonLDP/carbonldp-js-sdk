@@ -95,17 +95,15 @@ var Class = (function (_super) {
         configurable: true
     });
     Class.prototype.getPlatformMetadata = function () {
-        return this.getDocumentMetadata("system.platform.metadata");
+        return this._getDocumentMetadata("system.platform");
     };
     Class.prototype.getInstanceMetadata = function () {
-        return this.getDocumentMetadata("system.instance.metadata");
+        return this._getDocumentMetadata("system.instance");
     };
-    Class.prototype.getDocumentMetadata = function (metadataSetting) {
+    Class.prototype._getDocumentMetadata = function (metadataPath) {
         var _this = this;
-        if (!this.hasSetting(metadataSetting))
-            return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));
         return Promise.resolve()
-            .then(function () { return _this.resolveSystemURI(_this.getSetting(metadataSetting)); })
+            .then(function () { return _this._resolvePath(metadataPath); })
             .then(function (metadataURI) { return _this.documents.get(metadataURI); })
             .then(function (_a) {
             var metadataDocument = _a[0];

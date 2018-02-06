@@ -579,10 +579,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
-
-		let schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [ this.context.getObjectSchema() ] );
-		if( this.context.hasSetting( "vocabulary" ) ) schema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
-		return schema;
+		return this.context.getObjectSchema();
 	}
 
 	hasSchemaFor( object:object, path?:string ):boolean {
