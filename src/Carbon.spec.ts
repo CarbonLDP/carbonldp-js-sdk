@@ -44,7 +44,7 @@ import {
 
 import * as Utils from "./Utils";
 
-describe( module( "Carbon" ), ():void => {
+fdescribe( module( "Carbon" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Carbon ).toBeDefined();
@@ -591,37 +591,26 @@ describe( module( "Carbon" ), ():void => {
 				expect( Carbon.Class.prototype.getPlatformMetadata ).toEqual( jasmine.any( Function ) );
 			} );
 
-			xit( "should reject promise when no \"system.container\" setting declared", ( done:DoneFn ):void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				carbon.deleteSetting( "system.container" );
-				let promise:Promise<System.PlatformMetadata.Class>;
 
-				promise = carbon.getPlatformMetadata();
-				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promise
-					.then( () => done.fail( "Promise should not be resolved." ) )
+			it( "should ask for `system.platform` path", ( done:DoneFn ):void => {
+				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+
+				const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" )
+					.and.returnValue( Promise.reject( null ) );
+
+				carbon
+					.getPlatformMetadata()
+					.then( () => done.fail( "Should not resolve" ) )
 					.catch( error => {
-						expect( error.message ).toMatch( /system\.container/ );
+						if( error ) done.fail( error );
+
+						expect( spy ).toHaveBeenCalledWith( "system.platform" );
+
 						done();
 					} );
 			} );
 
-			xit( "should reject promise when no \"system.platform.metadata\" setting declared", ( done:DoneFn ):void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				carbon.deleteSetting( "system.platform.metadata" );
-				let promise:Promise<System.PlatformMetadata.Class>;
-
-				promise = carbon.getPlatformMetadata();
-				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promise
-					.then( () => done.fail( "Promise should not be resolved." ) )
-					.catch( error => {
-						expect( error.message ).toMatch( /system\.platform\.metadata/ );
-						done();
-					} );
-			} );
-
-			xit( "should retrieve a PlatformMetadata object", ( done:DoneFn ):void => {
+			it( "should retrieve a PlatformMetadata object", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
@@ -646,20 +635,25 @@ describe( module( "Carbon" ), ():void => {
 				} );
 
 				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				carbon.getPlatformMetadata().then( ( platformMetadata:System.PlatformMetadata.Class ):void => {
-					expect( platformMetadata ).toBeTruthy();
-					expect( Object.keys( platformMetadata ).length ).toBe( 2 );
+				spyOn( carbon, "_resolvePath" ).and.returnValue( "https://example.com/.system/platform/" );
 
-					expect( platformMetadata.version ).toBeDefined();
-					expect( platformMetadata.version ).toEqual( jasmine.any( String ) );
-					expect( platformMetadata.version ).toBe( "1.0.0" );
+				carbon
+					.getPlatformMetadata()
+					.then( ( platformMetadata:System.PlatformMetadata.Class ):void => {
+						expect( platformMetadata ).toBeTruthy();
+						expect( Object.keys( platformMetadata ).length ).toBe( 2 );
 
-					expect( platformMetadata.buildDate ).toBeDefined();
-					expect( platformMetadata.buildDate ).toEqual( jasmine.any( Date ) );
-					expect( platformMetadata.buildDate ).toEqual( new Date( "2016-06-01T06:00:00.000Z" ) );
+						expect( platformMetadata.version ).toBeDefined();
+						expect( platformMetadata.version ).toEqual( jasmine.any( String ) );
+						expect( platformMetadata.version ).toBe( "1.0.0" );
 
-					done();
-				} ).catch( done.fail );
+						expect( platformMetadata.buildDate ).toBeDefined();
+						expect( platformMetadata.buildDate ).toEqual( jasmine.any( Date ) );
+						expect( platformMetadata.buildDate ).toEqual( new Date( "2016-06-01T06:00:00.000Z" ) );
+
+						done();
+					} )
+					.catch( done.fail );
 			} );
 
 		} );
@@ -684,37 +678,26 @@ describe( module( "Carbon" ), ():void => {
 				expect( Carbon.Class.prototype.getInstanceMetadata ).toEqual( jasmine.any( Function ) );
 			} );
 
-			xit( "should reject promise when no \"system.container\" setting declared", ( done:DoneFn ):void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				carbon.deleteSetting( "system.container" );
-				let promise:Promise<System.InstanceMetadata.Class>;
 
-				promise = carbon.getInstanceMetadata();
-				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promise
-					.then( () => done.fail( "Promise should not be resolved." ) )
+			it( "should ask for `system.instance` path", ( done:DoneFn ):void => {
+				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+
+				const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" )
+					.and.returnValue( Promise.reject( null ) );
+
+				carbon
+					.getInstanceMetadata()
+					.then( () => done.fail( "Should not resolve" ) )
 					.catch( error => {
-						expect( error.message ).toMatch( /system\.container/ );
+						if( error ) done.fail( error );
+
+						expect( spy ).toHaveBeenCalledWith( "system.instance" );
+
 						done();
 					} );
 			} );
 
-			xit( "should reject promise when no \"system.instance.metadata\" setting declared", ( done:DoneFn ):void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				carbon.deleteSetting( "system.instance.metadata" );
-				let promise:Promise<System.InstanceMetadata.Class>;
-
-				promise = carbon.getInstanceMetadata();
-				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promise
-					.then( () => done.fail( "Promise should not be resolved." ) )
-					.catch( error => {
-						expect( error.message ).toMatch( /system\.instance\.metadata/ );
-						done();
-					} );
-			} );
-
-			xit( "should retrieve a InstanceMetadata object", ( done:DoneFn ):void => {
+			it( "should retrieve a InstanceMetadata object", ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/.system/instance/", null, "GET" ).andReturn( {
 					status: 200,
 					responseHeaders: {
@@ -742,26 +725,31 @@ describe( module( "Carbon" ), ():void => {
 				} );
 
 				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				carbon.getInstanceMetadata().then( ( instanceMetadata:System.InstanceMetadata.Class ):void => {
-					expect( instanceMetadata ).toBeTruthy();
-					expect( Object.keys( instanceMetadata ).length ).toBe( 3 );
+				spyOn( carbon, "_resolvePath" ).and.returnValue( "https://example.com/.system/instance/" );
 
-					expect( instanceMetadata.name ).toBeDefined();
-					expect( instanceMetadata.name ).toEqual( jasmine.any( String ) );
-					expect( instanceMetadata.name ).toBe( "Your instance's name" );
+				carbon
+					.getInstanceMetadata()
+					.then( ( instanceMetadata:System.InstanceMetadata.Class ):void => {
+						expect( instanceMetadata ).toBeTruthy();
+						expect( Object.keys( instanceMetadata ).length ).toBe( 3 );
 
-					expect( instanceMetadata.description ).toBeDefined();
-					expect( instanceMetadata.description ).toEqual( jasmine.any( String ) );
-					expect( instanceMetadata.description ).toBe( "Your instance's description" );
+						expect( instanceMetadata.name ).toBeDefined();
+						expect( instanceMetadata.name ).toEqual( jasmine.any( String ) );
+						expect( instanceMetadata.name ).toBe( "Your instance's name" );
 
-					expect( instanceMetadata.allowsOrigins ).toBeDefined();
-					expect( instanceMetadata.allowsOrigins ).toEqual( jasmine.any( Array ) );
-					expect( instanceMetadata.allowsOrigins.length ).toBe( 2 );
-					expect( instanceMetadata.allowsOrigins ).toContain( "http://example.com" );
-					expect( instanceMetadata.allowsOrigins ).toContain( Pointer.Factory.create( NS.CS.Class.AllOrigins ) );
+						expect( instanceMetadata.description ).toBeDefined();
+						expect( instanceMetadata.description ).toEqual( jasmine.any( String ) );
+						expect( instanceMetadata.description ).toBe( "Your instance's description" );
 
-					done();
-				} ).catch( done.fail );
+						expect( instanceMetadata.allowsOrigins ).toBeDefined();
+						expect( instanceMetadata.allowsOrigins ).toEqual( jasmine.any( Array ) );
+						expect( instanceMetadata.allowsOrigins.length ).toBe( 2 );
+						expect( instanceMetadata.allowsOrigins ).toContain( "http://example.com" );
+						expect( instanceMetadata.allowsOrigins ).toContain( Pointer.Factory.create( NS.CS.Class.AllOrigins ) );
+
+						done();
+					} )
+					.catch( done.fail );
 			} );
 
 		} );

@@ -18,7 +18,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-fdescribe( module( "Carbon/SDKContext" ), ():void => {
+describe( module( "Carbon/SDKContext" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( SDKContext ).toBeDefined();
