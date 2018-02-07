@@ -13,7 +13,10 @@ import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
-import { isString } from "./Utils";
+import {
+	isObject,
+	isString,
+} from "./Utils";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -68,7 +71,7 @@ export class Class implements Context.Class {
 		const currentSearchedPaths:string[] = [];
 
 		let url:string = "";
-		let documentPaths:Settings.DocumentPaths[ "paths" ] = this.settings.paths;
+		let documentPaths:Settings.DocumentPaths[ "paths" ] = this.settings && this.settings.paths;
 		while( leftSearchedPaths.length ) {
 			const containerKey:string = leftSearchedPaths.shift();
 			currentSearchedPaths.push( containerKey );
@@ -80,7 +83,7 @@ export class Class implements Context.Class {
 			if( ! slug ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
 
 			url = RDF.URI.Util.resolve( url, slug );
-			documentPaths = isString( containerPath ) ? null : containerPath.paths;
+			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
 		}
 
 		return this.resolve( url );

@@ -39,7 +39,7 @@ var Class = (function () {
         var leftSearchedPaths = path.split(".");
         var currentSearchedPaths = [];
         var url = "";
-        var documentPaths = this.settings.paths;
+        var documentPaths = this.settings && this.settings.paths;
         while (leftSearchedPaths.length) {
             var containerKey = leftSearchedPaths.shift();
             currentSearchedPaths.push(containerKey);
@@ -50,7 +50,7 @@ var Class = (function () {
             if (!slug)
                 throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
             url = RDF.URI.Util.resolve(url, slug);
-            documentPaths = Utils_1.isString(containerPath) ? null : containerPath.paths;
+            documentPaths = Utils_1.isObject(containerPath) ? containerPath.paths : null;
         }
         return this.resolve(url);
     };

@@ -194,7 +194,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { vocabulary: "http://example.com/vocab#" };
 				}
 			}
 

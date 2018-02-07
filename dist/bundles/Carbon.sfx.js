@@ -4672,7 +4672,7 @@ var Class = (function () {
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
-            var containerURI = _this.context.resolveSystemURI(Ticket.TICKETS_CONTAINER);
+            var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
@@ -7189,7 +7189,7 @@ var Class = (function () {
         var leftSearchedPaths = path.split(".");
         var currentSearchedPaths = [];
         var url = "";
-        var documentPaths = this.settings.paths;
+        var documentPaths = this.settings && this.settings.paths;
         while (leftSearchedPaths.length) {
             var containerKey = leftSearchedPaths.shift();
             currentSearchedPaths.push(containerKey);
@@ -7200,7 +7200,7 @@ var Class = (function () {
             if (!slug)
                 throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
             url = RDF.URI.Util.resolve(url, slug);
-            documentPaths = Utils_1.isString(containerPath) ? null : containerPath.paths;
+            documentPaths = Utils_1.isObject(containerPath) ? containerPath.paths : null;
         }
         return this.resolve(url);
     };
@@ -17051,9 +17051,7 @@ var Class = (function () {
         });
     };
     Class.prototype.getContainerURI = function () {
-        if (!this.context.hasSetting("system.roles.container"))
-            throw new Errors.IllegalStateError("The \"system.roles.container\" setting hasn't been defined.");
-        return this.context.resolveSystemURI(this.context.getSetting("system.roles.container"));
+        return this.context._resolvePath("system.roles");
     };
     return Class;
 }());
@@ -17168,7 +17166,7 @@ var Class = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
-            var tokensURI = _this.context.resolveSystemURI(exports.TOKEN_CONTAINER);
+            var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
             return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
@@ -17644,14 +17642,10 @@ var Class = (function () {
         return absoluteRoleURI;
     };
     Class.prototype.getContainerURI = function () {
-        if (!this.context.hasSetting("system.users.container"))
-            throw new Errors.IllegalStateError("The \"system.users.container\" setting hasn't been defined.");
-        return this.context.resolve(this.context.getSetting("system.users.container"));
+        return this.context._resolvePath("users");
     };
     Class.prototype.getCredentialsContainerURI = function () {
-        if (!this.context.hasSetting("system.credentials.container"))
-            throw new Errors.IllegalStateError("The \"system.credentials.container\" setting hasn't been defined.");
-        return this.context.resolveSystemURI(this.context.getSetting("system.credentials.container"));
+        return this.context._resolvePath("system.credentials");
     };
     return Class;
 }());

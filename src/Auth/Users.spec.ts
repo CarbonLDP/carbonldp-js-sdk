@@ -1,4 +1,14 @@
-import { clazz, hasConstructor, hasDefaultExport, hasMethod, hasSignature, INSTANCE, isDefined, method, module, } from "../test/JasmineExtender";
+import {
+	clazz,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+} from "../test/JasmineExtender";
 
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
@@ -62,14 +72,14 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				expect( Utils.isFunction( users.register ) ).toBe( true );
 			} );
 
-			it( "should reject promise when no \"system.container\" setting is declared", ( done:DoneFn ):void => {
+			it( "should reject promise when no \"system\" path is declared", ( done:DoneFn ):void => {
 				const context:AbstractContext = new class extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.credentials.container", "credentials/" );
+						this.settings = { paths: {} };
 					}
 				};
 				const users:Users.Class = new Users.Class( context );
@@ -79,19 +89,19 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
 					.catch( error => {
-						expect( error.message ).toContain( "system.container" );
+						expect( error.message ).toContain( "system" );
 						done();
 					} );
 			} );
 
-			it( "should reject promise when no \"system.credentials.container\" setting is declared", ( done:DoneFn ):void => {
+			it( "should reject promise when no \"system.credentials\" path is declared", ( done:DoneFn ):void => {
 				const context:AbstractContext = new class extends AbstractContext {
 					protected _baseURI:string;
 
 					constructor() {
 						super();
 						this._baseURI = "http://example.com";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: { slug: ".system/" } } };
 					}
 				};
 
@@ -102,7 +112,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
 					.catch( error => {
-						expect( error.message ).toContain( "system.credentials.container" );
+						expect( error.message ).toContain( "system.credentials" );
 						done();
 					} );
 			} );
@@ -114,8 +124,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com";
-						this.setSetting( "system.container", ".system/" );
-						this.setSetting( "system.credentials.container", "credentials/" );
+						this.settings = { paths: { system: { slug: ".system/", paths: { credentials: "credentials/" } } } };
 					}
 				};
 				const users:Users.Class = new Users.Class( context );
@@ -185,6 +194,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
+					this.settings = { paths: { system: { slug: ".system/" }, users: "users/" } };
 				}
 			}
 
@@ -198,39 +208,33 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
 
-			users.get( "http://example.com/users/an-user/" ).then( done.fail ).catch( ( stateError:Error ) => {
-				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "system.users.container", "users/" );
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			promise = users.get( "http://example.com/users/an-user/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
 
-				promise = users.get( "http://example.com/users/an-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			promise = users.get( "http://example.com/users/another-user/", options );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
 
-				promise = users.get( "http://example.com/users/another-user/", options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			promise = users.get( "http://example.com/users/another-another-user/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
 
-				promise = users.get( "http://example.com/users/another-another-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			promise = users.get( "http://example.com/not-an-users/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.catch( ( error:Error ) => {
+				expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+			} ) );
 
-				promise = users.get( "http://example.com/not-an-users/resource/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				} ) );
-
-				Promise.all( promises ).then( () => {
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
-					done();
-				} ).catch( done.fail );
-			} );
-
+			Promise.all( promises ).then( () => {
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
+				done();
+			} ).catch( done.fail );
 		} );
 
 		describe( "enableCredentials", ():void => {
@@ -245,7 +249,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				expect( users.enableCredentials ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should reject promise when no \"system.users.container\" setting is declared", ( done:DoneFn ):void => {
+			it( "should reject promise when no \"users\" setting is declared", ( done:DoneFn ):void => {
 				const context:AbstractContext = new class extends AbstractContext {
 					protected _baseURI:string;
 				};
@@ -256,7 +260,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
 					.catch( error => {
-						expect( error.message ).toContain( "system.users.container" );
+						expect( error.message ).toContain( "users" );
 						done();
 					} );
 			} );
@@ -268,7 +272,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.users.container", "users/" );
+						this.settings = { paths: { system: ".system/", users: "users/" } };
 					}
 				};
 				const users:Users.Class = new Users.Class( context );
@@ -290,7 +294,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.users.container", "users/" );
+						this.settings = { paths: { system: ".system/", users: "users/" } };
 					}
 				};
 				const users:Users.Class = new Users.Class( context );
@@ -347,7 +351,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				expect( users.disableCredentials ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should reject promise when no \"system.users.container\" setting is declared", ( done:DoneFn ):void => {
+			it( "should reject promise when no \"users\" setting is declared", ( done:DoneFn ):void => {
 				const context:AbstractContext = new class extends AbstractContext {
 					protected _baseURI:string;
 				};
@@ -358,7 +362,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
 					.catch( error => {
-						expect( error.message ).toContain( "system.users.container" );
+						expect( error.message ).toContain( "users" );
 						done();
 					} );
 			} );
@@ -370,7 +374,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.users.container", "users/" );
+						this.settings = { paths: { system: ".system/", users: "users/" } };
 					}
 				};
 				const users:Users.Class = new Users.Class( context );
@@ -392,7 +396,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.users.container", "users/" );
+						this.settings = { paths: { system: ".system/", users: "users/" } };
 					}
 				};
 				const users:Users.Class = new Users.Class( context );
@@ -455,6 +459,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
+					this.settings = { paths: { system: ".system/", users: "users/" } };
 				}
 			}
 
@@ -467,39 +472,33 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "delete" ).and.returnValue( Promise.resolve() );
 
-			users.delete( "http://example.com/users/an-user/" ).then( done.fail ).catch( ( stateError:Error ) => {
-				expect( stateError instanceof Errors.IllegalStateError ).toBe( true );
-				context.setSetting( "system.users.container", "users/" );
+			let promises:Promise<any>[] = [];
+			let promise:Promise<any>;
 
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
+			promise = users.delete( "http://example.com/users/an-user/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
 
-				promise = users.delete( "http://example.com/users/an-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			promise = users.delete( "http://example.com/users/another-user/", options );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
 
-				promise = users.delete( "http://example.com/users/another-user/", options );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			promise = users.delete( "http://example.com/users/another-another-user/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise );
 
-				promise = users.delete( "http://example.com/users/another-another-user/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise );
+			promise = users.delete( "http://example.com/not-an-users/resource/" );
+			expect( promise instanceof Promise ).toBe( true );
+			promises.push( promise.catch( ( error:Error ) => {
+				expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
+			} ) );
 
-				promise = users.delete( "http://example.com/not-an-users/resource/" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( ( error:Error ) => {
-					expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-				} ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
-					done();
-				} ).catch( done.fail );
-			} );
-
+			Promise.all( promises ).then( ():void => {
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-another-user/", undefined );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/users/another-user/", options );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/users/an-user/", undefined );
+				done();
+			} ).catch( done.fail );
 		} );
 
 	} );

@@ -293,7 +293,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 			let context:AbstractContext = new MockedContext();
@@ -322,7 +322,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 				let context:AbstractContext = new MockedContext();

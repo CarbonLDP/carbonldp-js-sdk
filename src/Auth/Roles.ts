@@ -103,8 +103,7 @@ export class Class {
 	}
 
 	private getContainerURI():string {
-		if( ! this.context.hasSetting( "system.roles.container" ) ) throw new Errors.IllegalStateError( `The "system.roles.container" setting hasn't been defined.` );
-		return this.context.resolveSystemURI( this.context.getSetting( "system.roles.container" ) );
+		return this.context._resolvePath( "system.roles" );
 	}
 
 }

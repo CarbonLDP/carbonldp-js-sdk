@@ -11,6 +11,7 @@ import {
 } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
+import { ContextSettings } from "../../Settings";
 import {
 	clazz,
 	extendsClass,
@@ -56,8 +57,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "http://example.com";
+				protected settings:ContextSettings = { vocabulary: "http://example.com/vocab#" };
 			};
-			context.setSetting( "vocabulary", "http://example.com/vocab#" );
 			context.extendObjectSchema( {
 				"ex": "http://example.com/ns#",
 			} );
