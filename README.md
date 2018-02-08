@@ -6,6 +6,9 @@
 
 Official JavaScript SDK for Carbon LDP applications, which simplifies the use of Carbon's REST API.
 
+## JavaScript SDK User Guide
+For information on how to use the SDK in your front-end development, please refer to the [JavaScript SDK user guide](https://carbonldp.com/documentation/v1.0.x/javascript-sdk/) on the Carbon LDP website.
+
 ## Development setup
 1. Install dependencies
     - [node.js 6+](https://nodejs.org/en/)
