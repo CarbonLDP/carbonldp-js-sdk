@@ -1,29 +1,25 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	decoratedObject,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
 import * as Fragment from "./Fragment";
 import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedResource from "./PersistedResource";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
 
 import * as PersistedFragment from "./PersistedFragment";
 import DefaultExport from "./PersistedFragment";
+import * as PersistedResource from "./PersistedResource";
+import {
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/PersistedFragment" ), ():void => {
 
@@ -97,12 +93,14 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = {
+							vocabulary: "http://example.com/vocab#",
+							paths: { system: ".system/" },
+						};
 					}
 				}
 
 				let context:AbstractContext = new MockedContext();
-				context.setSetting( "vocabulary", "vocab#" );
 				context.extendObjectSchema( {
 					"exTypes": "http://example.com/types#",
 					"another": "http://example.com/another-url/ns#",

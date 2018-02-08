@@ -8,11 +8,11 @@ export interface Class extends PersistedResource.Class, Fragment.Class {
 	document:PersistedDocument.Class;
 }
 
-function resolveURI( uri:string ):string {
+function resolveURI( this:Class, uri:string ):string {
 	if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-	let schema:ObjectSchema.DigestedObjectSchema = (<Class> this).document._documents.getGeneralSchema();
-	return ObjectSchema.Util.resolveURI( uri, schema );
+	let schema:ObjectSchema.DigestedObjectSchema = this.document._documents.getGeneralSchema();
+	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
 }
 
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {

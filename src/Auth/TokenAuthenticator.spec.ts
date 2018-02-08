@@ -67,7 +67,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -89,7 +89,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -143,7 +143,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						constructor() {
 							super();
 							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
+							this.settings = { paths: { system: ".system/" } };
 						}
 					}
 					let context:AbstractContext = new MockedContext();
@@ -163,7 +163,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						constructor() {
 							super();
 							this._baseURI = "http://successful.example.com/";
-							this.setSetting( "system.container", ".system/" );
+							this.settings = { paths: { system: ".system/" } };
 						}
 					}
 
@@ -251,7 +251,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						constructor() {
 							super();
 							this._baseURI = "http://unsuccessful.example.com/";
-							this.setSetting( "system.container", ".system/" );
+							this.settings = { paths: { system: ".system/" } };
 						}
 					}
 
@@ -289,7 +289,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 				let context:AbstractContext = new MockedContext();
@@ -394,7 +394,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -411,7 +411,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -451,7 +451,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://successfull.example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -495,7 +495,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://successfull.example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -543,7 +543,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -592,7 +592,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -647,7 +647,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
@@ -668,7 +668,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 

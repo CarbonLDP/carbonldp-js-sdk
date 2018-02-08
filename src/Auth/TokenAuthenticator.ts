@@ -73,7 +73,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
-			const tokensURI:string = this.context.resolveSystemURI( TOKEN_CONTAINER );
+			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
 			return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
 		} ).then<[ Token.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );

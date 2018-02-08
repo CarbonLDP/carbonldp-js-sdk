@@ -3,6 +3,8 @@ import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
 	DigestedPropertyDefinition,
+	Digester,
+	Util as SchemaUtils,
 } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
@@ -53,10 +55,11 @@ export class Class extends QueryContext.Class {
 
 		for( const schema of schemas ) {
 			if( ! schema.properties.has( propertyName ) ) continue;
-			const digestedProperty:DigestedPropertyDefinition = schema.properties.get( propertyName );
 
-			if( propertyURI && digestedProperty.uri.stringValue !== propertyURI ) continue;
-			return digestedProperty;
+			const mergeSchema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [ existingSchema, schema ] );
+			const digestedProperty:DigestedPropertyDefinition = SchemaUtils.resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
+
+			if( ! propertyURI || propertyURI === digestedProperty.uri ) return digestedProperty;
 		}
 	}
 

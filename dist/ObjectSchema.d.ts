@@ -1,4 +1,3 @@
-import * as RDF from "./RDF";
 export interface PropertyDefinition {
     "@id"?: string;
     "@type"?: string;
@@ -8,9 +7,9 @@ export interface PropertyDefinition {
 export interface Class {
     "@base"?: string;
     "@vocab"?: string;
-    "@index"?: Object;
+    "@index"?: object;
     "@language"?: string;
-    "@reverse"?: Object;
+    "@reverse"?: object;
     [name: string]: (string | PropertyDefinition);
 }
 export declare enum ContainerType {
@@ -22,22 +21,21 @@ export declare enum PointerType {
     ID = 0,
     VOCAB = 1,
 }
+export declare class DigestedPropertyDefinition {
+    uri: string;
+    literal: boolean;
+    literalType: string;
+    pointerType: PointerType;
+    language?: string;
+    containerType: ContainerType;
+}
 export declare class DigestedObjectSchema {
     base: string;
     language: string;
     vocab: string;
-    prefixes: Map<string, RDF.URI.Class>;
+    prefixes: Map<string, string>;
     properties: Map<string, DigestedPropertyDefinition>;
-    prefixedURIs: Map<string, RDF.URI.Class[]>;
     constructor();
-}
-export declare class DigestedPropertyDefinition {
-    uri: RDF.URI.Class;
-    literal: boolean;
-    literalType: RDF.URI.Class;
-    pointerType: PointerType;
-    language: string;
-    containerType: ContainerType;
 }
 export interface Resolver {
     getGeneralSchema(): DigestedObjectSchema;
@@ -45,17 +43,18 @@ export interface Resolver {
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
 export declare class Digester {
-    static digestSchema(schemas: Class[], vocab?: string): DigestedObjectSchema;
-    static digestSchema(schema: Class, vocab?: string): DigestedObjectSchema;
+    static digestSchema(schema: Class): DigestedObjectSchema;
+    static digestSchema(schemas: Class[]): DigestedObjectSchema;
+    static digestProperty(name: string, definition: PropertyDefinition, digestedSchema?: DigestedObjectSchema): DigestedPropertyDefinition;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-    static digestPropertyDefinition(digestedSchema: DigestedObjectSchema, propertyName: string, propertyDefinition: PropertyDefinition, vocab?: string): DigestedPropertyDefinition;
-    static resolvePrefixedURI(uri: string, digestedSchema: DigestedObjectSchema): string;
-    private static _resolveURI(uri, digestedSchema, vocab?);
-    private static _resolvePrefixedURI(uri, digestedSchema);
-    private static digestSingleSchema(schema, vocab?);
-    private static resolvePrefixedURIs(digestedSchema);
+    private static _digestSchema(schema);
+    private static _combineSchemas(digestedSchemas);
 }
 export declare class Util {
-    static resolveURI(uri: string, schema: DigestedObjectSchema, vocab?: string): string;
+    static resolveURI(uri: string, schema: DigestedObjectSchema, relativeTo?: {
+        vocab?: boolean;
+        base?: boolean;
+    }): string;
+    static resolveProperty(schema: DigestedObjectSchema, definition: DigestedPropertyDefinition, inSame?: boolean): DigestedPropertyDefinition;
 }
 export default Class;

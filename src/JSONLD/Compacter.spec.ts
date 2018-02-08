@@ -836,14 +836,14 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							Digester.digestSchema( {
 								"@vocab": "https://example.com/ns#",
 								"pointer1": {
-									"@id": "pointer-1",
+									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
 							Digester.digestSchema( {
 								"@vocab": "https://example.com/ns#",
 								"pointer2": {
-									"@id": "pointer-2",
+									"@id": "https://example.com/ns#pointer-2",
 									"@type": "@id",
 								},
 							} );

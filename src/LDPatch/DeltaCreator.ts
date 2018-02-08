@@ -15,6 +15,7 @@ import {
 } from "sparqler/tokens";
 
 import { Converter } from "../JSONLD";
+import { guessXSDType } from "../JSONLD/Utils";
 import { XSD } from "../NS";
 import {
 	ContainerType,
@@ -23,15 +24,8 @@ import {
 	PointerType,
 } from "../ObjectSchema";
 import * as Pointer from "../Pointer";
-import { URI } from "../RDF";
 import * as Resource from "../Resource";
-import {
-	isBoolean,
-	isDate,
-	isFunction,
-	isNumber,
-	isString,
-} from "../Utils";
+import { isString } from "../Utils";
 
 import {
 	AddToken,
@@ -190,7 +184,7 @@ export class Class {
 	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
 		const propertyDefinition:DigestedPropertyDefinition = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
-			propertyDefinition.uri.stringValue :
+			propertyDefinition.uri :
 			propertyName;
 
 		return this.compactIRI( schema, uri );
@@ -237,7 +231,7 @@ export class Class {
 
 			const tempDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
 			tempDefinition.language = key;
-			tempDefinition.literalType = new URI.Class( XSD.DataType.string );
+			tempDefinition.literalType = XSD.DataType.string;
 
 			return this.expandLiteral( value, schema, tempDefinition );
 		} ).filter( isValidValue );
@@ -254,8 +248,8 @@ export class Class {
 
 	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):LiteralToken {
 		const type:string = definition && definition.literalType ?
-			definition.literalType.stringValue :
-			guessType( value );
+			definition.literalType :
+			guessXSDType( value );
 
 		if( ! this.jsonldConverter.literalSerializers.has( type ) ) return null;
 
@@ -271,13 +265,12 @@ export class Class {
 	private compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
 		if( isRelative( iri ) && schema.vocab ) iri = schema.vocab + iri;
 
-		const matchPrefix:[ string, URI.Class ] = Array.from( schema.prefixes.entries() )
-			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI.stringValue ) );
+		const matchPrefix:[ string, string ] = Array.from( schema.prefixes.entries() )
+			.find( ( [ , prefixURI ] ) => iri.startsWith( prefixURI ) );
 
-		if( matchPrefix === void 0 ) return new IRIToken( iri );
+		if( ! matchPrefix ) return new IRIToken( iri );
 
-		const [ namespace, { stringValue: prefixIRI } ] = matchPrefix;
-		return new PrefixedNameToken( namespace, iri.substr( prefixIRI.length ) );
+		return new PrefixedNameToken( matchPrefix[ 0 ], iri.substr( matchPrefix[ 1 ].length ) );
 	}
 
 	private addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
@@ -294,26 +287,10 @@ export class Class {
 		const namespace:string = object.namespace;
 		if( this.prefixesMap.has( namespace ) ) return;
 
-		const iri:string = schema.prefixes.get( namespace ).stringValue;
+		const iri:string = schema.prefixes.get( namespace );
 		this.prefixesMap.set( namespace, new PrefixToken( namespace, new IRIToken( iri ) ) );
 	}
 
-}
-
-function guessType( value:any ):string {
-	if( isFunction( value ) )
-		return null;
-
-	if( isString( value ) )
-		return XSD.DataType.string;
-	if( isDate( value ) )
-		return XSD.DataType.dateTime;
-	if( isNumber( value ) )
-		return XSD.DataType.float;
-	if( isBoolean( value ) )
-		return XSD.DataType.boolean;
-
-	return null;
 }
 
 function getArrayDelta( oldValues:ObjectToken[], newValues:ObjectToken[] ):ArrayDelta {
