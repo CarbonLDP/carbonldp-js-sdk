@@ -1,65 +1,26 @@
+import * as Settings from "./Settings";
+
 import {
-	OPTIONAL,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
 	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OPTIONAL,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import * as Auth from "./Auth";
-
-import * as settings from "./Settings";
-import defaultExport from "./Settings";
 
 describe( module( "Carbon/Settings" ), ():void => {
 
 	it( isDefined(), ():void => {
-		expect( settings ).toBeDefined();
-		expect( Utils.isObject( settings ) ).toBe( true );
+		expect( Settings ).toBeDefined();
+		expect( Utils.isObject( Settings ) ).toBe( true );
 	} );
 
 	describe( interfaze(
 		"Carbon.Settings.Class",
 		"Interface that represents the possible settings used by the SDK."
 	), ():void => {
-
-		it( hasProperty(
-			OPTIONAL,
-			"auth.method",
-			"Carbon.Auth.Method",
-			"(Not supported) Indicates the default method of authentication to use."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"system.container",
-			"string",
-			"URI relative to the domain that indicates the slug of the system container."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"system.users.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the users container."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"system.credentials.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the user's credentials container."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"system.roles.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the roles container."
-		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -71,36 +32,27 @@ describe( module( "Carbon/Settings" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.settings", `
-		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
-		* auth.method: \`Carbon.Auth.Method.TOKEN\`
-		* system.container: \`".system/"\`
-		* system.users.container: \`"users/"\`
-		* system.credentials.container: \`"credentials/"\`
-		* system.roles.container: \`"roles/"\`
-		* vocabulary: \`"vocabulary/#"\`
-		`
+		"Carbon.Settings.defaultSettings",
+		"A object of type `Carbon.Settings.InternalSettings`, which is the default internal settings of a Carbon instance."
 	), ():void => {
-		expect( defaultExport ).toBeDefined();
-		expect( Utils.isObject( defaultExport ) ).toBe( true );
+		expect( Settings.default ).toBeDefined();
+		expect( Settings.default ).toBe( Settings.defaultSettings );
+		expect( Settings.default ).toEqual( jasmine.any( Object ) );
 
-		expect( defaultExport[ "auth.method" ] ).toBeDefined();
-		expect( defaultExport[ "auth.method" ] ).toBe( Auth.Method.TOKEN );
+		expect( Settings.default[ "system.container" ] ).toBeDefined();
+		expect( Settings.default[ "system.container" ] ).toBe( ".system/" );
 
-		expect( defaultExport[ "system.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.container" ] ).toBe( ".system/" );
+		expect( Settings.default[ "system.roles.container" ] ).toBeDefined();
+		expect( Settings.default[ "system.roles.container" ] ).toBe( "roles/" );
 
-		expect( defaultExport[ "system.roles.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.roles.container" ] ).toBe( "roles/" );
+		expect( Settings.default[ "system.users.container" ] ).toBeDefined();
+		expect( Settings.default[ "system.users.container" ] ).toBe( "users/" );
 
-		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
+		expect( Settings.default[ "system.users.container" ] ).toBeDefined();
+		expect( Settings.default[ "system.credentials.container" ] ).toBe( "credentials/" );
 
-		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.credentials.container" ] ).toBe( "credentials/" );
-
-		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
-		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );
+		expect( Settings.default[ "vocabulary" ] ).toBeDefined();
+		expect( Settings.default[ "vocabulary" ] ).toBe( "vocabulary/#" );
 	} );
 
 } );

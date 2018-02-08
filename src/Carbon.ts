@@ -75,8 +75,13 @@ export class Class extends AbstractContext.Class {
 		if( ! domain.endsWith( "/" ) ) domain = domain + "/";
 		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
-		settings = settings ? Utils.extend( {}, Settings.defaultSettings, settings ) : Settings.defaultSettings;
-		Utils.M.extend( this.settings, Utils.M.from( settings ) );
+		const internalSettings:Settings.InternalSettings = {
+			...Settings.defaultSettings,
+			...! settings ? {} : <Settings.Class> {
+				vocabulary: settings.vocabulary,
+			},
+		};
+		Utils.M.extend( this.settings, Utils.M.from( internalSettings ) );
 
 		this.messaging = new Messaging.Service.Class( this );
 	}

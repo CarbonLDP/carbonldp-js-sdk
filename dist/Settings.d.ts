@@ -1,13 +1,13 @@
-import * as Auth from "./Auth";
 export interface Class {
-    "auth.method"?: Auth.Method;
+    "vocabulary"?: string;
+}
+export interface InternalSettings extends Class {
     "system.container"?: string;
     "system.platform.metadata"?: string;
     "system.instance.metadata"?: string;
     "system.users.container"?: string;
     "system.credentials.container"?: string;
     "system.roles.container"?: string;
-    "vocabulary"?: string;
 }
-export declare const defaultSettings: Class;
+export declare const defaultSettings: InternalSettings;
 export default defaultSettings;

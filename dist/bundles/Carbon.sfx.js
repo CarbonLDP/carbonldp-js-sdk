@@ -537,13 +537,13 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(34));
+__export(__webpack_require__(33));
 __export(__webpack_require__(86));
 __export(__webpack_require__(59));
 __export(__webpack_require__(195));
 __export(__webpack_require__(46));
 __export(__webpack_require__(60));
-__export(__webpack_require__(33));
+__export(__webpack_require__(32));
 __export(__webpack_require__(21));
 __export(__webpack_require__(196));
 __export(__webpack_require__(197));
@@ -3403,213 +3403,6 @@ module.exports = AjaxBasedTransport;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACE = __webpack_require__(76);
-exports.ACE = ACE;
-var ACL = __webpack_require__(77);
-exports.ACL = ACL;
-var BasicAuthenticator_1 = __webpack_require__(80);
-exports.BasicAuthenticator = BasicAuthenticator_1.default;
-var Credentials = __webpack_require__(83);
-exports.Credentials = Credentials;
-var PersistedACE = __webpack_require__(221);
-exports.PersistedACE = PersistedACE;
-var PersistedACL = __webpack_require__(222);
-exports.PersistedACL = PersistedACL;
-var PersistedCredentials = __webpack_require__(101);
-exports.PersistedCredentials = PersistedCredentials;
-var PersistedRole = __webpack_require__(102);
-exports.PersistedRole = PersistedRole;
-var PersistedUser = __webpack_require__(66);
-exports.PersistedUser = PersistedUser;
-var Role = __webpack_require__(223);
-exports.Role = Role;
-var Roles = __webpack_require__(224);
-exports.Roles = Roles;
-var Ticket = __webpack_require__(225);
-exports.Ticket = Ticket;
-var Token = __webpack_require__(103);
-exports.Token = Token;
-var TokenAuthenticator_1 = __webpack_require__(226);
-exports.TokenAuthenticator = TokenAuthenticator_1.default;
-var User = __webpack_require__(237);
-exports.User = User;
-var UsernameAndPasswordToken_1 = __webpack_require__(104);
-exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
-var Users = __webpack_require__(238);
-exports.Users = Users;
-var Errors = __webpack_require__(3);
-var FreeResources = __webpack_require__(105);
-var HTTP = __webpack_require__(16);
-var JSONLD = __webpack_require__(30);
-var NS = __webpack_require__(1);
-var RDF = __webpack_require__(9);
-var Resource = __webpack_require__(10);
-var Utils = __webpack_require__(0);
-var Method;
-(function (Method) {
-    Method[Method["BASIC"] = 0] = "BASIC";
-    Method[Method["TOKEN"] = 1] = "TOKEN";
-})(Method = exports.Method || (exports.Method = {}));
-var Class = (function () {
-    function Class(context) {
-        this.roles = new Roles.Class(this.context);
-        this.users = new Users.Class(this.context);
-        this.context = context;
-        this.authenticators = [];
-        this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
-        this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
-    }
-    Object.defineProperty(Class.prototype, "authenticatedUser", {
-        get: function () {
-            if (!this._authenticatedUser) {
-                if (this.context.parentContext && this.context.parentContext.auth)
-                    return this.context.parentContext.auth.authenticatedUser;
-                return null;
-            }
-            return this._authenticatedUser;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Class.prototype.isAuthenticated = function (askParent) {
-        if (askParent === void 0) { askParent = true; }
-        return ((this.authenticator && this.authenticator.isAuthenticated()) ||
-            (askParent && !!this.context.parentContext && !!this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated()));
-    };
-    Class.prototype.authenticate = function (username, password) {
-        return this.authenticateUsing("TOKEN", username, password);
-    };
-    Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
-        switch (method) {
-            case "BASIC":
-                return this.authenticateWithBasic(userOrTokenOrCredentials, password);
-            case "TOKEN":
-                return this.authenticateWithToken(userOrTokenOrCredentials, password);
-            default:
-                return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
-        }
-    };
-    Class.prototype.addAuthentication = function (requestOptions) {
-        if (this.isAuthenticated(false)) {
-            this.authenticator.addAuthentication(requestOptions);
-        }
-        else if (!!this.context.parentContext && !!this.context.parentContext.auth) {
-            this.context.parentContext.auth.addAuthentication(requestOptions);
-        }
-        else {
-            console.warn("There is no authentication to add to the request.");
-        }
-    };
-    Class.prototype.clearAuthentication = function () {
-        if (!this.authenticator)
-            return;
-        this.authenticator.clearAuthentication();
-        this.authenticator = null;
-        this._authenticatedUser = null;
-    };
-    Class.prototype.createTicket = function (uri, requestOptions) {
-        var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
-        var resourceURI = this.context.resolve(uri);
-        var freeResources = FreeResources.Factory.create(this.context.documents);
-        Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
-        if (this.isAuthenticated())
-            this.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-        return Promise.resolve().then(function () {
-            var containerURI = _this.context.resolveSystemURI(Ticket.TICKETS_CONTAINER);
-            return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())
-                .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
-        }).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });
-            if (ticketNodes.length === 0)
-                throw new HTTP.Errors.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
-            if (ticketNodes.length > 1)
-                throw new HTTP.Errors.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
-            var expandedTicket = ticketNodes[0];
-            var ticket = Resource.Factory.create();
-            var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
-            _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
-            return [ticket, response];
-        });
-    };
-    Class.prototype.getAuthenticatedURL = function (uri, requestOptions) {
-        var resourceURI = this.context.resolve(uri);
-        return this.createTicket(resourceURI, requestOptions).then(function (_a) {
-            var ticket = _a[0], response = _a[1];
-            resourceURI += RDF.URI.Util.hasQuery(resourceURI) ? "&" : "?";
-            resourceURI += "ticket=" + ticket.ticketKey;
-            return resourceURI;
-        });
-    };
-    Class.prototype.authenticateWithBasic = function (username, password) {
-        var _this = this;
-        var authenticator = this.authenticators[Method.BASIC];
-        var authenticationToken;
-        authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
-        this.clearAuthentication();
-        var credentials;
-        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
-            credentials = _credentials;
-            return _this.getAuthenticatedUser(authenticator);
-        }).then(function (persistedUser) {
-            _this._authenticatedUser = persistedUser;
-            _this.authenticator = authenticator;
-            return credentials;
-        });
-    };
-    Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
-        var _this = this;
-        var authenticator = this.authenticators[Method.TOKEN];
-        var credentials = null;
-        var authenticationToken = null;
-        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
-            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
-        }
-        else if (Token.Factory.hasRequiredValues(userOrTokenOrCredentials)) {
-            credentials = userOrTokenOrCredentials;
-        }
-        else {
-            return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
-        }
-        this.clearAuthentication();
-        return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
-            credentials = _credentials;
-            if (PersistedUser.Factory.is(credentials.user))
-                return credentials.user;
-            return _this.getAuthenticatedUser(authenticator);
-        }).then(function (persistedUser) {
-            _this._authenticatedUser = persistedUser;
-            credentials.user = persistedUser;
-            _this.authenticator = authenticator;
-            return credentials;
-        });
-    };
-    Class.prototype.getAuthenticatedUser = function (authenticator) {
-        var requestOptions = {};
-        authenticator.addAuthentication(requestOptions);
-        return this.context.documents.get("users/me/", requestOptions).then(function (_a) {
-            var userDocument = _a[0], response = _a[1];
-            return userDocument;
-        });
-    };
-    return Class;
-}());
-exports.Class = Class;
-exports.default = Class;
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var Compacter = __webpack_require__(192);
 exports.Compacter = Compacter;
 var Converter = __webpack_require__(63);
@@ -3621,7 +3414,7 @@ exports.Processor = Processor;
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4165,7 +3958,7 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4181,7 +3974,7 @@ __export(__webpack_require__(58));
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4197,7 +3990,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Identifier_1 = __webpack_require__(34);
+var Identifier_1 = __webpack_require__(33);
 var NewLineSymbol_1 = __webpack_require__(59);
 var Operator_1 = __webpack_require__(46);
 var RightSymbol_1 = __webpack_require__(60);
@@ -4228,7 +4021,7 @@ exports.default = StringLiteral;
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4244,7 +4037,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var StringLiteral_1 = __webpack_require__(33);
+var StringLiteral_1 = __webpack_require__(32);
 var Token_1 = __webpack_require__(21);
 var Identifier = (function (_super) {
     __extends(Identifier, _super);
@@ -4270,7 +4063,7 @@ exports.default = Identifier;
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4290,7 +4083,7 @@ exports.joinPatterns = function (patterns) {
 
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4411,7 +4204,7 @@ exports.areDifferentType = areDifferentType;
 
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4440,7 +4233,7 @@ exports.ValidationError = ValidationError;
 
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4464,7 +4257,7 @@ module.exports = XHRLocalObject;
 
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4499,7 +4292,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4507,7 +4300,7 @@ module.exports = {
 
 var eventUtils = __webpack_require__(22)
   , JSON3 = __webpack_require__(20)
-  , browser = __webpack_require__(39)
+  , browser = __webpack_require__(38)
   ;
 
 var debug = function() {};
@@ -4693,14 +4486,14 @@ if (global.document) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var XSD = __webpack_require__(291);
-var StringLiteral_1 = __webpack_require__(33);
+var StringLiteral_1 = __webpack_require__(32);
 var tokens_1 = __webpack_require__(6);
 var PatternBuilder_1 = __webpack_require__(132);
 function serialize(object) {
@@ -4729,6 +4522,213 @@ function addType(value, type) {
 exports.addType = addType;
 
 //# sourceMappingURL=ObjectPattern.js.map
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ACE = __webpack_require__(76);
+exports.ACE = ACE;
+var ACL = __webpack_require__(77);
+exports.ACL = ACL;
+var BasicAuthenticator_1 = __webpack_require__(80);
+exports.BasicAuthenticator = BasicAuthenticator_1.default;
+var Credentials = __webpack_require__(83);
+exports.Credentials = Credentials;
+var PersistedACE = __webpack_require__(221);
+exports.PersistedACE = PersistedACE;
+var PersistedACL = __webpack_require__(222);
+exports.PersistedACL = PersistedACL;
+var PersistedCredentials = __webpack_require__(101);
+exports.PersistedCredentials = PersistedCredentials;
+var PersistedRole = __webpack_require__(102);
+exports.PersistedRole = PersistedRole;
+var PersistedUser = __webpack_require__(66);
+exports.PersistedUser = PersistedUser;
+var Role = __webpack_require__(223);
+exports.Role = Role;
+var Roles = __webpack_require__(224);
+exports.Roles = Roles;
+var Ticket = __webpack_require__(225);
+exports.Ticket = Ticket;
+var Token = __webpack_require__(103);
+exports.Token = Token;
+var TokenAuthenticator_1 = __webpack_require__(226);
+exports.TokenAuthenticator = TokenAuthenticator_1.default;
+var User = __webpack_require__(237);
+exports.User = User;
+var UsernameAndPasswordToken_1 = __webpack_require__(104);
+exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
+var Users = __webpack_require__(238);
+exports.Users = Users;
+var Errors = __webpack_require__(3);
+var FreeResources = __webpack_require__(105);
+var HTTP = __webpack_require__(16);
+var JSONLD = __webpack_require__(29);
+var NS = __webpack_require__(1);
+var RDF = __webpack_require__(9);
+var Resource = __webpack_require__(10);
+var Utils = __webpack_require__(0);
+var Method;
+(function (Method) {
+    Method[Method["BASIC"] = 0] = "BASIC";
+    Method[Method["TOKEN"] = 1] = "TOKEN";
+})(Method = exports.Method || (exports.Method = {}));
+var Class = (function () {
+    function Class(context) {
+        this.roles = new Roles.Class(this.context);
+        this.users = new Users.Class(this.context);
+        this.context = context;
+        this.authenticators = [];
+        this.authenticators[Method.BASIC] = new BasicAuthenticator_1.default();
+        this.authenticators[Method.TOKEN] = new TokenAuthenticator_1.default(this.context);
+    }
+    Object.defineProperty(Class.prototype, "authenticatedUser", {
+        get: function () {
+            if (!this._authenticatedUser) {
+                if (this.context.parentContext && this.context.parentContext.auth)
+                    return this.context.parentContext.auth.authenticatedUser;
+                return null;
+            }
+            return this._authenticatedUser;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Class.prototype.isAuthenticated = function (askParent) {
+        if (askParent === void 0) { askParent = true; }
+        return ((this.authenticator && this.authenticator.isAuthenticated()) ||
+            (askParent && !!this.context.parentContext && !!this.context.parentContext.auth && this.context.parentContext.auth.isAuthenticated()));
+    };
+    Class.prototype.authenticate = function (username, password) {
+        return this.authenticateUsing("TOKEN", username, password);
+    };
+    Class.prototype.authenticateUsing = function (method, userOrTokenOrCredentials, password) {
+        switch (method) {
+            case "BASIC":
+                return this.authenticateWithBasic(userOrTokenOrCredentials, password);
+            case "TOKEN":
+                return this.authenticateWithToken(userOrTokenOrCredentials, password);
+            default:
+                return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
+        }
+    };
+    Class.prototype.addAuthentication = function (requestOptions) {
+        if (this.isAuthenticated(false)) {
+            this.authenticator.addAuthentication(requestOptions);
+        }
+        else if (!!this.context.parentContext && !!this.context.parentContext.auth) {
+            this.context.parentContext.auth.addAuthentication(requestOptions);
+        }
+        else {
+            console.warn("There is no authentication to add to the request.");
+        }
+    };
+    Class.prototype.clearAuthentication = function () {
+        if (!this.authenticator)
+            return;
+        this.authenticator.clearAuthentication();
+        this.authenticator = null;
+        this._authenticatedUser = null;
+    };
+    Class.prototype.createTicket = function (uri, requestOptions) {
+        var _this = this;
+        if (requestOptions === void 0) { requestOptions = {}; }
+        var resourceURI = this.context.resolve(uri);
+        var freeResources = FreeResources.Factory.create(this.context.documents);
+        Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
+        if (this.isAuthenticated())
+            this.addAuthentication(requestOptions);
+        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        return Promise.resolve().then(function () {
+            var containerURI = _this.context.resolveSystemURI(Ticket.TICKETS_CONTAINER);
+            return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())
+                .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
+        }).then(function (_a) {
+            var expandedResult = _a[0], response = _a[1];
+            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });
+            if (ticketNodes.length === 0)
+                throw new HTTP.Errors.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
+            if (ticketNodes.length > 1)
+                throw new HTTP.Errors.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
+            var expandedTicket = ticketNodes[0];
+            var ticket = Resource.Factory.create();
+            var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
+            _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
+            return [ticket, response];
+        });
+    };
+    Class.prototype.getAuthenticatedURL = function (uri, requestOptions) {
+        var resourceURI = this.context.resolve(uri);
+        return this.createTicket(resourceURI, requestOptions).then(function (_a) {
+            var ticket = _a[0], response = _a[1];
+            resourceURI += RDF.URI.Util.hasQuery(resourceURI) ? "&" : "?";
+            resourceURI += "ticket=" + ticket.ticketKey;
+            return resourceURI;
+        });
+    };
+    Class.prototype.authenticateWithBasic = function (username, password) {
+        var _this = this;
+        var authenticator = this.authenticators[Method.BASIC];
+        var authenticationToken;
+        authenticationToken = new UsernameAndPasswordToken_1.default(username, password);
+        this.clearAuthentication();
+        var credentials;
+        return authenticator.authenticate(authenticationToken).then(function (_credentials) {
+            credentials = _credentials;
+            return _this.getAuthenticatedUser(authenticator);
+        }).then(function (persistedUser) {
+            _this._authenticatedUser = persistedUser;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
+    };
+    Class.prototype.authenticateWithToken = function (userOrTokenOrCredentials, password) {
+        var _this = this;
+        var authenticator = this.authenticators[Method.TOKEN];
+        var credentials = null;
+        var authenticationToken = null;
+        if (Utils.isString(userOrTokenOrCredentials) && Utils.isString(password)) {
+            authenticationToken = new UsernameAndPasswordToken_1.default(userOrTokenOrCredentials, password);
+        }
+        else if (Token.Factory.hasRequiredValues(userOrTokenOrCredentials)) {
+            credentials = userOrTokenOrCredentials;
+        }
+        else {
+            return Promise.reject(new Errors.IllegalArgumentError("Parameters do not match with the authentication request."));
+        }
+        this.clearAuthentication();
+        return authenticator.authenticate((authenticationToken) ? authenticationToken : credentials).then(function (_credentials) {
+            credentials = _credentials;
+            if (PersistedUser.Factory.is(credentials.user))
+                return credentials.user;
+            return _this.getAuthenticatedUser(authenticator);
+        }).then(function (persistedUser) {
+            _this._authenticatedUser = persistedUser;
+            credentials.user = persistedUser;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
+    };
+    Class.prototype.getAuthenticatedUser = function (authenticator) {
+        var requestOptions = {};
+        authenticator.addAuthentication(requestOptions);
+        return this.context.documents.get("users/me/", requestOptions).then(function (_a) {
+            var userDocument = _a[0], response = _a[1];
+            return userDocument;
+        });
+    };
+    return Class;
+}());
+exports.Class = Class;
+exports.default = Class;
 
 
 /***/ }),
@@ -5029,9 +5029,9 @@ exports.default = Operator;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTTP = __webpack_require__(16);
-var Auth = __webpack_require__(29);
+var Auth = __webpack_require__(41);
 var NS = __webpack_require__(1);
-var PersistedDocument = __webpack_require__(31);
+var PersistedDocument = __webpack_require__(30);
 var Resource = __webpack_require__(10);
 var Utils = __webpack_require__(0);
 var Factory = (function () {
@@ -5194,7 +5194,7 @@ module.exports = XHRCorsObject;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var tokens_2 = __webpack_require__(4);
-var ObjectPattern_1 = __webpack_require__(41);
+var ObjectPattern_1 = __webpack_require__(40);
 var TriplesPattern = (function () {
     function TriplesPattern(resolver) {
         this.resolver = resolver;
@@ -5561,7 +5561,7 @@ exports.Factory = Factory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var JSONLD = __webpack_require__(30);
+var JSONLD = __webpack_require__(29);
 var Node = __webpack_require__(64);
 var Utils = __webpack_require__(0);
 var URI = __webpack_require__(19);
@@ -5727,7 +5727,7 @@ exports.QueryVariable = QueryVariable;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var iri_1 = __webpack_require__(32);
+var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
 var Errors_1 = __webpack_require__(3);
 var ObjectSchema_1 = __webpack_require__(12);
@@ -5825,7 +5825,7 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var StringLiteral_1 = __webpack_require__(33);
+var StringLiteral_1 = __webpack_require__(32);
 var tokens_1 = __webpack_require__(6);
 function isAbsolute(iri) {
     return iri.indexOf(":") !== -1;
@@ -5939,7 +5939,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Identifier_1 = __webpack_require__(34);
+var Identifier_1 = __webpack_require__(33);
 var LeftSymbol_1 = __webpack_require__(86);
 var NewLineSymbol_1 = __webpack_require__(59);
 var Operator_1 = __webpack_require__(46);
@@ -5985,7 +5985,7 @@ exports.default = RightSymbol;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var ObjectSchema_1 = __webpack_require__(12);
-var Utils_1 = __webpack_require__(36);
+var Utils_1 = __webpack_require__(35);
 var PropertyType;
 (function (PropertyType) {
     PropertyType[PropertyType["FULL"] = 0] = "FULL";
@@ -6917,7 +6917,7 @@ exports.SCHEMA = {
 var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(2)
   , eventUtils = __webpack_require__(22)
-  , browser = __webpack_require__(39)
+  , browser = __webpack_require__(38)
   , urlUtils = __webpack_require__(14)
   ;
 
@@ -7147,11 +7147,11 @@ exports.Service = Service_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __webpack_require__(29);
+var Auth = __webpack_require__(41);
 var Document = __webpack_require__(24);
 var Documents = __webpack_require__(106);
 var Errors = __webpack_require__(3);
-var LDP = __webpack_require__(37);
+var LDP = __webpack_require__(36);
 var Messaging = __webpack_require__(67);
 var ObjectSchema = __webpack_require__(12);
 var ProtectedDocument = __webpack_require__(126);
@@ -8049,7 +8049,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Identifier_1 = __webpack_require__(34);
+var Identifier_1 = __webpack_require__(33);
 var Token_1 = __webpack_require__(21);
 var LeftSymbol = (function (_super) {
     __extends(LeftSymbol, _super);
@@ -8283,7 +8283,7 @@ var Errors_1 = __webpack_require__(3);
 var QueryObject = __webpack_require__(95);
 var QueryProperty = __webpack_require__(61);
 var QueryValue = __webpack_require__(96);
-var Utils_2 = __webpack_require__(36);
+var Utils_2 = __webpack_require__(35);
 var INHERIT = Object.freeze({});
 exports.ALL = Object.freeze({});
 var Class = (function () {
@@ -8428,7 +8428,7 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var iri_1 = __webpack_require__(32);
+var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(0);
 var Class = (function () {
@@ -8456,7 +8456,7 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var iri_1 = __webpack_require__(32);
+var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(0);
 var Errors_1 = __webpack_require__(3);
@@ -9488,19 +9488,19 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var AccessPoint = __webpack_require__(107);
-var Auth = __webpack_require__(29);
+var Auth = __webpack_require__(41);
 var Document = __webpack_require__(24);
 var Errors = __webpack_require__(3);
 var FreeResources = __webpack_require__(105);
 var HTTP = __webpack_require__(16);
-var JSONLD = __webpack_require__(30);
-var LDP = __webpack_require__(37);
+var JSONLD = __webpack_require__(29);
+var LDP = __webpack_require__(36);
 var LDPatch = __webpack_require__(108);
 var Messaging = __webpack_require__(67);
 var Utils_1 = __webpack_require__(125);
 var NS = __webpack_require__(1);
 var ObjectSchema = __webpack_require__(12);
-var PersistedDocument = __webpack_require__(31);
+var PersistedDocument = __webpack_require__(30);
 var PersistedFragment = __webpack_require__(44);
 var PersistedProtectedDocument = __webpack_require__(47);
 var PersistedResource = __webpack_require__(45);
@@ -9511,7 +9511,7 @@ var Resource = __webpack_require__(10);
 var SPARQL = __webpack_require__(74);
 var Builder_1 = __webpack_require__(127);
 var QueryDocument_1 = __webpack_require__(56);
-var Utils_2 = __webpack_require__(36);
+var Utils_2 = __webpack_require__(35);
 var Utils = __webpack_require__(0);
 var Utils_3 = __webpack_require__(0);
 var Class = (function () {
@@ -10642,7 +10642,7 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var LDP = __webpack_require__(37);
+var LDP = __webpack_require__(36);
 var NS = __webpack_require__(1);
 exports.RDF_CLASS = NS.C.Class.AccessPoint;
 var Factory = (function () {
@@ -10682,7 +10682,7 @@ exports.Tokens = Tokens;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(35);
+var utils_1 = __webpack_require__(34);
 var Utils_1 = __webpack_require__(0);
 var LDPatchToken = (function () {
     function LDPatchToken() {
@@ -11770,7 +11770,7 @@ var inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , version = __webpack_require__(119)
   , urlUtils = __webpack_require__(14)
-  , iframeUtils = __webpack_require__(40)
+  , iframeUtils = __webpack_require__(39)
   , eventUtils = __webpack_require__(22)
   , random = __webpack_require__(27)
   ;
@@ -11914,7 +11914,7 @@ module.exports = '1.1.4';
 
 var inherits = __webpack_require__(2)
   , HtmlfileReceiver = __webpack_require__(266)
-  , XHRLocalObject = __webpack_require__(38)
+  , XHRLocalObject = __webpack_require__(37)
   , AjaxBasedTransport = __webpack_require__(28)
   ;
 
@@ -11948,7 +11948,7 @@ var inherits = __webpack_require__(2)
   , AjaxBasedTransport = __webpack_require__(28)
   , XhrReceiver = __webpack_require__(48)
   , XHRCorsObject = __webpack_require__(49)
-  , XHRLocalObject = __webpack_require__(38)
+  , XHRLocalObject = __webpack_require__(37)
   ;
 
 function XhrPollingTransport(transUrl) {
@@ -12005,7 +12005,7 @@ module.exports = global.location || {
 var inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , JSON3 = __webpack_require__(20)
-  , XHRLocalObject = __webpack_require__(38)
+  , XHRLocalObject = __webpack_require__(37)
   , InfoAjax = __webpack_require__(124)
   ;
 
@@ -12414,7 +12414,7 @@ var Collection_1 = __webpack_require__(136);
 var Literals_1 = __webpack_require__(137);
 var Resource_1 = __webpack_require__(138);
 var Variable_1 = __webpack_require__(139);
-var StringLiteral_1 = __webpack_require__(33);
+var StringLiteral_1 = __webpack_require__(32);
 var Patterns_1 = __webpack_require__(140);
 var PatternBuilder = (function () {
     function PatternBuilder(iriResolver) {
@@ -12562,7 +12562,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var _1 = __webpack_require__(290);
 var tokens_1 = __webpack_require__(6);
-var ObjectPattern_1 = __webpack_require__(41);
+var ObjectPattern_1 = __webpack_require__(40);
 var ValuesPattern = (function (_super) {
     __extends(ValuesPattern, _super);
     function ValuesPattern(resolver, variables) {
@@ -12696,7 +12696,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var tokens_2 = __webpack_require__(4);
-var ObjectPattern_1 = __webpack_require__(41);
+var ObjectPattern_1 = __webpack_require__(40);
 var TriplesPattern_1 = __webpack_require__(50);
 var Collection = (function (_super) {
     __extends(Collection, _super);
@@ -12754,7 +12754,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var tokens_2 = __webpack_require__(4);
-var ObjectPattern_1 = __webpack_require__(41);
+var ObjectPattern_1 = __webpack_require__(40);
 var TriplesSubject_1 = __webpack_require__(51);
 var Literal = (function (_super) {
     __extends(Literal, _super);
@@ -13001,23 +13001,31 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractContext = __webpack_require__(146);
 var AccessPoint = __webpack_require__(107);
-var Auth = __webpack_require__(29);
+var Auth = __webpack_require__(41);
 var Document = __webpack_require__(24);
 var Documents = __webpack_require__(106);
 var Errors = __webpack_require__(3);
 var Fragment = __webpack_require__(43);
 var HTTP = __webpack_require__(16);
-var JSONLD = __webpack_require__(30);
-var LDP = __webpack_require__(37);
+var JSONLD = __webpack_require__(29);
+var LDP = __webpack_require__(36);
 var LDPatch = __webpack_require__(108);
 var Messaging = __webpack_require__(67);
 var NamedFragment = __webpack_require__(100);
 var NS = __webpack_require__(1);
 var ObjectSchema = __webpack_require__(12);
-var PersistedDocument = __webpack_require__(31);
+var PersistedDocument = __webpack_require__(30);
 var PersistedFragment = __webpack_require__(44);
 var PersistedNamedFragment = __webpack_require__(85);
 var PersistedResource = __webpack_require__(45);
@@ -13039,8 +13047,10 @@ var Class = (function (_super) {
         if (!domain.endsWith("/"))
             domain = domain + "/";
         _this._baseURI = (ssl ? "https://" : "http://") + domain;
-        settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
-        Utils.M.extend(_this.settings, Utils.M.from(settings));
+        var internalSettings = __assign({}, Settings.defaultSettings, !settings ? {} : {
+            vocabulary: settings.vocabulary,
+        });
+        Utils.M.extend(_this.settings, Utils.M.from(internalSettings));
         _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
@@ -15778,7 +15788,7 @@ exports.stringSerializer = new StringSerializer();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument = __webpack_require__(31);
+var PersistedDocument = __webpack_require__(30);
 var Pointer = __webpack_require__(13);
 var RDFDocument = __webpack_require__(55);
 var URI_1 = __webpack_require__(19);
@@ -16015,7 +16025,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Identifier_1 = __webpack_require__(34);
+var Identifier_1 = __webpack_require__(33);
 var Operator_1 = __webpack_require__(46);
 var RightSymbol_1 = __webpack_require__(60);
 var Token_1 = __webpack_require__(21);
@@ -16105,7 +16115,7 @@ exports.VariableToken = VariableToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var iri_1 = __webpack_require__(32);
+var iri_1 = __webpack_require__(31);
 var BooleanToken_1 = __webpack_require__(91);
 var IRIToken_1 = __webpack_require__(87);
 var LanguageToken_1 = __webpack_require__(90);
@@ -16254,7 +16264,7 @@ exports.PredicateToken = PredicateToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(35);
+var utils_1 = __webpack_require__(34);
 var OptionalToken = (function () {
     function OptionalToken() {
         this.token = "optional";
@@ -16286,7 +16296,7 @@ exports.OptionalToken = OptionalToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(35);
+var utils_1 = __webpack_require__(34);
 var GraphToken = (function () {
     function GraphToken(graph) {
         this.token = "graph";
@@ -16387,7 +16397,7 @@ exports.PrefixToken = PrefixToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(35);
+var utils_1 = __webpack_require__(34);
 var ConstructToken = (function () {
     function ConstructToken() {
         this.token = "construct";
@@ -16442,7 +16452,7 @@ exports.ConstructToken = ConstructToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(35);
+var utils_1 = __webpack_require__(34);
 var SelectToken = (function () {
     function SelectToken() {
         this.token = "select";
@@ -16669,7 +16679,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var QueryContext = __webpack_require__(57);
 var QueryProperty = __webpack_require__(61);
-var Utils_1 = __webpack_require__(36);
+var Utils_1 = __webpack_require__(35);
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(context) {
@@ -16832,7 +16842,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var Errors_1 = __webpack_require__(3);
 var QueryDocumentBuilder = __webpack_require__(94);
-var Utils_1 = __webpack_require__(36);
+var Utils_1 = __webpack_require__(35);
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -17235,8 +17245,8 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __webpack_require__(3);
 var HTTP = __webpack_require__(16);
-var JSONLD = __webpack_require__(30);
-var LDP = __webpack_require__(37);
+var JSONLD = __webpack_require__(29);
+var LDP = __webpack_require__(36);
 var NS = __webpack_require__(1);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
@@ -17774,7 +17784,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var iri_1 = __webpack_require__(32);
+var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
 var NS_1 = __webpack_require__(1);
 var ObjectSchema_1 = __webpack_require__(12);
@@ -19108,8 +19118,8 @@ var inherits = __webpack_require__(2)
   , AjaxBasedTransport = __webpack_require__(28)
   , XhrReceiver = __webpack_require__(48)
   , XHRCorsObject = __webpack_require__(49)
-  , XHRLocalObject = __webpack_require__(38)
-  , browser = __webpack_require__(39)
+  , XHRLocalObject = __webpack_require__(37)
+  , browser = __webpack_require__(38)
   ;
 
 function XhrStreamingTransport(transUrl) {
@@ -19419,7 +19429,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var inherits = __webpack_require__(2)
-  , iframeUtils = __webpack_require__(40)
+  , iframeUtils = __webpack_require__(39)
   , urlUtils = __webpack_require__(14)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , random = __webpack_require__(27)
@@ -19585,9 +19595,9 @@ module.exports = JsonPTransport;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var utils = __webpack_require__(40)
+var utils = __webpack_require__(39)
   , random = __webpack_require__(27)
-  , browser = __webpack_require__(39)
+  , browser = __webpack_require__(38)
   , urlUtils = __webpack_require__(14)
   , inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
@@ -19894,7 +19904,7 @@ var URL = __webpack_require__(111)
   , eventUtils = __webpack_require__(22)
   , transport = __webpack_require__(274)
   , objectUtils = __webpack_require__(72)
-  , browser = __webpack_require__(39)
+  , browser = __webpack_require__(38)
   , log = __webpack_require__(275)
   , Event = __webpack_require__(73)
   , EventTarget = __webpack_require__(112)
@@ -20922,7 +20932,7 @@ var EventEmitter = __webpack_require__(11).EventEmitter
   , urlUtils = __webpack_require__(14)
   , XDR = __webpack_require__(70)
   , XHRCors = __webpack_require__(49)
-  , XHRLocal = __webpack_require__(38)
+  , XHRLocal = __webpack_require__(37)
   , XHRFake = __webpack_require__(279)
   , InfoIframe = __webpack_require__(280)
   , InfoAjax = __webpack_require__(124)
@@ -21126,7 +21136,7 @@ var urlUtils = __webpack_require__(14)
   , JSON3 = __webpack_require__(20)
   , FacadeJS = __webpack_require__(282)
   , InfoIframeReceiver = __webpack_require__(123)
-  , iframeUtils = __webpack_require__(40)
+  , iframeUtils = __webpack_require__(39)
   , loc = __webpack_require__(122)
   ;
 
@@ -21231,7 +21241,7 @@ module.exports = function(SockJS, availableTransports) {
 
 
 var JSON3 = __webpack_require__(20)
-  , iframeUtils = __webpack_require__(40)
+  , iframeUtils = __webpack_require__(39)
   ;
 
 function FacadeJS(transport) {
@@ -22358,7 +22368,7 @@ var IRIResolver_1 = __webpack_require__(26);
 var patterns_1 = __webpack_require__(131);
 var tokens_1 = __webpack_require__(6);
 var triples_1 = __webpack_require__(292);
-var ObjectPattern_1 = __webpack_require__(41);
+var ObjectPattern_1 = __webpack_require__(40);
 function values(variableOrVariables, valuesOrBuilder) {
     var isSingle = !Array.isArray(variableOrVariables);
     var variables = (isSingle ?
@@ -22806,7 +22816,7 @@ exports.default = Class;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __webpack_require__(1);
-var PersistedDocument = __webpack_require__(31);
+var PersistedDocument = __webpack_require__(30);
 var Utils = __webpack_require__(0);
 exports.RDF_CLASS = NS.C.Class.RDFRepresentation;
 exports.SCHEMA = {
@@ -22934,9 +22944,7 @@ exports.SCHEMA = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __webpack_require__(29);
-exports.defaultSettings = {
-    "auth.method": Auth.Method.TOKEN,
+exports.defaultSettings = Object.freeze({
     "system.container": ".system/",
     "system.platform.metadata": "platform/",
     "system.instance.metadata": "instance/",
@@ -22944,7 +22952,7 @@ exports.defaultSettings = {
     "system.credentials.container": "credentials/",
     "system.roles.container": "roles/",
     "vocabulary": "vocabulary/#",
-};
+});
 exports.default = exports.defaultSettings;
 
 

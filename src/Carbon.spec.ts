@@ -60,18 +60,10 @@ describe( module( "Carbon" ), ():void => {
 		"The main class of the SDK, which contains all the references of the modules used in the the SDK."
 	), ():void => {
 		let carbon:Carbon.Class;
-		let myCarbon:Carbon.Class;
 
 		beforeEach( ():void => {
-			carbon = new Carbon.Class( "example.com", true );
-
-			myCarbon = new Carbon.Class( "my-carbonldp.example.com", false, {
-				"auth.method": Auth.Method.TOKEN,
-				"system.container": ".my-system/",
-				"system.roles.container": "my-roles/",
-			} );
-
 			jasmine.Ajax.install();
+			carbon = new Carbon.Class( "example.com", true );
 		} );
 
 		afterEach( ():void => {
@@ -121,7 +113,6 @@ describe( module( "Carbon" ), ():void => {
 			expect( Utils.isString( carbon.baseURI ) ).toBe( true );
 
 			expect( carbon.baseURI ).toMatch( "https://example.com/" );
-			expect( myCarbon.baseURI ).toMatch( "http://my-carbonldp.example.com/" );
 		} );
 
 		it( hasProperty(
@@ -385,9 +376,6 @@ describe( module( "Carbon" ), ():void => {
 			// Instantiated in BeforeEach
 			expect( carbon ).toBeTruthy();
 			expect( carbon instanceof Carbon.Class ).toBe( true );
-
-			expect( myCarbon ).toBeTruthy();
-			expect( myCarbon instanceof Carbon.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -404,10 +392,6 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.resolve( "my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 			expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 			expect( carbon.resolve( "http://my-carbon.example.com/my-resource/" ) ).toBe( "http://my-carbon.example.com/my-resource/" );
-
-			expect( myCarbon.resolve( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
-			expect( myCarbon.resolve( "http://my-carbonldp.example.com/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/my-resource/" );
-			expect( myCarbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 		} );
 
 		it( hasMethod(
@@ -425,12 +409,6 @@ describe( module( "Carbon" ), ():void => {
 			expect( carbon.resolveSystemURI( "https://example.com/.system/my-resource/" ) ).toBe( "https://example.com/.system/my-resource/" );
 			expect( () => carbon.resolveSystemURI( "https://example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => carbon.resolveSystemURI( "https://example.com/.my-system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
-
-			expect( myCarbon.resolveSystemURI( "my-resource/" ) ).toBe( "http://my-carbonldp.example.com/.my-system/my-resource/" );
-			expect( myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/.my-system/my-resource/" ) ).toBe( "http://my-carbonldp.example.com/.my-system/my-resource/" );
-			expect( () => myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => myCarbon.resolveSystemURI( "http://my-carbonldp.example.com/.system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( () => myCarbon.resolveSystemURI( "https://example.com/.my-system/my-resource/" ) ).toThrowError( Errors.IllegalArgumentError );
 
 			// No `system.container` defined
 			carbon.deleteSetting( "system.container" );
