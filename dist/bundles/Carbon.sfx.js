@@ -13115,11 +13115,7 @@ var Class = (function (_super) {
             return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));
         return Promise.resolve()
             .then(function () { return _this.resolveSystemURI(_this.getSetting(metadataSetting)); })
-            .then(function (metadataURI) { return _this.documents.get(metadataURI); })
-            .then(function (_a) {
-            var metadataDocument = _a[0];
-            return metadataDocument;
-        });
+            .then(function (metadataURI) { return _this.documents.get(metadataURI); });
     };
     Class.AccessPoint = AccessPoint;
     Class.Auth = Auth;

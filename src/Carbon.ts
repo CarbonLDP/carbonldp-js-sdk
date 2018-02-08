@@ -84,25 +84,24 @@ export class Class extends AbstractContext.Class {
 	/**
 	 * Retrieves the Metadata related to the CarbonLDP Platform.
 	 */
-	getPlatformMetadata():Promise<System.PlatformMetadata.Class> {
+	getPlatformMetadata():Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]> {
 		return this.getDocumentMetadata<System.PlatformMetadata.Class>( "system.platform.metadata" );
 	}
 
 	/**
 	 * Retrieves the Metadata related to your instance of the Carbon LDP Platform.
 	 */
-	getInstanceMetadata():Promise<System.InstanceMetadata.Class> {
+	getInstanceMetadata():Promise<[ System.InstanceMetadata.Class, HTTP.Response.Class ]> {
 		return this.getDocumentMetadata<System.InstanceMetadata.Class>( "system.instance.metadata" );
 	}
 
-	private getDocumentMetadata<T extends object>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<T> {
+	private getDocumentMetadata<T extends object>( metadataSetting:"system.platform.metadata" | "system.instance.metadata" ):Promise<[ T, HTTP.Response.Class ]> {
 		if( ! this.hasSetting( metadataSetting ) )
 			return Promise.reject( new Errors.IllegalStateError( `The "${ metadataSetting }" setting hasn't been defined.` ) );
 
 		return Promise.resolve()
 			.then( () => this.resolveSystemURI( this.getSetting( metadataSetting ) ) )
 			.then( metadataURI => this.documents.get<T>( metadataURI ) )
-			.then( ( [ metadataDocument ] ) => metadataDocument );
 	}
 }
 

@@ -1,24 +1,9 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	module,
-	clazz,
-	method,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	reexports,
-	hasDefaultExport,
-	hasSignature,
-} from "./test/JasmineExtender";
-
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
+
+import * as Carbon from "./Carbon";
+import DefaultExport from "./Carbon";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -43,10 +28,22 @@ import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
+import {
+	clazz,
+	extendsClass,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+	reexports,
+	STATIC,
+} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-
-import * as Carbon from "./Carbon";
-import DefaultExport from "./Carbon";
 
 describe( module( "Carbon" ), ():void => {
 
@@ -450,7 +447,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should reject promise when no \"system.container\" setting declared", ( done:DoneFn ):void => {
 				carbon.deleteSetting( "system.container" );
-				let promise:Promise<System.PlatformMetadata.Class>;
+				let promise:Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]>;
 
 				promise = carbon.getPlatformMetadata();
 				expect( promise ).toEqual( jasmine.any( Promise ) );
@@ -464,7 +461,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should reject promise when no \"system.platform.metadata\" setting declared", ( done:DoneFn ):void => {
 				carbon.deleteSetting( "system.platform.metadata" );
-				let promise:Promise<System.PlatformMetadata.Class>;
+				let promise:Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]>;
 
 				promise = carbon.getPlatformMetadata();
 				expect( promise ).toEqual( jasmine.any( Promise ) );
@@ -477,7 +474,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( hasSignature(
-				{ type: "Promise<Carbon.PlatformMetadata.Class>" }
+				{ type: "Promise<[ Carbon.System.PlatformMetadata.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/.system/platform/", null, "GET" ).andReturn( {
 					status: 200,
@@ -502,11 +499,13 @@ describe( module( "Carbon" ), ():void => {
 				} ]`,
 				} );
 
-				let promise:Promise<System.PlatformMetadata.Class>;
+				let promise:Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]>;
 				promise = carbon.getPlatformMetadata();
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 
-				promise.then( ( platformMetadata:System.PlatformMetadata.Class ):void => {
+				promise.then( ( [ platformMetadata, response ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
 					expect( platformMetadata ).toBeTruthy();
 					expect( Object.keys( platformMetadata ).length ).toBe( 2 );
 
@@ -537,7 +536,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should reject promise when no \"system.container\" setting declared", ( done:DoneFn ):void => {
 				carbon.deleteSetting( "system.container" );
-				let promise:Promise<System.InstanceMetadata.Class>;
+				let promise:Promise<[ System.InstanceMetadata.Class, HTTP.Response.Class ]>;
 
 				promise = carbon.getInstanceMetadata();
 				expect( promise ).toEqual( jasmine.any( Promise ) );
@@ -551,7 +550,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should reject promise when no \"system.instance.metadata\" setting declared", ( done:DoneFn ):void => {
 				carbon.deleteSetting( "system.instance.metadata" );
-				let promise:Promise<System.InstanceMetadata.Class>;
+				let promise:Promise<[ System.InstanceMetadata.Class, HTTP.Response.Class ]>;
 
 				promise = carbon.getInstanceMetadata();
 				expect( promise ).toEqual( jasmine.any( Promise ) );
@@ -564,7 +563,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( hasSignature(
-				{ type: "Promise<Carbon.InstanceMetadata.Class>" }
+				{ type: "Promise<[ Carbon.System.InstanceMetadata.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:DoneFn ):void => {
 				jasmine.Ajax.stubRequest( "https://example.com/.system/instance/", null, "GET" ).andReturn( {
 					status: 200,
@@ -592,11 +591,13 @@ describe( module( "Carbon" ), ():void => {
 				} ]`,
 				} );
 
-				let promise:Promise<System.InstanceMetadata.Class>;
+				let promise:Promise<[ System.InstanceMetadata.Class, HTTP.Response.Class ]>;
 				promise = carbon.getInstanceMetadata();
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 
-				promise.then( ( instanceMetadata:System.InstanceMetadata.Class ):void => {
+				promise.then( ( [ instanceMetadata, response ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
 					expect( instanceMetadata ).toBeTruthy();
 					expect( Object.keys( instanceMetadata ).length ).toBe( 3 );
 
