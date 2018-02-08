@@ -135,8 +135,7 @@ var Util = (function () {
         }
         return listLiterals;
     };
-    Util.getProperties = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Util.getProperties = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return null;
         if (!propertyValues.length)
@@ -150,8 +149,7 @@ var Util = (function () {
         }
         return properties;
     };
-    Util.getPropertyPointers = function (expandedObject, propertyURI, pointerLibrary) {
-        var propertyValues = expandedObject[propertyURI];
+    Util.getPropertyPointers = function (propertyValues, pointerLibrary) {
         if (!propertyValues)
             return [];
         if (!propertyValues.length)
@@ -182,8 +180,7 @@ var Util = (function () {
         }
         return propertyURIs;
     };
-    Util.getPropertyLiterals = function (expandedObject, propertyURI, literalType) {
-        var propertyValues = expandedObject[propertyURI];
+    Util.getPropertyLiterals = function (propertyValues, literalType) {
         if (!propertyValues)
             return null;
         var propertyLiterals = [];
@@ -197,8 +194,7 @@ var Util = (function () {
         }
         return propertyLiterals;
     };
-    Util.getPropertyLanguageMap = function (expandedObject, propertyURI) {
-        var propertyValues = expandedObject[propertyURI];
+    Util.getPropertyLanguageMap = function (propertyValues) {
         if (!propertyValues)
             return null;
         var propertyLanguageMap = {};

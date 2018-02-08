@@ -8,7 +8,7 @@ function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
         return uri;
     var schema = this.document._documents.getGeneralSchema();
-    return ObjectSchema.Util.resolveURI(uri, schema);
+    return ObjectSchema.Util.resolveURI(uri, schema, { vocab: true });
 }
 function extendAddType(superFunction) {
     return function (type) {

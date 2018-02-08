@@ -10,6 +10,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var iri_1 = require("sparqler/iri");
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
@@ -40,15 +41,46 @@ var System = require("./System");
 var Utils = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
-    function Class(domain, ssl, settings) {
-        if (ssl === void 0) { ssl = true; }
+    function Class(urlOrSettings) {
         var _this = _super.call(this) || this;
-        domain = RDF.URI.Util.removeProtocol(domain);
-        if (!domain.endsWith("/"))
-            domain = domain + "/";
-        _this._baseURI = (ssl ? "https://" : "http://") + domain;
-        settings = settings ? Utils.extend({}, Settings.defaultSettings, settings) : Settings.defaultSettings;
-        Utils.M.extend(_this.settings, Utils.M.from(settings));
+        _this.settings = {
+            vocabulary: "vocabulary/#",
+            paths: {
+                system: {
+                    slug: ".system/",
+                    paths: {
+                        platform: "platform/",
+                        instance: "instance/",
+                        credentials: "credentials/",
+                        users: "users/",
+                        roles: "roles/",
+                    },
+                },
+            },
+        };
+        if (Utils.isString(urlOrSettings)) {
+            if (!RDF.URI.Util.hasProtocol(urlOrSettings))
+                throw new Errors.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
+            _this._baseURI = urlOrSettings;
+        }
+        else {
+            if (!Utils.isString(urlOrSettings.host))
+                throw new Errors.IllegalArgumentError("The settings object must contains a valid host string.");
+            if (iri_1.hasProtocol(urlOrSettings.host))
+                throw new Errors.IllegalArgumentError("The host must not contain a protocol.");
+            if (urlOrSettings.host.includes(":"))
+                throw new Errors.IllegalArgumentError("The host must not contain a port.");
+            _this._baseURI = "" + (urlOrSettings.ssl === false ? "http://" : "https://") + urlOrSettings.host;
+            if (Utils.isNumber(urlOrSettings.port)) {
+                if (_this._baseURI.endsWith("/"))
+                    _this._baseURI = _this._baseURI.slice(0, -1);
+                _this._baseURI += ":" + urlOrSettings.port;
+            }
+            urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
+            _this.settings = Utils.O.extend(_this.settings, urlOrSettings, { objects: true });
+        }
+        if (!_this._baseURI.endsWith("/"))
+            _this._baseURI = _this._baseURI + "/";
         _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
@@ -63,17 +95,15 @@ var Class = (function (_super) {
         configurable: true
     });
     Class.prototype.getPlatformMetadata = function () {
-        return this.getDocumentMetadata("system.platform.metadata");
+        return this._getDocumentMetadata("system.platform");
     };
     Class.prototype.getInstanceMetadata = function () {
-        return this.getDocumentMetadata("system.instance.metadata");
+        return this._getDocumentMetadata("system.instance");
     };
-    Class.prototype.getDocumentMetadata = function (metadataSetting) {
+    Class.prototype._getDocumentMetadata = function (metadataPath) {
         var _this = this;
-        if (!this.hasSetting(metadataSetting))
-            return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));
         return Promise.resolve()
-            .then(function () { return _this.resolveSystemURI(_this.getSetting(metadataSetting)); })
+            .then(function () { return _this._resolvePath(metadataPath); })
             .then(function (metadataURI) { return _this.documents.get(metadataURI); });
     };
     Class.AccessPoint = AccessPoint;

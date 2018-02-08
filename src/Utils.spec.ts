@@ -373,7 +373,6 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 				{name: "target", type: "T", description: "The object to extend."},
 				{name: "source", type: "W", description: "The object to copy."},
 				{name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
-				{name: "ignore", type: "{[ key:string ]:boolean}", optional: true, description: "Object that indicates there is any property to ignore."},
 			],
 			{type: "T & W", description: "The copy of the object provided."}
 		), ():void => {
@@ -579,7 +578,6 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 			"Makes a shallow or deep clone of the object provided depending of the configuration specified.", [
 				{name: "object", type: "T", description: "The object to copy."},
 				{name: "config", type: "{arrays?:boolean, objects?:boolean}", optional: true, description: "Object that indicates if the arrays or objects must be copied or not. By default, arrays and objects will not be deep copied."},
-				{name: "ignore", type: "{[ key:string ]:boolean}", optional: true, description: "Object that indicates there is any property to ignore."},
 			],
 			{type: "T", description: "The copy of the object provided."}
 		), ():void => {

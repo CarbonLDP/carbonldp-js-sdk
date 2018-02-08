@@ -11,7 +11,7 @@ function getLevelRegExp(property) {
 exports.getLevelRegExp = getLevelRegExp;
 function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
-    var propertyIRI = context.compactIRI(uri.stringValue);
+    var propertyIRI = context.compactIRI(uri);
     var resource = context.getVariable(resourcePath);
     var propertyObject = context.getVariable(propertyPath);
     var propertyPatterns = [new tokens_1.SubjectToken(resource)
@@ -20,7 +20,7 @@ function createPropertyPatterns(context, resourcePath, propertyPath, propertyDef
     ];
     if (literalType !== null)
         propertyPatterns
-            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType.stringValue)));
+            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType)));
     if (pointerType !== null)
         propertyPatterns
             .push(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));

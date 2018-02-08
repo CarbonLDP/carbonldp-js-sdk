@@ -1,16 +1,14 @@
-import {
-	STATIC,
-
-	module,
-	clazz,
-
-	isDefined,
-	hasMethod,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
 import * as jsonld from "jsonld";
-import * as Utils from "./../Utils";
+import {
+	clazz,
+	hasDefaultExport,
+	hasMethod,
+	isDefined,
+	module,
+	STATIC,
+} from "../test/JasmineExtender";
 
+import * as Utils from "./../Utils";
 import * as Processor from "./Processor";
 import DefaultExport from "./Processor";
 
@@ -449,10 +447,10 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 			STATIC,
 			"expand",
 			"Static method that expand a compacted JSON-LD object.", [
-				{ name: "input", type: "Object", description: "The compacted JSON-LD object to expand." },
+				{ name: "input", type: "object", description: "The compacted JSON-LD object to expand." },
 			],
-			{ type: "Promise<Array<Object>>" }
-		), ( done:{ ():void, fail:() => void } ):void => {
+			{ type: "Promise<object[]>" }
+		), ( done:DoneFn ):void => {
 			expect( Processor.Class.expand ).toBeDefined();
 			expect( Utils.isFunction( Processor.Class.expand ) ).toBe( true );
 
@@ -690,7 +688,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 			];
 
 			let promises:Promise<void>[] = [];
-			for ( let object of objects ) {
+			for( let object of objects ) {
 				promises.push( evaluateExpand( object ) );
 			}
 

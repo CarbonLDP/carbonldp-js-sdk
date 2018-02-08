@@ -1,35 +1,32 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasSignature,
-	hasProperty,
-	decoratedObject,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
+
+import * as Document from "./Document";
+import DefaultExport from "./Document";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
 import * as NS from "./NS";
 import * as Pointer from "./Pointer";
-import * as Resource from "./Resource";
 import * as URI from "./RDF/URI";
+import * as Resource from "./Resource";
+import {
+	clazz,
+	decoratedObject,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
+} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-
-import * as Document from "./Document";
-import DefaultExport from "./Document";
 
 describe( module( "Carbon/Document" ), ():void => {
 
@@ -558,6 +555,7 @@ describe( module( "Carbon/Document" ), ():void => {
 				interface MyInterface {
 					myProperty?:string;
 				}
+
 				let document:Document.Class & MyInterface;
 
 				document = Document.Factory.createFrom<MyInterface>( {} );
@@ -1656,9 +1654,10 @@ describe( module( "Carbon/Document" ), ():void => {
 						constructor() {
 							super();
 							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
+							this.settings = { paths: { system: ".system/" } };
 						}
 					}
+
 					let context:AbstractContext = new MockedContext();
 					let converter:JSONLDConverter = new JSONLDConverter();
 					let json:string;
@@ -1703,9 +1702,10 @@ describe( module( "Carbon/Document" ), ():void => {
 						constructor() {
 							super();
 							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
+							this.settings = { paths: { system: ".system/" } };
 						}
 					}
+
 					let context:AbstractContext = new MockedContext();
 					let json:string;
 
@@ -1734,7 +1734,9 @@ describe( module( "Carbon/Document" ), ():void => {
 					expect( json ).toEqual( jsonFullDocument );
 
 					context.clearObjectSchema();
-					context.setSetting( "vocabulary", "vocabulary/#" );
+					context.extendObjectSchema( {
+						"@vocab": context.resolve( "vocabulary/#" ),
+					} );
 					json = document.toJSON( context.documents );
 					expect( json ).toEqual( JSON.stringify( {
 						"@id": "http://example.com/document/",

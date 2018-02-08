@@ -1,31 +1,29 @@
-import {
-	STATIC,
-	INSTANCE,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	hasSignature,
-	decoratedObject,
-	hasDefaultExport, extendsClass,
-} from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as Pointer from "./Pointer";
-import * as Resource from "./Resource";
-import * as URI from "./RDF/URI";
-import * as Utils from "./Utils";
 
 import * as FreeResources from "./FreeResources";
 import DefaultExport from "./FreeResources";
+import * as Pointer from "./Pointer";
+import * as URI from "./RDF/URI";
+import * as Resource from "./Resource";
+import {
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/FreeResources" ), ():void => {
 
@@ -246,7 +244,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.Factory.hasClassProperties( freeResources ) );
 
-			interface My { myProperty:string; }
+			interface My {
+				myProperty:string;
+			}
+
 			let myFreeResources:FreeResources.Class & My = FreeResources.Factory.createFrom( { myProperty: "The property" }, documents );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.Factory.hasClassProperties( myFreeResources ) );
@@ -287,7 +288,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			expect( freeResources.hasResource ).toBe( fx );
 			expect( freeResources.getResources ).toBe( fx );
 
-			interface My { myProperty:string; }
+			interface My {
+				myProperty:string;
+			}
+
 			let anotherFreeResources:FreeResources.Class & My = FreeResources.Factory.decorate<My>( { myProperty: "The property" } );
 			expect( anotherFreeResources ).toBeTruthy();
 			expect( anotherFreeResources._resourcesIndex ).not.toBeNull();
@@ -316,9 +320,10 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				context = new MockedContext();
 				documents = new Documents( context );
 
