@@ -81,7 +81,7 @@ export class Class implements Context.Class {
 	}
 
 	hasObjectSchema( type:string ):boolean {
-		type = this.resolveTypeURI( type );
+		type = this._resolveTypeURI( type );
 		if( this.typeObjectSchemaMap.has( type ) ) return true;
 		return ! ! this.parentContext && this.parentContext.hasObjectSchema( type );
 	}
@@ -89,28 +89,37 @@ export class Class implements Context.Class {
 	getObjectSchema( type:string = null ):ObjectSchema.DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
-			type = this.resolveTypeURI( type );
+			type = this._resolveTypeURI( type );
 			if( this.typeObjectSchemaMap.has( type ) ) return this.typeObjectSchemaMap.get( type );
 			if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
 			return null;
 		} else {
 			// General schema
-			if( ! ! this.generalObjectSchema ) return this.generalObjectSchema;
-			if( ! ! this.parentContext ) return this.parentContext.getObjectSchema();
+			if( ! this.generalObjectSchema && ! this.parentContext )
+				throw new Errors.IllegalStateError();
 
-			throw new Errors.IllegalStateError();
+			const generalSchema:ObjectSchema.DigestedObjectSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
+			const clonedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester
+				.combineDigestedObjectSchemas( [ generalSchema ] );
+
+			if( clonedSchema.vocab === null && this.hasSetting( "vocabulary" ) )
+				clonedSchema.vocab = this.resolve( this.getSetting( "vocabulary" ) );
+
+			if( ! clonedSchema.base )
+				clonedSchema.base = this.baseURI;
+
+			return clonedSchema;
 		}
 	}
 
 	extendObjectSchema( type:string, objectSchema:ObjectSchema.Class ):void;
 	extendObjectSchema( objectSchema:ObjectSchema.Class ):void;
 	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
-		let type:string = objectSchema ? typeOrObjectSchema : null;
+		const type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 
-		const vocab:string = this.hasSetting( "vocabulary" ) ? this.resolve( this.getSetting( "vocabulary" ) ) : void 0;
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema, vocab );
+		const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -123,7 +132,7 @@ export class Class implements Context.Class {
 		if( ! type ) {
 			this.generalObjectSchema = ! ! this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
 		} else {
-			type = this.resolveTypeURI( type );
+			type = this._resolveTypeURI( type );
 			this.typeObjectSchemaMap.delete( type );
 		}
 	}
@@ -145,7 +154,7 @@ export class Class implements Context.Class {
 	}
 
 	protected extendTypeObjectSchema( digestedSchema:ObjectSchema.DigestedObjectSchema, type:string ):void {
-		type = this.resolveTypeURI( type );
+		type = this._resolveTypeURI( type );
 		let digestedSchemaToExtend:ObjectSchema.DigestedObjectSchema;
 
 		if( this.typeObjectSchemaMap.has( type ) ) {
@@ -207,10 +216,8 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA );
 	}
 
-	private resolveTypeURI( uri:string ):string {
-		const vocab:string = this.hasSetting( "vocabulary" ) ?
-			this.resolve( this.getSetting( "vocabulary" ) ) : null;
-		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
+	private _resolveTypeURI( uri:string ):string {
+		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
 	}
 }
 

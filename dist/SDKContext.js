@@ -62,7 +62,7 @@ var Class = (function () {
         this.settings.delete(name);
     };
     Class.prototype.hasObjectSchema = function (type) {
-        type = this.resolveTypeURI(type);
+        type = this._resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
         return !!this.parentContext && this.parentContext.hasObjectSchema(type);
@@ -70,7 +70,7 @@ var Class = (function () {
     Class.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!!type) {
-            type = this.resolveTypeURI(type);
+            type = this._resolveTypeURI(type);
             if (this.typeObjectSchemaMap.has(type))
                 return this.typeObjectSchemaMap.get(type);
             if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -78,19 +78,23 @@ var Class = (function () {
             return null;
         }
         else {
-            if (!!this.generalObjectSchema)
-                return this.generalObjectSchema;
-            if (!!this.parentContext)
-                return this.parentContext.getObjectSchema();
-            throw new Errors.IllegalStateError();
+            if (!this.generalObjectSchema && !this.parentContext)
+                throw new Errors.IllegalStateError();
+            var generalSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
+            var clonedSchema = ObjectSchema.Digester
+                .combineDigestedObjectSchemas([generalSchema]);
+            if (clonedSchema.vocab === null && this.hasSetting("vocabulary"))
+                clonedSchema.vocab = this.resolve(this.getSetting("vocabulary"));
+            if (!clonedSchema.base)
+                clonedSchema.base = this.baseURI;
+            return clonedSchema;
         }
     };
     Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
+        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -104,7 +108,7 @@ var Class = (function () {
             this.generalObjectSchema = !!this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
         }
         else {
-            type = this.resolveTypeURI(type);
+            type = this._resolveTypeURI(type);
             this.typeObjectSchemaMap.delete(type);
         }
     };
@@ -125,7 +129,7 @@ var Class = (function () {
         ]);
     };
     Class.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
-        type = this.resolveTypeURI(type);
+        type = this._resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this.typeObjectSchemaMap.has(type)) {
             digestedSchemaToExtend = this.typeObjectSchemaMap.get(type);
@@ -177,10 +181,8 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA);
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
-    Class.prototype.resolveTypeURI = function (uri) {
-        var vocab = this.hasSetting("vocabulary") ?
-            this.resolve(this.getSetting("vocabulary")) : null;
-        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
+    Class.prototype._resolveTypeURI = function (uri) {
+        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), { vocab: true });
     };
     return Class;
 }());

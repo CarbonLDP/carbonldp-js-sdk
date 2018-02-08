@@ -115,7 +115,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( id ) ) id = ObjectSchema.Digester.resolvePrefixedURI( id, this.context.getObjectSchema() );
+			id = ObjectSchema.Util.resolveURI( id, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isRelative( id ) ) return true;
 			if( RDF.URI.Util.isBaseOf( this.context.baseURI, id ) ) return true;
@@ -678,15 +678,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	sparql( documentURI:string ):QueryClause<SPARQL.Builder.ExecuteSelect> {
 		let builder:QueryClause<SPARQL.Builder.ExecuteSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
 
-		if( ! ! this.context ) {
-			builder = builder.base( this.context.baseURI );
-			if( this.context.hasSetting( "vocabulary" ) ) {
-				builder = builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
-			}
+		if( this.context ) {
+			const schema:ObjectSchema.DigestedObjectSchema = this.getProcessedSchema();
 
-			let schema:ObjectSchema.DigestedObjectSchema = this.context.getObjectSchema();
-			schema.prefixes.forEach( ( uri:RDF.URI.Class, prefix:string ) => {
-				builder = builder.prefix( prefix, uri.stringValue );
+			builder = builder
+				.base( schema.base )
+				.vocab( schema.vocab );
+
+			schema.prefixes.forEach( ( uri:string, prefix:string ) => {
+				builder = builder.prefix( prefix, uri );
 			} );
 		}
 
@@ -1227,7 +1227,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		*/
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.getGeneralSchema() );
+			uri = ObjectSchema.Util.resolveURI( uri, this.getGeneralSchema() );
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				const baseURI:string = this.context.baseURI;
@@ -1297,7 +1297,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
 		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
 			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
-			return this.getSchemaWith( schemas );
+			return this.getProcessedSchema( schemas );
 		} else {
 			const types:string[] = Resource.Util.getTypes( document );
 			return this.getDigestedObjectSchema( types, document.id );
@@ -1320,20 +1320,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			.map( type => this.context.getObjectSchema( type ) )
 		;
 
-		return this.getSchemaWith( schemas );
+		return this.getProcessedSchema( schemas );
 	}
 
-	private getSchemaWith( objectSchemas:ObjectSchema.DigestedObjectSchema[] ):ObjectSchema.DigestedObjectSchema {
-		const digestedSchema:ObjectSchema.DigestedObjectSchema =
-			ObjectSchema.Digester.combineDigestedObjectSchemas( [
-				this.context.getObjectSchema(),
-				...objectSchemas,
-			] );
-
-		if( this.context.hasSetting( "vocabulary" ) )
-			digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
-
-		return digestedSchema;
+	private getProcessedSchema( objectSchemas:ObjectSchema.DigestedObjectSchema[] = [] ):ObjectSchema.DigestedObjectSchema {
+		objectSchemas.unshift( this.context.getObjectSchema() );
+		return ObjectSchema.Digester
+			.combineDigestedObjectSchemas( objectSchemas );
 	}
 
 
@@ -1342,7 +1335,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
 		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
-			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
+			uri = ObjectSchema.Util.resolveURI( uri, this.context.getObjectSchema() );
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
 		} else if( RDF.URI.Util.isRelative( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );

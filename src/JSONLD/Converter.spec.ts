@@ -1,23 +1,20 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-	method,
-
-	isDefined,
 	hasConstructor,
-	hasSignature,
-	hasProperty,
 	hasDefaultExport,
-} from "./../test/JasmineExtender";
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+} from "../test/JasmineExtender";
 
-import * as Errors from "./../Errors";
+import * as Utils from "../Utils";
 import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
-import * as Utils from "./../Utils";
 
 import * as JSONLDConverter from "./Converter";
 import DefaultExport from "./Converter";
@@ -139,12 +136,8 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					],
 				};
 
-				let generalSchema:ObjectSchema.Class = {
-					"ex": "http://example.com/ns#",
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-				};
-
 				let schema:ObjectSchema.Class = {
+					"@vocab": "http://example.com/my-vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"string": {
@@ -204,9 +197,6 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
-
-				expect( () => jsonldConverter.compact( expandedObject, compactedObject, digestedSchema, mockedPointerLibrary ) ).toThrowError( Errors.InvalidJSONLDSyntaxError );
-				digestedSchema.vocab = "http://example.com/my-vocabulary#";
 
 				jsonldConverter.compact( expandedObject, compactedObject, digestedSchema, mockedPointerLibrary );
 
@@ -330,6 +320,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					},
 					"unknownTypeArray": {
 						"@id": "ex:unknownTypeArray",
+						"@container": "@set",
 					},
 					"unknownTypePointer": {
 						"@id": "ex:unknownTypePointer",
@@ -414,13 +405,9 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
 				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schemas );
 
-				expect( jsonldConverter.compact ).toBeDefined();
-				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
+				expect( jsonldConverter.expand ).toBeDefined();
+				expect( Utils.isFunction( jsonldConverter.expand ) ).toBeDefined();
 
-				digestedSchema.vocab = null;
-				expect( () => jsonldConverter.expand( compactedObject, digestedGeneralSchema, digestedSchema ) ).toThrowError( Errors.InvalidJSONLDSyntaxError );
-
-				digestedSchema.vocab = "http://example.com/my-vocabulary#";
 				let expandedObject:any = jsonldConverter.expand( compactedObject, digestedGeneralSchema, digestedSchema );
 
 				expect( expandedObject ).toBeDefined();

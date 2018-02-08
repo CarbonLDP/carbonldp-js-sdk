@@ -191,23 +191,9 @@ var Class = (function () {
         return true;
     };
     Class.expandURI = function (schema, uri, relativeTo) {
-        if (relativeTo === void 0) { relativeTo = {}; }
-        if (uri === null || Class.isKeyword(uri) || RDF.URI.Util.isAbsolute(uri))
+        if (Class.isKeyword(uri))
             return uri;
-        if (schema.properties.has(uri))
-            return schema.properties.get(uri).uri.stringValue;
-        if (RDF.URI.Util.isPrefixed(uri))
-            return ObjectSchema.Digester.resolvePrefixedURI(uri, schema);
-        if (schema.prefixes.has(uri))
-            return schema.prefixes.get(uri).stringValue;
-        if (relativeTo.vocab) {
-            if (schema.vocab === null)
-                return null;
-            return schema.vocab + uri;
-        }
-        if (relativeTo.base)
-            return RDF.URI.Util.resolve(schema.base, uri);
-        return uri;
+        return ObjectSchema.Util.resolveURI(uri, schema, relativeTo);
     };
     Class.expandLanguageMap = function (languageMap) {
         var expandedLanguage = [];
@@ -234,7 +220,7 @@ var Class = (function () {
     Class.getContainer = function (context, property) {
         if (context.properties.has(property))
             return context.properties.get(property).containerType;
-        return undefined;
+        return void 0;
     };
     Class.expandValue = function (context, value, propertyName) {
         if (Utils.isNull(value) || !Utils.isDefined(value))
@@ -257,8 +243,8 @@ var Class = (function () {
         if (Class.isKeyword(propertyName))
             return value;
         var expandedValue = {};
-        if (!!definition.literalType) {
-            expandedValue["@type"] = definition.literalType.stringValue;
+        if (definition.literalType) {
+            expandedValue["@type"] = ObjectSchema.Util.resolveURI(definition.literalType, context, { vocab: true, base: true });
         }
         else if (Utils.isString(value)) {
             var language = Utils.isDefined(definition.language) ? definition.language : context.language;
@@ -281,7 +267,7 @@ var Class = (function () {
         if (Utils.isArray(element)) {
             var container = Class.getContainer(context, activeProperty);
             insideList = insideList || container === ObjectSchema.ContainerType.LIST;
-            var expandedElement_1 = [];
+            var expanded = [];
             for (var _i = 0, _a = element; _i < _a.length; _i++) {
                 var item = _a[_i];
                 var expandedItem = Class.process(context, item, activeProperty);
@@ -291,14 +277,15 @@ var Class = (function () {
                     throw new InvalidJSONLDSyntaxError_1.default("Lists of lists are not permitted.");
                 if (!Utils.isArray(expandedItem))
                     expandedItem = [expandedItem];
-                Array.prototype.push.apply(expandedElement_1, expandedItem);
+                expanded.push.apply(expanded, expandedItem);
             }
-            return expandedElement_1;
+            return expanded;
         }
         if ("@context" in element) {
-            context = ObjectSchema.Digester.combineDigestedObjectSchemas([
-                ObjectSchema.Digester.digestSchema(element["@context"]),
+            context = ObjectSchema.Digester
+                .combineDigestedObjectSchemas([
                 context,
+                ObjectSchema.Digester.digestSchema(element["@context"]),
             ]);
         }
         var expandedElement = {};
@@ -437,6 +424,12 @@ var Class = (function () {
     return Class;
 }());
 exports.Class = Class;
+var Util = (function () {
+    function Util() {
+    }
+    return Util;
+}());
+exports.Util = Util;
 exports.default = Class;
 
 //# sourceMappingURL=Processor.js.map

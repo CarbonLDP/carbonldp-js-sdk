@@ -1,8 +1,24 @@
-import { OptionalToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import {
+	OptionalToken,
+	ValuesToken,
+	VariableToken,
+} from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
-import { clazz, constructor, hasDefaultExport, hasProperty, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
+import {
+	DigestedObjectSchema,
+	Digester,
+} from "../../ObjectSchema";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	method,
+	module,
+} from "../../test/JasmineExtender";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryProperty";
 import { Class as QueryProperty } from "./QueryProperty";
@@ -63,6 +79,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 				expect( queryProperty[ "_patterns" ] ).toEqual( [] );
 			} );
+
 		} );
 
 		it( hasProperty(
@@ -158,21 +175,17 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			it( hasSignature(
 				"Returns the specific schema for the property objects that was created query definition.",
 				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
-			), ():void => {
-			} );
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryProperty.prototype.getSchema ).toBeDefined();
 				expect( QueryProperty.prototype.getSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should initialize the schema with an empty schema with vocab", ():void => {
+			it( "should initialize the schema with an empty schema", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 
-				const schema:DigestedObjectSchema = Digester.digestSchema( {
-					"@vocab": "http://example.com/vocab#",
-				} );
-
+				const schema:DigestedObjectSchema = Digester.digestSchema( {} );
 				expect( queryProperty[ "_schema" ] ).toBeUndefined();
 
 				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();
