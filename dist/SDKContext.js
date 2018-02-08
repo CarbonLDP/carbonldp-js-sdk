@@ -146,7 +146,6 @@ var Class = (function () {
         this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
-        this.extendObjectSchema(System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(LDP.Entry.SCHEMA);
         this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);

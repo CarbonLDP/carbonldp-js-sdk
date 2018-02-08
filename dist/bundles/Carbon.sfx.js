@@ -7303,7 +7303,6 @@ var Class = (function () {
         this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
-        this.extendObjectSchema(System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(LDP.Entry.SCHEMA);
         this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);
@@ -13018,8 +13017,6 @@ exports.ValidationResult = ValidationResult;
 Object.defineProperty(exports, "__esModule", { value: true });
 var PlatformMetadata = __webpack_require__(303);
 exports.PlatformMetadata = PlatformMetadata;
-var InstanceMetadata = __webpack_require__(304);
-exports.InstanceMetadata = InstanceMetadata;
 
 
 /***/ }),
@@ -13072,7 +13069,7 @@ var Pointer = __webpack_require__(13);
 var RDF = __webpack_require__(9);
 var Resource = __webpack_require__(10);
 var SDKContext = __webpack_require__(75);
-var Settings = __webpack_require__(305);
+var Settings = __webpack_require__(304);
 var SHACL = __webpack_require__(142);
 var SPARQL = __webpack_require__(74);
 var System = __webpack_require__(143);
@@ -22976,31 +22973,6 @@ exports.SCHEMA = {
 
 /***/ }),
 /* 304 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __webpack_require__(1);
-exports.RDF_CLASS = NS.C.Class.Instance;
-exports.SCHEMA = {
-    "name": {
-        "@id": NS.CS.Predicate.namae,
-        "@type": NS.XSD.DataType.string,
-    },
-    "description": {
-        "@id": NS.CS.Predicate.description,
-        "@type": NS.XSD.DataType.string,
-    },
-    "allowsOrigins": {
-        "@id": NS.CS.Predicate.allowsOrigin,
-        "@container": "@set",
-    },
-};
-
-
-/***/ }),
-/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
