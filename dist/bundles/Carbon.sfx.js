@@ -13104,17 +13104,11 @@ var Class = (function (_super) {
         configurable: true
     });
     Class.prototype.getPlatformMetadata = function () {
-        return this.getDocumentMetadata("system.platform.metadata");
-    };
-    Class.prototype.getInstanceMetadata = function () {
-        return this.getDocumentMetadata("system.instance.metadata");
-    };
-    Class.prototype.getDocumentMetadata = function (metadataSetting) {
         var _this = this;
-        if (!this.hasSetting(metadataSetting))
-            return Promise.reject(new Errors.IllegalStateError("The \"" + metadataSetting + "\" setting hasn't been defined."));
+        if (!this.hasSetting("system.platform.metadata"))
+            return Promise.reject(new Errors.IllegalStateError("The \"system.platform.metadata\" setting hasn't been defined."));
         return Promise.resolve()
-            .then(function () { return _this.resolveSystemURI(_this.getSetting(metadataSetting)); })
+            .then(function () { return _this.resolveSystemURI(_this.getSetting("system.platform.metadata")); })
             .then(function (metadataURI) { return _this.documents.get(metadataURI); })
             .then(function (_a) {
             var metadataDocument = _a[0];
