@@ -1,25 +1,22 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+import AbstractContext from "./AbstractContext";
 import * as NS from "./NS";
 import * as PersistedDocument from "./PersistedDocument";
-import AbstractContext from "./AbstractContext";
 
 import * as RDFRepresentation from "./RDFRepresentation";
 import DefaultExport from "./RDFRepresentation";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
@@ -156,9 +153,10 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { vocabulary: "http://example.com/vocab#" };
 				}
 			}
+
 			let context:AbstractContext = new MockedContext();
 
 			object = PersistedDocument.Factory.create( "", context.documents );

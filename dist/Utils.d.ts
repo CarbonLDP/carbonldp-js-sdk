@@ -25,17 +25,13 @@ declare class A {
     static indexOf<T, W>(array: Array<T>, searchedElement: W, comparator?: (element: T, searchedElement: W) => boolean): number;
 }
 declare class O {
-    static extend<T extends Object, W extends Object>(target: T, source: W, config?: {
+    static extend<T extends object, W extends object>(target: T, source: W, config?: {
         arrays?: boolean;
         objects?: boolean;
-    }, ignore?: {
-        [key: string]: boolean;
     }): T & W;
     static clone<T extends Object>(object: T, config?: {
         arrays?: boolean;
         objects?: boolean;
-    }, ignore?: {
-        [key: string]: boolean;
     }): T;
     static areEqual(object1: Object, object2: Object, config?: {
         arrays?: boolean;

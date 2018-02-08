@@ -139,7 +139,7 @@ export class Class {
 		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
-			const containerURI:string = this.context.resolveSystemURI( Ticket.TICKETS_CONTAINER );
+			const containerURI:string = this.context._resolvePath( "system" ) + Ticket.TICKETS_CONTAINER;
 			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() )
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
 		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {

@@ -185,9 +185,10 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { vocabulary: "http://example.com/vocab#" };
 					}
 				}
+
 				let context:AbstractContext = new MockContext();
 				documents = context.documents;
 

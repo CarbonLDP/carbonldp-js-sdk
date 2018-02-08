@@ -13,9 +13,9 @@ var RDFRepresentation = require("./RDFRepresentation");
 var SHACL = require("./SHACL");
 var SPARQL = require("./SPARQL");
 var System = require("./System");
+var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class() {
-        this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
         this.auth = new Auth.Class(this);
@@ -33,33 +33,26 @@ var Class = (function () {
         configurable: true
     });
     Class.prototype.resolve = function (relativeURI) {
-        return relativeURI;
+        return RDF.URI.Util.resolve(this.baseURI, relativeURI);
     };
-    Class.prototype.resolveSystemURI = function (relativeURI) {
-        if (!this.hasSetting("system.container"))
-            throw new Errors.IllegalStateError("The \"system.container\" setting hasn't been defined.");
-        var systemContainer = this.resolve(this.getSetting("system.container"));
-        var systemURI = RDF.URI.Util.resolve(systemContainer, relativeURI);
-        if (!systemURI.startsWith(systemContainer))
-            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP.");
-        return systemURI;
-    };
-    Class.prototype.hasSetting = function (name) {
-        return (this.settings.has(name))
-            || (!!this.parentContext && this.parentContext.hasSetting(name));
-    };
-    Class.prototype.getSetting = function (name) {
-        if (this.settings.has(name))
-            return this.settings.get(name);
-        if (this.parentContext && this.parentContext.hasSetting(name))
-            return this.parentContext.getSetting(name);
-        return null;
-    };
-    Class.prototype.setSetting = function (name, value) {
-        this.settings.set(name, value);
-    };
-    Class.prototype.deleteSetting = function (name) {
-        this.settings.delete(name);
+    Class.prototype._resolvePath = function (path) {
+        var leftSearchedPaths = path.split(".");
+        var currentSearchedPaths = [];
+        var url = "";
+        var documentPaths = this.settings && this.settings.paths;
+        while (leftSearchedPaths.length) {
+            var containerKey = leftSearchedPaths.shift();
+            currentSearchedPaths.push(containerKey);
+            var containerPath = documentPaths ? documentPaths[containerKey] : null;
+            if (!containerPath)
+                throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" hasn't been declared.");
+            var slug = Utils_1.isString(containerPath) ? containerPath : containerPath.slug;
+            if (!slug)
+                throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
+            url = RDF.URI.Util.resolve(url, slug);
+            documentPaths = Utils_1.isObject(containerPath) ? containerPath.paths : null;
+        }
+        return this.resolve(url);
     };
     Class.prototype.hasObjectSchema = function (type) {
         type = this._resolveTypeURI(type);
@@ -83,8 +76,8 @@ var Class = (function () {
             var generalSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
             var clonedSchema = ObjectSchema.Digester
                 .combineDigestedObjectSchemas([generalSchema]);
-            if (clonedSchema.vocab === null && this.hasSetting("vocabulary"))
-                clonedSchema.vocab = this.resolve(this.getSetting("vocabulary"));
+            if (clonedSchema.vocab === null && this.settings && this.settings.vocabulary)
+                clonedSchema.vocab = this.resolve(this.settings.vocabulary);
             if (!clonedSchema.base)
                 clonedSchema.base = this.baseURI;
             return clonedSchema;

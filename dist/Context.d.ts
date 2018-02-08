@@ -7,11 +7,7 @@ export interface Class {
     readonly baseURI: string;
     readonly parentContext: Class;
     resolve(relativeURI: string): string;
-    resolveSystemURI(relativeURI: string): string;
-    hasSetting(name: string): boolean;
-    getSetting(name: string): any;
-    setSetting(name: string, value: any): any;
-    deleteSetting(name: string): any;
+    _resolvePath(path: string): string;
     hasObjectSchema(type: string): boolean;
     getObjectSchema(type: string): ObjectSchema.DigestedObjectSchema;
     getObjectSchema(): ObjectSchema.DigestedObjectSchema;

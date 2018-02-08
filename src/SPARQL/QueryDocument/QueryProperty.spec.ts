@@ -9,6 +9,7 @@ import {
 	DigestedObjectSchema,
 	Digester,
 } from "../../ObjectSchema";
+import { ContextSettings } from "../../Settings";
 import {
 	clazz,
 	constructor,
@@ -47,8 +48,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
+				protected settings:ContextSettings = { vocabulary: "http://example.com/vocab#" };
 			};
-			context.setSetting( "vocabulary", "http://example.com/vocab#" );
 
 			queryContext = new QueryContext( context );
 		} );

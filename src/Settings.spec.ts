@@ -1,106 +1,140 @@
+import * as Settings from "./Settings";
+
 import {
-	OPTIONAL,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
+	extendsClass,
 	hasDefaultExport,
+	hasProperty,
+	INSTANCE,
+	interfaze,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	reexports,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Auth from "./Auth";
-
-import * as settings from "./Settings";
-import defaultExport from "./Settings";
 
 describe( module( "Carbon/Settings" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( settings ).toBeDefined();
-		expect( Utils.isObject( settings ) ).toBe( true );
+	it( "should exists", ():void => {
+		expect( Settings ).toBeDefined();
+		expect( Settings ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze(
-		"Carbon.Settings.Class",
-		"Interface that represents the possible settings used by the SDK."
-	), ():void => {
+	describe( interfaze( "Carbon.Settings.PlatformPaths", "Interface to configure the platform's system documents locations." ), ():void => {
+
+		it( "should exists", ():void => {
+			const target:Settings.PlatformPaths = {} as Settings.PlatformPaths;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OPTIONAL,
-			"auth.method",
-			"Carbon.Auth.Method",
-			"(Not supported) Indicates the default method of authentication to use."
-		), ():void => {} );
+			"paths",
+			"{ [document:string]:string | Carbon.Settings.DocumentPaths }",
+			"The paths of the platform's system document to configure.\n" +
+			"A document path can receive a string as its slug, or a `Carbon.Settings.DocumentPaths` object to declare it slug and its sub-paths."
+		), ():void => {
+			const target:Settings.PlatformPaths[ "paths" ] = {} as { [document:string]:string | Settings.DocumentPaths };
+			expect( target ).toBeDefined();
+		} );
+
+	} );
+
+	describe( interfaze( "Carbon.Settings.DocumentPaths", "Interface to configure the sub-paths of a platform's system document." ), ():void => {
+
+		it( extendsClass( "Carbon.Settings.PlatformPaths" ), ():void => {
+			const target:Settings.PlatformPaths = {} as Settings.DocumentPaths;
+			expect( target ).toBeDefined();
+		} );
+
+		it( "should exists", ():void => {
+			const target:Settings.DocumentPaths = {} as Settings.DocumentPaths;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
-			OPTIONAL,
-			"system.container",
+			OBLIGATORY,
+			"slug",
 			"string",
-			"URI relative to the domain that indicates the slug of the system container."
-		), ():void => {} );
+			"The slug of the platform's system document to configure."
+		), ():void => {
+			const target:Settings.DocumentPaths[ "slug" ] = "" as string;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasProperty(
-			OPTIONAL,
-			"system.users.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the users container."
-		), ():void => {} );
+	} );
 
-		it( hasProperty(
-			OPTIONAL,
-			"system.credentials.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the user's credentials container."
-		), ():void => {} );
+	describe( interfaze( "Carbon.Settings.ContextSettings", "Interface of the possible settings of a Context in the SDK." ), ():void => {
 
-		it( hasProperty(
-			OPTIONAL,
-			"system.roles.container",
-			"string",
-			"Relative URI to any context, that indicates the slug of the roles container."
-		), ():void => {} );
+		it( extendsClass( "Carbon.Settings.PlatformPaths" ), ():void => {
+			const target:Settings.PlatformPaths = {} as Settings.ContextSettings;
+			expect( target ).toBeDefined();
+		} );
+
+		it( "should exists", ():void => {
+			const target:Settings.ContextSettings = {} as Settings.ContextSettings;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"vocabulary",
 			"string",
-			"URI to be used as the default vocabulary. If a relative one is provided, the URI will be resolved by the context were it has been requested."
-		), ():void => {} );
+			"Optional default vocabulary to use as in the general schema of the context."
+		), ():void => {
+			const target:Settings.ContextSettings[ "vocabulary" ] = "" as string;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
-	it( hasDefaultExport(
-		"Carbon.settings", `
-		A object of type \`Carbon.settings.CarbonSettings\`, which is the default settings of a Carbon instance:
-		* auth.method: \`Carbon.Auth.Method.TOKEN\`
-		* system.container: \`".system/"\`
-		* system.users.container: \`"users/"\`
-		* system.credentials.container: \`"credentials/"\`
-		* system.roles.container: \`"roles/"\`
-		* vocabulary: \`"vocabulary/#"\`
-		`
-	), ():void => {
-		expect( defaultExport ).toBeDefined();
-		expect( Utils.isObject( defaultExport ) ).toBe( true );
+	describe( interfaze( "Carbon.Settings.CarbonSettings", "Interface of the possible settings used by the Carbon class." ), ():void => {
 
-		expect( defaultExport[ "auth.method" ] ).toBeDefined();
-		expect( defaultExport[ "auth.method" ] ).toBe( Auth.Method.TOKEN );
+		it( extendsClass( "Carbon.Settings.ContextSettings" ), ():void => {
+			const target:Settings.ContextSettings = {} as Settings.CarbonSettings;
+			expect( target ).toBeDefined();
+		} );
 
-		expect( defaultExport[ "system.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.container" ] ).toBe( ".system/" );
+		it( hasProperty(
+			OBLIGATORY,
+			"host",
+			"string",
+			"The host of the platform to connect to."
+		), ():void => {
+			const target:Settings.Class[ "host" ] = "" as string;
+			expect( target ).toBeDefined();
+		} );
 
-		expect( defaultExport[ "system.roles.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.roles.container" ] ).toBe( "roles/" );
+		it( hasProperty(
+			OPTIONAL,
+			"post",
+			"number",
+			"The optional port of the host to connect to."
+		), ():void => {
+			const target:Settings.Class[ "port" ] = 80 as number;
+			expect( target ).toBeDefined();
+		} );
 
-		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.users.container" ] ).toBe( "users/" );
+		it( hasProperty(
+			OPTIONAL,
+			"ssl",
+			"boolean",
+			"Flag that indicates is the server is under a secure connection or not.\n" +
+			"By default it will be set to true, making the host to be resolved as `https://`"
+		), ():void => {
+			const target:Settings.Class[ "ssl" ] = false as boolean;
+			expect( target ).toBeDefined();
+		} );
 
-		expect( defaultExport[ "system.users.container" ] ).toBeDefined();
-		expect( defaultExport[ "system.credentials.container" ] ).toBe( "credentials/" );
+	} );
 
-		expect( defaultExport[ "vocabulary" ] ).toBeDefined();
-		expect( defaultExport[ "vocabulary" ] ).toBe( "vocabulary/#" );
+	it( reexports( INSTANCE, "Carbon.Settings.Class", "Carbon.Settings.CarbonSettings" ), ():void => {
+		const target:Settings.Class = {} as Settings.CarbonSettings;
+		expect( target ).toBeDefined();
+	} );
+
+	it( hasDefaultExport( "Carbon.Settings.Class" ), ():void => {
+		const target:Settings.default = {} as Settings.Class;
+		expect( target ).toBeDefined();
 	} );
 
 } );

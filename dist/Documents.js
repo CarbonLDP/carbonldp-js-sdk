@@ -460,10 +460,7 @@ var Class = (function () {
     Class.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var schema = ObjectSchema.Digester.combineDigestedObjectSchemas([this.context.getObjectSchema()]);
-        if (this.context.hasSetting("vocabulary"))
-            schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return schema;
+        return this.context.getObjectSchema();
     };
     Class.prototype.hasSchemaFor = function (object, path) {
         if (path !== void 0)
