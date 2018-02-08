@@ -10,15 +10,14 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 1. Install dependencies
     - [node.js 6+](https://nodejs.org/en/)
     - gulp: `npm install gulp -g` (you may need to run it as root)
-    - typings: `npm install typings -g` (you may need to run it as root)
 2. cd into the project's root directory
 3. Run `npm install`
-4. Run `typings install`
 5. Build the source code by running `npm start`
 
 ## Main gulp tasks
 1. `build`: Same as `npm start`. Build the source code and prepare it for production (inside the dist/ folder)
 2. `lint`: Same as `npm lint`. Run TSLint over the source code to perform static code analysis.
+3. `test`: Same as `npm test`. Run the test in both Node.js and Google Chrome.
 
 ## File structure
 - **build**: Build related scripts
