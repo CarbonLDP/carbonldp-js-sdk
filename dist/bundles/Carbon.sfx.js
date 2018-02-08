@@ -3785,9 +3785,6 @@ function removeMembers(members) {
 function removeAllMembers() {
     return this._documents.removeAllMembers(this.id);
 }
-function upload(data, slug) {
-    return this._documents.upload(this.id, data, slug);
-}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -3845,7 +3842,6 @@ var Factory = (function () {
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
             && Utils.hasFunction(object, "removeAllMembers")
-            && Utils.hasFunction(object, "upload")
             && Utils.hasFunction(object, "executeRawASKQuery")
             && Utils.hasFunction(object, "executeASKQuery")
             && Utils.hasFunction(object, "executeRawSELECTQuery")
@@ -4088,12 +4084,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: removeAllMembers,
-            },
-            "upload": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: upload,
             },
             "executeRawASKQuery": {
                 writable: false,
@@ -9747,40 +9737,6 @@ var Class = (function () {
                 return _this.persistAccessPoint(documentURI, accessPoint, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
-    };
-    Class.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
-        var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
-        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-        if (typeof Blob !== "undefined") {
-            if (!(data instanceof Blob))
-                return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Blob object."));
-            HTTP.Request.Util.setContentTypeHeader(data.type, requestOptions);
-        }
-        else {
-            if (!(data instanceof Buffer))
-                return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Buffer object."));
-            var fileType = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"file-type\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-            var bufferType = fileType(data);
-            HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
-        }
-        return Utils_3.promiseMethod(function () {
-            parentURI = _this.getRequestURI(parentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            if (!!slug)
-                HTTP.Request.Util.setSlug(slug, requestOptions);
-            return _this.sendRequest(HTTP.Method.POST, parentURI, requestOptions, data);
-        }).then(function (response) {
-            var locationHeader = response.getHeader("Location");
-            if (locationHeader === null || locationHeader.values.length < 1)
-                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
-            if (locationHeader.values.length !== 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
-            return [pointer, response];
-        });
     };
     Class.prototype.listMembers = function (uri, requestOptions) {
         var _this = this;

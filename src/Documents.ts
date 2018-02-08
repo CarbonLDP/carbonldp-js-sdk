@@ -336,45 +336,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then( mapTupleArray );
 	}
 
-	upload( parentURI:string, data:Blob | Buffer, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Blob | Buffer, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Blob | Buffer, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
-		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-
-		if( typeof Blob !== "undefined" ) {
-			if( ! (data instanceof Blob) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
-			HTTP.Request.Util.setContentTypeHeader( (<Blob> data).type, requestOptions );
-
-		} else {
-			if( ! (data instanceof Buffer) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
-			const fileType:( buffer:Buffer ) => { ext:string, mime:string } = require( "file-type" );
-
-			let bufferType:{ ext:string, mime:string } = fileType( <Buffer> data );
-			HTTP.Request.Util.setContentTypeHeader( bufferType ? bufferType.mime : "application/octet-stream", requestOptions );
-		}
-
-		return promiseMethod( () => {
-			parentURI = this.getRequestURI( parentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
-
-			if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
-
-			return this.sendRequest( HTTP.Method.POST, parentURI, requestOptions, data );
-		} ).then<[ Pointer.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
-			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
-			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
-			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
-
-			let locationURI:string = locationHeader.values[ 0 ].toString();
-
-			let pointer:Pointer.Class = this.getPointer( locationURI );
-
-			return [ pointer, response ];
-		} );
-	}
-
-
 	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
