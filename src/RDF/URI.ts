@@ -174,16 +174,16 @@ export class Util {
 }
 
 function prefixWithObjectSchema( uri:string, objectSchema:ObjectSchema.DigestedObjectSchema ):string {
-	let prefixEntries:IterableIterator<[ string, Class ]> = objectSchema.prefixes.entries();
+	const prefixEntries:IterableIterator<[ string, string ]> = objectSchema.prefixes.entries();
 	while( true ) {
-		let result:IteratorResult<[ string, Class ]> = prefixEntries.next();
+		const result:IteratorResult<[ string, string ]> = prefixEntries.next();
 		if( result.done ) return uri;
 
-		let [ prefix, prefixURI ]:[ string, Class ] = result.value;
-		if( ! Util.isAbsolute( prefixURI.toString() ) ) continue;
-		if( ! uri.startsWith( prefixURI.toString() ) ) continue;
+		let [ prefix, prefixURI ]:[ string, string ] = result.value;
+		if( ! Util.isAbsolute( prefixURI ) ) continue;
+		if( ! uri.startsWith( prefixURI ) ) continue;
 
-		return Util.prefix( uri, prefix, prefixURI.toString() );
+		return Util.prefix( uri, prefix, prefixURI );
 	}
 }
 

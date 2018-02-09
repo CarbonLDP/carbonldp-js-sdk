@@ -19,11 +19,11 @@ export declare class Util {
     static getPropertyList(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
     static getPropertyPointerList(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
     static getPropertyLiteralList(expandedObject: any, propertyURI: string, literalType: string): any;
-    static getProperties(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyPointers(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
+    static getProperties(propertyValues: any[], pointerLibrary: Pointer.Library): any;
+    static getPropertyPointers(propertyValues: any[], pointerLibrary: Pointer.Library): any;
     static getPropertyURIs(expandedObject: any, propertyURI: string): string[];
-    static getPropertyLiterals(expandedObject: any, propertyURI: string, literalType: string): any;
-    static getPropertyLanguageMap(expandedObject: any, propertyURI: string): any;
-    static getList(propertyValues: Array<any>): List.Class;
+    static getPropertyLiterals(propertyValues: any[], literalType: string): any;
+    static getPropertyLanguageMap(propertyValues: any[]): any;
+    static getList(propertyValues: any[]): List.Class;
 }
 export default Class;

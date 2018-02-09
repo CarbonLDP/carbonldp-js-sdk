@@ -1,13 +1,17 @@
-export interface Class {
-    "vocabulary"?: string;
+export interface PlatformPaths {
+    paths?: {
+        [document: string]: string | DocumentPaths;
+    };
 }
-export interface InternalSettings extends Class {
-    "system.container"?: string;
-    "system.platform.metadata"?: string;
-    "system.instance.metadata"?: string;
-    "system.users.container"?: string;
-    "system.credentials.container"?: string;
-    "system.roles.container"?: string;
+export interface DocumentPaths extends PlatformPaths {
+    slug: string;
 }
-export declare const defaultSettings: InternalSettings;
-export default defaultSettings;
+export interface ContextSettings extends PlatformPaths {
+    vocabulary?: string;
+}
+export interface CarbonSettings extends ContextSettings {
+    host: string;
+    port?: number;
+    ssl?: boolean;
+}
+export { CarbonSettings as default, CarbonSettings as Class };

@@ -1,39 +1,36 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasSignature,
-	hasProperty,
-	extendsClass,
-	decoratedObject,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as AccessPoint from "./AccessPoint";
 import AbstractContext from "./AbstractContext";
+import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as NamedFragment from "./NamedFragment";
+
+import * as PersistedDocument from "./PersistedDocument";
+import DefaultExport from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as URI from "./RDF/URI";
+import {
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
+} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-
-import * as PersistedDocument from "./PersistedDocument";
-import DefaultExport from "./PersistedDocument";
 
 describe( module( "Carbon/PersistedDocument" ), ():void => {
 
@@ -650,7 +647,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = {
+						vocabulary: "vocab#",
+						paths: { system: ".system/" },
+					};
 				}
 			}
 
@@ -1032,7 +1032,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			let document:PersistedDocument.Class;
 
 			beforeEach( ():void => {
-				context.setSetting( "vocabulary", "vocab#" );
 				context.extendObjectSchema( {
 					"exTypes": "http://example.com/types#",
 					"another": "http://example.com/another-url/ns#",

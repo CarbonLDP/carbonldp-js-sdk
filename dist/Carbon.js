@@ -9,15 +9,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var iri_1 = require("sparqler/iri");
 var AbstractContext = require("./AbstractContext");
 var AccessPoint = require("./AccessPoint");
 var Auth = require("./Auth");
@@ -48,17 +41,46 @@ var System = require("./System");
 var Utils = require("./Utils");
 var Class = (function (_super) {
     __extends(Class, _super);
-    function Class(domain, ssl, settings) {
-        if (ssl === void 0) { ssl = true; }
+    function Class(urlOrSettings) {
         var _this = _super.call(this) || this;
-        domain = RDF.URI.Util.removeProtocol(domain);
-        if (!domain.endsWith("/"))
-            domain = domain + "/";
-        _this._baseURI = (ssl ? "https://" : "http://") + domain;
-        var internalSettings = __assign({}, Settings.defaultSettings, !settings ? {} : {
-            vocabulary: settings.vocabulary,
-        });
-        Utils.M.extend(_this.settings, Utils.M.from(internalSettings));
+        _this.settings = {
+            vocabulary: "vocabulary/#",
+            paths: {
+                system: {
+                    slug: ".system/",
+                    paths: {
+                        platform: "platform/",
+                        instance: "instance/",
+                        credentials: "credentials/",
+                        users: "users/",
+                        roles: "roles/",
+                    },
+                },
+            },
+        };
+        if (Utils.isString(urlOrSettings)) {
+            if (!RDF.URI.Util.hasProtocol(urlOrSettings))
+                throw new Errors.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
+            _this._baseURI = urlOrSettings;
+        }
+        else {
+            if (!Utils.isString(urlOrSettings.host))
+                throw new Errors.IllegalArgumentError("The settings object must contains a valid host string.");
+            if (iri_1.hasProtocol(urlOrSettings.host))
+                throw new Errors.IllegalArgumentError("The host must not contain a protocol.");
+            if (urlOrSettings.host.includes(":"))
+                throw new Errors.IllegalArgumentError("The host must not contain a port.");
+            _this._baseURI = "" + (urlOrSettings.ssl === false ? "http://" : "https://") + urlOrSettings.host;
+            if (Utils.isNumber(urlOrSettings.port)) {
+                if (_this._baseURI.endsWith("/"))
+                    _this._baseURI = _this._baseURI.slice(0, -1);
+                _this._baseURI += ":" + urlOrSettings.port;
+            }
+            urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
+            _this.settings = Utils.O.extend(_this.settings, urlOrSettings, { objects: true });
+        }
+        if (!_this._baseURI.endsWith("/"))
+            _this._baseURI = _this._baseURI + "/";
         _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
@@ -74,15 +96,9 @@ var Class = (function (_super) {
     });
     Class.prototype.getPlatformMetadata = function () {
         var _this = this;
-        if (!this.hasSetting("system.platform.metadata"))
-            return Promise.reject(new Errors.IllegalStateError("The \"system.platform.metadata\" setting hasn't been defined."));
         return Promise.resolve()
-            .then(function () { return _this.resolveSystemURI(_this.getSetting("system.platform.metadata")); })
-            .then(function (metadataURI) { return _this.documents.get(metadataURI); })
-            .then(function (_a) {
-            var metadataDocument = _a[0];
-            return metadataDocument;
-        });
+            .then(function () { return _this._resolvePath("system.platform"); })
+            .then(function (uri) { return _this.documents.get(uri); });
     };
     Class.AccessPoint = AccessPoint;
     Class.Auth = Auth;

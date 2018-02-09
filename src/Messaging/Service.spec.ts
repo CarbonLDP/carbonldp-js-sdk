@@ -3,7 +3,18 @@ import Frame from "webstomp-client/src/frame.js";
 
 import Carbon from "../Carbon";
 import { IllegalStateError } from "../Errors";
-import { clazz, constructor, hasDefaultExport, hasProperty, hasSignature, INSTANCE, isDefined, method, module, STATIC } from "../test/JasmineExtender";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+	STATIC
+} from "../test/JasmineExtender";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as Message from "./Message";
@@ -43,7 +54,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 
 		let service:MessagingService.Class;
 		beforeEach( () => {
-			const carbon:Carbon = new Carbon( "example.com" );
+			const carbon:Carbon = new Carbon( "https://example.com" );
 			service = new MessagingService.Class( carbon );
 		} );
 

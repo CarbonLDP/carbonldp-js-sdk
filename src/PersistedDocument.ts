@@ -194,7 +194,7 @@ function resolveURI( uri:string ):string {
 	if( URI.Util.isAbsolute( uri ) ) return uri;
 
 	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
-	return ObjectSchema.Util.resolveURI( uri, schema );
+	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
 }
 
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
@@ -508,14 +508,11 @@ export class Factory {
 				configurable: true,
 				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
-					return function( id:string ):boolean {
-						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( id, (<Class> this)._documents.getGeneralSchema() );
-						}
+					return function( this:Class, id:string ):boolean {
+						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
-
-						return ! URI.Util.isBNodeID( id ) && (<Class> this)._documents.hasPointer( id );
+						return ! URI.Util.isBNodeID( id ) && this._documents.hasPointer( id );
 					};
 				})(),
 			},
@@ -526,14 +523,11 @@ export class Factory {
 				value: (function():( id:string ) => Pointer.Class {
 					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
-					return function( id:string ):Pointer.Class {
-						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( id, (<Class> this)._documents.getGeneralSchema() );
-						}
+					return function( this:Class, id:string ):Pointer.Class {
+						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
-
-						return (<Class> this)._documents.getPointer( id );
+						return this._documents.getPointer( id );
 					};
 				})(),
 			},
@@ -543,15 +537,12 @@ export class Factory {
 				configurable: true,
 				value: (function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
-					return function( idOrPointer:any ):boolean {
-						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-						if( RDF.URI.Util.isPrefixed( uri ) ) {
-							uri = ObjectSchema.Digester.resolvePrefixedURI( uri, (<Class> this)._documents.getGeneralSchema() );
-						}
+					return function( this:Class, idOrPointer:any ):boolean {
+						let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
-						if( superFunction.call( this, uri ) ) return true;
-
-						return (<Class> this)._documents.inScope( uri );
+						if( superFunction.call( this, id ) ) return true;
+						return this._documents.inScope( id );
 					};
 				})(),
 			},

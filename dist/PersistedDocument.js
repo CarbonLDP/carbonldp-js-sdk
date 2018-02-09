@@ -55,7 +55,7 @@ function resolveURI(uri) {
     if (URI.Util.isAbsolute(uri))
         return uri;
     var schema = this._documents.getGeneralSchema();
-    return ObjectSchema.Util.resolveURI(uri, schema);
+    return ObjectSchema.Util.resolveURI(uri, schema, { vocab: true });
 }
 function extendAddType(superFunction) {
     return function (type) {
@@ -295,9 +295,7 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
                         return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
@@ -312,9 +310,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.getPointer;
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
                         return this._documents.getPointer(id);
@@ -328,13 +324,11 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.inScope;
                     return function (idOrPointer) {
-                        var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-                        if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
-                        }
-                        if (superFunction.call(this, uri))
+                        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+                        id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
+                        if (superFunction.call(this, id))
                             return true;
-                        return this._documents.inScope(uri);
+                        return this._documents.inScope(id);
                     };
                 })(),
             },

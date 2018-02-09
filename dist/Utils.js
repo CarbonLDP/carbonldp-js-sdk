@@ -25,7 +25,7 @@ function isNull(value) {
 }
 exports.isNull = isNull;
 function isArray(object) {
-    return object instanceof Array;
+    return Array.isArray(object);
 }
 exports.isArray = isArray;
 function isString(value) {
@@ -191,37 +191,43 @@ exports.A = A;
 var O = (function () {
     function O() {
     }
-    O.extend = function (target, source, config, ignore) {
+    O.extend = function (target, source, config) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
-        if (ignore === void 0) { ignore = {}; }
         if (!isArray(source) && !isPlainObject(source) || !isArray(target) && !isPlainObject(target))
             return null;
-        var clone = target;
-        source.__CarbonSDK_circularReferenceFlag = clone;
+        source.__CarbonSDK_circularReferenceFlag = target;
         for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
             var key = _a[_i];
             if (isFunction(source[key]) || key === "__CarbonSDK_circularReferenceFlag")
                 continue;
-            if (key in ignore)
-                continue;
             var property = source[key];
-            if (isArray(property) && config.arrays ||
-                isPlainObject(property) && config.objects) {
-                property = property.__CarbonSDK_circularReferenceFlag || O.clone(property, config);
+            if (isArray(property) && config.arrays || isPlainObject(property) && config.objects) {
+                if ("__CarbonSDK_circularReferenceFlag" in property) {
+                    property = property.__CarbonSDK_circularReferenceFlag;
+                }
+                else {
+                    property = !(key in target) || target[key].constructor !== property.constructor ?
+                        O.clone(property, config) :
+                        O.extend(target[key], property, config);
+                }
             }
-            clone[key] = property;
+            if (property === null) {
+                if (target[key])
+                    delete target[key];
+                continue;
+            }
+            target[key] = property;
         }
         delete source.__CarbonSDK_circularReferenceFlag;
-        return clone;
+        return target;
     };
-    O.clone = function (object, config, ignore) {
+    O.clone = function (object, config) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
-        if (ignore === void 0) { ignore = {}; }
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
         var clone = (isAnArray ? [] : Object.create(Object.getPrototypeOf(object)));
-        return O.extend(clone, object, config, ignore);
+        return O.extend(clone, object, config);
     };
     O.areEqual = function (object1, object2, config, ignore) {
         if (config === void 0) { config = { arrays: false, objects: false }; }

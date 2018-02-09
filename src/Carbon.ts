@@ -1,3 +1,4 @@
+import { hasProtocol } from "sparqler/iri";
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -66,22 +67,50 @@ export class Class extends AbstractContext.Class {
 	get version():string { return Class.version; }
 
 	protected _baseURI:string;
+	protected settings:Settings.ContextSettings = {
+		vocabulary: "vocabulary/#",
+		paths: {
+			system: {
+				slug: ".system/",
+				paths: {
+					platform: "platform/",
+					instance: "instance/",
+					credentials: "credentials/",
+					users: "users/",
+					roles: "roles/",
+				},
+			},
+		},
+	};
 
 	messaging:Messaging.Service.Class;
 
-	constructor( domain:string, ssl:boolean = true, settings?:Settings.Class ) {
+	constructor( url:string );
+	constructor( settings:Settings.Class );
+	constructor( urlOrSettings:string | Settings.Class ) {
 		super();
-		domain = RDF.URI.Util.removeProtocol( domain );
-		if( ! domain.endsWith( "/" ) ) domain = domain + "/";
-		this._baseURI = ( ssl ? "https://" : "http://" ) + domain;
 
-		const internalSettings:Settings.InternalSettings = {
-			...Settings.defaultSettings,
-			...! settings ? {} : <Settings.Class> {
-				vocabulary: settings.vocabulary,
-			},
-		};
-		Utils.M.extend( this.settings, Utils.M.from( internalSettings ) );
+		if( Utils.isString( urlOrSettings ) ) {
+			if( ! RDF.URI.Util.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
+			this._baseURI = urlOrSettings;
+
+		} else {
+			if( ! Utils.isString( urlOrSettings.host ) ) throw new Errors.IllegalArgumentError( `The settings object must contains a valid host string.` );
+			if( hasProtocol( urlOrSettings.host ) ) throw new Errors.IllegalArgumentError( `The host must not contain a protocol.` );
+			if( urlOrSettings.host.includes( ":" ) ) throw new Errors.IllegalArgumentError( `The host must not contain a port.` );
+
+			this._baseURI = `${ urlOrSettings.ssl === false ? "http://" : "https://" }${ urlOrSettings.host }`;
+
+			if( Utils.isNumber( urlOrSettings.port ) ) {
+				if( this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI.slice( 0, - 1 );
+				this._baseURI += `:${ urlOrSettings.port }`;
+			}
+
+			urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
+			this.settings = Utils.O.extend( this.settings, urlOrSettings, { objects: true } );
+		}
+
+		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";
 
 		this.messaging = new Messaging.Service.Class( this );
 	}
@@ -89,14 +118,10 @@ export class Class extends AbstractContext.Class {
 	/**
 	 * Retrieves the Metadata related to the CarbonLDP Platform.
 	 */
-	getPlatformMetadata():Promise<System.PlatformMetadata.Class> {
-		if( ! this.hasSetting( "system.platform.metadata" ) )
-			return Promise.reject( new Errors.IllegalStateError( `The "system.platform.metadata" setting hasn't been defined.` ) );
-
+	getPlatformMetadata():Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]> {
 		return Promise.resolve()
-			.then( () => this.resolveSystemURI( this.getSetting( "system.platform.metadata" ) ) )
-			.then( metadataURI => this.documents.get<System.PlatformMetadata.Class>( metadataURI ) )
-			.then( ( [ metadataDocument ] ) => metadataDocument );
+			.then( () => this._resolvePath( "system.platform" ) )
+			.then( uri => this.documents.get<System.PlatformMetadata.Class>( uri ) )
 	}
 
 }

@@ -116,7 +116,7 @@ var Class = (function () {
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
-            var containerURI = _this.context.resolveSystemURI(Ticket.TICKETS_CONTAINER);
+            var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {

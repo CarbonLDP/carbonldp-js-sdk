@@ -143,8 +143,7 @@ export class Util {
 		return listLiterals;
 	}
 
-	static getProperties( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+	static getProperties( propertyValues:any[], pointerLibrary:Pointer.Library ):any {
 		if( ! propertyValues ) return null;
 		if( ! propertyValues.length ) return null;
 
@@ -157,8 +156,7 @@ export class Util {
 		return properties;
 	}
 
-	static getPropertyPointers( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+	static getPropertyPointers( propertyValues:any[], pointerLibrary:Pointer.Library ):any {
 		if( ! propertyValues ) return [];
 		if( ! propertyValues.length ) return [];
 
@@ -189,8 +187,7 @@ export class Util {
 		return propertyURIs;
 	}
 
-	static getPropertyLiterals( expandedObject:any, propertyURI:string, literalType:string ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+	static getPropertyLiterals( propertyValues:any[], literalType:string ):any {
 		if( ! propertyValues ) return null;
 
 		let propertyLiterals:Array<any> = [];
@@ -204,8 +201,7 @@ export class Util {
 		return propertyLiterals;
 	}
 
-	static getPropertyLanguageMap( expandedObject:any, propertyURI:string ):any {
-		let propertyValues:Array<any> = expandedObject[ propertyURI ];
+	static getPropertyLanguageMap( propertyValues:any[] ):any {
 		if( ! propertyValues ) return null;
 
 		let propertyLanguageMap:any = {};
@@ -222,7 +218,7 @@ export class Util {
 		return propertyLanguageMap;
 	}
 
-	static getList( propertyValues:Array<any> ):List.Class {
+	static getList( propertyValues:any[] ):List.Class {
 		for( let propertyValue of propertyValues ) {
 			if( ! List.Factory.is( propertyValue ) ) continue;
 

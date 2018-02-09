@@ -41,6 +41,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
+import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import {
 	clazz,
@@ -58,6 +59,12 @@ import {
 	OPTIONAL,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+
+function createPartialMetadata( schema:ObjectSchema.Class ):SPARQL.QueryDocument.PartialMetadata.Class {
+	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+	digestedSchema.properties.forEach( definition => ObjectSchema.Util.resolveProperty( digestedSchema, definition, true ) );
+	return new SPARQL.QueryDocument.PartialMetadata.Class( digestedSchema );
+}
 
 describe( module( "Carbon/Documents" ), ():void => {
 
@@ -115,7 +122,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -142,7 +149,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -165,7 +172,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -196,7 +203,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -219,7 +226,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -262,7 +269,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -302,7 +309,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -353,7 +360,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -432,13 +439,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "_:2",
 							"@type": [ "${ NS.C.Class.Error }" ],
 							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
 								"@value": "code-01"
 							} ],
 							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
 								"@value": "Message 01"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
-									"@id": "_:4"
+								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
@@ -452,7 +461,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@value": "Message 02"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
-									"@id": "_:6"
+								"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
@@ -547,9 +556,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "_:3",
 							"@type": [ "${ NS.C.Class.Error }" ],
 							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
 								"@value": "code-02"
 							} ],
 							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
 								"@value": "Message 02"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
@@ -621,13 +632,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "_:2",
 							"@type": [ "${ NS.C.Class.Error }" ],
 							"${ NS.C.Predicate.errorCode }": [ {
+								"@language": "en",
 								"@value": "code-01"
 							} ],
 							"${ NS.C.Predicate.errorMessage }": [ {
+								"@language": "en",
 								"@value": "Message 01"
 							} ],
 							"${ NS.C.Predicate.errorParameters }": [ {
-									"@id": "_:4"
+								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
@@ -784,8 +797,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -1172,11 +1185,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -1184,7 +1197,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -1297,11 +1310,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -1312,7 +1325,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "${ context.baseURI }another-resource/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }another-resource/",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -1393,11 +1406,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -1405,7 +1418,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -1524,11 +1537,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -1536,7 +1549,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -1579,11 +1592,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+								"https://example.com/ns#property-4": [ {
 									"@value": "true",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ],
@@ -1671,11 +1684,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+								"https://example.com/ns#property-4": [ {
 									"@value": "false",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ],
@@ -1732,7 +1745,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
@@ -1746,13 +1759,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 
 					persistedDocument.property2 = persistedDocument.createFragment(
 						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
 						"_:1"
 					);
-					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument.property2._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -1766,7 +1779,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-2",
 							"@type": NS.XSD.DataType.integer,
 						},
-					} ) );
+					} );
 
 					Utils.promiseMethod( () => {
 						return documents.get<MyDocument>( "https://example.com/resource/", _ => _
@@ -1879,7 +1892,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( () => {
+					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
+						if( error ) done.fail( error );
+
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
@@ -2189,7 +2204,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -2391,8 +2406,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -2766,8 +2781,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -3037,8 +3052,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -3494,8 +3509,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -3809,8 +3824,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -4118,8 +4133,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -4668,11 +4683,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -4680,7 +4695,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -4694,11 +4709,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -4706,7 +4721,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:2",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -5177,11 +5192,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -5189,7 +5204,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -5203,11 +5218,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -5215,7 +5230,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:2",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -5381,11 +5396,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -5396,7 +5411,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "${ context.baseURI }sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -5410,11 +5425,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -5425,7 +5440,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "${ context.baseURI }sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -6065,8 +6080,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -6462,8 +6477,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -6763,8 +6778,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -7079,8 +7094,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -7643,11 +7658,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -7655,7 +7670,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -7669,11 +7684,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -7681,7 +7696,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:2",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -8159,11 +8174,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -8171,7 +8186,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:1",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -8185,11 +8200,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -8197,7 +8212,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ]
 							}, {
 								"@id": "_:2",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -8356,11 +8371,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -8371,7 +8386,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "${ context.baseURI }sub-documents/sub-document1/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -8385,11 +8400,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
 								} ],
 								"https://schema.org/property-2": [ {
@@ -8400,7 +8415,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "${ context.baseURI }sub-documents/sub-document2/",
 							"@graph": [ {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
-								"${ context.getSetting( "vocabulary" ) }property-2": [ {
+								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
 									"@type": "${ NS.XSD.DataType.integer }"
 								} ],
@@ -9018,7 +9033,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -9214,7 +9229,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -9403,7 +9418,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -9599,7 +9614,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -9795,7 +9810,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -9970,8 +9985,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -10256,7 +10271,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
 								string: [ "string 1" ],
 								number: 100,
-								_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								_partialMetadata: createPartialMetadata( {
 									"string": {
 										"@type": NS.XSD.DataType.string,
 										"@container": "@set",
@@ -10267,9 +10282,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"number": {
 										"@type": NS.XSD.DataType.integer,
 									},
-								} ) ),
+								} ),
 							} ],
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"string": {
 									"@type": NS.XSD.DataType.string,
 									"@container": "@set",
@@ -10277,16 +10292,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"pointer": {
 									"@type": "@id",
 								},
-							} ) ),
+							} ),
 						},
-						_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+						_partialMetadata: createPartialMetadata( {
 							"list": {
 								"@container": "@list",
 							},
 							"pointer": {
 								"@type": "@id",
 							},
-						} ) ),
+						} ),
 					}, "https://example.com/resource/", documents );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
@@ -10437,8 +10452,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -10622,14 +10637,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
-								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+								"https://example.com/ns#property-4": [ {
 									"@value": "false",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ],
@@ -10667,10 +10682,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
-							"@id": "property-4",
+							"@id": "https://example.com/ns#property-4",
 							"@type": NS.XSD.DataType.boolean,
 						},
 						"property2": {
@@ -10678,16 +10693,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": "@id",
 						},
 						"property1": {
-							"@id": "property-1",
+							"@id": "https://example.com/ns#property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 
 					persistedDocument.property2 = persistedDocument.createFragment(
 						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
 						"_:1"
 					);
-					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument.property2._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -10698,10 +10713,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": NS.XSD.DataType.dateTime,
 						},
 						"property2": {
-							"@id": "property-2",
+							"@id": "https://example.com/ns#property-2",
 							"@type": NS.XSD.DataType.integer,
 						},
-					} ) );
+					} );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -10868,7 +10883,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument[ "_partialMetadata" ] = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
@@ -10882,7 +10897,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@id": "property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 					persistedDocument.property2[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( SPARQL.QueryDocument.PartialMetadata.ALL );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
@@ -11031,17 +11046,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
 								} ],
-								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+								"https://example.com/ns#property-4": [ {
 									"@value": "false",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ]
@@ -11079,10 +11094,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property2: null,
 							property3: "non query-value",
 							property4: true,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
-									"@id": "property-1",
+									"@id": "https://example.com/ns#property-1",
 									"@type": NS.XSD.DataType.string,
 								},
 								"property2": {
@@ -11090,10 +11105,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@type": "@id",
 								},
 								"property4": {
-									"@id": "property-4",
+									"@id": "https://example.com/ns#property-4",
 									"@type": NS.XSD.DataType.boolean,
 								},
-							} ) ),
+							} ),
 						} ),
 						"https://example.com/resource/",
 						documents
@@ -11104,10 +11119,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property3: "sub-value",
 							property5: new Date( "2000-01-01" ),
 							property2: 12345,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
-									"@id": "property-2",
+									"@id": "https://example.com/ns#property-2",
 									"@type": NS.XSD.DataType.integer,
 								},
 								"property3": {
@@ -11118,7 +11133,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@id": "https://schema.org/property-5",
 									"@type": NS.XSD.DataType.dateTime,
 								},
-							} ) ),
+							} ),
 						},
 						"_:1"
 					);
@@ -11191,17 +11206,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
 								} ],
-								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+								"https://example.com/ns#property-4": [ {
 									"@value": "false",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ]
@@ -11240,7 +11255,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property2: null,
 							property3: "non query-value",
 							property4: true,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "property-1",
@@ -11254,7 +11269,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@id": "property-4",
 									"@type": NS.XSD.DataType.boolean,
 								},
-							} ) ),
+							} ),
 						} ),
 						"https://example.com/resource/",
 						documents
@@ -11265,7 +11280,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							property3: "sub-value",
 							property5: new Date( "2000-01-01" ),
 							property2: 12345,
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "property-2",
@@ -11279,7 +11294,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@id": "https://schema.org/property-5",
 									"@type": NS.XSD.DataType.dateTime,
 								},
-							} ) ),
+							} ),
 						},
 						"_:1"
 					);
@@ -11430,10 +11445,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"https://example.com/resource/",
 						documents
 					);
-					persistedDocument._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
-							"@id": "property-4",
+							"@id": "https://example.com/ns#property-4",
 							"@type": NS.XSD.DataType.boolean,
 						},
 						"property2": {
@@ -11441,16 +11456,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": "@id",
 						},
 						"property1": {
-							"@id": "property-1",
+							"@id": "https://example.com/ns#property-1",
 							"@type": NS.XSD.DataType.string,
 						},
-					} ) );
+					} );
 
 					persistedDocument.property2 = persistedDocument.createFragment(
 						{ property3: "sub-value", property5: new Date( "2000-01-01" ), property2: 12345 },
 						"_:1"
 					);
-					persistedDocument.property2._partialMetadata = new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+					persistedDocument.property2._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -11461,10 +11476,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": NS.XSD.DataType.dateTime,
 						},
 						"property2": {
-							"@id": "property-2",
+							"@id": "https://example.com/ns#property-2",
 							"@type": NS.XSD.DataType.integer,
 						},
-					} ) );
+					} );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -11626,8 +11641,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
+						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
-					context.setSetting( "vocabulary", "https://example.com/ns#" );
 					documents = context.documents;
 				} );
 
@@ -12075,17 +12090,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
 									"${ NS.C.Class.Document }",
-									"${ context.getSetting( "vocabulary" ) }Resource",
+									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
 								],
-								"${ context.getSetting( "vocabulary" ) }property-1": [ {
+								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
 								} ],
-								"${ context.getSetting( "vocabulary" ) }property-4": [ {
+								"https://example.com/ns#property-4": [ {
 									"@value": "false",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ]
@@ -12124,10 +12139,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								property3: "sub-value",
 								property5: new Date( "2000-01-01" ),
 								property2: 12345,
-								_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+								_partialMetadata: createPartialMetadata( {
 									"@vocab": "https://example.com/ns#",
 									"property2": {
-										"@id": "property-2",
+										"@id": "https://example.com/ns#property-2",
 										"@type": NS.XSD.DataType.integer,
 									},
 									"property3": {
@@ -12138,12 +12153,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 										"@id": "https://schema.org/property-5",
 										"@type": NS.XSD.DataType.dateTime,
 									},
-								} ) ),
+								} ),
 							},
-							_partialMetadata: new SPARQL.QueryDocument.PartialMetadata.Class( ObjectSchema.Digester.digestSchema( {
+							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
-									"@id": "property-1",
+									"@id": "https://example.com/ns#property-1",
 									"@type": NS.XSD.DataType.string,
 								},
 								"property2": {
@@ -12151,10 +12166,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@type": "@id",
 								},
 								"property4": {
-									"@id": "property-4",
+									"@id": "https://example.com/ns#property-4",
 									"@type": NS.XSD.DataType.boolean,
 								},
-							} ) ),
+							} ),
 						} ),
 						`${ context.baseURI }resource/`,
 						documents
@@ -12273,7 +12288,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -12454,7 +12469,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 						this.auth = new MockedAuth( this );
 					}
 				}
@@ -12485,7 +12500,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						constructor() {
 							super();
 							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
+							this.settings = { paths: { system: ".system/" } };
 						}
 					}();
 					documents = context.documents;
@@ -13662,7 +13677,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -13842,7 +13857,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
@@ -13863,7 +13878,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const destinationString:string = "destination/*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" );
 
@@ -14008,7 +14023,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
@@ -14029,7 +14044,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const destinationString:string = "destination/*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
 
@@ -14132,7 +14147,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14152,7 +14167,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `off` method when the notification has been resolved", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const offSpy:jasmine.Spy = spyOn( carbon.documents, "off" );
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" )
@@ -14176,7 +14191,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" )
 					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
@@ -14215,7 +14230,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14256,7 +14271,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14297,7 +14312,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14338,7 +14353,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14379,7 +14394,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14420,7 +14435,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14461,7 +14476,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "example.com", true );
+				const carbon:Carbon = new Carbon( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 

@@ -19,9 +19,6 @@ export abstract class Class extends SDKContext.Class {
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 	}
 
-	resolve( relativeURI:string ):string {
-		return RDF.URI.Util.resolve( this.baseURI, relativeURI );
-	}
 }
 
 export default Class;
