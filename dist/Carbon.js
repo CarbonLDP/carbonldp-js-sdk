@@ -50,7 +50,6 @@ var Class = (function (_super) {
                     slug: ".system/",
                     paths: {
                         platform: "platform/",
-                        instance: "instance/",
                         credentials: "credentials/",
                         users: "users/",
                         roles: "roles/",
@@ -95,16 +94,11 @@ var Class = (function (_super) {
         configurable: true
     });
     Class.prototype.getPlatformMetadata = function () {
-        return this._getDocumentMetadata("system.platform");
-    };
-    Class.prototype.getInstanceMetadata = function () {
-        return this._getDocumentMetadata("system.instance");
-    };
-    Class.prototype._getDocumentMetadata = function (metadataPath) {
         var _this = this;
-        return Promise.resolve()
-            .then(function () { return _this._resolvePath(metadataPath); })
-            .then(function (metadataURI) { return _this.documents.get(metadataURI); });
+        return Utils.promiseMethod(function () {
+            var uri = _this._resolvePath("system.platform");
+            return _this.documents.get(uri);
+        });
     };
     Class.AccessPoint = AccessPoint;
     Class.Auth = Auth;

@@ -158,9 +158,6 @@ function removeMembers(members) {
 function removeAllMembers() {
     return this._documents.removeAllMembers(this.id);
 }
-function upload(data, slug) {
-    return this._documents.upload(this.id, data, slug);
-}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -218,7 +215,6 @@ var Factory = (function () {
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
             && Utils.hasFunction(object, "removeAllMembers")
-            && Utils.hasFunction(object, "upload")
             && Utils.hasFunction(object, "executeRawASKQuery")
             && Utils.hasFunction(object, "executeASKQuery")
             && Utils.hasFunction(object, "executeRawSELECTQuery")
@@ -455,12 +451,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: removeAllMembers,
-            },
-            "upload": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: upload,
             },
             "executeRawASKQuery": {
                 writable: false,

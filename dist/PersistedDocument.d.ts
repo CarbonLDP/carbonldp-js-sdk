@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { QueryClause } from "sparqler/clauses";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
@@ -70,10 +69,6 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     removeMember(memberURI: string): Promise<HTTP.Response.Class>;
     removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
     removeAllMembers(): Promise<HTTP.Response.Class>;
-    upload(blob: Blob, slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(blob: Buffer, slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
     executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;

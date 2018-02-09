@@ -546,43 +546,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
 
-		describe( method(
-			OBLIGATORY,
-			"upload"
-		), ():void => {
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document with the slug specified. This signature only works in a web browser.", [
-					{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document. This signature only works in a web browser.", [
-					{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document with the slug specified. This signature only works with Node.js.", [
-					{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document. This signature only works with Node.js.", [
-					{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-		} );
-
 		it( hasMethod(
 			OBLIGATORY,
 			"executeRawASKQuery",
@@ -744,7 +707,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
 				removeAllMembers: ():void => {},
-				upload: ():void => {},
 
 				executeRawASKQuery: ():void => {},
 				executeASKQuery: ():void => {},
@@ -862,10 +824,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeAllMembers = ():void => {};
 
-			delete document.upload;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document.upload = ():void => {};
-
 			delete document.executeRawASKQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawASKQuery = ():void => {};
@@ -948,7 +906,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
 				removeAllMembers: ():void => {},
-				upload: ():void => {},
 
 				executeRawASKQuery: ():void => {},
 				executeASKQuery: ():void => {},
@@ -2398,91 +2355,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				document.removeAllMembers();
 
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/" );
-			} );
-
-			describe( method(
-				INSTANCE,
-				"upload"
-			), ():void => {
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document with the slug specified. This signature only works in a web browser.", [
-						{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Blob !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } );
-						document.upload( blob, "child" );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob, "child" );
-					}
-				} );
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document. This signature only works in a web browser.", [
-						{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Blob !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } );
-						document.upload( blob );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob, undefined );
-					}
-				} );
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document with the slug specified. This signature only works with Node.js.", [
-						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Buffer !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
-						document.upload( buffer, "child" );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer, "child" );
-					}
-				} );
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document. This signature only works with Node.js.", [
-						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Buffer !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
-						document.upload( buffer );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer, undefined );
-					}
-				} );
-
 			} );
 
 			it( hasMethod(

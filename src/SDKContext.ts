@@ -187,7 +187,6 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
-		this.extendObjectSchema( System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 

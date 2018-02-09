@@ -129,13 +129,6 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 
 	removeAllMembers():Promise<HTTP.Response.Class>;
 
-	upload( blob:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-	upload( blob:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 
@@ -362,14 +355,6 @@ function removeAllMembers():Promise<HTTP.Response.Class> {
 	return this._documents.removeAllMembers( this.id );
 }
 
-function upload( data:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Blob | Buffer, slug?:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	return this._documents.upload( this.id, data, slug );
-}
-
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
@@ -429,7 +414,6 @@ export class Factory {
 			&& Utils.hasFunction( object, "removeMember" )
 			&& Utils.hasFunction( object, "removeMembers" )
 			&& Utils.hasFunction( object, "removeAllMembers" )
-			&& Utils.hasFunction( object, "upload" )
 
 			&& Utils.hasFunction( object, "executeRawASKQuery" )
 			&& Utils.hasFunction( object, "executeASKQuery" )
@@ -683,12 +667,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: removeAllMembers,
-			},
-			"upload": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: upload,
 			},
 
 			"executeRawASKQuery": {

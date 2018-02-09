@@ -13,7 +13,6 @@ import * as Map from "./LDP/Map";
 import * as DirectContainer from "./LDP/DirectContainer";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
-import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 import * as ErrorResponse from "./LDP/ErrorResponse";
 import * as ResponseMetadata from "./LDP/ResponseMetadata";
@@ -72,15 +71,6 @@ describe( module( "Carbon/LDP" ), ():void => {
 	), ():void => {
 		expect( LDP.Error ).toBeDefined();
 		expect( LDP.Error ).toBe( Error );
-	} );
-
-	it( reexports(
-		STATIC,
-		"IndirectContainer",
-		"Carbon/LDP/IndirectContainer"
-	), ():void => {
-		expect( LDP.IndirectContainer ).toBeDefined();
-		expect( LDP.IndirectContainer ).toBe( IndirectContainer );
 	} );
 
 	it( reexports(

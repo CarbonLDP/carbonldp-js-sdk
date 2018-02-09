@@ -463,7 +463,6 @@ describe( module( "Carbon" ), ():void => {
 							slug: ".system/",
 							paths: {
 								platform: "platform/",
-								instance: "instance/",
 								credentials: "credentials/",
 								users: "users/",
 								roles: "roles/",
@@ -495,7 +494,6 @@ describe( module( "Carbon" ), ():void => {
 							slug: "https://secure.example.com/",
 							paths: {
 								platform: "platform/",
-								instance: "instance/",
 								credentials: "credentials/",
 								roles: "roles/",
 							},
@@ -596,13 +594,13 @@ describe( module( "Carbon" ), ():void => {
 				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
 
 				const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" )
-					.and.returnValue( Promise.reject( null ) );
+					.and.callFake( () => { throw new Error( "Should not resolve" ); } );
 
 				carbon
 					.getPlatformMetadata()
 					.then( () => done.fail( "Should not resolve" ) )
 					.catch( error => {
-						if( error ) done.fail( error );
+						if( error.message !== "Should not resolve" ) done.fail( error );
 
 						expect( spy ).toHaveBeenCalledWith( "system.platform" );
 
@@ -640,7 +638,7 @@ describe( module( "Carbon" ), ():void => {
 				carbon
 					.getPlatformMetadata()
 					.then( ( [ platformMetadata, response ] ):void => {
-					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
 						expect( platformMetadata ).toBeTruthy();
 						expect( Object.keys( platformMetadata ).length ).toBe( 2 );
@@ -652,104 +650,6 @@ describe( module( "Carbon" ), ():void => {
 						expect( platformMetadata.buildDate ).toBeDefined();
 						expect( platformMetadata.buildDate ).toEqual( jasmine.any( Date ) );
 						expect( platformMetadata.buildDate ).toEqual( new Date( "2016-06-01T06:00:00.000Z" ) );
-
-						done();
-					} )
-					.catch( done.fail );
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "getInstanceMetadata" ), ():void => {
-
-			beforeEach( ():void => {
-				jasmine.Ajax.install();
-			} );
-
-			afterEach( ():void => {
-				jasmine.Ajax.uninstall();
-			} );
-
-			it( hasSignature(
-				"Retrieves the Metadata related to your instance of the Carbon LDP Platform.",
-				{ type: ":Promise<Carbon.System.InstanceMetadata.Class>" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				expect( Carbon.Class.prototype.getInstanceMetadata ).toBeDefined();
-				expect( Carbon.Class.prototype.getInstanceMetadata ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should ask for `system.instance` path", ( done:DoneFn ):void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-
-				const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" )
-					.and.returnValue( Promise.reject( null ) );
-
-				carbon
-					.getInstanceMetadata()
-					.then( () => done.fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) done.fail( error );
-
-						expect( spy ).toHaveBeenCalledWith( "system.instance" );
-
-						done();
-					} );
-			} );
-
-			it( "should retrieve a InstanceMetadata object", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/.system/instance/", null, "GET" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"ETag": '"123456789"',
-						"Content-Location": "https://example.com/.system/instance/",
-					},
-					responseText: `[ {
-					"@graph": [ {
-						"@id": "https://example.com/.system/instance/",
-						"@type": [ "${ NS.CS.Class.ProtectedDocument }", "${ NS.C.Class.Instance }" ],
-						"${ NS.CS.Predicate.namae }": [ {
-							"@value": "Your instance's name"
-						} ],
-						"${ NS.CS.Predicate.description }": [ {
-							"@value": "Your instance's description"
-						} ],
-						"${ NS.CS.Predicate.allowsOrigin }": [ {
-							"@value": "http://example.com"
-						}, {
-							"@id": "${ NS.CS.Class.AllOrigins }"
-						} ]
-					} ],
-					"@id": "https://example.com/.system/instance/"
-				} ]`,
-				} );
-
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
-				spyOn( carbon, "_resolvePath" ).and.returnValue( "https://example.com/.system/instance/" );
-
-				carbon
-					.getInstanceMetadata()
-					.then( ( [ instanceMetadata, response ] ):void => {
-					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
-
-						expect( instanceMetadata ).toBeTruthy();
-						expect( Object.keys( instanceMetadata ).length ).toBe( 3 );
-
-						expect( instanceMetadata.name ).toBeDefined();
-						expect( instanceMetadata.name ).toEqual( jasmine.any( String ) );
-						expect( instanceMetadata.name ).toBe( "Your instance's name" );
-
-						expect( instanceMetadata.description ).toBeDefined();
-						expect( instanceMetadata.description ).toEqual( jasmine.any( String ) );
-						expect( instanceMetadata.description ).toBe( "Your instance's description" );
-
-						expect( instanceMetadata.allowsOrigins ).toBeDefined();
-						expect( instanceMetadata.allowsOrigins ).toEqual( jasmine.any( Array ) );
-						expect( instanceMetadata.allowsOrigins.length ).toBe( 2 );
-						expect( instanceMetadata.allowsOrigins ).toContain( "http://example.com" );
-						expect( instanceMetadata.allowsOrigins ).toContain( Pointer.Factory.create( NS.CS.Class.AllOrigins ) );
 
 						done();
 					} )
