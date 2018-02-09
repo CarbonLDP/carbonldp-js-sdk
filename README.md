@@ -1,15 +1,23 @@
 # [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
-[![npm version](https://badge.fury.io/js/carbonldp.svg)](https://badge.fury.io/js/carbonldp) [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK](https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg)](https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm version][npm-image]][npm-url]
+[![Downloads][npm-downloads]][npm-url]
+[![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK][gitter-image]][gitter-url]
 
-[![Build Status](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg)](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk)
+[![Build Status][travis-image]][travis-url]
 
-Official JavaScript SDK for Carbon LDP applications, which simplifies the use of Carbon's REST API.
+Official JavaScript SDK for Carbon LDP applications. Simplifies the use of Carbon LDP's REST API.
 
-## JavaScript SDK User Guide
-For information on how to use the SDK in your front-end development, please refer to the [JavaScript SDK user guide](https://carbonldp.com/documentation/v1.0.x/javascript-sdk/) on the Carbon LDP website.
+For information on how to use the SDK, please refer to the [JavaScript SDK user guide](https://carbonldp.com/documentation/v1.0.x/javascript-sdk/) on the Carbon LDP website.
+
+## Installing
+
+```
+npm install carbonldp
+```
 
 ## Development setup
+
 1. Install dependencies
     - [node.js 6+](https://nodejs.org/en/)
     - gulp: `npm install gulp -g` (you may need to run it as root)
@@ -18,12 +26,14 @@ For information on how to use the SDK in your front-end development, please refe
 5. Build the source code by running `npm start`
 
 ## Main gulp tasks
+
 1. `build`: Same as `npm start`. Build the source code and prepare it for production (inside the dist/ folder)
 2. `lint`: Same as `npm lint`. Run TSLint over the source code to perform static code analysis.
 3. `test`: Same as `npm test`. Run the test in both Node.js and Google Chrome.
 
 ## File structure
-	├── .idea                               # WebStorm shared configuration files (like code style)
+
+    ├── .idea                               # WebStorm shared configuration files (like code style)
     ├── build                               # Build related scripts
     │   ├── license.js                      # Contains the license to append to the build
     │   ├── sfx.ts                          # Main file that feeds the SFX building process
@@ -65,3 +75,11 @@ For information on how to use the SDK in your front-end development, please refe
 
 	This source code is licensed under the BSD-style license found in the
 	LICENSE file in the root directory of this source tree.
+
+[npm-image]: https://img.shields.io/npm/v/carbonldp.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/carbonldp
+[npm-downloads]: https://img.shields.io/npm/dm/carbonldp.svg?style=flat-square
+[gitter-image]: https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg
+[gitter-url]: https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[travis-image]: https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg
+[travis-url]: https://travis-ci.org/CarbonLDP/carbonldp-js-sdk
