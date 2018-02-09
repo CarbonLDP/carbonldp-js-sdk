@@ -1,4 +1,5 @@
 import { hasProtocol } from "sparqler/iri";
+
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -27,6 +28,7 @@ import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
+import { log } from "util";
 
 export class Class extends AbstractContext.Class {
 
@@ -74,7 +76,6 @@ export class Class extends AbstractContext.Class {
 				slug: ".system/",
 				paths: {
 					platform: "platform/",
-					instance: "instance/",
 					credentials: "credentials/",
 					users: "users/",
 					roles: "roles/",
@@ -119,9 +120,10 @@ export class Class extends AbstractContext.Class {
 	 * Retrieves the Metadata related to the CarbonLDP Platform.
 	 */
 	getPlatformMetadata():Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]> {
-		return Promise.resolve()
-			.then( () => this._resolvePath( "system.platform" ) )
-			.then( uri => this.documents.get<System.PlatformMetadata.Class>( uri ) )
+		return Utils.promiseMethod( () => {
+			const uri:string = this._resolvePath( "system.platform" );
+			return this.documents.get<System.PlatformMetadata.Class>( uri );
+		} );
 	}
 
 }

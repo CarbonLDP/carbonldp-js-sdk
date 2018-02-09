@@ -12839,7 +12839,6 @@ var Class = (function (_super) {
                     slug: ".system/",
                     paths: {
                         platform: "platform/",
-                        instance: "instance/",
                         credentials: "credentials/",
                         users: "users/",
                         roles: "roles/",
@@ -12885,9 +12884,10 @@ var Class = (function (_super) {
     });
     Class.prototype.getPlatformMetadata = function () {
         var _this = this;
-        return Promise.resolve()
-            .then(function () { return _this._resolvePath("system.platform"); })
-            .then(function (uri) { return _this.documents.get(uri); });
+        return Utils.promiseMethod(function () {
+            var uri = _this._resolvePath("system.platform");
+            return _this.documents.get(uri);
+        });
     };
     Class.AccessPoint = AccessPoint;
     Class.Auth = Auth;
