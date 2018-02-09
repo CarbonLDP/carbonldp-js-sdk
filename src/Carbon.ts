@@ -118,22 +118,21 @@ export class Class extends AbstractContext.Class {
 	/**
 	 * Retrieves the Metadata related to the CarbonLDP Platform.
 	 */
-	getPlatformMetadata():Promise<System.PlatformMetadata.Class> {
+	getPlatformMetadata():Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]> {
 		return this._getDocumentMetadata<System.PlatformMetadata.Class>( "system.platform" );
 	}
 
 	/**
 	 * Retrieves the Metadata related to your instance of the Carbon LDP Platform.
 	 */
-	getInstanceMetadata():Promise<System.InstanceMetadata.Class> {
+	getInstanceMetadata():Promise<[ System.InstanceMetadata.Class, HTTP.Response.Class ]> {
 		return this._getDocumentMetadata<System.InstanceMetadata.Class>( "system.instance" );
 	}
 
-	private _getDocumentMetadata<T extends object>( metadataPath:"system.platform" | "system.instance" ):Promise<T> {
+	private _getDocumentMetadata<T extends object>( metadataPath:"system.platform" | "system.instance" ):Promise<[ T, HTTP.Response.Class ]> {
 		return Promise.resolve()
 			.then( () => this._resolvePath( metadataPath ) )
 			.then( metadataURI => this.documents.get<T>( metadataURI ) )
-			.then( ( [ metadataDocument ] ) => metadataDocument );
 	}
 }
 

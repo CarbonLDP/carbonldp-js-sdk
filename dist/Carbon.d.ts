@@ -61,8 +61,8 @@ export declare class Class extends AbstractContext.Class {
     messaging: Messaging.Service.Class;
     constructor(url: string);
     constructor(settings: Settings.Class);
-    getPlatformMetadata(): Promise<System.PlatformMetadata.Class>;
-    getInstanceMetadata(): Promise<System.InstanceMetadata.Class>;
+    getPlatformMetadata(): Promise<[System.PlatformMetadata.Class, HTTP.Response.Class]>;
+    getInstanceMetadata(): Promise<[System.InstanceMetadata.Class, HTTP.Response.Class]>;
     private _getDocumentMetadata<T>(metadataPath);
 }
 export default Class;

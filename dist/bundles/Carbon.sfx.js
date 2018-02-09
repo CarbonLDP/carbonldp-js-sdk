@@ -12942,11 +12942,7 @@ var Class = (function (_super) {
         var _this = this;
         return Promise.resolve()
             .then(function () { return _this._resolvePath(metadataPath); })
-            .then(function (metadataURI) { return _this.documents.get(metadataURI); })
-            .then(function (_a) {
-            var metadataDocument = _a[0];
-            return metadataDocument;
-        });
+            .then(function (metadataURI) { return _this.documents.get(metadataURI); });
     };
     Class.AccessPoint = AccessPoint;
     Class.Auth = Auth;

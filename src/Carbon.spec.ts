@@ -639,7 +639,9 @@ describe( module( "Carbon" ), ():void => {
 
 				carbon
 					.getPlatformMetadata()
-					.then( ( platformMetadata:System.PlatformMetadata.Class ):void => {
+					.then( ( [ platformMetadata, response ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
 						expect( platformMetadata ).toBeTruthy();
 						expect( Object.keys( platformMetadata ).length ).toBe( 2 );
 
@@ -729,7 +731,9 @@ describe( module( "Carbon" ), ():void => {
 
 				carbon
 					.getInstanceMetadata()
-					.then( ( instanceMetadata:System.InstanceMetadata.Class ):void => {
+					.then( ( [ instanceMetadata, response ] ):void => {
+					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+
 						expect( instanceMetadata ).toBeTruthy();
 						expect( Object.keys( instanceMetadata ).length ).toBe( 3 );
 
