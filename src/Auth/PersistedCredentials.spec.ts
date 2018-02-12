@@ -233,7 +233,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 				context = new MockedContext();

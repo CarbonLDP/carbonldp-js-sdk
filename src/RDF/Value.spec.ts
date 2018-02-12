@@ -1,22 +1,19 @@
+import AbstractContext from "./../AbstractContext";
+import * as PersistedDocument from "./../PersistedDocument";
+import * as Pointer from "./../Pointer";
+import * as RDFDocument from "./../RDF/Document";
 import {
-	STATIC,
-
-	OPTIONAL,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
+	hasDefaultExport,
 	hasMethod,
 	hasProperty,
-	hasDefaultExport,
+	interfaze,
+	isDefined,
+	module,
+	OPTIONAL,
+	STATIC,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as Pointer from "./../Pointer";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as RDFDocument from "./../RDF/Document";
-import AbstractContext from "./../AbstractContext";
 
 import * as Value from "./Value";
 import DefaultExport from "./Value";
@@ -160,9 +157,10 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { vocabulary: "http://example.com/vocab#" };
 				}
 			}
+
 			context = new MockedContext();
 
 			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
@@ -179,8 +177,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"parseValue",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
-				{name: "propertyValue", type: "Carbon.RDF.Value.Class"},
-				{name: "pointerLibrary", type: "Carbon.Pointer.Library"},
+				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
 			],
 			{ type: "any" }
 		), ():void => {

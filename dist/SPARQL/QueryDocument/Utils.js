@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../../Utils");
-var Pointer_1 = require("../../Pointer");
 function getLevelRegExp(property) {
     if (property)
         property += ".";
@@ -12,7 +11,7 @@ function getLevelRegExp(property) {
 exports.getLevelRegExp = getLevelRegExp;
 function createPropertyPatterns(context, resourcePath, propertyPath, propertyDefinition) {
     var uri = propertyDefinition.uri, literalType = propertyDefinition.literalType, pointerType = propertyDefinition.pointerType;
-    var propertyIRI = context.compactIRI(uri.stringValue);
+    var propertyIRI = context.compactIRI(uri);
     var resource = context.getVariable(resourcePath);
     var propertyObject = context.getVariable(propertyPath);
     var propertyPatterns = [new tokens_1.SubjectToken(resource)
@@ -21,7 +20,7 @@ function createPropertyPatterns(context, resourcePath, propertyPath, propertyDef
     ];
     if (literalType !== null)
         propertyPatterns
-            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType.stringValue)));
+            .push(new tokens_1.FilterToken("datatype( " + propertyObject + " ) = " + context.compactIRI(literalType)));
     if (pointerType !== null)
         propertyPatterns
             .push(new tokens_1.FilterToken("! isLiteral( " + propertyObject + " )"));
@@ -96,19 +95,22 @@ function getSubject(subjectsMap, original) {
     subjectsMap.set(subjectStr, subject);
     return subject;
 }
-function getPathValue(element, path) {
-    if (element === void 0)
+function getPathProperty(element, path) {
+    if (element === void 0 || !path)
         return element;
-    if (!path) {
-        if (Pointer_1.Factory.is(element))
-            return element.id;
-        return element;
-    }
     var _a = path.split("."), propName = _a[0], restParts = _a.slice(1);
     var property = element[propName];
     var restPath = restParts.join(".");
-    return getPathValue(property, restPath);
+    return getPathProperty(property, restPath);
 }
-exports.getPathValue = getPathValue;
+exports.getPathProperty = getPathProperty;
+function areDifferentType(a, b) {
+    if (typeof a !== typeof b)
+        return true;
+    if (typeof a === "object")
+        return a instanceof Date !== b instanceof Date;
+    return false;
+}
+exports.areDifferentType = areDifferentType;
 
 //# sourceMappingURL=Utils.js.map

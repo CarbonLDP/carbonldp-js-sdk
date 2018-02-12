@@ -20,26 +20,14 @@ var Class = (function () {
         return variable;
     };
     Class.prototype.serializeLiteral = function (type, value) {
-        type = this.expandIRI(type);
         if (!this.context || !this.context.documents.jsonldConverter.literalSerializers.has(type))
             return "" + value;
         return this.context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
-    Class.prototype.expandIRI = function (iri) {
-        if (this.context) {
-            var vocab = this.context.hasSetting("vocabulary") ? this.context.resolve(this.context.getSetting("vocabulary")) : void 0;
-            iri = ObjectSchema_1.Util.resolveURI(iri, this.context.getObjectSchema(), vocab);
-        }
-        if (iri_1.isPrefixed(iri))
-            throw new Errors_1.IllegalArgumentError("Prefix \"" + iri.split(":")[0] + "\" has not been declared.");
-        return iri;
-    };
     Class.prototype.compactIRI = function (iri) {
         if (!this.context) {
             if (iri_1.isPrefixed(iri))
-                throw new Errors_1.IllegalArgumentError("Prefixed iri \"" + iri + "\" is not supported without a context.");
-            if (iri_1.isRelative(iri))
-                throw new Errors_1.IllegalArgumentError("Relative iri \"" + iri + "\" is not supported without a context.");
+                return new tokens_1.PrefixedNameToken(iri);
             return new tokens_1.IRIToken(iri);
         }
         var schema = this.context.getObjectSchema();
@@ -47,7 +35,7 @@ var Class = (function () {
         var localName;
         if (!iri_1.isPrefixed(iri)) {
             for (var _i = 0, _a = Array.from(schema.prefixes.entries()); _i < _a.length; _i++) {
-                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1].stringValue;
+                var _b = _a[_i], prefixName = _b[0], prefixURI = _b[1];
                 if (!iri.startsWith(prefixURI))
                     continue;
                 namespace = prefixName;
@@ -62,7 +50,7 @@ var Class = (function () {
         if (!this._prefixesMap.has(namespace)) {
             if (!schema.prefixes.has(namespace))
                 throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
-            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace).stringValue);
+            var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace));
             this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
         }
         return prefixedName;
@@ -74,6 +62,11 @@ var Class = (function () {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
         return this.context.documents.getGeneralSchema();
+    };
+    Class.prototype.hasSchemaFor = function (object, path) {
+        if (!this.context)
+            return false;
+        return this.context.documents.hasSchemaFor(object);
     };
     Class.prototype.getSchemaFor = function (object, path) {
         if (!this.context)

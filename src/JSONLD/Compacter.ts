@@ -15,7 +15,6 @@ import {
 } from "../SPARQL/QueryDocument";
 import * as Documents from "./../Documents";
 import * as Converter from "./Converter";
-import { getParentPath } from "../SPARQL/QueryDocument/Utils";
 
 function getRelativeID( node:RDFNode.Class ):string {
 	const id:string = node[ "@id" ];
@@ -23,16 +22,16 @@ function getRelativeID( node:RDFNode.Class ):string {
 }
 
 interface CompactionNode {
-	path:string;
+	paths:string[];
 	node:RDFNode.Class;
 	resource:PersistedResource.Class;
 	containerLibrary:Pointer.Library;
-	added?:boolean;
+	processed?:boolean;
 }
 
 export class Class {
 	private documents:Documents.Class;
-	private root:string;
+	private root?:string;
 	private resolver?:Resolver;
 	private converter?:Converter.Class;
 	private compactionMap:Map<string, CompactionNode>;
@@ -77,12 +76,21 @@ export class Class {
 
 		const mainCompactedDocuments:T[] = compactionQueue
 			.map( this.compactionMap.get, this.compactionMap )
-			.map( compactionNode => compactionNode.resource as any );
+			.map( compactionNode => {
+				if( this.root ) compactionNode.paths.push( this.root );
 
-		this.processCompactionQueue( compactionQueue );
-		while( this.compactionMap.size ) {
-			const first:string = this.compactionMap.keys().next().value;
-			this.processCompactionQueue( [ first ] );
+				return compactionNode.resource as any;
+			} );
+
+		while( compactionQueue.length ) {
+			this.processCompactionQueue( compactionQueue );
+
+			this.compactionMap.forEach( ( node, key, map ) => {
+				if( node.processed ) map.delete( key );
+			} );
+
+			if( this.compactionMap.size ) compactionQueue
+				.push( this.compactionMap.keys().next().value );
 		}
 
 		compactedDocuments.forEach( persistedDocument => {
@@ -97,9 +105,24 @@ export class Class {
 		return mainCompactedDocuments;
 	}
 
-	compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:Pointer.Library, path:string ):void {
+	private compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:Pointer.Library, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
-		const compactedData:object = this.converter.compact( node, {}, schema, containerLibrary );
+
+		if( this.resolver instanceof QueryContextBuilder.Class ) {
+			const type:QueryProperty.PropertyType = this.resolver.hasProperty( path ) ?
+				this.resolver.getProperty( path ).getType() : void 0;
+
+			if( type === QueryProperty.PropertyType.PARTIAL || type === QueryProperty.PropertyType.ALL ) {
+				resource._partialMetadata = new PartialMetadata.Class(
+					type === QueryProperty.PropertyType.ALL ? PartialMetadata.ALL : schema,
+					resource._partialMetadata
+				);
+			}
+		}
+
+		const compactedData:object = this.converter.compact( node, {}, schema, containerLibrary, resource.isPartial() );
+
+		const addedProperties:string[] = [];
 
 		new Set( [
 			...Object.keys( resource ),
@@ -109,6 +132,8 @@ export class Class {
 				if( ! resource.isPartial() || schema.properties.has( key ) ) delete resource[ key ];
 				return;
 			}
+
+			addedProperties.push( key );
 
 			if( ! Array.isArray( resource[ key ] ) ) {
 				resource[ key ] = compactedData[ key ];
@@ -120,26 +145,16 @@ export class Class {
 			resource[ key ].push( ...values );
 		} );
 
-		if( this.resolver instanceof QueryContextBuilder.Class ) {
-			const type:QueryProperty.PropertyType = this.resolver.hasProperty( path ) ?
-				this.resolver.getProperty( path ).getType() : void 0;
-
-			if( type !== QueryProperty.PropertyType.PARTIAL
-				&& type !== QueryProperty.PropertyType.ALL
-			) return;
-
-			resource._partialMetadata = new PartialMetadata.Class(
-				type === QueryProperty.PropertyType.ALL ? PartialMetadata.ALL : schema,
-				resource._partialMetadata
-			);
-		}
+		return addedProperties
+			.filter( x => schema.properties.has( x ) )
+			;
 	}
 
 	private getResource<T extends PersistedResource.Class>( node:RDFNode.Class, containerLibrary:Pointer.Library, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = PersistedDocument.Factory.decorate( resource, this.documents );
-		this.compactionMap.set( resource.id, { path: this.root, node, resource, containerLibrary } );
+		this.compactionMap.set( resource.id, { paths: [], node, resource, containerLibrary } );
 
 		return resource;
 	}
@@ -148,13 +163,16 @@ export class Class {
 		while( compactionQueue.length ) {
 			const targetNode:string = compactionQueue.shift();
 
+			if( ! this.compactionMap.has( targetNode ) ) continue;
 			const compactionNode:CompactionNode = this.compactionMap.get( targetNode );
-			this.compactionMap.delete( targetNode );
+			compactionNode.processed = true;
 
-			this.compactNode( compactionNode.node, compactionNode.resource, compactionNode.containerLibrary, compactionNode.path );
+			const targetPath:string = compactionNode.paths.shift();
+
+			const addedProperties:string[] = this.compactNode( compactionNode.node, compactionNode.resource, compactionNode.containerLibrary, targetPath );
 			compactionNode.resource._syncSnapshot();
 
-			for( const propertyName in compactionNode.resource ) {
+			for( const propertyName of addedProperties ) {
 				if( ! compactionNode.resource.hasOwnProperty( propertyName ) ) continue;
 
 				const value:any = compactionNode.resource[ propertyName ];
@@ -162,14 +180,16 @@ export class Class {
 
 				const pointers:Pointer.Class[] = values.filter( Pointer.Factory.is );
 				for( const pointer of pointers ) {
+					if( ! this.compactionMap.has( pointer.id ) ) continue;
 					const subCompactionNode:CompactionNode = this.compactionMap.get( pointer.id );
-					if( ! subCompactionNode || subCompactionNode.added ) continue;
 
-					const parentPath:string = compactionNode.path ? `${ compactionNode.path }.` : "";
-					subCompactionNode.path = parentPath + propertyName;
-					subCompactionNode.added = true;
+					if( targetPath ) {
+						const subPath:string = `${ targetPath }.${ propertyName }`;
+						if( ! this.resolver.hasSchemaFor( subCompactionNode.node, subPath ) ) continue;
 
-					compactionQueue.push( pointer.id );
+						subCompactionNode.paths.push( subPath );
+						compactionQueue.push( pointer.id );
+					}
 				}
 			}
 		}

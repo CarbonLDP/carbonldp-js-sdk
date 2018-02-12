@@ -52,11 +52,12 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
+	areDifferentType,
 	createAllPattern,
 	createPropertyPatterns,
 	createTypesPattern,
 	getAllTriples,
-	getPathValue,
+	getPathProperty,
 } from "./SPARQL/QueryDocument/Utils";
 import * as Utils from "./Utils";
 import {
@@ -114,7 +115,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( id ) ) id = ObjectSchema.Digester.resolvePrefixedURI( id, this.context.getObjectSchema() );
+			id = ObjectSchema.Util.resolveURI( id, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isRelative( id ) ) return true;
 			if( RDF.URI.Util.isBaseOf( this.context.baseURI, id ) ) return true;
@@ -335,45 +336,6 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} ).then( mapTupleArray );
 	}
 
-	upload( parentURI:string, data:Blob | Buffer, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Blob | Buffer, requestOptions?:HTTP.Request.Options ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-	upload( parentURI:string, data:Blob | Buffer, slugOrRequestOptions?:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
-		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-
-		if( typeof Blob !== "undefined" ) {
-			if( ! (data instanceof Blob) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Blob object." ) );
-			HTTP.Request.Util.setContentTypeHeader( (<Blob> data).type, requestOptions );
-
-		} else {
-			if( ! (data instanceof Buffer) ) return Promise.reject( new Errors.IllegalArgumentError( "The data is not a valid Buffer object." ) );
-			const fileType:( buffer:Buffer ) => { ext:string, mime:string } = require( "file-type" );
-
-			let bufferType:{ ext:string, mime:string } = fileType( <Buffer> data );
-			HTTP.Request.Util.setContentTypeHeader( bufferType ? bufferType.mime : "application/octet-stream", requestOptions );
-		}
-
-		return promiseMethod( () => {
-			parentURI = this.getRequestURI( parentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
-
-			if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
-
-			return this.sendRequest( HTTP.Method.POST, parentURI, requestOptions, data );
-		} ).then<[ Pointer.Class, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
-			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
-			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTP.Errors.BadResponseError( "The response is missing a Location header.", response );
-			if( locationHeader.values.length !== 1 ) throw new HTTP.Errors.BadResponseError( "The response contains more than one Location header.", response );
-
-			let locationURI:string = locationHeader.values[ 0 ].toString();
-
-			let pointer:Pointer.Class = this.getPointer( locationURI );
-
-			return [ pointer, response ];
-		} );
-	}
-
-
 	listMembers( uri:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
@@ -578,13 +540,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
 		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
-
-		let schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [ this.context.getObjectSchema() ] );
-		if( this.context.hasSetting( "vocabulary" ) ) schema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
-		return schema;
+		return this.context.getObjectSchema();
 	}
 
-	getSchemaFor( object:Object ):ObjectSchema.DigestedObjectSchema {
+	hasSchemaFor( object:object, path?:string ):boolean {
+		if( path !== void 0 ) return false;
+		return "@id" in object || "id" in object;
+	}
+
+	getSchemaFor( object:object ):ObjectSchema.DigestedObjectSchema {
 		return ("@id" in object) ?
 			this.getDigestedObjectSchemaForExpandedObject( object ) :
 			this.getDigestedObjectSchemaForDocument( <any> object );
@@ -672,15 +636,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	sparql( documentURI:string ):QueryClause<SPARQL.Builder.ExecuteSelect> {
 		let builder:QueryClause<SPARQL.Builder.ExecuteSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
 
-		if( ! ! this.context ) {
-			builder = builder.base( this.context.baseURI );
-			if( this.context.hasSetting( "vocabulary" ) ) {
-				builder = builder.vocab( this.context.resolve( this.context.getSetting( "vocabulary" ) ) );
-			}
+		if( this.context ) {
+			const schema:ObjectSchema.DigestedObjectSchema = this.getProcessedSchema();
 
-			let schema:ObjectSchema.DigestedObjectSchema = this.context.getObjectSchema();
-			schema.prefixes.forEach( ( uri:RDF.URI.Class, prefix:string ) => {
-				builder = builder.prefix( prefix, uri.stringValue );
+			builder = builder
+				.base( schema.base )
+				.vocab( schema.vocab );
+
+			schema.prefixes.forEach( ( uri:string, prefix:string ) => {
+				builder = builder.prefix( prefix, uri );
 			} );
 		}
 
@@ -996,14 +960,42 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 					const { path, flow } = queryBuilder._orderData;
 					const inverter:number = flow === "DESC" ? - 1 : 1;
 
-					returned[ 0 ].sort( ( a, b ) => {
-						const aValue:any = getPathValue( a, path );
-						const bValue:any = getPathValue( b, path );
+					returned[ 0 ].sort( ( a:any, b:any ) => {
+						a = getPathProperty( a, path );
+						b = getPathProperty( b, path );
+
+						const aValue:any = Pointer.Factory.is( a ) ? a.id : a;
+						const bValue:any = Pointer.Factory.is( b ) ? b.id : b;
 
 						if( aValue === bValue ) return 0;
 
 						if( aValue === void 0 ) return - 1 * inverter;
 						if( bValue === void 0 ) return inverter;
+
+						if( ! areDifferentType( a, b ) ) {
+							if( Pointer.Factory.is( a ) ) {
+								const aIsBNode:boolean = RDF.URI.Util.isBNodeID( aValue );
+								const bIsBNode:boolean = RDF.URI.Util.isBNodeID( bValue );
+
+								if( aIsBNode && ! bIsBNode ) return - 1 * inverter;
+								if( bIsBNode && ! aIsBNode ) return inverter;
+							}
+						} else {
+							if( Pointer.Factory.is( a ) ) return - 1 * inverter;
+							if( Pointer.Factory.is( b ) ) return inverter;
+
+							if( Utils.isNumber( a ) ) return - 1 * inverter;
+							if( Utils.isNumber( b ) ) return inverter;
+
+							if( Utils.isDate( a ) ) return - 1 * inverter;
+							if( Utils.isDate( b ) ) return inverter;
+
+							if( Utils.isBoolean( a ) ) return - 1 * inverter;
+							if( Utils.isBoolean( b ) ) return inverter;
+
+							if( Utils.isString( a ) ) return - 1 * inverter;
+							if( Utils.isString( b ) ) return inverter;
+						}
 
 						if( aValue < bValue ) return - 1 * inverter;
 						if( aValue > bValue ) return inverter;
@@ -1193,7 +1185,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		*/
 
 		if( ! ! this.context ) {
-			if( RDF.URI.Util.isPrefixed( uri ) ) uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.getGeneralSchema() );
+			uri = ObjectSchema.Util.resolveURI( uri, this.getGeneralSchema() );
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				const baseURI:string = this.context.baseURI;
@@ -1263,7 +1255,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
 		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
 			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
-			return this.getSchemaWith( schemas );
+			return this.getProcessedSchema( schemas );
 		} else {
 			const types:string[] = Resource.Util.getTypes( document );
 			return this.getDigestedObjectSchema( types, document.id );
@@ -1286,20 +1278,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			.map( type => this.context.getObjectSchema( type ) )
 		;
 
-		return this.getSchemaWith( schemas );
+		return this.getProcessedSchema( schemas );
 	}
 
-	private getSchemaWith( objectSchemas:ObjectSchema.DigestedObjectSchema[] ):ObjectSchema.DigestedObjectSchema {
-		const digestedSchema:ObjectSchema.DigestedObjectSchema =
-			ObjectSchema.Digester.combineDigestedObjectSchemas( [
-				this.context.getObjectSchema(),
-				...objectSchemas,
-			] );
-
-		if( this.context.hasSetting( "vocabulary" ) )
-			digestedSchema.vocab = this.context.resolve( this.context.getSetting( "vocabulary" ) );
-
-		return digestedSchema;
+	private getProcessedSchema( objectSchemas:ObjectSchema.DigestedObjectSchema[] = [] ):ObjectSchema.DigestedObjectSchema {
+		objectSchemas.unshift( this.context.getObjectSchema() );
+		return ObjectSchema.Digester
+			.combineDigestedObjectSchemas( objectSchemas );
 	}
 
 
@@ -1308,7 +1293,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
 		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
-			uri = ObjectSchema.Digester.resolvePrefixedURI( uri, this.context.getObjectSchema() );
+			uri = ObjectSchema.Util.resolveURI( uri, this.context.getObjectSchema() );
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
 		} else if( RDF.URI.Util.isRelative( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );

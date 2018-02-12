@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { QueryClause } from "sparqler/clauses";
 import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
@@ -60,20 +59,16 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
     createAccessPoint<T extends object>(accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    listChildren(requestOptions: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
-    getChildren<T extends object>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    listChildren(requestOptions?: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
+    getChildren<T extends object>(requestOptions?: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
-    listMembers(requestOptions: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
-    getMembers<T extends object>(requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
+    listMembers(requestOptions?: HTTP.Request.Options): Promise<[Class[], HTTP.Response.Class]>;
+    getMembers<T extends object>(requestOptions?: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], HTTP.Response.Class]>;
     removeMember(member: Pointer.Class): Promise<HTTP.Response.Class>;
     removeMember(memberURI: string): Promise<HTTP.Response.Class>;
     removeMembers(members: (Pointer.Class | string)[]): Promise<HTTP.Response.Class>;
     removeAllMembers(): Promise<HTTP.Response.Class>;
-    upload(blob: Blob, slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(blob: Blob): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(blob: Buffer, slug: string): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(blob: Buffer): Promise<[Pointer.Class, HTTP.Response.Class]>;
     executeRawASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;

@@ -1,39 +1,36 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasSignature,
-	hasProperty,
-	extendsClass,
-	decoratedObject,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as AccessPoint from "./AccessPoint";
 import AbstractContext from "./AbstractContext";
+import * as AccessPoint from "./AccessPoint";
 import * as Document from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as NamedFragment from "./NamedFragment";
+
+import * as PersistedDocument from "./PersistedDocument";
+import DefaultExport from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as Pointer from "./Pointer";
 import * as URI from "./RDF/URI";
+import {
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
+} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-
-import * as PersistedDocument from "./PersistedDocument";
-import DefaultExport from "./PersistedDocument";
 
 describe( module( "Carbon/PersistedDocument" ), ():void => {
 
@@ -450,7 +447,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves the empty children of the document.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
@@ -462,8 +459,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
@@ -471,7 +468,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
@@ -483,7 +480,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves the empty members of the document.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
@@ -495,8 +492,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
@@ -504,7 +501,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 			), ():void => {} );
@@ -548,43 +545,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Remove the specified resources URI or Pointers as members of the current document.",
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
-
-		describe( method(
-			OBLIGATORY,
-			"upload"
-		), ():void => {
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document with the slug specified. This signature only works in a web browser.", [
-					{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document. This signature only works in a web browser.", [
-					{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document with the slug specified. This signature only works with Node.js.", [
-					{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-					{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Upload a File to the server as a child of the current document. This signature only works with Node.js.", [
-					{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-				],
-				{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-			), ():void => {} );
-
-		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -687,7 +647,10 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = {
+						vocabulary: "vocab#",
+						paths: { system: ".system/" },
+					};
 				}
 			}
 
@@ -744,7 +707,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
 				removeAllMembers: ():void => {},
-				upload: ():void => {},
 
 				executeRawASKQuery: ():void => {},
 				executeASKQuery: ():void => {},
@@ -862,10 +824,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.removeAllMembers = ():void => {};
 
-			delete document.upload;
-			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
-			document.upload = ():void => {};
-
 			delete document.executeRawASKQuery;
 			expect( PersistedDocument.Factory.hasClassProperties( document ) ).toBe( false );
 			document.executeRawASKQuery = ():void => {};
@@ -948,7 +906,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				removeMember: ():void => {},
 				removeMembers: ():void => {},
 				removeAllMembers: ():void => {},
-				upload: ():void => {},
 
 				executeRawASKQuery: ():void => {},
 				executeASKQuery: ():void => {},
@@ -1075,7 +1032,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			let document:PersistedDocument.Class;
 
 			beforeEach( ():void => {
-				context.setSetting( "vocabulary", "vocab#" );
 				context.extendObjectSchema( {
 					"exTypes": "http://example.com/types#",
 					"another": "http://example.com/another-url/ns#",
@@ -2228,8 +2184,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends object" ],
 					"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
-						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 					],
 					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 				), ():void => {} );
@@ -2237,7 +2193,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends object" ],
 					"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 					],
 					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 				), ():void => {} );
@@ -2279,8 +2235,8 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends object" ],
 					"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Customizable options for the request." },
-						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 					],
 					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 				), ():void => {} );
@@ -2288,7 +2244,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends object" ],
 					"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+						{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 					],
 					{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response ]>" }
 				), ():void => {} );
@@ -2399,91 +2355,6 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				document.removeAllMembers();
 
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/" );
-			} );
-
-			describe( method(
-				INSTANCE,
-				"upload"
-			), ():void => {
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document with the slug specified. This signature only works in a web browser.", [
-						{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Blob !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } );
-						document.upload( blob, "child" );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob, "child" );
-					}
-				} );
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document. This signature only works in a web browser.", [
-						{ name: "data", type: "Blob", description: "Binary data to store in the server." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Blob !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let blob:Blob = new Blob( [ JSON.stringify( { "some content": "for the blob." } ) ], { type: "application/json" } );
-						document.upload( blob );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", blob, undefined );
-					}
-				} );
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document with the slug specified. This signature only works with Node.js.", [
-						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-						{ name: "slug", type: "string", description: "The slug that will be used in the URI of the data." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Buffer !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
-						document.upload( buffer, "child" );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer, "child" );
-					}
-				} );
-
-				it( hasSignature(
-					"Upload a File to the server as a child of the current document. This signature only works with Node.js.", [
-						{ name: "data", type: "Buffer", description: "Binary data to store in the server. The Buffer only works in Node.js." },
-					],
-					{ type: "Promise<[ Carbon.Pointer.Class, Carbon.HTTP.Response.Class ]>" }
-				), ():void => {
-					expect( document.upload ).toBeDefined();
-					expect( Utils.isFunction( document.upload ) ).toBeDefined();
-
-					if( typeof Buffer !== "undefined" ) {
-						let spy:jasmine.Spy = spyOn( document._documents, "upload" );
-
-						let buffer:Buffer = new Buffer( JSON.stringify( { "some content": "for the buffer." } ) );
-						document.upload( buffer );
-
-						expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", buffer, undefined );
-					}
-				} );
-
 			} );
 
 			it( hasMethod(

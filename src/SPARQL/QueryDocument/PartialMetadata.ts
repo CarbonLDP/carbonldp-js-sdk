@@ -2,6 +2,7 @@ import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
 	DigestedPropertyDefinition,
+	Util as SchemaUtils,
 } from "../../ObjectSchema";
 import * as URI from "../../RDF/URI";
 
@@ -11,32 +12,33 @@ export class Class {
 	readonly schema:DigestedObjectSchema;
 
 	constructor( schema:DigestedObjectSchema, previousPartial?:Class ) {
-		this.schema = previousPartial ? this.mergeSchemas( previousPartial.schema, schema ) : schema;
+		this.schema = this.mergeSchemas( previousPartial ? previousPartial.schema : new DigestedObjectSchema(), schema );
 	}
 
 	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
 		if( newSchema === ALL || oldSchema === ALL ) return ALL;
 
-		oldSchema.prefixes.forEach( ( oldURI, namespace ) => {
-			if( ! newSchema.prefixes.has( namespace ) ) return newSchema.prefixes.set( namespace, oldURI );
+		newSchema.prefixes.forEach( ( newURI, namespace ) => {
+			newURI = SchemaUtils.resolveURI( newURI, newSchema );
+			if( ! oldSchema.prefixes.has( namespace ) ) return oldSchema.prefixes.set( namespace, newURI );
 
-			const newURI:URI.Class = newSchema.prefixes.get( namespace );
-			if( newURI.stringValue !== oldURI.stringValue ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI.stringValue }", "${ newURI.stringValue }"` );
+			const oldURI:string = oldSchema.prefixes.get( namespace );
+			if( oldURI !== newURI ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI }", "${ newURI }"` );
 		} );
 
-		oldSchema.properties.forEach( ( oldDefinition, propertyName ) => {
-			if( ! newSchema.properties.has( propertyName ) ) return newSchema.properties.set( propertyName, oldDefinition );
+		newSchema.properties.forEach( ( newDefinition, propertyName ) => {
+			if( ! oldSchema.properties.has( propertyName ) ) return oldSchema.properties.set( propertyName, newDefinition );
 
-			const newDefinition:DigestedPropertyDefinition = newSchema.properties.get( propertyName );
+			const oldDefinition:DigestedPropertyDefinition = oldSchema.properties.get( propertyName );
 			for( const key in newDefinition ) {
-				const newValue:any = newDefinition[ key ] instanceof URI.Class ? newDefinition[ key ].stringValue : newDefinition[ key ];
-				const oldValue:any = oldDefinition[ key ] instanceof URI.Class ? oldDefinition[ key ].stringValue : oldDefinition[ key ];
+				const newValue:any = newDefinition[ key ];
+				const oldValue:any = oldDefinition[ key ];
 
 				if( newValue !== oldValue ) throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }"` );
 			}
 		} );
 
-		return newSchema;
+		return oldSchema;
 	}
 
 }

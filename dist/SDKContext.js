@@ -13,9 +13,9 @@ var RDFRepresentation = require("./RDFRepresentation");
 var SHACL = require("./SHACL");
 var SPARQL = require("./SPARQL");
 var System = require("./System");
+var Utils_1 = require("./Utils");
 var Class = (function () {
     function Class() {
-        this.settings = new Map();
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
         this.auth = new Auth.Class(this);
@@ -33,36 +33,29 @@ var Class = (function () {
         configurable: true
     });
     Class.prototype.resolve = function (relativeURI) {
-        return relativeURI;
+        return RDF.URI.Util.resolve(this.baseURI, relativeURI);
     };
-    Class.prototype.resolveSystemURI = function (relativeURI) {
-        if (!this.hasSetting("system.container"))
-            throw new Errors.IllegalStateError("The \"system.container\" setting hasn't been defined.");
-        var systemContainer = this.resolve(this.getSetting("system.container"));
-        var systemURI = RDF.URI.Util.resolve(systemContainer, relativeURI);
-        if (!systemURI.startsWith(systemContainer))
-            throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" doesn't belong to the system container of your Carbon LDP.");
-        return systemURI;
-    };
-    Class.prototype.hasSetting = function (name) {
-        return (this.settings.has(name))
-            || (!!this.parentContext && this.parentContext.hasSetting(name));
-    };
-    Class.prototype.getSetting = function (name) {
-        if (this.settings.has(name))
-            return this.settings.get(name);
-        if (this.parentContext && this.parentContext.hasSetting(name))
-            return this.parentContext.getSetting(name);
-        return null;
-    };
-    Class.prototype.setSetting = function (name, value) {
-        this.settings.set(name, value);
-    };
-    Class.prototype.deleteSetting = function (name) {
-        this.settings.delete(name);
+    Class.prototype._resolvePath = function (path) {
+        var leftSearchedPaths = path.split(".");
+        var currentSearchedPaths = [];
+        var url = "";
+        var documentPaths = this.settings && this.settings.paths;
+        while (leftSearchedPaths.length) {
+            var containerKey = leftSearchedPaths.shift();
+            currentSearchedPaths.push(containerKey);
+            var containerPath = documentPaths ? documentPaths[containerKey] : null;
+            if (!containerPath)
+                throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" hasn't been declared.");
+            var slug = Utils_1.isString(containerPath) ? containerPath : containerPath.slug;
+            if (!slug)
+                throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
+            url = RDF.URI.Util.resolve(url, slug);
+            documentPaths = Utils_1.isObject(containerPath) ? containerPath.paths : null;
+        }
+        return this.resolve(url);
     };
     Class.prototype.hasObjectSchema = function (type) {
-        type = this.resolveTypeURI(type);
+        type = this._resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
         return !!this.parentContext && this.parentContext.hasObjectSchema(type);
@@ -70,7 +63,7 @@ var Class = (function () {
     Class.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!!type) {
-            type = this.resolveTypeURI(type);
+            type = this._resolveTypeURI(type);
             if (this.typeObjectSchemaMap.has(type))
                 return this.typeObjectSchemaMap.get(type);
             if (!!this.parentContext && this.parentContext.hasObjectSchema(type))
@@ -78,19 +71,23 @@ var Class = (function () {
             return null;
         }
         else {
-            if (!!this.generalObjectSchema)
-                return this.generalObjectSchema;
-            if (!!this.parentContext)
-                return this.parentContext.getObjectSchema();
-            throw new Errors.IllegalStateError();
+            if (!this.generalObjectSchema && !this.parentContext)
+                throw new Errors.IllegalStateError();
+            var generalSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
+            var clonedSchema = ObjectSchema.Digester
+                .combineDigestedObjectSchemas([generalSchema]);
+            if (clonedSchema.vocab === null && this.settings && this.settings.vocabulary)
+                clonedSchema.vocab = this.resolve(this.settings.vocabulary);
+            if (!clonedSchema.base)
+                clonedSchema.base = this.baseURI;
+            return clonedSchema;
         }
     };
     Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var vocab = this.hasSetting("vocabulary") ? this.resolve(this.getSetting("vocabulary")) : void 0;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema, vocab);
+        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -104,7 +101,7 @@ var Class = (function () {
             this.generalObjectSchema = !!this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
         }
         else {
-            type = this.resolveTypeURI(type);
+            type = this._resolveTypeURI(type);
             this.typeObjectSchemaMap.delete(type);
         }
     };
@@ -125,7 +122,7 @@ var Class = (function () {
         ]);
     };
     Class.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
-        type = this.resolveTypeURI(type);
+        type = this._resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this.typeObjectSchemaMap.has(type)) {
             digestedSchemaToExtend = this.typeObjectSchemaMap.get(type);
@@ -146,7 +143,6 @@ var Class = (function () {
         this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
-        this.extendObjectSchema(System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
         this.extendObjectSchema(LDP.Entry.SCHEMA);
         this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);
@@ -177,10 +173,8 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA);
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
-    Class.prototype.resolveTypeURI = function (uri) {
-        var vocab = this.hasSetting("vocabulary") ?
-            this.resolve(this.getSetting("vocabulary")) : null;
-        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), vocab);
+    Class.prototype._resolveTypeURI = function (uri) {
+        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), { vocab: true });
     };
     return Class;
 }());

@@ -9,9 +9,14 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as RDFRepresentation from "./RDFRepresentation";
+import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
+import {
+	isObject,
+	isString,
+} from "./Utils";
 
 export class Class implements Context.Class {
 	auth:Auth.Class;
@@ -21,14 +26,12 @@ export class Class implements Context.Class {
 
 	get parentContext():Context.Class { return null; }
 
-	protected settings:Map<string, any>;
+	protected settings:Settings.ContextSettings;
 
 	protected generalObjectSchema:ObjectSchema.DigestedObjectSchema;
 	protected typeObjectSchemaMap:Map<string, ObjectSchema.DigestedObjectSchema>;
 
 	constructor() {
-		this.settings = new Map<string, any>();
-
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
@@ -39,49 +42,55 @@ export class Class implements Context.Class {
 	}
 
 	resolve( relativeURI:string ):string {
-		return relativeURI;
+		return RDF.URI.Util.resolve( this.baseURI, relativeURI );
 	}
 
 	/**
-	 * Resolve the URI provided in the scope of the system container of a Carbon LDP.
+	 * Resolves the path provided into an URL using the `path` settings of the context.
+	 * If such path does hasn't been declared an IllegalStateError will be thrown.
 	 *
-	 * If no `system.container` setting has been set an IllegalStateError will be thrown.
-	 * If the URI provided is outside the system container an IllegalArgumentError will be thrown.
+	 * Example: The path `system.platform` with the default setting:
+	 * ```javascript
+	 * {
+	 *  paths: {
+	 *      system: {
+	 *          slug: ".system/",
+	 *          paths: { platform: "platform/" }
+	 *      }
+	 *  }
+	 * }```,
+	 * This should resolve to something like `https://example.com/.system/platform/`.
 	 *
-	 * @param relativeURI Relative URI to be resolved.
-	 * @returns The absolute URI that has been resolved.
+	 * @param path The dot notation string that refers the path declared in the settings
+	 * of the context.
+	 *
+	 * @returns The absolute URI of the path provided.
 	 */
-	resolveSystemURI( relativeURI:string ):string {
-		if( ! this.hasSetting( "system.container" ) ) throw new Errors.IllegalStateError( `The "system.container" setting hasn't been defined.` );
-		const systemContainer:string = this.resolve( this.getSetting( "system.container" ) );
+	_resolvePath( path:string ):string {
+		const leftSearchedPaths:string[] = path.split( "." );
+		const currentSearchedPaths:string[] = [];
 
-		const systemURI:string = RDF.URI.Util.resolve( systemContainer, relativeURI );
-		if( ! systemURI.startsWith( systemContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" doesn't belong to the system container of your Carbon LDP.` );
+		let url:string = "";
+		let documentPaths:Settings.DocumentPaths[ "paths" ] = this.settings && this.settings.paths;
+		while( leftSearchedPaths.length ) {
+			const containerKey:string = leftSearchedPaths.shift();
+			currentSearchedPaths.push( containerKey );
 
-		return systemURI;
-	}
+			const containerPath:string | Settings.DocumentPaths = documentPaths ? documentPaths[ containerKey ] : null;
+			if( ! containerPath ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" hasn't been declared.` );
 
-	hasSetting( name:string ):boolean {
-		return ( this.settings.has( name ) )
-			|| ( ! ! this.parentContext && this.parentContext.hasSetting( name ) );
-	}
+			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
+			if( ! slug ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
 
-	getSetting( name:string ):any {
-		if( this.settings.has( name ) ) return this.settings.get( name );
-		if( this.parentContext && this.parentContext.hasSetting( name ) ) return this.parentContext.getSetting( name );
-		return null;
-	}
+			url = RDF.URI.Util.resolve( url, slug );
+			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
+		}
 
-	setSetting( name:string, value:any ):void {
-		this.settings.set( name, value );
-	}
-
-	deleteSetting( name:string ):void {
-		this.settings.delete( name );
+		return this.resolve( url );
 	}
 
 	hasObjectSchema( type:string ):boolean {
-		type = this.resolveTypeURI( type );
+		type = this._resolveTypeURI( type );
 		if( this.typeObjectSchemaMap.has( type ) ) return true;
 		return ! ! this.parentContext && this.parentContext.hasObjectSchema( type );
 	}
@@ -89,28 +98,37 @@ export class Class implements Context.Class {
 	getObjectSchema( type:string = null ):ObjectSchema.DigestedObjectSchema {
 		if( ! ! type ) {
 			// Type specific schema
-			type = this.resolveTypeURI( type );
+			type = this._resolveTypeURI( type );
 			if( this.typeObjectSchemaMap.has( type ) ) return this.typeObjectSchemaMap.get( type );
 			if( ! ! this.parentContext && this.parentContext.hasObjectSchema( type ) ) return this.parentContext.getObjectSchema( type );
 
 			return null;
 		} else {
 			// General schema
-			if( ! ! this.generalObjectSchema ) return this.generalObjectSchema;
-			if( ! ! this.parentContext ) return this.parentContext.getObjectSchema();
+			if( ! this.generalObjectSchema && ! this.parentContext )
+				throw new Errors.IllegalStateError();
 
-			throw new Errors.IllegalStateError();
+			const generalSchema:ObjectSchema.DigestedObjectSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
+			const clonedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester
+				.combineDigestedObjectSchemas( [ generalSchema ] );
+
+			if( clonedSchema.vocab === null && this.settings && this.settings.vocabulary )
+				clonedSchema.vocab = this.resolve( this.settings.vocabulary );
+
+			if( ! clonedSchema.base )
+				clonedSchema.base = this.baseURI;
+
+			return clonedSchema;
 		}
 	}
 
 	extendObjectSchema( type:string, objectSchema:ObjectSchema.Class ):void;
 	extendObjectSchema( objectSchema:ObjectSchema.Class ):void;
 	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
-		let type:string = objectSchema ? typeOrObjectSchema : null;
+		const type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 
-		const vocab:string = this.hasSetting( "vocabulary" ) ? this.resolve( this.getSetting( "vocabulary" ) ) : void 0;
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema, vocab );
+		const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -123,7 +141,7 @@ export class Class implements Context.Class {
 		if( ! type ) {
 			this.generalObjectSchema = ! ! this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
 		} else {
-			type = this.resolveTypeURI( type );
+			type = this._resolveTypeURI( type );
 			this.typeObjectSchemaMap.delete( type );
 		}
 	}
@@ -145,7 +163,7 @@ export class Class implements Context.Class {
 	}
 
 	protected extendTypeObjectSchema( digestedSchema:ObjectSchema.DigestedObjectSchema, type:string ):void {
-		type = this.resolveTypeURI( type );
+		type = this._resolveTypeURI( type );
 		let digestedSchemaToExtend:ObjectSchema.DigestedObjectSchema;
 
 		if( this.typeObjectSchemaMap.has( type ) ) {
@@ -169,7 +187,6 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
-		this.extendObjectSchema( System.InstanceMetadata.RDF_CLASS, System.InstanceMetadata.SCHEMA );
 
 		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 
@@ -207,10 +224,8 @@ export class Class implements Context.Class {
 		this.extendObjectSchema( Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA );
 	}
 
-	private resolveTypeURI( uri:string ):string {
-		const vocab:string = this.hasSetting( "vocabulary" ) ?
-			this.resolve( this.getSetting( "vocabulary" ) ) : null;
-		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), vocab );
+	private _resolveTypeURI( uri:string ):string {
+		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
 	}
 }
 

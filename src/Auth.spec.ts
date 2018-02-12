@@ -267,7 +267,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			} );
 
@@ -636,7 +636,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -1211,7 +1211,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -1221,7 +1221,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://empty.example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -1231,7 +1231,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://multiple.example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -1353,7 +1353,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
 

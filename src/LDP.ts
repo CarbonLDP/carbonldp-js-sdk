@@ -4,7 +4,6 @@ import * as DocumentMetadata from "./LDP/DocumentMetadata";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
 import * as ErrorResponse from "./LDP/ErrorResponse";
-import * as IndirectContainer from "./LDP/IndirectContainer";
 import * as Map from "./LDP/Map";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
 import * as ResponseMetadata from "./LDP/ResponseMetadata";
@@ -17,7 +16,6 @@ export {
 	Entry,
 	Error,
 	ErrorResponse,
-	IndirectContainer,
 	RemoveMemberAction,
 	DocumentMetadata,
 	ResponseMetadata,

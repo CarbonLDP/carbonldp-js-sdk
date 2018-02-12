@@ -13,7 +13,6 @@ import {
 import { DigestedPropertyDefinition } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
 import * as QueryContext from "./QueryContext";
-import { Factory as PoinerFactory } from "../../Pointer";
 
 export function getLevelRegExp( property:string ):RegExp {
 	if( property ) property += ".";
@@ -25,7 +24,7 @@ export function getLevelRegExp( property:string ):RegExp {
 export function createPropertyPatterns( context:QueryContext.Class, resourcePath:string, propertyPath:string, propertyDefinition:DigestedPropertyDefinition ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
-	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri.stringValue );
+	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri );
 
 	const resource:VariableToken = context.getVariable( resourcePath );
 	const propertyObject:VariableToken = context.getVariable( propertyPath );
@@ -36,7 +35,7 @@ export function createPropertyPatterns( context:QueryContext.Class, resourcePath
 	];
 
 	if( literalType !== null ) propertyPatterns
-		.push( new FilterToken( `datatype( ${ propertyObject } ) = ${ context.compactIRI( literalType.stringValue ) }` ) );
+		.push( new FilterToken( `datatype( ${ propertyObject } ) = ${ context.compactIRI( literalType ) }` ) );
 	if( pointerType !== null ) propertyPatterns
 		.push( new FilterToken( `! isLiteral( ${ propertyObject } )` ) );
 
@@ -123,17 +122,20 @@ function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToke
 	return subject;
 }
 
-export function getPathValue( element:any, path:string ):any {
-	if( element === void 0 ) return element;
-	if( ! path ) {
-		if( PoinerFactory.is( element ) ) return element.id;
-		return element;
-	}
+export function getPathProperty( element:any, path:string ):any {
+	if( element === void 0 || ! path ) return element;
 
 	const [ propName, ...restParts ] = path.split( "." );
 
 	const property:any = element[ propName ];
 	const restPath:string = restParts.join( "." );
 
-	return getPathValue( property, restPath );
+	return getPathProperty( property, restPath );
+}
+
+export function areDifferentType( a:any, b:any ):boolean {
+	if( typeof a !== typeof b ) return true;
+	if( typeof a === "object" ) return a instanceof Date !== b instanceof Date;
+
+	return false;
 }

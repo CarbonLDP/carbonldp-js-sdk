@@ -55,7 +55,7 @@ function resolveURI(uri) {
     if (URI.Util.isAbsolute(uri))
         return uri;
     var schema = this._documents.getGeneralSchema();
-    return ObjectSchema.Util.resolveURI(uri, schema);
+    return ObjectSchema.Util.resolveURI(uri, schema, { vocab: true });
 }
 function extendAddType(superFunction) {
     return function (type) {
@@ -158,9 +158,6 @@ function removeMembers(members) {
 function removeAllMembers() {
     return this._documents.removeAllMembers(this.id);
 }
-function upload(data, slug) {
-    return this._documents.upload(this.id, data, slug);
-}
 function executeRawASKQuery(askQuery, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
@@ -218,7 +215,6 @@ var Factory = (function () {
             && Utils.hasFunction(object, "removeMember")
             && Utils.hasFunction(object, "removeMembers")
             && Utils.hasFunction(object, "removeAllMembers")
-            && Utils.hasFunction(object, "upload")
             && Utils.hasFunction(object, "executeRawASKQuery")
             && Utils.hasFunction(object, "executeASKQuery")
             && Utils.hasFunction(object, "executeRawSELECTQuery")
@@ -299,9 +295,7 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
                         return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
@@ -316,9 +310,7 @@ var Factory = (function () {
                     var superFunction = persistedDocument.getPointer;
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
-                        if (RDF.URI.Util.isPrefixed(id)) {
-                            id = ObjectSchema.Digester.resolvePrefixedURI(id, this._documents.getGeneralSchema());
-                        }
+                        id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
                         return this._documents.getPointer(id);
@@ -332,13 +324,11 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.inScope;
                     return function (idOrPointer) {
-                        var uri = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-                        if (RDF.URI.Util.isPrefixed(uri)) {
-                            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this._documents.getGeneralSchema());
-                        }
-                        if (superFunction.call(this, uri))
+                        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+                        id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
+                        if (superFunction.call(this, id))
                             return true;
-                        return this._documents.inScope(uri);
+                        return this._documents.inScope(id);
                     };
                 })(),
             },
@@ -461,12 +451,6 @@ var Factory = (function () {
                 enumerable: false,
                 configurable: true,
                 value: removeAllMembers,
-            },
-            "upload": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: upload,
             },
             "executeRawASKQuery": {
                 writable: false,

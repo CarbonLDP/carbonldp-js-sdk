@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
+var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryContext = require("./QueryContext");
 var QueryProperty = require("./QueryProperty");
 var Utils_1 = require("./Utils");
@@ -55,11 +56,19 @@ var Class = (function (_super) {
             var schema = schemas_1[_i];
             if (!schema.properties.has(propertyName))
                 continue;
-            var digestedProperty = schema.properties.get(propertyName);
-            if (propertyURI && digestedProperty.uri.stringValue !== propertyURI)
-                continue;
-            return digestedProperty;
+            var mergeSchema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([existingSchema, schema]);
+            var digestedProperty = ObjectSchema_1.Util.resolveProperty(mergeSchema, schema.properties.get(propertyName));
+            if (!propertyURI || propertyURI === digestedProperty.uri)
+                return digestedProperty;
         }
+    };
+    Class.prototype.hasSchemaFor = function (object, path) {
+        if (path === void 0)
+            return _super.prototype.hasSchemaFor.call(this, object);
+        if (!this.hasProperty(path))
+            return false;
+        var property = this.getProperty(path);
+        return property.getType() !== void 0;
     };
     Class.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)

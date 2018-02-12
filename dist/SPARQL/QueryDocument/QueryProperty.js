@@ -42,9 +42,7 @@ var Class = (function () {
     Class.prototype.getSchema = function () {
         if (this._schema)
             return this._schema;
-        this._schema = new ObjectSchema_1.DigestedObjectSchema();
-        this._schema.vocab = this._context.expandIRI("") || null;
-        return this._schema;
+        return this._schema = new ObjectSchema_1.DigestedObjectSchema();
     };
     Class.prototype.isOptional = function () {
         return this._optional;

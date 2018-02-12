@@ -105,18 +105,18 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 	createAccessPoints<T extends object>( accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
 
 
-	listChildren( requestOptions:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]>;
+	listChildren( requestOptions?:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]>;
 
 
-	getChildren<T extends object>( requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getChildren<T extends object>( requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 
-	listMembers( requestOptions:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]>;
+	listMembers( requestOptions?:HTTP.Request.Options ):Promise<[ Class[], HTTP.Response.Class ]>;
 
 
-	getMembers<T extends object>( requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+	getMembers<T extends object>( requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
@@ -129,13 +129,6 @@ export interface Class extends Document.Class, PersistedResource.Class, ServiceA
 
 	removeAllMembers():Promise<HTTP.Response.Class>;
 
-	upload( blob:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-	upload( blob:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-	upload( blob:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-
-	upload( blob:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
 
 	executeRawASKQuery( askQuery:string, requestOptions?:HTTP.Request.Options ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]>;
 
@@ -201,7 +194,7 @@ function resolveURI( uri:string ):string {
 	if( URI.Util.isAbsolute( uri ) ) return uri;
 
 	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
-	return ObjectSchema.Util.resolveURI( uri, schema );
+	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
 }
 
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
@@ -331,7 +324,7 @@ function listChildren( this:Class, requestOptions?:HTTP.Request.Options ):Promis
 	return this._documents.listChildren( this.id, requestOptions );
 }
 
-function getChildren<T extends object>( this:Class, requestOptions:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getChildren<T extends object>( this:Class, requestOptions?:HTTP.Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 function getChildren<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 function getChildren<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
 	return this._documents.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
@@ -342,7 +335,7 @@ function listMembers( this:Class, requestOptions?:HTTP.Request.Options ):Promise
 	return this._documents.listMembers( this.id, requestOptions );
 }
 
-function getMembers<T extends object>( this:Class, requestOptions:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
+function getMembers<T extends object>( this:Class, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 function getMembers<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 function getMembers<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]> {
 	return this._documents.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery );
@@ -360,14 +353,6 @@ function removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Respon
 
 function removeAllMembers():Promise<HTTP.Response.Class> {
 	return this._documents.removeAllMembers( this.id );
-}
-
-function upload( data:Buffer, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Buffer ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Blob, slug:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Blob ):Promise<[ Pointer.Class, HTTP.Response.Class ]>;
-function upload( data:Blob | Buffer, slug?:string ):Promise<[ Pointer.Class, HTTP.Response.Class ]> {
-	return this._documents.upload( this.id, data, slug );
 }
 
 function executeRawASKQuery( askQuery:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, HTTP.Response.Class ]> {
@@ -429,7 +414,6 @@ export class Factory {
 			&& Utils.hasFunction( object, "removeMember" )
 			&& Utils.hasFunction( object, "removeMembers" )
 			&& Utils.hasFunction( object, "removeAllMembers" )
-			&& Utils.hasFunction( object, "upload" )
 
 			&& Utils.hasFunction( object, "executeRawASKQuery" )
 			&& Utils.hasFunction( object, "executeASKQuery" )
@@ -524,14 +508,11 @@ export class Factory {
 				configurable: true,
 				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
-					return function( id:string ):boolean {
-						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( id, (<Class> this)._documents.getGeneralSchema() );
-						}
+					return function( this:Class, id:string ):boolean {
+						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
-
-						return ! URI.Util.isBNodeID( id ) && (<Class> this)._documents.hasPointer( id );
+						return ! URI.Util.isBNodeID( id ) && this._documents.hasPointer( id );
 					};
 				})(),
 			},
@@ -542,14 +523,11 @@ export class Factory {
 				value: (function():( id:string ) => Pointer.Class {
 					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
-					return function( id:string ):Pointer.Class {
-						if( RDF.URI.Util.isPrefixed( id ) ) {
-							id = ObjectSchema.Digester.resolvePrefixedURI( id, (<Class> this)._documents.getGeneralSchema() );
-						}
+					return function( this:Class, id:string ):Pointer.Class {
+						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
-
-						return (<Class> this)._documents.getPointer( id );
+						return this._documents.getPointer( id );
 					};
 				})(),
 			},
@@ -559,15 +537,12 @@ export class Factory {
 				configurable: true,
 				value: (function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
-					return function( idOrPointer:any ):boolean {
-						let uri:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-						if( RDF.URI.Util.isPrefixed( uri ) ) {
-							uri = ObjectSchema.Digester.resolvePrefixedURI( uri, (<Class> this)._documents.getGeneralSchema() );
-						}
+					return function( this:Class, idOrPointer:any ):boolean {
+						let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
-						if( superFunction.call( this, uri ) ) return true;
-
-						return (<Class> this)._documents.inScope( uri );
+						if( superFunction.call( this, id ) ) return true;
+						return this._documents.inScope( id );
 					};
 				})(),
 			},
@@ -692,12 +667,6 @@ export class Factory {
 				enumerable: false,
 				configurable: true,
 				value: removeAllMembers,
-			},
-			"upload": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: upload,
 			},
 
 			"executeRawASKQuery": {

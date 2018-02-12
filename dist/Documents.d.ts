@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { QueryClause } from "sparqler/clauses";
 import * as AccessPoint from "./AccessPoint";
 import Context from "./Context";
@@ -46,8 +45,6 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
     createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    upload(parentURI: string, data: Blob | Buffer, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
-    upload(parentURI: string, data: Blob | Buffer, requestOptions?: HTTP.Request.Options): Promise<[Pointer.Class, HTTP.Response.Class]>;
     listMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getMembers<T extends object>(uri: string, requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getMembers<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
@@ -64,7 +61,8 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
     getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
-    getSchemaFor(object: Object): ObjectSchema.DigestedObjectSchema;
+    hasSchemaFor(object: object, path?: string): boolean;
+    getSchemaFor(object: object): ObjectSchema.DigestedObjectSchema;
     executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -128,7 +126,7 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private getDigestedObjectSchemaForExpandedObject(expandedObject);
     private getDigestedObjectSchemaForDocument(document);
     private getDigestedObjectSchema(objectTypes, objectID);
-    private getSchemaWith(objectSchemas);
+    private getProcessedSchema(objectSchemas?);
     private getRequestURI(uri);
     private setDefaultRequestOptions(requestOptions, interactionModel?);
     private updateFromPreferenceApplied<T>(persistedDocument, rdfDocuments, response);

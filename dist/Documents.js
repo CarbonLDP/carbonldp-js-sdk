@@ -70,8 +70,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(id))
-                id = ObjectSchema.Digester.resolvePrefixedURI(id, this.context.getObjectSchema());
+            id = ObjectSchema.Util.resolveURI(id, this.context.getObjectSchema());
             if (RDF.URI.Util.isRelative(id))
                 return true;
             if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
@@ -252,40 +251,6 @@ var Class = (function () {
             }));
         }).then(Utils_3.mapTupleArray);
     };
-    Class.prototype.upload = function (parentURI, data, slugOrRequestOptions, requestOptions) {
-        var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
-        var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
-        requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
-        if (typeof Blob !== "undefined") {
-            if (!(data instanceof Blob))
-                return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Blob object."));
-            HTTP.Request.Util.setContentTypeHeader(data.type, requestOptions);
-        }
-        else {
-            if (!(data instanceof Buffer))
-                return Promise.reject(new Errors.IllegalArgumentError("The data is not a valid Buffer object."));
-            var fileType = require("file-type");
-            var bufferType = fileType(data);
-            HTTP.Request.Util.setContentTypeHeader(bufferType ? bufferType.mime : "application/octet-stream", requestOptions);
-        }
-        return Utils_3.promiseMethod(function () {
-            parentURI = _this.getRequestURI(parentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
-            if (!!slug)
-                HTTP.Request.Util.setSlug(slug, requestOptions);
-            return _this.sendRequest(HTTP.Method.POST, parentURI, requestOptions, data);
-        }).then(function (response) {
-            var locationHeader = response.getHeader("Location");
-            if (locationHeader === null || locationHeader.values.length < 1)
-                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
-            if (locationHeader.values.length !== 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
-            var locationURI = locationHeader.values[0].toString();
-            var pointer = _this.getPointer(locationURI);
-            return [pointer, response];
-        });
-    };
     Class.prototype.listMembers = function (uri, requestOptions) {
         var _this = this;
         return Utils_3.promiseMethod(function () {
@@ -461,10 +426,12 @@ var Class = (function () {
     Class.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema.DigestedObjectSchema();
-        var schema = ObjectSchema.Digester.combineDigestedObjectSchemas([this.context.getObjectSchema()]);
-        if (this.context.hasSetting("vocabulary"))
-            schema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return schema;
+        return this.context.getObjectSchema();
+    };
+    Class.prototype.hasSchemaFor = function (object, path) {
+        if (path !== void 0)
+            return false;
+        return "@id" in object || "id" in object;
     };
     Class.prototype.getSchemaFor = function (object) {
         return ("@id" in object) ?
@@ -550,14 +517,13 @@ var Class = (function () {
     };
     Class.prototype.sparql = function (documentURI) {
         var builder = new Builder_1.default(this, this.getRequestURI(documentURI));
-        if (!!this.context) {
-            builder = builder.base(this.context.baseURI);
-            if (this.context.hasSetting("vocabulary")) {
-                builder = builder.vocab(this.context.resolve(this.context.getSetting("vocabulary")));
-            }
-            var schema = this.context.getObjectSchema();
+        if (this.context) {
+            var schema = this.getProcessedSchema();
+            builder = builder
+                .base(schema.base)
+                .vocab(schema.vocab);
             schema.prefixes.forEach(function (uri, prefix) {
-                builder = builder.prefix(prefix, uri.stringValue);
+                builder = builder.prefix(prefix, uri);
             });
         }
         return builder;
@@ -805,14 +771,48 @@ var Class = (function () {
                 var _a = queryBuilder._orderData, path_1 = _a.path, flow = _a.flow;
                 var inverter_1 = flow === "DESC" ? -1 : 1;
                 returned[0].sort(function (a, b) {
-                    var aValue = Utils_2.getPathValue(a, path_1);
-                    var bValue = Utils_2.getPathValue(b, path_1);
+                    a = Utils_2.getPathProperty(a, path_1);
+                    b = Utils_2.getPathProperty(b, path_1);
+                    var aValue = Pointer.Factory.is(a) ? a.id : a;
+                    var bValue = Pointer.Factory.is(b) ? b.id : b;
                     if (aValue === bValue)
                         return 0;
                     if (aValue === void 0)
                         return -1 * inverter_1;
                     if (bValue === void 0)
                         return inverter_1;
+                    if (!Utils_2.areDifferentType(a, b)) {
+                        if (Pointer.Factory.is(a)) {
+                            var aIsBNode = RDF.URI.Util.isBNodeID(aValue);
+                            var bIsBNode = RDF.URI.Util.isBNodeID(bValue);
+                            if (aIsBNode && !bIsBNode)
+                                return -1 * inverter_1;
+                            if (bIsBNode && !aIsBNode)
+                                return inverter_1;
+                        }
+                    }
+                    else {
+                        if (Pointer.Factory.is(a))
+                            return -1 * inverter_1;
+                        if (Pointer.Factory.is(b))
+                            return inverter_1;
+                        if (Utils.isNumber(a))
+                            return -1 * inverter_1;
+                        if (Utils.isNumber(b))
+                            return inverter_1;
+                        if (Utils.isDate(a))
+                            return -1 * inverter_1;
+                        if (Utils.isDate(b))
+                            return inverter_1;
+                        if (Utils.isBoolean(a))
+                            return -1 * inverter_1;
+                        if (Utils.isBoolean(b))
+                            return inverter_1;
+                        if (Utils.isString(a))
+                            return -1 * inverter_1;
+                        if (Utils.isString(b))
+                            return inverter_1;
+                    }
                     if (aValue < bValue)
                         return -1 * inverter_1;
                     if (aValue > bValue)
@@ -963,8 +963,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            if (RDF.URI.Util.isPrefixed(uri))
-                uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.getGeneralSchema());
+            uri = ObjectSchema.Util.resolveURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -1023,7 +1022,7 @@ var Class = (function () {
     Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
         if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
-            return this.getSchemaWith(schemas);
+            return this.getProcessedSchema(schemas);
         }
         else {
             var types = Resource.Util.getTypes(document);
@@ -1042,15 +1041,13 @@ var Class = (function () {
         var schemas = objectTypes
             .filter(function (type) { return _this.context.hasObjectSchema(type); })
             .map(function (type) { return _this.context.getObjectSchema(type); });
-        return this.getSchemaWith(schemas);
+        return this.getProcessedSchema(schemas);
     };
-    Class.prototype.getSchemaWith = function (objectSchemas) {
-        var digestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
-            this.context.getObjectSchema()
-        ].concat(objectSchemas));
-        if (this.context.hasSetting("vocabulary"))
-            digestedSchema.vocab = this.context.resolve(this.context.getSetting("vocabulary"));
-        return digestedSchema;
+    Class.prototype.getProcessedSchema = function (objectSchemas) {
+        if (objectSchemas === void 0) { objectSchemas = []; }
+        objectSchemas.unshift(this.context.getObjectSchema());
+        return ObjectSchema.Digester
+            .combineDigestedObjectSchemas(objectSchemas);
     };
     Class.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri)) {
@@ -1059,7 +1056,7 @@ var Class = (function () {
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.Digester.resolvePrefixedURI(uri, this.context.getObjectSchema());
+            uri = ObjectSchema.Util.resolveURI(uri, this.context.getObjectSchema());
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }

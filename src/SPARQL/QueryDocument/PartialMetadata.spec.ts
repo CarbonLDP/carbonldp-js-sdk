@@ -1,4 +1,11 @@
-import { clazz, constructor, hasDefaultExport, hasSignature, module } from "../../test/JasmineExtender";
+import { DigestedObjectSchema } from "../../ObjectSchema";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasSignature,
+	module
+} from "../../test/JasmineExtender";
 
 import * as Module from "./PartialMetadata";
 import { Class as PartialMetadata } from "./PartialMetadata";
@@ -33,7 +40,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/PartialMetadata" ), ():void => {
 			} );
 
 			it( "should exists", ():void => {
-				const partialMetadata:PartialMetadata = new PartialMetadata( null, null );
+				const partialMetadata:PartialMetadata = new PartialMetadata( new DigestedObjectSchema(), null );
 				expect( partialMetadata ).toBeDefined();
 				expect( partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 			} );
