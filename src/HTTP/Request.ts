@@ -1,11 +1,15 @@
+import {
+	ClientRequest,
+	IncomingMessage,
+	RequestOptions
+} from "http";
+import { Url } from "url";
+import * as Utils from "./../Utils";
+import { BadResponseError } from "./Errors";
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
 import Response from "./Response";
-import * as Utils from "./../Utils";
-
-import { RequestOptions, ClientRequest, IncomingMessage } from "http";
-import { Url } from "url";
 
 export interface Options {
 	headers?:Map<string, Header.Class>;
@@ -88,7 +92,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 
 		let numberOfRedirects:number = 0;
 
-		function sendRequest( _url:string ):void {
+		function sendRequestWithRedirect( _url:string ):void {
 			let parsedURL:Url = URL.parse( _url );
 			let HTTP:any = parsedURL.protocol === "http:" ? require( "http" ) : require( "https" );
 
@@ -107,7 +111,7 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 			if( options.timeout ) request.setTimeout( options.timeout );
 			request.on( "response", ( res:IncomingMessage ) => {
 				if( res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers ) {
-					if( ++ numberOfRedirects < 10 ) return sendRequest( URL.resolve( _url, res.headers.location ) );
+					if( ++ numberOfRedirects < 10 ) return sendRequestWithRedirect( URL.resolve( _url, res.headers.location ) );
 				}
 
 				returnResponse( request, res );
@@ -120,9 +124,15 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 			request.end( body );
 		}
 
-		sendRequest( url );
+		sendRequestWithRedirect( url );
 
 	} );
+}
+
+function sendRequest( method:string, url:string, body:string | Blob | Buffer, options:Options ):Promise<Response> {
+	if( typeof XMLHttpRequest !== "undefined" )
+		return sendWithBrowser( method, url, <string | Blob> body, options );
+	return sendWithNode( method, url, <string | Buffer> body, options );
 }
 
 function isBody( data:string | Blob | Buffer ):boolean {
@@ -157,12 +167,38 @@ export class Service {
 
 		if( Utils.isNumber( method ) ) method = Method[ method ];
 
-		let requestPromise:Promise<Response>;
-		if( typeof XMLHttpRequest !== "undefined" ) {
-			requestPromise = sendWithBrowser( method, url, <string | Blob> body, options );
-		} else {
-			requestPromise = sendWithNode( method, url, <string | Buffer> body, options );
-		}
+		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
+			.then( response => {
+				if( method !== "GET" ) return response;
+
+				const accept:string = options.headers.has( "accept" ) ?
+					options.headers.get( "accept" ).toString() : void 0;
+
+				const contentType:string | void = response.headers.has( "content-type" ) ?
+					response.headers.get( "content-type" ).toString() : void 0;
+
+				if( accept === contentType ) return response;
+
+				options.headers
+					.set( "pragma", new Header.Class( "no-cache" ) )
+					.set( "cache-control", new Header.Class( "no-cache, max-age=0" ) )
+				;
+
+				// Only when no Chromium force a false ETag
+				if( typeof window !== "undefined" && ! window[ "chrome" ] ) options.headers
+					.set( "if-none-match", new Header.Class( "" ) )
+				;
+
+				return sendRequest( method, url, body, options )
+					.then( noCachedResponse => {
+						const noCachedContentType:string | void = noCachedResponse.headers.has( "content-type" ) ?
+							noCachedResponse.headers.get( "content-type" ).toString() : void 0;
+						if( accept === noCachedContentType ) return noCachedResponse;
+
+						throw new BadResponseError( `Invalid Content-Type "${ noCachedContentType }", expected "${ accept }"`, noCachedResponse );
+					} );
+			} )
+		;
 
 		if( parser === null ) return requestPromise;
 
