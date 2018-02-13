@@ -9,7 +9,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = require("./../Utils");
-var Errors_1 = require("./Errors");
 var Header = require("./Header");
 var Method_1 = require("./Method");
 var Response_1 = require("./Response");
@@ -132,13 +131,13 @@ var Service = (function () {
             method = Method_1.default[method];
         var requestPromise = sendRequest(method, url, body, options)
             .then(function (response) {
-            if (method !== "GET")
+            if (method !== "GET" || !options.headers)
                 return response;
-            var accept = options.headers.has("accept") ?
-                options.headers.get("accept").toString() : void 0;
+            var accepts = options.headers.has("accept") ?
+                options.headers.get("accept").values : [];
             var contentType = response.headers.has("content-type") ?
-                response.headers.get("content-type").toString() : void 0;
-            if (accept === contentType)
+                response.headers.get("content-type") : void 0;
+            if (!contentType || accepts.some(contentType.hasValue, contentType))
                 return response;
             options.headers
                 .set("pragma", new Header.Class("no-cache"))
@@ -149,10 +148,10 @@ var Service = (function () {
             return sendRequest(method, url, body, options)
                 .then(function (noCachedResponse) {
                 var noCachedContentType = noCachedResponse.headers.has("content-type") ?
-                    noCachedResponse.headers.get("content-type").toString() : void 0;
-                if (accept === noCachedContentType)
+                    noCachedResponse.headers.get("content-type") : void 0;
+                if (!noCachedContentType || accepts.some(noCachedContentType.hasValue, noCachedContentType))
                     return noCachedResponse;
-                throw new Errors_1.BadResponseError("Invalid Content-Type \"" + noCachedContentType + "\", expected \"" + accept + "\"", noCachedResponse);
+                throw noCachedResponse;
             });
         });
         if (parser === null)

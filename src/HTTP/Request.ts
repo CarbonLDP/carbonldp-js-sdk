@@ -5,7 +5,6 @@ import {
 } from "http";
 import { Url } from "url";
 import * as Utils from "./../Utils";
-import { BadResponseError } from "./Errors";
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
@@ -169,15 +168,15 @@ export class Service {
 
 		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
 			.then( response => {
-				if( method !== "GET" ) return response;
+				if( method !== "GET" || ! options.headers ) return response;
 
-				const accept:string = options.headers.has( "accept" ) ?
-					options.headers.get( "accept" ).toString() : void 0;
+				const accepts:string[] = options.headers.has( "accept" ) ?
+					options.headers.get( "accept" ).values : [];
 
-				const contentType:string | void = response.headers.has( "content-type" ) ?
-					response.headers.get( "content-type" ).toString() : void 0;
+				const contentType:Header.Class = response.headers.has( "content-type" ) ?
+					response.headers.get( "content-type" ) : void 0;
 
-				if( accept === contentType ) return response;
+				if( ! contentType || accepts.some( contentType.hasValue, contentType ) ) return response;
 
 				options.headers
 					.set( "pragma", new Header.Class( "no-cache" ) )
@@ -191,11 +190,11 @@ export class Service {
 
 				return sendRequest( method, url, body, options )
 					.then( noCachedResponse => {
-						const noCachedContentType:string | void = noCachedResponse.headers.has( "content-type" ) ?
-							noCachedResponse.headers.get( "content-type" ).toString() : void 0;
-						if( accept === noCachedContentType ) return noCachedResponse;
+						const noCachedContentType:Header.Class | void = noCachedResponse.headers.has( "content-type" ) ?
+							noCachedResponse.headers.get( "content-type" ) : void 0;
+						if( ! noCachedContentType || accepts.some( noCachedContentType.hasValue, noCachedContentType ) ) return noCachedResponse;
 
-						throw new BadResponseError( `Invalid Content-Type "${ noCachedContentType }", expected "${ accept }"`, noCachedResponse );
+						throw noCachedResponse;
 					} );
 			} )
 		;
