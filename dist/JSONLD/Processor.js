@@ -137,7 +137,7 @@ var Class = (function () {
             var promise = HTTP.Request.Service
                 .get(url, requestOptions, new HTTP.JSONParser.Class())
                 .catch(function (response) {
-                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Code: " + response.status));
+                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });
             promises.push(resolved(url, promise));
         };

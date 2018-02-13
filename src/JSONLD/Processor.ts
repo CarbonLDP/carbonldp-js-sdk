@@ -140,7 +140,7 @@ export class Class {
 			let promise:Promise<[ any, HTTP.Response.Class ]> = HTTP.Request.Service
 				.get( url, requestOptions, new HTTP.JSONParser.Class() )
 				.catch( ( response:HTTP.Response.Class ) =>
-					Promise.reject( new Error( `Unable to resolve context from "${ url }". Code: ${ response.status }` ) )
+					Promise.reject( new Error( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
 				);
 			promises.push( resolved( url, promise ) );
 		}

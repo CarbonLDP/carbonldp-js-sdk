@@ -5458,29 +5458,21 @@ exports.default = RightSymbol;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Value = (function () {
-    function Value(value) {
-        this.value = value;
-    }
-    Value.prototype.toString = function () {
-        return this.value;
-    };
-    return Value;
-}());
-exports.Value = Value;
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];
-        if (!valueOrValues) {
+        if (!valueOrValues)
             return;
-        }
-        else if (Array.isArray(valueOrValues)) {
+        if (Array.isArray(valueOrValues)) {
             this.values = valueOrValues;
         }
         else {
             this.setValues(valueOrValues);
         }
     }
+    Class.prototype.hasValue = function (value) {
+        return this.values.indexOf(value) !== -1;
+    };
     Class.prototype.toString = function () {
         return this.values.join(", ");
     };
@@ -5489,7 +5481,7 @@ var Class = (function () {
         var valueStrings = valuesString.split(",");
         for (var i = 0, length_1 = valueStrings.length; i < length_1; i++) {
             var valueString = valueStrings[i].trim();
-            this.values.push(new Value(valueString));
+            this.values.push(valueString);
         }
     };
     return Class;
@@ -7724,7 +7716,7 @@ var Class = (function () {
         var header = new HTTP.Header.Class();
         headers.set("authorization", header);
         var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
-        header.values.push(new HTTP.Header.Value(authorization));
+        header.values.push(authorization);
     };
     return Class;
 }());
@@ -8568,7 +8560,7 @@ var Class = (function () {
             var promise = HTTP.Request.Service
                 .get(url, requestOptions, new HTTP.JSONParser.Class())
                 .catch(function (response) {
-                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Code: " + response.status));
+                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });
             promises.push(resolved(url, promise));
         };
@@ -15987,12 +15979,12 @@ var Util = (function () {
     };
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+        prefer.values.push(interactionModelURI + "; rel=interaction-model");
         return requestOptions;
     };
     Util.setPreferredRetrieval = function (retrievalType, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value("return=" + retrievalType));
+        prefer.values.push("return=" + retrievalType);
         return requestOptions;
     };
     Util.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
@@ -16003,14 +15995,14 @@ var Util = (function () {
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (key in preferences && preferences[key].length > 0) {
-                prefer.values.push(new Header.Value("" + representation + key + "=\"" + preferences[key].join(" ") + "\""));
+                prefer.values.push("" + representation + key + "=\"" + preferences[key].join(" ") + "\"");
             }
         }
         return requestOptions;
     };
     Util.setSlug = function (slug, requestOptions) {
         var slugHeader = Util.getHeader("slug", requestOptions, true);
-        slugHeader.values.push(new Header.Value(slug));
+        slugHeader.values.push(slug);
         return requestOptions;
     };
     Util.isOptions = function (object) {
@@ -17164,7 +17156,7 @@ var Class = (function () {
         var header = new HTTP.Header.Class();
         headers.set("authorization", header);
         var authorization = "Token " + this._credentials.key;
-        header.values.push(new HTTP.Header.Value(authorization));
+        header.values.push(authorization);
     };
     return Class;
 }());

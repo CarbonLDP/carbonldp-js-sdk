@@ -299,7 +299,7 @@ export class Util {
 
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
 		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
-		prefer.values.push( new Header.Value( interactionModelURI + "; rel=interaction-model" ) );
+		prefer.values.push( interactionModelURI + "; rel=interaction-model" );
 
 		return requestOptions;
 	}
@@ -307,7 +307,7 @@ export class Util {
 	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:Options ):Options {
 		const prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
 
-		prefer.values.push( new Header.Value( `return=${ retrievalType }` ) );
+		prefer.values.push( `return=${ retrievalType }` );
 		return requestOptions;
 	}
 
@@ -318,7 +318,7 @@ export class Util {
 		let keys:string[] = [ "include", "omit" ];
 		for( let key of keys ) {
 			if( key in preferences && preferences[ key ].length > 0 ) {
-				prefer.values.push( new Header.Value( `${ representation }${ key }="${ preferences[ key ].join( " " ) }"` ) );
+				prefer.values.push( `${ representation }${ key }="${ preferences[ key ].join( " " ) }"` );
 			}
 		}
 
@@ -327,7 +327,7 @@ export class Util {
 
 	static setSlug( slug:string, requestOptions:Options ):Options {
 		let slugHeader:Header.Class = Util.getHeader( "slug", requestOptions, true );
-		slugHeader.values.push( new Header.Value( slug ) );
+		slugHeader.values.push( slug );
 
 		return requestOptions;
 	}

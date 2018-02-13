@@ -38,7 +38,7 @@ var Class = (function () {
         var header = new HTTP.Header.Class();
         headers.set("authorization", header);
         var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
-        header.values.push(new HTTP.Header.Value(authorization));
+        header.values.push(authorization);
     };
     return Class;
 }());

@@ -110,7 +110,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		headers.set( "authorization", header );
 
 		let authorization:string = "Token " + this._credentials.key;
-		header.values.push( new HTTP.Header.Value( authorization ) );
+		header.values.push( authorization );
 	}
 }
 

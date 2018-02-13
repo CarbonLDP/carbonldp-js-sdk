@@ -89,7 +89,7 @@ var Class = (function () {
         var header = new HTTP.Header.Class();
         headers.set("authorization", header);
         var authorization = "Token " + this._credentials.key;
-        header.values.push(new HTTP.Header.Value(authorization));
+        header.values.push(authorization);
     };
     return Class;
 }());

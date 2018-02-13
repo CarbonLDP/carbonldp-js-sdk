@@ -247,12 +247,12 @@ var Util = (function () {
     };
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+        prefer.values.push(interactionModelURI + "; rel=interaction-model");
         return requestOptions;
     };
     Util.setPreferredRetrieval = function (retrievalType, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value("return=" + retrievalType));
+        prefer.values.push("return=" + retrievalType);
         return requestOptions;
     };
     Util.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
@@ -263,14 +263,14 @@ var Util = (function () {
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (key in preferences && preferences[key].length > 0) {
-                prefer.values.push(new Header.Value("" + representation + key + "=\"" + preferences[key].join(" ") + "\""));
+                prefer.values.push("" + representation + key + "=\"" + preferences[key].join(" ") + "\"");
             }
         }
         return requestOptions;
     };
     Util.setSlug = function (slug, requestOptions) {
         var slugHeader = Util.getHeader("slug", requestOptions, true);
-        slugHeader.values.push(new Header.Value(slug));
+        slugHeader.values.push(slug);
         return requestOptions;
     };
     Util.isOptions = function (object) {
