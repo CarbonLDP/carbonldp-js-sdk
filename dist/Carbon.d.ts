@@ -26,7 +26,8 @@ import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
-export declare class Class extends AbstractContext.Class {
+export declare class Class extends AbstractContext.AbstractContext {
+    static AbstractContext: typeof AbstractContext;
     static AccessPoint: typeof AccessPoint;
     static Auth: typeof Auth;
     static Document: typeof Document;

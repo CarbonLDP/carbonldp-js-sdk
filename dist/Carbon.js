@@ -107,6 +107,7 @@ var Class = (function (_super) {
             return _this.documents.get(uri);
         });
     };
+    Class.AbstractContext = AbstractContext;
     Class.AccessPoint = AccessPoint;
     Class.Auth = Auth;
     Class.Document = Document;
@@ -135,7 +136,7 @@ var Class = (function (_super) {
     Class.System = System;
     Class.Utils = Utils;
     return Class;
-}(AbstractContext.Class));
+}(AbstractContext.AbstractContext));
 exports.Class = Class;
 exports.default = Class;
 

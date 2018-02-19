@@ -58,9 +58,9 @@ describe( module( "Carbon" ), ():void => {
 			expect( Carbon.Class ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( extendsClass( "Carbon.AbstractContext.Class" ), ():void => {
+		it( extendsClass( "Carbon.AbstractContext.AbstractContext" ), ():void => {
 			const carbon:Carbon.Class = new Carbon.Class( "https://example.com" );
-			expect( carbon ).toEqual( jasmine.any( AbstractContext.Class ) );
+			expect( carbon ).toEqual( jasmine.any( AbstractContext.AbstractContext ) );
 		} );
 
 		it( hasProperty(
@@ -73,6 +73,15 @@ describe( module( "Carbon" ), ():void => {
 			expect( Carbon.Class.version ).toEqual( jasmine.any( String ) );
 
 			expect( Carbon.Class.version ).toMatch( /\d+\.\d+\.\d+.*/ );
+		} );
+
+		it( reexports(
+			STATIC,
+			"AbstractContext",
+			"Carbon/AbstractContext"
+		), ():void => {
+			expect( Carbon.Class.AbstractContext ).toBeDefined();
+			expect( Carbon.Class.AbstractContext ).toBe( AbstractContext );
 		} );
 
 		it( reexports(

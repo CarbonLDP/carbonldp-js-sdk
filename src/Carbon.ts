@@ -28,11 +28,11 @@ import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
-import { log } from "util";
 
-export class Class extends AbstractContext.Class {
+export class Class extends AbstractContext.AbstractContext {
 
 	/* tslint:disable: variable-name */
+	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static Auth:typeof Auth = Auth;
 	static Document:typeof Document = Document;
