@@ -1,8 +1,8 @@
 import {
 	hasProperty,
+	INSTANCE,
 	module,
 	namespaze,
-	STATIC,
 } from "../test/JasmineExtender";
 
 import { C } from "./C";
@@ -20,7 +20,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"namespace",
 			"string"
 		), ():void => {
@@ -29,7 +29,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"AccessPoint",
 			"string"
 		), ():void => {
@@ -38,7 +38,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"AccessPointCreated",
 			"string"
 		), ():void => {
@@ -47,7 +47,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"AddMemberAction",
 			"string"
 		), ():void => {
@@ -56,7 +56,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ChildCreated",
 			"string"
 		), ():void => {
@@ -65,7 +65,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Document",
 			"string"
 		), ():void => {
@@ -74,7 +74,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"DocumentCreatedDetails",
 			"string"
 		), ():void => {
@@ -83,7 +83,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"DocumentDeleted",
 			"string"
 		), ():void => {
@@ -92,7 +92,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"DocumentMetadata",
 			"string"
 		), ():void => {
@@ -101,7 +101,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"DocumentModified",
 			"string"
 		), ():void => {
@@ -110,7 +110,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ErrorResponse",
 			"string"
 		), ():void => {
@@ -119,7 +119,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Error",
 			"string"
 		), ():void => {
@@ -128,7 +128,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Instance",
 			"string"
 		), ():void => {
@@ -137,7 +137,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Map",
 			"string"
 		), ():void => {
@@ -146,7 +146,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"MemberAdded",
 			"string"
 		), ():void => {
@@ -155,7 +155,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"MemberAddedDetails",
 			"string"
 		), ():void => {
@@ -164,7 +164,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"MemberRemoved",
 			"string"
 		), ():void => {
@@ -173,7 +173,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"MemberRemovedDetails",
 			"string"
 		), ():void => {
@@ -182,7 +182,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"NonReadableMembershipResourceTriples",
 			"string"
 		), ():void => {
@@ -191,7 +191,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Platform",
 			"string"
 		), ():void => {
@@ -200,7 +200,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferContainer",
 			"string"
 		), ():void => {
@@ -209,7 +209,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferContainmentResources",
 			"string"
 		), ():void => {
@@ -218,7 +218,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferContainmentTriples",
 			"string"
 		), ():void => {
@@ -227,7 +227,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferDocumentETags",
 			"string"
 		), ():void => {
@@ -236,7 +236,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferMembershipResources",
 			"string"
 		), ():void => {
@@ -245,7 +245,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferMembershipTriples",
 			"string"
 		), ():void => {
@@ -254,7 +254,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferResultsContext",
 			"string"
 		), ():void => {
@@ -263,7 +263,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"QueryMetadata",
 			"string"
 		), ():void => {
@@ -272,7 +272,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"RDFRepresentation",
 			"string"
 		), ():void => {
@@ -281,7 +281,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"RemoveMemberAction",
 			"string"
 		), ():void => {
@@ -290,7 +290,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ResponseMetadata",
 			"string"
 		), ():void => {
@@ -299,7 +299,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ValidationError",
 			"string"
 		), ():void => {
@@ -308,7 +308,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"VolatileResource",
 			"string"
 		), ():void => {
@@ -318,7 +318,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"accessPoint",
 			"string"
 		), ():void => {
@@ -327,7 +327,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"bNodesMap",
 			"string"
 		), ():void => {
@@ -336,7 +336,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"buildDate",
 			"string"
 		), ():void => {
@@ -345,7 +345,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"created",
 			"string"
 		), ():void => {
@@ -354,7 +354,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"createdDocument",
 			"string"
 		), ():void => {
@@ -363,7 +363,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"details",
 			"string"
 		), ():void => {
@@ -372,7 +372,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"defaultInteractionModel",
 			"string"
 		), ():void => {
@@ -381,7 +381,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"documentMetadata",
 			"string"
 		), ():void => {
@@ -390,7 +390,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"entry",
 			"string"
 		), ():void => {
@@ -399,7 +399,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"entryKey",
 			"string"
 		), ():void => {
@@ -408,7 +408,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"modified",
 			"string"
 		), ():void => {
@@ -418,7 +418,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"mediaType",
 			"string"
 		), ():void => {
@@ -428,7 +428,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"size",
 			"string"
 		), ():void => {
@@ -437,7 +437,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"error",
 			"string"
 		), ():void => {
@@ -446,7 +446,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"errorCode",
 			"string"
 		), ():void => {
@@ -455,7 +455,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"errorDetails",
 			"string"
 		), ():void => {
@@ -464,7 +464,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"member",
 			"string"
 		), ():void => {
@@ -473,7 +473,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"errorMessage",
 			"string"
 		), ():void => {
@@ -482,7 +482,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"errorParameters",
 			"string"
 		), ():void => {
@@ -491,7 +491,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"httpStatusCode",
 			"string"
 		), ():void => {
@@ -500,7 +500,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"relatedDocument",
 			"string"
 		), ():void => {
@@ -509,7 +509,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"eTag",
 			"string"
 		), ():void => {
@@ -518,7 +518,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"requestID",
 			"string"
 		), ():void => {
@@ -527,7 +527,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"entryValue",
 			"string"
 		), ():void => {
@@ -536,7 +536,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"version",
 			"string"
 		), ():void => {
@@ -545,7 +545,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"target",
 			"string"
 		), ():void => {
@@ -554,7 +554,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"targetMember",
 			"string"
 		), ():void => {

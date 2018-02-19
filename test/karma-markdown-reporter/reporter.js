@@ -53,12 +53,16 @@ swag.registerHelpers( Handlebars );
 		for( var i = 0; i < modules.length; ++ i ) {
 			var interfaces = modules[ i ][ "interfaces" ] || [];
 			var classes = modules[ i ][ "classes" ] || [];
+			var namespaces = modules[ i ][ "namespaces" ] || [];
 
 			Array.prototype.push.apply( elements, interfaces.map( element => {
 				return { path: element.path, description: element.description, type: "I" };
 			} ) );
 			Array.prototype.push.apply( elements, classes.map( element => {
 				return { path: element.path, description: element.description, type: "C" };
+			} ) );
+			Array.prototype.push.apply( elements, namespaces.map( element => {
+				return { path: element.path, description: element.description, type: "N" };
 			} ) );
 		}
 
@@ -79,12 +83,16 @@ swag.registerHelpers( Handlebars );
 
 		var interfaces = module[ "interfaces" ] || [];
 		var classes = module[ "classes" ] || [];
+		var namespaces = module[ "namespaces" ] || [];
 
 		Array.prototype.push.apply( elements, interfaces.map( element => {
 			return { element: element, isInterface: true };
 		} ) );
 		Array.prototype.push.apply( elements, classes.map( element => {
 			return { element: element, isClass: true };
+		} ) );
+		Array.prototype.push.apply( elements, namespaces.map( element => {
+			return { element: element, isNamespace: true };
 		} ) );
 
 		elements = elements.sort( function( a, b ) {
@@ -165,12 +173,17 @@ var MarkdownReporter = (() => {
 	function composeSuite( parent, suite ) {
 		var name = suite.name;
 		var type = suite.suiteType;
-		delete suite.suiteType;
 
 		switch( type ) {
 			case "module":
 				suite.path = suite.name;
 				suite.name = suite.path.split( "/" ).pop();
+				break;
+
+			case "namespace":
+				parent = parent[ "namespaces" ] || ( parent[ "namespaces" ] = {} );
+				suite.path = suite.name;
+				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			case "class":
@@ -246,7 +259,7 @@ var MarkdownReporter = (() => {
 			case "property":
 				var properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
 
-				if( spec.access !== null ) {
+				if( parent.suiteType !== "namespace" && spec.access !== null ) {
 					properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
 				}
 
@@ -351,6 +364,7 @@ var MarkdownReporter = (() => {
 			delete specs[ key ]._;
 			parseSpecs( container, specs[ key ] );
 
+			sortObjectProperty( container, "namespaces" );
 			sortObjectProperty( container, "classes" );
 			sortObjectProperty( container, "interfaces" );
 			sortObjectProperty( container, "reexports" );
