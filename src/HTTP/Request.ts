@@ -5,6 +5,7 @@ import {
 } from "http";
 import { Url } from "url";
 import * as Utils from "./../Utils";
+import { BadResponseError } from "./Errors";
 import * as Header from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
@@ -241,20 +242,16 @@ export class Service {
 
 				this._setNoCacheHeaders( requestOptions );
 
-				// Force a false ETag when the user agent isn't Chromium based
 				if( ! this._isChromiumAgent() ) this._setFalseETag( requestOptions );
 
-				return sendRequest( "GET", url, null, requestOptions );
-			} )
-			.then( noCachedResponse => {
-				if( ! this._contentTypeIsAccepted( requestOptions, response ) ) {
-					// TODO: Use a more suitable error that also provides the response
-					const error:Error = new Error( "The server responded with an unacceptable Content-Type" );
-					error[ "response" ] = response;
-					throw error;
-				}
+				return sendRequest( "GET", url, null, requestOptions )
+					.then( noCachedResponse => {
+						if( ! this._contentTypeIsAccepted( requestOptions, response ) ) {
+							throw new BadResponseError( "The server responded with an unacceptable Content-Type", response );
+						}
 
-				return noCachedResponse;
+						return noCachedResponse;
+					} );
 			} );
 	}
 

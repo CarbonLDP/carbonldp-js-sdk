@@ -9,6 +9,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = require("./../Utils");
+var Errors_1 = require("./Errors");
 var Header = require("./Header");
 var Method_1 = require("./Method");
 var Response_1 = require("./Response");
@@ -191,15 +192,13 @@ var Service = (function () {
             _this._setNoCacheHeaders(requestOptions);
             if (!_this._isChromiumAgent())
                 _this._setFalseETag(requestOptions);
-            return sendRequest("GET", url, null, requestOptions);
-        })
-            .then(function (noCachedResponse) {
-            if (!_this._contentTypeIsAccepted(requestOptions, response)) {
-                var error = new Error("The server responded with an unacceptable Content-Type");
-                error["response"] = response;
-                throw error;
-            }
-            return noCachedResponse;
+            return sendRequest("GET", url, null, requestOptions)
+                .then(function (noCachedResponse) {
+                if (!_this._contentTypeIsAccepted(requestOptions, response)) {
+                    throw new Errors_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
+                }
+                return noCachedResponse;
+            });
         });
     };
     Service._contentTypeIsAccepted = function (requestOptions, response) {
