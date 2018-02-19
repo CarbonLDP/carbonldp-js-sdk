@@ -475,18 +475,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var LDP = __importStar(__webpack_require__(168));
-exports.LDP = LDP;
-var RDF = __importStar(__webpack_require__(169));
+__export(__webpack_require__(168));
+__export(__webpack_require__(169));
+__export(__webpack_require__(170));
+var RDF = __importStar(__webpack_require__(171));
 exports.RDF = RDF;
-var SHACL = __importStar(__webpack_require__(170));
+var SHACL = __importStar(__webpack_require__(172));
 exports.SHACL = SHACL;
-var VCARD = __importStar(__webpack_require__(171));
+var VCARD = __importStar(__webpack_require__(173));
 exports.VCARD = VCARD;
 var XSD = __importStar(__webpack_require__(43));
 exports.XSD = XSD;
-__export(__webpack_require__(172));
-__export(__webpack_require__(173));
 
 
 /***/ }),
@@ -2933,29 +2932,29 @@ var Utils = __importStar(__webpack_require__(0));
 exports.RDF_CLASS = NS.C.Document;
 exports.SCHEMA = {
     "contains": {
-        "@id": NS.LDP.Predicate.contains,
+        "@id": NS.LDP.contains,
         "@container": "@set",
         "@type": "@id",
     },
     "members": {
-        "@id": NS.LDP.Predicate.member,
+        "@id": NS.LDP.member,
         "@container": "@set",
         "@type": "@id",
     },
     "membershipResource": {
-        "@id": NS.LDP.Predicate.membershipResource,
+        "@id": NS.LDP.membershipResource,
         "@type": "@id",
     },
     "isMemberOfRelation": {
-        "@id": NS.LDP.Predicate.isMemberOfRelation,
+        "@id": NS.LDP.isMemberOfRelation,
         "@type": "@id",
     },
     "hasMemberRelation": {
-        "@id": NS.LDP.Predicate.hasMemberRelation,
+        "@id": NS.LDP.hasMemberRelation,
         "@type": "@id",
     },
     "insertedContentRelation": {
-        "@id": NS.LDP.Predicate.insertedContentRelation,
+        "@id": NS.LDP.insertedContentRelation,
         "@type": "@id",
     },
     "created": {
@@ -4694,10 +4693,10 @@ var Errors = __importStar(__webpack_require__(3));
 var FreeResources = __importStar(__webpack_require__(106));
 var HTTP = __importStar(__webpack_require__(16));
 var JSONLD = __importStar(__webpack_require__(33));
-var NS = __importStar(__webpack_require__(1));
 var RDF = __importStar(__webpack_require__(10));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
+var NS = __importStar(__webpack_require__(1));
 var Method;
 (function (Method) {
     Method[Method["BASIC"] = 0] = "BASIC";
@@ -4770,7 +4769,7 @@ var Class = (function () {
             this.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())
@@ -9802,7 +9801,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
             return _this.sendRequest(HTTP.Method.HEAD, documentURI, requestOptions);
         }).then(function (response) {
             return [true, response];
@@ -9870,7 +9869,7 @@ var Class = (function () {
             var childrenVar = queryContext.getVariable("child");
             var pattens = [
                 new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.contains))
                     .addObject(childrenVar)),
             ];
             return _this.executeSelectPatterns(parentURI, requestOptions, queryContext, "child", pattens);
@@ -9889,7 +9888,7 @@ var Class = (function () {
             var selectChildren = new tokens_1.SelectToken()
                 .addVariable(childrenProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.contains))
                 .addObject(childrenProperty.variable)));
             childrenProperty.addPattern(selectChildren);
             return _this.executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn);
@@ -9930,9 +9929,9 @@ var Class = (function () {
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
             var pattens = [
                 new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.membershipResource))
                     .addObject(membershipResource))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.hasMemberRelation))
                     .addObject(hasMemberRelation)),
                 new tokens_1.SubjectToken(membershipResource)
                     .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
@@ -9956,9 +9955,9 @@ var Class = (function () {
             var selectMembers = new tokens_1.SelectToken()
                 .addVariable(membersProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.membershipResource))
                 .addObject(membershipResource))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.hasMemberRelation))
                 .addObject(hasMemberRelation)))
                 .addPattern(new tokens_1.SubjectToken(membershipResource)
                 .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
@@ -9977,7 +9976,7 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var freeResources = FreeResources.Factory.create(_this);
             freeResources.createResourceFrom(LDP.AddMemberAction.Factory.create(pointers));
@@ -9994,7 +9993,7 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var containerRetrievalPreferences = {
                 include: [NS.C.PreferSelectedMembershipTriples],
@@ -10011,7 +10010,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
             var containerRetrievalPreferences = {
                 include: [
                     NS.C.PreferMembershipTriples,
@@ -10075,7 +10074,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
         }).then(function (response) {
             var pointerID = _this.getPointerID(documentURI);
@@ -10298,7 +10297,7 @@ var Class = (function () {
                     return Promise.resolve([persistedDocument, null]);
             }
         }
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
         var promise = this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser())
@@ -10369,7 +10368,7 @@ var Class = (function () {
     Class.prototype.refreshFullDocument = function (persistedDocument, requestOptions) {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
         HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
         return this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
@@ -10575,7 +10574,7 @@ var Class = (function () {
         if (PersistedDocument.Factory.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
         var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
         return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
     Class.prototype.persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
@@ -10585,7 +10584,7 @@ var Class = (function () {
             accessPoint : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
         if (accessPointDocument.membershipResource.id !== documentURI)
             throw new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource.");
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
         return this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
     };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
@@ -14070,159 +14069,169 @@ exports.default = AbstractContext;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var namespace = "http://www.w3.org/ns/ldp#";
-exports.namespace = namespace;
-var Class = (function () {
-    function Class() {
-    }
-    Object.defineProperty(Class, "Resource", {
-        get: function () { return namespace + "Resource"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "RDFSource", {
-        get: function () { return namespace + "RDFSource"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Container", {
-        get: function () { return namespace + "Container"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "BasicContainer", {
-        get: function () { return namespace + "BasicContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "DirectContainer", {
-        get: function () { return namespace + "DirectContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "IndirectContainer", {
-        get: function () { return namespace + "IndirectContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "NonRDFSource", {
-        get: function () { return namespace + "NonRDFSource"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "MemberSubject", {
-        get: function () { return namespace + "MemberSubject"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferContainment", {
-        get: function () { return namespace + "PreferContainment"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferMembership", {
-        get: function () { return namespace + "PreferMembership"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferEmptyContainer", {
-        get: function () { return namespace + "PreferEmptyContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferMinimalContainer", {
-        get: function () { return namespace + "PreferMinimalContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Page", {
-        get: function () { return namespace + "Page"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PageSortCriterion", {
-        get: function () { return namespace + "PageSortCriterion"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Ascending", {
-        get: function () { return namespace + "Ascending"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Descending", {
-        get: function () { return namespace + "Descending"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}());
-exports.Class = Class;
-var Predicate = (function () {
-    function Predicate() {
-    }
-    Object.defineProperty(Predicate, "contains", {
-        get: function () { return namespace + "contains"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "member", {
-        get: function () { return namespace + "member"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "hasMemberRelation", {
-        get: function () { return namespace + "hasMemberRelation"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "isMemberOfRelation", {
-        get: function () { return namespace + "isMemberOfRelation"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "membershipResource", {
-        get: function () { return namespace + "membershipResource"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "insertedContentRelation", {
-        get: function () { return namespace + "insertedContentRelation"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "constrainedBy", {
-        get: function () { return namespace + "constrainedBy"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "pageSortCriteria", {
-        get: function () { return namespace + "pageSortCriteria"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "pageSortOrder", {
-        get: function () { return namespace + "pageSortOrder"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "pageSortCollation", {
-        get: function () { return namespace + "pageSortCollation"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "pageSequence", {
-        get: function () { return namespace + "pageSequence"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Predicate;
-}());
-exports.Predicate = Predicate;
+var C;
+(function (C) {
+    C.namespace = "https://carbonldp.com/ns/v1/platform#";
+    C.AccessPoint = C.namespace + "AccessPoint";
+    C.AccessPointCreated = C.namespace + "AccessPointCreated";
+    C.AddMemberAction = C.namespace + "AddMemberAction";
+    C.ChildCreated = C.namespace + "ChildCreatedEvent";
+    C.Document = C.namespace + "Document";
+    C.DocumentCreatedDetails = C.namespace + "DocumentCreatedEventDetails";
+    C.DocumentDeleted = C.namespace + "DocumentDeleted";
+    C.DocumentMetadata = C.namespace + "DocumentMetadata";
+    C.DocumentModified = C.namespace + "DocumentModified";
+    C.ErrorResponse = C.namespace + "ErrorResponse";
+    C.Error = C.namespace + "Error";
+    C.Instance = C.namespace + "Instance";
+    C.Map = C.namespace + "Map";
+    C.MemberAdded = C.namespace + "MemberAddedEvent";
+    C.MemberAddedDetails = C.namespace + "MemberAddedEventDetails";
+    C.MemberRemoved = C.namespace + "MemberRemovedEvent";
+    C.MemberRemovedDetails = C.namespace + "MemberRemovedEventDetails";
+    C.NonReadableMembershipResourceTriples = C.namespace + "NonReadableMembershipResourceTriples";
+    C.Platform = C.namespace + "Platform";
+    C.PreferContainer = C.namespace + "PreferContainer";
+    C.PreferContainmentResources = C.namespace + "PreferContainmentResources";
+    C.PreferContainmentTriples = C.namespace + "PreferContainmentTriples";
+    C.PreferDocumentETags = C.namespace + "PreferDocumentETags";
+    C.PreferMembershipResources = C.namespace + "PreferMembershipResources";
+    C.PreferMembershipTriples = C.namespace + "PreferMembershipTriples";
+    C.PreferResultsContext = C.namespace + "PreferResultsContext";
+    C.PreferSelectedMembershipTriples = C.namespace + "PreferSelectedMembershipTriples";
+    C.QueryMetadata = C.namespace + "QueryMetadata";
+    C.RDFRepresentation = C.namespace + "RDFRepresentation";
+    C.RemoveMemberAction = C.namespace + "RemoveMemberAction";
+    C.ResponseMetadata = C.namespace + "ResponseMetadata";
+    C.ValidationError = C.namespace + "ValidationError";
+    C.VolatileResource = C.namespace + "VolatileResource";
+    C.accessPoint = C.namespace + "accessPoint";
+    C.bNodesMap = C.namespace + "bNodesMap";
+    C.buildDate = C.namespace + "buildDate";
+    C.created = C.namespace + "created";
+    C.createdDocument = C.namespace + "createdDocument";
+    C.details = C.namespace + "details";
+    C.defaultInteractionModel = C.namespace + "defaultInteractionModel";
+    C.documentMetadata = C.namespace + "documentMetadata";
+    C.entry = C.namespace + "entry";
+    C.entryKey = C.namespace + "key";
+    C.entryValue = C.namespace + "value";
+    C.error = C.namespace + "error";
+    C.errorCode = C.namespace + "errorCode";
+    C.errorDetails = C.namespace + "errorDetails";
+    C.errorMessage = C.namespace + "errorMessage";
+    C.errorParameters = C.namespace + "errorParameters";
+    C.eTag = C.namespace + "eTag";
+    C.httpStatusCode = C.namespace + "httpStatusCode";
+    C.mediaType = C.namespace + "mediaType";
+    C.member = C.namespace + "member";
+    C.modified = C.namespace + "modified";
+    C.requestID = C.namespace + "requestID";
+    C.relatedDocument = C.namespace + "relatedDocument";
+    C.size = C.namespace + "size";
+    C.target = C.namespace + "target";
+    C.targetMember = C.namespace + "targetMember";
+    C.version = C.namespace + "version";
+})(C = exports.C || (exports.C = {}));
 
 
 /***/ }),
 /* 169 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var CS;
+(function (CS) {
+    CS.namespace = "https://carbonldp.com/ns/v1/security#";
+    CS.AccessControlEntry = CS.namespace + "AccessControlEntry";
+    CS.AccessControlList = CS.namespace + "AccessControlList";
+    CS.AllOrigins = CS.namespace + "AllOrigins";
+    CS.CreateAccessPoint = CS.namespace + "CreateAccessPoint";
+    CS.CreateChild = CS.namespace + "CreateChild";
+    CS.Credentials = CS.namespace + "Credentials";
+    CS.Delete = CS.namespace + "Delete";
+    CS.Download = CS.namespace + "Download";
+    CS.Extend = CS.namespace + "Extend";
+    CS.ManageSecurity = CS.namespace + "ManageSecurity";
+    CS.ProtectedDocument = CS.namespace + "ProtectedDocument";
+    CS.Read = CS.namespace + "Read";
+    CS.RemoveMember = CS.namespace + "RemoveMember";
+    CS.Role = CS.namespace + "Role";
+    CS.Ticket = CS.namespace + "Ticket";
+    CS.Token = CS.namespace + "Token";
+    CS.Update = CS.namespace + "Update";
+    CS.Upload = CS.namespace + "Upload";
+    CS.User = CS.namespace + "User";
+    CS.accessControlEntry = CS.namespace + "accessControlEntry";
+    CS.accessControlList = CS.namespace + "accessControlList";
+    CS.accessTo = CS.namespace + "accessTo";
+    CS.allowsOrigin = CS.namespace + "allowsOrigin";
+    CS.childRole = CS.namespace + "childRole";
+    CS.credentials = CS.namespace + "credentials";
+    CS.credentialsOf = CS.namespace + "credentialsOf";
+    CS.description = CS.namespace + "description";
+    CS.enabled = CS.namespace + "enabled";
+    CS.expirationTime = CS.namespace + "expirationTime";
+    CS.forIRI = CS.namespace + "forIRI";
+    CS.granting = CS.namespace + "granting";
+    CS.inheritableEntry = CS.namespace + "inheritableEntry";
+    CS.name = CS.namespace + "name";
+    CS.parentRole = CS.namespace + "parentRole";
+    CS.password = CS.namespace + "password";
+    CS.permission = CS.namespace + "permission";
+    CS.rootContainer = CS.namespace + "rootContainer";
+    CS.subject = CS.namespace + "subject";
+    CS.subjectClass = CS.namespace + "subjectClass";
+    CS.ticketKey = CS.namespace + "ticketKey";
+    CS.tokenKey = CS.namespace + "tokenKey";
+    CS.user = CS.namespace + "user";
+})(CS = exports.CS || (exports.CS = {}));
+
+
+/***/ }),
+/* 170 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var LDP;
+(function (LDP) {
+    LDP.namespace = "http://www.w3.org/ns/ldp#";
+    LDP.Ascending = LDP.namespace + "Ascending";
+    LDP.BasicContainer = LDP.namespace + "BasicContainer";
+    LDP.Container = LDP.namespace + "Container";
+    LDP.Descending = LDP.namespace + "Descending";
+    LDP.DirectContainer = LDP.namespace + "DirectContainer";
+    LDP.IndirectContainer = LDP.namespace + "IndirectContainer";
+    LDP.RDFSource = LDP.namespace + "RDFSource";
+    LDP.Resource = LDP.namespace + "Resource";
+    LDP.MemberSubject = LDP.namespace + "MemberSubject";
+    LDP.NonRDFSource = LDP.namespace + "NonRDFSource";
+    LDP.Page = LDP.namespace + "Page";
+    LDP.PageSortCriterion = LDP.namespace + "PageSortCriterion";
+    LDP.PreferContainment = LDP.namespace + "PreferContainment";
+    LDP.PreferEmptyContainer = LDP.namespace + "PreferEmptyContainer";
+    LDP.PreferMembership = LDP.namespace + "PreferMembership";
+    LDP.PreferMinimalContainer = LDP.namespace + "PreferMinimalContainer";
+    LDP.constrainedBy = LDP.namespace + "constrainedBy";
+    LDP.contains = LDP.namespace + "contains";
+    LDP.hasMemberRelation = LDP.namespace + "hasMemberRelation";
+    LDP.insertedContentRelation = LDP.namespace + "insertedContentRelation";
+    LDP.isMemberOfRelation = LDP.namespace + "isMemberOfRelation";
+    LDP.member = LDP.namespace + "member";
+    LDP.membershipResource = LDP.namespace + "membershipResource";
+    LDP.pageSequence = LDP.namespace + "pageSequence";
+    LDP.pageSortCollation = LDP.namespace + "pageSortCollation";
+    LDP.pageSortCriteria = LDP.namespace + "pageSortCriteria";
+    LDP.pageSortOrder = LDP.namespace + "pageSortOrder";
+})(LDP = exports.LDP || (exports.LDP = {}));
+
+
+/***/ }),
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14240,7 +14249,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14327,7 +14336,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14345,134 +14354,6 @@ var Predicate = (function () {
     return Predicate;
 }());
 exports.Predicate = Predicate;
-
-
-/***/ }),
-/* 172 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var C;
-(function (C) {
-    C.namespace = "https://carbonldp.com/ns/v1/platform#";
-    C.AccessPoint = C.namespace + "AccessPoint";
-    C.AccessPointCreated = C.namespace + "AccessPointCreated";
-    C.AddMemberAction = C.namespace + "AddMemberAction";
-    C.ChildCreated = C.namespace + "ChildCreatedEvent";
-    C.Document = C.namespace + "Document";
-    C.DocumentCreatedDetails = C.namespace + "DocumentCreatedEventDetails";
-    C.DocumentDeleted = C.namespace + "DocumentDeleted";
-    C.DocumentMetadata = C.namespace + "DocumentMetadata";
-    C.DocumentModified = C.namespace + "DocumentModified";
-    C.ErrorResponse = C.namespace + "ErrorResponse";
-    C.Error = C.namespace + "Error";
-    C.Instance = C.namespace + "Instance";
-    C.Map = C.namespace + "Map";
-    C.MemberAdded = C.namespace + "MemberAddedEvent";
-    C.MemberAddedDetails = C.namespace + "MemberAddedEventDetails";
-    C.MemberRemoved = C.namespace + "MemberRemovedEvent";
-    C.MemberRemovedDetails = C.namespace + "MemberRemovedEventDetails";
-    C.NonReadableMembershipResourceTriples = C.namespace + "NonReadableMembershipResourceTriples";
-    C.Platform = C.namespace + "Platform";
-    C.PreferContainer = C.namespace + "PreferContainer";
-    C.PreferContainmentResources = C.namespace + "PreferContainmentResources";
-    C.PreferContainmentTriples = C.namespace + "PreferContainmentTriples";
-    C.PreferDocumentETags = C.namespace + "PreferDocumentETags";
-    C.PreferMembershipResources = C.namespace + "PreferMembershipResources";
-    C.PreferMembershipTriples = C.namespace + "PreferMembershipTriples";
-    C.PreferResultsContext = C.namespace + "PreferResultsContext";
-    C.PreferSelectedMembershipTriples = C.namespace + "PreferSelectedMembershipTriples";
-    C.QueryMetadata = C.namespace + "QueryMetadata";
-    C.RDFRepresentation = C.namespace + "RDFRepresentation";
-    C.RemoveMemberAction = C.namespace + "RemoveMemberAction";
-    C.ResponseMetadata = C.namespace + "ResponseMetadata";
-    C.ValidationError = C.namespace + "ValidationError";
-    C.VolatileResource = C.namespace + "VolatileResource";
-    C.accessPoint = C.namespace + "accessPoint";
-    C.bNodesMap = C.namespace + "bNodesMap";
-    C.buildDate = C.namespace + "buildDate";
-    C.created = C.namespace + "created";
-    C.createdDocument = C.namespace + "createdDocument";
-    C.details = C.namespace + "details";
-    C.defaultInteractionModel = C.namespace + "defaultInteractionModel";
-    C.documentMetadata = C.namespace + "documentMetadata";
-    C.entry = C.namespace + "entry";
-    C.entryKey = C.namespace + "key";
-    C.entryValue = C.namespace + "value";
-    C.error = C.namespace + "error";
-    C.errorCode = C.namespace + "errorCode";
-    C.errorDetails = C.namespace + "errorDetails";
-    C.errorMessage = C.namespace + "errorMessage";
-    C.errorParameters = C.namespace + "errorParameters";
-    C.eTag = C.namespace + "eTag";
-    C.httpStatusCode = C.namespace + "httpStatusCode";
-    C.mediaType = C.namespace + "mediaType";
-    C.member = C.namespace + "member";
-    C.modified = C.namespace + "modified";
-    C.requestID = C.namespace + "requestID";
-    C.relatedDocument = C.namespace + "relatedDocument";
-    C.size = C.namespace + "size";
-    C.target = C.namespace + "target";
-    C.targetMember = C.namespace + "targetMember";
-    C.version = C.namespace + "version";
-})(C = exports.C || (exports.C = {}));
-
-
-/***/ }),
-/* 173 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var CS;
-(function (CS) {
-    CS.namespace = "https://carbonldp.com/ns/v1/security#";
-    CS.AccessControlEntry = CS.namespace + "AccessControlEntry";
-    CS.AccessControlList = CS.namespace + "AccessControlList";
-    CS.AllOrigins = CS.namespace + "AllOrigins";
-    CS.CreateAccessPoint = CS.namespace + "CreateAccessPoint";
-    CS.CreateChild = CS.namespace + "CreateChild";
-    CS.Credentials = CS.namespace + "Credentials";
-    CS.Delete = CS.namespace + "Delete";
-    CS.Download = CS.namespace + "Download";
-    CS.Extend = CS.namespace + "Extend";
-    CS.ManageSecurity = CS.namespace + "ManageSecurity";
-    CS.ProtectedDocument = CS.namespace + "ProtectedDocument";
-    CS.Read = CS.namespace + "Read";
-    CS.RemoveMember = CS.namespace + "RemoveMember";
-    CS.Role = CS.namespace + "Role";
-    CS.Ticket = CS.namespace + "Ticket";
-    CS.Token = CS.namespace + "Token";
-    CS.Update = CS.namespace + "Update";
-    CS.Upload = CS.namespace + "Upload";
-    CS.User = CS.namespace + "User";
-    CS.accessControlEntry = CS.namespace + "accessControlEntry";
-    CS.accessControlList = CS.namespace + "accessControlList";
-    CS.accessTo = CS.namespace + "accessTo";
-    CS.allowsOrigin = CS.namespace + "allowsOrigin";
-    CS.childRole = CS.namespace + "childRole";
-    CS.credentials = CS.namespace + "credentials";
-    CS.credentialsOf = CS.namespace + "credentialsOf";
-    CS.description = CS.namespace + "description";
-    CS.enabled = CS.namespace + "enabled";
-    CS.expirationTime = CS.namespace + "expirationTime";
-    CS.forIRI = CS.namespace + "forIRI";
-    CS.granting = CS.namespace + "granting";
-    CS.inheritableEntry = CS.namespace + "inheritableEntry";
-    CS.name = CS.namespace + "name";
-    CS.parentRole = CS.namespace + "parentRole";
-    CS.password = CS.namespace + "password";
-    CS.permission = CS.namespace + "permission";
-    CS.rootContainer = CS.namespace + "rootContainer";
-    CS.subject = CS.namespace + "subject";
-    CS.subjectClass = CS.namespace + "subjectClass";
-    CS.ticketKey = CS.namespace + "ticketKey";
-    CS.tokenKey = CS.namespace + "tokenKey";
-    CS.user = CS.namespace + "user";
-})(CS = exports.CS || (exports.CS = {}));
 
 
 /***/ }),
@@ -17292,7 +17173,7 @@ var Class = (function () {
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
             return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
@@ -17395,7 +17276,7 @@ var Document = __importStar(__webpack_require__(24));
 var Errors = __importStar(__webpack_require__(3));
 var NS = __importStar(__webpack_require__(1));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
+exports.RDF_CLASS = NS.LDP.DirectContainer;
 var Factory = (function () {
     function Factory() {
     }
@@ -17422,8 +17303,8 @@ var Factory = (function () {
         var container = object;
         if (!Document.Factory.is(object))
             container = Document.Factory.createFrom(object);
-        container.types.push(NS.LDP.Class.Container);
-        container.types.push(NS.LDP.Class.DirectContainer);
+        container.types.push(NS.LDP.Container);
+        container.types.push(NS.LDP.DirectContainer);
         container.membershipResource = membershipResource;
         container.hasMemberRelation = hasMemberRelation;
         container.isMemberOfRelation = isMemberOfRelation;

@@ -1,356 +1,274 @@
 import {
-	STATIC,
-
+	hasProperty,
+	INSTANCE,
 	module,
-	clazz,
+	namespaze,
+} from "../test/JasmineExtender";
 
-	isDefined,
-	hasProperty
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+import { LDP } from "./LDP";
 
-import * as LDP from "./LDP";
+describe( module( "Carbon/Vocabularies/LDP" ), ():void => {
 
-describe( module(
-	"Carbon/Vocabularies/LDP"
-), ():void => {
+	describe( namespaze( "Carbon.Vocabularies.LDP", "The vocabulary defined for the W3C Linked Data Platform (LDP)" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( LDP ).toBeDefined();
-		expect( Utils.isObject( LDP ) ).toBe( true );
-	} );
+		it( "should exists", ():void => {
+			expect( LDP ).toEqual( jasmine.any( Object ) );
+		} );
 
-	it( hasProperty(
-		STATIC,
-		"namespace",
-		"string"
-	), ():void => {
-		expect( LDP.namespace ).toBeDefined();
-		expect( Utils.isString( LDP.namespace ) ).toBe( true );
-
-		expect( LDP.namespace ).toBe( "http://www.w3.org/ns/ldp#" )
-	} );
-
-	describe( clazz(
-		"Carbon.NS.LDP.Class",
-		"Class that contains classes defined in the W3C Linked Data Platform (LDP) vocabulary."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( LDP.Class ).toBeDefined();
-			expect( Utils.isFunction( LDP.Class ) ).toBe( true );
-			expect( Object.keys( LDP.Class ).length ).toBe( 16 );
+		it( "should test all exported IRIs", ():void => {
+			expect( Object.keys( LDP ).length ).toBe( 28 );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
+			"namespace",
+			"string"
+		), ():void => {
+			expect( LDP.namespace ).toEqual( jasmine.any( String ) );
+			expect( LDP.namespace ).toBe( "http://www.w3.org/ns/ldp#" );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
 			"Resource",
 			"string"
 		), ():void => {
-			expect( LDP.Class.Resource ).toBeDefined();
-			expect( Utils.isString( LDP.Class.Resource ) ).toBe( true );
-
-			expect( LDP.Class.Resource ).toBe( "http://www.w3.org/ns/ldp#Resource" );
+			expect( LDP.Resource ).toEqual( jasmine.any( String ) );
+			expect( LDP.Resource ).toBe( "http://www.w3.org/ns/ldp#Resource" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"RDFSource",
 			"string"
 		), ():void => {
-			expect( LDP.Class.RDFSource ).toBeDefined();
-			expect( Utils.isString( LDP.Class.RDFSource ) ).toBe( true );
-
-			expect( LDP.Class.RDFSource ).toBe( "http://www.w3.org/ns/ldp#RDFSource" );
+			expect( LDP.RDFSource ).toEqual( jasmine.any( String ) );
+			expect( LDP.RDFSource ).toBe( "http://www.w3.org/ns/ldp#RDFSource" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Container",
 			"string"
 		), ():void => {
-			expect( LDP.Class.Container ).toBeDefined();
-			expect( Utils.isString( LDP.Class.Container ) ).toBe( true );
-
-			expect( LDP.Class.Container ).toBe( "http://www.w3.org/ns/ldp#Container" );
+			expect( LDP.Container ).toEqual( jasmine.any( String ) );
+			expect( LDP.Container ).toBe( "http://www.w3.org/ns/ldp#Container" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"BasicContainer",
 			"string"
 		), ():void => {
-			expect( LDP.Class.BasicContainer ).toBeDefined();
-			expect( Utils.isString( LDP.Class.BasicContainer ) ).toBe( true );
-
-			expect( LDP.Class.BasicContainer ).toBe( "http://www.w3.org/ns/ldp#BasicContainer" );
+			expect( LDP.BasicContainer ).toEqual( jasmine.any( String ) );
+			expect( LDP.BasicContainer ).toBe( "http://www.w3.org/ns/ldp#BasicContainer" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"DirectContainer",
 			"string"
 		), ():void => {
-			expect( LDP.Class.DirectContainer ).toBeDefined();
-			expect( Utils.isString( LDP.Class.DirectContainer ) ).toBe( true );
-
-			expect( LDP.Class.DirectContainer ).toBe( "http://www.w3.org/ns/ldp#DirectContainer" );
+			expect( LDP.DirectContainer ).toEqual( jasmine.any( String ) );
+			expect( LDP.DirectContainer ).toBe( "http://www.w3.org/ns/ldp#DirectContainer" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"IndirectContainer",
 			"string"
 		), ():void => {
-			expect( LDP.Class.IndirectContainer ).toBeDefined();
-			expect( Utils.isString( LDP.Class.IndirectContainer ) ).toBe( true );
-
-			expect( LDP.Class.IndirectContainer ).toBe( "http://www.w3.org/ns/ldp#IndirectContainer" );
+			expect( LDP.IndirectContainer ).toEqual( jasmine.any( String ) );
+			expect( LDP.IndirectContainer ).toBe( "http://www.w3.org/ns/ldp#IndirectContainer" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"NonRDFSource",
 			"string"
 		), ():void => {
-			expect( LDP.Class.NonRDFSource ).toBeDefined();
-			expect( Utils.isString( LDP.Class.NonRDFSource ) ).toBe( true );
-
-			expect( LDP.Class.NonRDFSource ).toBe( "http://www.w3.org/ns/ldp#NonRDFSource" );
+			expect( LDP.NonRDFSource ).toEqual( jasmine.any( String ) );
+			expect( LDP.NonRDFSource ).toBe( "http://www.w3.org/ns/ldp#NonRDFSource" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"MemberSubject",
 			"string"
 		), ():void => {
-			expect( LDP.Class.MemberSubject ).toBeDefined();
-			expect( Utils.isString( LDP.Class.MemberSubject ) ).toBe( true );
-
-			expect( LDP.Class.MemberSubject ).toBe( "http://www.w3.org/ns/ldp#MemberSubject" );
+			expect( LDP.MemberSubject ).toEqual( jasmine.any( String ) );
+			expect( LDP.MemberSubject ).toBe( "http://www.w3.org/ns/ldp#MemberSubject" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferContainment",
 			"string"
 		), ():void => {
-			expect( LDP.Class.PreferContainment ).toBeDefined();
-			expect( Utils.isString( LDP.Class.PreferContainment ) ).toBe( true );
-
-			expect( LDP.Class.PreferContainment ).toBe( "http://www.w3.org/ns/ldp#PreferContainment" );
+			expect( LDP.PreferContainment ).toEqual( jasmine.any( String ) );
+			expect( LDP.PreferContainment ).toBe( "http://www.w3.org/ns/ldp#PreferContainment" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferMembership",
 			"string"
 		), ():void => {
-			expect( LDP.Class.PreferMembership ).toBeDefined();
-			expect( Utils.isString( LDP.Class.PreferMembership ) ).toBe( true );
-
-			expect( LDP.Class.PreferMembership ).toBe( "http://www.w3.org/ns/ldp#PreferMembership" );
+			expect( LDP.PreferMembership ).toEqual( jasmine.any( String ) );
+			expect( LDP.PreferMembership ).toBe( "http://www.w3.org/ns/ldp#PreferMembership" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferEmptyContainer",
 			"string"
 		), ():void => {
-			expect( LDP.Class.PreferEmptyContainer ).toBeDefined();
-			expect( Utils.isString( LDP.Class.PreferEmptyContainer ) ).toBe( true );
-
-			expect( LDP.Class.PreferEmptyContainer ).toBe( "http://www.w3.org/ns/ldp#PreferEmptyContainer" );
+			expect( LDP.PreferEmptyContainer ).toEqual( jasmine.any( String ) );
+			expect( LDP.PreferEmptyContainer ).toBe( "http://www.w3.org/ns/ldp#PreferEmptyContainer" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PreferMinimalContainer",
 			"string"
 		), ():void => {
-			expect( LDP.Class.PreferMinimalContainer ).toBeDefined();
-			expect( Utils.isString( LDP.Class.PreferMinimalContainer ) ).toBe( true );
-
-			expect( LDP.Class.PreferMinimalContainer ).toBe( "http://www.w3.org/ns/ldp#PreferMinimalContainer" );
+			expect( LDP.PreferMinimalContainer ).toEqual( jasmine.any( String ) );
+			expect( LDP.PreferMinimalContainer ).toBe( "http://www.w3.org/ns/ldp#PreferMinimalContainer" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Page",
 			"string"
 		), ():void => {
-			expect( LDP.Class.Page ).toBeDefined();
-			expect( Utils.isString( LDP.Class.Page ) ).toBe( true );
-
-			expect( LDP.Class.Page ).toBe( "http://www.w3.org/ns/ldp#Page" );
+			expect( LDP.Page ).toEqual( jasmine.any( String ) );
+			expect( LDP.Page ).toBe( "http://www.w3.org/ns/ldp#Page" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"PageSortCriterion",
 			"string"
 		), ():void => {
-			expect( LDP.Class.PageSortCriterion ).toBeDefined();
-			expect( Utils.isString( LDP.Class.PageSortCriterion ) ).toBe( true );
-
-			expect( LDP.Class.PageSortCriterion ).toBe( "http://www.w3.org/ns/ldp#PageSortCriterion" );
+			expect( LDP.PageSortCriterion ).toEqual( jasmine.any( String ) );
+			expect( LDP.PageSortCriterion ).toBe( "http://www.w3.org/ns/ldp#PageSortCriterion" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Ascending",
 			"string"
 		), ():void => {
-			expect( LDP.Class.Ascending ).toBeDefined();
-			expect( Utils.isString( LDP.Class.Ascending ) ).toBe( true );
-
-			expect( LDP.Class.Ascending ).toBe( "http://www.w3.org/ns/ldp#Ascending" );
+			expect( LDP.Ascending ).toEqual( jasmine.any( String ) );
+			expect( LDP.Ascending ).toBe( "http://www.w3.org/ns/ldp#Ascending" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Descending",
 			"string"
 		), ():void => {
-			expect( LDP.Class.Descending ).toBeDefined();
-			expect( Utils.isString( LDP.Class.Descending ) ).toBe( true );
-
-			expect( LDP.Class.Descending ).toBe( "http://www.w3.org/ns/ldp#Descending" );
-		} );
-
-	} );
-
-	describe( clazz(
-		"Carbon.NS.LDP.Predicate",
-		"Class that contains predicates defined in the W3C Linked Data Platform (LDP) vocabulary."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( LDP.Predicate ).toBeDefined();
-			expect( Utils.isFunction( LDP.Predicate ) ).toBe( true );
-
-			expect( Object.keys( LDP.Predicate ).length ).toBe( 11 );
+			expect( LDP.Descending ).toEqual( jasmine.any( String ) );
+			expect( LDP.Descending ).toBe( "http://www.w3.org/ns/ldp#Descending" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"contains",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.contains ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.contains ) ).toBe( true );
-
-			expect( LDP.Predicate.contains ).toBe( "http://www.w3.org/ns/ldp#contains" );
+			expect( LDP.contains ).toEqual( jasmine.any( String ) );
+			expect( LDP.contains ).toBe( "http://www.w3.org/ns/ldp#contains" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"member",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.member ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.member ) ).toBe( true );
-
-			expect( LDP.Predicate.member ).toBe( "http://www.w3.org/ns/ldp#member" );
+			expect( LDP.member ).toEqual( jasmine.any( String ) );
+			expect( LDP.member ).toBe( "http://www.w3.org/ns/ldp#member" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"hasMemberRelation",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.hasMemberRelation ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.hasMemberRelation ) ).toBe( true );
-
-			expect( LDP.Predicate.hasMemberRelation ).toBe( "http://www.w3.org/ns/ldp#hasMemberRelation" );
+			expect( LDP.hasMemberRelation ).toEqual( jasmine.any( String ) );
+			expect( LDP.hasMemberRelation ).toBe( "http://www.w3.org/ns/ldp#hasMemberRelation" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"isMemberOfRelation",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.isMemberOfRelation ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.isMemberOfRelation ) ).toBe( true );
-
-			expect( LDP.Predicate.isMemberOfRelation ).toBe( "http://www.w3.org/ns/ldp#isMemberOfRelation" );
+			expect( LDP.isMemberOfRelation ).toEqual( jasmine.any( String ) );
+			expect( LDP.isMemberOfRelation ).toBe( "http://www.w3.org/ns/ldp#isMemberOfRelation" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"membershipResource",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.membershipResource ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.membershipResource ) ).toBe( true );
-
-			expect( LDP.Predicate.membershipResource ).toBe( "http://www.w3.org/ns/ldp#membershipResource" );
+			expect( LDP.membershipResource ).toEqual( jasmine.any( String ) );
+			expect( LDP.membershipResource ).toBe( "http://www.w3.org/ns/ldp#membershipResource" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"insertedContentRelation",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.insertedContentRelation ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.insertedContentRelation ) ).toBe( true );
-
-			expect( LDP.Predicate.insertedContentRelation ).toBe( "http://www.w3.org/ns/ldp#insertedContentRelation" );
+			expect( LDP.insertedContentRelation ).toEqual( jasmine.any( String ) );
+			expect( LDP.insertedContentRelation ).toBe( "http://www.w3.org/ns/ldp#insertedContentRelation" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"constrainedBy",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.constrainedBy ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.constrainedBy ) ).toBe( true );
-
-			expect( LDP.Predicate.constrainedBy ).toBe( "http://www.w3.org/ns/ldp#constrainedBy" );
+			expect( LDP.constrainedBy ).toEqual( jasmine.any( String ) );
+			expect( LDP.constrainedBy ).toBe( "http://www.w3.org/ns/ldp#constrainedBy" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"pageSortCriteria",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.pageSortCriteria ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.pageSortCriteria ) ).toBe( true );
-
-			expect( LDP.Predicate.pageSortCriteria ).toBe( "http://www.w3.org/ns/ldp#pageSortCriteria" );
+			expect( LDP.pageSortCriteria ).toEqual( jasmine.any( String ) );
+			expect( LDP.pageSortCriteria ).toBe( "http://www.w3.org/ns/ldp#pageSortCriteria" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"pageSortOrder",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.pageSortOrder ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.pageSortOrder ) ).toBe( true );
-
-			expect( LDP.Predicate.pageSortOrder ).toBe( "http://www.w3.org/ns/ldp#pageSortOrder" );
+			expect( LDP.pageSortOrder ).toEqual( jasmine.any( String ) );
+			expect( LDP.pageSortOrder ).toBe( "http://www.w3.org/ns/ldp#pageSortOrder" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"pageSortCollation",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.pageSortCollation ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.pageSortCollation ) ).toBe( true );
-
-			expect( LDP.Predicate.pageSortCollation ).toBe( "http://www.w3.org/ns/ldp#pageSortCollation" );
+			expect( LDP.pageSortCollation ).toEqual( jasmine.any( String ) );
+			expect( LDP.pageSortCollation ).toBe( "http://www.w3.org/ns/ldp#pageSortCollation" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"pageSequence",
 			"string"
 		), ():void => {
-			expect( LDP.Predicate.pageSequence ).toBeDefined();
-			expect( Utils.isString( LDP.Predicate.pageSequence ) ).toBe( true );
-
-			expect( LDP.Predicate.pageSequence ).toBe( "http://www.w3.org/ns/ldp#pageSequence" );
+			expect( LDP.pageSequence ).toEqual( jasmine.any( String ) );
+			expect( LDP.pageSequence ).toBe( "http://www.w3.org/ns/ldp#pageSequence" );
 		} );
 
 	} );

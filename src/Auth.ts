@@ -23,11 +23,11 @@ import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
-import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
+import * as NS from "./Vocabularies/index";
 
 export {
 	ACE,
@@ -136,7 +136,7 @@ export class Class {
 		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context._resolvePath( "system" ) + Ticket.TICKETS_CONTAINER;

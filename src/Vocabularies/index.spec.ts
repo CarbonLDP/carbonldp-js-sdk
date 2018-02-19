@@ -10,7 +10,7 @@ import * as Vocabularies from "./";
 
 import { C } from "./C";
 import { CS } from "./CS";
-import * as LDP from "./LDP";
+import { LDP } from "./LDP";
 import * as RDF from "./RDF";
 import * as SHACL from "./SHACL";
 import * as VCARD from "./VCARD";
@@ -44,7 +44,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"LDP",
-		"Carbon/Vocabularies/LDP"
+		"Carbon.Vocabularies.LDP"
 	), ():void => {
 		expect( Vocabularies.LDP ).toBeDefined();
 		expect( Vocabularies.LDP ).toBe( LDP );

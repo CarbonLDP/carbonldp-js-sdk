@@ -1,33 +1,30 @@
-declare const namespace: string;
-declare class Class {
-    static readonly Resource: string;
-    static readonly RDFSource: string;
-    static readonly Container: string;
-    static readonly BasicContainer: string;
-    static readonly DirectContainer: string;
-    static readonly IndirectContainer: string;
-    static readonly NonRDFSource: string;
-    static readonly MemberSubject: string;
-    static readonly PreferContainment: string;
-    static readonly PreferMembership: string;
-    static readonly PreferEmptyContainer: string;
-    static readonly PreferMinimalContainer: string;
-    static readonly Page: string;
-    static readonly PageSortCriterion: string;
-    static readonly Ascending: string;
-    static readonly Descending: string;
+export declare namespace LDP {
+    const namespace: "http://www.w3.org/ns/ldp#";
+    const Ascending: string;
+    const BasicContainer: string;
+    const Container: string;
+    const Descending: string;
+    const DirectContainer: string;
+    const IndirectContainer: string;
+    const RDFSource: string;
+    const Resource: string;
+    const MemberSubject: string;
+    const NonRDFSource: string;
+    const Page: string;
+    const PageSortCriterion: string;
+    const PreferContainment: string;
+    const PreferEmptyContainer: string;
+    const PreferMembership: string;
+    const PreferMinimalContainer: string;
+    const constrainedBy: string;
+    const contains: string;
+    const hasMemberRelation: string;
+    const insertedContentRelation: string;
+    const isMemberOfRelation: string;
+    const member: string;
+    const membershipResource: string;
+    const pageSequence: string;
+    const pageSortCollation: string;
+    const pageSortCriteria: string;
+    const pageSortOrder: string;
 }
-declare class Predicate {
-    static readonly contains: string;
-    static readonly member: string;
-    static readonly hasMemberRelation: string;
-    static readonly isMemberOfRelation: string;
-    static readonly membershipResource: string;
-    static readonly insertedContentRelation: string;
-    static readonly constrainedBy: string;
-    static readonly pageSortCriteria: string;
-    static readonly pageSortOrder: string;
-    static readonly pageSortCollation: string;
-    static readonly pageSequence: string;
-}
-export { namespace, Class, Predicate };

@@ -64,7 +64,7 @@ var Class = (function () {
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
             return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());

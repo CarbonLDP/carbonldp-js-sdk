@@ -178,21 +178,21 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = Resource.Factory.create( "http://example.com/resource/", [ NS.LDP.Class.RDFSource ] );
+			resource = Resource.Factory.create( "http://example.com/resource/", [ NS.LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ NS.LDP.Class.RDFSource ] );
+			expect( resource.types ).toEqual( [ NS.LDP.RDFSource ] );
 
-			resource = Resource.Factory.create( null, [ NS.LDP.Class.RDFSource, NS.LDP.Class.Container ] );
+			resource = Resource.Factory.create( null, [ NS.LDP.RDFSource, NS.LDP.Container ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ NS.LDP.Class.RDFSource, NS.LDP.Class.Container ] );
+			expect( resource.types ).toEqual( [ NS.LDP.RDFSource, NS.LDP.Container ] );
 		} );
 
 		it( hasMethod(
@@ -239,23 +239,23 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, "http://example.com/resource/", [ NS.LDP.Class.RDFSource ] );
+			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, "http://example.com/resource/", [ NS.LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ NS.LDP.Class.RDFSource ] );
+			expect( resource.types ).toEqual( [ NS.LDP.RDFSource ] );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, null, [ NS.LDP.Class.RDFSource, NS.LDP.Class.Container ] );
+			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, null, [ NS.LDP.RDFSource, NS.LDP.Container ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ NS.LDP.Class.RDFSource, NS.LDP.Class.Container ] );
+			expect( resource.types ).toEqual( [ NS.LDP.RDFSource, NS.LDP.Container ] );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 		} );
@@ -289,9 +289,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( resource.types ).toEqual( [] );
 
 
-			resource.types = [ NS.LDP.Class.RDFSource ];
+			resource.types = [ NS.LDP.RDFSource ];
 			resource = Resource.Factory.decorate<MyResource>( resource );
-			expect( resource.types ).toEqual( [ NS.LDP.Class.RDFSource ] );
+			expect( resource.types ).toEqual( [ NS.LDP.RDFSource ] );
 		} );
 
 		describe( decoratedObject(

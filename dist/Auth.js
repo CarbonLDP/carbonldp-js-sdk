@@ -48,10 +48,10 @@ var Errors = __importStar(require("./Errors"));
 var FreeResources = __importStar(require("./FreeResources"));
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
-var NS = __importStar(require("./Vocabularies/index"));
 var RDF = __importStar(require("./RDF"));
 var Resource = __importStar(require("./Resource"));
 var Utils = __importStar(require("./Utils"));
+var NS = __importStar(require("./Vocabularies/index"));
 var Method;
 (function (Method) {
     Method[Method["BASIC"] = 0] = "BASIC";
@@ -124,7 +124,7 @@ var Class = (function () {
             this.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())

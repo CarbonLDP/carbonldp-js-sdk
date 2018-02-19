@@ -23,29 +23,29 @@ var Utils = __importStar(require("./Utils"));
 exports.RDF_CLASS = NS.C.Document;
 exports.SCHEMA = {
     "contains": {
-        "@id": NS.LDP.Predicate.contains,
+        "@id": NS.LDP.contains,
         "@container": "@set",
         "@type": "@id",
     },
     "members": {
-        "@id": NS.LDP.Predicate.member,
+        "@id": NS.LDP.member,
         "@container": "@set",
         "@type": "@id",
     },
     "membershipResource": {
-        "@id": NS.LDP.Predicate.membershipResource,
+        "@id": NS.LDP.membershipResource,
         "@type": "@id",
     },
     "isMemberOfRelation": {
-        "@id": NS.LDP.Predicate.isMemberOfRelation,
+        "@id": NS.LDP.isMemberOfRelation,
         "@type": "@id",
     },
     "hasMemberRelation": {
-        "@id": NS.LDP.Predicate.hasMemberRelation,
+        "@id": NS.LDP.hasMemberRelation,
         "@type": "@id",
     },
     "insertedContentRelation": {
-        "@id": NS.LDP.Predicate.insertedContentRelation,
+        "@id": NS.LDP.insertedContentRelation,
         "@type": "@id",
     },
     "created": {

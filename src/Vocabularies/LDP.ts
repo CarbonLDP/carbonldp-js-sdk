@@ -1,66 +1,32 @@
-const namespace:string = "http://www.w3.org/ns/ldp#";
+export namespace LDP {
+	export const namespace:"http://www.w3.org/ns/ldp#" = "http://www.w3.org/ns/ldp#";
 
-class Class {
-	static get Resource():string { return namespace + "Resource"; }
+	export const Ascending:string = namespace + "Ascending";
+	export const BasicContainer:string = namespace + "BasicContainer";
+	export const Container:string = namespace + "Container";
+	export const Descending:string = namespace + "Descending";
+	export const DirectContainer:string = namespace + "DirectContainer";
+	export const IndirectContainer:string = namespace + "IndirectContainer";
+	export const RDFSource:string = namespace + "RDFSource";
+	export const Resource:string = namespace + "Resource";
+	export const MemberSubject:string = namespace + "MemberSubject";
+	export const NonRDFSource:string = namespace + "NonRDFSource";
+	export const Page:string = namespace + "Page";
+	export const PageSortCriterion:string = namespace + "PageSortCriterion";
+	export const PreferContainment:string = namespace + "PreferContainment";
+	export const PreferEmptyContainer:string = namespace + "PreferEmptyContainer";
+	export const PreferMembership:string = namespace + "PreferMembership";
+	export const PreferMinimalContainer:string = namespace + "PreferMinimalContainer";
 
-	static get RDFSource():string { return namespace + "RDFSource"; }
-
-	static get Container():string { return namespace + "Container"; }
-
-	static get BasicContainer():string { return namespace + "BasicContainer"; }
-
-	static get DirectContainer():string { return namespace + "DirectContainer"; }
-
-	static get IndirectContainer():string { return namespace + "IndirectContainer"; }
-
-	static get NonRDFSource():string { return namespace + "NonRDFSource"; }
-
-	static get MemberSubject():string { return namespace + "MemberSubject"; }
-
-	static get PreferContainment():string { return namespace + "PreferContainment"; }
-
-	static get PreferMembership():string { return namespace + "PreferMembership"; }
-
-	static get PreferEmptyContainer():string { return namespace + "PreferEmptyContainer"; }
-
-	static get PreferMinimalContainer():string { return namespace + "PreferMinimalContainer"; }
-
-	static get Page():string { return namespace + "Page"; }
-
-	static get PageSortCriterion():string { return namespace + "PageSortCriterion"; }
-
-	static get Ascending():string { return namespace + "Ascending"; }
-
-	static get Descending():string { return namespace + "Descending"; }
+	export const constrainedBy:string = namespace + "constrainedBy";
+	export const contains:string = namespace + "contains";
+	export const hasMemberRelation:string = namespace + "hasMemberRelation";
+	export const insertedContentRelation:string = namespace + "insertedContentRelation";
+	export const isMemberOfRelation:string = namespace + "isMemberOfRelation";
+	export const member:string = namespace + "member";
+	export const membershipResource:string = namespace + "membershipResource";
+	export const pageSequence:string = namespace + "pageSequence";
+	export const pageSortCollation:string = namespace + "pageSortCollation";
+	export const pageSortCriteria:string = namespace + "pageSortCriteria";
+	export const pageSortOrder:string = namespace + "pageSortOrder";
 }
-
-class Predicate {
-	static get contains():string { return namespace + "contains"; }
-
-	static get member():string { return namespace + "member"; }
-
-	static get hasMemberRelation():string { return namespace + "hasMemberRelation"; }
-
-	static get isMemberOfRelation():string { return namespace + "isMemberOfRelation"; }
-
-	static get membershipResource():string { return namespace + "membershipResource"; }
-
-	static get insertedContentRelation():string { return namespace + "insertedContentRelation"; }
-
-	static get constrainedBy():string { return namespace + "constrainedBy"; }
-
-	static get pageSortCriteria():string { return namespace + "pageSortCriteria"; }
-
-	static get pageSortOrder():string { return namespace + "pageSortOrder"; }
-
-	static get pageSortCollation():string { return namespace + "pageSortCollation"; }
-
-	static get pageSequence():string { return namespace + "pageSequence"; }
-
-}
-
-export {
-	namespace,
-	Class,
-	Predicate
-};

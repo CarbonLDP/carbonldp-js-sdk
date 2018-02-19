@@ -56,14 +56,14 @@ describe( module( "Carbon/Document" ), ():void => {
 
 		expect( Utils.hasProperty( Document.SCHEMA, "contains" ) ).toBe( true );
 		expect( Document.SCHEMA[ "contains" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.contains,
+			"@id": NS.LDP.contains,
 			"@container": "@set",
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "members" ) ).toBe( true );
 		expect( Document.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.member,
+			"@id": NS.LDP.member,
 			"@container": "@set",
 			"@type": "@id",
 		} );
@@ -71,25 +71,25 @@ describe( module( "Carbon/Document" ), ():void => {
 
 		expect( Utils.hasProperty( Document.SCHEMA, "membershipResource" ) ).toBe( true );
 		expect( Document.SCHEMA[ "membershipResource" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.membershipResource,
+			"@id": NS.LDP.membershipResource,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "isMemberOfRelation" ) ).toBe( true );
 		expect( Document.SCHEMA[ "isMemberOfRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.isMemberOfRelation,
+			"@id": NS.LDP.isMemberOfRelation,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "hasMemberRelation" ) ).toBe( true );
 		expect( Document.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.hasMemberRelation,
+			"@id": NS.LDP.hasMemberRelation,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "insertedContentRelation" ) ).toBe( true );
 		expect( Document.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.insertedContentRelation,
+			"@id": NS.LDP.insertedContentRelation,
 			"@type": "@id",
 		} );
 

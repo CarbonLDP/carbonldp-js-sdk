@@ -70,7 +70,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		this.basicAuthenticator.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;

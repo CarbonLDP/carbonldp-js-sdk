@@ -185,7 +185,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	exists( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+			this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
 
 			return this.sendRequest( HTTP.Method.HEAD, documentURI, requestOptions );
 		} ).then<[ boolean, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
@@ -268,7 +268,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			const pattens:PatternToken[] = [
 				new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.contains ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.contains ) )
 						.addObject( childrenVar )
 					),
 			];
@@ -294,7 +294,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const selectChildren:SelectToken = new SelectToken()
 				.addVariable( childrenProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.contains ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.contains ) )
 						.addObject( childrenProperty.variable )
 					)
 				)
@@ -347,10 +347,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
 			const pattens:PatternToken[] = [
 				new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.membershipResource ) )
 						.addObject( membershipResource )
 					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.hasMemberRelation ) )
 						.addObject( hasMemberRelation )
 					)
 				,
@@ -384,10 +384,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const selectMembers:SelectToken = new SelectToken()
 				.addVariable( membersProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.membershipResource ) )
 						.addObject( membershipResource )
 					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.hasMemberRelation ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.hasMemberRelation ) )
 						.addObject( hasMemberRelation )
 					)
 				)
@@ -415,7 +415,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const pointers:Pointer.Class[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+			this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
@@ -436,7 +436,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const pointers:Pointer.Class[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+			this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
@@ -455,7 +455,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	removeAllMembers( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+			this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
 
 			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
 				include: [
@@ -518,7 +518,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+			this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
 
 			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions );
 		} ).then( ( response:HTTP.Response.Class ) => {
@@ -787,7 +787,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			}
 		}
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
 
 		if( this.documentsBeingResolved.has( uri ) )
 			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
@@ -868,7 +868,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private refreshFullDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
 		HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
 		return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
@@ -1113,7 +1113,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( PersistedDocument.Factory.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
 		let childDocument:T & Document.Class = Document.Factory.is( childObject ) ? <T & Document.Class> childObject : Document.Factory.createFrom<T>( childObject );
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.Container );
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
 		return this.persistDocument<T & Document.Class, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
@@ -1125,7 +1125,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Class.RDFSource );
+		this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
 		return this.persistDocument<T & AccessPoint.DocumentClass, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 

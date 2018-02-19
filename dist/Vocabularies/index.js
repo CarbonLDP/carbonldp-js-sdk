@@ -10,8 +10,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var LDP = __importStar(require("./LDP"));
-exports.LDP = LDP;
+__export(require("./C"));
+__export(require("./CS"));
+__export(require("./LDP"));
 var RDF = __importStar(require("./RDF"));
 exports.RDF = RDF;
 var SHACL = __importStar(require("./SHACL"));
@@ -20,7 +21,5 @@ var VCARD = __importStar(require("./VCARD"));
 exports.VCARD = VCARD;
 var XSD = __importStar(require("./XSD"));
 exports.XSD = XSD;
-__export(require("./C"));
-__export(require("./CS"));
 
 //# sourceMappingURL=index.js.map

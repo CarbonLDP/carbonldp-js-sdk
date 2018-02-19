@@ -11,7 +11,7 @@ var Document = __importStar(require("./../Document"));
 var Errors = __importStar(require("./../Errors"));
 var NS = __importStar(require("../Vocabularies/index"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.LDP.Class.DirectContainer;
+exports.RDF_CLASS = NS.LDP.DirectContainer;
 var Factory = (function () {
     function Factory() {
     }
@@ -38,8 +38,8 @@ var Factory = (function () {
         var container = object;
         if (!Document.Factory.is(object))
             container = Document.Factory.createFrom(object);
-        container.types.push(NS.LDP.Class.Container);
-        container.types.push(NS.LDP.Class.DirectContainer);
+        container.types.push(NS.LDP.Container);
+        container.types.push(NS.LDP.DirectContainer);
         container.membershipResource = membershipResource;
         container.hasMemberRelation = hasMemberRelation;
         container.isMemberOfRelation = isMemberOfRelation;

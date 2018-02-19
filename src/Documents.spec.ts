@@ -1186,8 +1186,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1311,8 +1311,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1407,8 +1407,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1538,8 +1538,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1593,8 +1593,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "true",
@@ -1685,8 +1685,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
@@ -1991,8 +1991,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -2109,8 +2109,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -2655,7 +2655,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ NS.LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -2682,7 +2682,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ NS.LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -2911,7 +2911,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ NS.LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -2943,7 +2943,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ NS.LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -3383,7 +3383,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=representation`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ NS.LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -3410,7 +3410,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=representation`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ NS.LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -3661,7 +3661,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=representation`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ NS.LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -3710,7 +3710,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=representation`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ NS.LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -4539,7 +4539,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								.addPattern( new SelectToken()
 									.addVariable( variableHelper( "child" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.contains ) )
+										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.contains ) )
 											.addObject( variableHelper( "child" ) )
 										)
 									)
@@ -4684,8 +4684,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -4710,8 +4710,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -4853,8 +4853,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -4882,8 +4882,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -5032,8 +5032,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -5049,8 +5049,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -5193,8 +5193,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5219,8 +5219,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5397,8 +5397,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5426,8 +5426,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5733,8 +5733,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5759,8 +5759,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5928,8 +5928,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5957,8 +5957,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -6349,7 +6349,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+									`${ NS.LDP.RDFSource }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -6376,7 +6376,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+									`${ NS.LDP.RDFSource }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -6643,7 +6643,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+										`${ NS.LDP.RDFSource }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -6679,7 +6679,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+										`${ NS.LDP.RDFSource }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -7506,10 +7506,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								.addPattern( new SelectToken()
 									.addVariable( variableHelper( "member" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.membershipResource ) )
+										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.membershipResource ) )
 											.addObject( variableHelper( "membershipResource" ) )
 										)
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.hasMemberRelation ) )
+										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.hasMemberRelation ) )
 											.addObject( variableHelper( "hasMemberRelation" ) )
 										)
 									)
@@ -7659,8 +7659,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -7685,8 +7685,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -7835,8 +7835,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -7864,8 +7864,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -8014,8 +8014,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -8031,8 +8031,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -8175,8 +8175,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8201,8 +8201,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8372,8 +8372,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8401,8 +8401,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8710,8 +8710,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8736,8 +8736,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8905,8 +8905,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8934,8 +8934,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -10638,8 +10638,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11047,8 +11047,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11207,8 +11207,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11405,8 +11405,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -12091,8 +12091,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": [
 									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ NS.LDP.BasicContainer }",
+									"${ NS.LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"

@@ -143,7 +143,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
             return _this.sendRequest(HTTP.Method.HEAD, documentURI, requestOptions);
         }).then(function (response) {
             return [true, response];
@@ -211,7 +211,7 @@ var Class = (function () {
             var childrenVar = queryContext.getVariable("child");
             var pattens = [
                 new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.contains))
                     .addObject(childrenVar)),
             ];
             return _this.executeSelectPatterns(parentURI, requestOptions, queryContext, "child", pattens);
@@ -230,7 +230,7 @@ var Class = (function () {
             var selectChildren = new tokens_1.SelectToken()
                 .addVariable(childrenProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.contains))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.contains))
                 .addObject(childrenProperty.variable)));
             childrenProperty.addPattern(selectChildren);
             return _this.executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn);
@@ -271,9 +271,9 @@ var Class = (function () {
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
             var pattens = [
                 new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.membershipResource))
                     .addObject(membershipResource))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.hasMemberRelation))
                     .addObject(hasMemberRelation)),
                 new tokens_1.SubjectToken(membershipResource)
                     .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
@@ -297,9 +297,9 @@ var Class = (function () {
             var selectMembers = new tokens_1.SelectToken()
                 .addVariable(membersProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.membershipResource))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.membershipResource))
                 .addObject(membershipResource))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.Predicate.hasMemberRelation))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.LDP.hasMemberRelation))
                 .addObject(hasMemberRelation)))
                 .addPattern(new tokens_1.SubjectToken(membershipResource)
                 .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
@@ -318,7 +318,7 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var freeResources = FreeResources.Factory.create(_this);
             freeResources.createResourceFrom(LDP.AddMemberAction.Factory.create(pointers));
@@ -335,7 +335,7 @@ var Class = (function () {
         return Utils_3.promiseMethod(function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var containerRetrievalPreferences = {
                 include: [NS.C.PreferSelectedMembershipTriples],
@@ -352,7 +352,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
             var containerRetrievalPreferences = {
                 include: [
                     NS.C.PreferMembershipTriples,
@@ -416,7 +416,7 @@ var Class = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+            _this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
         }).then(function (response) {
             var pointerID = _this.getPointerID(documentURI);
@@ -639,7 +639,7 @@ var Class = (function () {
                     return Promise.resolve([persistedDocument, null]);
             }
         }
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
         var promise = this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser())
@@ -710,7 +710,7 @@ var Class = (function () {
     Class.prototype.refreshFullDocument = function (persistedDocument, requestOptions) {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
         HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
         return this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
@@ -916,7 +916,7 @@ var Class = (function () {
         if (PersistedDocument.Factory.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
         var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.Container);
         return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
     Class.prototype.persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
@@ -926,7 +926,7 @@ var Class = (function () {
             accessPoint : AccessPoint.Factory.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
         if (accessPointDocument.membershipResource.id !== documentURI)
             throw new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource.");
-        this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.RDFSource);
+        this.setDefaultRequestOptions(requestOptions, NS.LDP.RDFSource);
         return this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
     };
     Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
