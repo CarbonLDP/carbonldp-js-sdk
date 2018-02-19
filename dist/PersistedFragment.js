@@ -1,9 +1,16 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = require("./Fragment");
-var ObjectSchema = require("./ObjectSchema");
-var PersistedResource = require("./PersistedResource");
-var RDF = require("./RDF");
+var Fragment = __importStar(require("./Fragment"));
+var ObjectSchema = __importStar(require("./ObjectSchema"));
+var PersistedResource = __importStar(require("./PersistedResource"));
+var RDF = __importStar(require("./RDF"));
 function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
         return uri;

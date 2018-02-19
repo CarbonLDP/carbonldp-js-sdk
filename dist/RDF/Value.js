@@ -1,8 +1,15 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var List = require("./List");
-var Literal = require("./Literal");
-var RDFNode = require("./Node");
+var List = __importStar(require("./List"));
+var Literal = __importStar(require("./Literal"));
+var RDFNode = __importStar(require("./Node"));
 var Util = (function () {
     function Util() {
     }

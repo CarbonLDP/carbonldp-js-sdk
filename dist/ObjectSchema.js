@@ -1,9 +1,16 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./Errors");
-var NS = require("./NS");
-var RDF = require("./RDF");
-var Utils = require("./Utils");
+var Errors = __importStar(require("./Errors"));
+var NS = __importStar(require("./NS"));
+var RDF = __importStar(require("./RDF"));
+var Utils = __importStar(require("./Utils"));
 var ContainerType;
 (function (ContainerType) {
     ContainerType[ContainerType["SET"] = 0] = "SET";

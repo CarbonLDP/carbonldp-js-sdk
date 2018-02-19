@@ -1,15 +1,25 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var BlankNode = require("./BlankNode");
-var Errors = require("./Errors");
-var Converter_1 = require("./JSONLD/Converter");
-var NamedFragment = require("./NamedFragment");
-var NS = require("./NS");
-var ObjectSchema = require("./ObjectSchema");
-var Pointer = require("./Pointer");
-var RDF = require("./RDF");
-var Resource = require("./Resource");
-var Utils = require("./Utils");
+var BlankNode = __importStar(require("./BlankNode"));
+var Errors = __importStar(require("./Errors"));
+var Converter_1 = __importDefault(require("./JSONLD/Converter"));
+var NamedFragment = __importStar(require("./NamedFragment"));
+var NS = __importStar(require("./NS"));
+var ObjectSchema = __importStar(require("./ObjectSchema"));
+var Pointer = __importStar(require("./Pointer"));
+var RDF = __importStar(require("./RDF"));
+var Resource = __importStar(require("./Resource"));
+var Utils = __importStar(require("./Utils"));
 exports.RDF_CLASS = NS.C.Class.Document;
 exports.SCHEMA = {
     "contains": {

@@ -1,11 +1,21 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var InvalidJSONLDSyntaxError_1 = require("../Errors/InvalidJSONLDSyntaxError");
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var ObjectSchema = require("./../ObjectSchema");
-var RDF = require("./../RDF");
-var Utils = require("./../Utils");
+var InvalidJSONLDSyntaxError_1 = __importDefault(require("../Errors/InvalidJSONLDSyntaxError"));
+var Errors = __importStar(require("./../Errors"));
+var HTTP = __importStar(require("./../HTTP"));
+var ObjectSchema = __importStar(require("./../ObjectSchema"));
+var RDF = __importStar(require("./../RDF"));
+var Utils = __importStar(require("./../Utils"));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
 var Class = (function () {

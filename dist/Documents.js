@@ -1,32 +1,42 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var AccessPoint = require("./AccessPoint");
-var Auth = require("./Auth");
-var Document = require("./Document");
-var Errors = require("./Errors");
-var FreeResources = require("./FreeResources");
-var HTTP = require("./HTTP");
-var JSONLD = require("./JSONLD");
-var LDP = require("./LDP");
-var LDPatch = require("./LDPatch");
-var Messaging = require("./Messaging");
+var AccessPoint = __importStar(require("./AccessPoint"));
+var Auth = __importStar(require("./Auth"));
+var Document = __importStar(require("./Document"));
+var Errors = __importStar(require("./Errors"));
+var FreeResources = __importStar(require("./FreeResources"));
+var HTTP = __importStar(require("./HTTP"));
+var JSONLD = __importStar(require("./JSONLD"));
+var LDP = __importStar(require("./LDP"));
+var LDPatch = __importStar(require("./LDPatch"));
+var Messaging = __importStar(require("./Messaging"));
 var Utils_1 = require("./Messaging/Utils");
-var NS = require("./NS");
-var ObjectSchema = require("./ObjectSchema");
-var PersistedDocument = require("./PersistedDocument");
-var PersistedFragment = require("./PersistedFragment");
-var PersistedProtectedDocument = require("./PersistedProtectedDocument");
-var PersistedResource = require("./PersistedResource");
-var Pointer = require("./Pointer");
-var ProtectedDocument = require("./ProtectedDocument");
-var RDF = require("./RDF");
-var Resource = require("./Resource");
-var SPARQL = require("./SPARQL");
-var Builder_1 = require("./SPARQL/Builder");
+var NS = __importStar(require("./NS"));
+var ObjectSchema = __importStar(require("./ObjectSchema"));
+var PersistedDocument = __importStar(require("./PersistedDocument"));
+var PersistedFragment = __importStar(require("./PersistedFragment"));
+var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
+var PersistedResource = __importStar(require("./PersistedResource"));
+var Pointer = __importStar(require("./Pointer"));
+var ProtectedDocument = __importStar(require("./ProtectedDocument"));
+var RDF = __importStar(require("./RDF"));
+var Resource = __importStar(require("./Resource"));
+var SPARQL = __importStar(require("./SPARQL"));
+var Builder_1 = __importDefault(require("./SPARQL/Builder"));
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
-var Utils = require("./Utils");
+var Utils = __importStar(require("./Utils"));
 var Utils_3 = require("./Utils");
 var Class = (function () {
     function Class(context) {

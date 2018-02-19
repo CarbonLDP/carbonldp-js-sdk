@@ -1,10 +1,17 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var URI = require("./../RDF/URI");
-var PersistedRole = require("./PersistedRole");
-var Utils = require("./../Utils");
+var Errors = __importStar(require("./../Errors"));
+var HTTP = __importStar(require("./../HTTP"));
+var URI = __importStar(require("./../RDF/URI"));
+var PersistedRole = __importStar(require("./PersistedRole"));
+var Utils = __importStar(require("./../Utils"));
 var Class = (function () {
     function Class(context) {
         this.context = context;

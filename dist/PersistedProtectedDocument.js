@@ -1,11 +1,18 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTP = require("./HTTP");
-var Auth = require("./Auth");
-var NS = require("./NS");
-var PersistedDocument = require("./PersistedDocument");
-var Resource = require("./Resource");
-var Utils = require("./Utils");
+var HTTP = __importStar(require("./HTTP"));
+var Auth = __importStar(require("./Auth"));
+var NS = __importStar(require("./NS"));
+var PersistedDocument = __importStar(require("./PersistedDocument"));
+var Resource = __importStar(require("./Resource"));
+var Utils = __importStar(require("./Utils"));
 var Factory = (function () {
     function Factory() {
     }

@@ -1,4 +1,4 @@
-import * as SockJS from "sockjs-client";
+import SockJS from "sockjs-client";
 import * as webstomp from "webstomp-client";
 import { Client, Frame } from "webstomp-client";
 

@@ -9,8 +9,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = require("./../HTTPError");
+var HTTPError_1 = __importDefault(require("./../HTTPError"));
 var name = "PreconditionFailedError";
 var statusCode = 412;
 var Class = (function (_super) {

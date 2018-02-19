@@ -1,11 +1,18 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils = require("./../Utils");
-var Document = require("./Document");
-var List = require("./List");
-var Literal = require("./Literal");
-var Value = require("./Value");
-var XSD = require("./../NS/XSD");
+var Utils = __importStar(require("./../Utils"));
+var Document = __importStar(require("./Document"));
+var List = __importStar(require("./List"));
+var Literal = __importStar(require("./Literal"));
+var Value = __importStar(require("./Value"));
+var XSD = __importStar(require("./../NS/XSD"));
 var Factory = (function () {
     function Factory() {
     }

@@ -1,9 +1,16 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var JSONLD = require("./../JSONLD");
-var Node = require("./Node");
-var Utils = require("./../Utils");
-var URI = require("./URI");
+var JSONLD = __importStar(require("./../JSONLD"));
+var Node = __importStar(require("./Node"));
+var Utils = __importStar(require("./../Utils"));
+var URI = __importStar(require("./URI"));
 var Factory = (function () {
     function Factory() {
     }

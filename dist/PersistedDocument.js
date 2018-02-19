@@ -1,17 +1,24 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = require("./Document");
-var HTTP = require("./HTTP");
-var MessagingDocument = require("./Messaging/Document");
-var ObjectSchema = require("./ObjectSchema");
-var PersistedFragment = require("./PersistedFragment");
-var PersistedNamedFragment = require("./PersistedNamedFragment");
-var PersistedResource = require("./PersistedResource");
-var Pointer = require("./Pointer");
-var RDF = require("./RDF");
-var URI = require("./RDF/URI");
-var ServiceAwareDocument = require("./ServiceAwareDocument");
-var Utils = require("./Utils");
+var Document = __importStar(require("./Document"));
+var HTTP = __importStar(require("./HTTP"));
+var MessagingDocument = __importStar(require("./Messaging/Document"));
+var ObjectSchema = __importStar(require("./ObjectSchema"));
+var PersistedFragment = __importStar(require("./PersistedFragment"));
+var PersistedNamedFragment = __importStar(require("./PersistedNamedFragment"));
+var PersistedResource = __importStar(require("./PersistedResource"));
+var Pointer = __importStar(require("./Pointer"));
+var RDF = __importStar(require("./RDF"));
+var URI = __importStar(require("./RDF/URI"));
+var ServiceAwareDocument = __importStar(require("./ServiceAwareDocument"));
+var Utils = __importStar(require("./Utils"));
 function extendIsDirty(superFunction) {
     return function () {
         var isDirty = superFunction.call(this);

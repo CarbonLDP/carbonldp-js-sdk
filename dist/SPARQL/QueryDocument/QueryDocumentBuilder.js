@@ -1,12 +1,19 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
 var Errors_1 = require("./../../Errors");
-var QueryObject = require("./QueryObject");
-var QueryProperty = require("./QueryProperty");
-var QueryValue = require("./QueryValue");
+var QueryObject = __importStar(require("./QueryObject"));
+var QueryProperty = __importStar(require("./QueryProperty"));
+var QueryValue = __importStar(require("./QueryValue"));
 var Utils_2 = require("./Utils");
 var INHERIT = Object.freeze({});
 exports.ALL = Object.freeze({});
