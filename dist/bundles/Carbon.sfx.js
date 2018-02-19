@@ -475,18 +475,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var CS = __importStar(__webpack_require__(168));
-exports.CS = CS;
-var LDP = __importStar(__webpack_require__(169));
+var LDP = __importStar(__webpack_require__(168));
 exports.LDP = LDP;
-var RDF = __importStar(__webpack_require__(170));
+var RDF = __importStar(__webpack_require__(169));
 exports.RDF = RDF;
-var SHACL = __importStar(__webpack_require__(171));
+var SHACL = __importStar(__webpack_require__(170));
 exports.SHACL = SHACL;
-var VCARD = __importStar(__webpack_require__(172));
+var VCARD = __importStar(__webpack_require__(171));
 exports.VCARD = VCARD;
 var XSD = __importStar(__webpack_require__(43));
 exports.XSD = XSD;
+__export(__webpack_require__(172));
 __export(__webpack_require__(173));
 
 
@@ -5194,7 +5193,7 @@ function getACL(requestOptions) {
         aclPromise = Promise.resolve(protectedDocument.accessControlList);
     }
     else {
-        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.Predicate.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
+        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
             var results = _a[0];
             return results.bindings[0].acl;
         });
@@ -6820,7 +6819,7 @@ function changeEnabledCredentials(enabled, requestOptions) {
 }
 function obtainCredentials(user) {
     return user
-        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + NS.CS.Predicate.credentials + ">?c}}")
+        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + NS.CS.credentials + ">?c}}")
         .then(function (_a) {
         var credentialsBinding = _a[0].bindings[0], response = _a[1];
         user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding.credentials, user._documents);
@@ -7586,24 +7585,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.CS.Class.AccessControlEntry;
+exports.RDF_CLASS = NS.CS.AccessControlEntry;
 exports.SCHEMA = {
     "granting": {
-        "@id": NS.CS.Predicate.granting,
+        "@id": NS.CS.granting,
         "@type": NS.XSD.DataType.boolean,
     },
     "permissions": {
-        "@id": NS.CS.Predicate.permission,
+        "@id": NS.CS.permission,
         "@type": "@id",
         "@container": "@set",
     },
     "subjects": {
-        "@id": NS.CS.Predicate.subject,
+        "@id": NS.CS.subject,
         "@type": "@id",
         "@container": "@set",
     },
     "subjectsClass": {
-        "@id": NS.CS.Predicate.subjectClass,
+        "@id": NS.CS.subjectClass,
         "@type": "@id",
     },
 };
@@ -7650,19 +7649,19 @@ var ACE = __importStar(__webpack_require__(83));
 var NS = __importStar(__webpack_require__(1));
 var Pointer = __importStar(__webpack_require__(13));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.CS.Class.AccessControlList;
+exports.RDF_CLASS = NS.CS.AccessControlList;
 exports.SCHEMA = {
     "entries": {
-        "@id": NS.CS.Predicate.accessControlEntry,
+        "@id": NS.CS.accessControlEntry,
         "@type": "@id",
         "@container": "@set",
     },
     "accessTo": {
-        "@id": NS.CS.Predicate.accessTo,
+        "@id": NS.CS.accessTo,
         "@type": "@id",
     },
     "inheritableEntries": {
-        "@id": NS.CS.Predicate.inheritableEntry,
+        "@id": NS.CS.inheritableEntry,
         "@type": "@id",
         "@container": "@set",
     },
@@ -8122,22 +8121,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __importStar(__webpack_require__(24));
 var NS = __importStar(__webpack_require__(1));
 var Errors_1 = __webpack_require__(3);
-exports.RDF_CLASS = NS.CS.Class.Credentials;
+exports.RDF_CLASS = NS.CS.Credentials;
 exports.SCHEMA = {
     "email": {
         "@id": NS.VCARD.Predicate.email,
         "@type": NS.XSD.DataType.string,
     },
     "password": {
-        "@id": NS.CS.Predicate.password,
+        "@id": NS.CS.password,
         "@type": NS.XSD.DataType.string,
     },
     "enabled": {
-        "@id": NS.CS.Predicate.enabled,
+        "@id": NS.CS.enabled,
         "@type": NS.XSD.DataType.boolean,
     },
     "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
+        "@id": NS.CS.credentialsOf,
         "@type": "@id",
     },
 };
@@ -9401,18 +9400,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.CS.Class.Token;
+exports.RDF_CLASS = NS.CS.Token;
 exports.SCHEMA = {
     "key": {
-        "@id": NS.CS.Predicate.tokenKey,
+        "@id": NS.CS.tokenKey,
         "@type": NS.XSD.DataType.string,
     },
     "expirationTime": {
-        "@id": NS.CS.Predicate.expirationTime,
+        "@id": NS.CS.expirationTime,
         "@type": NS.XSD.DataType.dateTime,
     },
     "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
+        "@id": NS.CS.credentialsOf,
         "@type": "@id",
     },
 };
@@ -12354,10 +12353,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.CS.Class.ProtectedDocument;
+exports.RDF_CLASS = NS.CS.ProtectedDocument;
 exports.SCHEMA = {
     "accessControlList": {
-        "@id": NS.CS.Predicate.accessControlList,
+        "@id": NS.CS.accessControlList,
         "@type": "@id",
     },
 };
@@ -14071,239 +14070,6 @@ exports.default = AbstractContext;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var namespace = "https://carbonldp.com/ns/v1/security#";
-exports.namespace = namespace;
-var Class = (function () {
-    function Class() {
-    }
-    Object.defineProperty(Class, "AccessControlEntry", {
-        get: function () { return namespace + "AccessControlEntry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AccessControlList", {
-        get: function () { return namespace + "AccessControlList"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AllOrigins", {
-        get: function () { return namespace + "AllOrigins"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "CreateAccessPoint", {
-        get: function () { return namespace + "CreateAccessPoint"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "CreateChild", {
-        get: function () { return namespace + "CreateChild"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Credentials", {
-        get: function () { return namespace + "Credentials"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Delete", {
-        get: function () { return namespace + "Delete"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Download", {
-        get: function () { return namespace + "Download"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Extend", {
-        get: function () { return namespace + "Extend"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ManageSecurity", {
-        get: function () { return namespace + "ManageSecurity"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ProtectedDocument", {
-        get: function () { return namespace + "ProtectedDocument"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Read", {
-        get: function () { return namespace + "Read"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "RemoveMember", {
-        get: function () { return namespace + "RemoveMember"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Role", {
-        get: function () { return namespace + "Role"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Ticket", {
-        get: function () { return namespace + "Ticket"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Token", {
-        get: function () { return namespace + "Token"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Update", {
-        get: function () { return namespace + "Update"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Upload", {
-        get: function () { return namespace + "Upload"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "User", {
-        get: function () { return namespace + "User"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}());
-exports.Class = Class;
-var Predicate = (function () {
-    function Predicate() {
-    }
-    Object.defineProperty(Predicate, "accessControlEntry", {
-        get: function () { return namespace + "accessControlEntry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "accessControlList", {
-        get: function () { return namespace + "accessControlList"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "accessTo", {
-        get: function () { return namespace + "accessTo"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "allowsOrigin", {
-        get: function () { return namespace + "allowsOrigin"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "childRole", {
-        get: function () { return namespace + "childRole"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "credentials", {
-        get: function () { return namespace + "credentials"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "credentialsOf", {
-        get: function () { return namespace + "credentialsOf"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "description", {
-        get: function () { return namespace + "description"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "enabled", {
-        get: function () { return namespace + "enabled"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "expirationTime", {
-        get: function () { return namespace + "expirationTime"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "forIRI", {
-        get: function () { return namespace + "forIRI"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "granting", {
-        get: function () { return namespace + "granting"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "inheritableEntry", {
-        get: function () { return namespace + "inheritableEntry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "namae", {
-        get: function () { return namespace + "name"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "parentRole", {
-        get: function () { return namespace + "parentRole"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "password", {
-        get: function () { return namespace + "password"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "permission", {
-        get: function () { return namespace + "permission"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "rootContainer", {
-        get: function () { return namespace + "rootContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "subject", {
-        get: function () { return namespace + "subject"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "subjectClass", {
-        get: function () { return namespace + "subjectClass"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "ticketKey", {
-        get: function () { return namespace + "ticketKey"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "tokenKey", {
-        get: function () { return namespace + "tokenKey"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "user", {
-        get: function () { return namespace + "user"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Predicate;
-}());
-exports.Predicate = Predicate;
-
-
-/***/ }),
-/* 169 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var namespace = "http://www.w3.org/ns/ldp#";
 exports.namespace = namespace;
 var Class = (function () {
@@ -14456,7 +14222,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 170 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14474,7 +14240,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 171 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14561,7 +14327,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 172 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14582,7 +14348,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 173 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14652,6 +14418,61 @@ var C;
     C.targetMember = C.namespace + "targetMember";
     C.version = C.namespace + "version";
 })(C = exports.C || (exports.C = {}));
+
+
+/***/ }),
+/* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var CS;
+(function (CS) {
+    CS.namespace = "https://carbonldp.com/ns/v1/security#";
+    CS.AccessControlEntry = CS.namespace + "AccessControlEntry";
+    CS.AccessControlList = CS.namespace + "AccessControlList";
+    CS.AllOrigins = CS.namespace + "AllOrigins";
+    CS.CreateAccessPoint = CS.namespace + "CreateAccessPoint";
+    CS.CreateChild = CS.namespace + "CreateChild";
+    CS.Credentials = CS.namespace + "Credentials";
+    CS.Delete = CS.namespace + "Delete";
+    CS.Download = CS.namespace + "Download";
+    CS.Extend = CS.namespace + "Extend";
+    CS.ManageSecurity = CS.namespace + "ManageSecurity";
+    CS.ProtectedDocument = CS.namespace + "ProtectedDocument";
+    CS.Read = CS.namespace + "Read";
+    CS.RemoveMember = CS.namespace + "RemoveMember";
+    CS.Role = CS.namespace + "Role";
+    CS.Ticket = CS.namespace + "Ticket";
+    CS.Token = CS.namespace + "Token";
+    CS.Update = CS.namespace + "Update";
+    CS.Upload = CS.namespace + "Upload";
+    CS.User = CS.namespace + "User";
+    CS.accessControlEntry = CS.namespace + "accessControlEntry";
+    CS.accessControlList = CS.namespace + "accessControlList";
+    CS.accessTo = CS.namespace + "accessTo";
+    CS.allowsOrigin = CS.namespace + "allowsOrigin";
+    CS.childRole = CS.namespace + "childRole";
+    CS.credentials = CS.namespace + "credentials";
+    CS.credentialsOf = CS.namespace + "credentialsOf";
+    CS.description = CS.namespace + "description";
+    CS.enabled = CS.namespace + "enabled";
+    CS.expirationTime = CS.namespace + "expirationTime";
+    CS.forIRI = CS.namespace + "forIRI";
+    CS.granting = CS.namespace + "granting";
+    CS.inheritableEntry = CS.namespace + "inheritableEntry";
+    CS.name = CS.namespace + "name";
+    CS.parentRole = CS.namespace + "parentRole";
+    CS.password = CS.namespace + "password";
+    CS.permission = CS.namespace + "permission";
+    CS.rootContainer = CS.namespace + "rootContainer";
+    CS.subject = CS.namespace + "subject";
+    CS.subjectClass = CS.namespace + "subjectClass";
+    CS.ticketKey = CS.namespace + "ticketKey";
+    CS.tokenKey = CS.namespace + "tokenKey";
+    CS.user = CS.namespace + "user";
+})(CS = exports.CS || (exports.CS = {}));
 
 
 /***/ }),
@@ -17192,27 +17013,27 @@ var Document = __importStar(__webpack_require__(24));
 var IllegalArgumentError_1 = __importDefault(__webpack_require__(85));
 var NS = __importStar(__webpack_require__(1));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.CS.Class.Role;
+exports.RDF_CLASS = NS.CS.Role;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.namae,
+        "@id": NS.CS.name,
         "@type": NS.XSD.DataType.string,
     },
     "description": {
-        "@id": NS.CS.Predicate.description,
+        "@id": NS.CS.description,
         "@type": NS.XSD.DataType.string,
     },
     "parentRole": {
-        "@id": NS.CS.Predicate.parentRole,
+        "@id": NS.CS.parentRole,
         "@type": "@id",
     },
     "childRoles": {
-        "@id": NS.CS.Predicate.childRole,
+        "@id": NS.CS.childRole,
         "@type": "@id",
         "@container": "@set",
     },
     "users": {
-        "@id": NS.CS.Predicate.user,
+        "@id": NS.CS.user,
         "@type": "@id",
         "@container": "@set",
     },
@@ -17368,18 +17189,18 @@ var Pointer = __importStar(__webpack_require__(13));
 var Resource = __importStar(__webpack_require__(9));
 var URI = __importStar(__webpack_require__(21));
 exports.TICKETS_CONTAINER = "auth-tickets/";
-exports.RDF_CLASS = NS.CS.Class.Ticket;
+exports.RDF_CLASS = NS.CS.Ticket;
 exports.SCHEMA = {
     "forURI": {
-        "@id": NS.CS.Predicate.forIRI,
+        "@id": NS.CS.forIRI,
         "@type": "@id",
     },
     "expirationTime": {
-        "@id": NS.CS.Predicate.expirationTime,
+        "@id": NS.CS.expirationTime,
         "@type": NS.XSD.DataType.dateTime,
     },
     "ticketKey": {
-        "@id": NS.CS.Predicate.ticketKey,
+        "@id": NS.CS.ticketKey,
         "@type": NS.XSD.DataType.string,
     },
 };
@@ -17918,14 +17739,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.CS.Class.User;
+exports.RDF_CLASS = NS.CS.User;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.namae,
+        "@id": NS.CS.name,
         "@type": NS.XSD.DataType.string,
     },
     "credentials": {
-        "@id": NS.CS.Predicate.credentials,
+        "@id": NS.CS.credentials,
         "@type": "@id",
     },
 };

@@ -4,28 +4,28 @@ import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Class.Role;
+export const RDF_CLASS:string = NS.CS.Role;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
-		"@id": NS.CS.Predicate.namae,
+		"@id": NS.CS.name,
 		"@type": NS.XSD.DataType.string,
 	},
 	"description": {
-		"@id": NS.CS.Predicate.description,
+		"@id": NS.CS.description,
 		"@type": NS.XSD.DataType.string,
 	},
 	"parentRole": {
-		"@id": NS.CS.Predicate.parentRole,
+		"@id": NS.CS.parentRole,
 		"@type": "@id",
 	},
 	"childRoles": {
-		"@id": NS.CS.Predicate.childRole,
+		"@id": NS.CS.childRole,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"users": {
-		"@id": NS.CS.Predicate.user,
+		"@id": NS.CS.user,
 		"@type": "@id",
 		"@container": "@set",
 	},

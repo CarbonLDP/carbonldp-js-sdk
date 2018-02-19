@@ -46,7 +46,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( ACL.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ACL.RDF_CLASS ) ).toBe( true );
 
-		expect( ACL.RDF_CLASS ).toBe( NS.CS.Class.AccessControlList );
+		expect( ACL.RDF_CLASS ).toBe( NS.CS.AccessControlList );
 	} );
 
 	it( hasProperty(
@@ -59,20 +59,20 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
 		expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
-			"@id": NS.CS.Predicate.accessControlEntry,
+			"@id": NS.CS.accessControlEntry,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
 		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
-			"@id": NS.CS.Predicate.accessTo,
+			"@id": NS.CS.accessTo,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
 		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
-			"@id": NS.CS.Predicate.inheritableEntry,
+			"@id": NS.CS.inheritableEntry,
 			"@type": "@id",
 			"@container": "@set",
 		} );

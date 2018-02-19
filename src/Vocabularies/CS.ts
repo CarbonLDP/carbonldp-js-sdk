@@ -1,95 +1,47 @@
-const namespace:string = "https://carbonldp.com/ns/v1/security#";
+export namespace CS {
+	export const namespace:"https://carbonldp.com/ns/v1/security#" = "https://carbonldp.com/ns/v1/security#";
 
-class Class {
-	static get AccessControlEntry():string { return namespace + "AccessControlEntry"; }
+	export const AccessControlEntry:string = namespace + "AccessControlEntry";
+	export const AccessControlList:string = namespace + "AccessControlList";
+	export const AllOrigins:string = namespace + "AllOrigins";
+	export const CreateAccessPoint:string = namespace + "CreateAccessPoint";
+	export const CreateChild:string = namespace + "CreateChild";
+	export const Credentials:string = namespace + "Credentials";
+	export const Delete:string = namespace + "Delete";
+	export const Download:string = namespace + "Download";
+	export const Extend:string = namespace + "Extend";
+	export const ManageSecurity:string = namespace + "ManageSecurity";
+	export const ProtectedDocument:string = namespace + "ProtectedDocument";
+	export const Read:string = namespace + "Read";
+	export const RemoveMember:string = namespace + "RemoveMember";
+	export const Role:string = namespace + "Role";
+	export const Ticket:string = namespace + "Ticket";
+	export const Token:string = namespace + "Token";
+	export const Update:string = namespace + "Update";
+	export const Upload:string = namespace + "Upload";
+	export const User:string = namespace + "User";
 
-	static get AccessControlList():string { return namespace + "AccessControlList"; }
-
-	static get AllOrigins():string { return namespace + "AllOrigins"; }
-
-	static get CreateAccessPoint():string { return namespace + "CreateAccessPoint"; }
-
-	static get CreateChild():string { return namespace + "CreateChild"; }
-
-	static get Credentials():string { return namespace + "Credentials"; }
-
-	static get Delete():string { return namespace + "Delete"; }
-
-	static get Download():string { return namespace + "Download"; }
-
-	static get Extend():string { return namespace + "Extend"; }
-
-	static get ManageSecurity():string { return namespace + "ManageSecurity"; }
-
-	static get ProtectedDocument():string { return namespace + "ProtectedDocument"; }
-
-	static get Read():string { return namespace + "Read"; }
-
-	static get RemoveMember():string { return namespace + "RemoveMember"; }
-
-	static get Role():string { return namespace + "Role"; }
-
-	static get Ticket():string { return namespace + "Ticket"; }
-
-	static get Token():string { return namespace + "Token"; }
-
-	static get Update():string { return namespace + "Update"; }
-
-	static get Upload():string { return namespace + "Upload"; }
-
-	static get User():string { return namespace + "User"; }
+	export const accessControlEntry:string = namespace + "accessControlEntry";
+	export const accessControlList:string = namespace + "accessControlList";
+	export const accessTo:string = namespace + "accessTo";
+	export const allowsOrigin:string = namespace + "allowsOrigin";
+	export const childRole:string = namespace + "childRole";
+	export const credentials:string = namespace + "credentials";
+	export const credentialsOf:string = namespace + "credentialsOf";
+	export const description:string = namespace + "description";
+	export const enabled:string = namespace + "enabled";
+	export const expirationTime:string = namespace + "expirationTime";
+	export const forIRI:string = namespace + "forIRI";
+	export const granting:string = namespace + "granting";
+	export const inheritableEntry:string = namespace + "inheritableEntry";
+	export const name:string = namespace + "name";
+	export const parentRole:string = namespace + "parentRole";
+	export const password:string = namespace + "password";
+	export const permission:string = namespace + "permission";
+	export const rootContainer:string = namespace + "rootContainer";
+	export const subject:string = namespace + "subject";
+	export const subjectClass:string = namespace + "subjectClass";
+	export const ticketKey:string = namespace + "ticketKey";
+	export const tokenKey:string = namespace + "tokenKey";
+	export const user:string = namespace + "user";
 }
-
-class Predicate {
-	static get accessControlEntry():string { return namespace + "accessControlEntry"; }
-
-	static get accessControlList():string { return namespace + "accessControlList"; }
-
-	static get accessTo():string { return namespace + "accessTo"; }
-
-	static get allowsOrigin():string { return namespace + "allowsOrigin"; }
-
-	static get childRole():string { return namespace + "childRole"; }
-
-	static get credentials():string { return namespace + "credentials"; }
-
-	static get credentialsOf():string { return namespace + "credentialsOf"; }
-
-	static get description():string { return namespace + "description"; }
-
-	static get enabled():string { return namespace + "enabled"; }
-
-	static get expirationTime():string { return namespace + "expirationTime"; }
-
-	static get forIRI():string { return namespace + "forIRI"; }
-
-	static get granting():string { return namespace + "granting"; }
-
-	static get inheritableEntry():string { return namespace + "inheritableEntry"; }
-
-	static get namae():string { return namespace + "name"; }
-
-	static get parentRole():string { return namespace + "parentRole"; }
-
-	static get password():string { return namespace + "password"; }
-
-	static get permission():string { return namespace + "permission"; }
-
-	static get rootContainer():string { return namespace + "rootContainer"; }
-
-	static get subject():string { return namespace + "subject"; }
-
-	static get subjectClass():string { return namespace + "subjectClass"; }
-
-	static get ticketKey():string { return namespace + "ticketKey"; }
-
-	static get tokenKey():string { return namespace + "tokenKey"; }
-
-	static get user():string { return namespace + "user"; }
-}
-
-export {
-	namespace,
-	Class,
-	Predicate
-};

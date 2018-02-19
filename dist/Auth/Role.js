@@ -14,27 +14,27 @@ var Document = __importStar(require("./../Document"));
 var IllegalArgumentError_1 = __importDefault(require("./../Errors/IllegalArgumentError"));
 var NS = __importStar(require("../Vocabularies/index"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.Class.Role;
+exports.RDF_CLASS = NS.CS.Role;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.namae,
+        "@id": NS.CS.name,
         "@type": NS.XSD.DataType.string,
     },
     "description": {
-        "@id": NS.CS.Predicate.description,
+        "@id": NS.CS.description,
         "@type": NS.XSD.DataType.string,
     },
     "parentRole": {
-        "@id": NS.CS.Predicate.parentRole,
+        "@id": NS.CS.parentRole,
         "@type": "@id",
     },
     "childRoles": {
-        "@id": NS.CS.Predicate.childRole,
+        "@id": NS.CS.childRole,
         "@type": "@id",
         "@container": "@set",
     },
     "users": {
-        "@id": NS.CS.Predicate.user,
+        "@id": NS.CS.user,
         "@type": "@id",
         "@container": "@set",
     },

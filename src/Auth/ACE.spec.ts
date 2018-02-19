@@ -37,7 +37,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		expect( ACE.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ACE.RDF_CLASS ) ).toBe( true );
 
-		expect( ACE.RDF_CLASS ).toBe( NS.CS.Class.AccessControlEntry );
+		expect( ACE.RDF_CLASS ).toBe( NS.CS.AccessControlEntry );
 	} );
 
 	it( hasProperty(
@@ -50,27 +50,27 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "granting" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "granting" ] ).toEqual( {
-			"@id": NS.CS.Predicate.granting,
+			"@id": NS.CS.granting,
 			"@type": NS.XSD.DataType.boolean,
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "permissions" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "permissions" ] ).toEqual( {
-			"@id": NS.CS.Predicate.permission,
+			"@id": NS.CS.permission,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjects" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "subjects" ] ).toEqual( {
-			"@id": NS.CS.Predicate.subject,
+			"@id": NS.CS.subject,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjectsClass" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "subjectsClass" ] ).toEqual( {
-			"@id": NS.CS.Predicate.subjectClass,
+			"@id": NS.CS.subjectClass,
 			"@type": "@id",
 		} );
 	} );

@@ -76,7 +76,7 @@ function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:
 
 function obtainCredentials( user:Class ):Promise<HTTP.Response.Class> {
 	return user
-		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.Predicate.credentials}>?c}}` )
+		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.credentials}>?c}}` )
 		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer.Class }>, HTTP.Response.Class ] ) => {
 			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
 			return response;

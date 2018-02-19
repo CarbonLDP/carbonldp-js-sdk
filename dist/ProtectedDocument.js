@@ -8,10 +8,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("./Vocabularies/index"));
-exports.RDF_CLASS = NS.CS.Class.ProtectedDocument;
+exports.RDF_CLASS = NS.CS.ProtectedDocument;
 exports.SCHEMA = {
     "accessControlList": {
-        "@id": NS.CS.Predicate.accessControlList,
+        "@id": NS.CS.accessControlList,
         "@type": "@id",
     },
 };

@@ -10,18 +10,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Resource = __importStar(require("./../Resource"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.Class.Token;
+exports.RDF_CLASS = NS.CS.Token;
 exports.SCHEMA = {
     "key": {
-        "@id": NS.CS.Predicate.tokenKey,
+        "@id": NS.CS.tokenKey,
         "@type": NS.XSD.DataType.string,
     },
     "expirationTime": {
-        "@id": NS.CS.Predicate.expirationTime,
+        "@id": NS.CS.expirationTime,
         "@type": NS.XSD.DataType.dateTime,
     },
     "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
+        "@id": NS.CS.credentialsOf,
         "@type": "@id",
     },
 };

@@ -1,228 +1,50 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var namespace = "https://carbonldp.com/ns/v1/security#";
-exports.namespace = namespace;
-var Class = (function () {
-    function Class() {
-    }
-    Object.defineProperty(Class, "AccessControlEntry", {
-        get: function () { return namespace + "AccessControlEntry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AccessControlList", {
-        get: function () { return namespace + "AccessControlList"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AllOrigins", {
-        get: function () { return namespace + "AllOrigins"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "CreateAccessPoint", {
-        get: function () { return namespace + "CreateAccessPoint"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "CreateChild", {
-        get: function () { return namespace + "CreateChild"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Credentials", {
-        get: function () { return namespace + "Credentials"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Delete", {
-        get: function () { return namespace + "Delete"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Download", {
-        get: function () { return namespace + "Download"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Extend", {
-        get: function () { return namespace + "Extend"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ManageSecurity", {
-        get: function () { return namespace + "ManageSecurity"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ProtectedDocument", {
-        get: function () { return namespace + "ProtectedDocument"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Read", {
-        get: function () { return namespace + "Read"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "RemoveMember", {
-        get: function () { return namespace + "RemoveMember"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Role", {
-        get: function () { return namespace + "Role"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Ticket", {
-        get: function () { return namespace + "Ticket"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Token", {
-        get: function () { return namespace + "Token"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Update", {
-        get: function () { return namespace + "Update"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Upload", {
-        get: function () { return namespace + "Upload"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "User", {
-        get: function () { return namespace + "User"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}());
-exports.Class = Class;
-var Predicate = (function () {
-    function Predicate() {
-    }
-    Object.defineProperty(Predicate, "accessControlEntry", {
-        get: function () { return namespace + "accessControlEntry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "accessControlList", {
-        get: function () { return namespace + "accessControlList"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "accessTo", {
-        get: function () { return namespace + "accessTo"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "allowsOrigin", {
-        get: function () { return namespace + "allowsOrigin"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "childRole", {
-        get: function () { return namespace + "childRole"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "credentials", {
-        get: function () { return namespace + "credentials"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "credentialsOf", {
-        get: function () { return namespace + "credentialsOf"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "description", {
-        get: function () { return namespace + "description"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "enabled", {
-        get: function () { return namespace + "enabled"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "expirationTime", {
-        get: function () { return namespace + "expirationTime"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "forIRI", {
-        get: function () { return namespace + "forIRI"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "granting", {
-        get: function () { return namespace + "granting"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "inheritableEntry", {
-        get: function () { return namespace + "inheritableEntry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "namae", {
-        get: function () { return namespace + "name"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "parentRole", {
-        get: function () { return namespace + "parentRole"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "password", {
-        get: function () { return namespace + "password"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "permission", {
-        get: function () { return namespace + "permission"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "rootContainer", {
-        get: function () { return namespace + "rootContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "subject", {
-        get: function () { return namespace + "subject"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "subjectClass", {
-        get: function () { return namespace + "subjectClass"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "ticketKey", {
-        get: function () { return namespace + "ticketKey"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "tokenKey", {
-        get: function () { return namespace + "tokenKey"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "user", {
-        get: function () { return namespace + "user"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Predicate;
-}());
-exports.Predicate = Predicate;
+var CS;
+(function (CS) {
+    CS.namespace = "https://carbonldp.com/ns/v1/security#";
+    CS.AccessControlEntry = CS.namespace + "AccessControlEntry";
+    CS.AccessControlList = CS.namespace + "AccessControlList";
+    CS.AllOrigins = CS.namespace + "AllOrigins";
+    CS.CreateAccessPoint = CS.namespace + "CreateAccessPoint";
+    CS.CreateChild = CS.namespace + "CreateChild";
+    CS.Credentials = CS.namespace + "Credentials";
+    CS.Delete = CS.namespace + "Delete";
+    CS.Download = CS.namespace + "Download";
+    CS.Extend = CS.namespace + "Extend";
+    CS.ManageSecurity = CS.namespace + "ManageSecurity";
+    CS.ProtectedDocument = CS.namespace + "ProtectedDocument";
+    CS.Read = CS.namespace + "Read";
+    CS.RemoveMember = CS.namespace + "RemoveMember";
+    CS.Role = CS.namespace + "Role";
+    CS.Ticket = CS.namespace + "Ticket";
+    CS.Token = CS.namespace + "Token";
+    CS.Update = CS.namespace + "Update";
+    CS.Upload = CS.namespace + "Upload";
+    CS.User = CS.namespace + "User";
+    CS.accessControlEntry = CS.namespace + "accessControlEntry";
+    CS.accessControlList = CS.namespace + "accessControlList";
+    CS.accessTo = CS.namespace + "accessTo";
+    CS.allowsOrigin = CS.namespace + "allowsOrigin";
+    CS.childRole = CS.namespace + "childRole";
+    CS.credentials = CS.namespace + "credentials";
+    CS.credentialsOf = CS.namespace + "credentialsOf";
+    CS.description = CS.namespace + "description";
+    CS.enabled = CS.namespace + "enabled";
+    CS.expirationTime = CS.namespace + "expirationTime";
+    CS.forIRI = CS.namespace + "forIRI";
+    CS.granting = CS.namespace + "granting";
+    CS.inheritableEntry = CS.namespace + "inheritableEntry";
+    CS.name = CS.namespace + "name";
+    CS.parentRole = CS.namespace + "parentRole";
+    CS.password = CS.namespace + "password";
+    CS.permission = CS.namespace + "permission";
+    CS.rootContainer = CS.namespace + "rootContainer";
+    CS.subject = CS.namespace + "subject";
+    CS.subjectClass = CS.namespace + "subjectClass";
+    CS.ticketKey = CS.namespace + "ticketKey";
+    CS.tokenKey = CS.namespace + "tokenKey";
+    CS.user = CS.namespace + "user";
+})(CS = exports.CS || (exports.CS = {}));
 
 //# sourceMappingURL=CS.js.map

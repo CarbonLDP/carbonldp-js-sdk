@@ -10,22 +10,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document = __importStar(require("./../Document"));
 var NS = __importStar(require("../Vocabularies/index"));
 var Errors_1 = require("./../Errors");
-exports.RDF_CLASS = NS.CS.Class.Credentials;
+exports.RDF_CLASS = NS.CS.Credentials;
 exports.SCHEMA = {
     "email": {
         "@id": NS.VCARD.Predicate.email,
         "@type": NS.XSD.DataType.string,
     },
     "password": {
-        "@id": NS.CS.Predicate.password,
+        "@id": NS.CS.password,
         "@type": NS.XSD.DataType.string,
     },
     "enabled": {
-        "@id": NS.CS.Predicate.enabled,
+        "@id": NS.CS.enabled,
         "@type": NS.XSD.DataType.boolean,
     },
     "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
+        "@id": NS.CS.credentialsOf,
         "@type": "@id",
     },
 };

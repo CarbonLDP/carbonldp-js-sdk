@@ -5,20 +5,20 @@ import * as Document from "./../Document";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Class.AccessControlList;
+export const RDF_CLASS:string = NS.CS.AccessControlList;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"entries": {
-		"@id": NS.CS.Predicate.accessControlEntry,
+		"@id": NS.CS.accessControlEntry,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"accessTo": {
-		"@id": NS.CS.Predicate.accessTo,
+		"@id": NS.CS.accessTo,
 		"@type": "@id",
 	},
 	"inheritableEntries": {
-		"@id": NS.CS.Predicate.inheritableEntry,
+		"@id": NS.CS.inheritableEntry,
 		"@type": "@id",
 		"@container": "@set",
 	},

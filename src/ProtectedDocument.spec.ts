@@ -47,7 +47,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 		expect( ProtectedDocument.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ProtectedDocument.RDF_CLASS ) ).toBe( true );
 
-		expect( ProtectedDocument.RDF_CLASS ).toBe( NS.CS.Class.ProtectedDocument );
+		expect( ProtectedDocument.RDF_CLASS ).toBe( NS.CS.ProtectedDocument );
 	} );
 
 	it( hasProperty(
@@ -60,7 +60,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 
 		expect( Utils.hasProperty( ProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
 		expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
-			"@id": NS.CS.Predicate.accessControlList,
+			"@id": NS.CS.accessControlList,
 			"@type": "@id",
 		} );
 

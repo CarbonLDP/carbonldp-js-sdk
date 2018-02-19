@@ -252,10 +252,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						"${ NS.C.accessPoint }": [ {
 							"@id": "https://dev.carbonldp.com/.system/roles/a-role/users/"
 						} ],
-						"${ NS.CS.Predicate.name }": [ {
+						"${ NS.CS.name }": [ {
 							"@value": "A Role"
 						} ],
-						"${ NS.CS.Predicate.parentRole }": [ {
+						"${ NS.CS.parentRole }": [ {
 							"@id": "https://example.com/.system/roles/parent-role/"
 						} ]
 					} ]
@@ -370,7 +370,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/.system/roles/a-role/",
-									"${ NS.CS.Predicate.user }": [
+									"${ NS.CS.user }": [
 										{
 											"@id": "http://example.com/users/an-user/"
 										}
@@ -391,7 +391,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 									],
 									"http://www.w3.org/ns/ldp#hasMemberRelation": [
 										{
-											"@id": "${ NS.CS.Predicate.user }"
+											"@id": "${ NS.CS.user }"
 										}
 									],
 									"http://www.w3.org/ns/ldp#membershipResource": [
@@ -413,7 +413,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 											"@value": "an-user@example.com"
 										}
 									],
-									"${ NS.CS.Predicate.name }": [
+									"${ NS.CS.name }": [
 										{
 											"@value": "The User Name"
 										}

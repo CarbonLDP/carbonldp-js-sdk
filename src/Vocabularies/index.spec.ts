@@ -9,7 +9,7 @@ import * as Utils from "../Utils";
 import * as Vocabularies from "./";
 
 import { C } from "./C";
-import * as CS from "./CS";
+import { CS } from "./CS";
 import * as LDP from "./LDP";
 import * as RDF from "./RDF";
 import * as SHACL from "./SHACL";
@@ -26,7 +26,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"C",
-		"Carbon/Vocabularies/C"
+		"Carbon.Vocabularies.C"
 	), ():void => {
 		expect( Vocabularies.C ).toBeDefined();
 		expect( Vocabularies.C ).toBe( C );
@@ -35,7 +35,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CS",
-		"Carbon/Vocabularies/CS"
+		"Carbon.Vocabularies.CS"
 	), ():void => {
 		expect( Vocabularies.CS ).toBeDefined();
 		expect( Vocabularies.CS ).toBe( CS );

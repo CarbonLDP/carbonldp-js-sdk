@@ -36,7 +36,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		expect( Ticket.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Ticket.RDF_CLASS ) ).toBe( true );
 
-		expect( Ticket.RDF_CLASS ).toBe( NS.CS.Class.Ticket );
+		expect( Ticket.RDF_CLASS ).toBe( NS.CS.Ticket );
 	} );
 
 	it( hasProperty(
@@ -49,19 +49,19 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "forURI" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "forURI" ] ).toEqual( {
-			"@id": NS.CS.Predicate.forIRI,
+			"@id": NS.CS.forIRI,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.Predicate.expirationTime,
+			"@id": NS.CS.expirationTime,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "ticketKey" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "ticketKey" ] ).toEqual( {
-			"@id": NS.CS.Predicate.ticketKey,
+			"@id": NS.CS.ticketKey,
 			"@type": NS.XSD.DataType.string,
 		} );
 	} );

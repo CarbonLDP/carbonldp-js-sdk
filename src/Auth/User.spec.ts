@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		expect( User.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( User.RDF_CLASS ) ).toBe( true );
 
-		expect( User.RDF_CLASS ).toBe( NS.CS.Class.User );
+		expect( User.RDF_CLASS ).toBe( NS.CS.User );
 	} );
 
 	it( hasProperty(
@@ -52,7 +52,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 
 		expect( Utils.hasProperty( User.SCHEMA, "name" ) ).toBe( true );
 		expect( User.SCHEMA[ "name" ] ).toEqual( {
-			"@id": NS.CS.Predicate.namae,
+			"@id": NS.CS.name,
 			"@type": NS.XSD.DataType.string,
 		} );
 	} );

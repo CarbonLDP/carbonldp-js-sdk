@@ -36,7 +36,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		expect( Credentials.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Credentials.RDF_CLASS ) ).toBe( true );
 
-		expect( Credentials.RDF_CLASS ).toBe( NS.CS.Class.Credentials );
+		expect( Credentials.RDF_CLASS ).toBe( NS.CS.Credentials );
 	} );
 
 	it( hasProperty(
@@ -55,13 +55,13 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "password" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "password" ] ).toEqual( {
-			"@id": NS.CS.Predicate.password,
+			"@id": NS.CS.password,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "enabled" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "enabled" ] ).toEqual( {
-			"@id": NS.CS.Predicate.enabled,
+			"@id": NS.CS.enabled,
 			"@type": NS.XSD.DataType.boolean,
 		} );
 	} );
@@ -178,14 +178,14 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			expect( user.myProperty ).toBeUndefined();
 			expect( user.email ).toBe( "email.of.user@example.com" );
 			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( NS.CS.Class.Credentials );
+			expect( user.types ).toContain( NS.CS.Credentials );
 
 			user = Credentials.Factory.createFrom<TheCredentials>( { myProperty: "a property" }, "email.of.user@example.com", "myAwesomePassword" );
 			expect( user.myProperty ).toBeDefined();
 			expect( user.myProperty ).toBe( "a property" );
 			expect( user.email ).toBe( "email.of.user@example.com" );
 			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( NS.CS.Class.Credentials );
+			expect( user.types ).toContain( NS.CS.Credentials );
 
 			expect( () => Credentials.Factory.createFrom( {}, "email.of.user@example.com", "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => Credentials.Factory.createFrom( {}, "", "myAwesomePassword" ) ).toThrowError( Errors.IllegalArgumentError );

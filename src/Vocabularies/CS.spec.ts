@@ -1,521 +1,410 @@
 import {
-	STATIC,
-
-	module,
-	clazz,
-
-	isDefined,
 	hasProperty,
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+	module,
+	namespaze,
+	INSTANCE,
+} from "../test/JasmineExtender";
 
-import * as CS from "./CS";
+import { CS } from "./CS";
 
-describe( module(
-	"Carbon/Vocabularies/CS"
-), ():void => {
+describe( module( "Carbon/Vocabularies/CS" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( CS ).toBeDefined();
-		expect( Utils.isObject( CS ) ).toBe( true );
-	} );
+	describe( namespaze( "Carbon.Vocabularies.CS", "The security vocabulary of Carbon LDP." ), ():void => {
 
-	it( hasProperty(
-		STATIC,
-		"namespace",
-		"string"
-	), ():void => {
-		expect( CS.namespace ).toBeDefined();
-		expect( Utils.isString( CS.namespace ) ).toBe( true );
+		it( "should exists", ():void => {
+			expect( CS ).toBeDefined();
+			expect( CS ).toEqual( jasmine.any( Object ) );
+		} );
 
-		expect( CS.namespace ).toBe( "https://carbonldp.com/ns/v1/security#" );
-	} );
-
-	describe( clazz(
-		"Carbon.NS.CS.Class",
-		"Class that contains classes defined by Carbon Security."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( CS.Class ).toBeDefined();
-			expect( Utils.isFunction( CS.Class ) ).toBe( true );
-			expect( Object.keys( CS.Class ).length ).toBe( 19 );
+		it( "should test all exported IRIs", ():void => {
+			expect( Object.keys( CS ).length ).toBe( 43 );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
+			"namespace",
+			"string"
+		), ():void => {
+			expect( CS.namespace ).toEqual( jasmine.any( String ) );
+			expect( CS.namespace ).toBe( "https://carbonldp.com/ns/v1/security#" );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
 			"AccessControlEntry",
 			"string"
 		), ():void => {
-			expect( CS.Class.AccessControlEntry ).toBeDefined();
-			expect( Utils.isString( CS.Class.AccessControlEntry ) ).toBe( true );
-
-			expect( CS.Class.AccessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlEntry" );
+			expect( CS.AccessControlEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.AccessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlEntry" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"AccessControlList",
 			"string"
 		), ():void => {
-			expect( CS.Class.AccessControlList ).toBeDefined();
-			expect( Utils.isString( CS.Class.AccessControlList ) ).toBe( true );
-
-			expect( CS.Class.AccessControlList ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlList" );
+			expect( CS.AccessControlList ).toEqual( jasmine.any( String ) );
+			expect( CS.AccessControlList ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlList" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"AllOrigins",
 			"string"
 		), ():void => {
-			expect( CS.Class.AllOrigins ).toBeDefined();
-			expect( Utils.isString( CS.Class.AllOrigins ) ).toBe( true );
-
-			expect( CS.Class.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
+			expect( CS.AllOrigins ).toEqual( jasmine.any( String ) );
+			expect( CS.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"CreateAccessPoint",
 			"string"
 		), ():void => {
-			expect( CS.Class.CreateAccessPoint ).toBeDefined();
-			expect( Utils.isString( CS.Class.CreateAccessPoint ) ).toBe( true );
-
-			expect( CS.Class.CreateAccessPoint ).toBe( "https://carbonldp.com/ns/v1/security#CreateAccessPoint" );
+			expect( CS.CreateAccessPoint ).toEqual( jasmine.any( String ) );
+			expect( CS.CreateAccessPoint ).toBe( "https://carbonldp.com/ns/v1/security#CreateAccessPoint" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"CreateChild",
 			"string"
 		), ():void => {
-			expect( CS.Class.CreateChild ).toBeDefined();
-			expect( Utils.isString( CS.Class.CreateChild ) ).toBe( true );
-
-			expect( CS.Class.CreateChild ).toBe( "https://carbonldp.com/ns/v1/security#CreateChild" );
+			expect( CS.CreateChild ).toEqual( jasmine.any( String ) );
+			expect( CS.CreateChild ).toBe( "https://carbonldp.com/ns/v1/security#CreateChild" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Credentials",
 			"string"
 		), ():void => {
-			expect( CS.Class.Credentials ).toBeDefined();
-			expect( Utils.isString( CS.Class.Credentials ) ).toBe( true );
-
-			expect( CS.Class.Credentials ).toBe( "https://carbonldp.com/ns/v1/security#Credentials" );
+			expect( CS.Credentials ).toEqual( jasmine.any( String ) );
+			expect( CS.Credentials ).toBe( "https://carbonldp.com/ns/v1/security#Credentials" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Delete",
 			"string"
 		), ():void => {
-			expect( CS.Class.Delete ).toBeDefined();
-			expect( Utils.isString( CS.Class.Delete ) ).toBe( true );
-
-			expect( CS.Class.Delete ).toBe( "https://carbonldp.com/ns/v1/security#Delete" );
+			expect( CS.Delete ).toEqual( jasmine.any( String ) );
+			expect( CS.Delete ).toBe( "https://carbonldp.com/ns/v1/security#Delete" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Download",
 			"string"
 		), ():void => {
-			expect( CS.Class.Download ).toBeDefined();
-			expect( Utils.isString( CS.Class.Download ) ).toBe( true );
-
-			expect( CS.Class.Download ).toBe( "https://carbonldp.com/ns/v1/security#Download" );
+			expect( CS.Download ).toEqual( jasmine.any( String ) );
+			expect( CS.Download ).toBe( "https://carbonldp.com/ns/v1/security#Download" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Extend",
 			"string"
 		), ():void => {
-			expect( CS.Class.Extend ).toBeDefined();
-			expect( Utils.isString( CS.Class.Extend ) ).toBe( true );
-
-			expect( CS.Class.Extend ).toBe( "https://carbonldp.com/ns/v1/security#Extend" );
+			expect( CS.Extend ).toEqual( jasmine.any( String ) );
+			expect( CS.Extend ).toBe( "https://carbonldp.com/ns/v1/security#Extend" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ManageSecurity",
 			"string"
 		), ():void => {
-			expect( CS.Class.ManageSecurity ).toBeDefined();
-			expect( Utils.isString( CS.Class.ManageSecurity ) ).toBe( true );
-
-			expect( CS.Class.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
+			expect( CS.ManageSecurity ).toEqual( jasmine.any( String ) );
+			expect( CS.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ProtectedDocument",
 			"string"
 		), ():void => {
-			expect( CS.Class.ProtectedDocument ).toBeDefined();
-			expect( Utils.isString( CS.Class.ProtectedDocument ) ).toBe( true );
-
-			expect( CS.Class.ProtectedDocument ).toBe( "https://carbonldp.com/ns/v1/security#ProtectedDocument" );
+			expect( CS.ProtectedDocument ).toEqual( jasmine.any( String ) );
+			expect( CS.ProtectedDocument ).toBe( "https://carbonldp.com/ns/v1/security#ProtectedDocument" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Read",
 			"string"
 		), ():void => {
-			expect( CS.Class.Read ).toBeDefined();
-			expect( Utils.isString( CS.Class.Read ) ).toBe( true );
-
-			expect( CS.Class.Read ).toBe( "https://carbonldp.com/ns/v1/security#Read" );
+			expect( CS.Read ).toEqual( jasmine.any( String ) );
+			expect( CS.Read ).toBe( "https://carbonldp.com/ns/v1/security#Read" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"RemoveMember",
 			"string"
 		), ():void => {
-			expect( CS.Class.RemoveMember ).toBeDefined();
-			expect( Utils.isString( CS.Class.RemoveMember ) ).toBe( true );
-
-			expect( CS.Class.RemoveMember ).toBe( "https://carbonldp.com/ns/v1/security#RemoveMember" );
+			expect( CS.RemoveMember ).toEqual( jasmine.any( String ) );
+			expect( CS.RemoveMember ).toBe( "https://carbonldp.com/ns/v1/security#RemoveMember" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Role",
 			"string"
 		), ():void => {
-			expect( CS.Class.Role ).toBeDefined();
-			expect( Utils.isString( CS.Class.Role ) ).toBe( true );
-
-			expect( CS.Class.Role ).toBe( "https://carbonldp.com/ns/v1/security#Role" );
+			expect( CS.Role ).toEqual( jasmine.any( String ) );
+			expect( CS.Role ).toBe( "https://carbonldp.com/ns/v1/security#Role" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Ticket",
 			"string"
 		), ():void => {
-			expect( CS.Class.Ticket ).toBeDefined();
-			expect( Utils.isString( CS.Class.Ticket ) ).toBe( true );
-
-			expect( CS.Class.Ticket ).toBe( "https://carbonldp.com/ns/v1/security#Ticket" );
+			expect( CS.Ticket ).toEqual( jasmine.any( String ) );
+			expect( CS.Ticket ).toBe( "https://carbonldp.com/ns/v1/security#Ticket" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Token",
 			"string"
 		), ():void => {
-			expect( CS.Class.Token ).toBeDefined();
-			expect( Utils.isString( CS.Class.Token ) ).toBe( true );
-
-			expect( CS.Class.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
+			expect( CS.Token ).toEqual( jasmine.any( String ) );
+			expect( CS.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Update",
 			"string"
 		), ():void => {
-			expect( CS.Class.Update ).toBeDefined();
-			expect( Utils.isString( CS.Class.Update ) ).toBe( true );
-
-			expect( CS.Class.Update ).toBe( "https://carbonldp.com/ns/v1/security#Update" );
+			expect( CS.Update ).toEqual( jasmine.any( String ) );
+			expect( CS.Update ).toBe( "https://carbonldp.com/ns/v1/security#Update" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"Upload",
 			"string"
 		), ():void => {
-			expect( CS.Class.Upload ).toBeDefined();
-			expect( Utils.isString( CS.Class.Upload ) ).toBe( true );
-
-			expect( CS.Class.Upload ).toBe( "https://carbonldp.com/ns/v1/security#Upload" );
+			expect( CS.Upload ).toEqual( jasmine.any( String ) );
+			expect( CS.Upload ).toBe( "https://carbonldp.com/ns/v1/security#Upload" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"User",
 			"string"
 		), ():void => {
-			expect( CS.Class.User ).toBeDefined();
-			expect( Utils.isString( CS.Class.User ) ).toBe( true );
-
-			expect( CS.Class.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
-		} );
-
-	} );
-
-	describe( clazz(
-		"Carbon.NS.CS.Predicate",
-		"Class that contains predicates defined by Carbon Security."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( CS.Predicate ).toBeDefined();
-			expect( Utils.isFunction( CS.Predicate ) ).toBe( true );
-
-			expect( Object.keys( CS.Predicate ).length ).toBe( 23 );
+			expect( CS.User ).toEqual( jasmine.any( String ) );
+			expect( CS.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"accessControlEntry",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.accessControlEntry ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.accessControlEntry ) ).toBe( true );
-
-			expect( CS.Predicate.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
+			expect( CS.accessControlEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"accessControlList",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.accessControlList ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.accessControlList ) ).toBe( true );
-
-			expect( CS.Predicate.accessControlList ).toBe( "https://carbonldp.com/ns/v1/security#accessControlList" );
+			expect( CS.accessControlList ).toEqual( jasmine.any( String ) );
+			expect( CS.accessControlList ).toBe( "https://carbonldp.com/ns/v1/security#accessControlList" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"accessTo",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.accessTo ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.accessTo ) ).toBe( true );
-
-			expect( CS.Predicate.accessTo ).toBe( "https://carbonldp.com/ns/v1/security#accessTo" );
+			expect( CS.accessTo ).toEqual( jasmine.any( String ) );
+			expect( CS.accessTo ).toBe( "https://carbonldp.com/ns/v1/security#accessTo" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"allowsOrigin",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.allowsOrigin ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.allowsOrigin ) ).toBe( true );
-
-			expect( CS.Predicate.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
+			expect( CS.allowsOrigin ).toEqual( jasmine.any( String ) );
+			expect( CS.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"childRole",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.childRole ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.childRole ) ).toBe( true );
-
-			expect( CS.Predicate.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
+			expect( CS.childRole ).toEqual( jasmine.any( String ) );
+			expect( CS.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"credentials",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.credentials ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.credentials ) ).toBe( true );
-
-			expect( CS.Predicate.credentials ).toBe( "https://carbonldp.com/ns/v1/security#credentials" );
+			expect( CS.credentials ).toEqual( jasmine.any( String ) );
+			expect( CS.credentials ).toBe( "https://carbonldp.com/ns/v1/security#credentials" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"credentialsOf",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.credentialsOf ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.credentialsOf ) ).toBe( true );
-
-			expect( CS.Predicate.credentialsOf ).toBe( "https://carbonldp.com/ns/v1/security#credentialsOf" );
+			expect( CS.credentialsOf ).toEqual( jasmine.any( String ) );
+			expect( CS.credentialsOf ).toBe( "https://carbonldp.com/ns/v1/security#credentialsOf" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"description",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.description ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.description ) ).toBe( true );
-
-			expect( CS.Predicate.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
+			expect( CS.description ).toEqual( jasmine.any( String ) );
+			expect( CS.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"enabled",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.enabled ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.enabled ) ).toBe( true );
-
-			expect( CS.Predicate.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
+			expect( CS.enabled ).toEqual( jasmine.any( String ) );
+			expect( CS.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"expirationTime",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.expirationTime ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.expirationTime ) ).toBe( true );
-
-			expect( CS.Predicate.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
+			expect( CS.expirationTime ).toEqual( jasmine.any( String ) );
+			expect( CS.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"forIRI",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.forIRI ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.forIRI ) ).toBe( true );
-
-			expect( CS.Predicate.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
+			expect( CS.forIRI ).toEqual( jasmine.any( String ) );
+			expect( CS.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"granting",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.granting ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.granting ) ).toBe( true );
-
-			expect( CS.Predicate.granting ).toBe( "https://carbonldp.com/ns/v1/security#granting" );
+			expect( CS.granting ).toEqual( jasmine.any( String ) );
+			expect( CS.granting ).toBe( "https://carbonldp.com/ns/v1/security#granting" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"inheritableEntry",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.inheritableEntry ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.inheritableEntry ) ).toBe( true );
-
-			expect( CS.Predicate.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
+			expect( CS.inheritableEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
 		} );
 
 		it( hasProperty(
-			STATIC,
-			"namae",
+			INSTANCE,
+			"name",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.namae ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.namae ) ).toBe( true );
-
-			expect( CS.Predicate.namae ).toBe( "https://carbonldp.com/ns/v1/security#name" );
+			expect( CS.name ).toEqual( jasmine.any( String ) );
+			expect( CS.name ).toBe( "https://carbonldp.com/ns/v1/security#name" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"parentRole",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.parentRole ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.parentRole ) ).toBe( true );
-
-			expect( CS.Predicate.parentRole ).toBe( "https://carbonldp.com/ns/v1/security#parentRole" );
+			expect( CS.parentRole ).toEqual( jasmine.any( String ) );
+			expect( CS.parentRole ).toBe( "https://carbonldp.com/ns/v1/security#parentRole" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"password",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.password ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.password ) ).toBe( true );
-
-			expect( CS.Predicate.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
+			expect( CS.password ).toEqual( jasmine.any( String ) );
+			expect( CS.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"permission",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.permission ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.permission ) ).toBe( true );
-
-			expect( CS.Predicate.permission ).toBe( "https://carbonldp.com/ns/v1/security#permission" );
+			expect( CS.permission ).toEqual( jasmine.any( String ) );
+			expect( CS.permission ).toBe( "https://carbonldp.com/ns/v1/security#permission" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"rootContainer",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.rootContainer ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.rootContainer ) ).toBe( true );
-
-			expect( CS.Predicate.rootContainer ).toBe( "https://carbonldp.com/ns/v1/security#rootContainer" );
+			expect( CS.rootContainer ).toEqual( jasmine.any( String ) );
+			expect( CS.rootContainer ).toBe( "https://carbonldp.com/ns/v1/security#rootContainer" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"subject",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.subject ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.subject ) ).toBe( true );
-
-			expect( CS.Predicate.subject ).toBe( "https://carbonldp.com/ns/v1/security#subject" );
+			expect( CS.subject ).toEqual( jasmine.any( String ) );
+			expect( CS.subject ).toBe( "https://carbonldp.com/ns/v1/security#subject" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"subjectClass",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.subjectClass ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.subjectClass ) ).toBe( true );
-
-			expect( CS.Predicate.subjectClass ).toBe( "https://carbonldp.com/ns/v1/security#subjectClass" );
+			expect( CS.subjectClass ).toEqual( jasmine.any( String ) );
+			expect( CS.subjectClass ).toBe( "https://carbonldp.com/ns/v1/security#subjectClass" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"ticketKey",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.ticketKey ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.ticketKey ) ).toBe( true );
-
-			expect( CS.Predicate.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
+			expect( CS.ticketKey ).toEqual( jasmine.any( String ) );
+			expect( CS.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"tokenKey",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.tokenKey ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.tokenKey ) ).toBe( true );
-
-			expect( CS.Predicate.tokenKey ).toBe( "https://carbonldp.com/ns/v1/security#tokenKey" );
+			expect( CS.tokenKey ).toEqual( jasmine.any( String ) );
+			expect( CS.tokenKey ).toBe( "https://carbonldp.com/ns/v1/security#tokenKey" );
 		} );
 
 		it( hasProperty(
-			STATIC,
+			INSTANCE,
 			"user",
 			"string"
 		), ():void => {
-			expect( CS.Predicate.user ).toBeDefined();
-			expect( Utils.isString( CS.Predicate.user ) ).toBe( true );
-
-			expect( CS.Predicate.user ).toBe( "https://carbonldp.com/ns/v1/security#user" );
+			expect( CS.user ).toEqual( jasmine.any( String ) );
+			expect( CS.user ).toBe( "https://carbonldp.com/ns/v1/security#user" );
 		} );
 
 	} );

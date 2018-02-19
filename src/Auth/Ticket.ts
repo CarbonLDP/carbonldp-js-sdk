@@ -7,19 +7,19 @@ import * as URI from "./../RDF/URI";
 
 export const TICKETS_CONTAINER:string = "auth-tickets/";
 
-export const RDF_CLASS:string = NS.CS.Class.Ticket;
+export const RDF_CLASS:string = NS.CS.Ticket;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"forURI": {
-		"@id": NS.CS.Predicate.forIRI,
+		"@id": NS.CS.forIRI,
 		"@type": "@id",
 	},
 	"expirationTime": {
-		"@id": NS.CS.Predicate.expirationTime,
+		"@id": NS.CS.expirationTime,
 		"@type": NS.XSD.DataType.dateTime,
 	},
 	"ticketKey": {
-		"@id": NS.CS.Predicate.ticketKey,
+		"@id": NS.CS.ticketKey,
 		"@type": NS.XSD.DataType.string,
 	},
 };

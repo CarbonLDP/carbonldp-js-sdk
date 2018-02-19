@@ -9,14 +9,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.Class.User;
+exports.RDF_CLASS = NS.CS.User;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.namae,
+        "@id": NS.CS.name,
         "@type": NS.XSD.DataType.string,
     },
     "credentials": {
-        "@id": NS.CS.Predicate.credentials,
+        "@id": NS.CS.credentials,
         "@type": "@id",
     },
 };

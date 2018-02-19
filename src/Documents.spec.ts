@@ -184,11 +184,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			// Has default decorators
 			expect( documents.documentDecorators.size ).toBe( 5 );
-			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.User ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.Role ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.Credentials ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.ProtectedDocument ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.AccessControlList ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.User ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Role ) ).toBe( true );
+			expect( documents.documentDecorators.has( NS.CS.Credentials ) ).toBe( true );
 		} );
 
 		describe( method(

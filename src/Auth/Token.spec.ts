@@ -35,7 +35,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		expect( Token.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Token.RDF_CLASS ) ).toBe( true );
 
-		expect( Token.RDF_CLASS ).toBe( NS.CS.Class.Token );
+		expect( Token.RDF_CLASS ).toBe( NS.CS.Token );
 	} );
 
 	it( hasProperty(
@@ -48,13 +48,13 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 		expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 		expect( Token.SCHEMA[ "key" ] ).toEqual( {
-			"@id": NS.CS.Predicate.tokenKey,
+			"@id": NS.CS.tokenKey,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.Predicate.expirationTime,
+			"@id": NS.CS.expirationTime,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
 
@@ -107,19 +107,19 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 			expect( Token.SCHEMA[ "key" ] ).toEqual( {
-				"@id": NS.CS.Predicate.tokenKey,
+				"@id": NS.CS.tokenKey,
 				"@type": NS.XSD.DataType.string,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 			expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
-				"@id": NS.CS.Predicate.expirationTime,
+				"@id": NS.CS.expirationTime,
 				"@type": NS.XSD.DataType.dateTime,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "user" ) ).toBe( true );
 			expect( Token.SCHEMA[ "user" ] ).toEqual( {
-				"@id": NS.CS.Predicate.credentialsOf,
+				"@id": NS.CS.credentialsOf,
 				"@type": "@id",
 			} );
 

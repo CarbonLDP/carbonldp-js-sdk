@@ -38,32 +38,32 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 		expect( Utils.hasProperty( Role.SCHEMA, "name" ) ).toBe( true );
 		expect( Role.SCHEMA[ "name" ] ).toEqual( {
-			"@id": NS.CS.Predicate.namae,
+			"@id": NS.CS.name,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "description" ) ).toBe( true );
 		expect( Role.SCHEMA[ "description" ] ).toEqual( {
-			"@id": NS.CS.Predicate.description,
+			"@id": NS.CS.description,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "parentRole" ) ).toBe( true );
 		expect( Role.SCHEMA[ "parentRole" ] ).toEqual( {
-			"@id": NS.CS.Predicate.parentRole,
+			"@id": NS.CS.parentRole,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "childRoles" ) ).toBe( true );
 		expect( Role.SCHEMA[ "childRoles" ] ).toEqual( {
-			"@id": NS.CS.Predicate.childRole,
+			"@id": NS.CS.childRole,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "users" ) ).toBe( true );
 		expect( Role.SCHEMA[ "users" ] ).toEqual( {
-			"@id": NS.CS.Predicate.user,
+			"@id": NS.CS.user,
 			"@type": "@id",
 			"@container": "@set",
 		} );

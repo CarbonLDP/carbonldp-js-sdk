@@ -4,25 +4,25 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Class.AccessControlEntry;
+export const RDF_CLASS:string = NS.CS.AccessControlEntry;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"granting": {
-		"@id": NS.CS.Predicate.granting,
+		"@id": NS.CS.granting,
 		"@type": NS.XSD.DataType.boolean,
 	},
 	"permissions": {
-		"@id": NS.CS.Predicate.permission,
+		"@id": NS.CS.permission,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"subjects": {
-		"@id": NS.CS.Predicate.subject,
+		"@id": NS.CS.subject,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"subjectsClass": {
-		"@id": NS.CS.Predicate.subjectClass,
+		"@id": NS.CS.subjectClass,
 		"@type": "@id",
 	},
 };

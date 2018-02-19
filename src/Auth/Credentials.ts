@@ -3,7 +3,7 @@ import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import { IllegalArgumentError } from "./../Errors";
 
-export const RDF_CLASS:string = NS.CS.Class.Credentials;
+export const RDF_CLASS:string = NS.CS.Credentials;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"email": {
@@ -11,15 +11,15 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@type": NS.XSD.DataType.string,
 	},
 	"password": {
-		"@id": NS.CS.Predicate.password,
+		"@id": NS.CS.password,
 		"@type": NS.XSD.DataType.string,
 	},
 	"enabled": {
-		"@id": NS.CS.Predicate.enabled,
+		"@id": NS.CS.enabled,
 		"@type": NS.XSD.DataType.boolean,
 	},
 	"user": {
-		"@id": NS.CS.Predicate.credentialsOf,
+		"@id": NS.CS.credentialsOf,
 		"@type": "@id",
 	},
 };

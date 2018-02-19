@@ -61,7 +61,7 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 		aclPromise = Promise.resolve( protectedDocument.accessControlList );
 	} else {
 		aclPromise = protectedDocument.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {
-			<${ protectedDocument.id }> <${ NS.CS.Predicate.accessControlList }> ?acl.
+			<${ protectedDocument.id }> <${ NS.CS.accessControlList }> ?acl.
 		}` ).then( ( [ results ]:[ SELECTResults<ACLResult>, HTTP.Response.Class ] ) => {
 			return results.bindings[ 0 ].acl;
 		} );

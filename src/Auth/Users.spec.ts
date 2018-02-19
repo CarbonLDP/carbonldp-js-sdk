@@ -142,14 +142,14 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 						"@id": "http://example.com/.system/credentials/a-user-credentials/",
 						"@graph": [ {
 							"@id": "http://example.com/.system/credentials/a-user-credentials/",
-							"@type": [ "${ NS.CS.Class.Credentials }" ],
+							"@type": [ "${ NS.CS.Credentials }" ],
 							"${ NS.VCARD.Predicate.email }": {
 								"@value": "user@example.com"
 							},
-							"${ NS.CS.Predicate.password }": {
+							"${ NS.CS.password }": {
 								"@value": "my-encrypted-password"
 							},
-							"${ NS.CS.Predicate.credentialsOf }": {
+							"${ NS.CS.credentialsOf }": {
 								"@id": "http://example.com/users/a-user/"
 							}
 						} ]

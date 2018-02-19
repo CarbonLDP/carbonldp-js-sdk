@@ -195,25 +195,25 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						}, {
 							"@id": "_:02",
 							"@type": [
-								"${ NS.CS.Class.Token }",
+								"${ NS.CS.Token }",
 								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.CS.Predicate.tokenKey }": [ {
+							"${ NS.CS.tokenKey }": [ {
 								"@value": "token-value"
 							} ],
-							"${ NS.CS.Predicate.expirationTime }": {
+							"${ NS.CS.expirationTime }": {
 								"@value": "${ expirationTime.toISOString() }",
 								"@type": "${ NS.XSD.DataType.dateTime }"
 							},
-							"${ NS.CS.Predicate.credentialsOf }": [ {
+							"${ NS.CS.credentialsOf }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "http://successful.example.com/users/my-user/",
 							"@graph": [ {
 								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "${ NS.CS.Class.User }" ],
-								"${ NS.CS.Predicate.name }": [ {
+								"@type": [ "${ NS.CS.User }" ],
+								"${ NS.CS.name }": [ {
 									"@value": "My User Name",
 									"@type": "${ NS.XSD.DataType.string }"
 								} ],
@@ -221,7 +221,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 									"@value": "my-user@users.com",
 									"@type": "${ NS.XSD.DataType.string }"
 								} ],
-								"${ NS.CS.Predicate.enabled }": [ {
+								"${ NS.CS.enabled }": [ {
 									"@value": "true",
 									"@type": "${ NS.XSD.DataType.boolean }"
 								} ]
@@ -312,7 +312,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ],
+						"types": [ "${ NS.CS.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -334,7 +334,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${expirationTime.toISOString()}",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ]
+						"types": [ "${ NS.CS.Token }" ]
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -357,7 +357,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ],
+						"types": [ "${ NS.CS.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -700,25 +700,25 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"${ NS.CS.Class.Token }",
+							"${ NS.CS.Token }",
 							"${ NS.C.VolatileResource }"
 						],
-						"${ NS.CS.Predicate.tokenKey }": [ {
+						"${ NS.CS.tokenKey }": [ {
 							"@value": "token-value"
 						} ],
-						"${ NS.CS.Predicate.expirationTime }": {
+						"${ NS.CS.expirationTime }": {
 							"@value": "${expirationTime.toISOString()}",
 							"@type": "${ NS.XSD.DataType.dateTime }"
 						},
-						"${ NS.CS.Predicate.credentialsOf }": [ {
+						"${ NS.CS.credentialsOf }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "http://successful.example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://successful.example.com/users/my-user/",
-							"@type": [ "${ NS.CS.Class.User }" ],
-							"${ NS.CS.Predicate.name }": [ {
+							"@type": [ "${ NS.CS.User }" ],
+							"${ NS.CS.name }": [ {
 								"@value": "My User Name",
 								"@type": "${ NS.XSD.DataType.string }"
 							} ],
@@ -726,7 +726,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@value": "my-user@users.com",
 								"@type": "${ NS.XSD.DataType.string }"
 							} ],
-							"${ NS.CS.Predicate.enabled }": [ {
+							"${ NS.CS.enabled }": [ {
 								"@value": "true",
 								"@type": "${ NS.XSD.DataType.boolean }"
 							} ]

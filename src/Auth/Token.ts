@@ -4,19 +4,19 @@ import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
-export const RDF_CLASS:string = NS.CS.Class.Token;
+export const RDF_CLASS:string = NS.CS.Token;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"key": {
-		"@id": NS.CS.Predicate.tokenKey,
+		"@id": NS.CS.tokenKey,
 		"@type": NS.XSD.DataType.string,
 	},
 	"expirationTime": {
-		"@id": NS.CS.Predicate.expirationTime,
+		"@id": NS.CS.expirationTime,
 		"@type": NS.XSD.DataType.dateTime,
 	},
 	"user": {
-		"@id": NS.CS.Predicate.credentialsOf,
+		"@id": NS.CS.credentialsOf,
 		"@type": "@id",
 	},
 };
