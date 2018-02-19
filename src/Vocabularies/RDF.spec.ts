@@ -1,46 +1,32 @@
 import {
-	STATIC,
-
+	hasProperty,
 	module,
-	clazz,
+	namespaze,
+	STATIC
+} from "../test/JasmineExtender";
 
-	isDefined,
-	hasProperty
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+import { RDF } from "./RDF";
 
-import * as RDF from "./RDF";
+describe( module( "Carbon/Vocabularies/RDF" ), ():void => {
 
-describe( module(
-	"Carbon/Vocabularies/RDF"
-), ():void => {
+	describe( namespaze( "Carbon.NS.RDF.Predicate", "The vocabulary defined in the RDF Syntax Specification." ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( RDF ).toBeDefined();
-		expect( Utils.isObject( RDF ) ).toBe( true );
-	} );
+		it( "should exists", ():void => {
+			expect( RDF ).toBeDefined();
+			expect( RDF ).toEqual( jasmine.any( Object ) );
+		} );
 
-	it( hasProperty(
-		STATIC,
-		"namespace",
-		"string"
-	), ():void => {
-		expect( RDF.namespace ).toBeDefined();
-		expect( Utils.isString( RDF.namespace ) ).toBe( true );
+		it( "should test all exported IRIs", ():void => {
+			expect( Object.keys( RDF ).length ).toBe( 2 );
+		} );
 
-		expect( RDF.namespace ).toBe( "http://www.w3.org/1999/02/22-rdf-syntax-ns#" )
-	} );
-
-	describe( clazz(
-		"Carbon.NS.RDF.Predicate",
-		"Class that contains predicates defined in the RDF Syntax Specification."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( RDF.Predicate ).toBeDefined();
-			expect( Utils.isFunction( RDF.Predicate ) ).toBe( true );
-
-			expect( Object.keys( RDF.Predicate ).length ).toBe( 1 );
+		it( hasProperty(
+			STATIC,
+			"namespace",
+			"string"
+		), ():void => {
+			expect( RDF.namespace ).toEqual( jasmine.any( String ) );
+			expect( RDF.namespace ).toBe( "http://www.w3.org/1999/02/22-rdf-syntax-ns#" );
 		} );
 
 		it( hasProperty(
@@ -48,10 +34,8 @@ describe( module(
 			"type",
 			"string"
 		), ():void => {
-			expect( RDF.Predicate.type ).toBeDefined();
-			expect( Utils.isString( RDF.Predicate.type ) ).toBe( true );
-
-			expect( RDF.Predicate.type ).toBe( "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" );
+			expect( RDF.type ).toEqual( jasmine.any( String ) );
+			expect( RDF.type ).toBe( "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" );
 		} );
 
 	} );

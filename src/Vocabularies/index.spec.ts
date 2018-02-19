@@ -4,14 +4,13 @@ import {
 	reexports,
 	STATIC,
 } from "../test/JasmineExtender";
-import * as Utils from "../Utils";
 
 import * as Vocabularies from "./";
 
 import { C } from "./C";
 import { CS } from "./CS";
 import { LDP } from "./LDP";
-import * as RDF from "./RDF";
+import { RDF } from "./RDF";
 import * as SHACL from "./SHACL";
 import * as VCARD from "./VCARD";
 import * as XSD from "./XSD";
@@ -20,7 +19,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Vocabularies ).toBeDefined();
-		expect( Utils.isObject( Vocabularies ) ).toBe( true );
+		expect( Vocabularies ).toEqual( jasmine.any( Object ) );
 	} );
 
 	it( reexports(
@@ -52,20 +51,20 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"RDF",
+		"Carbon.Vocabularies.RDF"
+	), ():void => {
+		expect( Vocabularies.RDF ).toBeDefined();
+		expect( Vocabularies.RDF ).toBe( RDF );
+	} );
+
+	it( reexports(
+		STATIC,
 		"SHACL",
 		"Carbon/Vocabularies/SHACL"
 	), ():void => {
 		expect( Vocabularies.SHACL ).toBeDefined();
 		expect( Vocabularies.SHACL ).toBe( SHACL );
-	} );
-
-	it( reexports(
-		STATIC,
-		"RDF",
-		"Carbon/Vocabularies/RDF"
-	), ():void => {
-		expect( Vocabularies.RDF ).toBeDefined();
-		expect( Vocabularies.RDF ).toBe( RDF );
 	} );
 
 	it( reexports(

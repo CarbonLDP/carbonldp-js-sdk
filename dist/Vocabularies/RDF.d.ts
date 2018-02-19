@@ -1,5 +1,4 @@
-declare const namespace: string;
-declare class Predicate {
-    static type: string;
+export declare namespace RDF {
+    const namespace: string;
+    const type: string;
 }
-export { namespace, Predicate };

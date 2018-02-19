@@ -478,8 +478,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(168));
 __export(__webpack_require__(169));
 __export(__webpack_require__(170));
-var RDF = __importStar(__webpack_require__(171));
-exports.RDF = RDF;
+__export(__webpack_require__(171));
 var SHACL = __importStar(__webpack_require__(172));
 exports.SHACL = SHACL;
 var VCARD = __importStar(__webpack_require__(173));
@@ -14237,15 +14236,11 @@ var LDP;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-exports.namespace = namespace;
-var Predicate = (function () {
-    function Predicate() {
-    }
-    Predicate.type = namespace + "type";
-    return Predicate;
-}());
-exports.Predicate = Predicate;
+var RDF;
+(function (RDF) {
+    RDF.namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    RDF.type = RDF.namespace + "type";
+})(RDF = exports.RDF || (exports.RDF = {}));
 
 
 /***/ }),
