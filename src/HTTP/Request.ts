@@ -129,9 +129,9 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 }
 
 function sendRequest( method:string, url:string, body:string | Blob | Buffer, options:Options ):Promise<Response> {
-	if( typeof XMLHttpRequest !== "undefined" )
-		return sendWithBrowser( method, url, <string | Blob> body, options );
-	return sendWithNode( method, url, <string | Buffer> body, options );
+	return typeof XMLHttpRequest !== "undefined" ?
+		sendWithBrowser( method, url, <string | Blob> body, options ) :
+		sendWithNode( method, url, <string | Buffer> body, options );
 }
 
 function isBody( data:string | Blob | Buffer ):boolean {
@@ -141,7 +141,6 @@ function isBody( data:string | Blob | Buffer ):boolean {
 }
 
 export class Service {
-
 	private static defaultOptions:Options = {
 		sendCredentialsOnCORS: true,
 	};
@@ -168,34 +167,8 @@ export class Service {
 
 		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
 			.then( response => {
-				if( method !== "GET" || ! options.headers ) return response;
-
-				const accepts:string[] = options.headers.has( "accept" ) ?
-					options.headers.get( "accept" ).values : [];
-
-				const contentType:Header.Class = response.headers.has( "content-type" ) ?
-					response.headers.get( "content-type" ) : void 0;
-
-				if( ! contentType || accepts.some( contentType.hasValue, contentType ) ) return response;
-
-				options.headers
-					.set( "pragma", new Header.Class( "no-cache" ) )
-					.set( "cache-control", new Header.Class( "no-cache, max-age=0" ) )
-				;
-
-				// Only when no Chromium force a false ETag
-				if( typeof window !== "undefined" && ! window[ "chrome" ] ) options.headers
-					.set( "if-none-match", new Header.Class( "" ) )
-				;
-
-				return sendRequest( method, url, body, options )
-					.then( noCachedResponse => {
-						const noCachedContentType:Header.Class | void = noCachedResponse.headers.has( "content-type" ) ?
-							noCachedResponse.headers.get( "content-type" ) : void 0;
-						if( ! noCachedContentType || accepts.some( noCachedContentType.hasValue, noCachedContentType ) ) return noCachedResponse;
-
-						throw noCachedResponse;
-					} );
+				if( method === "GET" && options.headers ) return this._handleGETResponse( url, options, response );
+				else return response;
 			} )
 		;
 
@@ -250,6 +223,67 @@ export class Service {
 	static delete<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
 		return Service.send( Method.DELETE, url, bodyOrOptions, optionsOrParser, parser );
+	}
+
+	/**
+	 * GET requests can be affected by previously cached resources that were originally requested with a different Accept header. This method identifies that
+	 * and retries the request with headers that force browsers to ignore cache.
+	 * @param {string} url
+	 * @param {Options} requestOptions
+	 * @param {Class} response
+	 * @returns {Promise<Class>}
+	 * @private
+	 */
+	private static _handleGETResponse( url:string, requestOptions:Options, response:Response ):Promise<Response> {
+		return Promise.resolve()
+			.then( () => {
+				if( this._contentTypeIsAccepted( requestOptions, response ) ) return response;
+
+				this._setNoCacheHeaders( requestOptions );
+
+				// Force a false ETag when the user agent isn't Chromium based
+				if( ! this._isChromiumAgent() ) this._setFalseETag( requestOptions );
+
+				return sendRequest( "GET", url, null, requestOptions );
+			} )
+			.then( noCachedResponse => {
+				if( ! this._contentTypeIsAccepted( requestOptions, response ) ) {
+					// TODO: Use a more suitable error that also provides the response
+					const error:Error = new Error( "The server responded with an unacceptable Content-Type" );
+					error[ "response" ] = response;
+					throw error;
+				}
+
+				return noCachedResponse;
+			} );
+	}
+
+	private static _contentTypeIsAccepted( requestOptions:Options, response:Response ):boolean {
+		const accepts:string[] = requestOptions.headers.has( "accept" ) ?
+			requestOptions.headers.get( "accept" ).values :
+			[]
+		;
+
+		const contentType:Header.Class = response.headers.has( "content-type" ) ?
+			response.headers.get( "content-type" ) :
+			null
+		;
+		return ! contentType || accepts.some( contentType.hasValue, contentType );
+	}
+
+	private static _setNoCacheHeaders( requestOptions:Options ):void {
+		requestOptions.headers
+			.set( "pragma", new Header.Class( "no-cache" ) )
+			.set( "cache-control", new Header.Class( "no-cache, max-age=0" ) )
+		;
+	}
+
+	private static _isChromiumAgent():boolean {
+		return typeof window !== "undefined" && ! window[ "chrome" ];
+	}
+
+	private static _setFalseETag( requestOptions:Options ):void {
+		requestOptions.headers.set( "if-none-match", new Header.Class( "" ) );
 	}
 }
 

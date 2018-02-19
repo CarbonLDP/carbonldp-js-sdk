@@ -15833,9 +15833,9 @@ function sendWithNode(method, url, body, options) {
     });
 }
 function sendRequest(method, url, body, options) {
-    if (typeof XMLHttpRequest !== "undefined")
-        return sendWithBrowser(method, url, body, options);
-    return sendWithNode(method, url, body, options);
+    return typeof XMLHttpRequest !== "undefined" ?
+        sendWithBrowser(method, url, body, options) :
+        sendWithNode(method, url, body, options);
 }
 function isBody(data) {
     return Utils.isString(data)
@@ -15846,6 +15846,7 @@ var Service = (function () {
     function Service() {
     }
     Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
+        var _this = this;
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
@@ -15863,28 +15864,10 @@ var Service = (function () {
             method = Method_1.default[method];
         var requestPromise = sendRequest(method, url, body, options)
             .then(function (response) {
-            if (method !== "GET" || !options.headers)
+            if (method === "GET" && options.headers)
+                return _this._handleGETResponse(url, options, response);
+            else
                 return response;
-            var accepts = options.headers.has("accept") ?
-                options.headers.get("accept").values : [];
-            var contentType = response.headers.has("content-type") ?
-                response.headers.get("content-type") : void 0;
-            if (!contentType || accepts.some(contentType.hasValue, contentType))
-                return response;
-            options.headers
-                .set("pragma", new Header.Class("no-cache"))
-                .set("cache-control", new Header.Class("no-cache, max-age=0"));
-            if (typeof window !== "undefined" && !window["chrome"])
-                options.headers
-                    .set("if-none-match", new Header.Class(""));
-            return sendRequest(method, url, body, options)
-                .then(function (noCachedResponse) {
-                var noCachedContentType = noCachedResponse.headers.has("content-type") ?
-                    noCachedResponse.headers.get("content-type") : void 0;
-                if (!noCachedContentType || accepts.some(noCachedContentType.hasValue, noCachedContentType))
-                    return noCachedResponse;
-                throw noCachedResponse;
-            });
         });
         if (parser === null)
             return requestPromise;
@@ -15930,6 +15913,46 @@ var Service = (function () {
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+    };
+    Service._handleGETResponse = function (url, requestOptions, response) {
+        var _this = this;
+        return Promise.resolve()
+            .then(function () {
+            if (_this._contentTypeIsAccepted(requestOptions, response))
+                return response;
+            _this._setNoCacheHeaders(requestOptions);
+            if (!_this._isChromiumAgent())
+                _this._setFalseETag(requestOptions);
+            return sendRequest("GET", url, null, requestOptions);
+        })
+            .then(function (noCachedResponse) {
+            if (!_this._contentTypeIsAccepted(requestOptions, response)) {
+                var error = new Error("The server responded with an unacceptable Content-Type");
+                error["response"] = response;
+                throw error;
+            }
+            return noCachedResponse;
+        });
+    };
+    Service._contentTypeIsAccepted = function (requestOptions, response) {
+        var accepts = requestOptions.headers.has("accept") ?
+            requestOptions.headers.get("accept").values :
+            [];
+        var contentType = response.headers.has("content-type") ?
+            response.headers.get("content-type") :
+            null;
+        return !contentType || accepts.some(contentType.hasValue, contentType);
+    };
+    Service._setNoCacheHeaders = function (requestOptions) {
+        requestOptions.headers
+            .set("pragma", new Header.Class("no-cache"))
+            .set("cache-control", new Header.Class("no-cache, max-age=0"));
+    };
+    Service._isChromiumAgent = function () {
+        return typeof window !== "undefined" && !window["chrome"];
+    };
+    Service._setFalseETag = function (requestOptions) {
+        requestOptions.headers.set("if-none-match", new Header.Class(""));
     };
     Service.defaultOptions = {
         sendCredentialsOnCORS: true,
