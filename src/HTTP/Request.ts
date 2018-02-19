@@ -229,11 +229,6 @@ export class Service {
 	/**
 	 * GET requests can be affected by previously cached resources that were originally requested with a different Accept header. This method identifies that
 	 * and retries the request with headers that force browsers to ignore cache.
-	 * @param {string} url
-	 * @param {Options} requestOptions
-	 * @param {Class} response
-	 * @returns {Promise<Class>}
-	 * @private
 	 */
 	private static _handleGETResponse( url:string, requestOptions:Options, response:Response ):Promise<Response> {
 		return Promise.resolve()
