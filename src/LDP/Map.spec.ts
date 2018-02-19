@@ -13,7 +13,7 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 

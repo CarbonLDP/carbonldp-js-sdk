@@ -1,7 +1,7 @@
 import { IRIToken, LiteralToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import * as XSD from "../../NS/XSD";
+import * as XSD from "../../Vocabularies/XSD";
 import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import { IllegalArgumentError } from "./../../Errors";
 import QueryContext from "./QueryContext";

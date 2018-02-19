@@ -1,5 +1,5 @@
 import * as Utils from "./../Utils";
-import * as XSD from "./../NS/XSD" ;
+import * as XSD from "../Vocabularies/XSD" ;
 import * as Errors from "./../Errors";
 
 import Serializer from "./Literal/Serializer";

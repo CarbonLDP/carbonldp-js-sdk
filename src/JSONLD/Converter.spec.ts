@@ -11,7 +11,7 @@ import {
 } from "../test/JasmineExtender";
 
 import * as Utils from "../Utils";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";

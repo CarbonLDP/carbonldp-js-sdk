@@ -6,7 +6,7 @@ import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as Pointer from "./Pointer";
 import * as URI from "./RDF/URI";
 import * as Resource from "./Resource";

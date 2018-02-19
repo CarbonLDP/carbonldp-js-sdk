@@ -1,5 +1,5 @@
 import * as Document from "./Document";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 
 export const RDF_CLASS:string = NS.CS.Class.ProtectedDocument;

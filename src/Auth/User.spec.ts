@@ -14,7 +14,7 @@ import {
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Document from "./../Document";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as User from "./User";

@@ -12,7 +12,7 @@ import {
 	extendsClass,
 } from "./../test/JasmineExtender";
 import * as VolatileResource from "./../LDP/VolatileResource";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as PlatformMetadata from "./PlatformMetadata";

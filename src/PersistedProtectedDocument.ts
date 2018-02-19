@@ -1,6 +1,6 @@
 import * as HTTP from "./HTTP";
 import * as Auth from "./Auth";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Documents from "./Documents";
 import * as Pointer from "./Pointer";

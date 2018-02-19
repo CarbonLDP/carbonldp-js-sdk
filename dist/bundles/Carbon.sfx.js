@@ -8603,19 +8603,19 @@ exports.default = Class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS_1 = __webpack_require__(1);
+var index_1 = __webpack_require__(1);
 var Utils_1 = __webpack_require__(0);
 function guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
     if (Utils_1.isString(value))
-        return NS_1.XSD.DataType.string;
+        return index_1.XSD.DataType.string;
     if (Utils_1.isDate(value))
-        return NS_1.XSD.DataType.dateTime;
+        return index_1.XSD.DataType.dateTime;
     if (Utils_1.isNumber(value))
-        return NS_1.XSD.DataType.float;
+        return index_1.XSD.DataType.float;
     if (Utils_1.isBoolean(value))
-        return NS_1.XSD.DataType.boolean;
+        return index_1.XSD.DataType.boolean;
     return null;
 }
 exports.guessXSDType = guessXSDType;
@@ -13251,7 +13251,7 @@ var LDP = __importStar(__webpack_require__(36));
 var LDPatch = __importStar(__webpack_require__(109));
 var Messaging = __importStar(__webpack_require__(67));
 var NamedFragment = __importStar(__webpack_require__(101));
-var NS = __importStar(__webpack_require__(1));
+var Vocabularies = __importStar(__webpack_require__(1));
 var ObjectSchema = __importStar(__webpack_require__(12));
 var PersistedDocument = __importStar(__webpack_require__(34));
 var PersistedFragment = __importStar(__webpack_require__(45));
@@ -13340,7 +13340,7 @@ var Class = (function (_super) {
     Class.LDPatch = LDPatch;
     Class.Messaging = Messaging;
     Class.NamedFragment = NamedFragment;
-    Class.NS = NS;
+    Class.Vocabularies = Vocabularies;
     Class.ObjectSchema = ObjectSchema;
     Class.PersistedDocument = PersistedDocument;
     Class.PersistedFragment = PersistedFragment;
@@ -18295,7 +18295,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(26);
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(97);
-var NS_1 = __webpack_require__(1);
+var index_1 = __webpack_require__(1);
 var ObjectSchema_1 = __webpack_require__(12);
 var Pointer = __importStar(__webpack_require__(13));
 var Utils_2 = __webpack_require__(0);
@@ -18438,7 +18438,7 @@ var Class = (function () {
             var value = languageMap[key];
             var tempDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
             tempDefinition.language = key;
-            tempDefinition.literalType = NS_1.XSD.DataType.string;
+            tempDefinition.literalType = index_1.XSD.DataType.string;
             return _this.expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
@@ -18458,7 +18458,7 @@ var Class = (function () {
             return null;
         value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
         var literal = new tokens_1.LiteralToken(value);
-        if (type !== NS_1.XSD.DataType.string)
+        if (type !== index_1.XSD.DataType.string)
             literal.setType(this.compactIRI(schema, type));
         if (definition && definition.language !== void 0)
             literal.setLanguage(definition.language);

@@ -23,7 +23,7 @@ import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";

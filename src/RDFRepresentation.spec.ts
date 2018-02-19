@@ -1,5 +1,5 @@
 import AbstractContext from "./AbstractContext";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as PersistedDocument from "./PersistedDocument";
 
 import * as RDFRepresentation from "./RDFRepresentation";

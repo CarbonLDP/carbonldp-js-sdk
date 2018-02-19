@@ -29,7 +29,7 @@ import {
 	createDestination,
 	validateEventContext,
 } from "./Messaging/Utils";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";

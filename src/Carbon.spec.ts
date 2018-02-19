@@ -12,7 +12,7 @@ import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
-import * as NS from "./NS";
+import * as Vocabularies from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -194,11 +194,11 @@ describe( module( "Carbon" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"NS",
-			"Carbon/NS"
+			"Vocabularies",
+			"Carbon/Vocabularies"
 		), ():void => {
-			expect( Carbon.Class.NS ).toBeDefined();
-			expect( Carbon.Class.NS ).toBe( NS );
+			expect( Carbon.Class.Vocabularies ).toBeDefined();
+			expect( Carbon.Class.Vocabularies ).toBe( Vocabularies );
 		} );
 
 		it( reexports(
@@ -627,12 +627,12 @@ describe( module( "Carbon" ), ():void => {
 					responseText: `[ {
 					"@graph": [ {
 						"@id": "https://example.com/.system/platform/",
-						"@type": [ "${ NS.C.Class.VolatileResource }", "${ NS.C.Class.Platform }" ],
-						"${ NS.C.Predicate.buildDate }": [ {
+						"@type": [ "${ Vocabularies.C.Class.VolatileResource }", "${ Vocabularies.C.Class.Platform }" ],
+						"${ Vocabularies.C.Predicate.buildDate }": [ {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							"@value": "2016-06-01T00:00:00.000-06:00"
 						} ],
-						"${ NS.C.Predicate.version }": [ {
+						"${ Vocabularies.C.Predicate.version }": [ {
 							"@value": "1.0.0"
 						} ]
 					}

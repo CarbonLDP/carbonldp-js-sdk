@@ -1,5 +1,5 @@
 import * as Errors from "./Errors";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 

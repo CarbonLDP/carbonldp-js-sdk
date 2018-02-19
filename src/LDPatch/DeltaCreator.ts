@@ -16,7 +16,7 @@ import {
 
 import { Converter } from "../JSONLD";
 import { guessXSDType } from "../JSONLD/Utils";
-import { XSD } from "../NS";
+import { XSD } from "../Vocabularies/index";
 import {
 	ContainerType,
 	DigestedObjectSchema,

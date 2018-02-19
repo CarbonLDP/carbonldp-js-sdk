@@ -9,7 +9,7 @@ import {
 } from "sparqler/tokens";
 
 import { Converter } from "../JSONLD";
-import { XSD } from "../NS";
+import { XSD } from "../Vocabularies/index";
 import {
 	DigestedObjectSchema,
 	Digester,

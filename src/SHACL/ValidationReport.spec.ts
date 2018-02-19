@@ -1,5 +1,5 @@
 import { hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ValidationReport from "./ValidationReport";
 import DefaultExport from "./ValidationReport";
 import * as ValidationResult from "./ValidationResult";

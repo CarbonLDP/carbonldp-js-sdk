@@ -1,5 +1,5 @@
 import * as VolatileResource from "../../LDP/VolatileResource";
-import * as NS from "../../NS";
+import * as NS from "../../Vocabularies/index";
 import * as Pointer from "../../Pointer";
 import * as Resource from "../../Resource";
 import { clazz, hasDefaultExport, hasProperty, hasSignature, interfaze, method, module, OBLIGATORY, STATIC } from "../../test/JasmineExtender";

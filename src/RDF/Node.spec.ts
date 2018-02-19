@@ -1,5 +1,5 @@
 import AbstractContext from "./../AbstractContext";
-import * as XSD from "./../NS/XSD";
+import * as XSD from "../Vocabularies/XSD";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
 import {

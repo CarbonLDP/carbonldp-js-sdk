@@ -13,7 +13,7 @@ import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
-import * as NS from "./NS";
+import * as Vocabularies from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -45,7 +45,7 @@ export class Class extends AbstractContext.AbstractContext {
 	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
-	static NS:typeof NS = NS;
+	static Vocabularies:typeof Vocabularies = Vocabularies;
 	static ObjectSchema:typeof ObjectSchema = ObjectSchema;
 	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;

@@ -1,4 +1,4 @@
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
 import * as Message from "./Message";

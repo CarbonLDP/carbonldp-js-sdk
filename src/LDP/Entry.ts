@@ -1,5 +1,5 @@
 import { Class as BlankNode } from "./../BlankNode";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import { Class as ObjectSchema } from "./../ObjectSchema";
 
 export const SCHEMA:ObjectSchema = {
