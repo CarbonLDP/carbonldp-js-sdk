@@ -1,28 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Value = (function () {
-    function Value(value) {
-        this.value = value;
-    }
-    Value.prototype.toString = function () {
-        return this.value;
-    };
-    return Value;
-}());
-exports.Value = Value;
 var Class = (function () {
     function Class(valueOrValues) {
         this.values = [];
-        if (!valueOrValues) {
+        if (!valueOrValues)
             return;
-        }
-        else if (Array.isArray(valueOrValues)) {
+        if (Array.isArray(valueOrValues)) {
             this.values = valueOrValues;
         }
         else {
             this.setValues(valueOrValues);
         }
     }
+    Class.prototype.hasValue = function (value) {
+        return this.values.indexOf(value) !== -1;
+    };
     Class.prototype.toString = function () {
         return this.values.join(", ");
     };
@@ -31,7 +23,7 @@ var Class = (function () {
         var valueStrings = valuesString.split(",");
         for (var i = 0, length_1 = valueStrings.length; i < length_1; i++) {
             var valueString = valueStrings[i].trim();
-            this.values.push(new Value(valueString));
+            this.values.push(valueString);
         }
     };
     return Class;
