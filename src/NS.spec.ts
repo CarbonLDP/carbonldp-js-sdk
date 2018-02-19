@@ -9,7 +9,6 @@ import {
 import * as Utils from "./Utils";
 
 import * as C from "./NS/C";
-import * as CP from "./NS/CP";
 import * as CS from "./NS/CS";
 import * as LDP from "./NS/LDP";
 import * as RDF from "./NS/RDF";
@@ -33,15 +32,6 @@ describe( module( "Carbon/NS" ), ():void => {
 	), ():void => {
 		expect( NS.C ).toBeDefined();
 		expect( NS.C ).toBe( C );
-	} );
-
-	it( reexports(
-		STATIC,
-		"CP",
-		"Carbon/NS/CP"
-	), ():void => {
-		expect( NS.CP ).toBeDefined();
-		expect( NS.CP ).toBe( CP );
 	} );
 
 	it( reexports(
