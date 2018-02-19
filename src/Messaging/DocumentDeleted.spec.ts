@@ -21,7 +21,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 		expect( DocumentDeleted.RDF_CLASS ).toBeDefined();
 		expect( DocumentDeleted.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( DocumentDeleted.RDF_CLASS ).toBe( NS.C.Class.DocumentDeleted );
+		expect( DocumentDeleted.RDF_CLASS ).toBe( NS.C.DocumentDeleted );
 	} );
 
 	it( hasProperty(
@@ -37,7 +37,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 		} );
 
 		expect( DocumentDeleted.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 	} );

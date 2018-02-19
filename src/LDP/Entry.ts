@@ -4,10 +4,10 @@ import { Class as ObjectSchema } from "./../ObjectSchema";
 
 export const SCHEMA:ObjectSchema = {
 	"entryKey": {
-		"@id": NS.C.Predicate.entryKey,
+		"@id": NS.C.entryKey,
 	},
 	"entryValue": {
-		"@id": NS.C.Predicate.entryValue,
+		"@id": NS.C.entryValue,
 	},
 };
 

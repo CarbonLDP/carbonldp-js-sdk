@@ -13,7 +13,7 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
@@ -36,7 +36,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		expect( RemoveMemberAction.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( RemoveMemberAction.RDF_CLASS ) ).toBe( true );
 
-		expect( RemoveMemberAction.RDF_CLASS ).toBe( NS.C.Class.RemoveMemberAction );
+		expect( RemoveMemberAction.RDF_CLASS ).toBe( NS.C.RemoveMemberAction );
 	} );
 
 	it( hasProperty(
@@ -49,7 +49,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
 		expect( Utils.hasProperty( RemoveMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
 		expect( RemoveMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
-			"@id": NS.C.Predicate.targetMember,
+			"@id": NS.C.targetMember,
 			"@container": "@set",
 			"@type": "@id",
 		} );

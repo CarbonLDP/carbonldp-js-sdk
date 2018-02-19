@@ -33,7 +33,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 		expect( PlatformMetadata.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( PlatformMetadata.RDF_CLASS ) ).toBe( true );
 
-		expect( PlatformMetadata.RDF_CLASS ).toBe( NS.C.Class.Platform );
+		expect( PlatformMetadata.RDF_CLASS ).toBe( NS.C.Platform );
 	} );
 
 	it( hasProperty(
@@ -46,13 +46,13 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 
 		expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "version" ) ).toBe( true );
 		expect( PlatformMetadata.SCHEMA[ "version" ] ).toEqual( {
-			"@id": NS.C.Predicate.version,
+			"@id": NS.C.version,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "buildDate" ) ).toBe( true );
 		expect( PlatformMetadata.SCHEMA[ "buildDate" ] ).toEqual( {
-			"@id": NS.C.Predicate.buildDate,
+			"@id": NS.C.buildDate,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
 

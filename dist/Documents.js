@@ -338,8 +338,8 @@ var Class = (function () {
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var containerRetrievalPreferences = {
-                include: [NS.C.Class.PreferSelectedMembershipTriples],
-                omit: [NS.C.Class.PreferMembershipTriples],
+                include: [NS.C.PreferSelectedMembershipTriples],
+                omit: [NS.C.PreferMembershipTriples],
             };
             HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             var freeResources = FreeResources.Factory.create(_this);
@@ -355,13 +355,13 @@ var Class = (function () {
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             var containerRetrievalPreferences = {
                 include: [
-                    NS.C.Class.PreferMembershipTriples,
+                    NS.C.PreferMembershipTriples,
                 ],
                 omit: [
-                    NS.C.Class.PreferMembershipResources,
-                    NS.C.Class.PreferContainmentTriples,
-                    NS.C.Class.PreferContainmentResources,
-                    NS.C.Class.PreferContainer,
+                    NS.C.PreferMembershipResources,
+                    NS.C.PreferContainmentTriples,
+                    NS.C.PreferContainmentResources,
+                    NS.C.PreferContainer,
                 ],
             };
             HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
@@ -838,16 +838,16 @@ var Class = (function () {
         var construct = (_a = new tokens_1.ConstructToken()
             .addTriple(new tokens_1.SubjectToken(metadataVar)
             .addPredicate(new tokens_1.PredicateToken("a")
-            .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
-            .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
-            .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
+            .addObject(queryContext.compactIRI(NS.C.VolatileResource))
+            .addObject(queryContext.compactIRI(NS.C.QueryMetadata)))
+            .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.target))
             .addObject(queryContext.getVariable(targetName))))
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.PreferResultsContext] }, requestOptions, false);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.PreferDocumentETags] }, requestOptions, false);
         var response;
         return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
@@ -859,7 +859,7 @@ var Class = (function () {
             var targetSet = new Set(freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return _this.context ? x.target : x[NS.C.Predicate.target]; })
+                .map(function (x) { return _this.context ? x.target : x[NS.C.target]; })
                 .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
                 .map(function (x) { return x.id; }));
             var targetETag = targetDocument && targetDocument._etag;
@@ -868,13 +868,13 @@ var Class = (function () {
             freeResources
                 .getResources()
                 .filter(LDP.ResponseMetadata.Factory.is)
-                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
+                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.documentMetadata]; })
                 .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
                 .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
                 if (!documentMetadata)
                     return;
-                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument];
-                var eTag = documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag];
+                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.relatedDocument];
+                var eTag = documentMetadata.eTag || documentMetadata[NS.C.eTag];
                 if (relatedDocument._etag === void 0)
                     relatedDocument._etag = eTag;
                 if (relatedDocument._etag !== eTag)

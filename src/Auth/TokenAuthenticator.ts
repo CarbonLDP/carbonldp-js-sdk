@@ -4,7 +4,7 @@ import * as FreeResources from "./../FreeResources";
 import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";
 import * as LDP from "./../LDP";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";

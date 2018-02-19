@@ -21,7 +21,7 @@ describe( module( "Carbon/Messaging/DocumentCreatedDetails" ), ():void => {
 		expect( DocumentCreatedDetails.RDF_CLASS ).toBeDefined();
 		expect( DocumentCreatedDetails.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( DocumentCreatedDetails.RDF_CLASS ).toBe( NS.C.Class.DocumentCreatedDetails );
+		expect( DocumentCreatedDetails.RDF_CLASS ).toBe( NS.C.DocumentCreatedDetails );
 	} );
 
 	it( hasProperty(
@@ -37,7 +37,7 @@ describe( module( "Carbon/Messaging/DocumentCreatedDetails" ), ():void => {
 		} );
 
 		expect( DocumentCreatedDetails.SCHEMA[ "createdDocuments" ] ).toEqual( {
-			"@id": NS.C.Predicate.createdDocument,
+			"@id": NS.C.createdDocument,
 			"@type": "@id",
 			"@container": "@set",
 		} );

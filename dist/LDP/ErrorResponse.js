@@ -8,19 +8,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
-exports.RDF_CLASS = NS.C.Class.ErrorResponse;
+exports.RDF_CLASS = NS.C.ErrorResponse;
 exports.SCHEMA = {
     "errors": {
-        "@id": NS.C.Predicate.error,
+        "@id": NS.C.error,
         "@type": "@id",
         "@container": "@set",
     },
     "requestID": {
-        "@id": NS.C.Predicate.requestID,
+        "@id": NS.C.requestID,
         "@type": NS.XSD.DataType.string,
     },
     "statusCode": {
-        "@id": NS.C.Predicate.httpStatusCode,
+        "@id": NS.C.httpStatusCode,
         "@type": NS.XSD.DataType.int,
     },
 };

@@ -1,5 +1,5 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../NS";
+import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
 import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
 
@@ -21,7 +21,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 		expect( DocumentModified.RDF_CLASS ).toBeDefined();
 		expect( DocumentModified.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( DocumentModified.RDF_CLASS ).toBe( NS.C.Class.DocumentModified );
+		expect( DocumentModified.RDF_CLASS ).toBe( NS.C.DocumentModified );
 	} );
 
 	it( hasProperty(
@@ -37,7 +37,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 		} );
 
 		expect( DocumentModified.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 	} );

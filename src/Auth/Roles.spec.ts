@@ -15,7 +15,7 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
@@ -246,10 +246,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/",
 						"@type": [
-							"${ NS.C.Class.Document }",
+							"${ NS.C.Document }",
 							"http://example.com/ns#Role"
 						 ],
-						"${ NS.C.Predicate.accessPoint }": [ {
+						"${ NS.C.accessPoint }": [ {
 							"@id": "https://dev.carbonldp.com/.system/roles/a-role/users/"
 						} ],
 						"${ NS.CS.Predicate.name }": [ {
@@ -340,10 +340,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [
+							"${ NS.C.documentMetadata }": [
 								{
 									"@id": "_:02"
 								}
@@ -352,15 +352,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						{
 							"@id": "_:02",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [
+							"${ NS.C.eTag }": [
 								{
 									"@value": "\\"1234567890\\""
 								}
 							],
-							"${ NS.C.Predicate.relatedDocument }": [
+							"${ NS.C.relatedDocument }": [
 								{
 									"@id": "http://example.com/users/an-user/"
 								}
@@ -384,7 +384,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 								{
 									"@id": "http://example.com/.system/roles/a-role/users/",
 									"@type": [
-										"${ NS.C.Class.Document }",
+										"${ NS.C.Document }",
 										"http://www.w3.org/ns/ldp#RDFSource",
 										"http://www.w3.org/ns/ldp#DirectContainer",
 										"http://www.w3.org/ns/ldp#Container"
@@ -407,7 +407,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/users/an-user/",
-									"@type": [ "${ NS.C.Class.Document }" ],
+									"@type": [ "${ NS.C.Document }" ],
 									"http://www.w3.org/2001/vcard-rdf/3.0#email": [
 										{
 											"@value": "an-user@example.com"

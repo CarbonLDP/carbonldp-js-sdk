@@ -13,7 +13,7 @@ import {
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";

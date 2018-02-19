@@ -1,14 +1,14 @@
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.C.Class.AddMemberAction;
+export const RDF_CLASS:string = NS.C.AddMemberAction;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"targetMembers": {
-		"@id": NS.C.Predicate.targetMember,
+		"@id": NS.C.targetMember,
 		"@type": "@id",
 		"@container": "@set",
 	},

@@ -17,9 +17,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Message = __importStar(require("./Message"));
-exports.RDF_CLASS = NS.C.Class.MemberRemoved;
+exports.RDF_CLASS = NS.C.MemberRemoved;
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.Predicate.details,
+        "@id": NS.C.details,
         "@type": "@id",
     } });
 

@@ -23,7 +23,7 @@ import * as ACE from "./ACE";
 import * as Document from "./../Document";
 import Documents from "./../Documents";
 import Fragment from "./../Fragment";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";

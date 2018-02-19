@@ -16,7 +16,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as Errors from "./../Errors";
-import * as XSD from "./../NS/XSD";
+import * as XSD from "../Vocabularies/XSD";
 
 import Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";

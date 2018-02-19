@@ -1,4 +1,7 @@
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -7,8 +10,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var C = __importStar(require("./C"));
-exports.C = C;
 var CS = __importStar(require("./CS"));
 exports.CS = CS;
 var LDP = __importStar(require("./LDP"));
@@ -21,5 +22,6 @@ var VCARD = __importStar(require("./VCARD"));
 exports.VCARD = VCARD;
 var XSD = __importStar(require("./XSD"));
 exports.XSD = XSD;
+__export(require("./C"));
 
 //# sourceMappingURL=index.js.map

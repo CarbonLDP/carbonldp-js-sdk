@@ -1,4 +1,4 @@
-import { XSD } from "../NS";
+import { XSD } from "../Vocabularies/index";
 import {
 	isBoolean,
 	isDate,

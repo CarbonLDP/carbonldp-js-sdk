@@ -18,7 +18,7 @@ import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as PersistedUser from "./PersistedUser";
 import * as Token from "./Token";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
@@ -174,29 +174,29 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						responseText: `[ {
 							"@id": "_:00",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:01"
 							} ]
 						}, {
 							"@id": "_:01",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
 							"@type": [
 								"${ NS.CS.Class.Token }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.VolatileResource }"
 							],
 							"${ NS.CS.Predicate.tokenKey }": [ {
 								"@value": "token-value"
@@ -679,29 +679,29 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"${ NS.C.Class.ResponseMetadata }",
-							"${ NS.C.Class.VolatileResource }"
+							"${ NS.C.ResponseMetadata }",
+							"${ NS.C.VolatileResource }"
 						],
-						"${ NS.C.Predicate.documentMetadata }": [ {
+						"${ NS.C.documentMetadata }": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"${ NS.C.Class.DocumentMetadata }",
-							"${ NS.C.Class.VolatileResource }"
+							"${ NS.C.DocumentMetadata }",
+							"${ NS.C.VolatileResource }"
 						],
-						"${ NS.C.Predicate.eTag }": [ {
+						"${ NS.C.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"${ NS.C.Predicate.relatedDocument }": [ {
+						"${ NS.C.relatedDocument }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
 							"${ NS.CS.Class.Token }",
-							"${ NS.C.Class.VolatileResource }"
+							"${ NS.C.VolatileResource }"
 						],
 						"${ NS.CS.Predicate.tokenKey }": [ {
 							"@value": "token-value"

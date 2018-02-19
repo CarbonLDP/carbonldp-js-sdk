@@ -26,7 +26,7 @@ describe( module( "Carbon/Messaging/Message" ), ():void => {
 		} );
 
 		expect( Message.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 	} );

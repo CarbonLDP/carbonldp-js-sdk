@@ -440,8 +440,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
-				include: [ NS.C.Class.PreferSelectedMembershipTriples ],
-				omit: [ NS.C.Class.PreferMembershipTriples ],
+				include: [ NS.C.PreferSelectedMembershipTriples ],
+				omit: [ NS.C.PreferMembershipTriples ],
 			};
 			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
@@ -459,13 +459,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
 				include: [
-					NS.C.Class.PreferMembershipTriples,
+					NS.C.PreferMembershipTriples,
 				],
 				omit: [
-					NS.C.Class.PreferMembershipResources,
-					NS.C.Class.PreferContainmentTriples,
-					NS.C.Class.PreferContainmentResources,
-					NS.C.Class.PreferContainer,
+					NS.C.PreferMembershipResources,
+					NS.C.PreferContainmentTriples,
+					NS.C.PreferContainmentResources,
+					NS.C.PreferContainer,
 				],
 			};
 			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
@@ -1012,10 +1012,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
 				.addPredicate( new PredicateToken( "a" )
-					.addObject( queryContext.compactIRI( NS.C.Class.VolatileResource ) )
-					.addObject( queryContext.compactIRI( NS.C.Class.QueryMetadata ) )
+					.addObject( queryContext.compactIRI( NS.C.VolatileResource ) )
+					.addObject( queryContext.compactIRI( NS.C.QueryMetadata ) )
 				)
-				.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.Predicate.target ) )
+				.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.target ) )
 					.addObject( queryContext.getVariable( targetName ) )
 				)
 			)
@@ -1028,8 +1028,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
 
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferResultsContext ] }, requestOptions, false );
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.PreferResultsContext ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.PreferDocumentETags ] }, requestOptions, false );
 
 		let response:HTTP.Response.Class;
 		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
@@ -1044,7 +1044,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
 				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => this.context ? x.target : x[ NS.C.Predicate.target ] )
+				.map( x => this.context ? x.target : x[ NS.C.target ] )
 				// Alternative to flatMap
 				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
 				.map( x => x.id )
@@ -1056,13 +1056,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			freeResources
 				.getResources()
 				.filter( LDP.ResponseMetadata.Factory.is )
-				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.Predicate.documentMetadata ] )
+				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.documentMetadata ] )
 				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
 				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
 					if( ! documentMetadata ) return;
 
-					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.Predicate.relatedDocument ];
-					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.Predicate.eTag ];
+					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.relatedDocument ];
+					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.eTag ];
 
 					if( relatedDocument._etag === void 0 ) relatedDocument._etag = eTag;
 					if( relatedDocument._etag !== eTag ) relatedDocument._etag = null;

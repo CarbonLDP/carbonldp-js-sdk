@@ -1,6 +1,6 @@
 import * as List from "./List";
 import * as Literal from "./Literal";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Pointer from "./../Pointer";
 import * as RDFNode from "./Node";
 

@@ -8,10 +8,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
-exports.RDF_CLASS = NS.C.Class.ValidationError;
+exports.RDF_CLASS = NS.C.ValidationError;
 exports.SCHEMA = {
     "errorDetails": {
-        "@id": NS.C.Predicate.errorDetails,
+        "@id": NS.C.errorDetails,
         "@type": "@id",
     },
 };

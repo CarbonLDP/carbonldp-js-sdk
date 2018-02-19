@@ -10,10 +10,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Resource = __importStar(require("./../Resource"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.C.Class.RemoveMemberAction;
+exports.RDF_CLASS = NS.C.RemoveMemberAction;
 exports.SCHEMA = {
     "targetMembers": {
-        "@id": NS.C.Predicate.targetMember,
+        "@id": NS.C.targetMember,
         "@type": "@id",
         "@container": "@set",
     },

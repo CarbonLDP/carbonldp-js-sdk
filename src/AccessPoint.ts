@@ -2,7 +2,7 @@ import * as LDP from "./LDP";
 import * as NS from "./Vocabularies/index";
 import * as Pointer from "./Pointer";
 
-export const RDF_CLASS:string = NS.C.Class.AccessPoint;
+export const RDF_CLASS:string = NS.C.AccessPoint;
 
 export interface Class {
 	hasMemberRelation:string | Pointer.Class;

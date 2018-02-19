@@ -21,7 +21,7 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 		expect( ChildCreated.RDF_CLASS ).toBeDefined();
 		expect( ChildCreated.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ChildCreated.RDF_CLASS ).toBe( NS.C.Class.ChildCreated );
+		expect( ChildCreated.RDF_CLASS ).toBe( NS.C.ChildCreated );
 	} );
 
 	it( hasProperty(
@@ -38,12 +38,12 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 		} );
 
 		expect( ChildCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 
 		expect( ChildCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.Predicate.details,
+			"@id": NS.C.details,
 			"@type": "@id",
 		} );
 	} );

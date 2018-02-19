@@ -22,7 +22,7 @@ describe( module( "Carbon/Messaging/MemberAdded" ), ():void => {
 		expect( MemberAdded.RDF_CLASS ).toBeDefined();
 		expect( MemberAdded.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( MemberAdded.RDF_CLASS ).toBe( NS.C.Class.MemberAdded );
+		expect( MemberAdded.RDF_CLASS ).toBe( NS.C.MemberAdded );
 	} );
 
 	it( hasProperty(
@@ -39,12 +39,12 @@ describe( module( "Carbon/Messaging/MemberAdded" ), ():void => {
 		} );
 
 		expect( MemberAdded.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 
 		expect( MemberAdded.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.Predicate.details,
+			"@id": NS.C.details,
 			"@type": "@id",
 		} );
 	} );

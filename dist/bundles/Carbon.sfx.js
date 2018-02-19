@@ -464,6 +464,9 @@ exports.UUID = UUID;
 
 "use strict";
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -472,20 +475,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var C = __importStar(__webpack_require__(168));
-exports.C = C;
-var CS = __importStar(__webpack_require__(169));
+var CS = __importStar(__webpack_require__(168));
 exports.CS = CS;
-var LDP = __importStar(__webpack_require__(170));
+var LDP = __importStar(__webpack_require__(169));
 exports.LDP = LDP;
-var RDF = __importStar(__webpack_require__(171));
+var RDF = __importStar(__webpack_require__(170));
 exports.RDF = RDF;
-var SHACL = __importStar(__webpack_require__(172));
+var SHACL = __importStar(__webpack_require__(171));
 exports.SHACL = SHACL;
-var VCARD = __importStar(__webpack_require__(173));
+var VCARD = __importStar(__webpack_require__(172));
 exports.VCARD = VCARD;
 var XSD = __importStar(__webpack_require__(43));
 exports.XSD = XSD;
+__export(__webpack_require__(173));
 
 
 /***/ }),
@@ -2929,7 +2931,7 @@ var Pointer = __importStar(__webpack_require__(13));
 var RDF = __importStar(__webpack_require__(10));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.C.Class.Document;
+exports.RDF_CLASS = NS.C.Document;
 exports.SCHEMA = {
     "contains": {
         "@id": NS.LDP.Predicate.contains,
@@ -2958,19 +2960,19 @@ exports.SCHEMA = {
         "@type": "@id",
     },
     "created": {
-        "@id": NS.C.Predicate.created,
+        "@id": NS.C.created,
         "@type": NS.XSD.DataType.dateTime,
     },
     "modified": {
-        "@id": NS.C.Predicate.modified,
+        "@id": NS.C.modified,
         "@type": NS.XSD.DataType.dateTime,
     },
     "defaultInteractionModel": {
-        "@id": NS.C.Predicate.defaultInteractionModel,
+        "@id": NS.C.defaultInteractionModel,
         "@type": "@id",
     },
     "accessPoints": {
-        "@id": NS.C.Predicate.accessPoint,
+        "@id": NS.C.accessPoint,
         "@type": "@id",
         "@container": "@set",
     },
@@ -3307,7 +3309,7 @@ var NS = __importStar(__webpack_require__(1));
 var Utils_1 = __webpack_require__(0);
 exports.SCHEMA = {
     "target": {
-        "@id": NS.C.Predicate.target,
+        "@id": NS.C.target,
         "@type": "@id",
     },
 };
@@ -6210,7 +6212,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Resource = __importStar(__webpack_require__(9));
-exports.RDF_CLASS = NS.C.Class.VolatileResource;
+exports.RDF_CLASS = NS.C.VolatileResource;
 var Factory = (function () {
     function Factory() {
     }
@@ -6900,7 +6902,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Message = __importStar(__webpack_require__(25));
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.Predicate.details,
+        "@id": NS.C.details,
         "@type": "@id",
     } });
 
@@ -6922,7 +6924,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 exports.SCHEMA = {
     "members": {
-        "@id": NS.C.Predicate.member,
+        "@id": NS.C.member,
         "@type": "@id",
         "@container": "@set",
     },
@@ -9996,8 +9998,8 @@ var Class = (function () {
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var containerRetrievalPreferences = {
-                include: [NS.C.Class.PreferSelectedMembershipTriples],
-                omit: [NS.C.Class.PreferMembershipTriples],
+                include: [NS.C.PreferSelectedMembershipTriples],
+                omit: [NS.C.PreferMembershipTriples],
             };
             HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             var freeResources = FreeResources.Factory.create(_this);
@@ -10013,13 +10015,13 @@ var Class = (function () {
             _this.setDefaultRequestOptions(requestOptions, NS.LDP.Class.Container);
             var containerRetrievalPreferences = {
                 include: [
-                    NS.C.Class.PreferMembershipTriples,
+                    NS.C.PreferMembershipTriples,
                 ],
                 omit: [
-                    NS.C.Class.PreferMembershipResources,
-                    NS.C.Class.PreferContainmentTriples,
-                    NS.C.Class.PreferContainmentResources,
-                    NS.C.Class.PreferContainer,
+                    NS.C.PreferMembershipResources,
+                    NS.C.PreferContainmentTriples,
+                    NS.C.PreferContainmentResources,
+                    NS.C.PreferContainer,
                 ],
             };
             HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
@@ -10496,16 +10498,16 @@ var Class = (function () {
         var construct = (_a = new tokens_1.ConstructToken()
             .addTriple(new tokens_1.SubjectToken(metadataVar)
             .addPredicate(new tokens_1.PredicateToken("a")
-            .addObject(queryContext.compactIRI(NS.C.Class.VolatileResource))
-            .addObject(queryContext.compactIRI(NS.C.Class.QueryMetadata)))
-            .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.Predicate.target))
+            .addObject(queryContext.compactIRI(NS.C.VolatileResource))
+            .addObject(queryContext.compactIRI(NS.C.QueryMetadata)))
+            .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(NS.C.target))
             .addObject(queryContext.getVariable(targetName))))
             .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferResultsContext] }, requestOptions, false);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.PreferResultsContext] }, requestOptions, false);
+        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.PreferDocumentETags] }, requestOptions, false);
         var response;
         return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
@@ -10517,7 +10519,7 @@ var Class = (function () {
             var targetSet = new Set(freeResources
                 .getResources()
                 .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
-                .map(function (x) { return _this.context ? x.target : x[NS.C.Predicate.target]; })
+                .map(function (x) { return _this.context ? x.target : x[NS.C.target]; })
                 .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
                 .map(function (x) { return x.id; }));
             var targetETag = targetDocument && targetDocument._etag;
@@ -10526,13 +10528,13 @@ var Class = (function () {
             freeResources
                 .getResources()
                 .filter(LDP.ResponseMetadata.Factory.is)
-                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.Predicate.documentMetadata]; })
+                .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[NS.C.documentMetadata]; })
                 .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
                 .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
                 if (!documentMetadata)
                     return;
-                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.Predicate.relatedDocument];
-                var eTag = documentMetadata.eTag || documentMetadata[NS.C.Predicate.eTag];
+                var relatedDocument = documentMetadata.relatedDocument || documentMetadata[NS.C.relatedDocument];
+                var eTag = documentMetadata.eTag || documentMetadata[NS.C.eTag];
                 if (relatedDocument._etag === void 0)
                     relatedDocument._etag = eTag;
                 if (relatedDocument._etag !== eTag)
@@ -10825,7 +10827,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP = __importStar(__webpack_require__(36));
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.C.Class.AccessPoint;
+exports.RDF_CLASS = NS.C.AccessPoint;
 var Factory = (function () {
     function Factory() {
     }
@@ -14069,328 +14071,6 @@ exports.default = AbstractContext;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.namespace = "https://carbonldp.com/ns/v1/platform#";
-var Class = (function () {
-    function Class() {
-    }
-    Object.defineProperty(Class, "AccessPoint", {
-        get: function () { return exports.namespace + "AccessPoint"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AccessPointCreated", {
-        get: function () { return exports.namespace + "AccessPointCreated"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "AddMemberAction", {
-        get: function () { return exports.namespace + "AddMemberAction"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ChildCreated", {
-        get: function () { return exports.namespace + "ChildCreatedEvent"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Document", {
-        get: function () { return exports.namespace + "Document"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "DocumentCreatedDetails", {
-        get: function () { return exports.namespace + "DocumentCreatedEventDetails"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "DocumentDeleted", {
-        get: function () { return exports.namespace + "DocumentDeleted"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "DocumentMetadata", {
-        get: function () { return exports.namespace + "DocumentMetadata"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "DocumentModified", {
-        get: function () { return exports.namespace + "DocumentModified"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ErrorResponse", {
-        get: function () { return exports.namespace + "ErrorResponse"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Error", {
-        get: function () { return exports.namespace + "Error"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Instance", {
-        get: function () { return exports.namespace + "Instance"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Map", {
-        get: function () { return exports.namespace + "Map"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "MemberAdded", {
-        get: function () { return exports.namespace + "MemberAddedEvent"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "MemberAddedDetails", {
-        get: function () { return exports.namespace + "MemberAddedEventDetails"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "MemberRemoved", {
-        get: function () { return exports.namespace + "MemberRemovedEvent"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "MemberRemovedDetails", {
-        get: function () { return exports.namespace + "MemberRemovedEventDetails"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "NonReadableMembershipResourceTriples", {
-        get: function () { return exports.namespace + "NonReadableMembershipResourceTriples"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "Platform", {
-        get: function () { return exports.namespace + "Platform"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferContainer", {
-        get: function () { return exports.namespace + "PreferContainer"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferContainmentResources", {
-        get: function () { return exports.namespace + "PreferContainmentResources"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferContainmentTriples", {
-        get: function () { return exports.namespace + "PreferContainmentTriples"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferDocumentETags", {
-        get: function () { return exports.namespace + "PreferDocumentETags"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferMembershipResources", {
-        get: function () { return exports.namespace + "PreferMembershipResources"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferMembershipTriples", {
-        get: function () { return exports.namespace + "PreferMembershipTriples"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferResultsContext", {
-        get: function () { return exports.namespace + "PreferResultsContext"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "PreferSelectedMembershipTriples", {
-        get: function () { return exports.namespace + "PreferSelectedMembershipTriples"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "QueryMetadata", {
-        get: function () { return exports.namespace + "QueryMetadata"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "RDFRepresentation", {
-        get: function () { return exports.namespace + "RDFRepresentation"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "RemoveMemberAction", {
-        get: function () { return exports.namespace + "RemoveMemberAction"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ResponseMetadata", {
-        get: function () { return exports.namespace + "ResponseMetadata"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ValidationError", {
-        get: function () { return exports.namespace + "ValidationError"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "VolatileResource", {
-        get: function () { return exports.namespace + "VolatileResource"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}());
-exports.Class = Class;
-var Predicate = (function () {
-    function Predicate() {
-    }
-    Object.defineProperty(Predicate, "accessPoint", {
-        get: function () { return exports.namespace + "accessPoint"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "bNodesMap", {
-        get: function () { return exports.namespace + "bNodesMap"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "buildDate", {
-        get: function () { return exports.namespace + "buildDate"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "created", {
-        get: function () { return exports.namespace + "created"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "createdDocument", {
-        get: function () { return exports.namespace + "createdDocument"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "details", {
-        get: function () { return exports.namespace + "details"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "defaultInteractionModel", {
-        get: function () { return exports.namespace + "defaultInteractionModel"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "documentMetadata", {
-        get: function () { return exports.namespace + "documentMetadata"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "entry", {
-        get: function () { return exports.namespace + "entry"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "error", {
-        get: function () { return exports.namespace + "error"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "errorCode", {
-        get: function () { return exports.namespace + "errorCode"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "errorDetails", {
-        get: function () { return exports.namespace + "errorDetails"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "errorMessage", {
-        get: function () { return exports.namespace + "errorMessage"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "errorParameters", {
-        get: function () { return exports.namespace + "errorParameters"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "eTag", {
-        get: function () { return exports.namespace + "eTag"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "httpStatusCode", {
-        get: function () { return exports.namespace + "httpStatusCode"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "entryKey", {
-        get: function () { return exports.namespace + "key"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "mediaType", {
-        get: function () { return exports.namespace + "mediaType"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "member", {
-        get: function () { return exports.namespace + "member"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "modified", {
-        get: function () { return exports.namespace + "modified"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "requestID", {
-        get: function () { return exports.namespace + "requestID"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "relatedDocument", {
-        get: function () { return exports.namespace + "relatedDocument"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "size", {
-        get: function () { return exports.namespace + "size"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "target", {
-        get: function () { return exports.namespace + "target"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "targetMember", {
-        get: function () { return exports.namespace + "targetMember"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "entryValue", {
-        get: function () { return exports.namespace + "value"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "version", {
-        get: function () { return exports.namespace + "version"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Predicate;
-}());
-exports.Predicate = Predicate;
-
-
-/***/ }),
-/* 169 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var namespace = "https://carbonldp.com/ns/v1/security#";
 exports.namespace = namespace;
 var Class = (function () {
@@ -14618,7 +14298,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 170 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14776,7 +14456,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 171 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14794,7 +14474,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 172 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14881,7 +14561,7 @@ exports.Predicate = Predicate;
 
 
 /***/ }),
-/* 173 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14899,6 +14579,79 @@ var Predicate = (function () {
     return Predicate;
 }());
 exports.Predicate = Predicate;
+
+
+/***/ }),
+/* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var C;
+(function (C) {
+    C.namespace = "https://carbonldp.com/ns/v1/platform#";
+    C.AccessPoint = C.namespace + "AccessPoint";
+    C.AccessPointCreated = C.namespace + "AccessPointCreated";
+    C.AddMemberAction = C.namespace + "AddMemberAction";
+    C.ChildCreated = C.namespace + "ChildCreatedEvent";
+    C.Document = C.namespace + "Document";
+    C.DocumentCreatedDetails = C.namespace + "DocumentCreatedEventDetails";
+    C.DocumentDeleted = C.namespace + "DocumentDeleted";
+    C.DocumentMetadata = C.namespace + "DocumentMetadata";
+    C.DocumentModified = C.namespace + "DocumentModified";
+    C.ErrorResponse = C.namespace + "ErrorResponse";
+    C.Error = C.namespace + "Error";
+    C.Instance = C.namespace + "Instance";
+    C.Map = C.namespace + "Map";
+    C.MemberAdded = C.namespace + "MemberAddedEvent";
+    C.MemberAddedDetails = C.namespace + "MemberAddedEventDetails";
+    C.MemberRemoved = C.namespace + "MemberRemovedEvent";
+    C.MemberRemovedDetails = C.namespace + "MemberRemovedEventDetails";
+    C.NonReadableMembershipResourceTriples = C.namespace + "NonReadableMembershipResourceTriples";
+    C.Platform = C.namespace + "Platform";
+    C.PreferContainer = C.namespace + "PreferContainer";
+    C.PreferContainmentResources = C.namespace + "PreferContainmentResources";
+    C.PreferContainmentTriples = C.namespace + "PreferContainmentTriples";
+    C.PreferDocumentETags = C.namespace + "PreferDocumentETags";
+    C.PreferMembershipResources = C.namespace + "PreferMembershipResources";
+    C.PreferMembershipTriples = C.namespace + "PreferMembershipTriples";
+    C.PreferResultsContext = C.namespace + "PreferResultsContext";
+    C.PreferSelectedMembershipTriples = C.namespace + "PreferSelectedMembershipTriples";
+    C.QueryMetadata = C.namespace + "QueryMetadata";
+    C.RDFRepresentation = C.namespace + "RDFRepresentation";
+    C.RemoveMemberAction = C.namespace + "RemoveMemberAction";
+    C.ResponseMetadata = C.namespace + "ResponseMetadata";
+    C.ValidationError = C.namespace + "ValidationError";
+    C.VolatileResource = C.namespace + "VolatileResource";
+    C.accessPoint = C.namespace + "accessPoint";
+    C.bNodesMap = C.namespace + "bNodesMap";
+    C.buildDate = C.namespace + "buildDate";
+    C.created = C.namespace + "created";
+    C.createdDocument = C.namespace + "createdDocument";
+    C.details = C.namespace + "details";
+    C.defaultInteractionModel = C.namespace + "defaultInteractionModel";
+    C.documentMetadata = C.namespace + "documentMetadata";
+    C.entry = C.namespace + "entry";
+    C.entryKey = C.namespace + "key";
+    C.entryValue = C.namespace + "value";
+    C.error = C.namespace + "error";
+    C.errorCode = C.namespace + "errorCode";
+    C.errorDetails = C.namespace + "errorDetails";
+    C.errorMessage = C.namespace + "errorMessage";
+    C.errorParameters = C.namespace + "errorParameters";
+    C.eTag = C.namespace + "eTag";
+    C.httpStatusCode = C.namespace + "httpStatusCode";
+    C.mediaType = C.namespace + "mediaType";
+    C.member = C.namespace + "member";
+    C.modified = C.namespace + "modified";
+    C.requestID = C.namespace + "requestID";
+    C.relatedDocument = C.namespace + "relatedDocument";
+    C.size = C.namespace + "size";
+    C.target = C.namespace + "target";
+    C.targetMember = C.namespace + "targetMember";
+    C.version = C.namespace + "version";
+})(C = exports.C || (exports.C = {}));
 
 
 /***/ }),
@@ -17319,10 +17072,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var VolatileResource = __importStar(__webpack_require__(62));
-exports.RDF_CLASS = NS.C.Class.QueryMetadata;
+exports.RDF_CLASS = NS.C.QueryMetadata;
 exports.SCHEMA = {
     "target": {
-        "@id": NS.C.Predicate.target,
+        "@id": NS.C.target,
         "@type": "@id",
         "@container": "@set",
     },
@@ -17778,10 +17531,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.C.Class.AddMemberAction;
+exports.RDF_CLASS = NS.C.AddMemberAction;
 exports.SCHEMA = {
     "targetMembers": {
-        "@id": NS.C.Predicate.targetMember,
+        "@id": NS.C.targetMember,
         "@type": "@id",
         "@container": "@set",
     },
@@ -17877,18 +17630,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Utils = __importStar(__webpack_require__(0));
 var VolatileResource = __importStar(__webpack_require__(62));
-exports.RDF_CLASS = NS.C.Class.DocumentMetadata;
+exports.RDF_CLASS = NS.C.DocumentMetadata;
 exports.SCHEMA = {
     "relatedDocument": {
-        "@id": NS.C.Predicate.relatedDocument,
+        "@id": NS.C.relatedDocument,
         "@type": "@id",
     },
     "eTag": {
-        "@id": NS.C.Predicate.eTag,
+        "@id": NS.C.eTag,
         "@type": NS.XSD.DataType.string,
     },
     "bNodesMap": {
-        "@id": NS.C.Predicate.bNodesMap,
+        "@id": NS.C.bNodesMap,
         "@type": "@id",
     },
 };
@@ -17925,10 +17678,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 exports.SCHEMA = {
     "entryKey": {
-        "@id": NS.C.Predicate.entryKey,
+        "@id": NS.C.entryKey,
     },
     "entryValue": {
-        "@id": NS.C.Predicate.entryValue,
+        "@id": NS.C.entryValue,
     },
 };
 
@@ -17948,18 +17701,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.C.Class.Error;
+exports.RDF_CLASS = NS.C.Error;
 exports.SCHEMA = {
     "errorCode": {
-        "@id": NS.C.Predicate.errorCode,
+        "@id": NS.C.errorCode,
         "@type": NS.XSD.DataType.string,
     },
     "errorMessage": {
-        "@id": NS.C.Predicate.errorMessage,
+        "@id": NS.C.errorMessage,
         "@language": "en",
     },
     "errorParameters": {
-        "@id": NS.C.Predicate.errorParameters,
+        "@id": NS.C.errorParameters,
         "@type": "@id",
     },
 };
@@ -17980,19 +17733,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.C.Class.ErrorResponse;
+exports.RDF_CLASS = NS.C.ErrorResponse;
 exports.SCHEMA = {
     "errors": {
-        "@id": NS.C.Predicate.error,
+        "@id": NS.C.error,
         "@type": "@id",
         "@container": "@set",
     },
     "requestID": {
-        "@id": NS.C.Predicate.requestID,
+        "@id": NS.C.requestID,
         "@type": NS.XSD.DataType.string,
     },
     "statusCode": {
-        "@id": NS.C.Predicate.httpStatusCode,
+        "@id": NS.C.httpStatusCode,
         "@type": NS.XSD.DataType.int,
     },
 };
@@ -18026,10 +17779,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Resource_1 = __webpack_require__(9);
-exports.RDF_CLASS = NS.C.Class.Map;
+exports.RDF_CLASS = NS.C.Map;
 exports.SCHEMA = {
     "entries": {
-        "@id": NS.C.Predicate.entry,
+        "@id": NS.C.entry,
         "@type": "@id",
         "@container": "@set",
     },
@@ -18064,10 +17817,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.C.Class.RemoveMemberAction;
+exports.RDF_CLASS = NS.C.RemoveMemberAction;
 exports.SCHEMA = {
     "targetMembers": {
-        "@id": NS.C.Predicate.targetMember,
+        "@id": NS.C.targetMember,
         "@type": "@id",
         "@container": "@set",
     },
@@ -18105,10 +17858,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var VolatileResource = __importStar(__webpack_require__(62));
-exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
+exports.RDF_CLASS = NS.C.ResponseMetadata;
 exports.SCHEMA = {
     "documentsMetadata": {
-        "@id": NS.C.Predicate.documentMetadata,
+        "@id": NS.C.documentMetadata,
         "@type": "@id",
         "@container": "@set",
     },
@@ -18140,10 +17893,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.C.Class.ValidationError;
+exports.RDF_CLASS = NS.C.ValidationError;
 exports.SCHEMA = {
     "errorDetails": {
-        "@id": NS.C.Predicate.errorDetails,
+        "@id": NS.C.errorDetails,
         "@type": "@id",
     },
 };
@@ -18581,7 +18334,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var DocumentCreated = __importStar(__webpack_require__(68));
-exports.RDF_CLASS = NS.C.Class.AccessPointCreated;
+exports.RDF_CLASS = NS.C.AccessPointCreated;
 exports.SCHEMA = DocumentCreated.SCHEMA;
 
 
@@ -18601,7 +18354,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var DocumentCreated = __importStar(__webpack_require__(68));
-exports.RDF_CLASS = NS.C.Class.ChildCreated;
+exports.RDF_CLASS = NS.C.ChildCreated;
 exports.SCHEMA = DocumentCreated.SCHEMA;
 
 
@@ -18620,10 +18373,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.C.Class.DocumentCreatedDetails;
+exports.RDF_CLASS = NS.C.DocumentCreatedDetails;
 exports.SCHEMA = {
     "createdDocuments": {
-        "@id": NS.C.Predicate.createdDocument,
+        "@id": NS.C.createdDocument,
         "@type": "@id",
         "@container": "@set",
     },
@@ -18646,7 +18399,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Message = __importStar(__webpack_require__(25));
-exports.RDF_CLASS = NS.C.Class.DocumentDeleted;
+exports.RDF_CLASS = NS.C.DocumentDeleted;
 exports.SCHEMA = Message.SCHEMA;
 
 
@@ -18666,7 +18419,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Message = __importStar(__webpack_require__(25));
-exports.RDF_CLASS = NS.C.Class.DocumentModified;
+exports.RDF_CLASS = NS.C.DocumentModified;
 exports.SCHEMA = Message.SCHEMA;
 
 
@@ -18714,9 +18467,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Message = __importStar(__webpack_require__(25));
-exports.RDF_CLASS = NS.C.Class.MemberAdded;
+exports.RDF_CLASS = NS.C.MemberAdded;
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.Predicate.details,
+        "@id": NS.C.details,
         "@type": "@id",
     } });
 
@@ -18737,7 +18490,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var MemberDetails = __importStar(__webpack_require__(69));
-exports.RDF_CLASS = NS.C.Class.MemberAddedDetails;
+exports.RDF_CLASS = NS.C.MemberAddedDetails;
 exports.SCHEMA = MemberDetails.SCHEMA;
 
 
@@ -18765,9 +18518,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var Message = __importStar(__webpack_require__(25));
-exports.RDF_CLASS = NS.C.Class.MemberRemoved;
+exports.RDF_CLASS = NS.C.MemberRemoved;
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.Predicate.details,
+        "@id": NS.C.details,
         "@type": "@id",
     } });
 
@@ -18788,7 +18541,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var MemberDetails = __importStar(__webpack_require__(69));
-exports.RDF_CLASS = NS.C.Class.MemberRemovedDetails;
+exports.RDF_CLASS = NS.C.MemberRemovedDetails;
 exports.SCHEMA = MemberDetails.SCHEMA;
 
 
@@ -23399,14 +23152,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
 var PersistedDocument = __importStar(__webpack_require__(34));
 var Utils = __importStar(__webpack_require__(0));
-exports.RDF_CLASS = NS.C.Class.RDFRepresentation;
+exports.RDF_CLASS = NS.C.RDFRepresentation;
 exports.SCHEMA = {
     "mediaType": {
-        "@id": NS.C.Predicate.mediaType,
+        "@id": NS.C.mediaType,
         "@type": NS.XSD.DataType.string,
     },
     "size": {
-        "@id": NS.C.Predicate.size,
+        "@id": NS.C.size,
         "@type": NS.XSD.DataType.long,
     },
 };
@@ -23526,14 +23279,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.C.Class.Platform;
+exports.RDF_CLASS = NS.C.Platform;
 exports.SCHEMA = {
     "version": {
-        "@id": NS.C.Predicate.version,
+        "@id": NS.C.version,
         "@type": NS.XSD.DataType.string,
     },
     "buildDate": {
-        "@id": NS.C.Predicate.buildDate,
+        "@id": NS.C.buildDate,
         "@type": NS.XSD.DataType.dateTime,
     },
 };

@@ -3,7 +3,7 @@ import { LiteralToken } from "sparqler/tokens";
 
 import { isDate } from "../../Utils";
 import { IllegalArgumentError } from "./../../Errors";
-import * as XSD from "./../../NS/XSD";
+import * as XSD from "../../Vocabularies/XSD";
 import * as QueryContext from "./QueryContext";
 
 export class Class {

@@ -20,7 +20,7 @@ var Pointer = __importStar(require("./Pointer"));
 var RDF = __importStar(require("./RDF"));
 var Resource = __importStar(require("./Resource"));
 var Utils = __importStar(require("./Utils"));
-exports.RDF_CLASS = NS.C.Class.Document;
+exports.RDF_CLASS = NS.C.Document;
 exports.SCHEMA = {
     "contains": {
         "@id": NS.LDP.Predicate.contains,
@@ -49,19 +49,19 @@ exports.SCHEMA = {
         "@type": "@id",
     },
     "created": {
-        "@id": NS.C.Predicate.created,
+        "@id": NS.C.created,
         "@type": NS.XSD.DataType.dateTime,
     },
     "modified": {
-        "@id": NS.C.Predicate.modified,
+        "@id": NS.C.modified,
         "@type": NS.XSD.DataType.dateTime,
     },
     "defaultInteractionModel": {
-        "@id": NS.C.Predicate.defaultInteractionModel,
+        "@id": NS.C.defaultInteractionModel,
         "@type": "@id",
     },
     "accessPoints": {
-        "@id": NS.C.Predicate.accessPoint,
+        "@id": NS.C.accessPoint,
         "@type": "@id",
         "@container": "@set",
     },

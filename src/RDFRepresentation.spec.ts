@@ -33,7 +33,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( RDFRepresentation.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( RDFRepresentation.RDF_CLASS ) ).toBe( true );
 
-		expect( RDFRepresentation.RDF_CLASS ).toBe( NS.C.Class.RDFRepresentation );
+		expect( RDFRepresentation.RDF_CLASS ).toBe( NS.C.RDFRepresentation );
 	} );
 
 	it( hasProperty(
@@ -46,13 +46,13 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "mediaType" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual( {
-			"@id": NS.C.Predicate.mediaType,
+			"@id": NS.C.mediaType,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "size" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "size" ] ).toEqual( {
-			"@id": NS.C.Predicate.size,
+			"@id": NS.C.size,
 			"@type": NS.XSD.DataType.long,
 		} );
 	} );

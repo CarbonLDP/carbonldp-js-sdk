@@ -1,5 +1,5 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../NS";
+import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
 import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
 
@@ -21,7 +21,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 		expect( AccessPointCreated.RDF_CLASS ).toBeDefined();
 		expect( AccessPointCreated.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( AccessPointCreated.RDF_CLASS ).toBe( NS.C.Class.AccessPointCreated );
+		expect( AccessPointCreated.RDF_CLASS ).toBe( NS.C.AccessPointCreated );
 	} );
 
 	it( hasProperty(
@@ -38,12 +38,12 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 		} );
 
 		expect( AccessPointCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 
 		expect( AccessPointCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.Predicate.details,
+			"@id": NS.C.details,
 			"@type": "@id",
 		} );
 	} );

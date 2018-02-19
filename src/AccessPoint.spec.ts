@@ -15,7 +15,7 @@ import {
 	hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as Pointer from "./Pointer";
 import * as DirectContainer from "./LDP/DirectContainer";
 
@@ -37,7 +37,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 		expect( AccessPoint.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( AccessPoint.RDF_CLASS ) ).toBe( true );
 
-		expect( AccessPoint.RDF_CLASS ).toBe( NS.C.Class.AccessPoint );
+		expect( AccessPoint.RDF_CLASS ).toBe( NS.C.AccessPoint );
 	} );
 
 	describe( interfaze(

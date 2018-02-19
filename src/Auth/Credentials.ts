@@ -1,5 +1,5 @@
 import * as Document from "./../Document";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import { IllegalArgumentError } from "./../Errors";
 

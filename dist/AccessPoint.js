@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP = __importStar(require("./LDP"));
 var NS = __importStar(require("./Vocabularies/index"));
-exports.RDF_CLASS = NS.C.Class.AccessPoint;
+exports.RDF_CLASS = NS.C.AccessPoint;
 var Factory = (function () {
     function Factory() {
     }

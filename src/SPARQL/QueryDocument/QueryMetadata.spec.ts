@@ -24,7 +24,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		"string"
 	), ():void => {
 		expect( QueryMetadata.RDF_CLASS ).toBeDefined();
-		expect( QueryMetadata.RDF_CLASS ).toBe( NS.C.Class.QueryMetadata );
+		expect( QueryMetadata.RDF_CLASS ).toBe( NS.C.QueryMetadata );
 	} );
 
 	it( hasProperty(
@@ -40,7 +40,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		} );
 
 		expect( QueryMetadata.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -98,7 +98,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 			it( "should verify the resource RDF_CLASS", ():void => {
 				const target:QueryMetadata.Class = Resource.Factory.createFrom( {
-					types: [ NS.C.Class.VolatileResource, NS.C.Class.QueryMetadata ],
+					types: [ NS.C.VolatileResource, NS.C.QueryMetadata ],
 					"target": null,
 				} );
 

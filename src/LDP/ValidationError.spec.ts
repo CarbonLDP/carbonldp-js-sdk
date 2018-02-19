@@ -1,5 +1,5 @@
 import { extendsClass, hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Resource from "./../Resource";
 
 import * as ValidationError from "./ValidationError";
@@ -20,7 +20,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		expect( ValidationError.RDF_CLASS ).toBeDefined();
 		expect( ValidationError.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ValidationError.RDF_CLASS ).toBe( NS.C.Class.ValidationError );
+		expect( ValidationError.RDF_CLASS ).toBe( NS.C.ValidationError );
 	} );
 
 	it( hasProperty(
@@ -36,7 +36,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		} );
 
 		expect( ValidationError.SCHEMA[ "errorDetails" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorDetails,
+			"@id": NS.C.errorDetails,
 			"@type": "@id",
 		} );
 	} );

@@ -1,4 +1,4 @@
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Utils from "./../Utils";
@@ -6,19 +6,19 @@ import * as VolatileResource from "./VolatileResource";
 import * as Map from "./Map";
 import BlankNode from "./../BlankNode";
 
-export const RDF_CLASS:string = NS.C.Class.DocumentMetadata;
+export const RDF_CLASS:string = NS.C.DocumentMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"relatedDocument": {
-		"@id": NS.C.Predicate.relatedDocument,
+		"@id": NS.C.relatedDocument,
 		"@type": "@id",
 	},
 	"eTag": {
-		"@id": NS.C.Predicate.eTag,
+		"@id": NS.C.eTag,
 		"@type": NS.XSD.DataType.string,
 	},
 	"bNodesMap": {
-		"@id": NS.C.Predicate.bNodesMap,
+		"@id": NS.C.bNodesMap,
 		"@type": "@id",
 	},
 };

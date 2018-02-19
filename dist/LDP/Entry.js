@@ -10,10 +10,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 exports.SCHEMA = {
     "entryKey": {
-        "@id": NS.C.Predicate.entryKey,
+        "@id": NS.C.entryKey,
     },
     "entryValue": {
-        "@id": NS.C.Predicate.entryValue,
+        "@id": NS.C.entryValue,
     },
 };
 

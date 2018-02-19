@@ -18,7 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Message = __importStar(require("./Message"));
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.Predicate.details,
+        "@id": NS.C.details,
         "@type": "@id",
     } });
 

@@ -6,7 +6,7 @@ import {
 	isDefined,
 	hasProperty, interfaze, extendsClass, OBLIGATORY, hasDefaultExport,
 } from "./../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as Error from "./Error";
@@ -27,7 +27,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Error.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Error.RDF_CLASS ) ).toBe( true );
 
-		expect( Error.RDF_CLASS ).toBe( NS.C.Class.Error );
+		expect( Error.RDF_CLASS ).toBe( NS.C.Error );
 	} );
 
 	it( hasProperty(
@@ -40,19 +40,19 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorCode,
+			"@id": NS.C.errorCode,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorMessage" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorMessage,
+			"@id": NS.C.errorMessage,
 			"@language": "en",
 		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorParameters" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorParameters" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorParameters,
+			"@id": NS.C.errorParameters,
 			"@type": "@id",
 		} );
 	} );

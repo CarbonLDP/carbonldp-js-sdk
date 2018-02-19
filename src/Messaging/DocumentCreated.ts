@@ -6,7 +6,7 @@ import * as Message from "./Message";
 export const SCHEMA:ObjectSchema.Class = {
 	...Message.SCHEMA,
 	"details": {
-		"@id": NS.C.Predicate.details,
+		"@id": NS.C.details,
 		"@type": "@id",
 	},
 };

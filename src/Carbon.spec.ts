@@ -627,12 +627,12 @@ describe( module( "Carbon" ), ():void => {
 					responseText: `[ {
 					"@graph": [ {
 						"@id": "https://example.com/.system/platform/",
-						"@type": [ "${ Vocabularies.C.Class.VolatileResource }", "${ Vocabularies.C.Class.Platform }" ],
-						"${ Vocabularies.C.Predicate.buildDate }": [ {
+						"@type": [ "${ Vocabularies.C.VolatileResource }", "${ Vocabularies.C.Platform }" ],
+						"${ Vocabularies.C.buildDate }": [ {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							"@value": "2016-06-01T00:00:00.000-06:00"
 						} ],
-						"${ Vocabularies.C.Predicate.version }": [ {
+						"${ Vocabularies.C.version }": [ {
 							"@value": "1.0.0"
 						} ]
 					}

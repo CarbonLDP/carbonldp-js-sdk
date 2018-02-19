@@ -10,14 +10,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("./Vocabularies/index"));
 var PersistedDocument = __importStar(require("./PersistedDocument"));
 var Utils = __importStar(require("./Utils"));
-exports.RDF_CLASS = NS.C.Class.RDFRepresentation;
+exports.RDF_CLASS = NS.C.RDFRepresentation;
 exports.SCHEMA = {
     "mediaType": {
-        "@id": NS.C.Predicate.mediaType,
+        "@id": NS.C.mediaType,
         "@type": NS.XSD.DataType.string,
     },
     "size": {
-        "@id": NS.C.Predicate.size,
+        "@id": NS.C.size,
         "@type": NS.XSD.DataType.long,
     },
 };

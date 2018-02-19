@@ -34,7 +34,7 @@ import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import MessagingEvent from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
@@ -425,70 +425,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [ {
+							"@type": [ "${ NS.C.ErrorResponse }" ],
+							"${ NS.C.error }": [ {
 								"@id": "_:2"
 							}, {
 								"@id": "_:3"
 							} ],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
+							"${ NS.C.httpStatusCode }": [ {
 								"@type": "${ NS.XSD.DataType.int }",
 								"@value": "500"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ NS.C.Error }" ],
+							"${ NS.C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-01"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ NS.C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 01"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ NS.C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ NS.C.Error }" ],
+							"${ NS.C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ NS.C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ NS.C.errorParameters }": [ {
 								"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ NS.C.Map }" ],
+							"${ NS.C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ NS.C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ NS.C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						}, {
 							"@id": "_:6",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ NS.C.Map }" ],
+							"${ NS.C.entry }": [ {
 								"@id": "_:7"
 							} ]
 						}, {
 							"@id": "_:7",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ NS.C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ NS.C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`,
@@ -523,17 +523,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
+							"@type": [ "${ NS.C.ErrorResponse }" ],
+							"${ NS.C.error }": [],
+							"${ NS.C.httpStatusCode }": [ {
 								"@type": "http://www.w3.org/2001/XMLSchema#int",
 								"@value": "1234567890"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
+							"@type": [ "${ NS.C.ErrorResponse }" ],
+							"${ NS.C.error }": [],
+							"${ NS.C.httpStatusCode }": [ {
 								"@type": "http://www.w3.org/2001/XMLSchema#int",
 								"@value": "0987654321"
 							} ]
@@ -554,30 +554,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ NS.C.Error }" ],
+							"${ NS.C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ NS.C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ NS.C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ NS.C.Map }" ],
+							"${ NS.C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ NS.C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ NS.C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`,
@@ -618,70 +618,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 				it( "should generate an HTTP error with empty ErrorResponse properties", ( done:DoneFn ):void => {
 					const responseText:string = `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [ {
+							"@type": [ "${ NS.C.ErrorResponse }" ],
+							"${ NS.C.error }": [ {
 								"@id": "_:2"
 							}, {
 								"@id": "_:3"
 							} ],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
+							"${ NS.C.httpStatusCode }": [ {
 								"@type": "${ NS.XSD.DataType.int }",
 								"@value": "500"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ NS.C.Error }" ],
+							"${ NS.C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-01"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ NS.C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 01"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ NS.C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ NS.C.Error }" ],
+							"${ NS.C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ NS.C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ NS.C.errorParameters }": [ {
 									"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ NS.C.Map }" ],
+							"${ NS.C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ NS.C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ NS.C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						}, {
 							"@id": "_:6",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ NS.C.Map }" ],
+							"${ NS.C.entry }": [ {
 								"@id": "_:7"
 							} ]
 						}, {
 							"@id": "_:7",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ NS.C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ NS.C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`;
@@ -1093,8 +1093,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?document.` +
+							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+							"" + ` <${ NS.C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
 							"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1136,8 +1136,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -1152,31 +1152,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -1184,7 +1184,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -1263,19 +1263,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -1283,25 +1283,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
@@ -1309,7 +1309,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -1394,10 +1394,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1405,7 +1405,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -1525,10 +1525,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1536,7 +1536,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -1580,10 +1580,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1591,7 +1591,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -1672,10 +1672,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1683,7 +1683,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -1898,8 +1898,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?document.` +
+							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+							"" + ` <${ NS.C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
 							"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1941,8 +1941,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -1957,31 +1957,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -1989,7 +1989,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -2061,19 +2061,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -2081,25 +2081,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
@@ -2107,7 +2107,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -2442,49 +2442,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-							        "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+							        "${ NS.C.VolatileResource }",
+						            "${ NS.C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ NS.C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ NS.C.relatedDocument }": [ {
 									"@id": "https://example.com/new-resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ NS.C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ NS.C.Map }" ],
+								"${ NS.C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -3089,49 +3089,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ NS.C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ NS.C.relatedDocument }": [ {
 									"@id": "https://example.com/new-resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ NS.C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ NS.C.Map }" ],
+								"${ NS.C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -4229,8 +4229,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?child.` +
+							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+							"" + ` <${ NS.C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
 							"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -4281,8 +4281,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -4322,8 +4322,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?child.` +
+								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+								"" + ` <${ NS.C.target }> ?child.` +
 
 								" ?child___subject ?child___predicate ?child___object " +
 
@@ -4345,8 +4345,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -4393,8 +4393,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?child.` +
+								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+								"" + ` <${ NS.C.target }> ?child.` +
 
 								" ?child ?child___predicate ?child___object " +
 
@@ -4424,8 +4424,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -4505,10 +4505,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( NS.C.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
 										.addObject( variableHelper( "child" ) )
 									)
 								)
@@ -4627,28 +4627,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -4656,25 +4656,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -4682,7 +4682,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -4708,7 +4708,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -4796,28 +4796,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -4825,25 +4825,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -4851,7 +4851,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -4880,7 +4880,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -4975,28 +4975,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5004,25 +5004,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5030,7 +5030,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5047,7 +5047,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5136,28 +5136,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5165,25 +5165,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5191,7 +5191,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5217,7 +5217,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5312,28 +5312,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5345,49 +5345,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -5395,7 +5395,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5424,7 +5424,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5608,8 +5608,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?child.` +
+							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+							"" + ` <${ NS.C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
 							"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -5660,8 +5660,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -5676,28 +5676,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5705,25 +5705,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5731,7 +5731,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5757,7 +5757,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5843,28 +5843,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5876,49 +5876,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -5926,7 +5926,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -5955,7 +5955,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -6118,49 +6118,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-							        "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+							        "${ NS.C.VolatileResource }",
+						            "${ NS.C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ NS.C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ NS.C.relatedDocument }": [ {
 									"@id": "https://example.com/new-access-point/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ NS.C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ NS.C.Map }" ],
+								"${ NS.C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -7190,8 +7190,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?member.` +
+							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+							"" + ` <${ NS.C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
 							"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -7244,8 +7244,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -7285,8 +7285,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?member.` +
+								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+								"" + ` <${ NS.C.target }> ?member.` +
 
 								" ?member___subject ?member___predicate ?member___object " +
 
@@ -7310,8 +7310,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -7358,8 +7358,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?member.` +
+								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+								"" + ` <${ NS.C.target }> ?member.` +
 
 								" ?member ?member___predicate ?member___object " +
 
@@ -7391,8 +7391,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -7472,10 +7472,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( NS.C.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
 										.addObject( variableHelper( "member" ) )
 									)
 								)
@@ -7602,28 +7602,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7631,25 +7631,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -7657,7 +7657,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -7683,7 +7683,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -7778,28 +7778,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7807,25 +7807,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -7833,7 +7833,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -7862,7 +7862,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -7957,28 +7957,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7986,25 +7986,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8012,7 +8012,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8029,7 +8029,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://schema.org/Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8118,28 +8118,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8147,25 +8147,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8173,7 +8173,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8199,7 +8199,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8287,28 +8287,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8320,49 +8320,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -8370,7 +8370,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8399,7 +8399,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8583,8 +8583,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?member.` +
+							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
+							"" + ` <${ NS.C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
 							"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -8637,8 +8637,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.Class.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -8653,28 +8653,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8682,25 +8682,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -8708,7 +8708,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8734,7 +8734,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8820,28 +8820,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8853,49 +8853,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -8903,7 +8903,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -8932,7 +8932,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -10035,49 +10035,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ NS.C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ NS.C.relatedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ NS.C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ NS.C.Map }" ],
+								"${ NS.C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -10625,10 +10625,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -10636,7 +10636,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -10738,10 +10738,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( NS.C.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
 										.addObject( variableHelper( "document" ) )
 									)
 								)
@@ -10927,10 +10927,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								new ConstructToken()
 									.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 										.addPredicate( new PredicateToken( "a" )
-											.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-											.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+											.addObject( new IRIToken( NS.C.VolatileResource ) )
+											.addObject( new IRIToken( NS.C.QueryMetadata ) )
 										)
-										.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+										.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
 											.addObject( variableHelper( "document" ) )
 										)
 									)
@@ -11013,31 +11013,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -11045,7 +11045,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -11173,31 +11173,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -11205,7 +11205,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -11392,10 +11392,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
@@ -11403,7 +11403,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"
@@ -11501,10 +11501,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( NS.C.VolatileResource ) )
+										.addObject( new IRIToken( NS.C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
 										.addObject( variableHelper( "document" ) )
 									)
 								)
@@ -11692,49 +11692,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ NS.C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ NS.C.VolatileResource }",
+						            "${ NS.C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ NS.C.relatedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ NS.C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ NS.C.Map }" ],
+								"${ NS.C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ NS.C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ NS.C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -12057,31 +12057,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ NS.C.VolatileResource }",
+								"${ NS.C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ NS.C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.ResponseMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ NS.C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ NS.C.DocumentMetadata }",
+								"${ NS.C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ NS.C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ NS.C.relatedDocument }": [ {
 								"@id": "${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -12089,7 +12089,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ NS.C.Document }",
 									"https://example.com/ns#Resource",
 									"${ NS.LDP.Class.BasicContainer }",
 									"${ NS.LDP.Class.RDFSource }"

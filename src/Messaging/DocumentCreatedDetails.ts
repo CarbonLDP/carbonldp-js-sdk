@@ -3,11 +3,11 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 
-export const RDF_CLASS:string = NS.C.Class.DocumentCreatedDetails;
+export const RDF_CLASS:string = NS.C.DocumentCreatedDetails;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"createdDocuments": {
-		"@id": NS.C.Predicate.createdDocument,
+		"@id": NS.C.createdDocument,
 		"@type": "@id",
 		"@container": "@set",
 	},

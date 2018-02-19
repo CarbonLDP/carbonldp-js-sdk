@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var DocumentCreated = __importStar(require("./DocumentCreated"));
-exports.RDF_CLASS = NS.C.Class.AccessPointCreated;
+exports.RDF_CLASS = NS.C.AccessPointCreated;
 exports.SCHEMA = DocumentCreated.SCHEMA;
 
 //# sourceMappingURL=AccessPointCreated.js.map

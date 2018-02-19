@@ -1,13 +1,13 @@
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import { Class as ObjectSchema } from "./../ObjectSchema";
 import { Class as Entry } from "./Entry";
 import { Class as Resource, Factory as ResourceFactory } from "./../Resource";
 
-export const RDF_CLASS:string = NS.C.Class.Map;
+export const RDF_CLASS:string = NS.C.Map;
 
 export const SCHEMA:ObjectSchema = {
 	"entries": {
-		"@id": NS.C.Predicate.entry,
+		"@id": NS.C.entry,
 		"@type": "@id",
 		"@container": "@set",
 	},

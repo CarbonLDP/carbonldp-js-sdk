@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Resource = __importStar(require("./../Resource"));
-exports.RDF_CLASS = NS.C.Class.VolatileResource;
+exports.RDF_CLASS = NS.C.VolatileResource;
 var Factory = (function () {
     function Factory() {
     }

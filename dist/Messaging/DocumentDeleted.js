@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Message = __importStar(require("./Message"));
-exports.RDF_CLASS = NS.C.Class.DocumentDeleted;
+exports.RDF_CLASS = NS.C.DocumentDeleted;
 exports.SCHEMA = Message.SCHEMA;
 
 //# sourceMappingURL=DocumentDeleted.js.map

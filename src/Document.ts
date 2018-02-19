@@ -10,7 +10,7 @@ import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
-export const RDF_CLASS:string = NS.C.Class.Document;
+export const RDF_CLASS:string = NS.C.Document;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"contains": {
@@ -40,19 +40,19 @@ export const SCHEMA:ObjectSchema.Class = {
 		"@type": "@id",
 	},
 	"created": {
-		"@id": NS.C.Predicate.created,
+		"@id": NS.C.created,
 		"@type": NS.XSD.DataType.dateTime,
 	},
 	"modified": {
-		"@id": NS.C.Predicate.modified,
+		"@id": NS.C.modified,
 		"@type": NS.XSD.DataType.dateTime,
 	},
 	"defaultInteractionModel": {
-		"@id": NS.C.Predicate.defaultInteractionModel,
+		"@id": NS.C.defaultInteractionModel,
 		"@type": "@id",
 	},
 	"accessPoints": {
-		"@id": NS.C.Predicate.accessPoint,
+		"@id": NS.C.accessPoint,
 		"@type": "@id",
 		"@container": "@set",
 	},

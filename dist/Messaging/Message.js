@@ -11,7 +11,7 @@ var NS = __importStar(require("../Vocabularies/index"));
 var Utils_1 = require("../Utils");
 exports.SCHEMA = {
     "target": {
-        "@id": NS.C.Predicate.target,
+        "@id": NS.C.target,
         "@type": "@id",
     },
 };

@@ -1,17 +1,17 @@
 import * as VolatileResource from "./../LDP/VolatileResource";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as PersistedDocument from "./../PersistedDocument";
 
-export const RDF_CLASS:string = NS.C.Class.Platform;
+export const RDF_CLASS:string = NS.C.Platform;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"version": {
-		"@id": NS.C.Predicate.version,
+		"@id": NS.C.version,
 		"@type": NS.XSD.DataType.string,
 	},
 	"buildDate": {
-		"@id": NS.C.Predicate.buildDate,
+		"@id": NS.C.buildDate,
 		"@type": NS.XSD.DataType.dateTime,
 	},
 };

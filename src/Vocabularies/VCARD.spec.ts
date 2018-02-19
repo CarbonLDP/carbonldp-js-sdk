@@ -12,7 +12,7 @@ import * as Utils from "./../Utils";
 import * as VCARD from "./VCARD";
 
 describe( module(
-	"Carbon/NS/VCARD"
+	"Carbon/Vocabularies/VCARD"
 ), ():void => {
 
 	it( isDefined(), ():void => {

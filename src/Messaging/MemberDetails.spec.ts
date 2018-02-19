@@ -1,4 +1,4 @@
-import * as NS from "../NS";
+import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
 import * as Resource from "../Resource";
 import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
@@ -26,7 +26,7 @@ describe( module( "Carbon/Messaging/MemberDetails" ), ():void => {
 		} );
 
 		expect( MemberDetails.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.C.Predicate.member,
+			"@id": NS.C.member,
 			"@type": "@id",
 			"@container": "@set",
 		} );

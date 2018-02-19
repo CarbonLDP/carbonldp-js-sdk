@@ -1,17 +1,17 @@
-import * as NS from "./NS";
+import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Utils from "./Utils";
 
-export const RDF_CLASS:string = NS.C.Class.RDFRepresentation;
+export const RDF_CLASS:string = NS.C.RDFRepresentation;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"mediaType": {
-		"@id": NS.C.Predicate.mediaType,
+		"@id": NS.C.mediaType,
 		"@type": NS.XSD.DataType.string,
 	},
 	"size": {
-		"@id": NS.C.Predicate.size,
+		"@id": NS.C.size,
 		"@type": NS.XSD.DataType.long,
 	},
 };

@@ -18,7 +18,7 @@ import * as Utils from "./../Utils";
 import * as Header from "./Header";
 import Response from "./Response";
 import Parser from "./JSONParser";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 
 import * as Request from "./Request";
 
@@ -1297,12 +1297,12 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			let preferencesOmitNormal:Request.RetrievalPreferences = {
 				omit: [
 					NS.LDP.Class.PreferContainment,
-					NS.C.Class.PreferContainmentResources,
-					NS.C.Class.PreferMembershipResources,
+					NS.C.PreferContainmentResources,
+					NS.C.PreferMembershipResources,
 				],
 			};
-			let preferencesOmitString:string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesOmitStringNoRepresentation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesOmitString:string = `return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.PreferContainmentResources} ${NS.C.PreferMembershipResources}"`;
+			let preferencesOmitStringNoRepresentation:string = `omit="${NS.LDP.Class.PreferContainment} ${NS.C.PreferContainmentResources} ${NS.C.PreferMembershipResources}"`;
 			let preferencesOmitEmpty:Request.RetrievalPreferences = {
 				omit: [],
 			};
@@ -1313,12 +1313,12 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				omit: [
 					NS.LDP.Class.PreferContainment,
-					NS.C.Class.PreferContainmentResources,
-					NS.C.Class.PreferMembershipResources,
+					NS.C.PreferContainmentResources,
+					NS.C.PreferMembershipResources,
 				],
 			};
-			let preferencesFullString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
-			let preferencesFullStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.Class.PreferContainmentResources} ${NS.C.Class.PreferMembershipResources}"`;
+			let preferencesFullString:string = `return=representation; include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", return=representation; omit="${NS.LDP.Class.PreferContainment} ${NS.C.PreferContainmentResources} ${NS.C.PreferMembershipResources}"`;
+			let preferencesFullStringNoRepresentation:string = `include="${NS.LDP.Class.PreferMinimalContainer} ${NS.LDP.Class.PreferMembership}", omit="${NS.LDP.Class.PreferContainment} ${NS.C.PreferContainmentResources} ${NS.C.PreferMembershipResources}"`;
 			let preferencesFullEmpty:Request.RetrievalPreferences = {
 				include: [],
 				omit: [],

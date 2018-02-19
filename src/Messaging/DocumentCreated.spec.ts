@@ -1,5 +1,5 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../NS";
+import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
 import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
 
@@ -27,12 +27,12 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 		} );
 
 		expect( DocumentCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
+			"@id": NS.C.target,
 			"@type": "@id",
 		} );
 
 		expect( DocumentCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.Predicate.details,
+			"@id": NS.C.details,
 			"@type": "@id",
 		} );
 	} );

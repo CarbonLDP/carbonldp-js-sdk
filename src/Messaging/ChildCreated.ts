@@ -1,8 +1,8 @@
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as DocumentCreated from "./DocumentCreated";
 
-export const RDF_CLASS:string = NS.C.Class.ChildCreated;
+export const RDF_CLASS:string = NS.C.ChildCreated;
 
 export const SCHEMA:ObjectSchema.Class = DocumentCreated.SCHEMA;
 

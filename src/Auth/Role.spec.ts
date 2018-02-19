@@ -15,7 +15,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as Role from "./Role";

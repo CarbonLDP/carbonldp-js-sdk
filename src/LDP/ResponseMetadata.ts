@@ -4,11 +4,11 @@ import * as DocumentMetadata from "./DocumentMetadata";
 import * as VolatileResource from "./VolatileResource";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.C.Class.ResponseMetadata;
+export const RDF_CLASS:string = NS.C.ResponseMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"documentsMetadata": {
-		"@id": NS.C.Predicate.documentMetadata,
+		"@id": NS.C.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
 	},

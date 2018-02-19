@@ -1,22 +1,22 @@
 import Error from "./Error";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import ObjectSchema from "./../ObjectSchema";
 import Resource from "./../Resource";
 
-export const RDF_CLASS:string = NS.C.Class.ErrorResponse;
+export const RDF_CLASS:string = NS.C.ErrorResponse;
 
 export const SCHEMA:ObjectSchema = {
 	"errors": {
-		"@id": NS.C.Predicate.error,
+		"@id": NS.C.error,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"requestID": {
-		"@id": NS.C.Predicate.requestID,
+		"@id": NS.C.requestID,
 		"@type": NS.XSD.DataType.string,
 	},
 	"statusCode": {
-		"@id": NS.C.Predicate.httpStatusCode,
+		"@id": NS.C.httpStatusCode,
 		"@type": NS.XSD.DataType.int,
 	},
 };

@@ -9,10 +9,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Resource_1 = require("./../Resource");
-exports.RDF_CLASS = NS.C.Class.Map;
+exports.RDF_CLASS = NS.C.Map;
 exports.SCHEMA = {
     "entries": {
-        "@id": NS.C.Predicate.entry,
+        "@id": NS.C.entry,
         "@type": "@id",
         "@container": "@set",
     },

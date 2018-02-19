@@ -13,7 +13,7 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
@@ -35,7 +35,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		expect( ResponseMetadata.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ResponseMetadata.RDF_CLASS ) ).toBe( true );
 
-		expect( ResponseMetadata.RDF_CLASS ).toBe( NS.C.Class.ResponseMetadata );
+		expect( ResponseMetadata.RDF_CLASS ).toBe( NS.C.ResponseMetadata );
 	} );
 
 	it( hasProperty(
@@ -51,7 +51,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		} );
 
 		expect( ResponseMetadata.SCHEMA[ "documentsMetadata" ] ).toEqual( {
-			"@id": NS.C.Predicate.documentMetadata,
+			"@id": NS.C.documentMetadata,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -104,20 +104,20 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
 			object = Resource.Factory.decorate( {
 				types: [
-					NS.C.Class.VolatileResource,
-					NS.C.Class.ResponseMetadata,
+					NS.C.VolatileResource,
+					NS.C.ResponseMetadata,
 				],
 				documentsMetadata: null,
 			} );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );
 
-			object.removeType( NS.C.Class.VolatileResource );
+			object.removeType( NS.C.VolatileResource );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-			object.addType( NS.C.Class.VolatileResource );
+			object.addType( NS.C.VolatileResource );
 
-			object.removeType( NS.C.Class.ResponseMetadata );
+			object.removeType( NS.C.ResponseMetadata );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-			object.addType( NS.C.Class.ResponseMetadata );
+			object.addType( NS.C.ResponseMetadata );
 
 			delete object.documentsMetadata;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );

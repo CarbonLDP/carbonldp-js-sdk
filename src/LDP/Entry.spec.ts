@@ -11,7 +11,7 @@ import {
 	extendsClass,
 	hasDefaultExport,
 } from "../test/JasmineExtender";
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as Entry from "./Entry";
@@ -38,11 +38,11 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 		} );
 
 		expect( Entry.SCHEMA[ "entryKey" ] ).toEqual( {
-			"@id": NS.C.Predicate.entryKey,
+			"@id": NS.C.entryKey,
 		} );
 
 		expect( Entry.SCHEMA[ "entryValue" ] ).toEqual( {
-			"@id": NS.C.Predicate.entryValue,
+			"@id": NS.C.entryValue,
 		} );
 	} );
 

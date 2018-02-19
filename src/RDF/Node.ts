@@ -5,7 +5,7 @@ import * as List from "./List";
 import * as Literal from "./Literal";
 import * as Pointer from "./../Pointer";
 import * as Value from "./Value";
-import * as XSD from "./../NS/XSD";
+import * as XSD from "../Vocabularies/XSD";
 
 export interface Class {
 	"@id":string;

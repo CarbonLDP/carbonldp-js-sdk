@@ -1,4 +1,4 @@
-import * as NS from "./../NS";
+import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
@@ -6,7 +6,7 @@ import { hasProperty } from "../Utils";
 
 export const SCHEMA:ObjectSchema.Class = {
 	"target": {
-		"@id": NS.C.Predicate.target,
+		"@id": NS.C.target,
 		"@type": "@id",
 	},
 };

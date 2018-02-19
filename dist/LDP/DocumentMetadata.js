@@ -10,18 +10,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
 var Utils = __importStar(require("./../Utils"));
 var VolatileResource = __importStar(require("./VolatileResource"));
-exports.RDF_CLASS = NS.C.Class.DocumentMetadata;
+exports.RDF_CLASS = NS.C.DocumentMetadata;
 exports.SCHEMA = {
     "relatedDocument": {
-        "@id": NS.C.Predicate.relatedDocument,
+        "@id": NS.C.relatedDocument,
         "@type": "@id",
     },
     "eTag": {
-        "@id": NS.C.Predicate.eTag,
+        "@id": NS.C.eTag,
         "@type": NS.XSD.DataType.string,
     },
     "bNodesMap": {
-        "@id": NS.C.Predicate.bNodesMap,
+        "@id": NS.C.bNodesMap,
         "@type": "@id",
     },
 };

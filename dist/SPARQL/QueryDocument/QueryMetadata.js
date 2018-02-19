@@ -9,10 +9,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../../Vocabularies/index"));
 var VolatileResource = __importStar(require("../../LDP/VolatileResource"));
-exports.RDF_CLASS = NS.C.Class.QueryMetadata;
+exports.RDF_CLASS = NS.C.QueryMetadata;
 exports.SCHEMA = {
     "target": {
-        "@id": NS.C.Predicate.target,
+        "@id": NS.C.target,
         "@type": "@id",
         "@container": "@set",
     },

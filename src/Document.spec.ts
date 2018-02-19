@@ -43,7 +43,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		expect( Document.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Document.RDF_CLASS ) ).toBe( true );
 
-		expect( Document.RDF_CLASS ).toBe( NS.C.Class.Document );
+		expect( Document.RDF_CLASS ).toBe( NS.C.Document );
 	} );
 
 	it( hasProperty(
@@ -95,25 +95,25 @@ describe( module( "Carbon/Document" ), ():void => {
 
 		expect( Utils.hasProperty( Document.SCHEMA, "created" ) ).toBe( true );
 		expect( Document.SCHEMA[ "created" ] ).toEqual( {
-			"@id": NS.C.Predicate.created,
+			"@id": NS.C.created,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "modified" ) ).toBe( true );
 		expect( Document.SCHEMA[ "modified" ] ).toEqual( {
-			"@id": NS.C.Predicate.modified,
+			"@id": NS.C.modified,
 			"@type": NS.XSD.DataType.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "defaultInteractionModel" ) ).toBe( true );
 		expect( Document.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
-			"@id": NS.C.Predicate.defaultInteractionModel,
+			"@id": NS.C.defaultInteractionModel,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "accessPoints" ) ).toBe( true );
 		expect( Document.SCHEMA[ "accessPoints" ] ).toEqual( {
-			"@id": NS.C.Predicate.accessPoint,
+			"@id": NS.C.accessPoint,
 			"@type": "@id",
 			"@container": "@set",
 		} );

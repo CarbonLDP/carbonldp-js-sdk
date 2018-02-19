@@ -33,7 +33,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 		expect( VolatileResource.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( VolatileResource.RDF_CLASS ) ).toBe( true );
 
-		expect( VolatileResource.RDF_CLASS ).toBe( NS.C.Class.VolatileResource );
+		expect( VolatileResource.RDF_CLASS ).toBe( NS.C.VolatileResource );
 	} );
 
 	describe( interfaze(
@@ -76,7 +76,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 			Resource.Factory.decorate( object );
 			expect( VolatileResource.Factory.is( object ) ).toBe( false );
 
-			object[ "types" ].push( NS.C.Class.VolatileResource );
+			object[ "types" ].push( NS.C.VolatileResource );
 			expect( VolatileResource.Factory.is( object ) ).toBe( true );
 		} );
 
