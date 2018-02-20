@@ -13407,6 +13407,7 @@ var JSONLD = __importStar(__webpack_require__(36));
 var LDP = __importStar(__webpack_require__(39));
 var LDPatch = __importStar(__webpack_require__(114));
 var Messaging = __importStar(__webpack_require__(70));
+var ModelFactory = __importStar(__webpack_require__(304));
 var NamedFragment = __importStar(__webpack_require__(106));
 var Vocabularies = __importStar(__webpack_require__(102));
 var ObjectSchema = __importStar(__webpack_require__(13));
@@ -13418,7 +13419,7 @@ var Pointer = __importStar(__webpack_require__(14));
 var RDF = __importStar(__webpack_require__(11));
 var Resource = __importStar(__webpack_require__(10));
 var SDKContext = __importStar(__webpack_require__(85));
-var Settings = __importStar(__webpack_require__(304));
+var Settings = __importStar(__webpack_require__(305));
 var SHACL = __importStar(__webpack_require__(148));
 var SPARQL = __importStar(__webpack_require__(77));
 var System = __importStar(__webpack_require__(149));
@@ -13496,6 +13497,7 @@ var Class = (function (_super) {
     Class.LDP = LDP;
     Class.LDPatch = LDPatch;
     Class.Messaging = Messaging;
+    Class.ModelFactory = ModelFactory;
     Class.NamedFragment = NamedFragment;
     Class.Vocabularies = Vocabularies;
     Class.ObjectSchema = ObjectSchema;
@@ -22821,6 +22823,15 @@ exports.SCHEMA = {
 
 /***/ }),
 /* 304 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+
+/***/ }),
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

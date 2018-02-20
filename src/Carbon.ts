@@ -12,6 +12,7 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
+import * as ModelFactory from "./ModelFactory";
 import * as NamedFragment from "./NamedFragment";
 import * as Vocabularies from "./Vocabularies";
 import * as ObjectSchema from "./ObjectSchema";
@@ -44,6 +45,7 @@ export class Class extends AbstractContext.AbstractContext {
 	static LDP:typeof LDP = LDP;
 	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
+	static ModelFactory:typeof ModelFactory = ModelFactory;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static Vocabularies:typeof Vocabularies = Vocabularies;
 	static ObjectSchema:typeof ObjectSchema = ObjectSchema;

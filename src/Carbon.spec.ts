@@ -11,6 +11,7 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
+import * as ModelFactory from "./ModelFactory";
 import * as NamedFragment from "./NamedFragment";
 import * as Vocabularies from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
@@ -181,6 +182,15 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.Messaging ).toBeDefined();
 			expect( Carbon.Class.Messaging ).toBe( Messaging );
+		} );
+
+		it( reexports(
+			STATIC,
+			"ModelFactory",
+			"Carbon/ModelFactory"
+		), ():void => {
+			expect( Carbon.Class.ModelFactory ).toBeDefined();
+			expect( Carbon.Class.ModelFactory ).toBe( ModelFactory );
 		} );
 
 		it( reexports(
