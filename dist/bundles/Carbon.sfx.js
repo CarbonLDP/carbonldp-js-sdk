@@ -15614,6 +15614,9 @@ var Header = __importStar(__webpack_require__(55));
 var Method_1 = __importDefault(__webpack_require__(88));
 var Response_1 = __importDefault(__webpack_require__(89));
 var Utils = __importStar(__webpack_require__(0));
+var http_1 = __importDefault(__webpack_require__(205));
+var https_1 = __importDefault(__webpack_require__(206));
+var url_1 = __importDefault(__webpack_require__(207));
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
     var next = namesIterator.next();
@@ -15655,7 +15658,6 @@ function sendWithBrowser(method, url, body, options) {
 }
 function sendWithNode(method, url, body, options) {
     return new Promise(function (resolve, reject) {
-        var URL = __webpack_require__(205);
         function returnResponse(request, res) {
             var rawData = [];
             res.on("data", function (chunk) {
@@ -15670,8 +15672,8 @@ function sendWithNode(method, url, body, options) {
         }
         var numberOfRedirects = 0;
         function sendRequest(_url) {
-            var parsedURL = URL.parse(_url);
-            var HTTP = parsedURL.protocol === "http:" ? __webpack_require__(206) : __webpack_require__(207);
+            var parsedURL = url_1.default.parse(_url);
+            var Adapter = parsedURL.protocol === "http:" ? http_1.default : https_1.default;
             var requestOptions = {
                 protocol: parsedURL.protocol,
                 hostname: parsedURL.hostname,
@@ -15679,17 +15681,16 @@ function sendWithNode(method, url, body, options) {
                 path: parsedURL.path,
                 method: method,
                 headers: {},
-                withCredentials: options.sendCredentialsOnCORS,
             };
             if (options.headers)
                 forEachHeaders(options.headers, function (name, value) { return requestOptions.headers[name] = value; });
-            var request = HTTP.request(requestOptions);
+            var request = Adapter.request(requestOptions);
             if (options.timeout)
                 request.setTimeout(options.timeout);
             request.on("response", function (res) {
                 if (res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers) {
                     if (++numberOfRedirects < 10)
-                        return sendRequest(URL.resolve(_url, res.headers.location));
+                        return sendRequest(url_1.default.resolve(_url, res.headers.location));
                 }
                 returnResponse(request, res);
             });

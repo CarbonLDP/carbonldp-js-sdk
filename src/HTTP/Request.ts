@@ -4,8 +4,13 @@ import Parser from "./Parser";
 import Response from "./Response";
 import * as Utils from "./../Utils";
 
-import { RequestOptions, ClientRequest, IncomingMessage } from "http";
-import { Url } from "url";
+import HTTP, {
+	ClientRequest,
+	IncomingMessage,
+	RequestOptions,
+} from "http";
+import HTTPS from "https";
+import URL from "url";
 
 export interface Options {
 	headers?:Map<string, Header.Class>;
@@ -70,8 +75,6 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 
 function sendWithNode( method:string, url:string, body:string | Buffer, options:Options ):Promise<Response> {
 	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
-		let URL:any = require( "url" );
-
 		function returnResponse( request:ClientRequest, res:IncomingMessage ):void {
 			let rawData:Buffer[] = [];
 
@@ -89,21 +92,20 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 		let numberOfRedirects:number = 0;
 
 		function sendRequest( _url:string ):void {
-			let parsedURL:Url = URL.parse( _url );
-			let HTTP:any = parsedURL.protocol === "http:" ? require( "http" ) : require( "https" );
+			let parsedURL:URL.Url = URL.parse( _url );
+			let Adapter:any = parsedURL.protocol === "http:" ? HTTP : HTTPS;
 
-			let requestOptions:RequestOptions & { withCredentials:boolean } = {
+			let requestOptions:RequestOptions = {
 				protocol: parsedURL.protocol,
 				hostname: parsedURL.hostname,
 				port: parsedURL.port,
 				path: parsedURL.path,
 				method: method,
 				headers: {},
-				withCredentials: options.sendCredentialsOnCORS,
 			};
 			if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => requestOptions.headers[ name ] = value );
 
-			let request:ClientRequest = HTTP.request( requestOptions );
+			let request:ClientRequest = Adapter.request( requestOptions );
 			if( options.timeout ) request.setTimeout( options.timeout );
 			request.on( "response", ( res:IncomingMessage ) => {
 				if( res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers ) {
