@@ -50,19 +50,19 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		expect( Utils.hasProperty( Credentials.SCHEMA, "email" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "email" ] ).toEqual( {
 			"@id": NS.VCARD.email,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "password" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "password" ] ).toEqual( {
 			"@id": NS.CS.password,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "enabled" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "enabled" ] ).toEqual( {
 			"@id": NS.CS.enabled,
-			"@type": NS.XSD.DataType.boolean,
+			"@type": NS.XSD.boolean,
 		} );
 	} );
 

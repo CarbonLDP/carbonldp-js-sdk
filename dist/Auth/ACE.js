@@ -13,7 +13,7 @@ exports.RDF_CLASS = NS.CS.AccessControlEntry;
 exports.SCHEMA = {
     "granting": {
         "@id": NS.CS.granting,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
     "permissions": {
         "@id": NS.CS.permission,

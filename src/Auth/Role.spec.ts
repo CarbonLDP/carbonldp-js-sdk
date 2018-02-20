@@ -39,13 +39,13 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		expect( Utils.hasProperty( Role.SCHEMA, "name" ) ).toBe( true );
 		expect( Role.SCHEMA[ "name" ] ).toEqual( {
 			"@id": NS.CS.name,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "description" ) ).toBe( true );
 		expect( Role.SCHEMA[ "description" ] ).toEqual( {
 			"@id": NS.CS.description,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "parentRole" ) ).toBe( true );

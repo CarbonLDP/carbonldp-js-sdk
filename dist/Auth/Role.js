@@ -18,11 +18,11 @@ exports.RDF_CLASS = NS.CS.Role;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.name,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "description": {
         "@id": NS.CS.description,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "parentRole": {
         "@id": NS.CS.parentRole,

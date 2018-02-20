@@ -47,13 +47,13 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "mediaType" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual( {
 			"@id": NS.C.mediaType,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "size" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "size" ] ).toEqual( {
 			"@id": NS.C.size,
-			"@type": NS.XSD.DataType.long,
+			"@type": NS.XSD.long,
 		} );
 	} );
 

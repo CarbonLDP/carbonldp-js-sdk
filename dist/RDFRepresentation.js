@@ -14,11 +14,11 @@ exports.RDF_CLASS = NS.C.RDFRepresentation;
 exports.SCHEMA = {
     "mediaType": {
         "@id": NS.C.mediaType,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "size": {
         "@id": NS.C.size,
-        "@type": NS.XSD.DataType.long,
+        "@type": NS.XSD.long,
     },
 };
 var Factory = (function () {

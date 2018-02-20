@@ -53,7 +53,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		expect( Utils.hasProperty( User.SCHEMA, "name" ) ).toBe( true );
 		expect( User.SCHEMA[ "name" ] ).toEqual( {
 			"@id": NS.CS.name,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 	} );
 

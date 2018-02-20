@@ -41,7 +41,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
 			"@id": NS.C.errorCode,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );

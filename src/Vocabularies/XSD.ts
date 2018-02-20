@@ -1,40 +1,32 @@
-import * as Utils from "./../Utils";
+export namespace XSD {
+	export const namespace:"http://www.w3.org/2001/XMLSchema#" = "http://www.w3.org/2001/XMLSchema#";
 
-export const namespace:string = "http://www.w3.org/2001/XMLSchema#";
-
-export class DataType {
-	static date:string = namespace + "date";
-	static dateTime:string = namespace + "dateTime";
-	static duration:string = namespace + "duration";
-	static gDay:string = namespace + "gDay";
-	static gMonth:string = namespace + "gMonth";
-	static gMonthDay:string = namespace + "gMonthDay";
-	static gYear:string = namespace + "gYear";
-	static gYearMonth:string = namespace + "gYearMonth";
-	static time:string = namespace + "time";
-
-	static byte:string = namespace + "byte";
-	static decimal:string = namespace + "decimal";
-	static int:string = namespace + "int";
-	static integer:string = namespace + "integer";
-	static long:string = namespace + "long";
-	static negativeInteger:string = namespace + "negativeInteger";
-	static nonNegativeInteger:string = namespace + "nonNegativeInteger";
-	static nonPositiveInteger:string = namespace + "nonPositiveInteger";
-	static positiveInteger:string = namespace + "positiveInteger";
-	static short:string = namespace + "short";
-	static unsignedLong:string = namespace + "unsignedLong";
-	static unsignedInt:string = namespace + "unsignedInt";
-	static unsignedShort:string = namespace + "unsignedShort";
-	static unsignedByte:string = namespace + "unsignedByte";
-	static double:string = namespace + "double";
-	static float:string = namespace + "float";
-
-	static boolean:string = namespace + "boolean";
-	static string:string = namespace + "string";
-	static object:string = namespace + "object";
+	export const boolean:string = namespace + "boolean"; // tslint:disable-line variable-name
+	export const byte:string = namespace + "byte";
+	export const date:string = namespace + "date";
+	export const dateTime:string = namespace + "dateTime";
+	export const decimal:string = namespace + "decimal";
+	export const double:string = namespace + "double";
+	export const duration:string = namespace + "duration";
+	export const float:string = namespace + "float";
+	export const gDay:string = namespace + "gDay";
+	export const gMonth:string = namespace + "gMonth";
+	export const gMonthDay:string = namespace + "gMonthDay";
+	export const gYear:string = namespace + "gYear";
+	export const gYearMonth:string = namespace + "gYearMonth";
+	export const int:string = namespace + "int";
+	export const integer:string = namespace + "integer";
+	export const long:string = namespace + "long";
+	export const negativeInteger:string = namespace + "negativeInteger";
+	export const nonNegativeInteger:string = namespace + "nonNegativeInteger";
+	export const nonPositiveInteger:string = namespace + "nonPositiveInteger";
+	export const object:string = namespace + "object";
+	export const positiveInteger:string = namespace + "positiveInteger";
+	export const short:string = namespace + "short";
+	export const string:string = namespace + "string"; // tslint:disable-line variable-name
+	export const time:string = namespace + "time";
+	export const unsignedByte:string = namespace + "unsignedByte";
+	export const unsignedInt:string = namespace + "unsignedInt";
+	export const unsignedLong:string = namespace + "unsignedLong";
+	export const unsignedShort:string = namespace + "unsignedShort";
 }
-
-Utils.forEachOwnProperty( DataType, ( key:string, value:any ):void => {
-	DataType[ value ] = key;
-} );

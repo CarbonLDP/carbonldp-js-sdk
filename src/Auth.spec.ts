@@ -664,7 +664,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": [ "${ NS.CS.User }" ],
 							"${ NS.CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ NS.XSD.string }"
 							} ],
 							"${ NS.CS.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
@@ -796,7 +796,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						} ],
 						"${ NS.CS.expirationTime }": {
 							"@value": "${ date.toISOString() }",
-							"@type": "${ NS.XSD.DataType.dateTime }"
+							"@type": "${ NS.XSD.dateTime }"
 						},
 						"${ NS.CS.credentialsOf }": [ {
 							"@id": "http://example.com/users/my-user/"
@@ -808,7 +808,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": [ "${ NS.CS.User }" ],
 							"${ NS.CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ NS.XSD.string }"
 							} ],
 							"${ NS.CS.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
@@ -864,7 +864,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 							"@type": [ "${ NS.CS.User }" ],
 							"${ NS.CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ NS.XSD.string }"
 							} ],
 							"${ NS.CS.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
@@ -1253,7 +1253,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"${ NS.CS.Ticket }"
 					],
 					"${ NS.CS.expirationTime }":[ {
-						"@type": "${ NS.XSD.DataType.dateTime }",
+						"@type": "${ NS.XSD.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"${ NS.CS.forIRI }":[ {
@@ -1277,7 +1277,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"${ NS.CS.Ticket }"
 					],
 					"${ NS.CS.expirationTime }":[ {
-						"@type": "${ NS.XSD.DataType.dateTime }",
+						"@type": "${ NS.XSD.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"${ NS.CS.forIRI }":[ {
@@ -1292,7 +1292,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"${ NS.CS.Ticket }"
 					],
 					"${ NS.CS.expirationTime }":[ {
-						"@type": "${ NS.XSD.DataType.dateTime }",
+						"@type": "${ NS.XSD.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
 					"${ NS.CS.forIRI }":[ {

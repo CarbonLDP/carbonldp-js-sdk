@@ -203,7 +203,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							} ],
 							"${ NS.CS.expirationTime }": {
 								"@value": "${ expirationTime.toISOString() }",
-								"@type": "${ NS.XSD.DataType.dateTime }"
+								"@type": "${ NS.XSD.dateTime }"
 							},
 							"${ NS.CS.credentialsOf }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
@@ -215,15 +215,15 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@type": [ "${ NS.CS.User }" ],
 								"${ NS.CS.name }": [ {
 									"@value": "My User Name",
-									"@type": "${ NS.XSD.DataType.string }"
+									"@type": "${ NS.XSD.string }"
 								} ],
 								"${ NS.VCARD.email }": [ {
 									"@value": "my-user@users.com",
-									"@type": "${ NS.XSD.DataType.string }"
+									"@type": "${ NS.XSD.string }"
 								} ],
 								"${ NS.CS.enabled }": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ]
 							} ]
 						} ]`,
@@ -708,7 +708,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						} ],
 						"${ NS.CS.expirationTime }": {
 							"@value": "${expirationTime.toISOString()}",
-							"@type": "${ NS.XSD.DataType.dateTime }"
+							"@type": "${ NS.XSD.dateTime }"
 						},
 						"${ NS.CS.credentialsOf }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
@@ -720,15 +720,15 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							"@type": [ "${ NS.CS.User }" ],
 							"${ NS.CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ NS.XSD.string }"
 							} ],
 							"${ NS.VCARD.email }": [ {
 								"@value": "my-user@users.com",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ NS.XSD.string }"
 							} ],
 							"${ NS.CS.enabled }": [ {
 								"@value": "true",
-								"@type": "${ NS.XSD.DataType.boolean }"
+								"@type": "${ NS.XSD.boolean }"
 							} ]
 						} ]
 					} ]`,

@@ -9,7 +9,7 @@ export const RDF_CLASS:string = NS.CS.AccessControlEntry;
 export const SCHEMA:ObjectSchema.Class = {
 	"granting": {
 		"@id": NS.CS.granting,
-		"@type": NS.XSD.DataType.boolean,
+		"@type": NS.XSD.boolean,
 	},
 	"permissions": {
 		"@id": NS.CS.permission,

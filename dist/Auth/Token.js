@@ -14,11 +14,11 @@ exports.RDF_CLASS = NS.CS.Token;
 exports.SCHEMA = {
     "key": {
         "@id": NS.CS.tokenKey,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "expirationTime": {
         "@id": NS.CS.expirationTime,
-        "@type": NS.XSD.DataType.dateTime,
+        "@type": NS.XSD.dateTime,
     },
     "user": {
         "@id": NS.CS.credentialsOf,

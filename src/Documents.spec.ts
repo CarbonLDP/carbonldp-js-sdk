@@ -432,7 +432,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:3"
 							} ],
 							"${ NS.C.httpStatusCode }": [ {
-								"@type": "${ NS.XSD.DataType.int }",
+								"@type": "${ NS.XSD.int }",
 								"@value": "500"
 							} ]
 						}, {
@@ -625,7 +625,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:3"
 							} ],
 							"${ NS.C.httpStatusCode }": [ {
-								"@type": "${ NS.XSD.DataType.int }",
+								"@type": "${ NS.XSD.int }",
 								"@value": "500"
 							} ]
 						}, {
@@ -1061,15 +1061,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -1199,7 +1199,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1216,15 +1216,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -1327,7 +1327,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }another-resource/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1344,15 +1344,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -1420,7 +1420,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1437,15 +1437,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -1467,7 +1467,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1479,11 +1479,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
-								"@type": NS.XSD.DataType.integer,
+								"@type": NS.XSD.integer,
 							},
 							"property3": {
 								"@id": "https://schema.org/property-3",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 						} ) );
 						done();
@@ -1499,23 +1499,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": NS.XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": NS.XSD.dateTime,
 						},
 					} );
 
@@ -1551,7 +1551,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1598,7 +1598,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -1610,7 +1610,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2000-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -1635,7 +1635,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
-								"@type": NS.XSD.DataType.boolean,
+								"@type": NS.XSD.boolean,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1643,7 +1643,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 						} ) );
 
@@ -1651,15 +1651,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property3": {
 								"@id": "https://schema.org/property-3",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property5": {
 								"@id": "https://schema.org/property-5",
-								"@type": NS.XSD.DataType.dateTime,
+								"@type": NS.XSD.dateTime,
 							},
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
-								"@type": NS.XSD.DataType.integer,
+								"@type": NS.XSD.integer,
 							},
 						} ) );
 						done();
@@ -1690,7 +1690,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -1702,7 +1702,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -1717,23 +1717,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": NS.XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": NS.XSD.dateTime,
 						},
 					} );
 
@@ -1749,7 +1749,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": NS.XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -1757,7 +1757,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -1769,15 +1769,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": NS.XSD.dateTime,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -1875,7 +1875,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1883,11 +1883,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -2004,7 +2004,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -2022,7 +2022,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.withType( "https://example.com/ns#Resource" ).properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2030,11 +2030,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -2125,7 +2125,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/another-resource/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -2144,7 +2144,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2152,11 +2152,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -3878,7 +3878,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -3939,7 +3939,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -4192,15 +4192,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -4300,15 +4300,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -4367,11 +4367,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -4448,15 +4448,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -4697,7 +4697,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -4723,7 +4723,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -4746,15 +4746,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -4872,7 +4872,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -4901,7 +4901,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -4921,7 +4921,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -4931,11 +4931,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -5076,7 +5076,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -5086,11 +5086,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -5206,7 +5206,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5232,7 +5232,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5252,15 +5252,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -5413,7 +5413,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5442,7 +5442,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5462,15 +5462,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -5582,7 +5582,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -5590,11 +5590,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -5746,7 +5746,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5772,7 +5772,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5791,7 +5791,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -5799,11 +5799,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -5944,7 +5944,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5973,7 +5973,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5992,7 +5992,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -6000,11 +6000,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -6832,7 +6832,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -6897,7 +6897,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -7153,15 +7153,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -7263,15 +7263,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -7332,11 +7332,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -7415,15 +7415,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -7672,7 +7672,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -7698,7 +7698,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -7718,15 +7718,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -7854,7 +7854,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -7883,7 +7883,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -7903,7 +7903,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -7913,11 +7913,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -8058,7 +8058,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -8068,11 +8068,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -8188,7 +8188,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8214,7 +8214,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8237,15 +8237,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -8388,7 +8388,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8417,7 +8417,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8437,15 +8437,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -8557,7 +8557,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8565,11 +8565,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -8723,7 +8723,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8749,7 +8749,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8768,7 +8768,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8776,11 +8776,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -8921,7 +8921,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8950,7 +8950,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ NS.XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8969,7 +8969,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": NS.XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8977,11 +8977,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 								} ),
 							},
@@ -10188,7 +10188,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Fragment", {
 						"string": {
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 							"@container": "@set",
 						},
 						"pointer": {
@@ -10197,7 +10197,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#BlankNode", {
 						"number": {
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -10273,20 +10273,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 								_partialMetadata: createPartialMetadata( {
 									"string": {
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 										"@container": "@set",
 									},
 									"pointer": {
 										"@type": "@id",
 									},
 									"number": {
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 								} ),
 							} ],
 							_partialMetadata: createPartialMetadata( {
 								"string": {
-									"@type": NS.XSD.DataType.string,
+									"@type": NS.XSD.string,
 									"@container": "@set",
 								},
 								"pointer": {
@@ -10646,7 +10646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -10658,7 +10658,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -10686,7 +10686,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": NS.XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -10694,7 +10694,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -10706,15 +10706,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": NS.XSD.dateTime,
 						},
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -10887,7 +10887,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": NS.XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -10895,7 +10895,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 					persistedDocument.property2[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( SPARQL.QueryDocument.PartialMetadata.ALL );
@@ -11058,7 +11058,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -11067,7 +11067,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11098,7 +11098,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "https://example.com/ns#property-1",
-									"@type": NS.XSD.DataType.string,
+									"@type": NS.XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -11106,7 +11106,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "https://example.com/ns#property-4",
-									"@type": NS.XSD.DataType.boolean,
+									"@type": NS.XSD.boolean,
 								},
 							} ),
 						} ),
@@ -11123,15 +11123,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "https://example.com/ns#property-2",
-									"@type": NS.XSD.DataType.integer,
+									"@type": NS.XSD.integer,
 								},
 								"property3": {
 									"@id": "https://schema.org/property-3",
-									"@type": NS.XSD.DataType.string,
+									"@type": NS.XSD.string,
 								},
 								"property5": {
 									"@id": "https://schema.org/property-5",
-									"@type": NS.XSD.DataType.dateTime,
+									"@type": NS.XSD.dateTime,
 								},
 							} ),
 						},
@@ -11218,7 +11218,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -11227,7 +11227,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11259,7 +11259,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "property-1",
-									"@type": NS.XSD.DataType.string,
+									"@type": NS.XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -11267,7 +11267,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "property-4",
-									"@type": NS.XSD.DataType.boolean,
+									"@type": NS.XSD.boolean,
 								},
 							} ),
 						} ),
@@ -11284,15 +11284,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "property-2",
-									"@type": NS.XSD.DataType.integer,
+									"@type": NS.XSD.integer,
 								},
 								"property3": {
 									"@id": "https://schema.org/property-3",
-									"@type": NS.XSD.DataType.string,
+									"@type": NS.XSD.string,
 								},
 								"property5": {
 									"@id": "https://schema.org/property-5",
-									"@type": NS.XSD.DataType.dateTime,
+									"@type": NS.XSD.dateTime,
 								},
 							} ),
 						},
@@ -11413,7 +11413,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -11425,7 +11425,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11449,7 +11449,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": NS.XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -11457,7 +11457,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 					} );
 
@@ -11469,15 +11469,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": NS.XSD.dateTime,
 						},
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -11874,7 +11874,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Fragment", {
 						"string": {
-							"@type": NS.XSD.DataType.string,
+							"@type": NS.XSD.string,
 							"@container": "@set",
 						},
 						"pointer": {
@@ -11883,7 +11883,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#BlankNode", {
 						"number": {
-							"@type": NS.XSD.DataType.integer,
+							"@type": NS.XSD.integer,
 						},
 					} );
 
@@ -12102,7 +12102,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ NS.XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -12111,7 +12111,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ NS.XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -12143,15 +12143,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@vocab": "https://example.com/ns#",
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": NS.XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": NS.XSD.string,
 									},
 									"property5": {
 										"@id": "https://schema.org/property-5",
-										"@type": NS.XSD.DataType.dateTime,
+										"@type": NS.XSD.dateTime,
 									},
 								} ),
 							},
@@ -12159,7 +12159,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "https://example.com/ns#property-1",
-									"@type": NS.XSD.DataType.string,
+									"@type": NS.XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -12167,7 +12167,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "https://example.com/ns#property-4",
-									"@type": NS.XSD.DataType.boolean,
+									"@type": NS.XSD.boolean,
 								},
 							} ),
 						} ),

@@ -47,13 +47,13 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 		expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "version" ) ).toBe( true );
 		expect( PlatformMetadata.SCHEMA[ "version" ] ).toEqual( {
 			"@id": NS.C.version,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "buildDate" ) ).toBe( true );
 		expect( PlatformMetadata.SCHEMA[ "buildDate" ] ).toEqual( {
 			"@id": NS.C.buildDate,
-			"@type": NS.XSD.DataType.dateTime,
+			"@type": NS.XSD.dateTime,
 		} );
 
 	} );

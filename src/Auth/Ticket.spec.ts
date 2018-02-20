@@ -56,13 +56,13 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		expect( Utils.hasProperty( Ticket.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "expirationTime" ] ).toEqual( {
 			"@id": NS.CS.expirationTime,
-			"@type": NS.XSD.DataType.dateTime,
+			"@type": NS.XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "ticketKey" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "ticketKey" ] ).toEqual( {
 			"@id": NS.CS.ticketKey,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 	} );
 

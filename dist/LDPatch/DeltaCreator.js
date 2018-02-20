@@ -18,7 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../JSONLD/Utils");
-var index_1 = require("../Vocabularies/index");
+var XSD_1 = require("../Vocabularies/XSD");
 var ObjectSchema_1 = require("../ObjectSchema");
 var Pointer = __importStar(require("../Pointer"));
 var Utils_2 = require("../Utils");
@@ -161,7 +161,7 @@ var Class = (function () {
             var value = languageMap[key];
             var tempDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
             tempDefinition.language = key;
-            tempDefinition.literalType = index_1.XSD.DataType.string;
+            tempDefinition.literalType = XSD_1.XSD.string;
             return _this.expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
@@ -181,7 +181,7 @@ var Class = (function () {
             return null;
         value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
         var literal = new tokens_1.LiteralToken(value);
-        if (type !== index_1.XSD.DataType.string)
+        if (type !== XSD_1.XSD.string)
             literal.setType(this.compactIRI(schema, type));
         if (definition && definition.language !== void 0)
             literal.setLanguage(definition.language);

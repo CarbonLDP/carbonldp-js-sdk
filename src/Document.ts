@@ -41,11 +41,11 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 	"created": {
 		"@id": NS.C.created,
-		"@type": NS.XSD.DataType.dateTime,
+		"@type": NS.XSD.dateTime,
 	},
 	"modified": {
 		"@id": NS.C.modified,
-		"@type": NS.XSD.DataType.dateTime,
+		"@type": NS.XSD.dateTime,
 	},
 	"defaultInteractionModel": {
 		"@id": NS.C.defaultInteractionModel,

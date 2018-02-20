@@ -5,7 +5,7 @@ import * as List from "./List";
 import * as Literal from "./Literal";
 import * as Pointer from "./../Pointer";
 import * as Value from "./Value";
-import * as XSD from "../Vocabularies/XSD";
+import { XSD } from "../Vocabularies/XSD";
 
 export interface Class {
 	"@id":string;
@@ -207,7 +207,7 @@ export class Util {
 		let propertyLanguageMap:any = {};
 		for( let propertyValue of propertyValues ) {
 			if( ! Literal.Factory.is( propertyValue ) ) continue;
-			if( ! Literal.Factory.hasType( propertyValue, XSD.DataType.string ) ) continue;
+			if( ! Literal.Factory.hasType( propertyValue, XSD.string ) ) continue;
 
 			let languageTag:string = propertyValue[ "@language" ];
 			if( ! languageTag ) continue;

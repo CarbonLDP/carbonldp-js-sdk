@@ -9,7 +9,7 @@ import {
 } from "sparqler/tokens";
 
 import { Converter } from "../JSONLD";
-import { XSD } from "../Vocabularies/index";
+import { XSD } from "../Vocabularies/XSD";
 import {
 	DigestedObjectSchema,
 	Digester,
@@ -158,7 +158,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -178,7 +178,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -198,7 +198,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -265,9 +265,9 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
 						),
 					] );
@@ -361,7 +361,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -381,7 +381,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
 						),
 					] );
 				} );
@@ -400,7 +400,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 						),
 					] );
 				} );
@@ -464,9 +464,9 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
 						),
 					] );
@@ -644,14 +644,14 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "delete string" ) )
-							.addObject( new LiteralToken( "false" ).setType( XSD.DataType.boolean ) )
+							.addObject( new LiteralToken( "false" ).setType( XSD.boolean ) )
 							.addObject( new BlankNodeToken( "_:1" ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2010-10-10T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
-							.addObject( new LiteralToken( "10.01" ).setType( XSD.DataType.float ) )
+							.addObject( new LiteralToken( "2010-10-10T00:00:00.000Z" ).setType( XSD.dateTime ) )
+							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
 							.addObject( new LiteralToken( "add string" ) )
 						),
 					] );
@@ -690,7 +690,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -717,7 +717,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@language": "en",
 						},
 					} );
@@ -745,7 +745,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -760,7 +760,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.integer ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.integer ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -772,7 +772,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.float,
+							"@type": XSD.float,
 						},
 					} );
 
@@ -787,7 +787,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "10.01" ).setType( XSD.DataType.float ) )
+							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -799,7 +799,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#the-property",
-							"@type": XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 					} );
 
@@ -814,7 +814,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#the-property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -826,7 +826,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.date,
+							"@type": XSD.date,
 						},
 					} );
 
@@ -841,7 +841,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.DataType.date ) )
+							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.date ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [] );
@@ -961,9 +961,9 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
 						),
 					] );
@@ -1009,7 +1009,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@language",
 						},
 					} );
@@ -1084,7 +1084,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@list",
 						},
 					} );
@@ -1125,7 +1125,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1152,7 +1152,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@language": "en",
 						},
 					} );
@@ -1180,7 +1180,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -1195,7 +1195,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.integer ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.integer ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1207,7 +1207,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.float,
+							"@type": XSD.float,
 						},
 					} );
 
@@ -1222,7 +1222,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "10.01" ).setType( XSD.DataType.float ) )
+							.addObject( new LiteralToken( "10.01" ).setType( XSD.float ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1234,7 +1234,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#the-property",
-							"@type": XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 					} );
 
@@ -1249,7 +1249,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#the-property" ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1261,7 +1261,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.date,
+							"@type": XSD.date,
 						},
 					} );
 
@@ -1276,7 +1276,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.DataType.date ) )
+							.addObject( new LiteralToken( "2000-01-01" ).setType( XSD.date ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1396,9 +1396,9 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( "string" ) )
-							.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
-							.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
-							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+							.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+							.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+							.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 							.addObject( new IRIToken( "http://example.org/pointer/" ) )
 						),
 					] );
@@ -1444,7 +1444,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@language",
 						},
 					} );
@@ -1501,9 +1501,9 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new CollectionToken()
 								.addObject( new LiteralToken( "string" ) )
-								.addObject( new LiteralToken( "1" ).setType( XSD.DataType.float ) )
-								.addObject( new LiteralToken( "true" ).setType( XSD.DataType.boolean ) )
-								.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.DataType.dateTime ) )
+								.addObject( new LiteralToken( "1" ).setType( XSD.float ) )
+								.addObject( new LiteralToken( "true" ).setType( XSD.boolean ) )
+								.addObject( new LiteralToken( "2000-01-01T00:00:00.000Z" ).setType( XSD.dateTime ) )
 								.addObject( new IRIToken( "http://example.org/pointer/" ) )
 							)
 						),
@@ -1517,7 +1517,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@list",
 						},
 					} );
@@ -1554,7 +1554,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1581,7 +1581,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1608,7 +1608,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1636,7 +1636,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1753,7 +1753,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.integer,
+							"@type": XSD.integer,
 							"@container": "@set",
 						},
 					} );
@@ -1780,12 +1780,12 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					deltaCreator.addResource( schema, oldResource, newResource );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "12345" ).setType( XSD.DataType.integer ) )
+							.addObject( new LiteralToken( "12345" ).setType( XSD.integer ) )
 						),
 					] );
 					expect( deltaCreator[ "addToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "67890" ).setType( XSD.DataType.integer ) )
+							.addObject( new LiteralToken( "67890" ).setType( XSD.integer ) )
 						),
 					] );
 				} );
@@ -1839,14 +1839,14 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							new IRIToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0, 0 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "10" ).setType( XSD.DataType.float ) )
+								.addObject( new LiteralToken( "10" ).setType( XSD.float ) )
 						),
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
 							new IRIToken( "http://example.org/vocab#property" ),
 							new SliceToken( 3, 3 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "67890" ).setType( XSD.DataType.float ) )
+								.addObject( new LiteralToken( "67890" ).setType( XSD.float ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1859,7 +1859,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.integer,
+							"@type": XSD.integer,
 							"@container": "@list",
 						},
 					} );
@@ -1896,14 +1896,14 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							new IRIToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0, 0 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "10" ).setType( XSD.DataType.integer ) )
+								.addObject( new LiteralToken( "10" ).setType( XSD.integer ) )
 						),
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
 							new IRIToken( "http://example.org/vocab#property" ),
 							new SliceToken( 3, 3 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "67890" ).setType( XSD.DataType.integer ) )
+								.addObject( new LiteralToken( "67890" ).setType( XSD.integer ) )
 						),
 					] );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [] );
@@ -1942,7 +1942,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							new IRIToken( "http://example.org/vocab#property" ),
 							new SliceToken( 0, 0 ),
 							new CollectionToken()
-								.addObject( new LiteralToken( "4" ).setType( new IRIToken( XSD.DataType.float ) ) )
+								.addObject( new LiteralToken( "4" ).setType( new IRIToken( XSD.float ) ) )
 						),
 						new UpdateListToken(
 							new IRIToken( "http://example.org/resource/" ),
@@ -1951,7 +1951,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							new CollectionToken()
 								.addObject( new LiteralToken( "s-1" ) )
 								.addObject( new LiteralToken( "s-2" ) )
-								.addObject( new LiteralToken( "6" ).setType( new IRIToken( XSD.DataType.float ) ) )
+								.addObject( new LiteralToken( "6" ).setType( new IRIToken( XSD.float ) ) )
 								.addObject( new LiteralToken( "s-3" ) )
 						),
 					] );
@@ -1982,7 +1982,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const spy:jasmine.Spy = spyOn( deltaCreator, "compactIRI" as any ).and.callThrough();
 
 					deltaCreator.addResource( schema, oldResource, newResource );
-					expect( spy ).toHaveBeenCalledWith( schema, XSD.DataType.boolean );
+					expect( spy ).toHaveBeenCalledWith( schema, XSD.boolean );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
 							.addObject( new LiteralToken( true ).setType( new PrefixedNameToken( "xsd", "boolean" ) ) )
@@ -2034,7 +2034,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					expect( spy ).toHaveBeenCalledWith( schema, "property" );
 					expect( deltaCreator[ "deleteToken" ].triples ).toEqual( [ new SubjectToken( new IRIToken( "http://example.org/resource/" ) )
 						.addPredicate( new PredicateToken( new PrefixedNameToken( "ex", "property" ) )
-							.addObject( new LiteralToken( true ).setType( new IRIToken( XSD.DataType.boolean ) ) )
+							.addObject( new LiteralToken( true ).setType( new IRIToken( XSD.boolean ) ) )
 						),
 					] );
 				} );
@@ -2173,7 +2173,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -2200,7 +2200,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -2227,7 +2227,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -2254,7 +2254,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@list",
 						},
 					} );
@@ -2294,7 +2294,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					const schema:DigestedObjectSchema = Digester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
-							"@type": XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@list",
 						},
 					} );
@@ -2332,7 +2332,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				deltaCreator.addResource( Digester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"property": {
-						"@type": XSD.DataType.string,
+						"@type": XSD.string,
 					},
 				} ), Resource.Factory.createFrom( {
 					id: "http://example.org/resource/",
@@ -2344,7 +2344,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				deltaCreator.addResource( Digester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"property": {
-						"@type": XSD.DataType.integer,
+						"@type": XSD.integer,
 					},
 				} ), Resource.Factory.createFrom( {
 					id: "http://example.org/resource/#fragment",
@@ -2356,10 +2356,10 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				deltaCreator.addResource( Digester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"property1": {
-						"@type": XSD.DataType.string,
+						"@type": XSD.string,
 					},
 					"property2": {
-						"@type": XSD.DataType.string,
+						"@type": XSD.string,
 					},
 				} ), Resource.Factory.createFrom( {
 					id: "_:blank-node",
@@ -2373,7 +2373,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				expect( deltaCreator[ "addToken" ].triples ).toEqual( [
 					new SubjectToken( new IRIToken( "http://example.org/resource/#fragment" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property" ) )
-							.addObject( new LiteralToken( "10" ).setType( new IRIToken( XSD.DataType.integer ) ) )
+							.addObject( new LiteralToken( "10" ).setType( new IRIToken( XSD.integer ) ) )
 						),
 					new SubjectToken( new BlankNodeToken( "_:blank-node" ) )
 						.addPredicate( new PredicateToken( new IRIToken( "http://example.org/vocab#property2" ) )
@@ -2416,7 +2416,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					"schema": "http://schema.org",
 					"xsd": XSD.namespace,
 					"property1": {
-						"@type": XSD.DataType.string,
+						"@type": XSD.string,
 					},
 					"property2": {
 						"@container": "@list",
@@ -2435,7 +2435,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					"resource": "http://example.org/resource/#",
 					"xsd": XSD.namespace,
 					"property1": {
-						"@type": XSD.DataType.integer,
+						"@type": XSD.integer,
 					},
 					"property2": {
 						"@container": "@list",
@@ -2454,10 +2454,10 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					"schema": "http://schema.org",
 					"xsd": XSD.namespace,
 					"property1": {
-						"@type": XSD.DataType.string,
+						"@type": XSD.string,
 					},
 					"property2": {
-						"@type": XSD.DataType.string,
+						"@type": XSD.string,
 					},
 				} ), Resource.Factory.createFrom( {
 					id: "_:blank-node",

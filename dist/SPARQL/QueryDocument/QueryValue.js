@@ -1,24 +1,17 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../../Utils");
 var Errors_1 = require("./../../Errors");
-var XSD = __importStar(require("../../Vocabularies/XSD"));
+var XSD_1 = require("../../Vocabularies/XSD");
 var Class = (function () {
     function Class(context, value) {
         this._value = value;
         this._context = context;
         if (Utils_1.isDate(value)) {
             this._literal = new tokens_1.LiteralToken();
-            this.withType(XSD.DataType.dateTime);
+            this.withType(XSD_1.XSD.dateTime);
         }
         else {
             this._literal = new tokens_1.LiteralToken(value);
@@ -26,9 +19,9 @@ var Class = (function () {
     }
     Class.prototype.withType = function (type) {
         if (!iri_1.isAbsolute(type)) {
-            if (!XSD.DataType.hasOwnProperty(type))
+            if (!XSD_1.XSD.hasOwnProperty(type))
                 throw new Errors_1.IllegalArgumentError("Invalid type provided.");
-            type = XSD.DataType[type];
+            type = XSD_1.XSD[type];
         }
         var value = this._context.serializeLiteral(type, this._value);
         this._literal.setValue(value);

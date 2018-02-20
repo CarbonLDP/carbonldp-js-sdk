@@ -76,8 +76,8 @@ var Digester = (function () {
                 digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
             }
             else {
-                if (RDF.URI.Util.isRelative(type) && type in NS.XSD.DataType)
-                    type = NS.XSD.DataType[type];
+                if (RDF.URI.Util.isRelative(type) && type in NS.XSD)
+                    type = NS.XSD[type];
                 digestedDefinition.literal = true;
                 digestedDefinition.literalType = type;
             }

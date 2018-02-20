@@ -12,7 +12,7 @@ exports.RDF_CLASS = NS.C.Error;
 exports.SCHEMA = {
     "errorCode": {
         "@id": NS.C.errorCode,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "errorMessage": {
         "@id": NS.C.errorMessage,

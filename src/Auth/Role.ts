@@ -9,11 +9,11 @@ export const RDF_CLASS:string = NS.CS.Role;
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
 		"@id": NS.CS.name,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"description": {
 		"@id": NS.CS.description,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"parentRole": {
 		"@id": NS.CS.parentRole,

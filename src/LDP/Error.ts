@@ -8,7 +8,7 @@ export const RDF_CLASS:string = NS.C.Error;
 export const SCHEMA:ObjectSchema = {
 	"errorCode": {
 		"@id": NS.C.errorCode,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"errorMessage": {
 		"@id": NS.C.errorMessage,

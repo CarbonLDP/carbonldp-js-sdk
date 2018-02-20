@@ -8,11 +8,11 @@ export const RDF_CLASS:string = NS.C.Platform;
 export const SCHEMA:ObjectSchema.Class = {
 	"version": {
 		"@id": NS.C.version,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"buildDate": {
 		"@id": NS.C.buildDate,
-		"@type": NS.XSD.DataType.dateTime,
+		"@type": NS.XSD.dateTime,
 	},
 };
 

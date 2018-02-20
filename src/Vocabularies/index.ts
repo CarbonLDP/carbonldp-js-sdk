@@ -4,8 +4,4 @@ export * from "./LDP";
 export * from "./RDF";
 export * from "./SHACL";
 export * from "./VCARD";
-import * as XSD from "./XSD";
-
-export {
-	XSD,
-};
+export * from "./XSD";

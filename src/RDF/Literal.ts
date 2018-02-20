@@ -1,5 +1,5 @@
 import * as Utils from "./../Utils";
-import * as XSD from "../Vocabularies/XSD" ;
+import { XSD } from "../Vocabularies/XSD" ;
 import * as Errors from "./../Errors";
 
 import Serializer from "./Literal/Serializer";
@@ -21,25 +21,25 @@ export class Factory {
 
 		switch( true ) {
 			case Utils.isDate( value ):
-				type = XSD.DataType.dateTime;
+				type = XSD.dateTime;
 				value = value.toISOString();
 				break;
 			case Utils.isNumber( value ):
 				if( Utils.isInteger( value ) ) {
-					type = XSD.DataType.integer;
+					type = XSD.integer;
 				} else {
-					type = XSD.DataType.double;
+					type = XSD.double;
 				}
 				break;
 			case Utils.isString( value ):
-				type = XSD.DataType.string;
+				type = XSD.string;
 				break;
 			case Utils.isBoolean( value ):
-				type = XSD.DataType.boolean;
+				type = XSD.boolean;
 				break;
 			default:
 				// Treat it as an unknown object
-				type = XSD.DataType.object;
+				type = XSD.object;
 				value = JSON.stringify( value );
 				break;
 		}
@@ -65,62 +65,58 @@ export class Factory {
 			literalValue = literal[ "@value" ];
 		}
 
-		if( literalDataType === null ) return literalValue;
-		// The DataType isn't supported
-		if( ! Utils.hasProperty( XSD.DataType, literalDataType ) ) return literalValue;
-
-		let value:any;
+		let value:any = literalValue;
 		let parts:string[];
 		switch( literalDataType ) {
 			// Dates
-			case XSD.DataType.date:
-			case XSD.DataType.dateTime:
+			case XSD.date:
+			case XSD.dateTime:
 				value = new Date( literalValue );
 				break;
-			case XSD.DataType.time:
+			case XSD.time:
 				parts = literalValue.match( /(\d+):(\d+):(\d+)\.(\d+)Z/ );
 				value = new Date();
 				value.setUTCHours( parseFloat( parts[ 1 ] ), parseFloat( parts[ 2 ] ), parseFloat( parts[ 3 ] ), parseFloat( parts[ 4 ] ) );
 				break;
-			case XSD.DataType.duration:
+			case XSD.duration:
 				// TODO: Support duration values (create a class or something...)
 				break;
-			case XSD.DataType.gDay:
-			case XSD.DataType.gMonth:
-			case XSD.DataType.gMonthDay:
-			case XSD.DataType.gYear:
-			case XSD.DataType.gYearMonth:
+			case XSD.gDay:
+			case XSD.gMonth:
+			case XSD.gMonthDay:
+			case XSD.gYear:
+			case XSD.gYearMonth:
 				// TODO: Decide. Should we return it as a Date?
 				break;
 
 			// Numbers
-			case XSD.DataType.byte :
-			case XSD.DataType.decimal :
-			case XSD.DataType.int :
-			case XSD.DataType.integer :
-			case XSD.DataType.long :
-			case XSD.DataType.negativeInteger :
-			case XSD.DataType.nonNegativeInteger :
-			case XSD.DataType.nonPositiveInteger :
-			case XSD.DataType.positiveInteger :
-			case XSD.DataType.short :
-			case XSD.DataType.unsignedLong :
-			case XSD.DataType.unsignedInt :
-			case XSD.DataType.unsignedShort :
-			case XSD.DataType.unsignedByte :
-			case XSD.DataType.double :
-			case XSD.DataType.float :
+			case XSD.byte :
+			case XSD.decimal :
+			case XSD.int :
+			case XSD.integer :
+			case XSD.long :
+			case XSD.negativeInteger :
+			case XSD.nonNegativeInteger :
+			case XSD.nonPositiveInteger :
+			case XSD.positiveInteger :
+			case XSD.short :
+			case XSD.unsignedLong :
+			case XSD.unsignedInt :
+			case XSD.unsignedShort :
+			case XSD.unsignedByte :
+			case XSD.double :
+			case XSD.float :
 				value = parseFloat( literalValue );
 				break;
 
 			// Misc
-			case XSD.DataType.boolean :
+			case XSD.boolean :
 				value = Utils.parseBoolean( literalValue );
 				break;
-			case XSD.DataType.string:
+			case XSD.string:
 				value = literalValue;
 				break;
-			case XSD.DataType.object:
+			case XSD.object:
 				value = JSON.parse( literalValue );
 				break;
 			default:
@@ -136,7 +132,7 @@ export class Factory {
 	}
 
 	static hasType( value:Class, type:string ):boolean {
-		if( ! value[ "@type" ] && type === <any> XSD.DataType.string ) return true;
+		if( ! value[ "@type" ] && type === XSD.string ) return true;
 		return value[ "@type" ] === type;
 	}
 }

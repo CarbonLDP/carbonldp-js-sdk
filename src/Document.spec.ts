@@ -96,13 +96,13 @@ describe( module( "Carbon/Document" ), ():void => {
 		expect( Utils.hasProperty( Document.SCHEMA, "created" ) ).toBe( true );
 		expect( Document.SCHEMA[ "created" ] ).toEqual( {
 			"@id": NS.C.created,
-			"@type": NS.XSD.DataType.dateTime,
+			"@type": NS.XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "modified" ) ).toBe( true );
 		expect( Document.SCHEMA[ "modified" ] ).toEqual( {
 			"@id": NS.C.modified,
-			"@type": NS.XSD.DataType.dateTime,
+			"@type": NS.XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "defaultInteractionModel" ) ).toBe( true );

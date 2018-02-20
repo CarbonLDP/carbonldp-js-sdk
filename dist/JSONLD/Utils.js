@@ -6,13 +6,13 @@ function guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
     if (Utils_1.isString(value))
-        return index_1.XSD.DataType.string;
+        return index_1.XSD.string;
     if (Utils_1.isDate(value))
-        return index_1.XSD.DataType.dateTime;
+        return index_1.XSD.dateTime;
     if (Utils_1.isNumber(value))
-        return index_1.XSD.DataType.float;
+        return index_1.XSD.float;
     if (Utils_1.isBoolean(value))
-        return index_1.XSD.DataType.boolean;
+        return index_1.XSD.boolean;
     return null;
 }
 exports.guessXSDType = guessXSDType;

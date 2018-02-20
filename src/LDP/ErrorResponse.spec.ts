@@ -56,13 +56,13 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "requestID" ) ).toBe( true );
 		expect( ErrorResponse.SCHEMA[ "requestID" ] ).toEqual( {
 			"@id": NS.C.requestID,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "statusCode" ) ).toBe( true );
 		expect( ErrorResponse.SCHEMA[ "statusCode" ] ).toEqual( {
 			"@id": NS.C.httpStatusCode,
-			"@type": NS.XSD.DataType.int,
+			"@type": NS.XSD.int,
 		} );
 	} );
 

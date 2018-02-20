@@ -38,7 +38,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 
 		expect( ValidationReport.SCHEMA[ "conforms" ] ).toEqual( {
 			"@id": NS.SHACL.conforms,
-			"@type": NS.XSD.DataType.boolean,
+			"@type": NS.XSD.boolean,
 		} );
 
 		expect( ValidationReport.SCHEMA[ "results" ] ).toEqual( {
@@ -49,7 +49,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 
 		expect( ValidationReport.SCHEMA[ "shapesGraphWellFormed" ] ).toEqual( {
 			"@id": NS.SHACL.shapesGraphWellFormed,
-			"@type": NS.XSD.DataType.boolean,
+			"@type": NS.XSD.boolean,
 		} );
 	} );
 

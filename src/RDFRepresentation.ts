@@ -8,11 +8,11 @@ export const RDF_CLASS:string = NS.C.RDFRepresentation;
 export const SCHEMA:ObjectSchema.Class = {
 	"mediaType": {
 		"@id": NS.C.mediaType,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"size": {
 		"@id": NS.C.size,
-		"@type": NS.XSD.DataType.long,
+		"@type": NS.XSD.long,
 	},
 };
 

@@ -1,5 +1,5 @@
 import AbstractContext from "./../AbstractContext";
-import * as XSD from "../Vocabularies/XSD";
+import { XSD } from "../Vocabularies/XSD";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
 import {
@@ -504,23 +504,23 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( RDFNode.Util.getPropertyLiteral ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLiteral ) ).toBe( true );
 
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#string", XSD.DataType.string );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#string", XSD.string );
 			expect( Utils.isString( result ) ).toBe( true );
 			expect( result ).toBe( "a string" );
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#integer", XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#integer", XSD.integer );
 			expect( Utils.isNumber( result ) ).toBe( true );
 			expect( result ).toBe( 100 );
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#date", XSD.DataType.dateTime );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#date", XSD.dateTime );
 			expect( Utils.isDate( result ) ).toBe( true );
 			expect( result ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#no-property", XSD.DataType.string );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#no-property", XSD.string );
 			expect( result ).toBeNull();
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#date", XSD.DataType.float );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#date", XSD.float );
 			expect( result ).toBeNull();
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#pointer", XSD.DataType.string );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#pointer", XSD.string );
 			expect( result ).toBeNull();
-			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
+			result = RDFNode.Util.getPropertyLiteral( documentResource, "http://example.com/ns#empty-property", XSD.object );
 			expect( result ).toBeNull();
 		} );
 
@@ -594,16 +594,16 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( RDFNode.Util.getPropertyLiteralList ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLiteralList ) ).toBe( true );
 
-			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#list", XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#list", XSD.integer );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
 			expect( result[ 0 ] ).toBe( 100 );
 
-			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#no-property", XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#no-property", XSD.integer );
 			expect( result ).toBeNull();
-			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#string", XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#string", XSD.integer );
 			expect( result ).toBeNull();
-			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#empty-property", XSD.DataType.object );
+			result = RDFNode.Util.getPropertyLiteralList( documentResource, "http://example.com/ns#empty-property", XSD.object );
 			expect( result ).toBeNull();
 		} );
 
@@ -771,47 +771,47 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( RDFNode.Util.getPropertyLiterals ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyLiterals ) ).toBe( true );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#string" ], XSD.DataType.string );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#string" ], XSD.string );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
 			expect( Utils.isString( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ] ).toBe( "a string" );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#integer" ], XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#integer" ], XSD.integer );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
 			expect( Utils.isNumber( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ] ).toBe( 100 );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#date" ], XSD.DataType.dateTime );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#date" ], XSD.dateTime );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
 			expect( Utils.isDate( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#set" ], XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#set" ], XSD.integer );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
 			expect( Utils.isNumber( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ] ).toEqual( 100 );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#date" ], XSD.DataType.float );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#date" ], XSD.float );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 0 );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#pointer" ], XSD.DataType.string );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#pointer" ], XSD.string );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 0 );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#list" ], XSD.DataType.integer );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#list" ], XSD.integer );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 0 );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#empty-property" ], XSD.DataType.object );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#empty-property" ], XSD.object );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 0 );
 
-			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#no-property" ], XSD.DataType.string );
+			result = RDFNode.Util.getPropertyLiterals( documentResource[ "http://example.com/ns#no-property" ], XSD.string );
 			expect( result ).toBeNull();
 		} );
 

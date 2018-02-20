@@ -9,11 +9,11 @@ export const RDF_CLASS:string = NS.CS.Token;
 export const SCHEMA:ObjectSchema.Class = {
 	"key": {
 		"@id": NS.CS.tokenKey,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"expirationTime": {
 		"@id": NS.CS.expirationTime,
-		"@type": NS.XSD.DataType.dateTime,
+		"@type": NS.XSD.dateTime,
 	},
 	"user": {
 		"@id": NS.CS.credentialsOf,

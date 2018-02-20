@@ -13,11 +13,11 @@ export const SCHEMA:ObjectSchema = {
 	},
 	"requestID": {
 		"@id": NS.C.requestID,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"statusCode": {
 		"@id": NS.C.httpStatusCode,
-		"@type": NS.XSD.DataType.int,
+		"@type": NS.XSD.int,
 	},
 };
 

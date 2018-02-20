@@ -35,7 +35,7 @@ exports.SCHEMA = {
     },
     "resultMessage": {
         "@id": NS.SHACL.resultMessage,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "resultSeverity": {
         "@id": NS.SHACL.resultSeverity,

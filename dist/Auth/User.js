@@ -13,7 +13,7 @@ exports.RDF_CLASS = NS.CS.User;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.name,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "credentials": {
         "@id": NS.CS.credentials,

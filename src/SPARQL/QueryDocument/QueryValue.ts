@@ -3,7 +3,7 @@ import { LiteralToken } from "sparqler/tokens";
 
 import { isDate } from "../../Utils";
 import { IllegalArgumentError } from "./../../Errors";
-import * as XSD from "../../Vocabularies/XSD";
+import { XSD } from "../../Vocabularies/XSD";
 import * as QueryContext from "./QueryContext";
 
 export class Class {
@@ -18,7 +18,7 @@ export class Class {
 
 		if( isDate( value ) ) {
 			this._literal = new LiteralToken();
-			this.withType( XSD.DataType.dateTime );
+			this.withType( XSD.dateTime );
 		} else {
 			this._literal = new LiteralToken( value );
 		}
@@ -26,8 +26,8 @@ export class Class {
 
 	withType( type:string ):this {
 		if( ! isAbsolute( type ) ) {
-			if( ! XSD.DataType.hasOwnProperty( type ) ) throw new IllegalArgumentError( "Invalid type provided." );
-			type = XSD.DataType[ type ];
+			if( ! XSD.hasOwnProperty( type ) ) throw new IllegalArgumentError( "Invalid type provided." );
+			type = XSD[ type ];
 		}
 		const value:string = this._context.serializeLiteral( type, this._value );
 		this._literal.setValue( value );

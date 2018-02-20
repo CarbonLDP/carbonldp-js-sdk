@@ -467,13 +467,6 @@ exports.UUID = UUID;
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(168));
 __export(__webpack_require__(169));
@@ -481,8 +474,7 @@ __export(__webpack_require__(170));
 __export(__webpack_require__(171));
 __export(__webpack_require__(172));
 __export(__webpack_require__(173));
-var XSD = __importStar(__webpack_require__(43));
-exports.XSD = XSD;
+__export(__webpack_require__(33));
 
 
 /***/ }),
@@ -552,7 +544,7 @@ __export(__webpack_require__(31));
 __export(__webpack_require__(75));
 __export(__webpack_require__(53));
 __export(__webpack_require__(147));
-__export(__webpack_require__(41));
+__export(__webpack_require__(42));
 __export(__webpack_require__(54));
 __export(__webpack_require__(30));
 __export(__webpack_require__(20));
@@ -1201,8 +1193,8 @@ var Digester = (function () {
                 digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
             }
             else {
-                if (RDF.URI.Util.isRelative(type) && type in NS.XSD.DataType)
-                    type = NS.XSD.DataType[type];
+                if (RDF.URI.Util.isRelative(type) && type in NS.XSD)
+                    type = NS.XSD[type];
                 digestedDefinition.literal = true;
                 digestedDefinition.literalType = type;
             }
@@ -2956,11 +2948,11 @@ exports.SCHEMA = {
     },
     "created": {
         "@id": NS.C.created,
-        "@type": NS.XSD.DataType.dateTime,
+        "@type": NS.XSD.dateTime,
     },
     "modified": {
         "@id": NS.C.modified,
-        "@type": NS.XSD.DataType.dateTime,
+        "@type": NS.XSD.dateTime,
     },
     "defaultInteractionModel": {
         "@id": NS.C.defaultInteractionModel,
@@ -3490,7 +3482,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(31);
 var NewLineSymbol_1 = __webpack_require__(53);
-var Operator_1 = __webpack_require__(41);
+var Operator_1 = __webpack_require__(42);
 var RightSymbol_1 = __webpack_require__(54);
 var Token_1 = __webpack_require__(20);
 var StringLiteral = (function (_super) {
@@ -3586,6 +3578,47 @@ exports.joinPatterns = function (patterns) {
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
+var XSD;
+(function (XSD) {
+    XSD.namespace = "http://www.w3.org/2001/XMLSchema#";
+    XSD.boolean = XSD.namespace + "boolean";
+    XSD.byte = XSD.namespace + "byte";
+    XSD.date = XSD.namespace + "date";
+    XSD.dateTime = XSD.namespace + "dateTime";
+    XSD.decimal = XSD.namespace + "decimal";
+    XSD.double = XSD.namespace + "double";
+    XSD.duration = XSD.namespace + "duration";
+    XSD.float = XSD.namespace + "float";
+    XSD.gDay = XSD.namespace + "gDay";
+    XSD.gMonth = XSD.namespace + "gMonth";
+    XSD.gMonthDay = XSD.namespace + "gMonthDay";
+    XSD.gYear = XSD.namespace + "gYear";
+    XSD.gYearMonth = XSD.namespace + "gYearMonth";
+    XSD.int = XSD.namespace + "int";
+    XSD.integer = XSD.namespace + "integer";
+    XSD.long = XSD.namespace + "long";
+    XSD.negativeInteger = XSD.namespace + "negativeInteger";
+    XSD.nonNegativeInteger = XSD.namespace + "nonNegativeInteger";
+    XSD.nonPositiveInteger = XSD.namespace + "nonPositiveInteger";
+    XSD.object = XSD.namespace + "object";
+    XSD.positiveInteger = XSD.namespace + "positiveInteger";
+    XSD.short = XSD.namespace + "short";
+    XSD.string = XSD.namespace + "string";
+    XSD.time = XSD.namespace + "time";
+    XSD.unsignedByte = XSD.namespace + "unsignedByte";
+    XSD.unsignedInt = XSD.namespace + "unsignedInt";
+    XSD.unsignedLong = XSD.namespace + "unsignedLong";
+    XSD.unsignedShort = XSD.namespace + "unsignedShort";
+})(XSD = exports.XSD || (exports.XSD = {}));
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -3605,7 +3638,7 @@ exports.Processor = Processor;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4150,7 +4183,7 @@ exports.Factory = Factory;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4271,7 +4304,7 @@ exports.areDifferentType = areDifferentType;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4307,7 +4340,7 @@ exports.ValidationError = ValidationError;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4331,7 +4364,7 @@ module.exports = XHRLocalObject;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4366,7 +4399,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4374,7 +4407,7 @@ module.exports = {
 
 var eventUtils = __webpack_require__(22)
   , JSON3 = __webpack_require__(19)
-  , browser = __webpack_require__(38)
+  , browser = __webpack_require__(39)
   ;
 
 var debug = function() {};
@@ -4560,7 +4593,7 @@ if (global.document) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4599,7 +4632,7 @@ exports.addType = addType;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4636,7 +4669,7 @@ exports.default = Operator;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4689,7 +4722,7 @@ exports.Users = Users;
 var Errors = __importStar(__webpack_require__(3));
 var FreeResources = __importStar(__webpack_require__(106));
 var HTTP = __importStar(__webpack_require__(16));
-var JSONLD = __importStar(__webpack_require__(33));
+var JSONLD = __importStar(__webpack_require__(34));
 var RDF = __importStar(__webpack_require__(10));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
@@ -4850,61 +4883,6 @@ var Class = (function () {
 }());
 exports.Class = Class;
 exports.default = Class;
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-var Utils = __importStar(__webpack_require__(0));
-exports.namespace = "http://www.w3.org/2001/XMLSchema#";
-var DataType = (function () {
-    function DataType() {
-    }
-    DataType.date = exports.namespace + "date";
-    DataType.dateTime = exports.namespace + "dateTime";
-    DataType.duration = exports.namespace + "duration";
-    DataType.gDay = exports.namespace + "gDay";
-    DataType.gMonth = exports.namespace + "gMonth";
-    DataType.gMonthDay = exports.namespace + "gMonthDay";
-    DataType.gYear = exports.namespace + "gYear";
-    DataType.gYearMonth = exports.namespace + "gYearMonth";
-    DataType.time = exports.namespace + "time";
-    DataType.byte = exports.namespace + "byte";
-    DataType.decimal = exports.namespace + "decimal";
-    DataType.int = exports.namespace + "int";
-    DataType.integer = exports.namespace + "integer";
-    DataType.long = exports.namespace + "long";
-    DataType.negativeInteger = exports.namespace + "negativeInteger";
-    DataType.nonNegativeInteger = exports.namespace + "nonNegativeInteger";
-    DataType.nonPositiveInteger = exports.namespace + "nonPositiveInteger";
-    DataType.positiveInteger = exports.namespace + "positiveInteger";
-    DataType.short = exports.namespace + "short";
-    DataType.unsignedLong = exports.namespace + "unsignedLong";
-    DataType.unsignedInt = exports.namespace + "unsignedInt";
-    DataType.unsignedShort = exports.namespace + "unsignedShort";
-    DataType.unsignedByte = exports.namespace + "unsignedByte";
-    DataType.double = exports.namespace + "double";
-    DataType.float = exports.namespace + "float";
-    DataType.boolean = exports.namespace + "boolean";
-    DataType.string = exports.namespace + "string";
-    DataType.object = exports.namespace + "object";
-    return DataType;
-}());
-exports.DataType = DataType;
-Utils.forEachOwnProperty(DataType, function (key, value) {
-    DataType[value] = key;
-});
 
 
 /***/ }),
@@ -5148,9 +5126,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTTP = __importStar(__webpack_require__(16));
-var Auth = __importStar(__webpack_require__(42));
+var Auth = __importStar(__webpack_require__(43));
 var NS = __importStar(__webpack_require__(1));
-var PersistedDocument = __importStar(__webpack_require__(34));
+var PersistedDocument = __importStar(__webpack_require__(35));
 var Resource = __importStar(__webpack_require__(9));
 var Utils = __importStar(__webpack_require__(0));
 var Factory = (function () {
@@ -5313,7 +5291,7 @@ module.exports = XHRCorsObject;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var tokens_2 = __webpack_require__(4);
-var ObjectPattern_1 = __webpack_require__(40);
+var ObjectPattern_1 = __webpack_require__(41);
 var TriplesPattern = (function () {
     function TriplesPattern(resolver) {
         this.resolver = resolver;
@@ -5560,7 +5538,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(31);
 var LeftSymbol_1 = __webpack_require__(75);
 var NewLineSymbol_1 = __webpack_require__(53);
-var Operator_1 = __webpack_require__(41);
+var Operator_1 = __webpack_require__(42);
 var Token_1 = __webpack_require__(20);
 var RightSymbol = (function (_super) {
     __extends(RightSymbol, _super);
@@ -5711,7 +5689,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(__webpack_require__(0));
-var XSD = __importStar(__webpack_require__(43));
+var XSD_1 = __webpack_require__(33);
 var Errors = __importStar(__webpack_require__(3));
 var Serializers = __importStar(__webpack_require__(210));
 exports.Serializers = Serializers;
@@ -5726,25 +5704,25 @@ var Factory = (function () {
         var type;
         switch (true) {
             case Utils.isDate(value):
-                type = XSD.DataType.dateTime;
+                type = XSD_1.XSD.dateTime;
                 value = value.toISOString();
                 break;
             case Utils.isNumber(value):
                 if (Utils.isInteger(value)) {
-                    type = XSD.DataType.integer;
+                    type = XSD_1.XSD.integer;
                 }
                 else {
-                    type = XSD.DataType.double;
+                    type = XSD_1.XSD.double;
                 }
                 break;
             case Utils.isString(value):
-                type = XSD.DataType.string;
+                type = XSD_1.XSD.string;
                 break;
             case Utils.isBoolean(value):
-                type = XSD.DataType.boolean;
+                type = XSD_1.XSD.boolean;
                 break;
             default:
-                type = XSD.DataType.object;
+                type = XSD_1.XSD.object;
                 value = JSON.stringify(value);
                 break;
         }
@@ -5768,55 +5746,51 @@ var Factory = (function () {
             literalDataType = "@type" in literal ? literal["@type"] : null;
             literalValue = literal["@value"];
         }
-        if (literalDataType === null)
-            return literalValue;
-        if (!Utils.hasProperty(XSD.DataType, literalDataType))
-            return literalValue;
-        var value;
+        var value = literalValue;
         var parts;
         switch (literalDataType) {
-            case XSD.DataType.date:
-            case XSD.DataType.dateTime:
+            case XSD_1.XSD.date:
+            case XSD_1.XSD.dateTime:
                 value = new Date(literalValue);
                 break;
-            case XSD.DataType.time:
+            case XSD_1.XSD.time:
                 parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
                 value = new Date();
                 value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
                 break;
-            case XSD.DataType.duration:
+            case XSD_1.XSD.duration:
                 break;
-            case XSD.DataType.gDay:
-            case XSD.DataType.gMonth:
-            case XSD.DataType.gMonthDay:
-            case XSD.DataType.gYear:
-            case XSD.DataType.gYearMonth:
+            case XSD_1.XSD.gDay:
+            case XSD_1.XSD.gMonth:
+            case XSD_1.XSD.gMonthDay:
+            case XSD_1.XSD.gYear:
+            case XSD_1.XSD.gYearMonth:
                 break;
-            case XSD.DataType.byte:
-            case XSD.DataType.decimal:
-            case XSD.DataType.int:
-            case XSD.DataType.integer:
-            case XSD.DataType.long:
-            case XSD.DataType.negativeInteger:
-            case XSD.DataType.nonNegativeInteger:
-            case XSD.DataType.nonPositiveInteger:
-            case XSD.DataType.positiveInteger:
-            case XSD.DataType.short:
-            case XSD.DataType.unsignedLong:
-            case XSD.DataType.unsignedInt:
-            case XSD.DataType.unsignedShort:
-            case XSD.DataType.unsignedByte:
-            case XSD.DataType.double:
-            case XSD.DataType.float:
+            case XSD_1.XSD.byte:
+            case XSD_1.XSD.decimal:
+            case XSD_1.XSD.int:
+            case XSD_1.XSD.integer:
+            case XSD_1.XSD.long:
+            case XSD_1.XSD.negativeInteger:
+            case XSD_1.XSD.nonNegativeInteger:
+            case XSD_1.XSD.nonPositiveInteger:
+            case XSD_1.XSD.positiveInteger:
+            case XSD_1.XSD.short:
+            case XSD_1.XSD.unsignedLong:
+            case XSD_1.XSD.unsignedInt:
+            case XSD_1.XSD.unsignedShort:
+            case XSD_1.XSD.unsignedByte:
+            case XSD_1.XSD.double:
+            case XSD_1.XSD.float:
                 value = parseFloat(literalValue);
                 break;
-            case XSD.DataType.boolean:
+            case XSD_1.XSD.boolean:
                 value = Utils.parseBoolean(literalValue);
                 break;
-            case XSD.DataType.string:
+            case XSD_1.XSD.string:
                 value = literalValue;
                 break;
-            case XSD.DataType.object:
+            case XSD_1.XSD.object:
                 value = JSON.parse(literalValue);
                 break;
             default:
@@ -5829,7 +5803,7 @@ var Factory = (function () {
             && Utils.isString(value["@value"]);
     };
     Factory.hasType = function (value, type) {
-        if (!value["@type"] && type === XSD.DataType.string)
+        if (!value["@type"] && type === XSD_1.XSD.string)
             return true;
         return value["@type"] === type;
     };
@@ -5852,7 +5826,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var JSONLD = __importStar(__webpack_require__(33));
+var JSONLD = __importStar(__webpack_require__(34));
 var Node = __importStar(__webpack_require__(64));
 var Utils = __importStar(__webpack_require__(0));
 var URI = __importStar(__webpack_require__(21));
@@ -6120,7 +6094,7 @@ exports.default = Class;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var ObjectSchema_1 = __webpack_require__(12);
-var Utils_1 = __webpack_require__(35);
+var Utils_1 = __webpack_require__(36);
 var PropertyType;
 (function (PropertyType) {
     PropertyType[PropertyType["FULL"] = 0] = "FULL";
@@ -6252,18 +6226,18 @@ var Class = (function () {
     });
     Class.getDefaultSerializers = function () {
         var literalSerializers = new Map();
-        literalSerializers.set(NS.XSD.DataType.date, RDF.Literal.Serializers.XSD.dateSerializer);
-        literalSerializers.set(NS.XSD.DataType.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
-        literalSerializers.set(NS.XSD.DataType.time, RDF.Literal.Serializers.XSD.timeSerializer);
-        literalSerializers.set(NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
-        literalSerializers.set(NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.longSerializer);
-        literalSerializers.set(NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
-        literalSerializers.set(NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
-        literalSerializers.set(NS.XSD.DataType.string, RDF.Literal.Serializers.XSD.stringSerializer);
+        literalSerializers.set(NS.XSD.date, RDF.Literal.Serializers.XSD.dateSerializer);
+        literalSerializers.set(NS.XSD.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
+        literalSerializers.set(NS.XSD.time, RDF.Literal.Serializers.XSD.timeSerializer);
+        literalSerializers.set(NS.XSD.integer, RDF.Literal.Serializers.XSD.integerSerializer);
+        literalSerializers.set(NS.XSD.int, RDF.Literal.Serializers.XSD.integerSerializer);
+        literalSerializers.set(NS.XSD.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
+        literalSerializers.set(NS.XSD.long, RDF.Literal.Serializers.XSD.longSerializer);
+        literalSerializers.set(NS.XSD.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
+        literalSerializers.set(NS.XSD.float, RDF.Literal.Serializers.XSD.floatSerializer);
+        literalSerializers.set(NS.XSD.double, RDF.Literal.Serializers.XSD.floatSerializer);
+        literalSerializers.set(NS.XSD.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
+        literalSerializers.set(NS.XSD.string, RDF.Literal.Serializers.XSD.stringSerializer);
         return literalSerializers;
     };
     Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary, strict) {
@@ -6353,8 +6327,8 @@ var Class = (function () {
         }
         var mapValues = [];
         Utils.forEachOwnProperty(propertyValue, function (languageTag, value) {
-            var serializedValue = _this.literalSerializers.get(NS.XSD.DataType.string).serialize(value);
-            mapValues.push({ "@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag });
+            var serializedValue = _this.literalSerializers.get(NS.XSD.string).serialize(value);
+            mapValues.push({ "@value": serializedValue, "@type": NS.XSD.string, "@language": languageTag });
         });
         return mapValues;
     };
@@ -6464,8 +6438,7 @@ var Class = (function () {
     };
     Class.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
-            NS.XSD.DataType.string :
-            ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+            NS.XSD.string : ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
         return RDF.Node.Util.getPropertyLiterals(propertyValues, literalType);
     };
     return Class;
@@ -6493,7 +6466,7 @@ var Document = __importStar(__webpack_require__(58));
 var List = __importStar(__webpack_require__(65));
 var Literal = __importStar(__webpack_require__(57));
 var Value = __importStar(__webpack_require__(100));
-var XSD = __importStar(__webpack_require__(43));
+var XSD_1 = __webpack_require__(33);
 var Factory = (function () {
     function Factory() {
     }
@@ -6690,7 +6663,7 @@ var Util = (function () {
             var propertyValue = propertyValues_7[_i];
             if (!Literal.Factory.is(propertyValue))
                 continue;
-            if (!Literal.Factory.hasType(propertyValue, XSD.DataType.string))
+            if (!Literal.Factory.hasType(propertyValue, XSD_1.XSD.string))
                 continue;
             var languageTag = propertyValue["@language"];
             if (!languageTag)
@@ -6936,7 +6909,7 @@ exports.SCHEMA = {
 var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(2)
   , eventUtils = __webpack_require__(22)
-  , browser = __webpack_require__(38)
+  , browser = __webpack_require__(39)
   , urlUtils = __webpack_require__(14)
   ;
 
@@ -7382,11 +7355,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __importStar(__webpack_require__(42));
+var Auth = __importStar(__webpack_require__(43));
 var Document = __importStar(__webpack_require__(24));
 var Documents = __importStar(__webpack_require__(107));
 var Errors = __importStar(__webpack_require__(3));
-var LDP = __importStar(__webpack_require__(36));
+var LDP = __importStar(__webpack_require__(37));
 var Messaging = __importStar(__webpack_require__(67));
 var ObjectSchema = __importStar(__webpack_require__(12));
 var ProtectedDocument = __importStar(__webpack_require__(127));
@@ -7585,7 +7558,7 @@ exports.RDF_CLASS = NS.CS.AccessControlEntry;
 exports.SCHEMA = {
     "granting": {
         "@id": NS.CS.granting,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
     "permissions": {
         "@id": NS.CS.permission,
@@ -8121,15 +8094,15 @@ exports.RDF_CLASS = NS.CS.Credentials;
 exports.SCHEMA = {
     "email": {
         "@id": NS.VCARD.email,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "password": {
         "@id": NS.CS.password,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "enabled": {
         "@id": NS.CS.enabled,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
     "user": {
         "@id": NS.CS.credentialsOf,
@@ -8369,7 +8342,7 @@ var Errors_1 = __webpack_require__(3);
 var QueryObject = __importStar(__webpack_require__(95));
 var QueryProperty = __importStar(__webpack_require__(61));
 var QueryValue = __importStar(__webpack_require__(96));
-var Utils_2 = __webpack_require__(35);
+var Utils_2 = __webpack_require__(36);
 var INHERIT = Object.freeze({});
 exports.ALL = Object.freeze({});
 var Class = (function () {
@@ -8541,26 +8514,19 @@ exports.default = Class;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(26);
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(0);
 var Errors_1 = __webpack_require__(3);
-var XSD = __importStar(__webpack_require__(43));
+var XSD_1 = __webpack_require__(33);
 var Class = (function () {
     function Class(context, value) {
         this._value = value;
         this._context = context;
         if (Utils_1.isDate(value)) {
             this._literal = new tokens_1.LiteralToken();
-            this.withType(XSD.DataType.dateTime);
+            this.withType(XSD_1.XSD.dateTime);
         }
         else {
             this._literal = new tokens_1.LiteralToken(value);
@@ -8568,9 +8534,9 @@ var Class = (function () {
     }
     Class.prototype.withType = function (type) {
         if (!iri_1.isAbsolute(type)) {
-            if (!XSD.DataType.hasOwnProperty(type))
+            if (!XSD_1.XSD.hasOwnProperty(type))
                 throw new Errors_1.IllegalArgumentError("Invalid type provided.");
-            type = XSD.DataType[type];
+            type = XSD_1.XSD[type];
         }
         var value = this._context.serializeLiteral(type, this._value);
         this._literal.setValue(value);
@@ -8606,13 +8572,13 @@ function guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
     if (Utils_1.isString(value))
-        return index_1.XSD.DataType.string;
+        return index_1.XSD.string;
     if (Utils_1.isDate(value))
-        return index_1.XSD.DataType.dateTime;
+        return index_1.XSD.dateTime;
     if (Utils_1.isNumber(value))
-        return index_1.XSD.DataType.float;
+        return index_1.XSD.float;
     if (Utils_1.isBoolean(value))
-        return index_1.XSD.DataType.boolean;
+        return index_1.XSD.boolean;
     return null;
 }
 exports.guessXSDType = guessXSDType;
@@ -9400,11 +9366,11 @@ exports.RDF_CLASS = NS.CS.Token;
 exports.SCHEMA = {
     "key": {
         "@id": NS.CS.tokenKey,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "expirationTime": {
         "@id": NS.CS.expirationTime,
-        "@type": NS.XSD.DataType.dateTime,
+        "@type": NS.XSD.dateTime,
     },
     "user": {
         "@id": NS.CS.credentialsOf,
@@ -9667,19 +9633,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var AccessPoint = __importStar(__webpack_require__(108));
-var Auth = __importStar(__webpack_require__(42));
+var Auth = __importStar(__webpack_require__(43));
 var Document = __importStar(__webpack_require__(24));
 var Errors = __importStar(__webpack_require__(3));
 var FreeResources = __importStar(__webpack_require__(106));
 var HTTP = __importStar(__webpack_require__(16));
-var JSONLD = __importStar(__webpack_require__(33));
-var LDP = __importStar(__webpack_require__(36));
+var JSONLD = __importStar(__webpack_require__(34));
+var LDP = __importStar(__webpack_require__(37));
 var LDPatch = __importStar(__webpack_require__(109));
 var Messaging = __importStar(__webpack_require__(67));
 var Utils_1 = __webpack_require__(126);
 var NS = __importStar(__webpack_require__(1));
 var ObjectSchema = __importStar(__webpack_require__(12));
-var PersistedDocument = __importStar(__webpack_require__(34));
+var PersistedDocument = __importStar(__webpack_require__(35));
 var PersistedFragment = __importStar(__webpack_require__(45));
 var PersistedProtectedDocument = __importStar(__webpack_require__(47));
 var PersistedResource = __importStar(__webpack_require__(46));
@@ -9690,7 +9656,7 @@ var Resource = __importStar(__webpack_require__(9));
 var SPARQL = __importStar(__webpack_require__(74));
 var Builder_1 = __importDefault(__webpack_require__(128));
 var QueryDocument_1 = __webpack_require__(59);
-var Utils_2 = __webpack_require__(35);
+var Utils_2 = __webpack_require__(36);
 var Utils = __importStar(__webpack_require__(0));
 var Utils_3 = __webpack_require__(0);
 var Class = (function () {
@@ -10820,7 +10786,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var LDP = __importStar(__webpack_require__(36));
+var LDP = __importStar(__webpack_require__(37));
 var NS = __importStar(__webpack_require__(1));
 exports.RDF_CLASS = NS.C.AccessPoint;
 var Factory = (function () {
@@ -11965,7 +11931,7 @@ var inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , version = __webpack_require__(120)
   , urlUtils = __webpack_require__(14)
-  , iframeUtils = __webpack_require__(39)
+  , iframeUtils = __webpack_require__(40)
   , eventUtils = __webpack_require__(22)
   , random = __webpack_require__(28)
   ;
@@ -12109,7 +12075,7 @@ module.exports = '1.1.4';
 
 var inherits = __webpack_require__(2)
   , HtmlfileReceiver = __webpack_require__(266)
-  , XHRLocalObject = __webpack_require__(37)
+  , XHRLocalObject = __webpack_require__(38)
   , AjaxBasedTransport = __webpack_require__(29)
   ;
 
@@ -12143,7 +12109,7 @@ var inherits = __webpack_require__(2)
   , AjaxBasedTransport = __webpack_require__(29)
   , XhrReceiver = __webpack_require__(48)
   , XHRCorsObject = __webpack_require__(49)
-  , XHRLocalObject = __webpack_require__(37)
+  , XHRLocalObject = __webpack_require__(38)
   ;
 
 function XhrPollingTransport(transUrl) {
@@ -12200,7 +12166,7 @@ module.exports = global.location || {
 var inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , JSON3 = __webpack_require__(19)
-  , XHRLocalObject = __webpack_require__(37)
+  , XHRLocalObject = __webpack_require__(38)
   , InfoAjax = __webpack_require__(125)
   ;
 
@@ -12767,7 +12733,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var _1 = __webpack_require__(290);
 var tokens_1 = __webpack_require__(6);
-var ObjectPattern_1 = __webpack_require__(40);
+var ObjectPattern_1 = __webpack_require__(41);
 var ValuesPattern = (function (_super) {
     __extends(ValuesPattern, _super);
     function ValuesPattern(resolver, variables) {
@@ -12901,7 +12867,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var tokens_2 = __webpack_require__(4);
-var ObjectPattern_1 = __webpack_require__(40);
+var ObjectPattern_1 = __webpack_require__(41);
 var TriplesPattern_1 = __webpack_require__(50);
 var Collection = (function (_super) {
     __extends(Collection, _super);
@@ -12959,7 +12925,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(6);
 var tokens_2 = __webpack_require__(4);
-var ObjectPattern_1 = __webpack_require__(40);
+var ObjectPattern_1 = __webpack_require__(41);
 var TriplesSubject_1 = __webpack_require__(51);
 var Literal = (function (_super) {
     __extends(Literal, _super);
@@ -13237,20 +13203,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(26);
 var AbstractContext = __importStar(__webpack_require__(167));
 var AccessPoint = __importStar(__webpack_require__(108));
-var Auth = __importStar(__webpack_require__(42));
+var Auth = __importStar(__webpack_require__(43));
 var Document = __importStar(__webpack_require__(24));
 var Documents = __importStar(__webpack_require__(107));
 var Errors = __importStar(__webpack_require__(3));
 var Fragment = __importStar(__webpack_require__(44));
 var HTTP = __importStar(__webpack_require__(16));
-var JSONLD = __importStar(__webpack_require__(33));
-var LDP = __importStar(__webpack_require__(36));
+var JSONLD = __importStar(__webpack_require__(34));
+var LDP = __importStar(__webpack_require__(37));
 var LDPatch = __importStar(__webpack_require__(109));
 var Messaging = __importStar(__webpack_require__(67));
 var NamedFragment = __importStar(__webpack_require__(101));
 var Vocabularies = __importStar(__webpack_require__(1));
 var ObjectSchema = __importStar(__webpack_require__(12));
-var PersistedDocument = __importStar(__webpack_require__(34));
+var PersistedDocument = __importStar(__webpack_require__(35));
 var PersistedFragment = __importStar(__webpack_require__(45));
 var PersistedNamedFragment = __importStar(__webpack_require__(92));
 var PersistedResource = __importStar(__webpack_require__(46));
@@ -13376,7 +13342,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(31);
-var Operator_1 = __webpack_require__(41);
+var Operator_1 = __webpack_require__(42);
 var RightSymbol_1 = __webpack_require__(54);
 var Token_1 = __webpack_require__(20);
 var NumberLiteral = (function (_super) {
@@ -16172,7 +16138,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument = __importStar(__webpack_require__(34));
+var PersistedDocument = __importStar(__webpack_require__(35));
 var Pointer = __importStar(__webpack_require__(13));
 var RDFDocument = __importStar(__webpack_require__(58));
 var URI_1 = __webpack_require__(21);
@@ -16420,7 +16386,7 @@ var Errors_1 = __webpack_require__(3);
 var ObjectSchema_1 = __webpack_require__(12);
 var QueryContext = __importStar(__webpack_require__(60));
 var QueryProperty = __importStar(__webpack_require__(61));
-var Utils_1 = __webpack_require__(35);
+var Utils_1 = __webpack_require__(36);
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(context) {
@@ -16597,7 +16563,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var Errors_1 = __webpack_require__(3);
 var QueryDocumentBuilder = __importStar(__webpack_require__(94));
-var Utils_1 = __webpack_require__(35);
+var Utils_1 = __webpack_require__(36);
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -16823,11 +16789,11 @@ exports.RDF_CLASS = NS.CS.Role;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.name,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "description": {
         "@id": NS.CS.description,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "parentRole": {
         "@id": NS.CS.parentRole,
@@ -17003,11 +16969,11 @@ exports.SCHEMA = {
     },
     "expirationTime": {
         "@id": NS.CS.expirationTime,
-        "@type": NS.XSD.DataType.dateTime,
+        "@type": NS.XSD.dateTime,
     },
     "ticketKey": {
         "@id": NS.CS.ticketKey,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
 };
 var Factory = (function () {
@@ -17046,8 +17012,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(3));
 var HTTP = __importStar(__webpack_require__(16));
-var JSONLD = __importStar(__webpack_require__(33));
-var LDP = __importStar(__webpack_require__(36));
+var JSONLD = __importStar(__webpack_require__(34));
+var LDP = __importStar(__webpack_require__(37));
 var NS = __importStar(__webpack_require__(1));
 var RDF = __importStar(__webpack_require__(10));
 var Resource = __importStar(__webpack_require__(9));
@@ -17265,7 +17231,7 @@ exports.SCHEMA = {
     },
     "eTag": {
         "@id": NS.C.eTag,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "bNodesMap": {
         "@id": NS.C.bNodesMap,
@@ -17332,7 +17298,7 @@ exports.RDF_CLASS = NS.C.Error;
 exports.SCHEMA = {
     "errorCode": {
         "@id": NS.C.errorCode,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "errorMessage": {
         "@id": NS.C.errorMessage,
@@ -17369,11 +17335,11 @@ exports.SCHEMA = {
     },
     "requestID": {
         "@id": NS.C.requestID,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "statusCode": {
         "@id": NS.C.httpStatusCode,
-        "@type": NS.XSD.DataType.int,
+        "@type": NS.XSD.int,
     },
 };
 var Util = (function () {
@@ -17549,7 +17515,7 @@ exports.RDF_CLASS = NS.CS.User;
 exports.SCHEMA = {
     "name": {
         "@id": NS.CS.name,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "credentials": {
         "@id": NS.CS.credentials,
@@ -17675,7 +17641,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(26);
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(97);
-var index_1 = __webpack_require__(1);
+var XSD_1 = __webpack_require__(33);
 var ObjectSchema_1 = __webpack_require__(12);
 var Pointer = __importStar(__webpack_require__(13));
 var Utils_2 = __webpack_require__(0);
@@ -17818,7 +17784,7 @@ var Class = (function () {
             var value = languageMap[key];
             var tempDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
             tempDefinition.language = key;
-            tempDefinition.literalType = index_1.XSD.DataType.string;
+            tempDefinition.literalType = XSD_1.XSD.string;
             return _this.expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
@@ -17838,7 +17804,7 @@ var Class = (function () {
             return null;
         value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
         var literal = new tokens_1.LiteralToken(value);
-        if (type !== index_1.XSD.DataType.string)
+        if (type !== XSD_1.XSD.string)
             literal.setType(this.compactIRI(schema, type));
         if (definition && definition.language !== void 0)
             literal.setLanguage(definition.language);
@@ -19055,8 +19021,8 @@ var inherits = __webpack_require__(2)
   , AjaxBasedTransport = __webpack_require__(29)
   , XhrReceiver = __webpack_require__(48)
   , XHRCorsObject = __webpack_require__(49)
-  , XHRLocalObject = __webpack_require__(37)
-  , browser = __webpack_require__(38)
+  , XHRLocalObject = __webpack_require__(38)
+  , browser = __webpack_require__(39)
   ;
 
 function XhrStreamingTransport(transUrl) {
@@ -19366,7 +19332,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var inherits = __webpack_require__(2)
-  , iframeUtils = __webpack_require__(39)
+  , iframeUtils = __webpack_require__(40)
   , urlUtils = __webpack_require__(14)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , random = __webpack_require__(28)
@@ -19532,9 +19498,9 @@ module.exports = JsonPTransport;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var utils = __webpack_require__(39)
+var utils = __webpack_require__(40)
   , random = __webpack_require__(28)
-  , browser = __webpack_require__(38)
+  , browser = __webpack_require__(39)
   , urlUtils = __webpack_require__(14)
   , inherits = __webpack_require__(2)
   , EventEmitter = __webpack_require__(11).EventEmitter
@@ -19841,7 +19807,7 @@ var URL = __webpack_require__(112)
   , eventUtils = __webpack_require__(22)
   , transport = __webpack_require__(274)
   , objectUtils = __webpack_require__(72)
-  , browser = __webpack_require__(38)
+  , browser = __webpack_require__(39)
   , log = __webpack_require__(275)
   , Event = __webpack_require__(73)
   , EventTarget = __webpack_require__(113)
@@ -20869,7 +20835,7 @@ var EventEmitter = __webpack_require__(11).EventEmitter
   , urlUtils = __webpack_require__(14)
   , XDR = __webpack_require__(70)
   , XHRCors = __webpack_require__(49)
-  , XHRLocal = __webpack_require__(37)
+  , XHRLocal = __webpack_require__(38)
   , XHRFake = __webpack_require__(279)
   , InfoIframe = __webpack_require__(280)
   , InfoAjax = __webpack_require__(125)
@@ -21073,7 +21039,7 @@ var urlUtils = __webpack_require__(14)
   , JSON3 = __webpack_require__(19)
   , FacadeJS = __webpack_require__(282)
   , InfoIframeReceiver = __webpack_require__(124)
-  , iframeUtils = __webpack_require__(39)
+  , iframeUtils = __webpack_require__(40)
   , loc = __webpack_require__(123)
   ;
 
@@ -21178,7 +21144,7 @@ module.exports = function(SockJS, availableTransports) {
 
 
 var JSON3 = __webpack_require__(19)
-  , iframeUtils = __webpack_require__(39)
+  , iframeUtils = __webpack_require__(40)
   ;
 
 function FacadeJS(transport) {
@@ -22305,7 +22271,7 @@ var IRIResolver_1 = __webpack_require__(27);
 var patterns_1 = __webpack_require__(132);
 var tokens_1 = __webpack_require__(6);
 var triples_1 = __webpack_require__(292);
-var ObjectPattern_1 = __webpack_require__(40);
+var ObjectPattern_1 = __webpack_require__(41);
 function values(variableOrVariables, valuesOrBuilder) {
     var isSingle = !Array.isArray(variableOrVariables);
     var variables = (isSingle ?
@@ -22777,17 +22743,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-var PersistedDocument = __importStar(__webpack_require__(34));
+var PersistedDocument = __importStar(__webpack_require__(35));
 var Utils = __importStar(__webpack_require__(0));
 exports.RDF_CLASS = NS.C.RDFRepresentation;
 exports.SCHEMA = {
     "mediaType": {
         "@id": NS.C.mediaType,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "size": {
         "@id": NS.C.size,
-        "@type": NS.XSD.DataType.long,
+        "@type": NS.XSD.long,
     },
 };
 var Factory = (function () {
@@ -22826,7 +22792,7 @@ exports.RDF_CLASS = NS.SHACL.ValidationReport;
 exports.SCHEMA = {
     "conforms": {
         "@id": NS.SHACL.conforms,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
     "results": {
         "@id": NS.SHACL.result,
@@ -22835,7 +22801,7 @@ exports.SCHEMA = {
     },
     "shapesGraphWellFormed": {
         "@id": NS.SHACL.shapesGraphWellFormed,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
 };
 
@@ -22882,7 +22848,7 @@ exports.SCHEMA = {
     },
     "resultMessage": {
         "@id": NS.SHACL.resultMessage,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "resultSeverity": {
         "@id": NS.SHACL.resultSeverity,
@@ -22910,11 +22876,11 @@ exports.RDF_CLASS = NS.C.Platform;
 exports.SCHEMA = {
     "version": {
         "@id": NS.C.version,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "buildDate": {
         "@id": NS.C.buildDate,
-        "@type": NS.XSD.DataType.dateTime,
+        "@type": NS.XSD.dateTime,
     },
 };
 

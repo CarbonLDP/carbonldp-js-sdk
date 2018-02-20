@@ -1,8 +1,19 @@
-import { IRIToken, LiteralToken } from "sparqler/tokens";
+import {
+	IRIToken,
+	LiteralToken
+} from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
-import * as XSD from "../../Vocabularies/XSD";
-import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasSignature,
+	INSTANCE,
+	method,
+	module,
+} from "../../test/JasmineExtender";
+import { XSD } from "../../Vocabularies/XSD";
 import { IllegalArgumentError } from "./../../Errors";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryValue";
@@ -71,7 +82,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryValue.prototype, "withType" ).and.callThrough();
 
 				new QueryValue( queryContext, new Date() );
-				expect( spy ).toHaveBeenCalledWith( XSD.DataType.dateTime );
+				expect( spy ).toHaveBeenCalledWith( XSD.dateTime );
 			} );
 
 		} );
@@ -99,7 +110,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 					const spy:jasmine.Spy = spyOn( queryValue[ "_literal" ], "setType" );
 
 					queryValue.withType( type );
-					expect( spy ).toHaveBeenCalledWith( new IRIToken( XSD.DataType[ type ] ) );
+					expect( spy ).toHaveBeenCalledWith( new IRIToken( XSD[ type ] ) );
 				};
 
 				helper( "string", "value" );
@@ -134,8 +145,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 					expect( serializeSpy ).toHaveBeenCalledWith( type, value );
 				};
 
-				helper( new Date(), XSD.DataType.dateTime );
-				helper( 10.01, XSD.DataType.float );
+				helper( new Date(), XSD.dateTime );
+				helper( 10.01, XSD.float );
 				helper( "a-value", "http://example.com/types#a-type" );
 			} );
 
@@ -147,7 +158,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 				};
 
 				helper( new Date(), "dateTime" );
-				helper( 10.01, XSD.DataType.float );
+				helper( 10.01, XSD.float );
 				helper( "a-value", "http://example.com/types#a-type" );
 			} );
 
@@ -235,7 +246,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 				helper( "value" );
 				helper( "value", "string" );
 				helper( 1 );
-				helper( 10.01, XSD.DataType.double );
+				helper( 10.01, XSD.double );
 				helper( new Date() );
 				helper( "value", null, "en" );
 				helper( "value", null, "en-US" );

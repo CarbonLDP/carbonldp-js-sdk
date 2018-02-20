@@ -73,7 +73,7 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 
 		expect( ValidationResult.SCHEMA[ "resultMessage" ] ).toEqual( {
 			"@id": NS.SHACL.resultMessage,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultSeverity" ] ).toEqual( {

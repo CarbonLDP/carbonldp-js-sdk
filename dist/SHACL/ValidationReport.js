@@ -12,7 +12,7 @@ exports.RDF_CLASS = NS.SHACL.ValidationReport;
 exports.SCHEMA = {
     "conforms": {
         "@id": NS.SHACL.conforms,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
     "results": {
         "@id": NS.SHACL.result,
@@ -21,7 +21,7 @@ exports.SCHEMA = {
     },
     "shapesGraphWellFormed": {
         "@id": NS.SHACL.shapesGraphWellFormed,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
 };
 

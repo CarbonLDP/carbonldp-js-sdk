@@ -16,7 +16,7 @@ import {
 
 import { Converter } from "../JSONLD";
 import { guessXSDType } from "../JSONLD/Utils";
-import { XSD } from "../Vocabularies/index";
+import { XSD } from "../Vocabularies/XSD";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -231,7 +231,7 @@ export class Class {
 
 			const tempDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
 			tempDefinition.language = key;
-			tempDefinition.literalType = XSD.DataType.string;
+			tempDefinition.literalType = XSD.string;
 
 			return this.expandLiteral( value, schema, tempDefinition );
 		} ).filter( isValidValue );
@@ -256,7 +256,7 @@ export class Class {
 		value = this.jsonldConverter.literalSerializers.get( type ).serialize( value );
 		const literal:LiteralToken = new LiteralToken( value );
 
-		if( type !== XSD.DataType.string ) literal.setType( this.compactIRI( schema, type ) );
+		if( type !== XSD.string ) literal.setType( this.compactIRI( schema, type ) );
 		if( definition && definition.language !== void 0 ) literal.setLanguage( definition.language );
 
 		return literal;

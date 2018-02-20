@@ -13,7 +13,7 @@ import { LDP } from "./LDP";
 import { RDF } from "./RDF";
 import { SHACL } from "./SHACL";
 import { VCARD } from "./VCARD";
-import * as XSD from "./XSD";
+import { XSD } from "./XSD";
 
 describe( module( "Carbon/Vocabularies" ), ():void => {
 
@@ -79,7 +79,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"XSD",
-		"Carbon/Vocabularies/XSD"
+		"Carbon.Vocabularies.XSD"
 	), ():void => {
 		expect( Vocabularies.XSD ).toBeDefined();
 		expect( Vocabularies.XSD ).toBe( XSD );

@@ -45,7 +45,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
 		expect( DocumentMetadata.SCHEMA[ "eTag" ] ).toEqual( {
 			"@id": NS.C.eTag,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {

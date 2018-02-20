@@ -7,7 +7,7 @@ export const RDF_CLASS:string = NS.SHACL.ValidationReport;
 export const SCHEMA:ObjectSchema.Class = {
 	"conforms": {
 		"@id": NS.SHACL.conforms,
-		"@type": NS.XSD.DataType.boolean,
+		"@type": NS.XSD.boolean,
 	},
 	"results": {
 		"@id": NS.SHACL.result,
@@ -16,7 +16,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 	"shapesGraphWellFormed": {
 		"@id": NS.SHACL.shapesGraphWellFormed,
-		"@type": NS.XSD.DataType.boolean,
+		"@type": NS.XSD.boolean,
 	},
 };
 

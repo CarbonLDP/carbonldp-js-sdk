@@ -51,7 +51,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		expect( Utils.hasProperty( ACE.SCHEMA, "granting" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "granting" ] ).toEqual( {
 			"@id": NS.CS.granting,
-			"@type": NS.XSD.DataType.boolean,
+			"@type": NS.XSD.boolean,
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "permissions" ) ).toBe( true );

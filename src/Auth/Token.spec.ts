@@ -49,13 +49,13 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 		expect( Token.SCHEMA[ "key" ] ).toEqual( {
 			"@id": NS.CS.tokenKey,
-			"@type": NS.XSD.DataType.string,
+			"@type": NS.XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
 			"@id": NS.CS.expirationTime,
-			"@type": NS.XSD.DataType.dateTime,
+			"@type": NS.XSD.dateTime,
 		} );
 
 	} );
@@ -108,13 +108,13 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 			expect( Token.SCHEMA[ "key" ] ).toEqual( {
 				"@id": NS.CS.tokenKey,
-				"@type": NS.XSD.DataType.string,
+				"@type": NS.XSD.string,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 			expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
 				"@id": NS.CS.expirationTime,
-				"@type": NS.XSD.DataType.dateTime,
+				"@type": NS.XSD.dateTime,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "user" ) ).toBe( true );

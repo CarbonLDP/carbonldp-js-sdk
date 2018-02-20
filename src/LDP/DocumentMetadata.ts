@@ -15,7 +15,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 	"eTag": {
 		"@id": NS.C.eTag,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 	"bNodesMap": {
 		"@id": NS.C.bNodesMap,

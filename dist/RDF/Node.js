@@ -12,7 +12,7 @@ var Document = __importStar(require("./Document"));
 var List = __importStar(require("./List"));
 var Literal = __importStar(require("./Literal"));
 var Value = __importStar(require("./Value"));
-var XSD = __importStar(require("../Vocabularies/XSD"));
+var XSD_1 = require("../Vocabularies/XSD");
 var Factory = (function () {
     function Factory() {
     }
@@ -209,7 +209,7 @@ var Util = (function () {
             var propertyValue = propertyValues_7[_i];
             if (!Literal.Factory.is(propertyValue))
                 continue;
-            if (!Literal.Factory.hasType(propertyValue, XSD.DataType.string))
+            if (!Literal.Factory.hasType(propertyValue, XSD_1.XSD.string))
                 continue;
             var languageTag = propertyValue["@language"];
             if (!languageTag)

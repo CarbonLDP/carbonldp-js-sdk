@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(require("./../Utils"));
-var XSD = __importStar(require("../Vocabularies/XSD"));
+var XSD_1 = require("../Vocabularies/XSD");
 var Errors = __importStar(require("./../Errors"));
 var Serializers = __importStar(require("./Literal/Serializers"));
 exports.Serializers = Serializers;
@@ -23,25 +23,25 @@ var Factory = (function () {
         var type;
         switch (true) {
             case Utils.isDate(value):
-                type = XSD.DataType.dateTime;
+                type = XSD_1.XSD.dateTime;
                 value = value.toISOString();
                 break;
             case Utils.isNumber(value):
                 if (Utils.isInteger(value)) {
-                    type = XSD.DataType.integer;
+                    type = XSD_1.XSD.integer;
                 }
                 else {
-                    type = XSD.DataType.double;
+                    type = XSD_1.XSD.double;
                 }
                 break;
             case Utils.isString(value):
-                type = XSD.DataType.string;
+                type = XSD_1.XSD.string;
                 break;
             case Utils.isBoolean(value):
-                type = XSD.DataType.boolean;
+                type = XSD_1.XSD.boolean;
                 break;
             default:
-                type = XSD.DataType.object;
+                type = XSD_1.XSD.object;
                 value = JSON.stringify(value);
                 break;
         }
@@ -65,55 +65,51 @@ var Factory = (function () {
             literalDataType = "@type" in literal ? literal["@type"] : null;
             literalValue = literal["@value"];
         }
-        if (literalDataType === null)
-            return literalValue;
-        if (!Utils.hasProperty(XSD.DataType, literalDataType))
-            return literalValue;
-        var value;
+        var value = literalValue;
         var parts;
         switch (literalDataType) {
-            case XSD.DataType.date:
-            case XSD.DataType.dateTime:
+            case XSD_1.XSD.date:
+            case XSD_1.XSD.dateTime:
                 value = new Date(literalValue);
                 break;
-            case XSD.DataType.time:
+            case XSD_1.XSD.time:
                 parts = literalValue.match(/(\d+):(\d+):(\d+)\.(\d+)Z/);
                 value = new Date();
                 value.setUTCHours(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
                 break;
-            case XSD.DataType.duration:
+            case XSD_1.XSD.duration:
                 break;
-            case XSD.DataType.gDay:
-            case XSD.DataType.gMonth:
-            case XSD.DataType.gMonthDay:
-            case XSD.DataType.gYear:
-            case XSD.DataType.gYearMonth:
+            case XSD_1.XSD.gDay:
+            case XSD_1.XSD.gMonth:
+            case XSD_1.XSD.gMonthDay:
+            case XSD_1.XSD.gYear:
+            case XSD_1.XSD.gYearMonth:
                 break;
-            case XSD.DataType.byte:
-            case XSD.DataType.decimal:
-            case XSD.DataType.int:
-            case XSD.DataType.integer:
-            case XSD.DataType.long:
-            case XSD.DataType.negativeInteger:
-            case XSD.DataType.nonNegativeInteger:
-            case XSD.DataType.nonPositiveInteger:
-            case XSD.DataType.positiveInteger:
-            case XSD.DataType.short:
-            case XSD.DataType.unsignedLong:
-            case XSD.DataType.unsignedInt:
-            case XSD.DataType.unsignedShort:
-            case XSD.DataType.unsignedByte:
-            case XSD.DataType.double:
-            case XSD.DataType.float:
+            case XSD_1.XSD.byte:
+            case XSD_1.XSD.decimal:
+            case XSD_1.XSD.int:
+            case XSD_1.XSD.integer:
+            case XSD_1.XSD.long:
+            case XSD_1.XSD.negativeInteger:
+            case XSD_1.XSD.nonNegativeInteger:
+            case XSD_1.XSD.nonPositiveInteger:
+            case XSD_1.XSD.positiveInteger:
+            case XSD_1.XSD.short:
+            case XSD_1.XSD.unsignedLong:
+            case XSD_1.XSD.unsignedInt:
+            case XSD_1.XSD.unsignedShort:
+            case XSD_1.XSD.unsignedByte:
+            case XSD_1.XSD.double:
+            case XSD_1.XSD.float:
                 value = parseFloat(literalValue);
                 break;
-            case XSD.DataType.boolean:
+            case XSD_1.XSD.boolean:
                 value = Utils.parseBoolean(literalValue);
                 break;
-            case XSD.DataType.string:
+            case XSD_1.XSD.string:
                 value = literalValue;
                 break;
-            case XSD.DataType.object:
+            case XSD_1.XSD.object:
                 value = JSON.parse(literalValue);
                 break;
             default:
@@ -126,7 +122,7 @@ var Factory = (function () {
             && Utils.isString(value["@value"]);
     };
     Factory.hasType = function (value, type) {
-        if (!value["@type"] && type === XSD.DataType.string)
+        if (!value["@type"] && type === XSD_1.XSD.string)
             return true;
         return value["@type"] === type;
     };

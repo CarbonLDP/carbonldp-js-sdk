@@ -16,11 +16,11 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 	"expirationTime": {
 		"@id": NS.CS.expirationTime,
-		"@type": NS.XSD.DataType.dateTime,
+		"@type": NS.XSD.dateTime,
 	},
 	"ticketKey": {
 		"@id": NS.CS.ticketKey,
-		"@type": NS.XSD.DataType.string,
+		"@type": NS.XSD.string,
 	},
 };
 

@@ -14,15 +14,15 @@ exports.RDF_CLASS = NS.CS.Credentials;
 exports.SCHEMA = {
     "email": {
         "@id": NS.VCARD.email,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "password": {
         "@id": NS.CS.password,
-        "@type": NS.XSD.DataType.string,
+        "@type": NS.XSD.string,
     },
     "enabled": {
         "@id": NS.CS.enabled,
-        "@type": NS.XSD.DataType.boolean,
+        "@type": NS.XSD.boolean,
     },
     "user": {
         "@id": NS.CS.credentialsOf,
