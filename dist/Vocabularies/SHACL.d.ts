@@ -1,18 +1,16 @@
-export declare const namespace: string;
-export declare class Class {
-    static readonly ValidationReport: string;
-    static readonly ValidationResult: string;
-}
-export declare class Predicate {
-    static readonly conforms: string;
-    static readonly detail: string;
-    static readonly focusNode: string;
-    static readonly result: string;
-    static readonly resultMessage: string;
-    static readonly resultPath: string;
-    static readonly resultSeverity: string;
-    static readonly shapesGraphWellFormed: string;
-    static readonly sourceConstraintComponent: string;
-    static readonly sourceShape: string;
-    static readonly value: string;
+export declare namespace SHACL {
+    const namespace: "http://www.w3.org/ns/shacl#";
+    const ValidationReport: string;
+    const ValidationResult: string;
+    const conforms: string;
+    const detail: string;
+    const focusNode: string;
+    const result: string;
+    const resultMessage: string;
+    const resultPath: string;
+    const resultSeverity: string;
+    const shapesGraphWellFormed: string;
+    const sourceConstraintComponent: string;
+    const sourceShape: string;
+    const value: string;
 }

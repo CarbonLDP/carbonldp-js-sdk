@@ -479,8 +479,7 @@ __export(__webpack_require__(168));
 __export(__webpack_require__(169));
 __export(__webpack_require__(170));
 __export(__webpack_require__(171));
-var SHACL = __importStar(__webpack_require__(172));
-exports.SHACL = SHACL;
+__export(__webpack_require__(172));
 var VCARD = __importStar(__webpack_require__(173));
 exports.VCARD = VCARD;
 var XSD = __importStar(__webpack_require__(43));
@@ -14250,84 +14249,23 @@ var RDF;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.namespace = "http://www.w3.org/ns/shacl#";
-var Class = (function () {
-    function Class() {
-    }
-    Object.defineProperty(Class, "ValidationReport", {
-        get: function () { return exports.namespace + "ValidationReport"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Class, "ValidationResult", {
-        get: function () { return exports.namespace + "ValidationResult"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Class;
-}());
-exports.Class = Class;
-var Predicate = (function () {
-    function Predicate() {
-    }
-    Object.defineProperty(Predicate, "conforms", {
-        get: function () { return exports.namespace + "conforms"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "detail", {
-        get: function () { return exports.namespace + "detail"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "focusNode", {
-        get: function () { return exports.namespace + "focusNode"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "result", {
-        get: function () { return exports.namespace + "result"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "resultMessage", {
-        get: function () { return exports.namespace + "resultMessage"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "resultPath", {
-        get: function () { return exports.namespace + "resultPath"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "resultSeverity", {
-        get: function () { return exports.namespace + "resultSeverity"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "shapesGraphWellFormed", {
-        get: function () { return exports.namespace + "shapesGraphWellFormed"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "sourceConstraintComponent", {
-        get: function () { return exports.namespace + "sourceConstraintComponent"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "sourceShape", {
-        get: function () { return exports.namespace + "sourceShape"; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Predicate, "value", {
-        get: function () { return exports.namespace + "value"; },
-        enumerable: true,
-        configurable: true
-    });
-    return Predicate;
-}());
-exports.Predicate = Predicate;
+var SHACL;
+(function (SHACL) {
+    SHACL.namespace = "http://www.w3.org/ns/shacl#";
+    SHACL.ValidationReport = SHACL.namespace + "ValidationReport";
+    SHACL.ValidationResult = SHACL.namespace + "ValidationResult";
+    SHACL.conforms = SHACL.namespace + "conforms";
+    SHACL.detail = SHACL.namespace + "detail";
+    SHACL.focusNode = SHACL.namespace + "focusNode";
+    SHACL.result = SHACL.namespace + "result";
+    SHACL.resultMessage = SHACL.namespace + "resultMessage";
+    SHACL.resultPath = SHACL.namespace + "resultPath";
+    SHACL.resultSeverity = SHACL.namespace + "resultSeverity";
+    SHACL.shapesGraphWellFormed = SHACL.namespace + "shapesGraphWellFormed";
+    SHACL.sourceConstraintComponent = SHACL.namespace + "sourceConstraintComponent";
+    SHACL.sourceShape = SHACL.namespace + "sourceShape";
+    SHACL.value = SHACL.namespace + "value";
+})(SHACL = exports.SHACL || (exports.SHACL = {}));
 
 
 /***/ }),
@@ -22892,19 +22830,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.SHACL.Class.ValidationReport;
+exports.RDF_CLASS = NS.SHACL.ValidationReport;
 exports.SCHEMA = {
     "conforms": {
-        "@id": NS.SHACL.Predicate.conforms,
+        "@id": NS.SHACL.conforms,
         "@type": NS.XSD.DataType.boolean,
     },
     "results": {
-        "@id": NS.SHACL.Predicate.result,
+        "@id": NS.SHACL.result,
         "@type": "@id",
         "@container": "@set",
     },
     "shapesGraphWellFormed": {
-        "@id": NS.SHACL.Predicate.shapesGraphWellFormed,
+        "@id": NS.SHACL.shapesGraphWellFormed,
         "@type": NS.XSD.DataType.boolean,
     },
 };
@@ -22925,37 +22863,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(__webpack_require__(1));
-exports.RDF_CLASS = NS.SHACL.Class.ValidationResult;
+exports.RDF_CLASS = NS.SHACL.ValidationResult;
 exports.SCHEMA = {
     "focusNode": {
-        "@id": NS.SHACL.Predicate.focusNode,
+        "@id": NS.SHACL.focusNode,
         "@type": "@id",
     },
     "resultPath": {
-        "@id": NS.SHACL.Predicate.resultPath,
+        "@id": NS.SHACL.resultPath,
         "@type": "@id",
     },
     "value": {
-        "@id": NS.SHACL.Predicate.value,
+        "@id": NS.SHACL.value,
     },
     "sourceShape": {
-        "@id": NS.SHACL.Predicate.sourceShape,
+        "@id": NS.SHACL.sourceShape,
         "@type": "@id",
     },
     "sourceConstraintComponent": {
-        "@id": NS.SHACL.Predicate.sourceConstraintComponent,
+        "@id": NS.SHACL.sourceConstraintComponent,
         "@type": "@id",
     },
     "detail": {
-        "@id": NS.SHACL.Predicate.detail,
+        "@id": NS.SHACL.detail,
         "@type": "@id",
     },
     "resultMessage": {
-        "@id": NS.SHACL.Predicate.resultMessage,
+        "@id": NS.SHACL.resultMessage,
         "@type": NS.XSD.DataType.string,
     },
     "resultSeverity": {
-        "@id": NS.SHACL.Predicate.resultSeverity,
+        "@id": NS.SHACL.resultSeverity,
         "@type": "@id",
     },
 };

@@ -3,38 +3,38 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as Resource from "./../Resource";
 import * as Pointer from "./../Pointer";
 
-export const RDF_CLASS:string = NS.SHACL.Class.ValidationResult;
+export const RDF_CLASS:string = NS.SHACL.ValidationResult;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"focusNode": {
-		"@id": NS.SHACL.Predicate.focusNode,
+		"@id": NS.SHACL.focusNode,
 		"@type": "@id",
 	},
 	"resultPath": {
-		"@id": NS.SHACL.Predicate.resultPath,
+		"@id": NS.SHACL.resultPath,
 		"@type": "@id",
 	},
 	"value": {
-		"@id": NS.SHACL.Predicate.value,
+		"@id": NS.SHACL.value,
 	},
 	"sourceShape": {
-		"@id": NS.SHACL.Predicate.sourceShape,
+		"@id": NS.SHACL.sourceShape,
 		"@type": "@id",
 	},
 	"sourceConstraintComponent": {
-		"@id": NS.SHACL.Predicate.sourceConstraintComponent,
+		"@id": NS.SHACL.sourceConstraintComponent,
 		"@type": "@id",
 	},
 	"detail": {
-		"@id": NS.SHACL.Predicate.detail,
+		"@id": NS.SHACL.detail,
 		"@type": "@id",
 	},
 	"resultMessage": {
-		"@id": NS.SHACL.Predicate.resultMessage,
+		"@id": NS.SHACL.resultMessage,
 		"@type": NS.XSD.DataType.string,
 	},
 	"resultSeverity": {
-		"@id": NS.SHACL.Predicate.resultSeverity,
+		"@id": NS.SHACL.resultSeverity,
 		"@type": "@id",
 	},
 };

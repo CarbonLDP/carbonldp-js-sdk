@@ -11,7 +11,7 @@ import { C } from "./C";
 import { CS } from "./CS";
 import { LDP } from "./LDP";
 import { RDF } from "./RDF";
-import * as SHACL from "./SHACL";
+import { SHACL } from "./SHACL";
 import * as VCARD from "./VCARD";
 import * as XSD from "./XSD";
 
@@ -61,7 +61,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"SHACL",
-		"Carbon/Vocabularies/SHACL"
+		"Carbon.Vocabularies.SHACL"
 	), ():void => {
 		expect( Vocabularies.SHACL ).toBeDefined();
 		expect( Vocabularies.SHACL ).toBe( SHACL );

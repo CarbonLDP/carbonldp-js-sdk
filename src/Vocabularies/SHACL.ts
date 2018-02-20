@@ -1,31 +1,18 @@
-export const namespace:string = "http://www.w3.org/ns/shacl#";
+export namespace SHACL {
+	export const namespace:"http://www.w3.org/ns/shacl#" = "http://www.w3.org/ns/shacl#";
 
-export class Class {
-	static get ValidationReport():string { return namespace + "ValidationReport"; }
+	export const ValidationReport:string = namespace + "ValidationReport";
+	export const ValidationResult:string = namespace + "ValidationResult";
 
-	static get ValidationResult():string { return namespace + "ValidationResult"; }
-}
-
-export class Predicate {
-	static get conforms():string { return namespace + "conforms"; }
-
-	static get detail():string { return namespace + "detail"; }
-
-	static get focusNode():string { return namespace + "focusNode"; }
-
-	static get result():string { return namespace + "result"; }
-
-	static get resultMessage():string { return namespace + "resultMessage"; }
-
-	static get resultPath():string { return namespace + "resultPath"; }
-
-	static get resultSeverity():string { return namespace + "resultSeverity"; }
-
-	static get shapesGraphWellFormed():string { return namespace + "shapesGraphWellFormed"; }
-
-	static get sourceConstraintComponent():string { return namespace + "sourceConstraintComponent"; }
-
-	static get sourceShape():string { return namespace + "sourceShape"; }
-
-	static get value():string { return namespace + "value"; }
+	export const conforms:string = namespace + "conforms";
+	export const detail:string = namespace + "detail";
+	export const focusNode:string = namespace + "focusNode";
+	export const result:string = namespace + "result";
+	export const resultMessage:string = namespace + "resultMessage";
+	export const resultPath:string = namespace + "resultPath";
+	export const resultSeverity:string = namespace + "resultSeverity";
+	export const shapesGraphWellFormed:string = namespace + "shapesGraphWellFormed";
+	export const sourceConstraintComponent:string = namespace + "sourceConstraintComponent";
+	export const sourceShape:string = namespace + "sourceShape";
+	export const value:string = namespace + "value";
 }

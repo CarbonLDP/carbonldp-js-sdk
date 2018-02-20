@@ -19,7 +19,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		expect( ValidationReport.RDF_CLASS ).toBeDefined();
 		expect( ValidationReport.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ValidationReport.RDF_CLASS ).toBe( NS.SHACL.Class.ValidationReport );
+		expect( ValidationReport.RDF_CLASS ).toBe( NS.SHACL.ValidationReport );
 	} );
 
 	it( hasProperty(
@@ -37,18 +37,18 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		} );
 
 		expect( ValidationReport.SCHEMA[ "conforms" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.conforms,
+			"@id": NS.SHACL.conforms,
 			"@type": NS.XSD.DataType.boolean,
 		} );
 
 		expect( ValidationReport.SCHEMA[ "results" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.result,
+			"@id": NS.SHACL.result,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( ValidationReport.SCHEMA[ "shapesGraphWellFormed" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.shapesGraphWellFormed,
+			"@id": NS.SHACL.shapesGraphWellFormed,
 			"@type": NS.XSD.DataType.boolean,
 		} );
 	} );

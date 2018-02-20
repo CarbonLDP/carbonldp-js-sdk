@@ -8,19 +8,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
-exports.RDF_CLASS = NS.SHACL.Class.ValidationReport;
+exports.RDF_CLASS = NS.SHACL.ValidationReport;
 exports.SCHEMA = {
     "conforms": {
-        "@id": NS.SHACL.Predicate.conforms,
+        "@id": NS.SHACL.conforms,
         "@type": NS.XSD.DataType.boolean,
     },
     "results": {
-        "@id": NS.SHACL.Predicate.result,
+        "@id": NS.SHACL.result,
         "@type": "@id",
         "@container": "@set",
     },
     "shapesGraphWellFormed": {
-        "@id": NS.SHACL.Predicate.shapesGraphWellFormed,
+        "@id": NS.SHACL.shapesGraphWellFormed,
         "@type": NS.XSD.DataType.boolean,
     },
 };

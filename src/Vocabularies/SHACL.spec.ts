@@ -1,34 +1,34 @@
-import { clazz, hasProperty, module, STATIC } from "../test/JasmineExtender";
-import * as SHACL from "./SHACL";
+import {
+	hasProperty,
+	module,
+	namespaze,
+	STATIC
+} from "../test/JasmineExtender";
+
+import { SHACL } from "./SHACL";
 
 describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 
-	it( "should exists", ():void => {
-		expect( SHACL ).toBeDefined();
-		expect( SHACL ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"namespace",
-		"string",
-		"The IRI namespace prefix with the SHACL vocabulary."
-	), ():void => {
-		expect( SHACL.namespace ).toBeDefined();
-		expect( SHACL.namespace ).toEqual( jasmine.any( String ) );
-
-		expect( SHACL.namespace ).toBe( "http://www.w3.org/ns/shacl#" );
-	} );
-
-	describe( clazz(
-		"Class",
-		"Class that contains the classes defined by the Shapes Constraint Language (SHACL) specification."
-	), ():void => {
+	describe( namespaze( "Carbon.Vocabularies.SHACL", "The vocabulary of the Shapes Constraint Language (SHACL) specification." ), ():void => {
 
 		it( "should exists", ():void => {
-			expect( SHACL.Class ).toBeDefined();
-			expect( SHACL.Class ).toEqual( jasmine.any( Function ) );
-			expect( Object.keys( SHACL.Class ).length ).toBe( 2 );
+			expect( SHACL ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( "should test all exported IRIs", ():void => {
+			expect( Object.keys( SHACL ).length ).toBe( 14 );
+		} );
+
+		it( hasProperty(
+			STATIC,
+			"namespace",
+			"string",
+			"The IRI namespace prefix with the SHACL vocabulary."
+		), ():void => {
+			expect( SHACL.namespace ).toBeDefined();
+			expect( SHACL.namespace ).toEqual( jasmine.any( String ) );
+
+			expect( SHACL.namespace ).toBe( "http://www.w3.org/ns/shacl#" );
 		} );
 
 		it( hasProperty(
@@ -36,10 +36,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"ValidationReport",
 			"string"
 		), ():void => {
-			expect( SHACL.Class.ValidationReport ).toBeDefined();
-			expect( SHACL.Class.ValidationReport ).toEqual( jasmine.any( String ) );
+			expect( SHACL.ValidationReport ).toBeDefined();
+			expect( SHACL.ValidationReport ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Class.ValidationReport ).toBe( "http://www.w3.org/ns/shacl#ValidationReport" );
+			expect( SHACL.ValidationReport ).toBe( "http://www.w3.org/ns/shacl#ValidationReport" );
 		} );
 
 		it( hasProperty(
@@ -47,23 +47,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"ValidationResult",
 			"string"
 		), ():void => {
-			expect( SHACL.Class.ValidationResult ).toBeDefined();
-			expect( SHACL.Class.ValidationResult ).toEqual( jasmine.any( String ) );
+			expect( SHACL.ValidationResult ).toBeDefined();
+			expect( SHACL.ValidationResult ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Class.ValidationResult ).toBe( "http://www.w3.org/ns/shacl#ValidationResult" );
-		} );
-
-	} );
-
-	describe( clazz(
-		"Carbon.NS.SHACL.Predicate",
-		"Class that contains the predicated defied by the Shapes Constraint Language (SHACL) specification."
-	), ():void => {
-
-		it( "should exists", ():void => {
-			expect( SHACL.Predicate ).toBeDefined();
-			expect( SHACL.Predicate ).toEqual( jasmine.any( Function ) );
-			expect( Object.keys( SHACL.Predicate ).length ).toBe( 11 );
+			expect( SHACL.ValidationResult ).toBe( "http://www.w3.org/ns/shacl#ValidationResult" );
 		} );
 
 		it( hasProperty(
@@ -71,10 +58,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"conforms",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.conforms ).toBeDefined();
-			expect( SHACL.Predicate.conforms ).toEqual( jasmine.any( String ) );
+			expect( SHACL.conforms ).toBeDefined();
+			expect( SHACL.conforms ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.conforms ).toBe( "http://www.w3.org/ns/shacl#conforms" );
+			expect( SHACL.conforms ).toBe( "http://www.w3.org/ns/shacl#conforms" );
 		} );
 
 		it( hasProperty(
@@ -82,10 +69,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"detail",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.detail ).toBeDefined();
-			expect( SHACL.Predicate.detail ).toEqual( jasmine.any( String ) );
+			expect( SHACL.detail ).toBeDefined();
+			expect( SHACL.detail ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.detail ).toBe( "http://www.w3.org/ns/shacl#detail" );
+			expect( SHACL.detail ).toBe( "http://www.w3.org/ns/shacl#detail" );
 		} );
 
 		it( hasProperty(
@@ -93,10 +80,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"focusNode",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.focusNode ).toBeDefined();
-			expect( SHACL.Predicate.focusNode ).toEqual( jasmine.any( String ) );
+			expect( SHACL.focusNode ).toBeDefined();
+			expect( SHACL.focusNode ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.focusNode ).toBe( "http://www.w3.org/ns/shacl#focusNode" );
+			expect( SHACL.focusNode ).toBe( "http://www.w3.org/ns/shacl#focusNode" );
 		} );
 
 		it( hasProperty(
@@ -104,10 +91,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"result",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.result ).toBeDefined();
-			expect( SHACL.Predicate.result ).toEqual( jasmine.any( String ) );
+			expect( SHACL.result ).toBeDefined();
+			expect( SHACL.result ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.result ).toBe( "http://www.w3.org/ns/shacl#result" );
+			expect( SHACL.result ).toBe( "http://www.w3.org/ns/shacl#result" );
 		} );
 
 		it( hasProperty(
@@ -115,10 +102,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"resultMessage",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.resultMessage ).toBeDefined();
-			expect( SHACL.Predicate.resultMessage ).toEqual( jasmine.any( String ) );
+			expect( SHACL.resultMessage ).toBeDefined();
+			expect( SHACL.resultMessage ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.resultMessage ).toBe( "http://www.w3.org/ns/shacl#resultMessage" );
+			expect( SHACL.resultMessage ).toBe( "http://www.w3.org/ns/shacl#resultMessage" );
 		} );
 
 		it( hasProperty(
@@ -126,10 +113,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"resultPath",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.resultPath ).toBeDefined();
-			expect( SHACL.Predicate.resultPath ).toEqual( jasmine.any( String ) );
+			expect( SHACL.resultPath ).toBeDefined();
+			expect( SHACL.resultPath ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.resultPath ).toBe( "http://www.w3.org/ns/shacl#resultPath" );
+			expect( SHACL.resultPath ).toBe( "http://www.w3.org/ns/shacl#resultPath" );
 		} );
 
 		it( hasProperty(
@@ -137,10 +124,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"resultSeverity",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.resultSeverity ).toBeDefined();
-			expect( SHACL.Predicate.resultSeverity ).toEqual( jasmine.any( String ) );
+			expect( SHACL.resultSeverity ).toBeDefined();
+			expect( SHACL.resultSeverity ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.resultSeverity ).toBe( "http://www.w3.org/ns/shacl#resultSeverity" );
+			expect( SHACL.resultSeverity ).toBe( "http://www.w3.org/ns/shacl#resultSeverity" );
 		} );
 
 		it( hasProperty(
@@ -148,10 +135,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"shapesGraphWellFormed",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.shapesGraphWellFormed ).toBeDefined();
-			expect( SHACL.Predicate.shapesGraphWellFormed ).toEqual( jasmine.any( String ) );
+			expect( SHACL.shapesGraphWellFormed ).toBeDefined();
+			expect( SHACL.shapesGraphWellFormed ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.shapesGraphWellFormed ).toBe( "http://www.w3.org/ns/shacl#shapesGraphWellFormed" );
+			expect( SHACL.shapesGraphWellFormed ).toBe( "http://www.w3.org/ns/shacl#shapesGraphWellFormed" );
 		} );
 
 		it( hasProperty(
@@ -159,10 +146,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"sourceConstraintComponent",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.sourceConstraintComponent ).toBeDefined();
-			expect( SHACL.Predicate.sourceConstraintComponent ).toEqual( jasmine.any( String ) );
+			expect( SHACL.sourceConstraintComponent ).toBeDefined();
+			expect( SHACL.sourceConstraintComponent ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.sourceConstraintComponent ).toBe( "http://www.w3.org/ns/shacl#sourceConstraintComponent" );
+			expect( SHACL.sourceConstraintComponent ).toBe( "http://www.w3.org/ns/shacl#sourceConstraintComponent" );
 		} );
 
 		it( hasProperty(
@@ -170,10 +157,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"sourceShape",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.sourceShape ).toBeDefined();
-			expect( SHACL.Predicate.sourceShape ).toEqual( jasmine.any( String ) );
+			expect( SHACL.sourceShape ).toBeDefined();
+			expect( SHACL.sourceShape ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.sourceShape ).toBe( "http://www.w3.org/ns/shacl#sourceShape" );
+			expect( SHACL.sourceShape ).toBe( "http://www.w3.org/ns/shacl#sourceShape" );
 		} );
 
 		it( hasProperty(
@@ -181,10 +168,10 @@ describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 			"value",
 			"string"
 		), ():void => {
-			expect( SHACL.Predicate.value ).toBeDefined();
-			expect( SHACL.Predicate.value ).toEqual( jasmine.any( String ) );
+			expect( SHACL.value ).toBeDefined();
+			expect( SHACL.value ).toEqual( jasmine.any( String ) );
 
-			expect( SHACL.Predicate.value ).toBe( "http://www.w3.org/ns/shacl#value" );
+			expect( SHACL.value ).toBe( "http://www.w3.org/ns/shacl#value" );
 		} );
 
 	} );

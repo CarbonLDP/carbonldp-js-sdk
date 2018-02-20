@@ -8,37 +8,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var NS = __importStar(require("../Vocabularies/index"));
-exports.RDF_CLASS = NS.SHACL.Class.ValidationResult;
+exports.RDF_CLASS = NS.SHACL.ValidationResult;
 exports.SCHEMA = {
     "focusNode": {
-        "@id": NS.SHACL.Predicate.focusNode,
+        "@id": NS.SHACL.focusNode,
         "@type": "@id",
     },
     "resultPath": {
-        "@id": NS.SHACL.Predicate.resultPath,
+        "@id": NS.SHACL.resultPath,
         "@type": "@id",
     },
     "value": {
-        "@id": NS.SHACL.Predicate.value,
+        "@id": NS.SHACL.value,
     },
     "sourceShape": {
-        "@id": NS.SHACL.Predicate.sourceShape,
+        "@id": NS.SHACL.sourceShape,
         "@type": "@id",
     },
     "sourceConstraintComponent": {
-        "@id": NS.SHACL.Predicate.sourceConstraintComponent,
+        "@id": NS.SHACL.sourceConstraintComponent,
         "@type": "@id",
     },
     "detail": {
-        "@id": NS.SHACL.Predicate.detail,
+        "@id": NS.SHACL.detail,
         "@type": "@id",
     },
     "resultMessage": {
-        "@id": NS.SHACL.Predicate.resultMessage,
+        "@id": NS.SHACL.resultMessage,
         "@type": NS.XSD.DataType.string,
     },
     "resultSeverity": {
-        "@id": NS.SHACL.Predicate.resultSeverity,
+        "@id": NS.SHACL.resultSeverity,
         "@type": "@id",
     },
 };

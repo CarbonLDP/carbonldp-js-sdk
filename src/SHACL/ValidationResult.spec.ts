@@ -20,7 +20,7 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		expect( ValidationResult.RDF_CLASS ).toBeDefined();
 		expect( ValidationResult.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ValidationResult.RDF_CLASS ).toBe( NS.SHACL.Class.ValidationResult );
+		expect( ValidationResult.RDF_CLASS ).toBe( NS.SHACL.ValidationResult );
 	} );
 
 	it( hasProperty(
@@ -43,41 +43,41 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		} );
 
 		expect( ValidationResult.SCHEMA[ "focusNode" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.focusNode,
+			"@id": NS.SHACL.focusNode,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultPath" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.resultPath,
+			"@id": NS.SHACL.resultPath,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "value" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.value,
+			"@id": NS.SHACL.value,
 		} );
 
 		expect( ValidationResult.SCHEMA[ "sourceShape" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.sourceShape,
+			"@id": NS.SHACL.sourceShape,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "sourceConstraintComponent" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.sourceConstraintComponent,
+			"@id": NS.SHACL.sourceConstraintComponent,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "detail" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.detail,
+			"@id": NS.SHACL.detail,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultMessage" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.resultMessage,
+			"@id": NS.SHACL.resultMessage,
 			"@type": NS.XSD.DataType.string,
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultSeverity" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.resultSeverity,
+			"@id": NS.SHACL.resultSeverity,
 			"@type": "@id",
 		} );
 	} );
