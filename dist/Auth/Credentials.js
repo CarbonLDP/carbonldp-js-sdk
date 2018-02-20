@@ -13,7 +13,7 @@ var Errors_1 = require("./../Errors");
 exports.RDF_CLASS = NS.CS.Credentials;
 exports.SCHEMA = {
     "email": {
-        "@id": NS.VCARD.Predicate.email,
+        "@id": NS.VCARD.email,
         "@type": NS.XSD.DataType.string,
     },
     "password": {

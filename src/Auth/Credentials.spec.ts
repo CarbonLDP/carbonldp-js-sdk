@@ -49,7 +49,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "email" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "email" ] ).toEqual( {
-			"@id": NS.VCARD.Predicate.email,
+			"@id": NS.VCARD.email,
 			"@type": NS.XSD.DataType.string,
 		} );
 

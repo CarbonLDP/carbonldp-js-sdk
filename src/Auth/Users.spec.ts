@@ -143,7 +143,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 						"@graph": [ {
 							"@id": "http://example.com/.system/credentials/a-user-credentials/",
 							"@type": [ "${ NS.CS.Credentials }" ],
-							"${ NS.VCARD.Predicate.email }": {
+							"${ NS.VCARD.email }": {
 								"@value": "user@example.com"
 							},
 							"${ NS.CS.password }": {

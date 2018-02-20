@@ -12,7 +12,7 @@ import { CS } from "./CS";
 import { LDP } from "./LDP";
 import { RDF } from "./RDF";
 import { SHACL } from "./SHACL";
-import * as VCARD from "./VCARD";
+import { VCARD } from "./VCARD";
 import * as XSD from "./XSD";
 
 describe( module( "Carbon/Vocabularies" ), ():void => {
@@ -70,7 +70,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"VCARD",
-		"Carbon/Vocabularies/VCARD"
+		"Carbon.Vocabularies.VCARD"
 	), ():void => {
 		expect( Vocabularies.VCARD ).toBeDefined();
 		expect( Vocabularies.VCARD ).toBe( VCARD );

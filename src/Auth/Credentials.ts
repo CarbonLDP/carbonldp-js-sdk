@@ -7,7 +7,7 @@ export const RDF_CLASS:string = NS.CS.Credentials;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"email": {
-		"@id": NS.VCARD.Predicate.email,
+		"@id": NS.VCARD.email,
 		"@type": NS.XSD.DataType.string,
 	},
 	"password": {

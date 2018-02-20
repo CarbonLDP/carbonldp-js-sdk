@@ -15,8 +15,7 @@ __export(require("./CS"));
 __export(require("./LDP"));
 __export(require("./RDF"));
 __export(require("./SHACL"));
-var VCARD = __importStar(require("./VCARD"));
-exports.VCARD = VCARD;
+__export(require("./VCARD"));
 var XSD = __importStar(require("./XSD"));
 exports.XSD = XSD;
 

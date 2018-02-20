@@ -9,7 +9,7 @@ import { LDP } from "./LDP";
 
 describe( module( "Carbon/Vocabularies/LDP" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.LDP", "The vocabulary defined for the W3C Linked Data Platform (LDP)" ), ():void => {
+	describe( namespaze( "Carbon.Vocabularies.LDP", "Vocabulary defined for the W3C Linked Data Platform (LDP)" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( LDP ).toEqual( jasmine.any( Object ) );

@@ -9,7 +9,7 @@ import { CS } from "./CS";
 
 describe( module( "Carbon/Vocabularies/CS" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.CS", "The security vocabulary of Carbon LDP." ), ():void => {
+	describe( namespaze( "Carbon.Vocabularies.CS", "Vocabulary for the security system of Carbon LDP." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( CS ).toBeDefined();

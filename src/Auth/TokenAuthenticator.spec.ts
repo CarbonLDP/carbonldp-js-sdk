@@ -217,7 +217,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 									"@value": "My User Name",
 									"@type": "${ NS.XSD.DataType.string }"
 								} ],
-								"${ NS.VCARD.Predicate.email }": [ {
+								"${ NS.VCARD.email }": [ {
 									"@value": "my-user@users.com",
 									"@type": "${ NS.XSD.DataType.string }"
 								} ],
@@ -722,7 +722,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 								"@value": "My User Name",
 								"@type": "${ NS.XSD.DataType.string }"
 							} ],
-							"${ NS.VCARD.Predicate.email }": [ {
+							"${ NS.VCARD.email }": [ {
 								"@value": "my-user@users.com",
 								"@type": "${ NS.XSD.DataType.string }"
 							} ],

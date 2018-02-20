@@ -9,7 +9,7 @@ import { SHACL } from "./SHACL";
 
 describe( module( "Carbon/Vocabularies/SHACL" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.SHACL", "The vocabulary of the Shapes Constraint Language (SHACL) specification." ), ():void => {
+	describe( namespaze( "Carbon.Vocabularies.SHACL", "Vocabulary of the Shapes Constraint Language (SHACL) specification." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( SHACL ).toEqual( jasmine.any( Object ) );

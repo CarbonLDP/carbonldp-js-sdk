@@ -1,45 +1,32 @@
 import {
-	STATIC,
-
+	hasProperty,
 	module,
-	clazz,
+	namespaze,
+	STATIC,
+} from "../test/JasmineExtender";
 
-	isDefined,
-	hasProperty
-} from "./../test/JasmineExtender";
-import * as Utils from "./../Utils";
+import { VCARD } from "./VCARD";
 
-import * as VCARD from "./VCARD";
+describe( module( "Carbon/Vocabularies/VCARD" ), ():void => {
 
-describe( module(
-	"Carbon/Vocabularies/VCARD"
-), ():void => {
+	describe( namespaze( "Carbon.Vocabularies.VCARD", "Vocabulary that contains some predicates defined in the vCard Ontology Specification." ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( VCARD ).toBeDefined();
-		expect( Utils.isObject( VCARD ) ).toBe( true );
-	} );
+		it( "should exists", ():void => {
+			expect( VCARD ).toBeDefined();
+			expect( VCARD ).toEqual( jasmine.any( Object ) );
+		} );
 
-	it( hasProperty(
-		STATIC,
-		"namespace",
-		"string"
-	), ():void => {
-		expect( VCARD.namespace ).toBeDefined();
-		expect( Utils.isString( VCARD.namespace ) ).toBe( true );
+		it( "should test all exported IRIs", ():void => {
+			expect( Object.keys( VCARD ).length ).toBe( 2 );
+		} );
 
-		expect( VCARD.namespace ).toBe( "http://www.w3.org/2001/vcard-rdf/3.0#" )
-	} );
-
-	describe( clazz(
-		"Carbon.NS.VCARD.Predicate",
-		"Class that contains some predicates defined in the vCard Ontology Specification."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( VCARD.Predicate ).toBeDefined();
-			expect( Utils.isFunction( VCARD.Predicate ) ).toBe( true );
-			expect( Object.keys( VCARD.Predicate ).length ).toBe( 1 );
+		it( hasProperty(
+			STATIC,
+			"namespace",
+			"string"
+		), ():void => {
+			expect( VCARD.namespace ).toEqual( jasmine.any( String ) );
+			expect( VCARD.namespace ).toBe( "http://www.w3.org/2001/vcard-rdf/3.0#" );
 		} );
 
 		it( hasProperty(
@@ -47,10 +34,8 @@ describe( module(
 			"email",
 			"string"
 		), ():void => {
-			expect( VCARD.Predicate.email ).toBeDefined();
-			expect( Utils.isString( VCARD.Predicate.email ) ).toBe( true );
-
-			expect( VCARD.Predicate.email ).toBe( "http://www.w3.org/2001/vcard-rdf/3.0#email" );
+			expect( VCARD.email ).toEqual( jasmine.any( String ) );
+			expect( VCARD.email ).toBe( "http://www.w3.org/2001/vcard-rdf/3.0#email" );
 		} );
 
 	} );
