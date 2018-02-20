@@ -1,9 +1,16 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
-import * as Resource from "../Resource";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as MemberAdded from "./MemberAdded";
 import DefaultExport from "./MemberAdded";
 
@@ -22,7 +29,7 @@ describe( module( "Carbon/Messaging/MemberAdded" ), ():void => {
 		expect( MemberAdded.RDF_CLASS ).toBeDefined();
 		expect( MemberAdded.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( MemberAdded.RDF_CLASS ).toBe( NS.C.MemberAdded );
+		expect( MemberAdded.RDF_CLASS ).toBe( C.MemberAdded );
 	} );
 
 	it( hasProperty(
@@ -39,12 +46,12 @@ describe( module( "Carbon/Messaging/MemberAdded" ), ():void => {
 		} );
 
 		expect( MemberAdded.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.target,
+			"@id": C.target,
 			"@type": "@id",
 		} );
 
 		expect( MemberAdded.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.details,
+			"@id": C.details,
 			"@type": "@id",
 		} );
 	} );

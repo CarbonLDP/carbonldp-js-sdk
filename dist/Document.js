@@ -14,54 +14,56 @@ var BlankNode = __importStar(require("./BlankNode"));
 var Errors = __importStar(require("./Errors"));
 var Converter_1 = __importDefault(require("./JSONLD/Converter"));
 var NamedFragment = __importStar(require("./NamedFragment"));
-var NS = __importStar(require("./Vocabularies/index"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var Pointer = __importStar(require("./Pointer"));
 var RDF = __importStar(require("./RDF"));
 var Resource = __importStar(require("./Resource"));
 var Utils = __importStar(require("./Utils"));
-exports.RDF_CLASS = NS.C.Document;
+var C_1 = require("./Vocabularies/C");
+var LDP_1 = require("./Vocabularies/LDP");
+var XSD_1 = require("./Vocabularies/XSD");
+exports.RDF_CLASS = C_1.C.Document;
 exports.SCHEMA = {
     "contains": {
-        "@id": NS.LDP.contains,
+        "@id": LDP_1.LDP.contains,
         "@container": "@set",
         "@type": "@id",
     },
     "members": {
-        "@id": NS.LDP.member,
+        "@id": LDP_1.LDP.member,
         "@container": "@set",
         "@type": "@id",
     },
     "membershipResource": {
-        "@id": NS.LDP.membershipResource,
+        "@id": LDP_1.LDP.membershipResource,
         "@type": "@id",
     },
     "isMemberOfRelation": {
-        "@id": NS.LDP.isMemberOfRelation,
+        "@id": LDP_1.LDP.isMemberOfRelation,
         "@type": "@id",
     },
     "hasMemberRelation": {
-        "@id": NS.LDP.hasMemberRelation,
+        "@id": LDP_1.LDP.hasMemberRelation,
         "@type": "@id",
     },
     "insertedContentRelation": {
-        "@id": NS.LDP.insertedContentRelation,
+        "@id": LDP_1.LDP.insertedContentRelation,
         "@type": "@id",
     },
     "created": {
-        "@id": NS.C.created,
-        "@type": NS.XSD.dateTime,
+        "@id": C_1.C.created,
+        "@type": XSD_1.XSD.dateTime,
     },
     "modified": {
-        "@id": NS.C.modified,
-        "@type": NS.XSD.dateTime,
+        "@id": C_1.C.modified,
+        "@type": XSD_1.XSD.dateTime,
     },
     "defaultInteractionModel": {
-        "@id": NS.C.defaultInteractionModel,
+        "@id": C_1.C.defaultInteractionModel,
         "@type": "@id",
     },
     "accessPoints": {
-        "@id": NS.C.accessPoint,
+        "@id": C_1.C.accessPoint,
         "@type": "@id",
         "@container": "@set",
     },

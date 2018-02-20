@@ -1,9 +1,9 @@
 import AbstractContext from "./AbstractContext";
-import * as NS from "./Vocabularies/index";
 import * as PersistedDocument from "./PersistedDocument";
 
 import * as RDFRepresentation from "./RDFRepresentation";
 import DefaultExport from "./RDFRepresentation";
+
 import {
 	clazz,
 	extendsClass,
@@ -17,6 +17,8 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
+import { XSD } from "./Vocabularies/XSD";
 
 describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
@@ -33,7 +35,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		expect( RDFRepresentation.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( RDFRepresentation.RDF_CLASS ) ).toBe( true );
 
-		expect( RDFRepresentation.RDF_CLASS ).toBe( NS.C.RDFRepresentation );
+		expect( RDFRepresentation.RDF_CLASS ).toBe( C.RDFRepresentation );
 	} );
 
 	it( hasProperty(
@@ -46,14 +48,14 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "mediaType" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "mediaType" ] ).toEqual( {
-			"@id": NS.C.mediaType,
-			"@type": NS.XSD.string,
+			"@id": C.mediaType,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( RDFRepresentation.SCHEMA, "size" ) ).toBe( true );
 		expect( RDFRepresentation.SCHEMA[ "size" ] ).toEqual( {
-			"@id": NS.C.size,
-			"@type": NS.XSD.long,
+			"@id": C.size,
+			"@type": XSD.long,
 		} );
 	} );
 

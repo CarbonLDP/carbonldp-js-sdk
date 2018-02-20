@@ -1,11 +1,11 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 
 export const SCHEMA:ObjectSchema.Class = {
 	"members": {
-		"@id": NS.C.member,
+		"@id": C.member,
 		"@type": "@id",
 		"@container": "@set",
 	},

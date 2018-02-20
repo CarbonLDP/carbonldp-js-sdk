@@ -1,26 +1,23 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-	decoratedObject,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as NS from "./Vocabularies/index";
 import * as Pointer from "./Pointer";
-import * as Utils from "./Utils";
 
 import * as Resource from "./Resource";
 import DefaultExport from "./Resource";
+import {
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import { LDP } from "./Vocabularies/LDP";
 
 describe( module( "Carbon/Resource" ), ():void => {
 
@@ -91,9 +88,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.", [
-				{name: "object", type: "Object"},
+				{ name: "object", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( Resource.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.hasClassProperties ) ).toBe( true );
@@ -130,9 +127,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"is",
 			"Returns true if the object provided is considered a `Carbon.Resource.Class` object.", [
-				{name: "resource", type: "Object"},
+				{ name: "resource", type: "Object" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			let object:Object = undefined;
 			expect( Resource.Factory.is( object ) ).toBe( false );
@@ -154,10 +151,10 @@ describe( module( "Carbon/Resource" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a Resource object with the id and types provided.", [
-				{name: "id", type: "string", optional: true},
-				{name: "types", type: "string[]", optional: true},
+				{ name: "id", type: "string", optional: true },
+				{ name: "types", type: "string[]", optional: true },
 			],
-			{type: "Carbon.Resource.Class"}
+			{ type: "Carbon.Resource.Class" }
 		), ():void => {
 			expect( Resource.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.create ) ).toBe( true );
@@ -178,21 +175,21 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = Resource.Factory.create( "http://example.com/resource/", [ NS.LDP.RDFSource ] );
+			resource = Resource.Factory.create( "http://example.com/resource/", [ LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ NS.LDP.RDFSource ] );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 
-			resource = Resource.Factory.create( null, [ NS.LDP.RDFSource, NS.LDP.Container ] );
+			resource = Resource.Factory.create( null, [ LDP.RDFSource, LDP.Container ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ NS.LDP.RDFSource, NS.LDP.Container ] );
+			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
 		} );
 
 		it( hasMethod(
@@ -200,11 +197,11 @@ describe( module( "Carbon/Resource" ), ():void => {
 			"createFrom",
 			[ "T extends Object" ],
 			"Creates a Resource object with the id and types provided.", [
-				{name: "object", type: "T"},
-				{name: "id", type: "string", optional: true},
-				{name: "types", type: "string[]", optional: true},
+				{ name: "object", type: "T" },
+				{ name: "id", type: "string", optional: true },
+				{ name: "types", type: "string[]", optional: true },
 			],
-			{type: "T & Carbon.Resource.Class"}
+			{ type: "T & Carbon.Resource.Class" }
 		), ():void => {
 			expect( Resource.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.createFrom ) ).toBe( true );
@@ -219,9 +216,10 @@ describe( module( "Carbon/Resource" ), ():void => {
 			interface MyResource {
 				myProperty:string;
 			}
+
 			let resource:Resource.Class & MyResource;
 
-			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"} );
+			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" } );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
@@ -230,7 +228,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, "http://example.com/resource/" );
+			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/" );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
@@ -239,23 +237,23 @@ describe( module( "Carbon/Resource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, "http://example.com/resource/", [ NS.LDP.RDFSource ] );
+			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/", [ LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ NS.LDP.RDFSource ] );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( {myProperty: "a property"}, null, [ NS.LDP.RDFSource, NS.LDP.Container ] );
+			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" }, null, [ LDP.RDFSource, LDP.Container ] );
 			expect( resource ).toBeTruthy();
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( Utils.isArray( resource.types ) ).toBe( true );
 			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ NS.LDP.RDFSource, NS.LDP.Container ] );
+			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 		} );
@@ -265,9 +263,9 @@ describe( module( "Carbon/Resource" ), ():void => {
 			"decorate",
 			[ "T extends Object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Class` object.", [
-				{name: "object", type: "T"},
+				{ name: "object", type: "T" },
 			],
-			{type: "T & Carbon.Resource.Class"}
+			{ type: "T & Carbon.Resource.Class" }
 		), ():void => {
 			expect( Resource.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( Resource.Factory.decorate ) ).toBe( true );
@@ -276,22 +274,23 @@ describe( module( "Carbon/Resource" ), ():void => {
 			interface MyResource {
 				myProperty?:string;
 			}
+
 			let resource:Resource.Class & MyResource;
 
 			resource = Resource.Factory.decorate<MyResource>( {} );
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.types ).toEqual( [] );
 
-			resource = Resource.Factory.decorate<MyResource>( {myProperty: "a property"} );
+			resource = Resource.Factory.decorate<MyResource>( { myProperty: "a property" } );
 			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 			expect( resource.types ).toEqual( [] );
 
 
-			resource.types = [ NS.LDP.RDFSource ];
+			resource.types = [ LDP.RDFSource ];
 			resource = Resource.Factory.decorate<MyResource>( resource );
-			expect( resource.types ).toEqual( [ NS.LDP.RDFSource ] );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 		} );
 
 		describe( decoratedObject(
@@ -309,7 +308,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 				INSTANCE,
 				"addType",
 				"Adds a type to the Resource.", [
-					{name: "type", type: "string", description: "The type to be added."},
+					{ name: "type", type: "string", description: "The type to be added." },
 				]
 			), ():void => {
 				expect( resource.addType ).toBeDefined();
@@ -331,7 +330,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 				INSTANCE,
 				"hasType",
 				"Returns true if the Resource contains the type specified.", [
-					{name: "type", type: "string", description: "The type to look for."},
+					{ name: "type", type: "string", description: "The type to look for." },
 				]
 			), ():void => {
 				expect( resource.hasType ).toBeDefined();
@@ -352,7 +351,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 				INSTANCE,
 				"removeType",
 				"Remove the type specified from the Resource.", [
-					{name: "type", type: "string", description: "The type to be removed."},
+					{ name: "type", type: "string", description: "The type to be removed." },
 				]
 			), ():void => {
 				expect( resource.removeType ).toBeDefined();

@@ -1,14 +1,14 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.C.RemoveMemberAction;
+export const RDF_CLASS:string = C.RemoveMemberAction;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"targetMembers": {
-		"@id": NS.C.targetMember,
+		"@id": C.targetMember,
 		"@type": "@id",
 		"@container": "@set",
 	},

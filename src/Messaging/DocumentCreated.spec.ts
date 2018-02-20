@@ -1,8 +1,16 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as DocumentCreated from "./DocumentCreated";
 import DefaultExport from "./DocumentCreated";
 
@@ -27,12 +35,12 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 		} );
 
 		expect( DocumentCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.target,
+			"@id": C.target,
 			"@type": "@id",
 		} );
 
 		expect( DocumentCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.details,
+			"@id": C.details,
 			"@type": "@id",
 		} );
 	} );

@@ -1,18 +1,19 @@
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import * as VolatileResource from "./../LDP/VolatileResource";
-import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as PersistedDocument from "./../PersistedDocument";
 
-export const RDF_CLASS:string = NS.C.Platform;
+export const RDF_CLASS:string = C.Platform;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"version": {
-		"@id": NS.C.version,
-		"@type": NS.XSD.string,
+		"@id": C.version,
+		"@type": XSD.string,
 	},
 	"buildDate": {
-		"@id": NS.C.buildDate,
-		"@type": NS.XSD.dateTime,
+		"@id": C.buildDate,
+		"@type": XSD.dateTime,
 	},
 };
 

@@ -1,13 +1,13 @@
 import * as LDP from "./LDP";
-import * as NS from "./Vocabularies/index";
 import * as Pointer from "./Pointer";
+import { C } from "./Vocabularies/C";
 
-export const RDF_CLASS:string = NS.C.AccessPoint;
+export const RDF_CLASS:string = C.AccessPoint;
 
 export interface Class {
 	hasMemberRelation:string | Pointer.Class;
 	isMemberOfRelation?:string | Pointer.Class;
-	insertedContentRelation?: string | Pointer.Class;
+	insertedContentRelation?:string | Pointer.Class;
 }
 
 export interface DocumentClass extends LDP.DirectContainer.Class {

@@ -1,8 +1,19 @@
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
 import * as Resource from "../Resource";
-import { clazz, extendsClass, hasDefaultExport, hasProperty, hasSignature, interfaze, isDefined, method, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	hasSignature,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as Message from "./Message";
 import DefaultExport from "./Message";
 
@@ -26,7 +37,7 @@ describe( module( "Carbon/Messaging/Message" ), ():void => {
 		} );
 
 		expect( Message.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.target,
+			"@id": C.target,
 			"@type": "@id",
 		} );
 	} );

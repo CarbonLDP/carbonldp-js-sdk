@@ -1,18 +1,16 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasDefaultExport,
-	extendsClass,
-} from "./../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import * as VolatileResource from "./../LDP/VolatileResource";
-import * as NS from "../Vocabularies/index";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as PlatformMetadata from "./PlatformMetadata";
@@ -33,7 +31,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 		expect( PlatformMetadata.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( PlatformMetadata.RDF_CLASS ) ).toBe( true );
 
-		expect( PlatformMetadata.RDF_CLASS ).toBe( NS.C.Platform );
+		expect( PlatformMetadata.RDF_CLASS ).toBe( C.Platform );
 	} );
 
 	it( hasProperty(
@@ -46,14 +44,14 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 
 		expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "version" ) ).toBe( true );
 		expect( PlatformMetadata.SCHEMA[ "version" ] ).toEqual( {
-			"@id": NS.C.version,
-			"@type": NS.XSD.string,
+			"@id": C.version,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "buildDate" ) ).toBe( true );
 		expect( PlatformMetadata.SCHEMA[ "buildDate" ] ).toEqual( {
-			"@id": NS.C.buildDate,
-			"@type": NS.XSD.dateTime,
+			"@id": C.buildDate,
+			"@type": XSD.dateTime,
 		} );
 
 	} );

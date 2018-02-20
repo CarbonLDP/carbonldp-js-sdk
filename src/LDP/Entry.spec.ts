@@ -1,19 +1,15 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
-
 import * as Entry from "./Entry";
 import DefaultExport from "./Entry";
 
@@ -38,11 +34,11 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 		} );
 
 		expect( Entry.SCHEMA[ "entryKey" ] ).toEqual( {
-			"@id": NS.C.entryKey,
+			"@id": C.entryKey,
 		} );
 
 		expect( Entry.SCHEMA[ "entryValue" ] ).toEqual( {
-			"@id": NS.C.entryValue,
+			"@id": C.entryValue,
 		} );
 	} );
 

@@ -7,12 +7,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../../Vocabularies/index"));
 var VolatileResource = __importStar(require("../../LDP/VolatileResource"));
-exports.RDF_CLASS = NS.C.QueryMetadata;
+var C_1 = require("../../Vocabularies/C");
+exports.RDF_CLASS = C_1.C.QueryMetadata;
 exports.SCHEMA = {
     "target": {
-        "@id": NS.C.target,
+        "@id": C_1.C.target,
         "@type": "@id",
         "@container": "@set",
     },

@@ -1,28 +1,29 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as Fragment from "./../Fragment";
-import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.AccessControlEntry;
+export const RDF_CLASS:string = CS.AccessControlEntry;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"granting": {
-		"@id": NS.CS.granting,
-		"@type": NS.XSD.boolean,
+		"@id": CS.granting,
+		"@type": XSD.boolean,
 	},
 	"permissions": {
-		"@id": NS.CS.permission,
+		"@id": CS.permission,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"subjects": {
-		"@id": NS.CS.subject,
+		"@id": CS.subject,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"subjectsClass": {
-		"@id": NS.CS.subjectClass,
+		"@id": CS.subjectClass,
 		"@type": "@id",
 	},
 };

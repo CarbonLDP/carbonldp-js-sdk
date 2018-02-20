@@ -1,19 +1,16 @@
-import {
-	STATIC,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as NS from "./Vocabularies/index";
-import * as Utils from "./Utils";
-
 import * as ProtectedDocument from "./ProtectedDocument";
 import DefaultExport from "./ProtectedDocument";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import { CS } from "./Vocabularies/CS";
 
 describe( module( "Carbon/ProtectedDocument" ), ():void => {
 
@@ -47,7 +44,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 		expect( ProtectedDocument.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ProtectedDocument.RDF_CLASS ) ).toBe( true );
 
-		expect( ProtectedDocument.RDF_CLASS ).toBe( NS.CS.ProtectedDocument );
+		expect( ProtectedDocument.RDF_CLASS ).toBe( CS.ProtectedDocument );
 	} );
 
 	it( hasProperty(
@@ -60,7 +57,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 
 		expect( Utils.hasProperty( ProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
 		expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
-			"@id": NS.CS.accessControlList,
+			"@id": CS.accessControlList,
 			"@type": "@id",
 		} );
 

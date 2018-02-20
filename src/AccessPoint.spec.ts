@@ -1,26 +1,22 @@
-import {
-	STATIC,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as NS from "./Vocabularies/index";
-import * as Pointer from "./Pointer";
-import * as DirectContainer from "./LDP/DirectContainer";
-
 import * as AccessPoint from "./AccessPoint";
 import DefaultExport from "./AccessPoint";
+import * as DirectContainer from "./LDP/DirectContainer";
+import * as Pointer from "./Pointer";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
 
 describe( module( "Carbon/AccessPoint" ), ():void => {
 
@@ -37,7 +33,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 		expect( AccessPoint.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( AccessPoint.RDF_CLASS ) ).toBe( true );
 
-		expect( AccessPoint.RDF_CLASS ).toBe( NS.C.AccessPoint );
+		expect( AccessPoint.RDF_CLASS ).toBe( C.AccessPoint );
 	} );
 
 	describe( interfaze(

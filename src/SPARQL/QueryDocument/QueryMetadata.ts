@@ -1,13 +1,13 @@
-import * as NS from "../../Vocabularies/index";
+import * as VolatileResource from "../../LDP/VolatileResource";
 import * as ObjectSchema from "../../ObjectSchema";
 import * as Pointer from "../../Pointer";
-import * as VolatileResource from "../../LDP/VolatileResource";
+import { C } from "../../Vocabularies/C";
 
-export const RDF_CLASS:string = NS.C.QueryMetadata;
+export const RDF_CLASS:string = C.QueryMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"target": {
-		"@id": NS.C.target,
+		"@id": C.target,
 		"@type": "@id",
 		"@container": "@set",
 	},

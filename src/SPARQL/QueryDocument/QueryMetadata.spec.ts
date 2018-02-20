@@ -1,8 +1,18 @@
 import * as VolatileResource from "../../LDP/VolatileResource";
-import * as NS from "../../Vocabularies/index";
 import * as Pointer from "../../Pointer";
 import * as Resource from "../../Resource";
-import { clazz, hasDefaultExport, hasProperty, hasSignature, interfaze, method, module, OBLIGATORY, STATIC } from "../../test/JasmineExtender";
+import {
+	clazz,
+	hasDefaultExport,
+	hasProperty,
+	hasSignature,
+	interfaze,
+	method,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../../test/JasmineExtender";
+import { C } from "../../Vocabularies/C";
 
 import * as QueryMetadata from "./QueryMetadata";
 
@@ -24,7 +34,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		"string"
 	), ():void => {
 		expect( QueryMetadata.RDF_CLASS ).toBeDefined();
-		expect( QueryMetadata.RDF_CLASS ).toBe( NS.C.QueryMetadata );
+		expect( QueryMetadata.RDF_CLASS ).toBe( C.QueryMetadata );
 	} );
 
 	it( hasProperty(
@@ -40,7 +50,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		} );
 
 		expect( QueryMetadata.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.target,
+			"@id": C.target,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -98,7 +108,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 			it( "should verify the resource RDF_CLASS", ():void => {
 				const target:QueryMetadata.Class = Resource.Factory.createFrom( {
-					types: [ NS.C.VolatileResource, NS.C.QueryMetadata ],
+					types: [ C.VolatileResource, C.QueryMetadata ],
 					"target": null,
 				} );
 

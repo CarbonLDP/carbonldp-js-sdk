@@ -10,31 +10,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
 var Document = __importStar(require("./../Document"));
 var IllegalArgumentError_1 = __importDefault(require("./../Errors/IllegalArgumentError"));
-var NS = __importStar(require("../Vocabularies/index"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.Role;
+exports.RDF_CLASS = CS_1.CS.Role;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.name,
-        "@type": NS.XSD.string,
+        "@id": CS_1.CS.name,
+        "@type": XSD_1.XSD.string,
     },
     "description": {
-        "@id": NS.CS.description,
-        "@type": NS.XSD.string,
+        "@id": CS_1.CS.description,
+        "@type": XSD_1.XSD.string,
     },
     "parentRole": {
-        "@id": NS.CS.parentRole,
+        "@id": CS_1.CS.parentRole,
         "@type": "@id",
     },
     "childRoles": {
-        "@id": NS.CS.childRole,
+        "@id": CS_1.CS.childRole,
         "@type": "@id",
         "@container": "@set",
     },
     "users": {
-        "@id": NS.CS.user,
+        "@id": CS_1.CS.user,
         "@type": "@id",
         "@container": "@set",
     },

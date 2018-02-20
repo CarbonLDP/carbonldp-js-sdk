@@ -1,21 +1,22 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import ObjectSchema from "./../ObjectSchema";
 import Resource from "./../Resource";
 import Map from "./Map";
 
-export const RDF_CLASS:string = NS.C.Error;
+export const RDF_CLASS:string = C.Error;
 
 export const SCHEMA:ObjectSchema = {
 	"errorCode": {
-		"@id": NS.C.errorCode,
-		"@type": NS.XSD.string,
+		"@id": C.errorCode,
+		"@type": XSD.string,
 	},
 	"errorMessage": {
-		"@id": NS.C.errorMessage,
+		"@id": C.errorMessage,
 		"@language": "en",
 	},
 	"errorParameters": {
-		"@id": NS.C.errorParameters,
+		"@id": C.errorParameters,
 		"@type": "@id",
 	},
 };

@@ -1,5 +1,13 @@
-import { hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import {
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
 import * as ValidationReport from "./ValidationReport";
 import DefaultExport from "./ValidationReport";
 import * as ValidationResult from "./ValidationResult";
@@ -19,7 +27,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		expect( ValidationReport.RDF_CLASS ).toBeDefined();
 		expect( ValidationReport.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ValidationReport.RDF_CLASS ).toBe( NS.SHACL.ValidationReport );
+		expect( ValidationReport.RDF_CLASS ).toBe( SHACL.ValidationReport );
 	} );
 
 	it( hasProperty(
@@ -37,19 +45,19 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		} );
 
 		expect( ValidationReport.SCHEMA[ "conforms" ] ).toEqual( {
-			"@id": NS.SHACL.conforms,
-			"@type": NS.XSD.boolean,
+			"@id": SHACL.conforms,
+			"@type": XSD.boolean,
 		} );
 
 		expect( ValidationReport.SCHEMA[ "results" ] ).toEqual( {
-			"@id": NS.SHACL.result,
+			"@id": SHACL.result,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( ValidationReport.SCHEMA[ "shapesGraphWellFormed" ] ).toEqual( {
-			"@id": NS.SHACL.shapesGraphWellFormed,
-			"@type": NS.XSD.boolean,
+			"@id": SHACL.shapesGraphWellFormed,
+			"@type": XSD.boolean,
 		} );
 	} );
 

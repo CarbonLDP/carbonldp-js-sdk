@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var XSD_1 = require("../Vocabularies/XSD");
 var Errors = __importStar(require("./../Errors"));
-var NS = __importStar(require("../Vocabularies/index"));
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var Pointer = __importStar(require("./../Pointer"));
 var RDF = __importStar(require("./../RDF"));
@@ -25,18 +25,18 @@ var Class = (function () {
     });
     Class.getDefaultSerializers = function () {
         var literalSerializers = new Map();
-        literalSerializers.set(NS.XSD.date, RDF.Literal.Serializers.XSD.dateSerializer);
-        literalSerializers.set(NS.XSD.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
-        literalSerializers.set(NS.XSD.time, RDF.Literal.Serializers.XSD.timeSerializer);
-        literalSerializers.set(NS.XSD.integer, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.int, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
-        literalSerializers.set(NS.XSD.long, RDF.Literal.Serializers.XSD.longSerializer);
-        literalSerializers.set(NS.XSD.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
-        literalSerializers.set(NS.XSD.float, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(NS.XSD.double, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(NS.XSD.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
-        literalSerializers.set(NS.XSD.string, RDF.Literal.Serializers.XSD.stringSerializer);
+        literalSerializers.set(XSD_1.XSD.date, RDF.Literal.Serializers.XSD.dateSerializer);
+        literalSerializers.set(XSD_1.XSD.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
+        literalSerializers.set(XSD_1.XSD.time, RDF.Literal.Serializers.XSD.timeSerializer);
+        literalSerializers.set(XSD_1.XSD.integer, RDF.Literal.Serializers.XSD.integerSerializer);
+        literalSerializers.set(XSD_1.XSD.int, RDF.Literal.Serializers.XSD.integerSerializer);
+        literalSerializers.set(XSD_1.XSD.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
+        literalSerializers.set(XSD_1.XSD.long, RDF.Literal.Serializers.XSD.longSerializer);
+        literalSerializers.set(XSD_1.XSD.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
+        literalSerializers.set(XSD_1.XSD.float, RDF.Literal.Serializers.XSD.floatSerializer);
+        literalSerializers.set(XSD_1.XSD.double, RDF.Literal.Serializers.XSD.floatSerializer);
+        literalSerializers.set(XSD_1.XSD.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
+        literalSerializers.set(XSD_1.XSD.string, RDF.Literal.Serializers.XSD.stringSerializer);
         return literalSerializers;
     };
     Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary, strict) {
@@ -126,8 +126,8 @@ var Class = (function () {
         }
         var mapValues = [];
         Utils.forEachOwnProperty(propertyValue, function (languageTag, value) {
-            var serializedValue = _this.literalSerializers.get(NS.XSD.string).serialize(value);
-            mapValues.push({ "@value": serializedValue, "@type": NS.XSD.string, "@language": languageTag });
+            var serializedValue = _this.literalSerializers.get(XSD_1.XSD.string).serialize(value);
+            mapValues.push({ "@value": serializedValue, "@type": XSD_1.XSD.string, "@language": languageTag });
         });
         return mapValues;
     };
@@ -237,7 +237,7 @@ var Class = (function () {
     };
     Class.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
-            NS.XSD.string : ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+            XSD_1.XSD.string : ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
         return RDF.Node.Util.getPropertyLiterals(propertyValues, literalType);
     };
     return Class;

@@ -1,14 +1,14 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as MemberRemovedDetails from "./MemberRemovedDetails";
 import * as Message from "./Message";
 
-export const RDF_CLASS:string = NS.C.MemberRemoved;
+export const RDF_CLASS:string = C.MemberRemoved;
 
 export const SCHEMA:ObjectSchema.Class = {
 	...Message.SCHEMA,
 	"details": {
-		"@id": NS.C.details,
+		"@id": C.details,
 		"@type": "@id",
 	},
 };

@@ -15,10 +15,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var C_1 = require("../Vocabularies/C");
 var Message = __importStar(require("./Message"));
 exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.details,
+        "@id": C_1.C.details,
         "@type": "@id",
     } });
 

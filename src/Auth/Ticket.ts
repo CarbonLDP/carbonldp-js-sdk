@@ -1,26 +1,27 @@
-import * as NS from "../Vocabularies/index";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
 import * as URI from "./../RDF/URI";
+import * as Resource from "./../Resource";
 
 
 export const TICKETS_CONTAINER:string = "auth-tickets/";
 
-export const RDF_CLASS:string = NS.CS.Ticket;
+export const RDF_CLASS:string = CS.Ticket;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"forURI": {
-		"@id": NS.CS.forIRI,
+		"@id": CS.forIRI,
 		"@type": "@id",
 	},
 	"expirationTime": {
-		"@id": NS.CS.expirationTime,
-		"@type": NS.XSD.dateTime,
+		"@id": CS.expirationTime,
+		"@type": XSD.dateTime,
 	},
 	"ticketKey": {
-		"@id": NS.CS.ticketKey,
-		"@type": NS.XSD.string,
+		"@id": CS.ticketKey,
+		"@type": XSD.string,
 	},
 };
 

@@ -1,44 +1,38 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
-exports.RDF_CLASS = NS.SHACL.ValidationResult;
+var SHACL_1 = require("../Vocabularies/SHACL");
+var XSD_1 = require("../Vocabularies/XSD");
+exports.RDF_CLASS = SHACL_1.SHACL.ValidationResult;
 exports.SCHEMA = {
     "focusNode": {
-        "@id": NS.SHACL.focusNode,
+        "@id": SHACL_1.SHACL.focusNode,
         "@type": "@id",
     },
     "resultPath": {
-        "@id": NS.SHACL.resultPath,
+        "@id": SHACL_1.SHACL.resultPath,
         "@type": "@id",
     },
     "value": {
-        "@id": NS.SHACL.value,
+        "@id": SHACL_1.SHACL.value,
     },
     "sourceShape": {
-        "@id": NS.SHACL.sourceShape,
+        "@id": SHACL_1.SHACL.sourceShape,
         "@type": "@id",
     },
     "sourceConstraintComponent": {
-        "@id": NS.SHACL.sourceConstraintComponent,
+        "@id": SHACL_1.SHACL.sourceConstraintComponent,
         "@type": "@id",
     },
     "detail": {
-        "@id": NS.SHACL.detail,
+        "@id": SHACL_1.SHACL.detail,
         "@type": "@id",
     },
     "resultMessage": {
-        "@id": NS.SHACL.resultMessage,
-        "@type": NS.XSD.string,
+        "@id": SHACL_1.SHACL.resultMessage,
+        "@type": XSD_1.XSD.string,
     },
     "resultSeverity": {
-        "@id": NS.SHACL.resultSeverity,
+        "@id": SHACL_1.SHACL.resultSeverity,
         "@type": "@id",
     },
 };

@@ -1,22 +1,18 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
-
 import * as Map from "./Map";
 import DefaultExport from "./Map";
 
@@ -35,7 +31,7 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 		expect( Map.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Map.RDF_CLASS ) ).toBe( true );
 
-		expect( Map.RDF_CLASS ).toBe( NS.C.Map );
+		expect( Map.RDF_CLASS ).toBe( C.Map );
 	} );
 
 	it( hasProperty(
@@ -51,7 +47,7 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 		} );
 
 		expect( Map.SCHEMA[ "entries" ] ).toEqual( {
-			"@id": NS.C.entry,
+			"@id": C.entry,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -103,15 +99,15 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 
 			object = Resource.Factory.decorate( {
 				types: [
-					NS.C.Map,
+					C.Map,
 				],
 				entries: null,
 			} );
 			expect( Map.Factory.is( object ) ).toBe( true );
 
-			object.removeType( NS.C.Map );
+			object.removeType( C.Map );
 			expect( Map.Factory.is( object ) ).toBe( false );
-			object.addType( NS.C.Map );
+			object.addType( C.Map );
 
 			delete object.entries;
 			expect( Map.Factory.is( object ) ).toBe( false );

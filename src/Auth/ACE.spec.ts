@@ -1,21 +1,19 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "../test/JasmineExtender";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 
 import * as Fragment from "./../Fragment";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
@@ -37,7 +35,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		expect( ACE.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ACE.RDF_CLASS ) ).toBe( true );
 
-		expect( ACE.RDF_CLASS ).toBe( NS.CS.AccessControlEntry );
+		expect( ACE.RDF_CLASS ).toBe( CS.AccessControlEntry );
 	} );
 
 	it( hasProperty(
@@ -50,27 +48,27 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "granting" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "granting" ] ).toEqual( {
-			"@id": NS.CS.granting,
-			"@type": NS.XSD.boolean,
+			"@id": CS.granting,
+			"@type": XSD.boolean,
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "permissions" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "permissions" ] ).toEqual( {
-			"@id": NS.CS.permission,
+			"@id": CS.permission,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjects" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "subjects" ] ).toEqual( {
-			"@id": NS.CS.subject,
+			"@id": CS.subject,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ACE.SCHEMA, "subjectsClass" ) ).toBe( true );
 		expect( ACE.SCHEMA[ "subjectsClass" ] ).toEqual( {
-			"@id": NS.CS.subjectClass,
+			"@id": CS.subjectClass,
 			"@type": "@id",
 		} );
 	} );
@@ -215,7 +213,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			object = {};
 			ace = ACE.Factory.createFrom( object, true, [ Pointer.Factory.create( "1" ) ], Pointer.Factory.create( "2" ), [ Pointer.Factory.create( "3" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
-			expect( ace.types ) .toContain( ACE.RDF_CLASS );
+			expect( ace.types ).toContain( ACE.RDF_CLASS );
 			expect( ace.granting ).toBe( true );
 			expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "1" );
 			expect( ace.subjectsClass.id ).toContain( "2" );
@@ -225,7 +223,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			object = { some: "some" };
 			ace = ACE.Factory.createFrom( object, false, [ Pointer.Factory.create( "4" ) ], Pointer.Factory.create( "5" ), [ Pointer.Factory.create( "6" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
-			expect( ace.types ) .toContain( ACE.RDF_CLASS );
+			expect( ace.types ).toContain( ACE.RDF_CLASS );
 			expect( ace.granting ).toBe( false );
 			expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "4" );
 			expect( ace.subjectsClass.id ).toContain( "5" );

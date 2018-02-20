@@ -1,21 +1,20 @@
-import {
-	INSTANCE,
-
-	module,
-	clazz,
-	method,
-
-	isDefined,
-	hasSignature,
-	hasDefaultExport,
-	hasConstructor,
-	hasMethod,
-} from "./../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
-import * as NS from "../Vocabularies/index";
+import {
+	clazz,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
@@ -246,16 +245,16 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					"@graph": [ {
 						"@id": "http://example.com/.system/roles/a-role/",
 						"@type": [
-							"${ NS.C.Document }",
+							"${ C.Document }",
 							"http://example.com/ns#Role"
 						 ],
-						"${ NS.C.accessPoint }": [ {
+						"${ C.accessPoint }": [ {
 							"@id": "https://dev.carbonldp.com/.system/roles/a-role/users/"
 						} ],
-						"${ NS.CS.name }": [ {
+						"${ CS.name }": [ {
 							"@value": "A Role"
 						} ],
-						"${ NS.CS.parentRole }": [ {
+						"${ CS.parentRole }": [ {
 							"@id": "https://example.com/.system/roles/parent-role/"
 						} ]
 					} ]
@@ -340,10 +339,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						{
 							"@id": "_:01",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [
+							"${ C.documentMetadata }": [
 								{
 									"@id": "_:02"
 								}
@@ -352,15 +351,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 						{
 							"@id": "_:02",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [
+							"${ C.eTag }": [
 								{
 									"@value": "\\"1234567890\\""
 								}
 							],
-							"${ NS.C.relatedDocument }": [
+							"${ C.relatedDocument }": [
 								{
 									"@id": "http://example.com/users/an-user/"
 								}
@@ -370,7 +369,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/.system/roles/a-role/",
-									"${ NS.CS.user }": [
+									"${ CS.user }": [
 										{
 											"@id": "http://example.com/users/an-user/"
 										}
@@ -384,14 +383,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 								{
 									"@id": "http://example.com/.system/roles/a-role/users/",
 									"@type": [
-										"${ NS.C.Document }",
+										"${ C.Document }",
 										"http://www.w3.org/ns/ldp#RDFSource",
 										"http://www.w3.org/ns/ldp#DirectContainer",
 										"http://www.w3.org/ns/ldp#Container"
 									],
 									"http://www.w3.org/ns/ldp#hasMemberRelation": [
 										{
-											"@id": "${ NS.CS.user }"
+											"@id": "${ CS.user }"
 										}
 									],
 									"http://www.w3.org/ns/ldp#membershipResource": [
@@ -407,13 +406,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 							"@graph": [
 								{
 									"@id": "http://example.com/users/an-user/",
-									"@type": [ "${ NS.C.Document }" ],
+									"@type": [ "${ C.Document }" ],
 									"http://www.w3.org/2001/vcard-rdf/3.0#email": [
 										{
 											"@value": "an-user@example.com"
 										}
 									],
-									"${ NS.CS.name }": [
+									"${ CS.name }": [
 										{
 											"@value": "The User Name"
 										}

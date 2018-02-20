@@ -1,22 +1,23 @@
-import * as NS from "../Vocabularies/index";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
-export const RDF_CLASS:string = NS.CS.Token;
+export const RDF_CLASS:string = CS.Token;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"key": {
-		"@id": NS.CS.tokenKey,
-		"@type": NS.XSD.string,
+		"@id": CS.tokenKey,
+		"@type": XSD.string,
 	},
 	"expirationTime": {
-		"@id": NS.CS.expirationTime,
-		"@type": NS.XSD.dateTime,
+		"@id": CS.expirationTime,
+		"@type": XSD.dateTime,
 	},
 	"user": {
-		"@id": NS.CS.credentialsOf,
+		"@id": CS.credentialsOf,
 		"@type": "@id",
 	},
 };

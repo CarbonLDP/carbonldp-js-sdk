@@ -1,7 +1,14 @@
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as Resource from "./../Resource";
-
 import * as ValidationError from "./ValidationError";
 import DefaultExport from "./ValidationError";
 
@@ -20,7 +27,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		expect( ValidationError.RDF_CLASS ).toBeDefined();
 		expect( ValidationError.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ValidationError.RDF_CLASS ).toBe( NS.C.ValidationError );
+		expect( ValidationError.RDF_CLASS ).toBe( C.ValidationError );
 	} );
 
 	it( hasProperty(
@@ -36,7 +43,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		} );
 
 		expect( ValidationError.SCHEMA[ "errorDetails" ] ).toEqual( {
-			"@id": NS.C.errorDetails,
+			"@id": C.errorDetails,
 			"@type": "@id",
 		} );
 	} );

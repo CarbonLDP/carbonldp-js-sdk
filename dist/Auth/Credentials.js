@@ -7,25 +7,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var CS_1 = require("../Vocabularies/CS");
+var VCARD_1 = require("../Vocabularies/VCARD");
+var XSD_1 = require("../Vocabularies/XSD");
 var Document = __importStar(require("./../Document"));
-var NS = __importStar(require("../Vocabularies/index"));
 var Errors_1 = require("./../Errors");
-exports.RDF_CLASS = NS.CS.Credentials;
+exports.RDF_CLASS = CS_1.CS.Credentials;
 exports.SCHEMA = {
     "email": {
-        "@id": NS.VCARD.email,
-        "@type": NS.XSD.string,
+        "@id": VCARD_1.VCARD.email,
+        "@type": XSD_1.XSD.string,
     },
     "password": {
-        "@id": NS.CS.password,
-        "@type": NS.XSD.string,
+        "@id": CS_1.CS.password,
+        "@type": XSD_1.XSD.string,
     },
     "enabled": {
-        "@id": NS.CS.enabled,
-        "@type": NS.XSD.boolean,
+        "@id": CS_1.CS.enabled,
+        "@type": XSD_1.XSD.boolean,
     },
     "user": {
-        "@id": NS.CS.credentialsOf,
+        "@id": CS_1.CS.credentialsOf,
         "@type": "@id",
     },
 };

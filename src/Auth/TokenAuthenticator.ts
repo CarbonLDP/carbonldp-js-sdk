@@ -1,18 +1,18 @@
+import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
 import * as Errors from "./../Errors";
 import * as FreeResources from "./../FreeResources";
 import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";
-import * as LDP from "./../LDP";
-import * as NS from "../Vocabularies/index";
+import { ResponseMetadata } from "./../LDP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Resource from "./../Resource";
+import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
 import * as Token from "./Token";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-import * as Utils from "./../Utils";
 
 export const TOKEN_CONTAINER:string = "auth-tokens/";
 
@@ -70,7 +70,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		this.basicAuthenticator.addAuthentication( requestOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
@@ -88,9 +88,9 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
 			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
-			const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources
+			const responseMetadata:ResponseMetadata.Class = <ResponseMetadata.Class> freeResources
 				.getResources()
-				.find( LDP.ResponseMetadata.Factory.is );
+				.find( ResponseMetadata.Factory.is );
 
 			if( responseMetadata ) responseMetadata
 				.documentsMetadata

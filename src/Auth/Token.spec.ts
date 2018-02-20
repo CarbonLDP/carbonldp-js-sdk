@@ -1,20 +1,18 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import * as Resource from "./../Resource";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
+	extendsClass,
+	hasDefaultExport,
 	hasMethod,
 	hasProperty,
-	hasDefaultExport,
-	extendsClass,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
-import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as Token from "./Token";
@@ -35,7 +33,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		expect( Token.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Token.RDF_CLASS ) ).toBe( true );
 
-		expect( Token.RDF_CLASS ).toBe( NS.CS.Token );
+		expect( Token.RDF_CLASS ).toBe( CS.Token );
 	} );
 
 	it( hasProperty(
@@ -48,14 +46,14 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 		expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 		expect( Token.SCHEMA[ "key" ] ).toEqual( {
-			"@id": NS.CS.tokenKey,
-			"@type": NS.XSD.string,
+			"@id": CS.tokenKey,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.expirationTime,
-			"@type": NS.XSD.dateTime,
+			"@id": CS.expirationTime,
+			"@type": XSD.dateTime,
 		} );
 
 	} );
@@ -107,19 +105,19 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 			expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 			expect( Token.SCHEMA[ "key" ] ).toEqual( {
-				"@id": NS.CS.tokenKey,
-				"@type": NS.XSD.string,
+				"@id": CS.tokenKey,
+				"@type": XSD.string,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 			expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
-				"@id": NS.CS.expirationTime,
-				"@type": NS.XSD.dateTime,
+				"@id": CS.expirationTime,
+				"@type": XSD.dateTime,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "user" ) ).toBe( true );
 			expect( Token.SCHEMA[ "user" ] ).toEqual( {
-				"@id": NS.CS.credentialsOf,
+				"@id": CS.credentialsOf,
 				"@type": "@id",
 			} );
 

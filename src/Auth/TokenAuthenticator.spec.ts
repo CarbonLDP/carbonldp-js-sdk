@@ -1,30 +1,29 @@
-import {
-	INSTANCE,
-
-	module,
-
-	isDefined,
-
-	clazz,
-	method,
-
-	hasConstructor,
-	hasMethod,
-	hasSignature,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
-
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
+import {
+	clazz,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as NS from "../Vocabularies/index";
 import * as PersistedUser from "./PersistedUser";
 import * as Token from "./Token";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
+
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
@@ -146,6 +145,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							this.settings = { paths: { system: ".system/" } };
 						}
 					}
+
 					let context:AbstractContext = new MockedContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -174,56 +174,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						responseText: `[ {
 							"@id": "_:00",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:01"
 							} ]
 						}, {
 							"@id": "_:01",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
 							"@type": [
-								"${ NS.CS.Token }",
-								"${ NS.C.VolatileResource }"
+								"${ CS.Token }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.CS.tokenKey }": [ {
+							"${ CS.tokenKey }": [ {
 								"@value": "token-value"
 							} ],
-							"${ NS.CS.expirationTime }": {
+							"${ CS.expirationTime }": {
 								"@value": "${ expirationTime.toISOString() }",
-								"@type": "${ NS.XSD.dateTime }"
+								"@type": "${ XSD.dateTime }"
 							},
-							"${ NS.CS.credentialsOf }": [ {
+							"${ CS.credentialsOf }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "http://successful.example.com/users/my-user/",
 							"@graph": [ {
 								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "${ NS.CS.User }" ],
-								"${ NS.CS.name }": [ {
+								"@type": [ "${ CS.User }" ],
+								"${ CS.name }": [ {
 									"@value": "My User Name",
-									"@type": "${ NS.XSD.string }"
+									"@type": "${ XSD.string }"
 								} ],
-								"${ NS.VCARD.email }": [ {
+								"${ VCARD.email }": [ {
 									"@value": "my-user@users.com",
-									"@type": "${ NS.XSD.string }"
+									"@type": "${ XSD.string }"
 								} ],
-								"${ NS.CS.enabled }": [ {
+								"${ CS.enabled }": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							} ]
 						} ]`,
@@ -292,6 +292,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				// Property Integrity
@@ -312,7 +313,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Token }" ],
+						"types": [ "${ CS.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -334,7 +335,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${expirationTime.toISOString()}",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Token }" ]
+						"types": [ "${ CS.Token }" ]
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -357,7 +358,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Token }" ],
+						"types": [ "${ CS.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -650,6 +651,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
 				expect( "clearAuthentication" in authenticator ).toEqual( true );
@@ -679,56 +681,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"${ NS.C.ResponseMetadata }",
-							"${ NS.C.VolatileResource }"
+							"${ C.ResponseMetadata }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.C.documentMetadata }": [ {
+						"${ C.documentMetadata }": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"${ NS.C.DocumentMetadata }",
-							"${ NS.C.VolatileResource }"
+							"${ C.DocumentMetadata }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.C.eTag }": [ {
+						"${ C.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"${ NS.C.relatedDocument }": [ {
+						"${ C.relatedDocument }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"${ NS.CS.Token }",
-							"${ NS.C.VolatileResource }"
+							"${ CS.Token }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.CS.tokenKey }": [ {
+						"${ CS.tokenKey }": [ {
 							"@value": "token-value"
 						} ],
-						"${ NS.CS.expirationTime }": {
+						"${ CS.expirationTime }": {
 							"@value": "${expirationTime.toISOString()}",
-							"@type": "${ NS.XSD.dateTime }"
+							"@type": "${ XSD.dateTime }"
 						},
-						"${ NS.CS.credentialsOf }": [ {
+						"${ CS.credentialsOf }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "http://successful.example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://successful.example.com/users/my-user/",
-							"@type": [ "${ NS.CS.User }" ],
-							"${ NS.CS.name }": [ {
+							"@type": [ "${ CS.User }" ],
+							"${ CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.VCARD.email }": [ {
+							"${ VCARD.email }": [ {
 								"@value": "my-user@users.com",
-								"@type": "${ NS.XSD.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.CS.enabled }": [ {
+							"${ CS.enabled }": [ {
 								"@value": "true",
-								"@type": "${ NS.XSD.boolean }"
+								"@type": "${ XSD.boolean }"
 							} ]
 						} ]
 					} ]`,

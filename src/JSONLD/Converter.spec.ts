@@ -11,11 +11,10 @@ import {
 } from "../test/JasmineExtender";
 
 import * as Utils from "../Utils";
-import * as NS from "../Vocabularies/index";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
-
 import * as JSONLDConverter from "./Converter";
 import DefaultExport from "./Converter";
 
@@ -434,7 +433,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 1 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "Some string" );
 
 				property = expandedObject[ "http://example.com/ns#date" ];
@@ -442,7 +441,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 1 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.dateTime ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.dateTime ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "2015-12-04T23:06:57.920Z" );
 
 				property = expandedObject[ "http://example.com/ns#languageMap" ];
@@ -450,17 +449,17 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 3 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@language" ] ).toBe( "es" );
 				expect( literal[ "@value" ] ).toBe( "español" );
 				literal = <RDF.Literal.Class> property[ 1 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@language" ] ).toBe( "en" );
 				expect( literal[ "@value" ] ).toBe( "english" );
 				literal = <RDF.Literal.Class> property[ 2 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@language" ] ).toBe( "ja" );
 				expect( literal[ "@value" ] ).toBe( "日本語" );
 
@@ -499,7 +498,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 1 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.float ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.float ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "1" );
 
 				property = expandedObject[ "http://example.com/ns#unknownTypeArray" ];
@@ -507,19 +506,19 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 5 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.float ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.float ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "1.12" );
 				literal = <RDF.Literal.Class> property[ 1 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.boolean ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.boolean ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "false" );
 				literal = <RDF.Literal.Class> property[ 2 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.dateTime ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.dateTime ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "2015-12-04T23:06:57.920Z" );
 				literal = <RDF.Literal.Class> property[ 3 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "Some string" );
 				node = <RDF.Node.Class> property[ 4 ];
 				expect( RDF.Node.Factory.is( node ) ).toBe( true );
@@ -545,7 +544,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaLiteral" ] ).toBeDefined();
 				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaLiteral" ] ).toEqual( [ {
 					"@value": "Property Literal not defined in Schema",
-					"@type": NS.XSD.string,
+					"@type": XSD.string,
 				} ] );
 
 				expect( expandedObject[ "http://example.com/my-vocabulary#notInSchemaPointer" ] ).toBeDefined();
@@ -569,7 +568,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 1 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "This element will be converted into a set" );
 
 				expect( expandedObject[ "http://example.com/my-vocabulary#relative-at-id" ] ).toBeDefined();
@@ -578,7 +577,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( property.length ).toBe( 1 );
 				literal = <RDF.Literal.Class> property[ 0 ];
 				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, NS.XSD.string ) ).toBe( true );
+				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "Property with a relative @id" );
 			} );
 

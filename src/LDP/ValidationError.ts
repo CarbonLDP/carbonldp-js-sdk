@@ -1,13 +1,13 @@
-import * as NS from "../Vocabularies/index";
-import * as Resource from "./../Resource";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
 
-export const RDF_CLASS:string = NS.C.ValidationError;
+export const RDF_CLASS:string = C.ValidationError;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"errorDetails": {
-		"@id": NS.C.errorDetails,
+		"@id": C.errorDetails,
 		"@type": "@id",
 	},
 };

@@ -1,7 +1,7 @@
 import * as Errors from "./Errors";
-import * as NS from "./Vocabularies/index";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
+import { XSD } from "./Vocabularies/XSD";
 
 export interface PropertyDefinition {
 	"@id"?:string;
@@ -114,7 +114,7 @@ export class Digester {
 				digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
 
 			} else {
-				if( RDF.URI.Util.isRelative( type ) && type in NS.XSD ) type = NS.XSD[ type ];
+				if( RDF.URI.Util.isRelative( type ) && type in XSD ) type = XSD[ type ];
 
 				digestedDefinition.literal = true;
 				digestedDefinition.literalType = type;

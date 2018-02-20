@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var CS_1 = require("../Vocabularies/CS");
 var PersistedProtectedDocument = __importStar(require("./../PersistedProtectedDocument"));
 var Utils = __importStar(require("./../Utils"));
 var PersistedCredentials = __importStar(require("./PersistedCredentials"));
@@ -69,7 +69,7 @@ function changeEnabledCredentials(enabled, requestOptions) {
 }
 function obtainCredentials(user) {
     return user
-        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + NS.CS.credentials + ">?c}}")
+        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + CS_1.CS.credentials + ">?c}}")
         .then(function (_a) {
         var credentialsBinding = _a[0].bindings[0], response = _a[1];
         user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding.credentials, user._documents);

@@ -1,18 +1,19 @@
-import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
+import { XSD } from "./Vocabularies/XSD";
 
-export const RDF_CLASS:string = NS.C.RDFRepresentation;
+export const RDF_CLASS:string = C.RDFRepresentation;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"mediaType": {
-		"@id": NS.C.mediaType,
-		"@type": NS.XSD.string,
+		"@id": C.mediaType,
+		"@type": XSD.string,
 	},
 	"size": {
-		"@id": NS.C.size,
-		"@type": NS.XSD.long,
+		"@id": C.size,
+		"@type": XSD.long,
 	},
 };
 

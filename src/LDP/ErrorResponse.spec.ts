@@ -1,20 +1,17 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "../test/JasmineExtender";
-
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
 import * as ErrorResponse from "./ErrorResponse";
@@ -35,7 +32,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		expect( ErrorResponse.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ErrorResponse.RDF_CLASS ) ).toBe( true );
 
-		expect( ErrorResponse.RDF_CLASS ).toBe( NS.C.ErrorResponse );
+		expect( ErrorResponse.RDF_CLASS ).toBe( C.ErrorResponse );
 	} );
 
 	it( hasProperty(
@@ -48,21 +45,21 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "errors" ) ).toBe( true );
 		expect( ErrorResponse.SCHEMA[ "errors" ] ).toEqual( {
-			"@id": NS.C.error,
+			"@id": C.error,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "requestID" ) ).toBe( true );
 		expect( ErrorResponse.SCHEMA[ "requestID" ] ).toEqual( {
-			"@id": NS.C.requestID,
-			"@type": NS.XSD.string,
+			"@id": C.requestID,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "statusCode" ) ).toBe( true );
 		expect( ErrorResponse.SCHEMA[ "statusCode" ] ).toEqual( {
-			"@id": NS.C.httpStatusCode,
-			"@type": NS.XSD.int,
+			"@id": C.httpStatusCode,
+			"@type": XSD.int,
 		} );
 	} );
 

@@ -1,23 +1,19 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
-	extendsClass,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-
 import * as AddMemberAction from "./AddMemberAction";
 import DefaultExport from "./AddMemberAction";
 
@@ -36,7 +32,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		expect( AddMemberAction.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( AddMemberAction.RDF_CLASS ) ).toBe( true );
 
-		expect( AddMemberAction.RDF_CLASS ).toBe( NS.C.AddMemberAction );
+		expect( AddMemberAction.RDF_CLASS ).toBe( C.AddMemberAction );
 	} );
 
 	it( hasProperty(
@@ -49,7 +45,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 
 		expect( Utils.hasProperty( AddMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
 		expect( AddMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
-			"@id": NS.C.targetMember,
+			"@id": C.targetMember,
 			"@container": "@set",
 			"@type": "@id",
 		} );

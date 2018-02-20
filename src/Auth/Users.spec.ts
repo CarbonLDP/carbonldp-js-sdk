@@ -9,11 +9,11 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
@@ -142,14 +142,14 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 						"@id": "http://example.com/.system/credentials/a-user-credentials/",
 						"@graph": [ {
 							"@id": "http://example.com/.system/credentials/a-user-credentials/",
-							"@type": [ "${ NS.CS.Credentials }" ],
-							"${ NS.VCARD.email }": {
+							"@type": [ "${ CS.Credentials }" ],
+							"${ VCARD.email }": {
 								"@value": "user@example.com"
 							},
-							"${ NS.CS.password }": {
+							"${ CS.password }": {
 								"@value": "my-encrypted-password"
 							},
-							"${ NS.CS.credentialsOf }": {
+							"${ CS.credentialsOf }": {
 								"@id": "http://example.com/users/a-user/"
 							}
 						} ]

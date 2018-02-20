@@ -6,7 +6,6 @@ import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
-import * as NS from "./Vocabularies/index";
 import * as Pointer from "./Pointer";
 import * as URI from "./RDF/URI";
 import * as Resource from "./Resource";
@@ -27,6 +26,9 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
 describe( module( "Carbon/Document" ), ():void => {
 
@@ -43,7 +45,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		expect( Document.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Document.RDF_CLASS ) ).toBe( true );
 
-		expect( Document.RDF_CLASS ).toBe( NS.C.Document );
+		expect( Document.RDF_CLASS ).toBe( C.Document );
 	} );
 
 	it( hasProperty(
@@ -56,14 +58,14 @@ describe( module( "Carbon/Document" ), ():void => {
 
 		expect( Utils.hasProperty( Document.SCHEMA, "contains" ) ).toBe( true );
 		expect( Document.SCHEMA[ "contains" ] ).toEqual( {
-			"@id": NS.LDP.contains,
+			"@id": LDP.contains,
 			"@container": "@set",
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "members" ) ).toBe( true );
 		expect( Document.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.LDP.member,
+			"@id": LDP.member,
 			"@container": "@set",
 			"@type": "@id",
 		} );
@@ -71,49 +73,49 @@ describe( module( "Carbon/Document" ), ():void => {
 
 		expect( Utils.hasProperty( Document.SCHEMA, "membershipResource" ) ).toBe( true );
 		expect( Document.SCHEMA[ "membershipResource" ] ).toEqual( {
-			"@id": NS.LDP.membershipResource,
+			"@id": LDP.membershipResource,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "isMemberOfRelation" ) ).toBe( true );
 		expect( Document.SCHEMA[ "isMemberOfRelation" ] ).toEqual( {
-			"@id": NS.LDP.isMemberOfRelation,
+			"@id": LDP.isMemberOfRelation,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "hasMemberRelation" ) ).toBe( true );
 		expect( Document.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
-			"@id": NS.LDP.hasMemberRelation,
+			"@id": LDP.hasMemberRelation,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "insertedContentRelation" ) ).toBe( true );
 		expect( Document.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
-			"@id": NS.LDP.insertedContentRelation,
+			"@id": LDP.insertedContentRelation,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "created" ) ).toBe( true );
 		expect( Document.SCHEMA[ "created" ] ).toEqual( {
-			"@id": NS.C.created,
-			"@type": NS.XSD.dateTime,
+			"@id": C.created,
+			"@type": XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "modified" ) ).toBe( true );
 		expect( Document.SCHEMA[ "modified" ] ).toEqual( {
-			"@id": NS.C.modified,
-			"@type": NS.XSD.dateTime,
+			"@id": C.modified,
+			"@type": XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "defaultInteractionModel" ) ).toBe( true );
 		expect( Document.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
-			"@id": NS.C.defaultInteractionModel,
+			"@id": C.defaultInteractionModel,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Document.SCHEMA, "accessPoints" ) ).toBe( true );
 		expect( Document.SCHEMA[ "accessPoints" ] ).toEqual( {
-			"@id": NS.C.accessPoint,
+			"@id": C.accessPoint,
 			"@type": "@id",
 			"@container": "@set",
 		} );

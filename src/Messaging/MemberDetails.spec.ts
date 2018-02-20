@@ -1,8 +1,16 @@
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
 import * as Resource from "../Resource";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as MemberDetails from "./MemberDetails";
 import DefaultExport from "./MemberDetails";
 
@@ -26,7 +34,7 @@ describe( module( "Carbon/Messaging/MemberDetails" ), ():void => {
 		} );
 
 		expect( MemberDetails.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.C.member,
+			"@id": C.member,
 			"@type": "@id",
 			"@container": "@set",
 		} );

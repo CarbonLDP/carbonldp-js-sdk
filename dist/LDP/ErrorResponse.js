@@ -1,27 +1,21 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
-exports.RDF_CLASS = NS.C.ErrorResponse;
+var C_1 = require("../Vocabularies/C");
+var XSD_1 = require("../Vocabularies/XSD");
+exports.RDF_CLASS = C_1.C.ErrorResponse;
 exports.SCHEMA = {
     "errors": {
-        "@id": NS.C.error,
+        "@id": C_1.C.error,
         "@type": "@id",
         "@container": "@set",
     },
     "requestID": {
-        "@id": NS.C.requestID,
-        "@type": NS.XSD.string,
+        "@id": C_1.C.requestID,
+        "@type": XSD_1.XSD.string,
     },
     "statusCode": {
-        "@id": NS.C.httpStatusCode,
-        "@type": NS.XSD.int,
+        "@id": C_1.C.httpStatusCode,
+        "@type": XSD_1.XSD.int,
     },
 };
 var Util = (function () {

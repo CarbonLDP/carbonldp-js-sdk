@@ -1,7 +1,7 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Resource from "./../Resource";
 
-export const RDF_CLASS:string = NS.C.VolatileResource;
+export const RDF_CLASS:string = C.VolatileResource;
 
 export interface Class extends Resource.Class {
 

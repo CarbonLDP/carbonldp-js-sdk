@@ -1,13 +1,13 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
 
-export const RDF_CLASS:string = NS.C.DocumentCreatedDetails;
+export const RDF_CLASS:string = C.DocumentCreatedDetails;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"createdDocuments": {
-		"@id": NS.C.createdDocument,
+		"@id": C.createdDocument,
 		"@type": "@id",
 		"@container": "@set",
 	},

@@ -1,21 +1,19 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
-import * as NS from "../Vocabularies/index";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as Role from "./Role";
@@ -38,32 +36,32 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 		expect( Utils.hasProperty( Role.SCHEMA, "name" ) ).toBe( true );
 		expect( Role.SCHEMA[ "name" ] ).toEqual( {
-			"@id": NS.CS.name,
-			"@type": NS.XSD.string,
+			"@id": CS.name,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "description" ) ).toBe( true );
 		expect( Role.SCHEMA[ "description" ] ).toEqual( {
-			"@id": NS.CS.description,
-			"@type": NS.XSD.string,
+			"@id": CS.description,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "parentRole" ) ).toBe( true );
 		expect( Role.SCHEMA[ "parentRole" ] ).toEqual( {
-			"@id": NS.CS.parentRole,
+			"@id": CS.parentRole,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "childRoles" ) ).toBe( true );
 		expect( Role.SCHEMA[ "childRoles" ] ).toEqual( {
-			"@id": NS.CS.childRole,
+			"@id": CS.childRole,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( Role.SCHEMA, "users" ) ).toBe( true );
 		expect( Role.SCHEMA[ "users" ] ).toEqual( {
-			"@id": NS.CS.user,
+			"@id": CS.user,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -203,6 +201,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			interface TheRole {
 				myProperty?:string;
 			}
+
 			interface MyRole extends Role.Class, TheRole {}
 
 			let role:MyRole;

@@ -3,56 +3,58 @@ import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import JSONLDConverter from "./JSONLD/Converter";
 import * as NamedFragment from "./NamedFragment";
-import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
-export const RDF_CLASS:string = NS.C.Document;
+export const RDF_CLASS:string = C.Document;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"contains": {
-		"@id": NS.LDP.contains,
+		"@id": LDP.contains,
 		"@container": "@set",
 		"@type": "@id",
 	},
 	"members": {
-		"@id": NS.LDP.member,
+		"@id": LDP.member,
 		"@container": "@set",
 		"@type": "@id",
 	},
 	"membershipResource": {
-		"@id": NS.LDP.membershipResource,
+		"@id": LDP.membershipResource,
 		"@type": "@id",
 	},
 	"isMemberOfRelation": {
-		"@id": NS.LDP.isMemberOfRelation,
+		"@id": LDP.isMemberOfRelation,
 		"@type": "@id",
 	},
 	"hasMemberRelation": {
-		"@id": NS.LDP.hasMemberRelation,
+		"@id": LDP.hasMemberRelation,
 		"@type": "@id",
 	},
 	"insertedContentRelation": {
-		"@id": NS.LDP.insertedContentRelation,
+		"@id": LDP.insertedContentRelation,
 		"@type": "@id",
 	},
 	"created": {
-		"@id": NS.C.created,
-		"@type": NS.XSD.dateTime,
+		"@id": C.created,
+		"@type": XSD.dateTime,
 	},
 	"modified": {
-		"@id": NS.C.modified,
-		"@type": NS.XSD.dateTime,
+		"@id": C.modified,
+		"@type": XSD.dateTime,
 	},
 	"defaultInteractionModel": {
-		"@id": NS.C.defaultInteractionModel,
+		"@id": C.defaultInteractionModel,
 		"@type": "@id",
 	},
 	"accessPoints": {
-		"@id": NS.C.accessPoint,
+		"@id": C.accessPoint,
 		"@type": "@id",
 		"@container": "@set",
 	},

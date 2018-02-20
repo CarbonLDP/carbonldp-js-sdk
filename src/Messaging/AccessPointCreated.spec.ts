@@ -1,8 +1,16 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as AccessPointCreated from "./AccessPointCreated";
 import DefaultExport from "./AccessPointCreated";
 
@@ -21,7 +29,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 		expect( AccessPointCreated.RDF_CLASS ).toBeDefined();
 		expect( AccessPointCreated.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( AccessPointCreated.RDF_CLASS ).toBe( NS.C.AccessPointCreated );
+		expect( AccessPointCreated.RDF_CLASS ).toBe( C.AccessPointCreated );
 	} );
 
 	it( hasProperty(
@@ -38,12 +46,12 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 		} );
 
 		expect( AccessPointCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.target,
+			"@id": C.target,
 			"@type": "@id",
 		} );
 
 		expect( AccessPointCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.details,
+			"@id": C.details,
 			"@type": "@id",
 		} );
 	} );

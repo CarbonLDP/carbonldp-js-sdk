@@ -1,12 +1,15 @@
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import {
-	STATIC,
-
-	module,
-
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
 	isDefined,
-	hasProperty, interfaze, extendsClass, OBLIGATORY, hasDefaultExport,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as Error from "./Error";
@@ -27,7 +30,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		expect( Error.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Error.RDF_CLASS ) ).toBe( true );
 
-		expect( Error.RDF_CLASS ).toBe( NS.C.Error );
+		expect( Error.RDF_CLASS ).toBe( C.Error );
 	} );
 
 	it( hasProperty(
@@ -40,19 +43,19 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
-			"@id": NS.C.errorCode,
-			"@type": NS.XSD.string,
+			"@id": C.errorCode,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorMessage" ] ).toEqual( {
-			"@id": NS.C.errorMessage,
+			"@id": C.errorMessage,
 			"@language": "en",
 		} );
 
 		expect( Utils.hasProperty( Error.SCHEMA, "errorParameters" ) ).toBe( true );
 		expect( Error.SCHEMA[ "errorParameters" ] ).toEqual( {
-			"@id": NS.C.errorParameters,
+			"@id": C.errorParameters,
 			"@type": "@id",
 		} );
 	} );

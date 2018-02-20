@@ -1,21 +1,18 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
-	extendsClass,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as RemoveMemberAction from "./RemoveMemberAction";
@@ -36,7 +33,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		expect( RemoveMemberAction.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( RemoveMemberAction.RDF_CLASS ) ).toBe( true );
 
-		expect( RemoveMemberAction.RDF_CLASS ).toBe( NS.C.RemoveMemberAction );
+		expect( RemoveMemberAction.RDF_CLASS ).toBe( C.RemoveMemberAction );
 	} );
 
 	it( hasProperty(
@@ -49,7 +46,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
 		expect( Utils.hasProperty( RemoveMemberAction.SCHEMA, "targetMembers" ) ).toBe( true );
 		expect( RemoveMemberAction.SCHEMA[ "targetMembers" ] ).toEqual( {
-			"@id": NS.C.targetMember,
+			"@id": C.targetMember,
 			"@container": "@set",
 			"@type": "@id",
 		} );
@@ -86,9 +83,9 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object has the properties of a `Carbon.LDP.RemoveMemberAction.Class` object.", [
-				{name: "resource", type: "Carbon.RDF.Node.Class"},
+				{ name: "resource", type: "Carbon.RDF.Node.Class" },
 			],
-			{type: "boolean"}
+			{ type: "boolean" }
 		), ():void => {
 			expect( RemoveMemberAction.Factory.hasClassProperties ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory.hasClassProperties ) ).toBe( true );
@@ -110,9 +107,9 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.LDP.RemoveMemberAction.Class` resource for the specified targetMembers.", [
-				{name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action."},
+				{ name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action." },
 			],
-			{type: "Carbon.LDP.RemoveMemberAction.Class"}
+			{ type: "Carbon.LDP.RemoveMemberAction.Class" }
 		), ():void => {
 			expect( RemoveMemberAction.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory.create ) ).toBe( true );

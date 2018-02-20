@@ -1,22 +1,18 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
-
 import * as ResponseMetadata from "./ResponseMetadata";
 import DefaultExport from "./ResponseMetadata";
 
@@ -35,7 +31,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		expect( ResponseMetadata.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ResponseMetadata.RDF_CLASS ) ).toBe( true );
 
-		expect( ResponseMetadata.RDF_CLASS ).toBe( NS.C.ResponseMetadata );
+		expect( ResponseMetadata.RDF_CLASS ).toBe( C.ResponseMetadata );
 	} );
 
 	it( hasProperty(
@@ -51,7 +47,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		} );
 
 		expect( ResponseMetadata.SCHEMA[ "documentsMetadata" ] ).toEqual( {
-			"@id": NS.C.documentMetadata,
+			"@id": C.documentMetadata,
 			"@type": "@id",
 			"@container": "@set",
 		} );
@@ -104,20 +100,20 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
 			object = Resource.Factory.decorate( {
 				types: [
-					NS.C.VolatileResource,
-					NS.C.ResponseMetadata,
+					C.VolatileResource,
+					C.ResponseMetadata,
 				],
 				documentsMetadata: null,
 			} );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );
 
-			object.removeType( NS.C.VolatileResource );
+			object.removeType( C.VolatileResource );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-			object.addType( NS.C.VolatileResource );
+			object.addType( C.VolatileResource );
 
-			object.removeType( NS.C.ResponseMetadata );
+			object.removeType( C.ResponseMetadata );
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
-			object.addType( NS.C.ResponseMetadata );
+			object.addType( C.ResponseMetadata );
 
 			delete object.documentsMetadata;
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( true );

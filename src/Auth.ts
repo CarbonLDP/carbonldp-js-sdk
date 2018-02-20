@@ -27,7 +27,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
-import * as NS from "./Vocabularies/index";
+import { LDP } from "./Vocabularies/LDP";
 
 export {
 	ACE,
@@ -136,7 +136,7 @@ export class Class {
 		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
 		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.RDFSource, requestOptions );
+		HTTP.Request.Util.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context._resolvePath( "system" ) + Ticket.TICKETS_CONTAINER;

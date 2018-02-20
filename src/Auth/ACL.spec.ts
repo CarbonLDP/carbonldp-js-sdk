@@ -1,32 +1,29 @@
 import {
-	STATIC,
-	INSTANCE,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	method,
-	OPTIONAL,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
-	hasSignature,
 	decoratedObject,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
 } from "../test/JasmineExtender";
-
-import * as ACE from "./ACE";
+import { CS } from "../Vocabularies/CS";
 import * as Document from "./../Document";
 import Documents from "./../Documents";
 import Fragment from "./../Fragment";
-import * as NS from "../Vocabularies/index";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
+
+import * as ACE from "./ACE";
 
 import * as ACL from "./ACL";
 import DefaultExport from "./ACL";
@@ -46,7 +43,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		expect( ACL.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( ACL.RDF_CLASS ) ).toBe( true );
 
-		expect( ACL.RDF_CLASS ).toBe( NS.CS.AccessControlList );
+		expect( ACL.RDF_CLASS ).toBe( CS.AccessControlList );
 	} );
 
 	it( hasProperty(
@@ -59,20 +56,20 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
 		expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
-			"@id": NS.CS.accessControlEntry,
+			"@id": CS.accessControlEntry,
 			"@type": "@id",
 			"@container": "@set",
 		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
 		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
-			"@id": NS.CS.accessTo,
+			"@id": CS.accessTo,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
 		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
-			"@id": NS.CS.inheritableEntry,
+			"@id": CS.inheritableEntry,
 			"@type": "@id",
 			"@container": "@set",
 		} );

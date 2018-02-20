@@ -8,9 +8,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("./Errors"));
-var NS = __importStar(require("./Vocabularies/index"));
 var RDF = __importStar(require("./RDF"));
 var Utils = __importStar(require("./Utils"));
+var XSD_1 = require("./Vocabularies/XSD");
 var ContainerType;
 (function (ContainerType) {
     ContainerType[ContainerType["SET"] = 0] = "SET";
@@ -76,8 +76,8 @@ var Digester = (function () {
                 digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
             }
             else {
-                if (RDF.URI.Util.isRelative(type) && type in NS.XSD)
-                    type = NS.XSD[type];
+                if (RDF.URI.Util.isRelative(type) && type in XSD_1.XSD)
+                    type = XSD_1.XSD[type];
                 digestedDefinition.literal = true;
                 digestedDefinition.literalType = type;
             }

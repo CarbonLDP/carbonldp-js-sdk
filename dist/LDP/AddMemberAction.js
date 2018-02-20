@@ -7,13 +7,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var C_1 = require("../Vocabularies/C");
 var Resource = __importStar(require("./../Resource"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.C.AddMemberAction;
+exports.RDF_CLASS = C_1.C.AddMemberAction;
 exports.SCHEMA = {
     "targetMembers": {
-        "@id": NS.C.targetMember,
+        "@id": C_1.C.targetMember,
         "@type": "@id",
         "@container": "@set",
     },

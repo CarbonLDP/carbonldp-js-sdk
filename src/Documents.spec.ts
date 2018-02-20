@@ -17,7 +17,7 @@ import {
 	SelectToken,
 	SubjectToken,
 	ValuesToken,
-	VariableToken,
+	VariableToken
 } from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
@@ -34,7 +34,6 @@ import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import MessagingEvent from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
-import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
@@ -59,6 +58,10 @@ import {
 	OPTIONAL,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
+import { CS } from "./Vocabularies/CS";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
 function createPartialMetadata( schema:ObjectSchema.Class ):SPARQL.QueryDocument.PartialMetadata.Class {
 	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
@@ -184,11 +187,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			// Has default decorators
 			expect( documents.documentDecorators.size ).toBe( 5 );
-			expect( documents.documentDecorators.has( NS.CS.ProtectedDocument ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.AccessControlList ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.User ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Role ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Credentials ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.ProtectedDocument ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.AccessControlList ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.User ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.Role ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.Credentials ) ).toBe( true );
 		} );
 
 		describe( method(
@@ -425,70 +428,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.ErrorResponse }" ],
-							"${ NS.C.error }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [ {
 								"@id": "_:2"
 							}, {
 								"@id": "_:3"
 							} ],
-							"${ NS.C.httpStatusCode }": [ {
-								"@type": "${ NS.XSD.int }",
+							"${ C.httpStatusCode }": [ {
+								"@type": "${ XSD.int }",
 								"@value": "500"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Error }" ],
-							"${ NS.C.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-01"
 							} ],
-							"${ NS.C.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 01"
 							} ],
-							"${ NS.C.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Error }" ],
-							"${ NS.C.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Map }" ],
-							"${ NS.C.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						}, {
 							"@id": "_:6",
-							"@type": [ "${ NS.C.Map }" ],
-							"${ NS.C.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:7"
 							} ]
 						}, {
 							"@id": "_:7",
-							"${ NS.C.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`,
@@ -523,17 +526,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.ErrorResponse }" ],
-							"${ NS.C.error }": [],
-							"${ NS.C.httpStatusCode }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [],
+							"${ C.httpStatusCode }": [ {
 								"@type": "http://www.w3.org/2001/XMLSchema#int",
 								"@value": "1234567890"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.ErrorResponse }" ],
-							"${ NS.C.error }": [],
-							"${ NS.C.httpStatusCode }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [],
+							"${ C.httpStatusCode }": [ {
 								"@type": "http://www.w3.org/2001/XMLSchema#int",
 								"@value": "0987654321"
 							} ]
@@ -554,30 +557,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Error }" ],
-							"${ NS.C.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Map }" ],
-							"${ NS.C.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`,
@@ -618,70 +621,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 				it( "should generate an HTTP error with empty ErrorResponse properties", ( done:DoneFn ):void => {
 					const responseText:string = `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.ErrorResponse }" ],
-							"${ NS.C.error }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [ {
 								"@id": "_:2"
 							}, {
 								"@id": "_:3"
 							} ],
-							"${ NS.C.httpStatusCode }": [ {
-								"@type": "${ NS.XSD.int }",
+							"${ C.httpStatusCode }": [ {
+								"@type": "${ XSD.int }",
 								"@value": "500"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Error }" ],
-							"${ NS.C.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-01"
 							} ],
-							"${ NS.C.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 01"
 							} ],
-							"${ NS.C.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Error }" ],
-							"${ NS.C.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 									"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Map }" ],
-							"${ NS.C.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						}, {
 							"@id": "_:6",
-							"@type": [ "${ NS.C.Map }" ],
-							"${ NS.C.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:7"
 							} ]
 						}, {
 							"@id": "_:7",
-							"${ NS.C.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`;
@@ -1061,15 +1064,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1093,8 +1096,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-							"" + ` <${ NS.C.target }> ?document.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
 							"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1136,8 +1139,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -1152,31 +1155,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -1184,10 +1187,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1199,7 +1202,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1216,15 +1219,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1263,19 +1266,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -1283,25 +1286,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
@@ -1309,10 +1312,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1327,7 +1330,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }another-resource/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1344,15 +1347,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1394,10 +1397,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1405,10 +1408,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1420,7 +1423,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1437,15 +1440,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1467,7 +1470,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1479,11 +1482,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
-								"@type": NS.XSD.integer,
+								"@type": XSD.integer,
 							},
 							"property3": {
 								"@id": "https://schema.org/property-3",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 						} ) );
 						done();
@@ -1499,23 +1502,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.boolean,
+							"@type": XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.dateTime,
+							"@type": XSD.dateTime,
 						},
 					} );
 
@@ -1525,10 +1528,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1536,10 +1539,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1551,7 +1554,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1580,10 +1583,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1591,14 +1594,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -1610,7 +1613,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2000-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -1635,7 +1638,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
-								"@type": NS.XSD.boolean,
+								"@type": XSD.boolean,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1643,7 +1646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 						} ) );
 
@@ -1651,15 +1654,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
 							"property3": {
 								"@id": "https://schema.org/property-3",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property5": {
 								"@id": "https://schema.org/property-5",
-								"@type": NS.XSD.dateTime,
+								"@type": XSD.dateTime,
 							},
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
-								"@type": NS.XSD.integer,
+								"@type": XSD.integer,
 							},
 						} ) );
 						done();
@@ -1672,10 +1675,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1683,14 +1686,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -1702,7 +1705,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -1717,23 +1720,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.boolean,
+							"@type": XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.dateTime,
+							"@type": XSD.dateTime,
 						},
 					} );
 
@@ -1749,7 +1752,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -1757,7 +1760,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1769,15 +1772,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.dateTime,
+							"@type": XSD.dateTime,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -1875,7 +1878,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1883,11 +1886,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -1898,8 +1901,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-							"" + ` <${ NS.C.target }> ?document.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
 							"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1941,8 +1944,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -1957,31 +1960,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -1989,10 +1992,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -2004,7 +2007,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -2022,7 +2025,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.withType( "https://example.com/ns#Resource" ).properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2030,11 +2033,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -2061,19 +2064,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -2081,25 +2084,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
@@ -2107,10 +2110,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -2125,7 +2128,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/another-resource/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -2144,7 +2147,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2152,11 +2155,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -2442,49 +2445,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-							        "${ NS.C.VolatileResource }",
-						            "${ NS.C.ResponseMetadata }"
+							        "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/new-resource/"
 								} ],
-								"${ NS.C.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Map }" ],
-								"${ NS.C.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -2655,7 +2658,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -2682,7 +2685,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -2911,7 +2914,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -2943,7 +2946,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -3089,49 +3092,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.ResponseMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/new-resource/"
 								} ],
-								"${ NS.C.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Map }" ],
-								"${ NS.C.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -3383,7 +3386,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=representation`,
-									`${ NS.LDP.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -3410,7 +3413,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=representation`,
-									`${ NS.LDP.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -3661,7 +3664,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=representation`,
-										`${ NS.LDP.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -3710,7 +3713,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=representation`,
-										`${ NS.LDP.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -3878,7 +3881,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -3939,7 +3942,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -4192,15 +4195,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4229,8 +4232,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-							"" + ` <${ NS.C.target }> ?child.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
 							"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -4281,8 +4284,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -4300,15 +4303,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4322,8 +4325,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-								"" + ` <${ NS.C.target }> ?child.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?child.` +
 
 								" ?child___subject ?child___predicate ?child___object " +
 
@@ -4345,8 +4348,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -4367,11 +4370,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -4393,8 +4396,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-								"" + ` <${ NS.C.target }> ?child.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?child.` +
 
 								" ?child ?child___predicate ?child___object " +
 
@@ -4424,8 +4427,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -4443,20 +4446,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( {
 						"schema": "https://schema.org/",
 						"ex": "https://example.com/ns#",
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4505,10 +4508,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "child" ) )
 									)
 								)
@@ -4539,7 +4542,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								.addPattern( new SelectToken()
 									.addVariable( variableHelper( "child" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.contains ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
 											.addObject( variableHelper( "child" ) )
 										)
 									)
@@ -4613,7 +4616,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							)
 
 								.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-								.addPrologues( new PrefixToken( "xsd", new IRIToken( NS.XSD.namespace ) ) )
+								.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
 								.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
 						);
 
@@ -4627,28 +4630,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -4656,25 +4659,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -4682,10 +4685,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -4697,7 +4700,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -4708,10 +4711,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -4723,7 +4726,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -4746,15 +4749,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4796,28 +4799,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -4825,25 +4828,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -4851,10 +4854,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -4872,7 +4875,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -4880,10 +4883,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -4901,7 +4904,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -4921,7 +4924,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -4931,11 +4934,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -4975,28 +4978,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5004,25 +5007,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5030,10 +5033,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -5047,10 +5050,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -5076,7 +5079,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -5086,11 +5089,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -5136,28 +5139,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5165,25 +5168,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5191,10 +5194,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5206,7 +5209,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5217,10 +5220,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5232,7 +5235,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5252,15 +5255,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -5312,28 +5315,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5345,49 +5348,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -5395,10 +5398,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5413,7 +5416,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5424,10 +5427,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5442,7 +5445,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5462,15 +5465,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -5582,7 +5585,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -5590,11 +5593,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -5608,8 +5611,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-							"" + ` <${ NS.C.target }> ?child.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
 							"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -5660,8 +5663,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -5676,28 +5679,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5705,25 +5708,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5731,10 +5734,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5746,7 +5749,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5757,10 +5760,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5772,7 +5775,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5791,7 +5794,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -5799,11 +5802,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -5843,28 +5846,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5876,49 +5879,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -5926,10 +5929,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5944,7 +5947,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5955,10 +5958,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5973,7 +5976,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5992,7 +5995,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -6000,11 +6003,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -6118,49 +6121,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-							        "${ NS.C.VolatileResource }",
-						            "${ NS.C.ResponseMetadata }"
+							        "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/new-access-point/"
 								} ],
-								"${ NS.C.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Map }" ],
-								"${ NS.C.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -6349,7 +6352,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.RDFSource }; rel=interaction-model`,
+									`${ LDP.RDFSource }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -6376,7 +6379,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.RDFSource }; rel=interaction-model`,
+									`${ LDP.RDFSource }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -6643,7 +6646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.RDFSource }; rel=interaction-model`,
+										`${ LDP.RDFSource }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -6679,7 +6682,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.RDFSource }; rel=interaction-model`,
+										`${ LDP.RDFSource }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -6832,7 +6835,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -6897,7 +6900,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -7153,15 +7156,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7190,8 +7193,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-							"" + ` <${ NS.C.target }> ?member.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
 							"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -7244,8 +7247,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -7263,15 +7266,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7285,8 +7288,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-								"" + ` <${ NS.C.target }> ?member.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?member.` +
 
 								" ?member___subject ?member___predicate ?member___object " +
 
@@ -7310,8 +7313,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -7332,11 +7335,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -7358,8 +7361,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-								"" + ` <${ NS.C.target }> ?member.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?member.` +
 
 								" ?member ?member___predicate ?member___object " +
 
@@ -7391,8 +7394,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 										] ) ],
 									] ),
 								} )
@@ -7410,20 +7413,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( {
 						"schema": "https://schema.org/",
 						"ex": "https://example.com/ns#",
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7472,10 +7475,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "member" ) )
 									)
 								)
@@ -7506,10 +7509,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								.addPattern( new SelectToken()
 									.addVariable( variableHelper( "member" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.membershipResource ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
 											.addObject( variableHelper( "membershipResource" ) )
 										)
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.hasMemberRelation ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
 											.addObject( variableHelper( "hasMemberRelation" ) )
 										)
 									)
@@ -7588,7 +7591,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							)
 
 								.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-								.addPrologues( new PrefixToken( "xsd", new IRIToken( NS.XSD.namespace ) ) )
+								.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
 								.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
 						);
 
@@ -7602,28 +7605,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7631,25 +7634,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -7657,10 +7660,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -7672,7 +7675,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -7683,10 +7686,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -7698,7 +7701,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -7718,15 +7721,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7778,28 +7781,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7807,25 +7810,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -7833,10 +7836,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -7854,7 +7857,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -7862,10 +7865,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -7883,7 +7886,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -7903,7 +7906,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -7913,11 +7916,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -7957,28 +7960,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7986,25 +7989,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8012,10 +8015,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -8029,10 +8032,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -8058,7 +8061,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -8068,11 +8071,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -8118,28 +8121,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8147,25 +8150,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8173,10 +8176,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8188,7 +8191,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8199,10 +8202,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8214,7 +8217,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8237,15 +8240,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -8287,28 +8290,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8320,49 +8323,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -8370,10 +8373,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8388,7 +8391,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8399,10 +8402,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8417,7 +8420,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8437,15 +8440,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -8557,7 +8560,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8565,11 +8568,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -8583,8 +8586,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.VolatileResource }>, <${ NS.C.QueryMetadata }>;` +
-							"" + ` <${ NS.C.target }> ?member.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
 							"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -8637,8 +8640,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ NS.C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ NS.C.PreferDocumentETags }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
+										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
 									] ) ],
 								] ),
 							} )
@@ -8653,28 +8656,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8682,25 +8685,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -8708,10 +8711,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8723,7 +8726,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8734,10 +8737,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8749,7 +8752,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8768,7 +8771,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8776,11 +8779,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -8820,28 +8823,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8853,49 +8856,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -8903,10 +8906,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member1/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8921,7 +8924,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8932,10 +8935,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member2/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8950,7 +8953,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8969,7 +8972,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8977,11 +8980,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -10035,49 +10038,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.ResponseMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ],
-								"${ NS.C.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Map }" ],
-								"${ NS.C.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
@@ -10176,7 +10179,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					context.extendObjectSchema( {
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Document", {
 						"list": {
@@ -10188,7 +10191,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Fragment", {
 						"string": {
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 							"@container": "@set",
 						},
 						"pointer": {
@@ -10197,7 +10200,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#BlankNode", {
 						"number": {
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -10231,7 +10234,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
-							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`@prefix xsd: <${ XSD.namespace }>. ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -10256,7 +10259,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					context.extendObjectSchema( {
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 
 					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
@@ -10273,20 +10276,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 								_partialMetadata: createPartialMetadata( {
 									"string": {
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 										"@container": "@set",
 									},
 									"pointer": {
 										"@type": "@id",
 									},
 									"number": {
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 								} ),
 							} ],
 							_partialMetadata: createPartialMetadata( {
 								"string": {
-									"@type": NS.XSD.string,
+									"@type": XSD.string,
 									"@container": "@set",
 								},
 								"pointer": {
@@ -10318,7 +10321,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
-							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`@prefix xsd: <${ XSD.namespace }>. ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -10625,10 +10628,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -10636,17 +10639,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -10658,7 +10661,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -10686,7 +10689,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
-							"@type": NS.XSD.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -10694,7 +10697,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -10706,15 +10709,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.dateTime,
+							"@type": XSD.dateTime,
 						},
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -10738,10 +10741,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "document" ) )
 									)
 								)
@@ -10887,7 +10890,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -10895,7 +10898,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 					persistedDocument.property2[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( SPARQL.QueryDocument.PartialMetadata.ALL );
@@ -10927,10 +10930,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								new ConstructToken()
 									.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 										.addPredicate( new PredicateToken( "a" )
-											.addObject( new IRIToken( NS.C.VolatileResource ) )
-											.addObject( new IRIToken( NS.C.QueryMetadata ) )
+											.addObject( new IRIToken( C.VolatileResource ) )
+											.addObject( new IRIToken( C.QueryMetadata ) )
 										)
-										.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
+										.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 											.addObject( variableHelper( "document" ) )
 										)
 									)
@@ -11013,31 +11016,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -11045,10 +11048,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11058,7 +11061,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -11067,7 +11070,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11098,7 +11101,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "https://example.com/ns#property-1",
-									"@type": NS.XSD.string,
+									"@type": XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -11106,7 +11109,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "https://example.com/ns#property-4",
-									"@type": NS.XSD.boolean,
+									"@type": XSD.boolean,
 								},
 							} ),
 						} ),
@@ -11123,15 +11126,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "https://example.com/ns#property-2",
-									"@type": NS.XSD.integer,
+									"@type": XSD.integer,
 								},
 								"property3": {
 									"@id": "https://schema.org/property-3",
-									"@type": NS.XSD.string,
+									"@type": XSD.string,
 								},
 								"property5": {
 									"@id": "https://schema.org/property-5",
-									"@type": NS.XSD.dateTime,
+									"@type": XSD.dateTime,
 								},
 							} ),
 						},
@@ -11173,31 +11176,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -11205,10 +11208,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11218,7 +11221,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -11227,7 +11230,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11259,7 +11262,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "property-1",
-									"@type": NS.XSD.string,
+									"@type": XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -11267,7 +11270,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "property-4",
-									"@type": NS.XSD.boolean,
+									"@type": XSD.boolean,
 								},
 							} ),
 						} ),
@@ -11284,15 +11287,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "property-2",
-									"@type": NS.XSD.integer,
+									"@type": XSD.integer,
 								},
 								"property3": {
 									"@id": "https://schema.org/property-3",
-									"@type": NS.XSD.string,
+									"@type": XSD.string,
 								},
 								"property5": {
 									"@id": "https://schema.org/property-5",
-									"@type": NS.XSD.dateTime,
+									"@type": XSD.dateTime,
 								},
 							} ),
 						},
@@ -11392,10 +11395,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
@@ -11403,17 +11406,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -11425,7 +11428,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11449,7 +11452,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
-							"@type": NS.XSD.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -11457,7 +11460,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -11469,15 +11472,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.dateTime,
+							"@type": XSD.dateTime,
 						},
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -11501,10 +11504,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "document" ) )
 									)
 								)
@@ -11692,49 +11695,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.ResponseMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.VolatileResource }",
-						            "${ NS.C.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ],
-								"${ NS.C.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Map }" ],
-								"${ NS.C.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -11862,7 +11865,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					context.extendObjectSchema( {
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Document", {
 						"list": {
@@ -11874,7 +11877,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Fragment", {
 						"string": {
-							"@type": NS.XSD.string,
+							"@type": XSD.string,
 							"@container": "@set",
 						},
 						"pointer": {
@@ -11883,7 +11886,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#BlankNode", {
 						"number": {
-							"@type": NS.XSD.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -11914,7 +11917,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents.saveAndRefresh( persistedDocument ).then( () => {
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
-							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`@prefix xsd: <${ XSD.namespace }>. ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -12057,31 +12060,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.VolatileResource }",
-								"${ NS.C.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.ResponseMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.DocumentMetadata }",
-								"${ NS.C.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -12089,10 +12092,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.BasicContainer }",
-									"${ NS.LDP.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -12102,7 +12105,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -12111,7 +12114,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -12143,15 +12146,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@vocab": "https://example.com/ns#",
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.string,
+										"@type": XSD.string,
 									},
 									"property5": {
 										"@id": "https://schema.org/property-5",
-										"@type": NS.XSD.dateTime,
+										"@type": XSD.dateTime,
 									},
 								} ),
 							},
@@ -12159,7 +12162,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "https://example.com/ns#property-1",
-									"@type": NS.XSD.string,
+									"@type": XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -12167,7 +12170,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "https://example.com/ns#property-4",
-									"@type": NS.XSD.boolean,
+									"@type": XSD.boolean,
 								},
 							} ),
 						} ),

@@ -7,26 +7,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.AccessControlEntry;
+exports.RDF_CLASS = CS_1.CS.AccessControlEntry;
 exports.SCHEMA = {
     "granting": {
-        "@id": NS.CS.granting,
-        "@type": NS.XSD.boolean,
+        "@id": CS_1.CS.granting,
+        "@type": XSD_1.XSD.boolean,
     },
     "permissions": {
-        "@id": NS.CS.permission,
+        "@id": CS_1.CS.permission,
         "@type": "@id",
         "@container": "@set",
     },
     "subjects": {
-        "@id": NS.CS.subject,
+        "@id": CS_1.CS.subject,
         "@type": "@id",
         "@container": "@set",
     },
     "subjectsClass": {
-        "@id": NS.CS.subjectClass,
+        "@id": CS_1.CS.subjectClass,
         "@type": "@id",
     },
 };

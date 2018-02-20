@@ -1,5 +1,5 @@
+import { XSD } from "../Vocabularies/XSD";
 import * as Errors from "./../Errors";
-import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as RDF from "./../RDF";
@@ -15,18 +15,18 @@ export class Class {
 	private static getDefaultSerializers():Map<string, RDF.Literal.Serializer> {
 		let literalSerializers:Map<string, RDF.Literal.Serializer> = new Map<string, RDF.Literal.Serializer>();
 
-		literalSerializers.set( NS.XSD.date, RDF.Literal.Serializers.XSD.dateSerializer );
-		literalSerializers.set( NS.XSD.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer );
-		literalSerializers.set( NS.XSD.time, RDF.Literal.Serializers.XSD.timeSerializer );
-		literalSerializers.set( NS.XSD.integer, RDF.Literal.Serializers.XSD.integerSerializer );
-		literalSerializers.set( NS.XSD.int, RDF.Literal.Serializers.XSD.integerSerializer );
-		literalSerializers.set( NS.XSD.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
-		literalSerializers.set( NS.XSD.long, RDF.Literal.Serializers.XSD.longSerializer );
-		literalSerializers.set( NS.XSD.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer );
-		literalSerializers.set( NS.XSD.float, RDF.Literal.Serializers.XSD.floatSerializer );
-		literalSerializers.set( NS.XSD.double, RDF.Literal.Serializers.XSD.floatSerializer );
-		literalSerializers.set( NS.XSD.boolean, RDF.Literal.Serializers.XSD.booleanSerializer );
-		literalSerializers.set( NS.XSD.string, RDF.Literal.Serializers.XSD.stringSerializer );
+		literalSerializers.set( XSD.date, RDF.Literal.Serializers.XSD.dateSerializer );
+		literalSerializers.set( XSD.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer );
+		literalSerializers.set( XSD.time, RDF.Literal.Serializers.XSD.timeSerializer );
+		literalSerializers.set( XSD.integer, RDF.Literal.Serializers.XSD.integerSerializer );
+		literalSerializers.set( XSD.int, RDF.Literal.Serializers.XSD.integerSerializer );
+		literalSerializers.set( XSD.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer );
+		literalSerializers.set( XSD.long, RDF.Literal.Serializers.XSD.longSerializer );
+		literalSerializers.set( XSD.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer );
+		literalSerializers.set( XSD.float, RDF.Literal.Serializers.XSD.floatSerializer );
+		literalSerializers.set( XSD.double, RDF.Literal.Serializers.XSD.floatSerializer );
+		literalSerializers.set( XSD.boolean, RDF.Literal.Serializers.XSD.booleanSerializer );
+		literalSerializers.set( XSD.string, RDF.Literal.Serializers.XSD.stringSerializer );
 
 		return literalSerializers;
 	}
@@ -140,8 +140,8 @@ export class Class {
 		Utils.forEachOwnProperty( propertyValue, ( languageTag:string, value:any ):void => {
 			// TODO: Validate language tags
 
-			let serializedValue:string = this.literalSerializers.get( NS.XSD.string ).serialize( value );
-			mapValues.push( { "@value": serializedValue, "@type": NS.XSD.string, "@language": languageTag } );
+			let serializedValue:string = this.literalSerializers.get( XSD.string ).serialize( value );
+			mapValues.push( { "@value": serializedValue, "@type": XSD.string, "@language": languageTag } );
 		} );
 
 		return mapValues;
@@ -270,7 +270,7 @@ export class Class {
 
 	private compactPropertyLiteral( propertyValues:any[], definition:ObjectSchema.DigestedPropertyDefinition, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
 		const literalType:string = definition.literalType === null ?
-			NS.XSD.string : ObjectSchema.Util.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
+			XSD.string : ObjectSchema.Util.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
 
 		return RDF.Node.Util.getPropertyLiterals( propertyValues, literalType );
 	}

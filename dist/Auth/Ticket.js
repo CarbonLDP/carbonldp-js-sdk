@@ -7,24 +7,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
 var Pointer = __importStar(require("./../Pointer"));
-var Resource = __importStar(require("./../Resource"));
 var URI = __importStar(require("./../RDF/URI"));
+var Resource = __importStar(require("./../Resource"));
 exports.TICKETS_CONTAINER = "auth-tickets/";
-exports.RDF_CLASS = NS.CS.Ticket;
+exports.RDF_CLASS = CS_1.CS.Ticket;
 exports.SCHEMA = {
     "forURI": {
-        "@id": NS.CS.forIRI,
+        "@id": CS_1.CS.forIRI,
         "@type": "@id",
     },
     "expirationTime": {
-        "@id": NS.CS.expirationTime,
-        "@type": NS.XSD.dateTime,
+        "@id": CS_1.CS.expirationTime,
+        "@type": XSD_1.XSD.dateTime,
     },
     "ticketKey": {
-        "@id": NS.CS.ticketKey,
-        "@type": NS.XSD.string,
+        "@id": CS_1.CS.ticketKey,
+        "@type": XSD_1.XSD.string,
     },
 };
 var Factory = (function () {

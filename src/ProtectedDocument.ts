@@ -1,12 +1,12 @@
 import * as Document from "./Document";
-import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
+import { CS } from "./Vocabularies/CS";
 
-export const RDF_CLASS:string = NS.CS.ProtectedDocument;
+export const RDF_CLASS:string = CS.ProtectedDocument;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"accessControlList": {
-		"@id": NS.CS.accessControlList,
+		"@id": CS.accessControlList,
 		"@type": "@id",
 	},
 };

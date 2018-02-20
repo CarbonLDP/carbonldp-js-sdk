@@ -1,20 +1,18 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import * as Document from "./../Document";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as Document from "./../Document";
-import * as NS from "../Vocabularies/index";
 import * as Utils from "./../Utils";
 
 import * as User from "./User";
@@ -39,7 +37,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		expect( User.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( User.RDF_CLASS ) ).toBe( true );
 
-		expect( User.RDF_CLASS ).toBe( NS.CS.User );
+		expect( User.RDF_CLASS ).toBe( CS.User );
 	} );
 
 	it( hasProperty(
@@ -52,8 +50,8 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 
 		expect( Utils.hasProperty( User.SCHEMA, "name" ) ).toBe( true );
 		expect( User.SCHEMA[ "name" ] ).toEqual( {
-			"@id": NS.CS.name,
-			"@type": NS.XSD.string,
+			"@id": CS.name,
+			"@type": XSD.string,
 		} );
 	} );
 

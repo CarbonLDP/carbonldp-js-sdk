@@ -7,23 +7,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACE = __importStar(require("./ACE"));
-var NS = __importStar(require("../Vocabularies/index"));
+var CS_1 = require("../Vocabularies/CS");
 var Pointer = __importStar(require("./../Pointer"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.AccessControlList;
+var ACE = __importStar(require("./ACE"));
+exports.RDF_CLASS = CS_1.CS.AccessControlList;
 exports.SCHEMA = {
     "entries": {
-        "@id": NS.CS.accessControlEntry,
+        "@id": CS_1.CS.accessControlEntry,
         "@type": "@id",
         "@container": "@set",
     },
     "accessTo": {
-        "@id": NS.CS.accessTo,
+        "@id": CS_1.CS.accessTo,
         "@type": "@id",
     },
     "inheritableEntries": {
-        "@id": NS.CS.inheritableEntry,
+        "@id": CS_1.CS.inheritableEntry,
         "@type": "@id",
         "@container": "@set",
     },

@@ -22,14 +22,19 @@ import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
-import * as LDP from "./LDP";
+import {
+	AddMemberAction,
+	DocumentMetadata,
+	ErrorResponse,
+	RemoveMemberAction,
+	ResponseMetadata,
+} from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import {
 	createDestination,
 	validateEventContext,
 } from "./Messaging/Utils";
-import * as NS from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
@@ -64,6 +69,8 @@ import {
 	mapTupleArray,
 	promiseMethod
 } from "./Utils";
+import { C } from "./Vocabularies/C";
+import { LDP } from "./Vocabularies/LDP";
 
 export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
 
@@ -185,7 +192,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	exists( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ boolean, HTTP.Response.Class ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
+			this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return this.sendRequest( HTTP.Method.HEAD, documentURI, requestOptions );
 		} ).then<[ boolean, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
@@ -268,7 +275,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			const pattens:PatternToken[] = [
 				new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.contains ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
 						.addObject( childrenVar )
 					),
 			];
@@ -294,7 +301,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const selectChildren:SelectToken = new SelectToken()
 				.addVariable( childrenProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.contains ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
 						.addObject( childrenProperty.variable )
 					)
 				)
@@ -347,10 +354,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
 			const pattens:PatternToken[] = [
 				new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.membershipResource ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
 						.addObject( membershipResource )
 					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.hasMemberRelation ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
 						.addObject( hasMemberRelation )
 					)
 				,
@@ -384,10 +391,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const selectMembers:SelectToken = new SelectToken()
 				.addVariable( membersProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.membershipResource ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
 						.addObject( membershipResource )
 					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.hasMemberRelation ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
 						.addObject( hasMemberRelation )
 					)
 				)
@@ -415,11 +422,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const pointers:Pointer.Class[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
+			this.setDefaultRequestOptions( requestOptions, LDP.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
-			freeResources.createResourceFrom( LDP.AddMemberAction.Factory.create( pointers ) );
+			freeResources.createResourceFrom( AddMemberAction.Factory.create( pointers ) );
 
 			return this.sendRequest( HTTP.Method.PUT, documentURI, requestOptions, freeResources.toJSON() );
 		} );
@@ -436,17 +443,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const pointers:Pointer.Class[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
+			this.setDefaultRequestOptions( requestOptions, LDP.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
-				include: [ NS.C.PreferSelectedMembershipTriples ],
-				omit: [ NS.C.PreferMembershipTriples ],
+				include: [ C.PreferSelectedMembershipTriples ],
+				omit: [ C.PreferMembershipTriples ],
 			};
 			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
-			freeResources.createResourceFrom( LDP.RemoveMemberAction.Factory.create( pointers ) );
+			freeResources.createResourceFrom( RemoveMemberAction.Factory.create( pointers ) );
 
 			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON() );
 		} );
@@ -455,17 +462,17 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	removeAllMembers( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
+			this.setDefaultRequestOptions( requestOptions, LDP.Container );
 
 			let containerRetrievalPreferences:HTTP.Request.RetrievalPreferences = {
 				include: [
-					NS.C.PreferMembershipTriples,
+					C.PreferMembershipTriples,
 				],
 				omit: [
-					NS.C.PreferMembershipResources,
-					NS.C.PreferContainmentTriples,
-					NS.C.PreferContainmentResources,
-					NS.C.PreferContainer,
+					C.PreferMembershipResources,
+					C.PreferContainmentTriples,
+					C.PreferContainmentResources,
+					C.PreferContainer,
 				],
 			};
 			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
@@ -518,7 +525,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	delete( documentURI:string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
+			this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions );
 		} ).then( ( response:HTTP.Response.Class ) => {
@@ -762,14 +769,14 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		return new JSONLD.Parser.Class().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
 			const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
-			const errorResponses:LDP.ErrorResponse.Class[] = freeResources
+			const errorResponses:ErrorResponse.Class[] = freeResources
 				.getResources()
-				.filter( ( resource ):resource is LDP.ErrorResponse.Class => resource.hasType( LDP.ErrorResponse.RDF_CLASS ) );
+				.filter( ( resource ):resource is ErrorResponse.Class => resource.hasType( ErrorResponse.RDF_CLASS ) );
 			if( errorResponses.length === 0 ) return Promise.reject( new Errors.IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
 			if( errorResponses.length > 1 ) return Promise.reject( new Errors.IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
 
 			Object.assign( error, errorResponses[ 0 ] );
-			error.message = LDP.ErrorResponse.Util.getMessage( error );
+			error.message = ErrorResponse.Util.getMessage( error );
 			return Promise.reject( error );
 		}, () => {
 			return Promise.reject( error );
@@ -787,7 +794,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			}
 		}
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
+		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 		if( this.documentsBeingResolved.has( uri ) )
 			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
@@ -868,7 +875,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private refreshFullDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
+		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 		HTTP.Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
 		return this.sendRequest( HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], HTTP.Response.Class ] ) => {
@@ -1012,10 +1019,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
 				.addPredicate( new PredicateToken( "a" )
-					.addObject( queryContext.compactIRI( NS.C.VolatileResource ) )
-					.addObject( queryContext.compactIRI( NS.C.QueryMetadata ) )
+					.addObject( queryContext.compactIRI( C.VolatileResource ) )
+					.addObject( queryContext.compactIRI( C.QueryMetadata ) )
 				)
-				.addPredicate( new PredicateToken( queryContext.compactIRI( NS.C.target ) )
+				.addPredicate( new PredicateToken( queryContext.compactIRI( C.target ) )
 					.addObject( queryContext.getVariable( targetName ) )
 				)
 			)
@@ -1028,8 +1035,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
 
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.PreferResultsContext ] }, requestOptions, false );
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.PreferDocumentETags ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions, false );
+		HTTP.Request.Util.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions, false );
 
 		let response:HTTP.Response.Class;
 		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, HTTP.Response.Class ] ) => {
@@ -1044,7 +1051,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
 				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
-				.map( x => this.context ? x.target : x[ NS.C.target ] )
+				.map( x => this.context ? x.target : x[ C.target ] )
 				// Alternative to flatMap
 				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
 				.map( x => x.id )
@@ -1055,14 +1062,14 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			freeResources
 				.getResources()
-				.filter( LDP.ResponseMetadata.Factory.is )
-				.map<LDP.DocumentMetadata.Class[] | LDP.DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ NS.C.documentMetadata ] )
-				.map<LDP.DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
+				.filter( ResponseMetadata.Factory.is )
+				.map<DocumentMetadata.Class[] | DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
+				.map<DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
 				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
 					if( ! documentMetadata ) return;
 
-					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ NS.C.relatedDocument ];
-					const eTag:string = documentMetadata.eTag || documentMetadata[ NS.C.eTag ];
+					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
+					const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
 
 					if( relatedDocument._etag === void 0 ) relatedDocument._etag = eTag;
 					if( relatedDocument._etag !== eTag ) relatedDocument._etag = null;
@@ -1113,7 +1120,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( PersistedDocument.Factory.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
 		let childDocument:T & Document.Class = Document.Factory.is( childObject ) ? <T & Document.Class> childObject : Document.Factory.createFrom<T>( childObject );
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.Container );
+		this.setDefaultRequestOptions( requestOptions, LDP.Container );
 		return this.persistDocument<T & Document.Class, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
@@ -1125,7 +1132,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 		if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
 
-		this.setDefaultRequestOptions( requestOptions, NS.LDP.RDFSource );
+		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 		return this.persistDocument<T & AccessPoint.DocumentClass, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
@@ -1353,7 +1360,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	private applyNodeMap( freeNodes:RDF.Node.Class[] ):void {
 		if( ! freeNodes.length ) return;
 		const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
-		const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources.getResources().find( LDP.ResponseMetadata.Factory.is );
+		const responseMetadata:ResponseMetadata.Class = <ResponseMetadata.Class> freeResources.getResources().find( ResponseMetadata.Factory.is );
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
 			const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;

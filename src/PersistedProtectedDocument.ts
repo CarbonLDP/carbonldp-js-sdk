@@ -1,12 +1,12 @@
-import * as HTTP from "./HTTP";
 import * as Auth from "./Auth";
-import * as NS from "./Vocabularies/index";
-import * as PersistedDocument from "./PersistedDocument";
 import * as Documents from "./Documents";
+import * as HTTP from "./HTTP";
+import * as PersistedDocument from "./PersistedDocument";
 import * as Pointer from "./Pointer";
 import * as Resource from "./Resource";
 import SELECTResults from "./SPARQL/SELECTResults";
 import * as Utils from "./Utils";
+import { CS } from "./Vocabularies/CS";
 
 export interface Class extends PersistedDocument.Class {
 	accessControlList?:Pointer.Class;
@@ -61,7 +61,7 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 		aclPromise = Promise.resolve( protectedDocument.accessControlList );
 	} else {
 		aclPromise = protectedDocument.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {
-			<${ protectedDocument.id }> <${ NS.CS.accessControlList }> ?acl.
+			<${ protectedDocument.id }> <${ CS.accessControlList }> ?acl.
 		}` ).then( ( [ results ]:[ SELECTResults<ACLResult>, HTTP.Response.Class ] ) => {
 			return results.bindings[ 0 ].acl;
 		} );

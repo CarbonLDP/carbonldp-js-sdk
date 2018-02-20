@@ -1,22 +1,8 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	module,
-	clazz,
-	enumeration,
-	method,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasProperty,
-	hasDefaultExport,
-	reexports,
-	hasEnumeral,
-	hasSignature,
-} from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
+
+
+import * as Auth from "./Auth";
+import DefaultExport from "./Auth";
 import * as ACE from "./Auth/ACE";
 import * as ACL from "./Auth/ACL";
 import Authenticator from "./Auth/Authenticator";
@@ -39,13 +25,27 @@ import * as Users from "./Auth/Users";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
-import * as NS from "./Vocabularies/index";
 import * as URI from "./RDF/URI";
+import {
+	clazz,
+	enumeration,
+	hasConstructor,
+	hasDefaultExport,
+	hasEnumeral,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+	reexports,
+	STATIC,
+} from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-
-
-import * as Auth from "./Auth";
-import DefaultExport from "./Auth";
+import { C } from "./Vocabularies/C";
+import { CS } from "./Vocabularies/CS";
+import { XSD } from "./Vocabularies/XSD";
 
 describe( module( "Carbon/Auth" ), ():void => {
 
@@ -661,12 +661,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ NS.CS.User }" ],
-							"${ NS.CS.name }": [ {
+							"@type": [ "${ CS.User }" ],
+							"${ CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.CS.credentials }": [ {
+							"${ CS.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
@@ -767,50 +767,50 @@ describe( module( "Carbon/Auth" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"${ NS.C.ResponseMetadata }",
-							"${ NS.C.VolatileResource }"
+							"${ C.ResponseMetadata }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.C.documentMetadata }": [ {
+						"${ C.documentMetadata }": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"${ NS.C.DocumentMetadata }",
-							"${ NS.C.VolatileResource }"
+							"${ C.DocumentMetadata }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.C.eTag }": [ {
+						"${ C.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"${ NS.C.relatedDocument }": [ {
+						"${ C.relatedDocument }": [ {
 							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"${ NS.CS.Token }",
-							"${ NS.C.VolatileResource }"
+							"${ CS.Token }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.CS.tokenKey }": [ {
+						"${ CS.tokenKey }": [ {
 							"@value": "token-value"
 						} ],
-						"${ NS.CS.expirationTime }": {
+						"${ CS.expirationTime }": {
 							"@value": "${ date.toISOString() }",
-							"@type": "${ NS.XSD.dateTime }"
+							"@type": "${ XSD.dateTime }"
 						},
-						"${ NS.CS.credentialsOf }": [ {
+						"${ CS.credentialsOf }": [ {
 							"@id": "http://example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ NS.CS.User }" ],
-							"${ NS.CS.name }": [ {
+							"@type": [ "${ CS.User }" ],
+							"${ CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.CS.credentials }": [ {
+							"${ CS.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
@@ -861,12 +861,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 						"@id": "http://example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ NS.CS.User }" ],
-							"${ NS.CS.name }": [ {
+							"@type": [ "${ CS.User }" ],
+							"${ CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.CS.credentials }": [ {
+							"${ CS.credentials }": [ {
 								"@id": "http://example.com/.system/credentials/my-user-credentials/"
 							} ]
 						} ]
@@ -916,7 +916,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					expirationTime: date,
 					id: "_:BlankNode",
 					key: "dG9rZW4tdmFsdWU=",
-					types: [ NS.CS.Token ],
+					types: [ CS.Token ],
 				};
 				promise = auth01.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
@@ -932,7 +932,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 						expirationTime: date.toISOString(),
 						id: "_:BlankNode",
 						key: "dG9rZW4tdmFsdWU=",
-						types: [ NS.CS.Token ],
+						types: [ CS.Token ],
 					};
 					return JSON.parse( JSON.stringify( storedToken ) );
 				};
@@ -950,7 +950,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					expirationTime: date,
 					id: "_:BlankNode",
 					key: "dG9rZW4tdmFsdWU=",
-					types: [ NS.CS.Token ],
+					types: [ CS.Token ],
 				};
 				promise = auth03.authenticateUsing( "TOKEN", token );
 				expect( promise instanceof Promise ).toBe( true );
@@ -1250,16 +1250,16 @@ describe( module( "Carbon/Auth" ), ():void => {
 				responseText: `[ {
 					"@id":"_:01",
 					"@type":[
-						"${ NS.CS.Ticket }"
+						"${ CS.Ticket }"
 					],
-					"${ NS.CS.expirationTime }":[ {
-						"@type": "${ NS.XSD.dateTime }",
+					"${ CS.expirationTime }":[ {
+						"@type": "${ XSD.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
-					"${ NS.CS.forIRI }":[ {
+					"${ CS.forIRI }":[ {
 						"@id": "http://example.com/resource/"
 					} ],
-					"${ NS.CS.ticketKey }":[ {
+					"${ CS.ticketKey }":[ {
 						"@value": "1234123412341234"
 					} ]
 				} ]`,
@@ -1274,31 +1274,31 @@ describe( module( "Carbon/Auth" ), ():void => {
 				responseText: `[ {
 					"@id":"_:01",
 					"@type":[
-						"${ NS.CS.Ticket }"
+						"${ CS.Ticket }"
 					],
-					"${ NS.CS.expirationTime }":[ {
-						"@type": "${ NS.XSD.dateTime }",
+					"${ CS.expirationTime }":[ {
+						"@type": "${ XSD.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
-					"${ NS.CS.forIRI }":[ {
+					"${ CS.forIRI }":[ {
 						"@id": "http://multiple.example.com/resource/"
 					} ],
-					"${ NS.CS.ticketKey }":[ {
+					"${ CS.ticketKey }":[ {
 						"@value": "1234123412341234"
 					} ]
 				}, {
 					"@id":"_:02",
 					"@type":[
-						"${ NS.CS.Ticket }"
+						"${ CS.Ticket }"
 					],
-					"${ NS.CS.expirationTime }":[ {
-						"@type": "${ NS.XSD.dateTime }",
+					"${ CS.expirationTime }":[ {
+						"@type": "${ XSD.dateTime }",
 						"@value": "${ expirationTime.toISOString() }"
 					} ],
-					"${ NS.CS.forIRI }":[ {
+					"${ CS.forIRI }":[ {
 						"@id": "http://multiple.example.com/resource/"
 					} ],
-					"${ NS.CS.ticketKey }":[ {
+					"${ CS.ticketKey }":[ {
 						"@value": "1234123412341234"
 					} ]
 				} ]`,
@@ -1365,7 +1365,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 
 			spyOn( auth, "createTicket" ).and.returnValue( Promise.resolve( [ {
 				id: "_:01",
-				types: [ "${ NS.CS.Ticket }" ],
+				types: [ CS.Ticket ],
 				expirationTime: new Date(),
 				forURI: context.documents.getPointer( "http://example.com/resource/" ),
 				ticketKey: "1234123412341234",

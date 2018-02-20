@@ -1,23 +1,24 @@
-import Error from "./Error";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import ObjectSchema from "./../ObjectSchema";
 import Resource from "./../Resource";
+import Error from "./Error";
 
-export const RDF_CLASS:string = NS.C.ErrorResponse;
+export const RDF_CLASS:string = C.ErrorResponse;
 
 export const SCHEMA:ObjectSchema = {
 	"errors": {
-		"@id": NS.C.error,
+		"@id": C.error,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"requestID": {
-		"@id": NS.C.requestID,
-		"@type": NS.XSD.string,
+		"@id": C.requestID,
+		"@type": XSD.string,
 	},
 	"statusCode": {
-		"@id": NS.C.httpStatusCode,
-		"@type": NS.XSD.int,
+		"@id": C.httpStatusCode,
+		"@type": XSD.int,
 	},
 };
 

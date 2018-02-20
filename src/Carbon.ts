@@ -13,7 +13,7 @@ import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as NamedFragment from "./NamedFragment";
-import * as Vocabularies from "./Vocabularies/index";
+import * as Vocabularies from "./Vocabularies";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";

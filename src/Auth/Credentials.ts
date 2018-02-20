@@ -1,25 +1,27 @@
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
 import * as Document from "./../Document";
-import * as NS from "../Vocabularies/index";
-import * as ObjectSchema from "./../ObjectSchema";
 import { IllegalArgumentError } from "./../Errors";
+import * as ObjectSchema from "./../ObjectSchema";
 
-export const RDF_CLASS:string = NS.CS.Credentials;
+export const RDF_CLASS:string = CS.Credentials;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"email": {
-		"@id": NS.VCARD.email,
-		"@type": NS.XSD.string,
+		"@id": VCARD.email,
+		"@type": XSD.string,
 	},
 	"password": {
-		"@id": NS.CS.password,
-		"@type": NS.XSD.string,
+		"@id": CS.password,
+		"@type": XSD.string,
 	},
 	"enabled": {
-		"@id": NS.CS.enabled,
-		"@type": NS.XSD.boolean,
+		"@id": CS.enabled,
+		"@type": XSD.boolean,
 	},
 	"user": {
-		"@id": NS.CS.credentialsOf,
+		"@id": CS.credentialsOf,
 		"@type": "@id",
 	},
 };

@@ -7,18 +7,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("./Vocabularies/index"));
 var PersistedDocument = __importStar(require("./PersistedDocument"));
 var Utils = __importStar(require("./Utils"));
-exports.RDF_CLASS = NS.C.RDFRepresentation;
+var C_1 = require("./Vocabularies/C");
+var XSD_1 = require("./Vocabularies/XSD");
+exports.RDF_CLASS = C_1.C.RDFRepresentation;
 exports.SCHEMA = {
     "mediaType": {
-        "@id": NS.C.mediaType,
-        "@type": NS.XSD.string,
+        "@id": C_1.C.mediaType,
+        "@type": XSD_1.XSD.string,
     },
     "size": {
-        "@id": NS.C.size,
-        "@type": NS.XSD.long,
+        "@id": C_1.C.size,
+        "@type": XSD_1.XSD.long,
     },
 };
 var Factory = (function () {

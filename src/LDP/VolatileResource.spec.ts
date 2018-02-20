@@ -1,20 +1,17 @@
 import {
-	STATIC,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	STATIC,
 } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
-
 import * as VolatileResource from "./VolatileResource";
 import DefaultExport from "./VolatileResource";
 
@@ -33,7 +30,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 		expect( VolatileResource.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( VolatileResource.RDF_CLASS ) ).toBe( true );
 
-		expect( VolatileResource.RDF_CLASS ).toBe( NS.C.VolatileResource );
+		expect( VolatileResource.RDF_CLASS ).toBe( C.VolatileResource );
 	} );
 
 	describe( interfaze(
@@ -76,7 +73,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 			Resource.Factory.decorate( object );
 			expect( VolatileResource.Factory.is( object ) ).toBe( false );
 
-			object[ "types" ].push( NS.C.VolatileResource );
+			object[ "types" ].push( C.VolatileResource );
 			expect( VolatileResource.Factory.is( object ) ).toBe( true );
 		} );
 

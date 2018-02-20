@@ -1,31 +1,32 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as Document from "./../Document";
 import IllegalArgumentError from "./../Errors/IllegalArgumentError";
-import * as NS from "../Vocabularies/index";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Role;
+export const RDF_CLASS:string = CS.Role;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"name": {
-		"@id": NS.CS.name,
-		"@type": NS.XSD.string,
+		"@id": CS.name,
+		"@type": XSD.string,
 	},
 	"description": {
-		"@id": NS.CS.description,
-		"@type": NS.XSD.string,
+		"@id": CS.description,
+		"@type": XSD.string,
 	},
 	"parentRole": {
-		"@id": NS.CS.parentRole,
+		"@id": CS.parentRole,
 		"@type": "@id",
 	},
 	"childRoles": {
-		"@id": NS.CS.childRole,
+		"@id": CS.childRole,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"users": {
-		"@id": NS.CS.user,
+		"@id": CS.user,
 		"@type": "@id",
 		"@container": "@set",
 	},

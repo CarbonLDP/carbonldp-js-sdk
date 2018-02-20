@@ -1,6 +1,6 @@
-import { Class as ObjectSchema } from "./../ObjectSchema";
+import { Class as ObjectSchema } from "../ObjectSchema";
+import { Class as Resource } from "../Resource";
 import { Class as Entry } from "./Entry";
-import { Class as Resource } from "./../Resource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema;
 export interface Class<K, V> extends Resource {

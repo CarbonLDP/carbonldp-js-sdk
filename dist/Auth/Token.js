@@ -7,21 +7,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
 var Resource = __importStar(require("./../Resource"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.CS.Token;
+exports.RDF_CLASS = CS_1.CS.Token;
 exports.SCHEMA = {
     "key": {
-        "@id": NS.CS.tokenKey,
-        "@type": NS.XSD.string,
+        "@id": CS_1.CS.tokenKey,
+        "@type": XSD_1.XSD.string,
     },
     "expirationTime": {
-        "@id": NS.CS.expirationTime,
-        "@type": NS.XSD.dateTime,
+        "@id": CS_1.CS.expirationTime,
+        "@type": XSD_1.XSD.dateTime,
     },
     "user": {
-        "@id": NS.CS.credentialsOf,
+        "@id": CS_1.CS.credentialsOf,
         "@type": "@id",
     },
 };

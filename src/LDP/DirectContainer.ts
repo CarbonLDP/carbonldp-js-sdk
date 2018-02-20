@@ -1,10 +1,10 @@
+import { LDP } from "../Vocabularies/LDP";
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.LDP.DirectContainer;
+export const RDF_CLASS:string = LDP.DirectContainer;
 
 export interface Class extends Document.Class {
 	membershipResource:Pointer.Class;
@@ -36,8 +36,8 @@ export class Factory {
 		let container:T & Class = <any> object;
 		if( ! Document.Factory.is( object ) ) container = <any> Document.Factory.createFrom( object );
 
-		container.types.push( NS.LDP.Container );
-		container.types.push( NS.LDP.DirectContainer );
+		container.types.push( LDP.Container );
+		container.types.push( LDP.DirectContainer );
 
 		container.membershipResource = membershipResource;
 

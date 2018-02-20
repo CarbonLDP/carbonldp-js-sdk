@@ -1,23 +1,21 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
 import * as Document from "./../Document";
 import * as Errors from "./../Errors";
-import * as NS from "../Vocabularies/index";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-
 import * as Credentials from "./Credentials";
 import DefaultExport from "./Credentials";
 
@@ -36,7 +34,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		expect( Credentials.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Credentials.RDF_CLASS ) ).toBe( true );
 
-		expect( Credentials.RDF_CLASS ).toBe( NS.CS.Credentials );
+		expect( Credentials.RDF_CLASS ).toBe( CS.Credentials );
 	} );
 
 	it( hasProperty(
@@ -49,20 +47,20 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "email" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "email" ] ).toEqual( {
-			"@id": NS.VCARD.email,
-			"@type": NS.XSD.string,
+			"@id": VCARD.email,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "password" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "password" ] ).toEqual( {
-			"@id": NS.CS.password,
-			"@type": NS.XSD.string,
+			"@id": CS.password,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "enabled" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "enabled" ] ).toEqual( {
-			"@id": NS.CS.enabled,
-			"@type": NS.XSD.boolean,
+			"@id": CS.enabled,
+			"@type": XSD.boolean,
 		} );
 	} );
 
@@ -171,6 +169,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			interface TheCredentials {
 				myProperty?:string;
 			}
+
 			interface MyCredentials extends Credentials.Class, TheCredentials {}
 
 			let user:MyCredentials;
@@ -178,14 +177,14 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			expect( user.myProperty ).toBeUndefined();
 			expect( user.email ).toBe( "email.of.user@example.com" );
 			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( NS.CS.Credentials );
+			expect( user.types ).toContain( CS.Credentials );
 
 			user = Credentials.Factory.createFrom<TheCredentials>( { myProperty: "a property" }, "email.of.user@example.com", "myAwesomePassword" );
 			expect( user.myProperty ).toBeDefined();
 			expect( user.myProperty ).toBe( "a property" );
 			expect( user.email ).toBe( "email.of.user@example.com" );
 			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( NS.CS.Credentials );
+			expect( user.types ).toContain( CS.Credentials );
 
 			expect( () => Credentials.Factory.createFrom( {}, "email.of.user@example.com", "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => Credentials.Factory.createFrom( {}, "", "myAwesomePassword" ) ).toThrowError( Errors.IllegalArgumentError );

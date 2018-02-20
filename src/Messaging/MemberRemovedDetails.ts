@@ -1,8 +1,8 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as MemberDetails from "./MemberDetails";
 
-export const RDF_CLASS:string = NS.C.MemberRemovedDetails;
+export const RDF_CLASS:string = C.MemberRemovedDetails;
 
 export const SCHEMA:ObjectSchema.Class = MemberDetails.SCHEMA;
 

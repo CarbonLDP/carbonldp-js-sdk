@@ -1,8 +1,16 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as DocumentModified from "./DocumentModified";
 import DefaultExport from "./DocumentModified";
 
@@ -21,7 +29,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 		expect( DocumentModified.RDF_CLASS ).toBeDefined();
 		expect( DocumentModified.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( DocumentModified.RDF_CLASS ).toBe( NS.C.DocumentModified );
+		expect( DocumentModified.RDF_CLASS ).toBe( C.DocumentModified );
 	} );
 
 	it( hasProperty(
@@ -37,7 +45,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 		} );
 
 		expect( DocumentModified.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.target,
+			"@id": C.target,
 			"@type": "@id",
 		} );
 	} );

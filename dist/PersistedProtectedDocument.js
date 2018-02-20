@@ -7,12 +7,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTP = __importStar(require("./HTTP"));
 var Auth = __importStar(require("./Auth"));
-var NS = __importStar(require("./Vocabularies/index"));
+var HTTP = __importStar(require("./HTTP"));
 var PersistedDocument = __importStar(require("./PersistedDocument"));
 var Resource = __importStar(require("./Resource"));
 var Utils = __importStar(require("./Utils"));
+var CS_1 = require("./Vocabularies/CS");
 var Factory = (function () {
     function Factory() {
     }
@@ -49,7 +49,7 @@ function getACL(requestOptions) {
         aclPromise = Promise.resolve(protectedDocument.accessControlList);
     }
     else {
-        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + NS.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
+        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + CS_1.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
             var results = _a[0];
             return results.bindings[0].acl;
         });

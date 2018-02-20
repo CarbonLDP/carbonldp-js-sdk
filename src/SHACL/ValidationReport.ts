@@ -1,22 +1,23 @@
-import * as NS from "../Vocabularies/index";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as ValidationResult from "./ValidationResult";
 
-export const RDF_CLASS:string = NS.SHACL.ValidationReport;
+export const RDF_CLASS:string = SHACL.ValidationReport;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"conforms": {
-		"@id": NS.SHACL.conforms,
-		"@type": NS.XSD.boolean,
+		"@id": SHACL.conforms,
+		"@type": XSD.boolean,
 	},
 	"results": {
-		"@id": NS.SHACL.result,
+		"@id": SHACL.result,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"shapesGraphWellFormed": {
-		"@id": NS.SHACL.shapesGraphWellFormed,
-		"@type": NS.XSD.boolean,
+		"@id": SHACL.shapesGraphWellFormed,
+		"@type": XSD.boolean,
 	},
 };
 

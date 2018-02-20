@@ -7,11 +7,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var LDP_1 = require("../Vocabularies/LDP");
 var Document = __importStar(require("./../Document"));
 var Errors = __importStar(require("./../Errors"));
-var NS = __importStar(require("../Vocabularies/index"));
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = NS.LDP.DirectContainer;
+exports.RDF_CLASS = LDP_1.LDP.DirectContainer;
 var Factory = (function () {
     function Factory() {
     }
@@ -38,8 +38,8 @@ var Factory = (function () {
         var container = object;
         if (!Document.Factory.is(object))
             container = Document.Factory.createFrom(object);
-        container.types.push(NS.LDP.Container);
-        container.types.push(NS.LDP.DirectContainer);
+        container.types.push(LDP_1.LDP.Container);
+        container.types.push(LDP_1.LDP.DirectContainer);
         container.membershipResource = membershipResource;
         container.hasMemberRelation = hasMemberRelation;
         container.isMemberOfRelation = isMemberOfRelation;

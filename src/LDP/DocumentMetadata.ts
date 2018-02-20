@@ -1,24 +1,25 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+import BlankNode from "./../BlankNode";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as Utils from "./../Utils";
-import * as VolatileResource from "./VolatileResource";
 import * as Map from "./Map";
-import BlankNode from "./../BlankNode";
+import * as VolatileResource from "./VolatileResource";
 
-export const RDF_CLASS:string = NS.C.DocumentMetadata;
+export const RDF_CLASS:string = C.DocumentMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"relatedDocument": {
-		"@id": NS.C.relatedDocument,
+		"@id": C.relatedDocument,
 		"@type": "@id",
 	},
 	"eTag": {
-		"@id": NS.C.eTag,
-		"@type": NS.XSD.string,
+		"@id": C.eTag,
+		"@type": XSD.string,
 	},
 	"bNodesMap": {
-		"@id": NS.C.bNodesMap,
+		"@id": C.bNodesMap,
 		"@type": "@id",
 	},
 };

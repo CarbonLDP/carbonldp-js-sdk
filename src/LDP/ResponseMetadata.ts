@@ -1,14 +1,13 @@
-import * as NS from "../Vocabularies/index";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as DocumentMetadata from "./DocumentMetadata";
 import * as VolatileResource from "./VolatileResource";
-import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.C.ResponseMetadata;
+export const RDF_CLASS:string = C.ResponseMetadata;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"documentsMetadata": {
-		"@id": NS.C.documentMetadata,
+		"@id": C.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
 	},

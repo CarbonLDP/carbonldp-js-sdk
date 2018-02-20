@@ -7,9 +7,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var C_1 = require("../Vocabularies/C");
 var DocumentCreated = __importStar(require("./DocumentCreated"));
-exports.RDF_CLASS = NS.C.ChildCreated;
+exports.RDF_CLASS = C_1.C.ChildCreated;
 exports.SCHEMA = DocumentCreated.SCHEMA;
 
 //# sourceMappingURL=ChildCreated.js.map

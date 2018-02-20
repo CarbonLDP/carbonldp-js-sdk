@@ -1,40 +1,41 @@
-import * as NS from "../Vocabularies/index";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
 import * as Pointer from "./../Pointer";
+import * as Resource from "./../Resource";
 
-export const RDF_CLASS:string = NS.SHACL.ValidationResult;
+export const RDF_CLASS:string = SHACL.ValidationResult;
 
 export const SCHEMA:ObjectSchema.Class = {
 	"focusNode": {
-		"@id": NS.SHACL.focusNode,
+		"@id": SHACL.focusNode,
 		"@type": "@id",
 	},
 	"resultPath": {
-		"@id": NS.SHACL.resultPath,
+		"@id": SHACL.resultPath,
 		"@type": "@id",
 	},
 	"value": {
-		"@id": NS.SHACL.value,
+		"@id": SHACL.value,
 	},
 	"sourceShape": {
-		"@id": NS.SHACL.sourceShape,
+		"@id": SHACL.sourceShape,
 		"@type": "@id",
 	},
 	"sourceConstraintComponent": {
-		"@id": NS.SHACL.sourceConstraintComponent,
+		"@id": SHACL.sourceConstraintComponent,
 		"@type": "@id",
 	},
 	"detail": {
-		"@id": NS.SHACL.detail,
+		"@id": SHACL.detail,
 		"@type": "@id",
 	},
 	"resultMessage": {
-		"@id": NS.SHACL.resultMessage,
-		"@type": NS.XSD.string,
+		"@id": SHACL.resultMessage,
+		"@type": XSD.string,
 	},
 	"resultSeverity": {
-		"@id": NS.SHACL.resultSeverity,
+		"@id": SHACL.resultSeverity,
 		"@type": "@id",
 	},
 };

@@ -51,7 +51,7 @@ var JSONLD = __importStar(require("./JSONLD"));
 var RDF = __importStar(require("./RDF"));
 var Resource = __importStar(require("./Resource"));
 var Utils = __importStar(require("./Utils"));
-var NS = __importStar(require("./Vocabularies/index"));
+var LDP_1 = require("./Vocabularies/LDP");
 var Method;
 (function (Method) {
     Method[Method["BASIC"] = 0] = "BASIC";
@@ -124,7 +124,7 @@ var Class = (function () {
             this.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.RDFSource, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())

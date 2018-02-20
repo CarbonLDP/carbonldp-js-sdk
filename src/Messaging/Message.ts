@@ -1,12 +1,12 @@
-import * as NS from "../Vocabularies/index";
+import { hasProperty } from "../Utils";
+import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
-import { hasProperty } from "../Utils";
 
 export const SCHEMA:ObjectSchema.Class = {
 	"target": {
-		"@id": NS.C.target,
+		"@id": C.target,
 		"@type": "@id",
 	},
 };

@@ -10,17 +10,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var LDP_1 = require("../Vocabularies/LDP");
 var Errors = __importStar(require("./../Errors"));
 var HTTP = __importStar(require("./../HTTP"));
 var JSONLD = __importStar(require("./../JSONLD"));
-var LDP = __importStar(require("./../LDP"));
-var NS = __importStar(require("../Vocabularies/index"));
+var LDP_2 = require("./../LDP");
 var RDF = __importStar(require("./../RDF"));
 var Resource = __importStar(require("./../Resource"));
+var Utils = __importStar(require("./../Utils"));
 var BasicAuthenticator_1 = __importDefault(require("./BasicAuthenticator"));
 var Token = __importStar(require("./Token"));
 var UsernameAndPasswordToken = __importStar(require("./UsernameAndPasswordToken"));
-var Utils = __importStar(require("./../Utils"));
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {
@@ -64,7 +64,7 @@ var Class = (function () {
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.RDFSource, requestOptions);
+        HTTP.Request.Util.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
             return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
@@ -82,7 +82,7 @@ var Class = (function () {
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources
                 .getResources()
-                .find(LDP.ResponseMetadata.Factory.is);
+                .find(LDP_2.ResponseMetadata.Factory.is);
             if (responseMetadata)
                 responseMetadata
                     .documentsMetadata

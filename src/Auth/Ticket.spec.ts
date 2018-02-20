@@ -1,21 +1,19 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import * as URI from "./../RDF/URI";
+import * as Resource from "./../Resource";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
-import * as Resource from "./../Resource";
-import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
 import * as Ticket from "./Ticket";
@@ -36,7 +34,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		expect( Ticket.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Ticket.RDF_CLASS ) ).toBe( true );
 
-		expect( Ticket.RDF_CLASS ).toBe( NS.CS.Ticket );
+		expect( Ticket.RDF_CLASS ).toBe( CS.Ticket );
 	} );
 
 	it( hasProperty(
@@ -49,20 +47,20 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "forURI" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "forURI" ] ).toEqual( {
-			"@id": NS.CS.forIRI,
+			"@id": CS.forIRI,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.expirationTime,
-			"@type": NS.XSD.dateTime,
+			"@id": CS.expirationTime,
+			"@type": XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "ticketKey" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "ticketKey" ] ).toEqual( {
-			"@id": NS.CS.ticketKey,
-			"@type": NS.XSD.string,
+			"@id": CS.ticketKey,
+			"@type": XSD.string,
 		} );
 	} );
 
@@ -116,7 +114,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 			STATIC,
 			"create",
 			"Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
-				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." }
+				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
 			],
 			{ type: "Carbon.Auth.Ticket.Class" }
 		), ():void => {

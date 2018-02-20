@@ -7,21 +7,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("../Vocabularies/index"));
+var C_1 = require("../Vocabularies/C");
+var XSD_1 = require("../Vocabularies/XSD");
 var Utils = __importStar(require("./../Utils"));
 var VolatileResource = __importStar(require("./VolatileResource"));
-exports.RDF_CLASS = NS.C.DocumentMetadata;
+exports.RDF_CLASS = C_1.C.DocumentMetadata;
 exports.SCHEMA = {
     "relatedDocument": {
-        "@id": NS.C.relatedDocument,
+        "@id": C_1.C.relatedDocument,
         "@type": "@id",
     },
     "eTag": {
-        "@id": NS.C.eTag,
-        "@type": NS.XSD.string,
+        "@id": C_1.C.eTag,
+        "@type": XSD_1.XSD.string,
     },
     "bNodesMap": {
-        "@id": NS.C.bNodesMap,
+        "@id": C_1.C.bNodesMap,
         "@type": "@id",
     },
 };

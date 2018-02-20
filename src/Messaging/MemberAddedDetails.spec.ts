@@ -1,8 +1,16 @@
 import * as Messaging from "../Messaging";
-import * as NS from "../Vocabularies/index";
 import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 import * as MemberAddedDetails from "./MemberAddedDetails";
 import DefaultExport from "./MemberAddedDetails";
 
@@ -21,7 +29,7 @@ describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 		expect( MemberAddedDetails.RDF_CLASS ).toBeDefined();
 		expect( MemberAddedDetails.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( MemberAddedDetails.RDF_CLASS ).toBe( NS.C.MemberAddedDetails );
+		expect( MemberAddedDetails.RDF_CLASS ).toBe( C.MemberAddedDetails );
 	} );
 
 	it( hasProperty(
@@ -37,7 +45,7 @@ describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 		} );
 
 		expect( MemberAddedDetails.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.C.member,
+			"@id": C.member,
 			"@type": "@id",
 			"@container": "@set",
 		} );

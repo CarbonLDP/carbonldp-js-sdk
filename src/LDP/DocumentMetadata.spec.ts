@@ -1,5 +1,17 @@
-import { module, isDefined, hasProperty, STATIC, clazz, hasMethod, interfaze, extendsClass, OBLIGATORY, hasDefaultExport } from "../test/JasmineExtender";
-import * as NS from "../Vocabularies/index";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
@@ -21,7 +33,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		expect( DocumentMetadata.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( DocumentMetadata.RDF_CLASS ) ).toBe( true );
 
-		expect( DocumentMetadata.RDF_CLASS ).toBe( NS.C.DocumentMetadata );
+		expect( DocumentMetadata.RDF_CLASS ).toBe( C.DocumentMetadata );
 	} );
 
 	it( hasProperty(
@@ -39,17 +51,17 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		} );
 
 		expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
-			"@id": NS.C.relatedDocument,
+			"@id": C.relatedDocument,
 			"@type": "@id",
 		} );
 
 		expect( DocumentMetadata.SCHEMA[ "eTag" ] ).toEqual( {
-			"@id": NS.C.eTag,
-			"@type": NS.XSD.string,
+			"@id": C.eTag,
+			"@type": XSD.string,
 		} );
 
 		expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {
-			"@id": NS.C.bNodesMap,
+			"@id": C.bNodesMap,
 			"@type": "@id",
 		} );
 
@@ -148,8 +160,8 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
 			object = Resource.Factory.decorate( {
 				types: [
-					NS.C.VolatileResource,
-					NS.C.DocumentMetadata,
+					C.VolatileResource,
+					C.DocumentMetadata,
 				],
 				relatedDocument: null,
 				eTag: null,
@@ -168,13 +180,13 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 			expect( DocumentMetadata.Factory.is( object ) ).toBe( true );
 			object.bNodesMap = null;
 
-			object.removeType( NS.C.VolatileResource );
+			object.removeType( C.VolatileResource );
 			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
-			object.hasType( NS.C.VolatileResource );
+			object.hasType( C.VolatileResource );
 
-			object.removeType( NS.C.DocumentMetadata );
+			object.removeType( C.DocumentMetadata );
 			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
-			object.addType( NS.C.DocumentMetadata );
+			object.addType( C.DocumentMetadata );
 		} );
 
 	} );

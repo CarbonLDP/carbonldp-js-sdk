@@ -1,9 +1,19 @@
-import { hasDefaultExport, module, hasProperty, STATIC, interfaze, OBLIGATORY, OPTIONAL, extendsClass } from "../test/JasmineExtender";
-import * as ValidationResult from "./ValidationResult";
-import DefaultExport from "./ValidationResult";
-import * as NS from "../Vocabularies/index";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC
+} from "../test/JasmineExtender";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
 import * as Pointer from "./../Pointer";
 import * as Resource from "./../Resource";
+import * as ValidationResult from "./ValidationResult";
+import DefaultExport from "./ValidationResult";
 
 describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 
@@ -20,7 +30,7 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		expect( ValidationResult.RDF_CLASS ).toBeDefined();
 		expect( ValidationResult.RDF_CLASS ).toEqual( jasmine.any( String ) );
 
-		expect( ValidationResult.RDF_CLASS ).toBe( NS.SHACL.ValidationResult );
+		expect( ValidationResult.RDF_CLASS ).toBe( SHACL.ValidationResult );
 	} );
 
 	it( hasProperty(
@@ -43,41 +53,41 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		} );
 
 		expect( ValidationResult.SCHEMA[ "focusNode" ] ).toEqual( {
-			"@id": NS.SHACL.focusNode,
+			"@id": SHACL.focusNode,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultPath" ] ).toEqual( {
-			"@id": NS.SHACL.resultPath,
+			"@id": SHACL.resultPath,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "value" ] ).toEqual( {
-			"@id": NS.SHACL.value,
+			"@id": SHACL.value,
 		} );
 
 		expect( ValidationResult.SCHEMA[ "sourceShape" ] ).toEqual( {
-			"@id": NS.SHACL.sourceShape,
+			"@id": SHACL.sourceShape,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "sourceConstraintComponent" ] ).toEqual( {
-			"@id": NS.SHACL.sourceConstraintComponent,
+			"@id": SHACL.sourceConstraintComponent,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "detail" ] ).toEqual( {
-			"@id": NS.SHACL.detail,
+			"@id": SHACL.detail,
 			"@type": "@id",
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultMessage" ] ).toEqual( {
-			"@id": NS.SHACL.resultMessage,
-			"@type": NS.XSD.string,
+			"@id": SHACL.resultMessage,
+			"@type": XSD.string,
 		} );
 
 		expect( ValidationResult.SCHEMA[ "resultSeverity" ] ).toEqual( {
-			"@id": NS.SHACL.resultSeverity,
+			"@id": SHACL.resultSeverity,
 			"@type": "@id",
 		} );
 	} );
