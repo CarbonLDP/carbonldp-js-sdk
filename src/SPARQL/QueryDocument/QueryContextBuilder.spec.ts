@@ -52,7 +52,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );

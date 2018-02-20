@@ -7,11 +7,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = require("../Utils");
 var Errors = __importStar(require("./../Errors"));
 var URI = __importStar(require("./../RDF/URI"));
 var Credentials = __importStar(require("./Credentials"));
 var PersistedUser = __importStar(require("./PersistedUser"));
-var Utils_1 = require("../Utils");
 var Class = (function () {
     function Class(context) {
         this.context = context;

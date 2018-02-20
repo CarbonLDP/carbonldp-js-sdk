@@ -25,7 +25,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		expect( SDKContext ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "Carbon.SDKContext.Class", "Base class of every Context in the SDK.", [ "Carbon.Context.Class" ] ), ():void => {
+	describe( clazz( "Carbon.SDKContext.Class", "Base class of every Context in the SDK.", [ "Carbon.Context.Context" ] ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( SDKContext.Class ).toBeDefined();
@@ -94,7 +94,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"Carbon.Context.Class",
+			"Carbon.Context.Context",
 			"Parent context of the current context. For an instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK."
 		), ():void => {
 			const context:SDKContext.Class = new SDKContext.Class();

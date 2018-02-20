@@ -1,20 +1,17 @@
-import {
-	OBLIGATORY,
-
-	module,
-	method,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
-	hasSignature,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-
 import * as Context from "./Context";
 import DefaultExport from "./Context";
+import {
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/Context" ), ():void => {
 
@@ -24,7 +21,7 @@ describe( module( "Carbon/Context" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Context.Class",
+		"Carbon.Context.Context",
 		"Interface that every context in the SDK implements."
 	), ():void => {
 
@@ -45,7 +42,7 @@ describe( module( "Carbon/Context" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"parentContext",
-			"Carbon.Context.Class",
+			"Carbon.Context.Context",
 			"The parent context of the current context. It will be `null` when the context has no parent."
 		), ():void => {} );
 
@@ -122,9 +119,9 @@ describe( module( "Carbon/Context" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Context.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Context.Context" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Context.Class;
+		let defaultTarget:Context.Context;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

@@ -1,4 +1,4 @@
-import * as Context from "../../Context";
+import { Context } from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
@@ -18,7 +18,7 @@ export class Class extends QueryContext.Class {
 	private _propertiesMap:Map<string, QueryProperty.Class>;
 	private _schemas:DigestedObjectSchema[];
 
-	constructor( context?:Context.Class ) {
+	constructor( context?:Context ) {
 		super( context );
 		this._propertiesMap = new Map();
 	}
@@ -100,7 +100,7 @@ export class Class extends QueryContext.Class {
 		if( this._schemas ) return this._schemas;
 
 		const schemasTypes:Set<string> = new Set();
-		(function addSchemasTypes( context:Context.Class ):void {
+		(function addSchemasTypes( context:Context ):void {
 			if( ! context ) return;
 			Array.from( context[ "typeObjectSchemaMap" ].keys() ).forEach( schemasTypes.add, schemasTypes );
 			addSchemasTypes( context.parentContext );

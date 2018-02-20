@@ -17507,11 +17507,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils_1 = __webpack_require__(0);
 var Errors = __importStar(__webpack_require__(2));
 var URI = __importStar(__webpack_require__(23));
 var Credentials = __importStar(__webpack_require__(93));
 var PersistedUser = __importStar(__webpack_require__(69));
-var Utils_1 = __webpack_require__(0);
 var Class = (function () {
     function Class(context) {
         this.context = context;

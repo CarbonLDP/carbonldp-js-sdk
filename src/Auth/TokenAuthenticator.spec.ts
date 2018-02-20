@@ -58,7 +58,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the user." },
+			{ name: "context", type: "Carbon.Context.Context", description: "The context where to authenticate the user." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;

@@ -54,7 +54,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"Carbon.Context.Class",
+			"Carbon.Context.Context",
 			"The parent context provided in the constructor. " +
 			"If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
 		), ():void => {

@@ -52,7 +52,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 			it( hasSignature(
 				[
 					{ name: "document", type: "Carbon.PersistedDocument.Class", description: "partial document from whom the query context is created for." },
-					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );

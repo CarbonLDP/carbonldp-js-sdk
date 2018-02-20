@@ -1,11 +1,11 @@
-import * as Context from "../../Context";
+import { Context } from "../../Context";
 import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
 export declare class Class extends QueryContext.Class {
     private _propertiesMap;
     private _schemas;
-    constructor(context?: Context.Class);
+    constructor(context?: Context);
     hasProperty(name: string): boolean;
     hasProperties(name: string): boolean;
     addProperty(name: string): QueryProperty.Class;

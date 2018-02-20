@@ -18,7 +18,7 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 		it( hasSignature(
 			"Test if the provided context has a valid `Carbon.Messaging.Service.Class` instance. If don't an error will be thrown.",
 			[
-				{ name: "context", type: "Carbon.Context.Class", description: "The context to be evaluated." },
+				{ name: "context", type: "Carbon.Context.Context", description: "The context to be evaluated." },
 			] ), ():void => {
 		} );
 

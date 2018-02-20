@@ -1,9 +1,9 @@
-import * as Context from "./../Context";
+import { Context } from "../Context";
 import * as HTTP from "./../HTTP";
 import * as PersistedUser from "./PersistedUser";
 export declare class Class {
     private context;
-    constructor(context: Context.Class);
+    constructor(context: Context);
     register(email: string, password: string, enabled?: boolean): Promise<[PersistedUser.Class, HTTP.Response.Class]>;
     get(userURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedUser.Class, HTTP.Response.Class]>;
     enableCredentials(userURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedUser.Class, HTTP.Response.Class[]]>;

@@ -38,7 +38,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( hasSignature(
 				"Class that helps the builders of a query document with the shared data.",
 				[
-					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {} );
 

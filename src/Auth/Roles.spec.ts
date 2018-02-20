@@ -71,7 +71,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class" },
+			{ name: "context", type: "Carbon.Context.Context" },
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );

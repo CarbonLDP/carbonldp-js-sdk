@@ -1,4 +1,5 @@
-import * as Context from "./../Context";
+import { Context } from "../Context";
+import { promiseMethod } from "../Utils";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as Pointer from "./../Pointer";
@@ -6,12 +7,11 @@ import * as URI from "./../RDF/URI";
 import * as Credentials from "./Credentials";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
-import { promiseMethod } from "../Utils";
 
 export class Class {
-	private context:Context.Class;
+	private context:Context;
 
-	constructor( context:Context.Class ) {
+	constructor( context:Context ) {
 		this.context = context;
 	}
 

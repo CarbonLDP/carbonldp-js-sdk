@@ -1,5 +1,5 @@
 import Carbon from "../Carbon";
-import { Class as Context } from "../Context";
+import { Context } from "../Context";
 import { IllegalArgumentError, IllegalStateError } from "../Errors";
 import { Util as URIUtils } from "../RDF/URI";
 import Service from "./Service";

@@ -259,7 +259,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class" },
+			{ name: "context", type: "Carbon.Context.Context" },
 		] ), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
 				protected _baseURI:string;

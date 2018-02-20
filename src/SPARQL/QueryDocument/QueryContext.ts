@@ -1,31 +1,27 @@
-import {
-	isPrefixed,
-	isRelative
-} from "sparqler/iri";
+import { isPrefixed } from "sparqler/iri";
 import {
 	IRIToken,
 	PrefixedNameToken,
 	PrefixToken
 } from "sparqler/tokens";
 
-import * as Context from "../../Context";
+import { Context } from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
 	Resolver,
-	Util as SchemaUtils
 } from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
 
 export class Class implements Resolver {
-	readonly context?:Context.Class;
+	readonly context?:Context;
 
 	private _variablesCounter:number;
 	private _variablesMap:Map<string, QueryVariable.Class>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
-	constructor( context?:Context.Class ) {
+	constructor( context?:Context ) {
 		this.context = context;
 
 		this._variablesCounter = 0;

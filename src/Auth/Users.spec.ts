@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Users." },
+			{ name: "context", type: "Carbon.Context.Context", description: "The context where to manage its Users." },
 		] ), ():void => {
 			const context:AbstractContext = new class extends AbstractContext {
 				protected _baseURI:string;

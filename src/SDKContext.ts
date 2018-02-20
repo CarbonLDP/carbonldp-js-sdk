@@ -1,5 +1,5 @@
 import * as Auth from "./Auth";
-import * as Context from "./Context";
+import { Context } from "./Context";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -18,13 +18,13 @@ import {
 	isString,
 } from "./Utils";
 
-export class Class implements Context.Class {
+export class Class implements Context {
 	auth:Auth.Class;
 	documents:Documents.Class;
 
 	get baseURI():string { return ""; }
 
-	get parentContext():Context.Class { return null; }
+	get parentContext():Context { return null; }
 
 	protected settings:Settings.ContextSettings;
 

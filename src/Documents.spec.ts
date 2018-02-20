@@ -117,7 +117,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
+			{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
