@@ -16,7 +16,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { CS } from "../Vocabularies/CS";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import Documents from "./../Documents";
 import Fragment from "./../Fragment";
 import * as PersistedDocument from "./../PersistedDocument";
@@ -80,9 +80,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		"Interface that represents an in-memory Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {
 			let acl:ACL.Class = <any> {};
-			let fragment:Document.Class;
+			let fragment:Document;
 
 			fragment = acl;
 			expect( fragment ).toEqual( jasmine.any( Object ) );

@@ -1,7 +1,7 @@
 import { QueryClause } from "sparqler/clauses";
 
 import * as AccessPoint from "./AccessPoint";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import Documents from "./Documents";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";
@@ -21,7 +21,7 @@ import * as SPARQL from "./SPARQL";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 
-export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
+export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer.Class;
@@ -428,7 +428,7 @@ export class Factory {
 	}
 
 	static is( object:object ):object is Class {
-		return Document.Factory.is( object )
+		return Document.is( object )
 			&& Factory.hasClassProperties( object )
 			&& MessagingDocument.Factory.hasClassProperties( object )
 			;
@@ -450,9 +450,9 @@ export class Factory {
 	static decorate<T extends object>( object:T, documents:Documents ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
-		Document.Factory.decorate( object );
-		PersistedResource.Factory.decorate( <T & Document.Class> object );
-		ServiceAwareDocument.Factory.decorate( <T & Document.Class> object, documents );
+		Document.decorate( object );
+		PersistedResource.Factory.decorate( <T & Document> object );
+		ServiceAwareDocument.Factory.decorate( <T & Document> object, documents );
 		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument.Class> object );
 
 		const persistedDocument:T & Class = <T & Class> object;

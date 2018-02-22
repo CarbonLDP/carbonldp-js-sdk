@@ -14,7 +14,7 @@ import {
 	hasSignature,
 	hasDefaultExport,
 } from "./test/JasmineExtender";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as NS from "./Vocabularies/index";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
@@ -66,11 +66,11 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 				"Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.", [
 					{name: "object", type: "T extends Object", description: "Object to be converted into a `Carbon.BlankNode.Class`."},
 					{name: "id", type: "string", description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created."},
-					{name: "document", type: "Carbon.Document.Class", description: "The `Carbon.Document.Class` object where the fragment is part of."},
+					{name: "document", type: "Carbon.Document.Document", description: "The `Carbon.Document.Document` object where the fragment is part of."},
 				],
 				{type: "T & Carbon.BlankNode.Class"}
 			), ():void => {
-				let document:Document.Class = Document.Factory.create();
+				let document:Document = Document.create();
 				interface MyFragment {
 					property:string;
 				}
@@ -93,11 +93,11 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 				[ "T extends Object" ],
 				"Creates a `Carbon.BlankNode.Class` object from the object and parameters specified.", [
 					{name: "object", type: "T extends Object", description: "Object to be converted into a `Carbon.BlankNode.Class`."},
-					{name: "document", type: "Carbon.Document.Class", description: "The `Carbon.Document.Class` object where the fragment is part of."},
+					{name: "document", type: "Carbon.Document.Document", description: "The `Carbon.Document.Document` object where the fragment is part of."},
 				],
 				{type: "T & Carbon.BlankNode.Class"}
 			), ():void => {
-				let document:Document.Class = Document.Factory.create();
+				let document:Document = Document.create();
 				interface MyFragment {
 					property:string;
 				}

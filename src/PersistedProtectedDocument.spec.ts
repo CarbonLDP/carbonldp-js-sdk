@@ -17,7 +17,7 @@ import {
 	hasDefaultExport,
 } from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as Documents from "./Documents";
 import * as HTTP from "./HTTP";
 import * as PersistedACL from "./Auth/PersistedACL";
@@ -192,7 +192,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				let context:AbstractContext = new MockContext();
 				documents = context.documents;
 
-				let document:Document.Class = Document.Factory.createFrom( {
+				let document:Document = Document.createFrom( {
 					id: "http://example.com/resource/",
 					accessControlList: documents.getPointer( "http://example.com/resource/~acl/" ),
 					_resolved: true,

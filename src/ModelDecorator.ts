@@ -5,5 +5,5 @@ export interface ModelDecorator<T extends object> {
 
 	isDecorated?( object:object ):object is T;
 
-	decorate<W extends object>( object:W, carbon:Context ):W & T;
+	decorate<W extends object>( object:W, context?:Context ):W & T;
 }

@@ -13,8 +13,8 @@ var Utils = __importStar(require("./Utils"));
 var Factory = (function () {
     function Factory() {
     }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "slug"));
+    Factory.hasClassProperties = function (object) {
+        return (Utils.hasPropertyDefined(object, "slug") && !object.propertyIsEnumerable("slug"));
     };
     Factory.create = function (slug, document) {
         return this.createFrom({}, slug, document);

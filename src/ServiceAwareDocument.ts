@@ -1,4 +1,4 @@
-import { Class as Document } from "./Document";
+import { Document } from "./Document";
 import { Class as Documents } from "./Documents";
 import { isObject } from "./Utils";
 

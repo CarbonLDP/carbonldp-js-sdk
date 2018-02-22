@@ -11,7 +11,7 @@ import {
 	hasSignature, interfaze, hasProperty, OBLIGATORY, hasDefaultExport,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
-import * as Document from "./Document";
+import { Document } from "./Document";
 
 import * as Fragment from "./Fragment";
 import DefaultExport from "./Fragment";
@@ -31,7 +31,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"document",
-			"Carbon.Document.Class",
+			"Carbon.Document.Document",
 			"The document the fragment belongs to."
 		), ():void => {} );
 
@@ -79,10 +79,10 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			resource.document = null;
 		} );
 
-		let document:Document.Class;
+		let document:Document;
 
 		beforeAll( ():void => {
-			document = Document.Factory.create();
+			document = Document.create();
 			document.id = "http://example.com/document/";
 		} );
 
@@ -94,7 +94,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 			it( hasSignature(
 				"Creates a Fragment with the ID provided.", [
 					{name: "id", type: "string", description: "The ID of the fragment to create."},
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
+					{name: "document", type: "Carbon.Document.Document", description: "The document that the fragment will be part of."},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -124,7 +124,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 
 			it( hasSignature(
 				"Creates a BlankNode since no ID is provided.", [
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
+					{name: "document", type: "Carbon.Document.Document", description: "The document that the fragment will be part of."},
 				],
 				{type: "Carbon.Fragment.Class"}
 			), ():void => {
@@ -165,7 +165,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				"Creates a Fragment from an Object with the ID provided.", [
 					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
 					{name: "id", type: "string", description: "The ID that will be assigned to the fragment."},
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
+					{name: "document", type: "Carbon.Document.Document", description: "The document that the fragment will be part of."},
 				],
 				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {
@@ -207,7 +207,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 				[ "T extends Object" ],
 				"Creates a BlankNode since no ID is provided.", [
 					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
+					{name: "document", type: "Carbon.Document.Document", description: "The document that the fragment will be part of."},
 				],
 				{type: "T & Carbon.Fragment.Class"}
 			), ():void => {

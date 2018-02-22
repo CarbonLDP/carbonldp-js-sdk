@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
@@ -17,7 +17,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	name:string;
 }
 

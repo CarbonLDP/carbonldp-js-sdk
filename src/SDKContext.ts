@@ -1,6 +1,6 @@
 import * as Auth from "./Auth";
 import { Context } from "./Context";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
@@ -183,7 +183,7 @@ export class Class implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( Document.RDF_CLASS, Document.SCHEMA );
+		this.extendObjectSchema( Document.TYPE, Document.SCHEMA );
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );

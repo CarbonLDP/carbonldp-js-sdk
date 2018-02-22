@@ -1,5 +1,5 @@
 import { LDP } from "../Vocabularies/LDP";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import {
@@ -41,7 +41,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		"Interface that represents an `ldp:DirectContainer`."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -106,7 +106,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			object.types = [ LDP.DirectContainer ];
 			expect( DirectContainer.Factory.is( object ) ).toBe( false );
 
-			object = Document.Factory.create();
+			object = Document.create();
 			expect( DirectContainer.Factory.is( object ) ).toBe( false );
 			object.membershipResource = "http://example.com/myNamespace#some-relation";
 			expect( DirectContainer.Factory.is( object ) ).toBe( false );

@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(require("./Auth"));
-var Document = __importStar(require("./Document"));
+var Document_1 = require("./Document");
 var Documents = __importStar(require("./Documents"));
 var Errors = __importStar(require("./Errors"));
 var LDP = __importStar(require("./LDP"));
@@ -147,7 +147,7 @@ var Class = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     Class.prototype.registerDefaultObjectSchemas = function () {
-        this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
+        this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);

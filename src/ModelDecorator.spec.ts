@@ -23,7 +23,7 @@ describe( module( "Carbon/ModelDecorator" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasMethod( OBLIGATORY, "decorate", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "context", type: "Carbon.Context.Context" } ], { type: "W & T" } ), ():void => {
+		it( hasMethod( OBLIGATORY, "decorate", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "context", type: "Carbon.Context.Context", optional: true } ], { type: "W & T" } ), ():void => {
 			const target:ModelDecorator<any>[ "decorate" ] = ( object, context ) => object;
 			expect( target ).toBeDefined();
 		} );

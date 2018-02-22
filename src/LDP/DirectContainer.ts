@@ -1,12 +1,12 @@
 import { LDP } from "../Vocabularies/LDP";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as Errors from "./../Errors";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = LDP.DirectContainer;
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	membershipResource:Pointer.Class;
 }
 
@@ -17,7 +17,7 @@ export class Factory {
 	}
 
 	static is( object:object ):object is Class {
-		return Document.Factory.is( object )
+		return Document.is( object )
 			&& object.hasType( RDF_CLASS )
 			&& Factory.hasClassProperties( object )
 			;
@@ -34,7 +34,7 @@ export class Factory {
 		if( ! isMemberOfRelation && Utils.isDefined( isMemberOfRelation ) ) throw new Errors.IllegalArgumentError( "The property isMemberOfRelation cannot be empty." );
 
 		let container:T & Class = <any> object;
-		if( ! Document.Factory.is( object ) ) container = <any> Document.Factory.createFrom( object );
+		if( ! Document.is( object ) ) container = <any> Document.createFrom( object );
 
 		container.types.push( LDP.Container );
 		container.types.push( LDP.DirectContainer );

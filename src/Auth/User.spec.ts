@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import {
 	clazz,
 	extendsClass,
@@ -60,9 +60,9 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		"Interface that represents an in-memory User of any Context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {
 			let user:User.Class = <any> {};
-			let document:Document.Class;
+			let document:Document;
 
 			document = user;
 			expect( document ).toEqual( jasmine.any( Object ) );

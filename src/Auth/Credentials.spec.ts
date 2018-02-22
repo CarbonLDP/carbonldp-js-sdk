@@ -1,7 +1,7 @@
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as Errors from "./../Errors";
 import {
 	clazz,
@@ -69,9 +69,9 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		"Interface that represents an in-memory Credentials of a user."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {
 			const user:Credentials.Class = <any> {};
-			let document:Document.Class;
+			let document:Document;
 
 			document = user;
 			expect( document ).toEqual( jasmine.any( Object ) );

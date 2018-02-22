@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
@@ -32,7 +32,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	name:string;
 	description?:string;
 }
@@ -44,7 +44,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& Document.Factory.is( object )
+			&& Document.is( object )
 			;
 	}
 
@@ -53,8 +53,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
-		if( ! Document.Factory.hasClassProperties( object ) )
-			object = Document.Factory.createFrom( object );
+		if( ! Document.isDecorated( object ) ) object = Document.createFrom( object );
 
 		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 

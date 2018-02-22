@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = require("../Vocabularies/LDP");
-var Document = __importStar(require("./../Document"));
+var Document_1 = require("./../Document");
 var Errors = __importStar(require("./../Errors"));
 var Utils = __importStar(require("./../Utils"));
 exports.RDF_CLASS = LDP_1.LDP.DirectContainer;
@@ -19,7 +19,7 @@ var Factory = (function () {
         return Utils.hasPropertyDefined(resource, "membershipResource");
     };
     Factory.is = function (object) {
-        return Document.Factory.is(object)
+        return Document_1.Document.is(object)
             && object.hasType(exports.RDF_CLASS)
             && Factory.hasClassProperties(object);
     };
@@ -36,8 +36,8 @@ var Factory = (function () {
         if (!isMemberOfRelation && Utils.isDefined(isMemberOfRelation))
             throw new Errors.IllegalArgumentError("The property isMemberOfRelation cannot be empty.");
         var container = object;
-        if (!Document.Factory.is(object))
-            container = Document.Factory.createFrom(object);
+        if (!Document_1.Document.is(object))
+            container = Document_1.Document.createFrom(object);
         container.types.push(LDP_1.LDP.Container);
         container.types.push(LDP_1.LDP.DirectContainer);
         container.membershipResource = membershipResource;

@@ -1,6 +1,6 @@
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import Documents from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
@@ -44,7 +44,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
 		it( extendsClass( "Carbon.PersistedResource.Class" ), ():void => {} );
 		it( extendsClass( "Carbon.ServiceAwareDocument.Class" ), ():void => {} );
 		it( extendsClass( "Carbon.Messaging.Document.Class" ), ():void => {} );
@@ -268,7 +268,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists a document with the slug specified as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it's transformed into one." },
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
@@ -278,7 +278,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists a document as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it's transformed into one." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
@@ -335,7 +335,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it is transformed into one." },
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
@@ -344,7 +344,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it is transformed into one." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
@@ -666,7 +666,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the Document provided has the properties and methods of a `Carbon.PersistedDocument.Class` object.", [
-				{ name: "document", type: "Carbon.Document.Class" },
+				{ name: "document", type: "Carbon.Document.Document" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -874,7 +874,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.Factory.is( <any> 100 ) ).toBe( false );
 			expect( PersistedDocument.Factory.is( {} ) ).toBe( false );
 
-			let object:any = Document.Factory.createFrom( {
+			let object:any = Document.createFrom( {
 				created: null,
 				modified: null,
 				defaultInteractionModel: null,
@@ -1001,7 +1001,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				myProperty?:string;
 			}
 
-			interface MyDocument extends MyObject, Document.Class {}
+			interface MyDocument extends MyObject, Document {}
 
 			let document:MyDocument;
 
@@ -1010,13 +1010,13 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			let persistedDocument:MyPersistedDocument;
 
-			document = Document.Factory.createFrom<MyObject>( {} );
+			document = Document.createFrom<MyObject>( {} );
 			persistedDocument = PersistedDocument.Factory.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
-			document = Document.Factory.createFrom<MyObject>( { myProperty: "a property" } );
+			document = Document.createFrom<MyObject>( { myProperty: "a property" } );
 			persistedDocument = PersistedDocument.Factory.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.Factory.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();
@@ -1741,7 +1741,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends object" ],
 					"Persists a document with the slug specified as a child of the current document.", [
-						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
+						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it's transformed into one." },
 						{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
@@ -1752,7 +1752,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
-					let childDocument:Document.Class = Document.Factory.create();
+					let childDocument:Document = Document.create();
 					document.createChild( childDocument, "child" );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", {} );
@@ -1775,7 +1775,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature(
 					[ "T extends object" ],
 					"Persists a document as a child of the current document.", [
-						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it's transformed into one." },
+						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it's transformed into one." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
 					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
@@ -1785,7 +1785,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
-					let childDocument:Document.Class = Document.Factory.create();
+					let childDocument:Document = Document.create();
 					document.createChild( childDocument );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, {} );
@@ -1922,7 +1922,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					[ "T extends object" ], [
-						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
+						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it is transformed into one." },
 						{ name: "slug", type: "string", description: "The slug name for the children URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
@@ -1930,7 +1930,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
-					let childDocument:Document.Class = Document.Factory.create();
+					let childDocument:Document = Document.create();
 					document.createChildAndRetrieve( childDocument, "child" );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", {} );
@@ -1952,14 +1952,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					[ "T extends object" ], [
-						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Class` object, it is transformed into one." },
+						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it is transformed into one." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 					],
 					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
-					let childDocument:Document.Class = Document.Factory.create();
+					let childDocument:Document = Document.create();
 					document.createChildAndRetrieve( childDocument );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, {} );

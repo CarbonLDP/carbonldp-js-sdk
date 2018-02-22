@@ -24,7 +24,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
 
 	} );
 

@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -6,13 +9,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
-var Document = __importStar(require("./../Document"));
+var Document_1 = require("./../Document");
 var IllegalArgumentError_1 = __importDefault(require("./../Errors/IllegalArgumentError"));
 var Utils = __importStar(require("./../Utils"));
 exports.RDF_CLASS = CS_1.CS.Role;
@@ -48,14 +48,14 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && Document.Factory.is(object);
+            && Document_1.Document.is(object);
     };
     Factory.create = function (name, description) {
         return Factory.createFrom({}, name, description);
     };
     Factory.createFrom = function (object, name, description) {
-        if (!Document.Factory.hasClassProperties(object))
-            object = Document.Factory.createFrom(object);
+        if (!Document_1.Document.isDecorated(object))
+            object = Document_1.Document.createFrom(object);
         if (!name)
             throw new IllegalArgumentError_1.default("The name cannot be empty.");
         var role = object;

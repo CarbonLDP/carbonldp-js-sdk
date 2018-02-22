@@ -25,7 +25,7 @@ import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";
 import Carbon from "./Carbon";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as Documents from "./Documents";
 import DefaultExport from "./Documents";
 import * as Errors from "./Errors";
@@ -2556,7 +2556,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -2832,7 +2832,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
@@ -3231,7 +3231,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -3560,7 +3560,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];

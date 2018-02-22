@@ -1,16 +1,9 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
 var VCARD_1 = require("../Vocabularies/VCARD");
 var XSD_1 = require("../Vocabularies/XSD");
-var Document = __importStar(require("./../Document"));
+var Document_1 = require("./../Document");
 var Errors_1 = require("./../Errors");
 exports.RDF_CLASS = CS_1.CS.Credentials;
 exports.SCHEMA = {
@@ -38,7 +31,7 @@ var Factory = (function () {
         return Factory.createFrom({}, email, password);
     };
     Factory.createFrom = function (object, email, password) {
-        var credentials = Document.Factory.createFrom(object);
+        var credentials = Document_1.Document.createFrom(object);
         if (!email)
             throw new Errors_1.IllegalArgumentError("The email cannot be empty.");
         if (!password)

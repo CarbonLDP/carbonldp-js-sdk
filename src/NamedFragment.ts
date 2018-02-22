@@ -1,4 +1,4 @@
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as Fragment from "./Fragment";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
@@ -8,17 +8,17 @@ export interface Class extends Fragment.Class {
 }
 
 export class Factory {
-	static hasClassProperties( resource:Fragment.Class ):boolean {
+	static hasClassProperties( object:object ):boolean {
 		return (
-			Utils.hasPropertyDefined( resource, "slug" )
+			Utils.hasPropertyDefined( object, "slug" ) && ! object.propertyIsEnumerable( "slug" )
 		);
 	}
 
-	static create( slug:string, document:Document.Class ):Class {
+	static create( slug:string, document:Document ):Class {
 		return this.createFrom( {}, slug, document );
 	}
 
-	static createFrom<T extends Object>( object:T, slug:string, document:Document.Class ):T & Class {
+	static createFrom<T extends Object>( object:T, slug:string, document:Document ):T & Class {
 		let uri:string = document.id + "#" + slug;
 
 		let fragment:Fragment.Class = Fragment.Factory.createFrom( object, uri, document );

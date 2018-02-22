@@ -24,7 +24,7 @@ import {
 	module,
 	property,
 } from "../../test/JasmineExtender";
-import * as Document from "./../../Document";
+import { Document } from "./../../Document";
 import {
 	IllegalArgumentError,
 	IllegalStateError
@@ -93,7 +93,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 				const schema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
 					context.getObjectSchema(),
-					context.getObjectSchema( Document.RDF_CLASS ),
+					context.getObjectSchema( Document.TYPE ),
 				] );
 				schema.vocab = "http://example.com/vocab#";
 

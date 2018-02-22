@@ -1,7 +1,7 @@
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import { IllegalArgumentError } from "./../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 
@@ -26,7 +26,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	email:string;
 	password:string;
 	enabled?:boolean;
@@ -38,7 +38,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, email:string, password:string ):T & Class {
-		const credentials:T & Class = <T & Class> Document.Factory.createFrom<T>( object );
+		const credentials:T & Class = <T & Class> Document.createFrom<T>( object );
 
 		if( ! email ) throw new IllegalArgumentError( "The email cannot be empty." );
 		if( ! password ) throw new IllegalArgumentError( "The password cannot be empty." );

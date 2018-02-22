@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = __importStar(require("./Document"));
+var Document_1 = require("./Document");
 var HTTP = __importStar(require("./HTTP"));
 var MessagingDocument = __importStar(require("./Messaging/Document"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
@@ -232,7 +232,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "sparql");
     };
     Factory.is = function (object) {
-        return Document.Factory.is(object)
+        return Document_1.Document.is(object)
             && Factory.hasClassProperties(object)
             && MessagingDocument.Factory.hasClassProperties(object);
     };
@@ -248,7 +248,7 @@ var Factory = (function () {
     Factory.decorate = function (object, documents) {
         if (Factory.hasClassProperties(object))
             return object;
-        Document.Factory.decorate(object);
+        Document_1.Document.decorate(object);
         PersistedResource.Factory.decorate(object);
         ServiceAwareDocument.Factory.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);

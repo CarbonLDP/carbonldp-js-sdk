@@ -17,7 +17,7 @@ import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
 import Carbon from "./Carbon";
 import Context from "./Context";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as Errors from "./Errors";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
@@ -1118,10 +1118,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	private persistChildDocument<T extends object>( parentURI:string, childObject:T, slug:string, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]> {
 		if( PersistedDocument.Factory.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
-		let childDocument:T & Document.Class = Document.Factory.is( childObject ) ? <T & Document.Class> childObject : Document.Factory.createFrom<T>( childObject );
+		let childDocument:T & Document = Document.is( childObject ) ? <T & Document> childObject : Document.createFrom<T>( childObject );
 
 		this.setDefaultRequestOptions( requestOptions, LDP.Container );
-		return this.persistDocument<T & Document.Class, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
+		return this.persistDocument<T & Document, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
 	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPoint.Class, slug:string, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
@@ -1136,7 +1136,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.persistDocument<T & AccessPoint.DocumentClass, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
-	private persistDocument<T extends Document.Class, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {
+	private persistDocument<T extends Document, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {
 		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
 		if( document.id ) {
@@ -1150,11 +1150,11 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		if( document[ "__CarbonSDK_InProgressOfPersisting" ] ) return Promise.reject( new Errors.IllegalArgumentError( "The document is already being persisted." ) );
 		Object.defineProperty( document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true } );
 
-		let body:string = document.toJSON( this, this.jsonldConverter );
+		let body:string = JSON.stringify( document.toJSON( this, this.jsonldConverter ) );
 
 		if( ! ! slug ) HTTP.Request.Util.setSlug( slug, requestOptions );
 
-		return HTTP.Request.Service.post( parentURI, body, requestOptions ).then<[ T & W, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
+		return this.sendRequest( HTTP.Method.POST, parentURI, requestOptions, body ).then<[ T & W, HTTP.Response.Class ]>( ( response:HTTP.Response.Class ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 
 			let locationHeader:HTTP.Header.Class = response.getHeader( "Location" );
@@ -1259,7 +1259,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ] );
 	}
 
-	private getDigestedObjectSchemaForDocument( document:Document.Class ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchemaForDocument( document:Document ):ObjectSchema.DigestedObjectSchema {
 		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
 			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
 			return this.getProcessedSchema( schemas );
@@ -1276,9 +1276,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			Utils.isDefined( objectID ) &&
 			! RDF.URI.Util.hasFragment( objectID ) &&
 			! RDF.URI.Util.isBNodeID( objectID ) &&
-			objectTypes.indexOf( Document.RDF_CLASS ) === - 1
+			objectTypes.indexOf( Document.TYPE ) === - 1
 		)
-			objectTypes = objectTypes.concat( Document.RDF_CLASS );
+			objectTypes = objectTypes.concat( Document.TYPE );
 
 		const schemas:ObjectSchema.DigestedObjectSchema[] = objectTypes
 			.filter( type => this.context.hasObjectSchema( type ) )

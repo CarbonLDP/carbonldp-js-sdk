@@ -1,5 +1,5 @@
 import { CS } from "../Vocabularies/CS";
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Pointer from "./../Pointer";
 import * as Utils from "./../Utils";
@@ -24,7 +24,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	accessTo:Pointer.Class;
 	entries?:ACE.Class[];
 	inheritableEntries?:ACE.Class[];

@@ -1,4 +1,4 @@
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as ObjectSchema from "./ObjectSchema";
 import { CS } from "./Vocabularies/CS";
 
@@ -11,7 +11,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 
 }
 

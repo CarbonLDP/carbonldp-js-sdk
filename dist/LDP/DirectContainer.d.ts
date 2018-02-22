@@ -1,7 +1,7 @@
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as Pointer from "./../Pointer";
 export declare const RDF_CLASS: string;
-export interface Class extends Document.Class {
+export interface Class extends Document {
     membershipResource: Pointer.Class;
 }
 export declare class Factory {

@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var AccessPoint = __importStar(require("./AccessPoint"));
 var Auth = __importStar(require("./Auth"));
-var Document = __importStar(require("./Document"));
+var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
 var FreeResources = __importStar(require("./FreeResources"));
 var HTTP = __importStar(require("./HTTP"));
@@ -916,7 +916,7 @@ var Class = (function () {
     Class.prototype.persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
         if (PersistedDocument.Factory.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
-        var childDocument = Document.Factory.is(childObject) ? childObject : Document.Factory.createFrom(childObject);
+        var childDocument = Document_1.Document.is(childObject) ? childObject : Document_1.Document.createFrom(childObject);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
         return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
@@ -944,10 +944,10 @@ var Class = (function () {
         if (document["__CarbonSDK_InProgressOfPersisting"])
             return Promise.reject(new Errors.IllegalArgumentError("The document is already being persisted."));
         Object.defineProperty(document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
-        var body = document.toJSON(this, this.jsonldConverter);
+        var body = JSON.stringify(document.toJSON(this, this.jsonldConverter));
         if (!!slug)
             HTTP.Request.Util.setSlug(slug, requestOptions);
-        return HTTP.Request.Service.post(parentURI, body, requestOptions).then(function (response) {
+        return this.sendRequest(HTTP.Method.POST, parentURI, requestOptions, body).then(function (response) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
@@ -1047,8 +1047,8 @@ var Class = (function () {
         if (Utils.isDefined(objectID) &&
             !RDF.URI.Util.hasFragment(objectID) &&
             !RDF.URI.Util.isBNodeID(objectID) &&
-            objectTypes.indexOf(Document.RDF_CLASS) === -1)
-            objectTypes = objectTypes.concat(Document.RDF_CLASS);
+            objectTypes.indexOf(Document_1.Document.TYPE) === -1)
+            objectTypes = objectTypes.concat(Document_1.Document.TYPE);
         var schemas = objectTypes
             .filter(function (type) { return _this.context.hasObjectSchema(type); })
             .map(function (type) { return _this.context.getObjectSchema(type); });

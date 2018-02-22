@@ -1,12 +1,9 @@
-import * as Document from "./Document";
-import * as Errors from "./Errors";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
+import { Document } from "./Document";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
 export interface Class extends Resource.Class {
-	document:Document.Class;
+	document:Document;
 }
 
 export class Factory {
@@ -16,15 +13,15 @@ export class Factory {
 		);
 	}
 
-	static create( id:string, document:Document.Class ):Class;
-	static create( document:Document.Class ):Class;
-	static create( idOrDocument:any, document?:Document.Class ):Class {
+	static create( id:string, document:Document ):Class;
+	static create( document:Document ):Class;
+	static create( idOrDocument:any, document?:Document ):Class {
 		return this.createFrom( {}, idOrDocument, document );
 	}
 
-	static createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
-	static createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
-	static createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
+	static createFrom<T extends Object>( object:T, id:string, document:Document ):T & Class;
+	static createFrom<T extends Object>( object:T, document:Document ):T & Class;
+	static createFrom<T extends Object>( object:T, idOrDocument:any, document:Document = null ):T & Class {
 		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : "";
 		document = document || idOrDocument;
 

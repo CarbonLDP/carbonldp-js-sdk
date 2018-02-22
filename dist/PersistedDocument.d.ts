@@ -1,6 +1,6 @@
 import { QueryClause } from "sparqler/clauses";
 import * as AccessPoint from "./AccessPoint";
-import * as Document from "./Document";
+import { Document } from "./Document";
 import Documents from "./Documents";
 import * as HTTP from "./HTTP";
 import * as MessagingDocument from "./Messaging/Document";
@@ -13,7 +13,7 @@ import * as Pointer from "./Pointer";
 import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
-export interface Class extends Document.Class, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
+export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer.Class;

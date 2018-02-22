@@ -1,4 +1,4 @@
-import * as Document from "./Document";
+import { Document } from "./Document";
 import * as Documents from "./Documents";
 import * as ServiceAwareDocument from "./ServiceAwareDocument";
 import DefaultExport from "./ServiceAwareDocument";
@@ -11,7 +11,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 		"Interface that has a reference to its `Carbon.Documents.Class`."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -45,7 +45,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			[ "T extends Carbon.Document.Class" ],
+			[ "T extends Carbon.Document.Document" ],
 			"Decorates the provided document with the properties of the `Carbon.ServiceAwareDocument.Class` interface.",
 			[
 				{ name: "document", type: "T", description: "Document object to decorate." },
@@ -107,7 +107,7 @@ describe( "Carbon.ServiceAwareDocument.Factory", ():void => {
 
 		it( "should return the same reference of the object provided", ():void => {
 			const documents:Documents.Class = new Documents.Class();
-			const object:Document.Class = Document.Factory.createFrom( {
+			const object:Document = Document.createFrom( {
 				_documents: null,
 			} );
 
@@ -117,7 +117,7 @@ describe( "Carbon.ServiceAwareDocument.Factory", ():void => {
 
 		it( "should not decorate if already has the specific properties", ():void => {
 			const documents:Documents.Class = new Documents.Class();
-			const object:Document.Class = Document.Factory.createFrom( {
+			const object:Document = Document.createFrom( {
 				_documents: null,
 			} );
 
@@ -127,7 +127,7 @@ describe( "Carbon.ServiceAwareDocument.Factory", ():void => {
 
 		it( "should add the new properties", ():void => {
 			const documents:Documents.Class = new Documents.Class();
-			const object:Document.Class = Document.Factory.create();
+			const object:Document = Document.create();
 
 			const decoratedObject:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( object, documents );
 			expect( decoratedObject ).toEqual( jasmine.objectContaining( {
