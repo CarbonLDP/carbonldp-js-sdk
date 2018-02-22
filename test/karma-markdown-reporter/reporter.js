@@ -162,8 +162,8 @@ var MarkdownReporter = (() => {
 	}
 
 	// Obtains or generate the object for store and arrange the specs data
-	function getContainer( parent, data, isSuite ) {
-		if( "suiteType" in data || isSuite ) {
+	function getContainer( parent, data ) {
+		if( "suiteType" in data ) {
 			return composeSuite( parent, data );
 		} else {
 			return composeSpec( parent, data );
@@ -350,16 +350,16 @@ var MarkdownReporter = (() => {
 	}
 
 	function parseSpecs( parent, specs ) {
-		let container;
-		let data;
 		for( let key of Object.keys( specs ) ) {
-			data = parseData( key );
-			container = getContainer( parent, data, true );
+			if( ! isJSON( key ) ) continue;
+			const data = parseData( key );
+
+			const container = getContainer( parent, data );
 			if( container === null ) continue;
 
 			for( let spec of specs[ key ]._ ) {
-				data = parseData( spec );
-				getContainer( container, data, false );
+				const subData = parseData( spec );
+				getContainer( container, subData );
 			}
 			delete specs[ key ]._;
 			parseSpecs( container, specs[ key ] );
