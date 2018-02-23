@@ -29,7 +29,7 @@ import { Document } from "./Document";
 import * as Documents from "./Documents";
 import DefaultExport from "./Documents";
 import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import MessagingEvent from "./Messaging/Event";
@@ -945,7 +945,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						(function documentFragments():void {
 
-							let fragment:Fragment.Class;
+							let fragment:Fragment;
 							expect( document.getFragments().length ).toBe( 4 );
 
 							(function documentBlankNode_1():void {

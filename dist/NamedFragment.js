@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __importStar(require("./Fragment"));
+var Fragment_1 = require("./Fragment");
 var RDF = __importStar(require("./RDF"));
 var Utils = __importStar(require("./Utils"));
 var Factory = (function () {
@@ -21,7 +21,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object, slug, document) {
         var uri = document.id + "#" + slug;
-        var fragment = Fragment.Factory.createFrom(object, uri, document);
+        var fragment = Fragment_1.Fragment.createFrom(object, document, uri);
         if (this.hasClassProperties(fragment))
             return fragment;
         Object.defineProperties(fragment, {

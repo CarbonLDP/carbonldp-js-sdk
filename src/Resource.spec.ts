@@ -67,7 +67,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.Resource.ResourceFactory",
-		"Interface with the factory, decorate, and utils methods of a `Carbon.Resource.Resource` object."
+		"Interface with the factory, decorate and utils methods of a `Carbon.Resource.Resource` object."
 	), ():void => {
 
 		it( hasMethod(

@@ -1,6 +1,6 @@
 import { Document } from "./Document";
-import * as Fragment from "./Fragment";
-export interface Class extends Fragment.Class {
+import { Fragment } from "./Fragment";
+export interface Class extends Fragment {
 }
 export declare class Factory {
     static createFrom<T extends Object>(object: T, document: Document): T & Class;

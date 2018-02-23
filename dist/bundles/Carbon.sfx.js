@@ -4675,45 +4675,45 @@ exports.default = Class;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = __webpack_require__(13);
-var Utils = __importStar(__webpack_require__(0));
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "document"));
-    };
-    Factory.create = function (idOrDocument, document) {
-        return this.createFrom({}, idOrDocument, document);
-    };
-    Factory.createFrom = function (object, idOrDocument, document) {
-        if (document === void 0) { document = null; }
-        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : "";
-        document = document || idOrDocument;
-        var resource = Resource_1.Resource.createFrom(object, id);
-        if (Factory.hasClassProperties(resource))
-            return resource;
-        Object.defineProperties(resource, {
-            "document": {
-                writable: false,
+var Utils_1 = __webpack_require__(0);
+exports.Fragment = {
+    isDecorated: function (object) {
+        return Utils_1.isObject(object) &&
+            object.hasOwnProperty("_document");
+    },
+    is: function (object) {
+        return Resource_1.Resource.is(object) &&
+            exports.Fragment.isDecorated(object);
+    },
+    create: function (document, id) {
+        return this.createFrom({}, document, id);
+    },
+    createFrom: function (object, document, id) {
+        var fragment = exports.Fragment.decorate(object);
+        if (id)
+            fragment.id = id;
+        fragment._document = document;
+        return fragment;
+    },
+    decorate: function (object) {
+        if (exports.Fragment.isDecorated(object))
+            return object;
+        Resource_1.Resource.decorate(object);
+        var fragment = object;
+        Object.defineProperties(fragment, {
+            "_document": {
+                writable: true,
                 enumerable: false,
                 configurable: true,
-                value: document,
+                value: fragment._document,
             },
         });
-        return resource;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+        return fragment;
+    },
+};
+exports.default = exports.Fragment;
 
 
 /***/ }),
@@ -4730,14 +4730,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __importStar(__webpack_require__(46));
+var Fragment_1 = __webpack_require__(46);
 var ObjectSchema = __importStar(__webpack_require__(12));
 var PersistedResource = __importStar(__webpack_require__(48));
 var RDF = __importStar(__webpack_require__(10));
 function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
         return uri;
-    var schema = this.document._documents.getGeneralSchema();
+    var schema = this._document._documents.getGeneralSchema();
     return ObjectSchema.Util.resolveURI(uri, schema, { vocab: true });
 }
 function extendAddType(superFunction) {
@@ -4763,7 +4763,7 @@ var Factory = (function () {
     }
     Factory.is = function (object) {
         return PersistedResource.Factory.hasClassProperties(object)
-            && Fragment.Factory.hasClassProperties(object);
+            && Fragment_1.Fragment.isDecorated(object);
     };
     Factory.decorate = function (fragment) {
         PersistedResource.Factory.decorate(fragment);
@@ -8944,7 +8944,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __importStar(__webpack_require__(46));
+var Fragment_1 = __webpack_require__(46);
 var RDF = __importStar(__webpack_require__(10));
 var Utils = __importStar(__webpack_require__(0));
 var Factory = (function () {
@@ -8958,7 +8958,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object, slug, document) {
         var uri = document.id + "#" + slug;
-        var fragment = Fragment.Factory.createFrom(object, uri, document);
+        var fragment = Fragment_1.Fragment.createFrom(object, document, uri);
         if (this.hasClassProperties(fragment))
             return fragment;
         Object.defineProperties(fragment, {
@@ -13025,7 +13025,7 @@ var Auth = __importStar(__webpack_require__(45));
 var Document = __importStar(__webpack_require__(26));
 var Documents = __importStar(__webpack_require__(112));
 var Errors = __importStar(__webpack_require__(2));
-var Fragment = __importStar(__webpack_require__(46));
+var Fragment_1 = __webpack_require__(46);
 var HTTP = __importStar(__webpack_require__(18));
 var JSONLD = __importStar(__webpack_require__(36));
 var LDP = __importStar(__webpack_require__(39));
@@ -13115,7 +13115,7 @@ var Class = (function (_super) {
     Class.Document = Document;
     Class.Documents = Documents;
     Class.Errors = Errors;
-    Class.Fragment = Fragment;
+    Class.Fragment = Fragment_1.Fragment;
     Class.HTTP = HTTP;
     Class.JSONLD = JSONLD;
     Class.LDP = LDP;
@@ -15846,7 +15846,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __importStar(__webpack_require__(46));
+var Fragment_1 = __webpack_require__(46);
 var RDF = __importStar(__webpack_require__(10));
 var Utils = __importStar(__webpack_require__(0));
 var Factory = (function () {
@@ -15855,7 +15855,7 @@ var Factory = (function () {
     Factory.createFrom = function (object, idOrDocument, document) {
         var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
         document = document || idOrDocument;
-        return Fragment.Factory.createFrom(object, id, document);
+        return Fragment_1.Fragment.createFrom(object, document, id);
     };
     return Factory;
 }());

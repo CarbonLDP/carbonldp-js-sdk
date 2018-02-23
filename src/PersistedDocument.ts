@@ -3,7 +3,7 @@ import { QueryClause } from "sparqler/clauses";
 import * as AccessPoint from "./AccessPoint";
 import { Document } from "./Document";
 import Documents from "./Documents";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as MessagingDocument from "./Messaging/Document";
 import * as NamedFragment from "./NamedFragment";
@@ -218,13 +218,13 @@ function extendRemoveType( superFunction:( type:string ) => void ):( type:string
 	};
 }
 
-function extendCreateFragment( superFunction:() => Fragment.Class ):() => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( slug:string ) => Fragment.Class ):( slug:string ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( object:object, slug:string ) => Fragment.Class ):( slug:string, object:object ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( object:object ) => Fragment.Class ):( object:object ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => Fragment.Class ):any {
+function extendCreateFragment( superFunction:() => Fragment ):() => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( slug:string ) => Fragment ):( slug:string ) => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( object:object, slug:string ) => Fragment ):( slug:string, object:object ) => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( object:object ) => Fragment ):( object:object ) => PersistedFragment.Class;
+function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => Fragment ):any {
 	return function( slugOrObject?:any, slug?:string ):any {
-		let fragment:Fragment.Class = superFunction.call( this, slugOrObject, slug );
+		let fragment:Fragment = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
 		if( RDF.URI.Util.isBNodeID( id ) ) PersistedFragment.Factory.decorate( fragment );

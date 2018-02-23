@@ -1,5 +1,5 @@
 import { IllegalArgumentError } from "../Errors";
-import * as Fragment from "../Fragment";
+import { Fragment } from "../Fragment";
 import { Resource } from "../Resource";
 import {
 	hasFunction,
@@ -75,7 +75,7 @@ export const decorateDocument:<T extends object>( object:T ) => T & Document = <
 	Object.defineProperties( object, {
 		"_fragmentsIndex": {
 			configurable: true,
-			value: new Map<string, Fragment.Class>(),
+			value: new Map<string, Fragment>(),
 		},
 
 		"_normalize": {

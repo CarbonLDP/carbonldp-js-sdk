@@ -62,7 +62,7 @@ describe( module( "Carbon/Document" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, Carbon.Fragment.Class>",
+			"Map<string, Carbon.Fragment.Fragment>",
 			"Map that stores the fragments (named fragments and blank nodes) of the Document."
 		), ():void => {} );
 
@@ -129,7 +129,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & Carbon.Fragment.Class" }
+			{ type: "T & Carbon.Fragment.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -140,14 +140,14 @@ describe( module( "Carbon/Document" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & Carbon.Fragment.Class" }
+			{ type: "T & Carbon.Fragment.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getFragments",
 			"Returns an array with all the fragments in the Document.",
-			{ type: "Carbon.Fragment.Class[]" }
+			{ type: "Carbon.Fragment.Fragment[]" }
 		), ():void => {} );
 
 		describe( method(
@@ -158,32 +158,32 @@ describe( module( "Carbon/Document" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
+				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Fragment` is created instead.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & Carbon.Fragment.Class" }
+				{ type: "T & Carbon.Fragment.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
+				"Creates a `Carbon.Fragment.Fragment` from the object provided, since no slug is specified.", [
 					{ name: "object", type: "object" },
 				],
-				{ type: "T & Carbon.Fragment.Class" }
+				{ type: "T & Carbon.Fragment.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates an empty `Carbon.NamedFragment.Class` with the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
+				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Fragment` is created instead.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "Carbon.Fragment.Class" }
+				{ type: "Carbon.Fragment.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `Carbon.Fragment.Class`, since no slug is provided.",
-				{ type: "Carbon.Fragment.Class" }
+				"Creates an empty `Carbon.Fragment.Fragment`, since no slug is provided.",
+				{ type: "Carbon.Fragment.Fragment" }
 			), ():void => {} );
 
 		} );
@@ -219,8 +219,8 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.", [
-					{ name: "fragment", type: "Carbon.Fragment.Class" },
+				"Remove the fragment referenced by the `Carbon.Fragment.Fragment` provided from the Document.", [
+					{ name: "fragment", type: "Carbon.Fragment.Fragment" },
 				]
 			), ():void => {} );
 

@@ -13,7 +13,7 @@ import {
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
-import * as Fragment from "./../Fragment";
+import { Fragment } from "./../Fragment";
 import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
@@ -78,9 +78,9 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		"Interface that represents an Access Control Entry (ACE) of an Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {
+		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {
 			let ace:ACE.Class = <any> {};
-			let fragment:Fragment.Class;
+			let fragment:Fragment;
 
 			fragment = ace;
 			expect( fragment ).toEqual( jasmine.any( Object ) );

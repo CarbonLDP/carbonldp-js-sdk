@@ -1,6 +1,6 @@
 import * as BlankNode from "../BlankNode";
 import * as Errors from "../Errors";
-import * as Fragment from "../Fragment";
+import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import * as NamedFragment from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
@@ -46,7 +46,7 @@ export function hasFragment( this:Document, id:string ):boolean {
 	return this._fragmentsIndex.has( id );
 }
 
-export function getFragment( this:Document, id:string ):Fragment.Class {
+export function getFragment( this:Document, id:string ):Fragment {
 	if( ! RDF.URI.Util.isBNodeID( id ) ) return this.getNamedFragment( id );
 	return this._fragmentsIndex.get( id ) || null;
 }
@@ -63,13 +63,13 @@ export function getNamedFragment( this:Document, id:string ):NamedFragment.Class
 	return <NamedFragment.Class> this._fragmentsIndex.get( id ) || null;
 }
 
-export function getFragments( this:Document ):Fragment.Class[] {
+export function getFragments( this:Document ):Fragment[] {
 	return Utils.A.from( this._fragmentsIndex.values() );
 }
 
-export function createFragment<T extends object>( object:T, slug?:string ):T & Fragment.Class;
-export function createFragment( slug?:string ):Fragment.Class;
-export function createFragment<T extends object>( this:Document, slugOrObject?:any, slug?:string ):T & Fragment.Class {
+export function createFragment<T extends object>( object:T, slug?:string ):T & Fragment;
+export function createFragment( slug?:string ):Fragment;
+export function createFragment<T extends object>( this:Document, slugOrObject?:any, slug?:string ):T & Fragment {
 	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
@@ -107,7 +107,7 @@ export function createNamedFragment<T extends Object>( this:Document, slugOrObje
 	return fragment;
 }
 
-export function removeFragment( this:Document, fragmentOrSlug:string | Fragment.Class ):void {
+export function removeFragment( this:Document, fragmentOrSlug:string | Fragment ):void {
 	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( RDF.URI.Util.isAbsolute( id ) ) {
@@ -147,7 +147,7 @@ export function toJSON( this:Document, keyOrObjectSchemaResolver?:string | Objec
 }
 
 export function normalize( this:Document ):void {
-	const currentFragments:Fragment.Class[] = this.getFragments()
+	const currentFragments:Fragment[] = this.getFragments()
 		.filter( fragment => RDF.URI.Util.isBNodeID( fragment.id ) );
 	const usedFragmentsIDs:Set<string> = new Set();
 
@@ -161,7 +161,7 @@ export function normalize( this:Document ):void {
 export const convertNestedObjects:( parent:Document, actual:any, fragmentsTracker?:Set<string> ) => void = ( parent, actual, fragmentsTracker = new Set() ) => {
 	let next:any;
 	let idOrSlug:string;
-	let fragment:Fragment.Class;
+	let fragment:Fragment;
 
 	let keys:string[] = Object.keys( actual );
 	for( let key of keys ) {
@@ -184,7 +184,7 @@ export const convertNestedObjects:( parent:Document, actual:any, fragmentsTracke
 		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? RDF.URI.Util.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "" );
 		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
 
-		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
+		let parentFragment:Fragment = parent.getFragment( idOrSlug );
 
 		if( ! parentFragment ) {
 			fragment = parent.createFragment( <Object> next, idOrSlug );

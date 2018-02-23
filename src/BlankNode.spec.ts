@@ -78,13 +78,13 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 
 				blankNode = BlankNode.Factory.createFrom<MyFragment>( {property: "my property 1"}, "_:BlankNode-1", document );
 				expect( blankNode ).toBeTruthy();
-				expect( blankNode.document ).toBe( document );
+				expect( blankNode._document ).toBe( document );
 				expect( blankNode.id ).toBe( "_:BlankNode-1" );
 				expect( blankNode.property ).toBe( "my property 1" );
 
 				let anotherBlankNode:BlankNode.Class = BlankNode.Factory.createFrom<{}>( {}, "_:BlankNode-2", document );
 				expect( anotherBlankNode ).toBeTruthy();
-				expect( anotherBlankNode.document ).toBe( document );
+				expect( anotherBlankNode._document ).toBe( document );
 				expect( anotherBlankNode.id ).toBe( "_:BlankNode-2" );
 				expect( anotherBlankNode[ "property" ] ).toBeUndefined();
 			} );
@@ -105,13 +105,13 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 
 				blankNode = BlankNode.Factory.createFrom<MyFragment>( {property: "my property 3"}, document );
 				expect( blankNode ).toBeTruthy();
-				expect( blankNode.document ).toBe( document );
+				expect( blankNode._document ).toBe( document );
 				expect( RDF.URI.Util.isBNodeID( blankNode.id ) ).toBe( true );
 				expect( blankNode.property ).toBe( "my property 3" );
 
 				let anotherBlankNode:BlankNode.Class = BlankNode.Factory.createFrom<{}>( {}, document );
 				expect( anotherBlankNode ).toBeTruthy();
-				expect( anotherBlankNode.document ).toBe( document );
+				expect( anotherBlankNode._document ).toBe( document );
 				expect( RDF.URI.Util.isBNodeID( anotherBlankNode.id ) ).toBe( true );
 				expect( anotherBlankNode[ "property" ] ).toBeUndefined();
 			} );

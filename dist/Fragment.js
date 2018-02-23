@@ -1,42 +1,42 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = require("./Resource");
-var Utils = __importStar(require("./Utils"));
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (resource) {
-        return (Utils.hasPropertyDefined(resource, "document"));
-    };
-    Factory.create = function (idOrDocument, document) {
-        return this.createFrom({}, idOrDocument, document);
-    };
-    Factory.createFrom = function (object, idOrDocument, document) {
-        if (document === void 0) { document = null; }
-        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : "";
-        document = document || idOrDocument;
-        var resource = Resource_1.Resource.createFrom(object, id);
-        if (Factory.hasClassProperties(resource))
-            return resource;
-        Object.defineProperties(resource, {
-            "document": {
-                writable: false,
+var Utils_1 = require("./Utils");
+exports.Fragment = {
+    isDecorated: function (object) {
+        return Utils_1.isObject(object) &&
+            object.hasOwnProperty("_document");
+    },
+    is: function (object) {
+        return Resource_1.Resource.is(object) &&
+            exports.Fragment.isDecorated(object);
+    },
+    create: function (document, id) {
+        return this.createFrom({}, document, id);
+    },
+    createFrom: function (object, document, id) {
+        var fragment = exports.Fragment.decorate(object);
+        if (id)
+            fragment.id = id;
+        fragment._document = document;
+        return fragment;
+    },
+    decorate: function (object) {
+        if (exports.Fragment.isDecorated(object))
+            return object;
+        Resource_1.Resource.decorate(object);
+        var fragment = object;
+        Object.defineProperties(fragment, {
+            "_document": {
+                writable: true,
                 enumerable: false,
                 configurable: true,
-                value: document,
+                value: fragment._document,
             },
         });
-        return resource;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+        return fragment;
+    },
+};
+exports.default = exports.Fragment;
 
 //# sourceMappingURL=Fragment.js.map

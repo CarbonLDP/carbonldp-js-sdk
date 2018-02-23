@@ -30,7 +30,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		"Interface that represents a named fragment from a Carbon LDP document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -70,7 +70,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			STATIC,
 			"hasClassProperties",
 			"Returns true if the object provided has the properties and methods of a `Carbon.NamedFragment.Class` object.", [
-				{ name: "resource", type: "Carbon.Fragment.Class" },
+				{ name: "resource", type: "Carbon.Fragment.Fragment" },
 			],
 			{ type: "boolean" }
 		), ():void => {
@@ -107,13 +107,13 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			fragment = NamedFragment.Factory.create( "fragment", document );
 			expect( fragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-			expect( fragment.document ).toBe( document );
+			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
 			fragment = NamedFragment.Factory.create( "another-fragment", document );
 			expect( fragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-			expect( fragment.document ).toBe( document );
+			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 		} );
 
@@ -140,21 +140,21 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			fragment = NamedFragment.Factory.createFrom<MyFragment>( { property: "my property 1" }, "fragment", document );
 			expect( fragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-			expect( fragment.document ).toBe( document );
+			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 			expect( fragment.property ).toBe( "my property 1" );
 
 			fragment = NamedFragment.Factory.createFrom<MyFragment>( { property: "my property 2" }, "another-fragment", document );
 			expect( fragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-			expect( fragment.document ).toBe( document );
+			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 			expect( fragment.property ).toBe( "my property 2" );
 
 			let anotherFragment:NamedFragment.Class = NamedFragment.Factory.createFrom<Object>( {}, "some-fragment", document );
 			expect( anotherFragment ).toBeTruthy();
 			expect( NamedFragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
-			expect( anotherFragment.document ).toBe( document );
+			expect( anotherFragment._document ).toBe( document );
 			expect( anotherFragment.id ).toBe( "http://example.com/document/#some-fragment" );
 			expect( anotherFragment[ "property" ] ).toBeUndefined();
 		} );

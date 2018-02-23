@@ -1,4 +1,4 @@
-import * as Fragment from "../Fragment";
+import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
@@ -11,15 +11,15 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;
     hasMemberRelation?: Pointer;
-    _fragmentsIndex: Map<string, Fragment.Class>;
+    _fragmentsIndex: Map<string, Fragment>;
     _normalize(): void;
-    _removeFragment(slugOrFragment: string | Fragment.Class): void;
+    _removeFragment(slugOrFragment: string | Fragment): void;
     hasFragment(slug: string): boolean;
-    getFragment<T>(slug: string): T & Fragment.Class;
+    getFragment<T>(slug: string): T & Fragment;
     getNamedFragment<T>(slug: string): T & NamedFragment.Class;
-    getFragments(): Fragment.Class[];
-    createFragment<T>(object: T, slug?: string): T & Fragment.Class;
-    createFragment(slug?: string): Fragment.Class;
+    getFragments(): Fragment[];
+    createFragment<T>(object: T, slug?: string): T & Fragment;
+    createFragment(slug?: string): Fragment;
     createNamedFragment<T>(object: T, slug: string): T & NamedFragment.Class;
     createNamedFragment(slug: string): NamedFragment.Class;
     removeNamedFragment(slugOrFragment: string | NamedFragment.Class): void;

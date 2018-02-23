@@ -3,7 +3,7 @@ import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,
 } from "../Errors";
-import * as Fragment from "../Fragment";
+import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import * as NamedFragment from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
@@ -137,7 +137,7 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when relative fragment label and not exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = getPointer.call( document, "#fragment" );
+			const fragment:Fragment = getPointer.call( document, "#fragment" );
 
 			// TODO: Use `NamedFragment.is`
 			expect( Resource.is( fragment ) ).toBe( true );
@@ -150,7 +150,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when relative fragment label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getPointer.call( document, "#fragment" ) ).toBe( fragment );
@@ -158,7 +158,7 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when absolute fragment label and not exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = getPointer.call( document, "https://example.com/document/#fragment" );
+			const fragment:Fragment = getPointer.call( document, "https://example.com/document/#fragment" );
 
 			// TODO: Use `NamedFragment.is`
 			expect( Resource.is( fragment ) ).toBe( true );
@@ -171,7 +171,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when absolute fragment label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getPointer.call( document, "https://example.com/document/#fragment" ) ).toBe( fragment );
@@ -179,7 +179,7 @@ describe( "Document methods", ():void => {
 
 		it( "should create `BlankNode` when blank node label and not exists", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = getPointer.call( document, "_:1" );
+			const fragment:Fragment = getPointer.call( document, "_:1" );
 
 			// TODO: Use `BlankNode.is`
 			expect( Resource.is( fragment ) ).toBe( true );
@@ -192,7 +192,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return true when blank node label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "_:1", fragment );
 
 			expect( getPointer.call( document, "_:1" ) ).toBe( fragment );
@@ -399,7 +399,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when relative fragment label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getFragment.call( document, "#fragment" ) ).toBe( fragment );
@@ -413,7 +413,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when absolute fragment label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getFragment.call( document, "https://example.com/document/#fragment" ) ).toBe( fragment );
@@ -427,7 +427,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return true when blank node label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "_:1", fragment );
 
 			expect( getFragment.call( document, "_:1" ) ).toBe( fragment );
@@ -462,7 +462,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when relative fragment label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getNamedFragment.call( document, "#fragment" ) ).toBe( fragment );
@@ -470,7 +470,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when relative label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getNamedFragment.call( document, "fragment" ) ).toBe( fragment );
@@ -484,7 +484,7 @@ describe( "Document methods", ():void => {
 
 		it( "should return fragment when absolute fragment label and exits", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = {} as any;
+			const fragment:Fragment = {} as any;
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			expect( getNamedFragment.call( document, "https://example.com/document/#fragment" ) ).toBe( fragment );
@@ -551,7 +551,7 @@ describe( "Document methods", ():void => {
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 
 			expect( fragment ).toEqual( {
 				string: "a string",
@@ -560,21 +560,21 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when only slug label provided", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = createFragment.call( document, "fragment" );
+			const fragment:Fragment = createFragment.call( document, "fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 		} );
 
 		it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
 			const document:Document = createMockDocument();
-			type TargetFragment = Fragment.Class & { string:string };
+			type TargetFragment = Fragment & { string:string };
 			const fragment:TargetFragment = createFragment.call( document, { string: "a string" }, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
 				string: "a string",
@@ -583,31 +583,31 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = createFragment.call( document, "https://example.com/document/#fragment" );
+			const fragment:Fragment = createFragment.call( document, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 		} );
 
 		it( "should create `BlankNode` when no label provided", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = createFragment.call( document, {} );
+			const fragment:Fragment = createFragment.call( document, {} );
 
 			// TODO: Use `isBlankNode`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 		} );
 
 		it( "should create `BlankNode` when object and blank node label provided", ():void => {
 			const document:Document = createMockDocument();
-			type TargetFragment = Fragment.Class & { string:string };
+			type TargetFragment = Fragment & { string:string };
 			const fragment:TargetFragment = createFragment.call( document, { string: "a string" }, "_:1" );
 
 			// TODO: Use `isBlankNode`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
@@ -617,11 +617,11 @@ describe( "Document methods", ():void => {
 
 		it( "should create `BlankNode` when only blank node label provided", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = createFragment.call( document, "_:1" );
+			const fragment:Fragment = createFragment.call( document, "_:1" );
 
 			// TODO: Use `isBlankNode`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 		} );
 
@@ -688,12 +688,12 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when object and slug label provided", ():void => {
 			const document:Document = createMockDocument();
-			type TargetFragment = Fragment.Class & { string:string };
+			type TargetFragment = Fragment & { string:string };
 			const fragment:TargetFragment = createNamedFragment.call( document, { string: "a string" }, "fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
 				string: "a string",
@@ -702,21 +702,21 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when only slug label provided", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = createNamedFragment.call( document, "fragment" );
+			const fragment:Fragment = createNamedFragment.call( document, "fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 		} );
 
 		it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
 			const document:Document = createMockDocument();
-			type TargetFragment = Fragment.Class & { string:string };
+			type TargetFragment = Fragment & { string:string };
 			const fragment:TargetFragment = createNamedFragment.call( document, { string: "a string" }, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
 				string: "a string",
@@ -725,11 +725,11 @@ describe( "Document methods", ():void => {
 
 		it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
 			const document:Document = createMockDocument();
-			const fragment:Fragment.Class = createNamedFragment.call( document, "https://example.com/document/#fragment" );
+			const fragment:Fragment = createNamedFragment.call( document, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( Fragment.isDecorated( fragment ) ).toBe( true );
 		} );
 
 		it( "should throw error when object and blank node label provided", ():void => {

@@ -1,5 +1,5 @@
 import AbstractContext from "./AbstractContext";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
 import * as PersistedDocument from "./PersistedDocument";
 
 import * as PersistedFragment from "./PersistedFragment";
@@ -34,7 +34,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "Carbon.PersistedResource.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.Fragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -64,7 +64,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.", [
-				{ name: "fragment", type: "T extends Carbon.Fragment.Class", description: "The Fragment object to convert into a persisted one." },
+				{ name: "fragment", type: "T extends Carbon.Fragment.Fragment", description: "The Fragment object to convert into a persisted one." },
 			]
 		), ():void => {
 			expect( PersistedFragment.Factory.decorate ).toBeDefined();
@@ -72,7 +72,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource.Factory, "decorate" );
 
-			let fragment:Fragment.Class = Fragment.Factory.create( "_:01", null );
+			let fragment:Fragment = Fragment.create( null, "_:01" );
 			let persistedFragment:PersistedFragment.Class = PersistedFragment.Factory.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
@@ -110,7 +110,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 
 				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
 
-				let fragment:Fragment.Class = Fragment.Factory.create( document );
+				let fragment:Fragment = Fragment.create( document );
 				persistedFragment = PersistedFragment.Factory.decorate( fragment );
 			} );
 

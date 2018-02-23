@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as Fragment from "./../Fragment";
+import { Fragment } from "./../Fragment";
 import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
@@ -28,7 +28,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Fragment.Class {
+export interface Class extends Fragment {
 	granting:boolean;
 	permissions:Pointer[];
 	subjects:Pointer[];

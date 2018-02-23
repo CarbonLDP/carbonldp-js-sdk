@@ -7,14 +7,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __importStar(require("./Fragment"));
+var Fragment_1 = require("./Fragment");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedResource = __importStar(require("./PersistedResource"));
 var RDF = __importStar(require("./RDF"));
 function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
         return uri;
-    var schema = this.document._documents.getGeneralSchema();
+    var schema = this._document._documents.getGeneralSchema();
     return ObjectSchema.Util.resolveURI(uri, schema, { vocab: true });
 }
 function extendAddType(superFunction) {
@@ -40,7 +40,7 @@ var Factory = (function () {
     }
     Factory.is = function (object) {
         return PersistedResource.Factory.hasClassProperties(object)
-            && Fragment.Factory.hasClassProperties(object);
+            && Fragment_1.Fragment.isDecorated(object);
     };
     Factory.decorate = function (fragment) {
         PersistedResource.Factory.decorate(fragment);

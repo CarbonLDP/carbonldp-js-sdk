@@ -6,7 +6,7 @@ import * as Auth from "./Auth";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
 import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";

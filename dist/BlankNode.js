@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = __importStar(require("./Fragment"));
+var Fragment_1 = require("./Fragment");
 var RDF = __importStar(require("./RDF"));
 var Utils = __importStar(require("./Utils"));
 var Factory = (function () {
@@ -16,7 +16,7 @@ var Factory = (function () {
     Factory.createFrom = function (object, idOrDocument, document) {
         var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
         document = document || idOrDocument;
-        return Fragment.Factory.createFrom(object, id, document);
+        return Fragment_1.Fragment.createFrom(object, document, id);
     };
     return Factory;
 }());

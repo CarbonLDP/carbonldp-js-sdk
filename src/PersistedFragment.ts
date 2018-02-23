@@ -1,17 +1,17 @@
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedResource from "./PersistedResource";
 import * as RDF from "./RDF";
 
-export interface Class extends PersistedResource.Class, Fragment.Class {
-	document:PersistedDocument.Class;
+export interface Class extends PersistedResource.Class, Fragment {
+	_document:PersistedDocument.Class;
 }
 
 function resolveURI( this:Class, uri:string ):string {
 	if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-	let schema:ObjectSchema.DigestedObjectSchema = this.document._documents.getGeneralSchema();
+	let schema:ObjectSchema.DigestedObjectSchema = this._document._documents.getGeneralSchema();
 	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
 }
 
@@ -40,11 +40,11 @@ export class Factory {
 
 	static is( object:object ):object is Class {
 		return PersistedResource.Factory.hasClassProperties( object )
-			&& Fragment.Factory.hasClassProperties( object )
+			&& Fragment.isDecorated( object )
 			;
 	}
 
-	static decorate<T extends Fragment.Class>( fragment:T ):T & Class {
+	static decorate<T extends Fragment>( fragment:T ):T & Class {
 		PersistedResource.Factory.decorate( fragment );
 
 		Object.defineProperties( fragment, {

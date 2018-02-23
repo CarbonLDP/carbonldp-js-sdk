@@ -1,9 +1,9 @@
 import { Document } from "./Document";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
 import * as RDF from "./RDF";
 import * as Utils from "./Utils";
 
-export interface Class extends Fragment.Class {
+export interface Class extends Fragment {
 	slug:string;
 }
 
@@ -21,7 +21,7 @@ export class Factory {
 	static createFrom<T extends Object>( object:T, slug:string, document:Document ):T & Class {
 		let uri:string = document.id + "#" + slug;
 
-		let fragment:Fragment.Class = Fragment.Factory.createFrom( object, uri, document );
+		let fragment:Fragment = Fragment.createFrom( object, document, uri );
 
 		if( this.hasClassProperties( fragment ) ) return <any> fragment;
 
