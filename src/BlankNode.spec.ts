@@ -10,6 +10,8 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
+	STATIC,
 } from "./test/JasmineExtender";
 
 describe( module( "Carbon/BlankNode" ), ():void => {
@@ -65,7 +67,7 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "Carbon.BlankNode.BlankNode", "Factory class for `Carbon.BlankNode.BlankNode` objects." ), ():void => {
+	describe( property( STATIC, "BlankNode", "Carbon.BlankNode.BlankNodeFactory", "Constant that implements the `Carbon.BlankNode.BlankNodeFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( BlankNode ).toBeDefined();
