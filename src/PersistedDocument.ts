@@ -6,7 +6,7 @@ import Documents from "./Documents";
 import { Fragment } from "./Fragment";
 import * as HTTP from "./HTTP";
 import * as MessagingDocument from "./Messaging/Document";
-import * as NamedFragment from "./NamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedFragment from "./PersistedFragment";
@@ -232,11 +232,11 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 	};
 }
 
-function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment.Class ):( slug:string ) => PersistedNamedFragment.Class;
-function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => NamedFragment.Class ):( slug:string, object:object ) => PersistedNamedFragment.Class;
-function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment.Class ):any {
+function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment ):( slug:string ) => PersistedNamedFragment.Class;
+function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => NamedFragment ):( slug:string, object:object ) => PersistedNamedFragment.Class;
+function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment ):any {
 	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment.Class {
-		let fragment:NamedFragment.Class = superFunction.call( this, slugOrObject, slug );
+		let fragment:NamedFragment = superFunction.call( this, slugOrObject, slug );
 		return PersistedNamedFragment.Factory.decorate( fragment );
 	};
 }

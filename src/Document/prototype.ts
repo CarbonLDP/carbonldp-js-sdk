@@ -2,7 +2,7 @@ import * as BlankNode from "../BlankNode";
 import * as Errors from "../Errors";
 import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
-import * as NamedFragment from "../NamedFragment";
+import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import * as RDF from "../RDF";
@@ -51,7 +51,7 @@ export function getFragment( this:Document, id:string ):Fragment {
 	return this._fragmentsIndex.get( id ) || null;
 }
 
-export function getNamedFragment( this:Document, id:string ):NamedFragment.Class {
+export function getNamedFragment( this:Document, id:string ):NamedFragment {
 	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
 	if( RDF.URI.Util.isAbsolute( id ) ) {
 		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) throw new Errors.IllegalArgumentError( "The id is out of scope." );
@@ -60,7 +60,7 @@ export function getNamedFragment( this:Document, id:string ):NamedFragment.Class
 		id = id.substring( 1 );
 	}
 
-	return <NamedFragment.Class> this._fragmentsIndex.get( id ) || null;
+	return <NamedFragment> this._fragmentsIndex.get( id ) || null;
 }
 
 export function getFragments( this:Document ):Fragment[] {
@@ -85,9 +85,9 @@ export function createFragment<T extends object>( this:Document, slugOrObject?:a
 	return fragment;
 }
 
-export function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment.Class & T;
-export function createNamedFragment( slug:string ):NamedFragment.Class;
-export function createNamedFragment<T extends Object>( this:Document, slugOrObject:any, slug?:string ):T & NamedFragment.Class {
+export function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment & T;
+export function createNamedFragment( slug:string ):NamedFragment;
+export function createNamedFragment<T extends Object>( this:Document, slugOrObject:any, slug?:string ):T & NamedFragment {
 	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
@@ -100,7 +100,7 @@ export function createNamedFragment<T extends Object>( this:Document, slugOrObje
 
 	if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	const fragment:T & NamedFragment.Class = NamedFragment.Factory.createFrom<T>( object, slug, this );
+	const fragment:T & NamedFragment = NamedFragment.createFrom<T>( object, this, slug );
 	this._fragmentsIndex.set( slug, fragment );
 
 	convertNestedObjects( this, fragment );
@@ -120,7 +120,7 @@ export function removeFragment( this:Document, fragmentOrSlug:string | Fragment 
 	this._fragmentsIndex.delete( id );
 }
 
-export function removeNamedFragment( this:Document, fragmentOrSlug:NamedFragment.Class | string ):void {
+export function removeNamedFragment( this:Document, fragmentOrSlug:NamedFragment | string ):void {
 	const id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "You can only remove NamedFragments." );

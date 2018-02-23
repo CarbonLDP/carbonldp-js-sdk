@@ -157,7 +157,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
+				"Creates a `Carbon.NamedFragment.NamedFragment` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Fragment` is created instead.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
@@ -174,7 +174,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `Carbon.NamedFragment.Class` with the slug specified.\n" +
+				"Creates an empty `Carbon.NamedFragment.NamedFragment` with the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Fragment` is created instead.", [
 					{ name: "slug", type: "string" },
 				],
@@ -194,21 +194,21 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a `Carbon.NamedFragment.Class` with the slug provided.\n" +
+				"Creates a `Carbon.NamedFragment.NamedFragment` with the slug provided.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "Carbon.NamedFragment.Class" }
+				{ type: "Carbon.NamedFragment.NamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
+				"Creates a `Carbon.NamedFragment.NamedFragment` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & Carbon.NamedFragment.Class" }
+				{ type: "T & Carbon.NamedFragment.NamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -238,8 +238,8 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
-					{ name: "fragment", type: "Carbon.NamedFragment.Class" },
+				"Remove the maned fragment referenced by the `Carbon.NamedFragment.NamedFragment` provided from the Document.", [
+					{ name: "fragment", type: "Carbon.NamedFragment.NamedFragment" },
 				]
 			), ():void => {} );
 

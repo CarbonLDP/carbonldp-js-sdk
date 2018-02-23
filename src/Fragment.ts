@@ -60,7 +60,6 @@ export const Fragment:FragmentFactory = {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: fragment._document,
 			},
 		} );
 

@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode = __importStar(require("../BlankNode"));
 var Errors = __importStar(require("../Errors"));
 var JSONLDConverter = __importStar(require("../JSONLD/Converter"));
-var NamedFragment = __importStar(require("../NamedFragment"));
+var NamedFragment_1 = require("../NamedFragment");
 var ObjectSchema = __importStar(require("../ObjectSchema"));
 var Pointer_1 = require("../Pointer");
 var RDF = __importStar(require("../RDF"));
@@ -109,7 +109,7 @@ function createNamedFragment(slugOrObject, slug) {
         slug = slug.substring(1);
     if (this._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = NamedFragment.Factory.createFrom(object, slug, this);
+    var fragment = NamedFragment_1.NamedFragment.createFrom(object, this, slug);
     this._fragmentsIndex.set(slug, fragment);
     exports.convertNestedObjects(this, fragment);
     return fragment;

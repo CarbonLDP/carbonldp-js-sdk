@@ -1,24 +1,21 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as NamedFragment from "./NamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import * as PersistedFragment from "./PersistedFragment";
-import * as Utils from "./Utils";
 
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import DefaultExport from "./PersistedNamedFragment";
+import {
+	clazz,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
 
 describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 
@@ -33,7 +30,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.NamedFragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.NamedFragment.NamedFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -64,7 +61,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 			STATIC,
 			"decorate",
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.", [
-				{ name: "fragment", type: "T extends Carbon.NamedFragment.Class", description: "The NamedFragment object to convert into a persisted one." },
+				{ name: "fragment", type: "T extends Carbon.NamedFragment.NamedFragment", description: "The NamedFragment object to convert into a persisted one." },
 			]
 		), ():void => {
 			expect( PersistedNamedFragment.Factory.decorate ).toBeDefined();
@@ -72,7 +69,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedFragment.Factory, "decorate" );
 
-			let fragment:NamedFragment.Class = NamedFragment.Factory.create( "fragment-slug", <any> { id: "http://example.com/resoruce/" } );
+			let fragment:NamedFragment = NamedFragment.create( <any> { id: "http://example.com/resoruce/" }, "fragment-slug" );
 			let persistedFragment:PersistedNamedFragment.Class = PersistedNamedFragment.Factory.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();

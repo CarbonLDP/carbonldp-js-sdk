@@ -1,33 +1,24 @@
-import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-
-	isDefined,
-	hasMethod,
-	interfaze,
-	hasProperty,
-	hasDefaultExport, extendsClass,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import { Document } from "./Document";
+import DefaultExport, { NamedFragment } from "./NamedFragment";
 
-import * as NamedFragment from "./NamedFragment";
-import DefaultExport from "./NamedFragment";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC,
+} from "./test/JasmineExtender";
 
 describe( module( "Carbon/NamedFragment" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( NamedFragment ).toBeDefined();
-		expect( Utils.isObject( NamedFragment ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.NamedFragment.Class",
-		"Interface that represents a named fragment from a Carbon LDP document."
+		"Carbon.NamedFragment.NamedFragment",
+		"Interface that represents an in-memory named fragment from a Carbon LDP document."
 	), ():void => {
 
 		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {} );
@@ -41,123 +32,161 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.NamedFragment.Class" ), ():void => {
+	describe( interfaze(
+		"Carbon.NamedFragment.NamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `Carbon.NamedFragment.NamedFragment` object."
+	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object provided has the properties and methods of a `Carbon.NamedFragment.NamedFragment` object.", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.NamedFragment.NamedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object provided is considered a `Carbon.NamedFragment.NamedFragment` object.", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.NamedFragment.NamedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			"Creates a NamedFragment with the slug provided", [
+				{ name: "document", type: "Carbon.Document.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
+			],
+			{ type: "Carbon.NamedFragment.Class" }
+		), ():void => {} );
+
+		it( hasMethod(
+			STATIC,
+			"createFrom",
+			[ "T extends object" ],
+			"Creates a NamedFragment from an Object with the slug provided.", [
+				{ name: "object", type: "T", description: "Object that will be converted to a NamedFragment." },
+				{ name: "document", type: "Carbon.Document.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
+			],
+			{ type: "T & Carbon.NamedFragment.NamedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			STATIC,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.Named.Fragment.NamedFragment` object.", [
+				{ name: "object", type: "T", description: "Object to be decorated." },
+			],
+			{ type: "T & Carbon.NamedFragment.NamedFragment" }
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.NamedFragment.NamedFragment" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:NamedFragment.Class;
+		let defaultTarget:NamedFragment;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"Carbon.NamedFragment.Factory",
-		"Factory class for `Carbon.NamedFragment.Class` objects."
-	), ():void => {
+	describe( property( STATIC, "NamedFragment", "Carbon.NamedFragmentFactory", "Constant that implements the `Carbon.NamedFragment.NamedFragment`, interface" ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( NamedFragment.Factory ).toBeDefined();
-			expect( Utils.isFunction( NamedFragment.Factory ) ).toBe( true );
+			expect( NamedFragment ).toBeDefined();
+			expect( NamedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
 		let document:Document;
-
 		beforeAll( ():void => {
 			document = Document.create();
 			document.id = "http://example.com/document/";
 		} );
 
-		xit( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties and methods of a `Carbon.NamedFragment.Class` object.", [
-				{ name: "resource", type: "Carbon.Fragment.Fragment" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( NamedFragment.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( NamedFragment.Factory.hasClassProperties ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "NamedFragment.isDecorated", ():void => {
+			expect( NamedFragment.isDecorated ).toBeDefined();
+			expect( NamedFragment.isDecorated ).toEqual( jasmine.any( Function ) );
 
-			let resource:any = undefined;
-			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( false );
+			let namedFragment:Partial<NamedFragment> = undefined;
+			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( false );
 
-			resource = {
+			namedFragment = {
 				slug: null,
 			};
-			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( true );
+			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( false );
 
-			delete resource.slug;
-			expect( NamedFragment.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.slug = null;
+			Object.defineProperty( namedFragment, "slug", { enumerable: false } );
+			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( true );
+
+			delete namedFragment.slug;
+			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( false );
+			namedFragment.slug = null;
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"create",
-			"Creates a NamedFragment with the slug provided", [
-				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
-				{ name: "document", type: "Carbon.Document.Document", description: "The document that the NamedFragment will be part of." },
-			],
-			{ type: "Carbon.NamedFragment.Class" }
-		), ():void => {
-			expect( NamedFragment.Factory.create ).toBeDefined();
-			expect( Utils.isFunction( NamedFragment.Factory.create ) ).toBe( true );
+		// TODO: Create tests for `NamedFragment.is`
 
-			let fragment:NamedFragment.Class;
+		// TODO: Separate in different tests
+		it( "NamedFragment.create", ():void => {
+			expect( NamedFragment.create ).toBeDefined();
+			expect( NamedFragment.create ).toEqual( jasmine.any( Function ) );
 
-			fragment = NamedFragment.Factory.create( "fragment", document );
+			let fragment:NamedFragment;
+
+			fragment = NamedFragment.create( document, "fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
-			fragment = NamedFragment.Factory.create( "another-fragment", document );
+			fragment = NamedFragment.create( document, "another-fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"createFrom",
-			[ "T extends Object" ],
-			"Creates a NamedFragment from an Object with the slug provided.", [
-				{ name: "object", type: "T", description: "Object that will be converted to a NamedFragment." },
-				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
-				{ name: "document", type: "Carbon.Document.Document", description: "The document that the NamedFragment will be part of." },
-			],
-			{ type: "T & Carbon.NamedFragment.Class" }
-		), ():void => {
-			expect( NamedFragment.Factory.createFrom ).toBeDefined();
-			expect( Utils.isFunction( NamedFragment.Factory.createFrom ) ).toBe( true );
-
+		// TODO: Separate in different tests
+		it( "NamedFragment.createFrom", ():void => {
+			expect( NamedFragment.createFrom ).toBeDefined();
+			expect( NamedFragment.createFrom ).toEqual( jasmine.any( Function ) );
 
 			interface MyFragment {
 				property:string;
 			}
-			let fragment:NamedFragment.Class & MyFragment;
 
-			fragment = NamedFragment.Factory.createFrom<MyFragment>( { property: "my property 1" }, "fragment", document );
+			let fragment:NamedFragment & MyFragment;
+
+			fragment = NamedFragment.createFrom<MyFragment>( { property: "my property 1" }, document, "fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 			expect( fragment.property ).toBe( "my property 1" );
 
-			fragment = NamedFragment.Factory.createFrom<MyFragment>( { property: "my property 2" }, "another-fragment", document );
+			fragment = NamedFragment.createFrom<MyFragment>( { property: "my property 2" }, document, "another-fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 			expect( fragment.property ).toBe( "my property 2" );
 
-			let anotherFragment:NamedFragment.Class = NamedFragment.Factory.createFrom<Object>( {}, "some-fragment", document );
+			let anotherFragment:NamedFragment = NamedFragment.createFrom<Object>( {}, document, "some-fragment" );
 			expect( anotherFragment ).toBeTruthy();
-			expect( NamedFragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( anotherFragment ) ).toBe( true );
 			expect( anotherFragment._document ).toBe( document );
 			expect( anotherFragment.id ).toBe( "http://example.com/document/#some-fragment" );
 			expect( anotherFragment[ "property" ] ).toBeUndefined();
 		} );
+
+		// TODO: Create tests for `NamedFragment.decorate`
 
 	} );
 

@@ -5,7 +5,7 @@ import {
 } from "../Errors";
 import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
-import * as NamedFragment from "../NamedFragment";
+import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
@@ -141,7 +141,7 @@ describe( "Document methods", ():void => {
 
 			// TODO: Use `NamedFragment.is`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 
 			expect( document._fragmentsIndex ).toEqual( new Map( [
 				[ "fragment", fragment ],
@@ -162,7 +162,7 @@ describe( "Document methods", ():void => {
 
 			// TODO: Use `NamedFragment.is`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 
 			expect( document._fragmentsIndex ).toEqual( new Map( [
 				[ "fragment", fragment ],
@@ -793,7 +793,7 @@ describe( "Document methods", ():void => {
 		it( "should remove providing a `NamedFragment`", ():void => {
 			const document:Document = createMockDocument();
 
-			const fragment:NamedFragment.Class = NamedFragment.Factory.create( "fragment", document );
+			const fragment:NamedFragment = NamedFragment.create( document, "fragment" );
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			removeFragment.call( document, fragment );
@@ -858,7 +858,7 @@ describe( "Document methods", ():void => {
 		it( "should remove providing a `NamedFragment`", ():void => {
 			const document:Document = createMockDocument();
 
-			const fragment:NamedFragment.Class = NamedFragment.Factory.create( "fragment", document );
+			const fragment:NamedFragment = NamedFragment.create( document, "fragment" );
 			document._fragmentsIndex.set( "fragment", fragment );
 
 			removeNamedFragment.call( document, fragment );
@@ -1202,7 +1202,7 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( document.object ) ).toBe( true );
-			expect( NamedFragment.Factory.hasClassProperties( document.object ) ).toBe( true );
+			expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
 
 			expect( document.hasFragment( "#fragment" ) ).toBe( true );
 			expect( document.object ).toBe( document.getFragment( "#fragment" ) );
@@ -1217,7 +1217,7 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( document.object ) ).toBe( true );
-			expect( NamedFragment.Factory.hasClassProperties( document.object ) ).toBe( true );
+			expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
 
 			expect( document.hasFragment( "#1" ) ).toBe( true );
 			expect( document.object ).toBe( document.getFragment( "#1" ) );
@@ -1232,7 +1232,7 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isNamedFragment`
 			expect( Resource.is( document.object ) ).toBe( true );
-			expect( NamedFragment.Factory.hasClassProperties( document.object ) ).toBe( true );
+			expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
 
 			expect( document.hasFragment( "#fragment" ) ).toBe( true );
 			expect( document.object ).toBe( document.getFragment( "#fragment" ) );

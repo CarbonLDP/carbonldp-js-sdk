@@ -5,7 +5,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
 import * as HTTP from "./HTTP";
-import * as NamedFragment from "./NamedFragment";
+import { NamedFragment } from "./NamedFragment";
 
 import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
@@ -1533,7 +1533,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					let fragment:PersistedNamedFragment.Class;
 
 					fragment = document.createNamedFragment( "my-fragment" );
-					expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
+					expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
 					expect( fragment.slug ).toBe( "my-fragment" );
 					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
 

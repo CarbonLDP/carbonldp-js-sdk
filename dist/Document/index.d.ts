@@ -2,7 +2,7 @@ import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
-import * as NamedFragment from "../NamedFragment";
+import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
@@ -16,13 +16,13 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     _removeFragment(slugOrFragment: string | Fragment): void;
     hasFragment(slug: string): boolean;
     getFragment<T>(slug: string): T & Fragment;
-    getNamedFragment<T>(slug: string): T & NamedFragment.Class;
+    getNamedFragment<T>(slug: string): T & NamedFragment;
     getFragments(): Fragment[];
     createFragment<T>(object: T, slug?: string): T & Fragment;
     createFragment(slug?: string): Fragment;
-    createNamedFragment<T>(object: T, slug: string): T & NamedFragment.Class;
-    createNamedFragment(slug: string): NamedFragment.Class;
-    removeNamedFragment(slugOrFragment: string | NamedFragment.Class): void;
+    createNamedFragment<T>(object: T, slug: string): T & NamedFragment;
+    createNamedFragment(slug: string): NamedFragment;
+    removeNamedFragment(slugOrFragment: string | NamedFragment): void;
     toJSON(objectSchemaResolver?: ObjectSchema.Resolver, jsonldConverter?: JSONLDConverter.Class): RDFDocument.Class;
 }
 export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {

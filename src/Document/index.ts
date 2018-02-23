@@ -2,7 +2,7 @@ import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
-import * as NamedFragment from "../NamedFragment";
+import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import {
 	Pointer,
@@ -41,7 +41,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
 
 	getFragment<T>( slug:string ):T & Fragment;
 
-	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
+	getNamedFragment<T>( slug:string ):T & NamedFragment;
 
 
 	getFragments():Fragment[];
@@ -52,12 +52,12 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
 	createFragment( slug?:string ):Fragment;
 
 
-	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment.Class;
+	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment;
 
-	createNamedFragment( slug:string ):NamedFragment.Class;
+	createNamedFragment( slug:string ):NamedFragment;
 
 
-	removeNamedFragment( slugOrFragment:string | NamedFragment.Class ):void;
+	removeNamedFragment( slugOrFragment:string | NamedFragment ):void;
 
 
 	toJSON( objectSchemaResolver?:ObjectSchema.Resolver, jsonldConverter?:JSONLDConverter.Class ):RDFDocument.Class;

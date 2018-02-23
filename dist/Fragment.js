@@ -31,7 +31,6 @@ exports.Fragment = {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: fragment._document,
             },
         });
         return fragment;
