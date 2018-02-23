@@ -4,12 +4,10 @@ import {
 	extendsClass,
 	hasDefaultExport,
 	hasProperty,
-	INSTANCE,
 	interfaze,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
-	reexports,
 } from "./test/JasmineExtender";
 
 describe( module( "Carbon/Settings" ), ():void => {
@@ -100,7 +98,7 @@ describe( module( "Carbon/Settings" ), ():void => {
 			"string",
 			"The host of the platform to connect to."
 		), ():void => {
-			const target:Settings.Class[ "host" ] = "" as string;
+			const target:Settings.CarbonSettings[ "host" ] = "" as string;
 			expect( target ).toBeDefined();
 		} );
 
@@ -110,7 +108,7 @@ describe( module( "Carbon/Settings" ), ():void => {
 			"number",
 			"The optional port of the host to connect to."
 		), ():void => {
-			const target:Settings.Class[ "port" ] = 80 as number;
+			const target:Settings.CarbonSettings[ "port" ] = 80 as number;
 			expect( target ).toBeDefined();
 		} );
 
@@ -121,19 +119,14 @@ describe( module( "Carbon/Settings" ), ():void => {
 			"Flag that indicates is the server is under a secure connection or not.\n" +
 			"By default it will be set to true, making the host to be resolved as `https://`"
 		), ():void => {
-			const target:Settings.Class[ "ssl" ] = false as boolean;
+			const target:Settings.CarbonSettings[ "ssl" ] = false as boolean;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( reexports( INSTANCE, "Carbon.Settings.Class", "Carbon.Settings.CarbonSettings" ), ():void => {
-		const target:Settings.Class = {} as Settings.CarbonSettings;
-		expect( target ).toBeDefined();
-	} );
-
-	it( hasDefaultExport( "Carbon.Settings.Class" ), ():void => {
-		const target:Settings.default = {} as Settings.Class;
+	it( hasDefaultExport( "Carbon.SettingsCarbonSettings" ), ():void => {
+		const target:Settings.default = {} as Settings.CarbonSettings;
 		expect( target ).toBeDefined();
 	} );
 

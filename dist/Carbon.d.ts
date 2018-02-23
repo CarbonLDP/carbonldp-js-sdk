@@ -65,7 +65,7 @@ export declare class Class extends AbstractContext.AbstractContext {
     protected settings: Settings.ContextSettings;
     messaging: Messaging.Service.Class;
     constructor(url: string);
-    constructor(settings: Settings.Class);
+    constructor(settings: Settings.CarbonSettings);
     getPlatformMetadata(): Promise<[System.PlatformMetadata.Class, HTTP.Response.Class]>;
 }
 export default Class;

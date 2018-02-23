@@ -91,8 +91,8 @@ export class Class extends AbstractContext.AbstractContext {
 	messaging:Messaging.Service.Class;
 
 	constructor( url:string );
-	constructor( settings:Settings.Class );
-	constructor( urlOrSettings:string | Settings.Class ) {
+	constructor( settings:Settings.CarbonSettings );
+	constructor( urlOrSettings:string | Settings.CarbonSettings ) {
 		super();
 
 		if( Utils.isString( urlOrSettings ) ) {

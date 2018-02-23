@@ -355,7 +355,7 @@ describe( module( "Carbon" ), ():void => {
 			] ), ():void => {} );
 
 			it( hasSignature( [
-				{ name: "settings", type: "Carbon.Settings.Class", description: "A settings object to fully configure the Carbon instance." },
+				{ name: "settings", type: "Carbon.SettingsCarbonSettings", description: "A settings object to fully configure the Carbon instance." },
 			] ), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -404,7 +404,7 @@ describe( module( "Carbon" ), ():void => {
 
 
 			it( "should throw error when invalid host property", ():void => {
-				const helper:( settings:Settings.Class ) => void = settings => () => {
+				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
 					new Carbon.Class( settings );
 				};
 
@@ -414,7 +414,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should throw error when invalid host with protocol", ():void => {
-				const helper:( settings:Settings.Class ) => void = settings => () => {
+				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
 					new Carbon.Class( settings );
 				};
 
@@ -424,7 +424,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should throw error when invalid host with port", ():void => {
-				const helper:( settings:Settings.Class ) => void = settings => () => {
+				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
 					new Carbon.Class( settings );
 				};
 
@@ -433,7 +433,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host", ():void => {
-				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:Carbon.Class = new Carbon.Class( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -443,7 +443,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host and ssl", ():void => {
-				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:Carbon.Class = new Carbon.Class( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -453,7 +453,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host and port", ():void => {
-				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:Carbon.Class = new Carbon.Class( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -463,7 +463,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
-				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:Carbon.Class = new Carbon.Class( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -473,7 +473,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
-				const helper:( settings:Settings.Class, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:Carbon.Class = new Carbon.Class( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
