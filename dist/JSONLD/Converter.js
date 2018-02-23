@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var XSD_1 = require("../Vocabularies/XSD");
 var Errors = __importStar(require("./../Errors"));
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
-var Pointer = __importStar(require("./../Pointer"));
+var Pointer_1 = require("./../Pointer");
 var RDF = __importStar(require("./../RDF"));
 var Utils = __importStar(require("./../Utils"));
 var Utils_1 = require("./Utils");
@@ -133,7 +133,7 @@ var Class = (function () {
     };
     Class.prototype.expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
         var isString = Utils.isString(propertyValue);
-        var id = Pointer.Factory.is(propertyValue) ?
+        var id = Pointer_1.Pointer.is(propertyValue) ?
             propertyValue.id :
             isString ?
                 propertyValue :
@@ -146,7 +146,7 @@ var Class = (function () {
     Class.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
         if (Utils.isArray(propertyValue))
             return null;
-        return Pointer.Factory.is(propertyValue) ?
+        return Pointer_1.Pointer.is(propertyValue) ?
             this.expandPointerValue(propertyValue, generalSchema, digestedSchema) :
             this.expandLiteralValue(propertyValue, Utils_1.guessXSDType(propertyValue));
     };

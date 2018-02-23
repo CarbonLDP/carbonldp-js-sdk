@@ -14,7 +14,7 @@ import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
 import * as Fragment from "./../Fragment";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
 import * as ACE from "./ACE";
@@ -102,42 +102,42 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"permissions",
-			"Carbon.Pointer.Class[]",
+			"Carbon.Pointer.Pointer[]",
 			"An array with all the permissions to grant or deny."
 		), ():void => {
-			let permissions:Pointer.Class[] = [ Pointer.Factory.create() ];
+			let permissions:Pointer[] = [ Pointer.create() ];
 			let ace:ACE.Class = <any> {};
 
 			ace.permissions = permissions;
 			expect( ace.permissions ).toEqual( jasmine.any( Array ) );
-			expect( Pointer.Factory.is( ace.permissions[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( ace.permissions[ 0 ] ) ).toBe( true );
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"subjects",
-			"Carbon.Pointer.Class[]",
+			"Carbon.Pointer.Pointer[]",
 			"An array with all the subjects to grant or deny its permissions."
 		), ():void => {
-			let subjects:Pointer.Class[] = [ Pointer.Factory.create() ];
+			let subjects:Pointer[] = [ Pointer.create() ];
 			let ace:ACE.Class = <any> {};
 
 			ace.subjects = subjects;
 			expect( ace.subjects ).toEqual( jasmine.any( Array ) );
-			expect( Pointer.Factory.is( ace.subjects[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( ace.subjects[ 0 ] ) ).toBe( true );
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"subjectsClass",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"An pointer that contains the URI of the type that all the subject in the ace are.."
 		), ():void => {
-			let subjectsClass:Pointer.Class = Pointer.Factory.create();
+			let subjectsClass:Pointer = Pointer.create();
 			let ace:ACE.Class = <any> {};
 
 			ace.subjectsClass = subjectsClass;
-			expect( Pointer.Factory.is( ace.subjectsClass ) ).toBe( true );
+			expect( Pointer.is( ace.subjectsClass ) ).toBe( true );
 		} );
 
 	} );
@@ -198,9 +198,9 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			"Creates a `Carbon.Auth.ACE.Class` object with the parameters specified.", [
 				{ name: "object", type: "T", description: "The object that will be converted into a `Carbon.Auth.ACE.Class`" },
 				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
-				{ name: "subjects", type: "Carbon.Pointer.Class[]", description: "Subjects that will have the permissions specified." },
-				{ name: "subjectClass", type: "Carbon.Pointer.Class", description: "The type of the subjects provided." },
-				{ name: "permissions", type: "Carbon.Pointer.Class[]", description: "The permissions that will be granted or denied." },
+				{ name: "subjects", type: "Carbon.Pointer.Pointer[]", description: "Subjects that will have the permissions specified." },
+				{ name: "subjectClass", type: "Carbon.Pointer.Pointer", description: "The type of the subjects provided." },
+				{ name: "permissions", type: "Carbon.Pointer.Pointer[]", description: "The permissions that will be granted or denied." },
 			],
 			{ type: "T & Carbon.Auth.ACE.Class" }
 		), ():void => {
@@ -211,23 +211,23 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 			let ace:ACE.Class;
 
 			object = {};
-			ace = ACE.Factory.createFrom( object, true, [ Pointer.Factory.create( "1" ) ], Pointer.Factory.create( "2" ), [ Pointer.Factory.create( "3" ) ] );
+			ace = ACE.Factory.createFrom( object, true, [ Pointer.create( "1" ) ], Pointer.create( "2" ), [ Pointer.create( "3" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ).toContain( ACE.RDF_CLASS );
 			expect( ace.granting ).toBe( true );
-			expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "1" );
+			expect( Pointer.getIDs( ace.subjects ) ).toContain( "1" );
 			expect( ace.subjectsClass.id ).toContain( "2" );
-			expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "3" );
+			expect( Pointer.getIDs( ace.permissions ) ).toContain( "3" );
 			expect( ace[ "some" ] ).toBeUndefined();
 
 			object = { some: "some" };
-			ace = ACE.Factory.createFrom( object, false, [ Pointer.Factory.create( "4" ) ], Pointer.Factory.create( "5" ), [ Pointer.Factory.create( "6" ) ] );
+			ace = ACE.Factory.createFrom( object, false, [ Pointer.create( "4" ) ], Pointer.create( "5" ), [ Pointer.create( "6" ) ] );
 			expect( ACE.Factory.hasClassProperties( ace ) ).toBe( true );
 			expect( ace.types ).toContain( ACE.RDF_CLASS );
 			expect( ace.granting ).toBe( false );
-			expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "4" );
+			expect( Pointer.getIDs( ace.subjects ) ).toContain( "4" );
 			expect( ace.subjectsClass.id ).toContain( "5" );
-			expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "6" );
+			expect( Pointer.getIDs( ace.permissions ) ).toContain( "6" );
 			expect( ace[ "some" ] ).toBe( "some" );
 		} );
 

@@ -78,7 +78,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"relatedDocument",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Reference to the resource the metadata information refers to."
 		), ():void => {} );
 

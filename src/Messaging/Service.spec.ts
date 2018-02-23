@@ -15,7 +15,7 @@ import {
 	module,
 	STATIC
 } from "../test/JasmineExtender";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as Message from "./Message";
 
@@ -503,7 +503,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 					expect( message.id ).toBe( "_:1" );
 					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
-					expect( Pointer.Factory.is( message.target ) ).toBe( true );
+					expect( Pointer.is( message.target ) ).toBe( true );
 					expect( message.target.id ).toBe( "https://example.com/created-child/" );
 
 					mockServer.stop( done );
@@ -554,7 +554,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 						expect( message.id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
-						expect( Pointer.Factory.is( message.target ) ).toBe( true );
+						expect( Pointer.is( message.target ) ).toBe( true );
 						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ receivedData === 2 ) mockServer.stop( done );
@@ -688,7 +688,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 						expect( message.id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
-						expect( Pointer.Factory.is( message.target ) ).toBe( true );
+						expect( Pointer.is( message.target ) ).toBe( true );
 						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ responded === 3 ) finishCallback();

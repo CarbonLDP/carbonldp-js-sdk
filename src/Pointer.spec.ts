@@ -1,37 +1,36 @@
+import Documents from "./Documents";
+import { IllegalStateError } from "./Errors";
+
+import * as Module from "./Pointer";
+import DefaultExport, {
+	isPointerResolved,
+	Pointer,
+	resolveStandalonePointer
+} from "./Pointer";
+
 import {
-	INSTANCE,
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
+	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
-	decoratedObject,
-	hasDefaultExport,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC,
 } from "./test/JasmineExtender";
-import Documents from "./Documents";
-import NotImplementedError from "./HTTP/Errors/server/NotImplementedError";
-import * as Utils from "./Utils";
-
-import * as Pointer from "./Pointer";
-import DefaultExport from "./Pointer";
 
 describe( module( "Carbon/Pointer" ), ():void => {
 
 	it( isDefined(), ():void => {
-		expect( Pointer ).toBeDefined();
-		expect( Utils.isObject( Pointer ) ).toBe( true );
+		expect( Module ).toBeDefined();
+		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.Class",
+		"Carbon.Pointer.Pointer",
 		"Interface that represents any element that can be referenced by an URI."
 	), ():void => {
 
@@ -74,7 +73,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.Library",
+		"Carbon.Pointer.PointerLibrary",
 		"Interface that represents resources that can manage pointers."
 	), ():void => {
 
@@ -99,7 +98,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.Validator",
+		"Carbon.Pointer.PointerValidator",
 		"Interface that represents resources that can validate pointers."
 	), ():void => {
 
@@ -110,7 +109,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is in the scope of the object that implements this interface.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" },
+					{ name: "pointer", type: "Carbon.Pointer.Pointer" },
 				],
 				{ type: "boolean" }
 			), ():void => {} );
@@ -126,342 +125,441 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Pointer.Class" ), ():void => {
+	describe( interfaze(
+		"Carbon.Pointer.PointerFactory",
+		"Interface with the factory, decorate, and utils methods of a `Carbon.Pointer.Pointer` object."
+	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Pointer` object.", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.Pointer.Pointer" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Returns true if the value provided is considered a `Carbon.Pointer.Pointer` object.", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			"Creates a Pointer object with the ID provided.", [
+				{ name: "id", type: "string", optional: true },
+			],
+			{ type: "Carbon.Pointer.Pointer" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends object" ],
+			"Create a Pointer from the object provided with id if provided.", [
+				{ name: "object", type: "T" },
+				{ name: "id", type: "string", optional: true },
+			],
+			{ type: "T & Carbon.Pointer.Pointer" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Pointer` object.", [
+				{ name: "object", type: "T" },
+			],
+			{ type: "T & Carbon.Pointer.Pointer" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"areEqual",
+			"Check of the objects refer to the same resource by its ID.", [
+				{ name: "pointer1", type: "Carbon.Pointer.Pointer" },
+				{ name: "pointer2", type: "Carbon.Pointer.Pointer" },
+			],
+			{ type: "boolean" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getIDs",
+			"Extracts the IDs of all the pointers provided.", [
+				{ name: "pointers", type: "Carbon.Pointer.Pointer[]", description: "The array of Pointers to obtain their IDs." },
+			],
+			{ type: "string[]" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"resolveAll",
+			[ "T extends object" ],
+			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
+				{ name: "pointers", type: "Carbon.Pointer.Pointer[]", description: "The array of Pointers to resolve." },
+			],
+			{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>" }
+		), ():void => {} );
+
+	} );
+
+	describe( property( STATIC, "Pointer", "Carbon.Pointer.PointerFactory", "Constant that implements the `Carbon.Pointer.PointerFactory` interface." ), ():void => {
+
+		it( "should exist", ():void => {
+			expect( Pointer ).toBeDefined();
+			expect( Pointer ).toEqual( jasmine.any( Object ) );
+		} );
+
+		describe( "Pointer.TYPE", ():void => {
+
+			it( "should not exists", ():void => {
+				expect( Pointer.TYPE ).not.toBeDefined();
+			} );
+
+		} );
+
+		describe( "Pointer.SCHEMA", ():void => {
+
+			it( "should not exists", ():void => {
+				expect( Pointer.TYPE ).not.toBeDefined();
+			} );
+		} );
+
+		describe( "Pointer.isDecorated", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.isDecorated ).toBeDefined();
+				expect( Pointer.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Separate in different tests
+			it( "should test method", ():void => {
+				let pointer:any = undefined;
+				expect( Pointer.isDecorated( pointer ) ).toBe( false );
+
+				pointer = {
+					_id: null,
+					_resolved: null,
+					id: null,
+					isResolved: ():void => {},
+					resolve: ():void => {},
+				};
+				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+
+				delete pointer._id;
+				expect( Pointer.isDecorated( pointer ) ).toBe( false );
+				pointer._id = null;
+
+				delete pointer._resolved;
+				expect( Pointer.isDecorated( pointer ) ).toBe( false );
+				pointer._resolved = null;
+
+				delete pointer.id;
+				expect( Pointer.isDecorated( pointer ) ).toBe( false );
+				pointer.id = null;
+
+				delete pointer.isResolved;
+				expect( Pointer.isDecorated( pointer ) ).toBe( false );
+				pointer.isResolved = ():void => {};
+
+				delete pointer.resolve;
+				expect( Pointer.isDecorated( pointer ) ).toBe( false );
+				pointer.resolve = ():void => {};
+			} );
+
+		} );
+
+		describe( "Pointer.is", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.is ).toBeDefined();
+				expect( Pointer.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Separate in different tests
+			it( "should test method", ():void => {
+				expect( Pointer.is( undefined ) ).toBe( false );
+				expect( Pointer.is( null ) ).toBe( false );
+				expect( Pointer.is( {} ) ).toBe( false );
+
+				const target:Pointer = {
+					_id: null,
+					_resolved: null,
+					id: null,
+					isResolved():any {},
+					resolve():any {},
+				};
+				expect( Pointer.is( target ) ).toBe( true );
+			} );
+
+		} );
+
+		describe( "Pointer.create", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.create ).toBeDefined();
+				expect( Pointer.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should assign the provided ID in `Pointer._id`", ():void => {
+				const pointer:Pointer = Pointer.create( "https://example.com/pointer/" );
+				expect( pointer._id ).toBe( "https://example.com/pointer/" );
+			} );
+
+			it( "should set empty string in `Pointer._id` if no ID provided", ():void => {
+				const pointer:Pointer = Pointer.create();
+				expect( pointer.id ).toBe( "" );
+			} );
+
+		} );
+
+		describe( "Pointer.createFrom", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.createFrom ).toBeDefined();
+				expect( Pointer.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Separate in different tests
+			it( "should test method", ():void => {
+				interface MyInterface {
+					myProperty?:string;
+				}
+
+				let pointer:Pointer & MyInterface;
+
+				pointer = Pointer.createFrom<MyInterface>( {} );
+				expect( pointer ).toBeTruthy();
+				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+				expect( pointer.id ).toBe( "" );
+				expect( pointer.myProperty ).not.toBeDefined();
+
+				pointer = Pointer.createFrom( { myProperty: "My Property" }, "http://example.com/pointer/" );
+				expect( pointer ).toBeTruthy();
+				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+				expect( pointer.id ).toBe( "http://example.com/pointer/" );
+				expect( pointer.myProperty ).toBe( "My Property" );
+			} );
+
+		} );
+
+		describe( "Pointer.decorate", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.decorate ).toBeDefined();
+				expect( Pointer.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Separate in different tests
+			it( "should test method", ():void => {
+				interface MyResource {
+					myProperty?:string;
+				}
+
+				let pointer:Pointer & MyResource;
+
+				pointer = Pointer.decorate<MyResource>( {} );
+				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+
+				pointer = Pointer.decorate<MyResource>( { myProperty: "a property" } );
+				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+				expect( pointer.myProperty ).toBeDefined();
+				expect( pointer.myProperty ).toBe( "a property" );
+				expect( pointer.isResolved() ).toBe( false );
+
+
+				pointer._resolved = true;
+				pointer = Pointer.decorate<MyResource>( pointer );
+				expect( pointer.isResolved() ).toBe( true );
+			} );
+
+
+			it( "should assign empty string to `Pointer._id` when not exists", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
+				expect( pointer._id ).toBe( "" );
+			} );
+
+			it( "should keep ID in `Pointer._id` when `Pointer.id` already exists", ():void => {
+				const pointer:Pointer = Pointer.decorate( { id: "https://example.com/pointer/" } );
+				expect( pointer._id ).toBe( "https://example.com/pointer/" );
+			} );
+
+
+			it( "should assign false to `Pointer._resolved` when not exists", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
+				expect( pointer._resolved ).toBe( false );
+			} );
+
+			it( "should keep resolved in `Pointer._resolved` when already set", ():void => {
+				const pointer:Pointer = Pointer.decorate( { _resolved: true } );
+				expect( pointer._resolved ).toBe( true );
+			} );
+
+
+			it( "should set getter as `Pointer.id` of `Pointer._id` ", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
+
+				pointer._id = "https://example.com/pointer/";
+				expect( pointer.id ).toBe( "https://example.com/pointer/" );
+			} );
+
+			it( "should set setter as `Pointer.id` of `Pointer._id`", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
+
+				pointer.id = "https://example.com/pointer/";
+				expect( pointer._id ).toBe( "https://example.com/pointer/" );
+			} );
+
+
+			it( "should assign `isPointerResolved` as `Pointer.resolved`", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
+				expect( pointer.isResolved ).toBe( isPointerResolved );
+			} );
+
+			it( "should assign `resolveStandalonePointer` as `Pointer.resolve`", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
+				expect( pointer.resolve ).toBe( resolveStandalonePointer );
+			} );
+
+		} );
+
+		describe( "Pointer.areEqual", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.areEqual ).toBeDefined();
+				expect( Pointer.areEqual ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Create tests
+
+		} );
+
+		describe( "Pointer.getIDs", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.getIDs ).toBeDefined();
+				expect( Pointer.getIDs ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the IDs", ():void => {
+				const pointers:Pointer[] = [
+					Pointer.create( "http://example.com/resource-1/" ),
+					Pointer.create( "http://example.com/resource-2/" ),
+					Pointer.create( "http://example.com/resource-3/" ),
+				];
+
+				const ids:string[] = Pointer.getIDs( pointers );
+				expect( ids.length ).toBe( 3 );
+				expect( ids ).toContain( "http://example.com/resource-1/" );
+				expect( ids ).toContain( "http://example.com/resource-2/" );
+				expect( ids ).toContain( "http://example.com/resource-3/" );
+			} );
+
+		} );
+
+		describe( "Pointer.resolveAll", ():void => {
+
+			it( "should exist", ():void => {
+				expect( Pointer.resolveAll ).toBeDefined();
+				expect( Pointer.resolveAll ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Separate in different test
+			it( "should tests method", ( done:DoneFn ):void => {
+				let documents:Documents = new Documents();
+				let pointers:Pointer[];
+
+				pointers = [ documents.getPointer( "http://example.com/some/id/" ), documents.getPointer( "http://example.com/another/id/" ), documents.getPointer( "http://example.com/random/id/1234567890/" ) ];
+				spyOn( documents, "get" ).and.callFake( ( id:string ):any => {
+					let pointer:Pointer = documents.getPointer( id );
+					pointer._resolved = true;
+
+					return Promise.resolve( [ pointer, null ] );
+				} );
+
+				let promise:Promise<[ Pointer[], any[] ]> = Pointer.resolveAll( pointers );
+				expect( promise instanceof Promise ).toBe( true );
+
+				promise.then( ( [ _pointers, responses ]:[ Pointer[], any[] ] ) => {
+					expect( _pointers.length ).toBe( 3 );
+					expect( responses.length ).toBe( 3 );
+
+					expect( _pointers ).toEqual( pointers );
+					expect( _pointers[ 0 ].isResolved() ).toBe( true );
+					expect( _pointers[ 1 ].isResolved() ).toBe( true );
+					expect( _pointers[ 2 ].isResolved() ).toBe( true );
+
+					expect( responses[ 0 ] ).toBeNull();
+					expect( responses[ 1 ] ).toBeNull();
+					expect( responses[ 2 ] ).toBeNull();
+
+					done();
+				} ).catch( done.fail );
+			} );
+
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Pointer.Pointer" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Pointer.Class;
+		let defaultTarget:Pointer;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"Carbon.Pointer.Factory",
-		"Factory class for `Carbon.Pointer.Class` objects."
-	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Pointer.Factory ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Factory ) ).toBe( true );
+	function createMockPointer<T extends {}>( base:T = {} as T ):T & Pointer {
+		base = Object.assign( base, { id: "https://example.com/pointer/" } );
+		return Pointer.decorate( base );
+	}
+
+	describe( "isPointerResolved", ():void => {
+
+		it( "should exist", ():void => {
+			expect( isPointerResolved ).toBeDefined();
+			expect( isPointerResolved ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{ name: "resource", type: "Object" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Pointer.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Factory.hasClassProperties ) ).toBe( true );
-
-			let pointer:any = undefined;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-
-			pointer = {
-				_id: null,
-				_resolved: null,
-				id: null,
-				isResolved: ():void => {},
-				resolve: ():void => {},
-			};
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-
-			delete pointer._id;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer._id = null;
-
-			delete pointer._resolved;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer._resolved = null;
-
-			delete pointer.id;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.id = null;
-
-			delete pointer.isResolved;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.isResolved = ():void => {};
-
-			delete pointer.resolve;
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( false );
-			pointer.resolve = ():void => {};
+		it( "should return false when `_resolved` is set to false", ():void => {
+			const pointer:Pointer = createMockPointer( { _resolved: false } );
+			expect( isPointerResolved.call( pointer ) ).toBe( false );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"is",
-			"Returns true if the value provided is considered a `Carbon.Pointer.Class` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Pointer.Factory.is ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Factory.is ) ).toBe( true );
-
-			expect( Pointer.Factory.is( undefined ) ).toBe( false );
-			expect( Pointer.Factory.is( null ) ).toBe( false );
-			expect( Pointer.Factory.is( "a string" ) ).toBe( false );
-			expect( Pointer.Factory.is( 100 ) ).toBe( false );
-			expect( Pointer.Factory.is( {} ) ).toBe( false );
-
-			let value:any = {};
-			value[ "_id" ] = null;
-			value[ "_resolved" ] = null;
-			value[ "id" ] = null;
-			value[ "isResolved" ] = ():void => {};
-			value[ "resolve" ] = ():void => {};
-			expect( Pointer.Factory.is( value ) ).toBe( true );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"create",
-			"Creates a Pointer object with the ID provided.", [
-				{ name: "id", type: "string", optional: true },
-			],
-			{ type: "Carbon.Pointer.Class" }
-		), ():void => {
-			expect( Pointer.Factory.create ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Factory.create ) ).toBe( true );
-
-			let pointer:Pointer.Class;
-
-			pointer = Pointer.Factory.create();
-			expect( pointer ).toBeTruthy();
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "" );
-
-			pointer = Pointer.Factory.create( "http://example.com/pointer/" );
-			expect( pointer ).toBeTruthy();
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "http://example.com/pointer/" );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"createFrom",
-			[ "T extends Object" ],
-			"Create a Pointer from the object provided with id if provided.", [
-				{ name: "object", type: "T" },
-				{ name: "id", type: "string", optional: true },
-			],
-			{ type: "T & Carbon.Pointer.Class" }
-		), ():void => {
-			expect( Pointer.Factory.createFrom ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Factory.createFrom ) ).toBe( true );
-
-			interface MyInterface {
-				myProperty?:string;
-			}
-			let pointer:Pointer.Class & MyInterface;
-
-			pointer = Pointer.Factory.createFrom<MyInterface>( {} );
-			expect( pointer ).toBeTruthy();
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "" );
-			expect( pointer.myProperty ).not.toBeDefined();
-
-			pointer = Pointer.Factory.createFrom( { myProperty: "My Property" }, "http://example.com/pointer/" );
-			expect( pointer ).toBeTruthy();
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "http://example.com/pointer/" );
-			expect( pointer.myProperty ).toBe( "My Property" );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			[ "T extends Object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Class` object.", [
-				{ name: "object", type: "T" },
-			],
-			{ type: "T & Carbon.Pointer.Class" }
-		), ():void => {
-			expect( Pointer.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Factory.decorate ) ).toBe( true );
-
-			interface MyResource {
-				myProperty?:string;
-			}
-			let pointer:Pointer.Class & MyResource;
-
-			pointer = Pointer.Factory.decorate<MyResource>( {} );
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-
-			pointer = Pointer.Factory.decorate<MyResource>( { myProperty: "a property" } );
-			expect( Pointer.Factory.hasClassProperties( pointer ) ).toBe( true );
-			expect( pointer.myProperty ).toBeDefined();
-			expect( pointer.myProperty ).toBe( "a property" );
-			expect( pointer.isResolved() ).toBe( false );
-
-
-			pointer._resolved = true;
-			pointer = Pointer.Factory.decorate<MyResource>( pointer );
-			expect( pointer.isResolved() ).toBe( true );
-		} );
-
-		describe( decoratedObject(
-			"Object decorated by the `Carbon.Pointer.Factory.decorate()` function.", [
-				"Carbon.Pointer.Class",
-			]
-		), ():void => {
-			let pointer:Pointer.Class;
-
-			beforeEach( ():void => {
-				pointer = Pointer.Factory.create( "http://example.com/pointer/" );
-			} );
-
-			it( hasProperty(
-				INSTANCE,
-				"_id",
-				"string",
-				"Private variable for the URI that identifies the pointer."
-			), ():void => {
-				expect( pointer._id ).toBeDefined();
-				expect( Utils.isString( pointer._id ) ).toBe( true );
-
-				expect( pointer._id ).toBe( "http://example.com/pointer/" );
-			} );
-
-			it( hasProperty(
-				INSTANCE,
-				"_resolved",
-				"boolean",
-				"Private variable that indicates if the pointer has been resolved."
-			), ():void => {
-				expect( pointer._resolved ).toBeDefined();
-				expect( Utils.isBoolean( pointer._resolved ) ).toBe( true );
-
-				expect( pointer._resolved ).toBe( false );
-			} );
-
-			it( hasProperty(
-				INSTANCE,
-				"id",
-				"string",
-				"Accessor for the _id variable."
-			), ():void => {
-				expect( pointer.id ).toBeDefined();
-				expect( Utils.isString( pointer.id ) ).toBe( true );
-
-				expect( pointer.id ).toBe( pointer._id );
-
-				pointer.id = "http://example.com/pointer/change/";
-				expect( pointer._id ).toBe( "http://example.com/pointer/change/" );
-			} );
-
-			it( hasMethod(
-				INSTANCE,
-				"isResolved",
-				"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
-				{ type: "boolean" }
-			), ():void => {
-				expect( pointer.isResolved ).toBeDefined();
-				expect( Utils.isFunction( pointer.isResolved ) ).toBe( true );
-
-				expect( pointer.isResolved() ).toBe( false );
-
-				pointer._resolved = true;
-				expect( pointer.isResolved() ).toBe( true );
-			} );
-
-			it( hasMethod(
-				INSTANCE,
-				"resolve",
-				[ "T" ],
-				"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( pointer.resolve ).toBeDefined();
-				expect( Utils.isFunction( pointer.resolve ) ).toBe( true );
-
-				let promise:Promise<any> = pointer.resolve();
-				expect( promise instanceof Promise ).toBe( true );
-
-				promise.then( done.fail, ( error:NotImplementedError ):void => {
-					expect( error.name ).toBe( "NotImplementedError" );
-					done();
-				} );
-			} );
-
+		it( "should return true when `_resolved` is set to true", ():void => {
+			const pointer:Pointer = createMockPointer( { _resolved: true } );
+			expect( isPointerResolved.call( pointer ) ).toBe( true );
 		} );
 
 	} );
 
-	describe( clazz( "Carbon.Pointer.Util", "Class with useful functions to manage `Carbon.Pointer.Class` objects." ), ():void => {
+	describe( "resolveStandalonePointer", ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Pointer.Util ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Util ) ).toBe( true );
+		it( "should exist", ():void => {
+			expect( resolveStandalonePointer ).toBeDefined();
+			expect( resolveStandalonePointer ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"getIDs",
-			"Extracts the IDs of all the pointers provided.", [
-				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to obtain their IDs." },
-			],
-			{ type: "string[]" }
-		), ():void => {
-			expect( Pointer.Util.getIDs ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Util.getIDs ) ).toBe( true );
+		it( "should always return rejected promise", ( done:DoneFn ) => {
+			const pointer:Pointer = createMockPointer();
 
-			let pointers:Pointer.Class[];
-			let ids:string[];
+			const promise:Promise<any> = resolveStandalonePointer.call( pointer );
+			expect( promise ).toEqual( jasmine.any( Promise ) );
 
-			pointers = [];
-			pointers.push( Pointer.Factory.create( "http://example.com/resource-1/" ) );
-			pointers.push( Pointer.Factory.create( "http://example.com/resource-2/" ) );
-			pointers.push( Pointer.Factory.create( "http://example.com/resource-3/" ) );
-
-			ids = Pointer.Util.getIDs( pointers );
-			expect( ids.length ).toBe( 3 );
-			expect( ids ).toContain( "http://example.com/resource-1/" );
-			expect( ids ).toContain( "http://example.com/resource-2/" );
-			expect( ids ).toContain( "http://example.com/resource-3/" );
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"resolveAll",
-			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
-				{ name: "pointers", type: "Carbon.Pointer.Class[]", description: "The array of Pointers to resolve." },
-			],
-			{ type: "Promise<[ Carbon.Pointer.Class[], Carbon.HTTP.Response.Class[] ]>" }
-		), ( done:{():void, fail:() => void} ):void => {
-			expect( Pointer.Util.resolveAll ).toBeDefined();
-			expect( Utils.isFunction( Pointer.Util.resolveAll ) ).toBe( true );
-
-			let documents:Documents = new Documents();
-			let pointers:Pointer.Class[];
-
-			pointers = [ documents.getPointer( "http://example.com/some/id/" ), documents.getPointer( "http://example.com/another/id/" ), documents.getPointer( "http://example.com/random/id/1234567890/" ) ];
-			spyOn( documents, "get" ).and.callFake( ( id:string ):any => {
-				let pointer:Pointer.Class = documents.getPointer( id );
-				pointer._resolved = true;
-
-				return Promise.resolve( [ pointer, null ] );
-			} );
-
-			let promise:Promise<[ Pointer.Class[], any[] ]> = Pointer.Util.resolveAll( pointers );
-			expect( promise instanceof Promise ).toBe( true );
-
-			promise.then( ( [ _pointers, responses ]:[ Pointer.Class[], any[] ] ) => {
-				expect( _pointers.length ).toBe( 3 );
-				expect( responses.length ).toBe( 3 );
-
-				expect( _pointers ).toEqual( pointers );
-				expect( _pointers[ 0 ].isResolved() ).toBe( true );
-				expect( _pointers[ 1 ].isResolved() ).toBe( true );
-				expect( _pointers[ 2 ].isResolved() ).toBe( true );
-
-				expect( responses[ 0 ] ).toBeNull();
-				expect( responses[ 1 ] ).toBeNull();
-				expect( responses[ 2 ] ).toBeNull();
-
-				done();
-			} ).catch( done.fail );
+			promise
+				.then( () => done.fail( "Should not resolve." ) )
+				.catch( error => {
+					expect( () => { throw error; } ).toThrowError( IllegalStateError, "The pointer has not been assigned to a context." );
+					done();
+				} )
+			;
 		} );
 
 	} );

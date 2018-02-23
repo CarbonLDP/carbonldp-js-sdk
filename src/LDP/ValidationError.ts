@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 
 export const RDF_CLASS:string = C.ValidationError;
@@ -13,7 +13,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Resource.Class {
-	errorDetails:Pointer.Class;
+	errorDetails:Pointer;
 }
 
 export default Class;

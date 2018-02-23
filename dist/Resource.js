@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer = __importStar(require("./Pointer"));
+var Pointer_1 = require("./Pointer");
 var Utils = __importStar(require("./Utils"));
 function addType(type) {
     this.types.push(type);
@@ -30,7 +30,7 @@ var Factory = (function () {
             && Utils.hasFunction(object, "removeType"));
     };
     Factory.is = function (object) {
-        return Pointer.Factory.is(object)
+        return Pointer_1.Pointer.is(object)
             && Factory.hasClassProperties(object);
     };
     Factory.create = function (id, types) {
@@ -50,7 +50,7 @@ var Factory = (function () {
         var resource = object;
         if (Factory.hasClassProperties(object))
             return resource;
-        Pointer.Factory.decorate(resource);
+        Pointer_1.Pointer.decorate(resource);
         Object.defineProperties(resource, {
             "types": {
                 writable: true,

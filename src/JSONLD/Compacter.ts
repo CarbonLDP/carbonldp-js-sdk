@@ -4,7 +4,10 @@ import {
 } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
-import * as Pointer from "../Pointer";
+import {
+	Pointer,
+	PointerLibrary
+} from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
@@ -25,7 +28,7 @@ interface CompactionNode {
 	paths:string[];
 	node:RDFNode.Class;
 	resource:PersistedResource.Class;
-	containerLibrary:Pointer.Library;
+	containerLibrary:PointerLibrary;
 	processed?:boolean;
 }
 
@@ -105,7 +108,7 @@ export class Class {
 		return mainCompactedDocuments;
 	}
 
-	private compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:Pointer.Library, path:string ):string[] {
+	private compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		if( this.resolver instanceof QueryContextBuilder.Class ) {
@@ -150,7 +153,7 @@ export class Class {
 			;
 	}
 
-	private getResource<T extends PersistedResource.Class>( node:RDFNode.Class, containerLibrary:Pointer.Library, isDocument?:boolean ):T {
+	private getResource<T extends PersistedResource.Class>( node:RDFNode.Class, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = PersistedDocument.Factory.decorate( resource, this.documents );
@@ -178,7 +181,7 @@ export class Class {
 				const value:any = compactionNode.resource[ propertyName ];
 				const values:any[] = Array.isArray( value ) ? value : [ value ];
 
-				const pointers:Pointer.Class[] = values.filter( Pointer.Factory.is );
+				const pointers:Pointer[] = values.filter( Pointer.is );
 				for( const pointer of pointers ) {
 					if( ! this.compactionMap.has( pointer.id ) ) continue;
 					const subCompactionNode:CompactionNode = this.compactionMap.get( pointer.id );

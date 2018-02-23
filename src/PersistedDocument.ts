@@ -13,7 +13,7 @@ import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as PersistedResource from "./PersistedResource";
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
 import * as URI from "./RDF/URI";
 import * as ServiceAwareDocument from "./ServiceAwareDocument";
@@ -24,11 +24,11 @@ import * as Utils from "./Utils";
 export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
 	created?:Date;
 	modified?:Date;
-	defaultInteractionModel?:Pointer.Class;
-	accessPoints?:Pointer.Class[];
-	hasMemberRelation?:Pointer.Class;
-	isMemberOfRelation?:Pointer.Class;
-	contains?:Pointer.Class[];
+	defaultInteractionModel?:Pointer;
+	accessPoints?:Pointer[];
+	hasMemberRelation?:Pointer;
+	isMemberOfRelation?:Pointer;
+	contains?:Pointer[];
 
 	_etag:string;
 	_fragmentsIndex:Map<string, PersistedFragment.Class>;
@@ -66,11 +66,11 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 
 	getDownloadURL():Promise<string>;
 
-	addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	addMember( member:Pointer ):Promise<HTTP.Response.Class>;
 
 	addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
-	addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+	addMembers( members:(Pointer | string)[] ):Promise<HTTP.Response.Class>;
 
 	createChild<T extends object>( object:T, slug:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, HTTP.Response.Class ]>;
 
@@ -121,11 +121,11 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], HTTP.Response.Class ]>;
 
 
-	removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+	removeMember( member:Pointer ):Promise<HTTP.Response.Class>;
 
 	removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
 
-	removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class>;
+	removeMembers( members:(Pointer | string)[] ):Promise<HTTP.Response.Class>;
 
 	removeAllMembers():Promise<HTTP.Response.Class>;
 
@@ -261,13 +261,13 @@ function getDownloadURL():Promise<string> {
 	return (<Class> this)._documents.getDownloadURL( (<Class> this).id );
 }
 
-function addMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function addMember( member:Pointer ):Promise<HTTP.Response.Class>;
 function addMember( memberURI:string ):Promise<HTTP.Response.Class>;
 function addMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
 	return this._documents.addMember( this.id, memberOrUri );
 }
 
-function addMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
+function addMembers( members:(Pointer | string)[] ):Promise<HTTP.Response.Class> {
 	return this._documents.addMembers( this.id, members );
 }
 
@@ -341,13 +341,13 @@ function getMembers<T extends object>( this:Class, requestOptionsOrQueryBuilderF
 	return this._documents.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery );
 }
 
-function removeMember( member:Pointer.Class ):Promise<HTTP.Response.Class>;
+function removeMember( member:Pointer ):Promise<HTTP.Response.Class>;
 function removeMember( memberURI:string ):Promise<HTTP.Response.Class>;
 function removeMember( memberOrUri:any ):Promise<HTTP.Response.Class> {
 	return this._documents.removeMember( this.id, memberOrUri );
 }
 
-function removeMembers( members:(Pointer.Class | string)[] ):Promise<HTTP.Response.Class> {
+function removeMembers( members:(Pointer | string)[] ):Promise<HTTP.Response.Class> {
 	return this._documents.removeMembers( this.id, members );
 }
 
@@ -520,10 +520,10 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: (function():( id:string ) => Pointer.Class {
-					let superFunction:( id:string ) => Pointer.Class = persistedDocument.getPointer;
+				value: (function():( id:string ) => Pointer {
+					let superFunction:( id:string ) => Pointer = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
-					return function( this:Class, id:string ):Pointer.Class {
+					return function( this:Class, id:string ):Pointer {
 						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
@@ -538,7 +538,7 @@ export class Factory {
 				value: (function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( this:Class, idOrPointer:any ):boolean {
-						let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+						let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;

@@ -4,7 +4,7 @@ import * as Fragment from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import * as NamedFragment from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
-import * as Pointer from "../Pointer";
+import { Pointer } from "../Pointer";
 import * as RDF from "../RDF";
 import * as Utils from "../Utils";
 
@@ -17,7 +17,7 @@ export function hasPointer( this:Document, id:string ):boolean {
 	return this.hasFragment( id );
 }
 
-export function getPointer( this:Document, id:string ):Pointer.Class {
+export function getPointer( this:Document, id:string ):Pointer {
 	if( ! this.inScope( id ) ) return null;
 	if( id === this.id ) return this;
 
@@ -26,8 +26,8 @@ export function getPointer( this:Document, id:string ):Pointer.Class {
 		this.createFragment( id );
 }
 
-export function inScope( this:Document, idOrPointer:string | Pointer.Class ):boolean {
-	const id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+export function inScope( this:Document, idOrPointer:string | Pointer ):boolean {
+	const id:string = Utils.isObject( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 	if( id === this.id ) return true;
 	if( RDF.URI.Util.isBNodeID( id ) ) return true;
@@ -173,7 +173,7 @@ export const convertNestedObjects:( parent:Document, actual:any, fragmentsTracke
 		}
 
 		if( ! Utils.isPlainObject( next ) ) continue;
-		if( Pointer.Factory.is( next ) ) {
+		if( Pointer.is( next ) ) {
 			if( parent.hasFragment( next.id ) && ! fragmentsTracker.has( next.id ) ) {
 				fragmentsTracker.add( next.id );
 				convertNestedObjects( parent, next, fragmentsTracker );

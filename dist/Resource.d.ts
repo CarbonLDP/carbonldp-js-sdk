@@ -1,5 +1,5 @@
-import * as Pointer from "./Pointer";
-export interface Class extends Pointer.Class {
+import { Pointer } from "./Pointer";
+export interface Class extends Pointer {
     types: string[];
     addType(type: string): void;
     hasType(type: string): boolean;

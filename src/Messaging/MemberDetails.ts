@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 
 export const SCHEMA:ObjectSchema.Class = {
@@ -12,7 +12,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Resource.Class {
-	members:Pointer.Class[];
+	members:Pointer[];
 }
 
 export default Class;

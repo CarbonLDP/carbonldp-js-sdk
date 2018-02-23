@@ -2,7 +2,7 @@ import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as Fragment from "./../Fragment";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = CS.AccessControlEntry;
@@ -30,9 +30,9 @@ export const SCHEMA:ObjectSchema.Class = {
 
 export interface Class extends Fragment.Class {
 	granting:boolean;
-	permissions:Pointer.Class[];
-	subjects:Pointer.Class[];
-	subjectsClass:Pointer.Class;
+	permissions:Pointer[];
+	subjects:Pointer[];
+	subjectsClass:Pointer;
 }
 
 export class Factory {
@@ -45,7 +45,7 @@ export class Factory {
 			;
 	}
 
-	static createFrom<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
+	static createFrom<T extends Object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & Class {
 		let ace:T & Class = <any> object;
 
 		if( ! ace.types ) ace.types = [];

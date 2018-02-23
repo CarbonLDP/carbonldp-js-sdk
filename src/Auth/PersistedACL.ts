@@ -1,39 +1,53 @@
 import * as ACL from "./ACL";
 import * as PersistedACE from "./PersistedACE";
 import * as PersistedDocument from "./../PersistedDocument";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
-	accessTo:Pointer.Class;
+	accessTo:Pointer;
 	entries?:PersistedACE.Class[];
 	inheritableEntries?:PersistedACE.Class[];
 
-	_parsePointer( element:string | Pointer.Class ):Pointer.Class;
+	_parsePointer( element:string | Pointer ):Pointer;
 
-	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-	grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	grant( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-	deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	grant( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-	configureChildInheritance( granting:boolean, subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	configureChildInheritance( granting:boolean, subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	grants( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean;
-	denies( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean;
-	getChildInheritance( subject:string | Pointer.Class, permissions:string | Pointer.Class ):boolean;
+	grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	remove( subject:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	remove( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-	removeChildInheritance( subject:string | Pointer.Class, permission:string | Pointer.Class ):void;
-	removeChildInheritance( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	deny( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+
+	deny( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+
+	deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+
+	deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+
+	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+
+	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+
+	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+
+	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+
+	grants( subject:string | Pointer, permission:string | Pointer ):boolean;
+
+	denies( subject:string | Pointer, permission:string | Pointer ):boolean;
+
+	getChildInheritance( subject:string | Pointer, permissions:string | Pointer ):boolean;
+
+	remove( subject:string | Pointer, permission:string | Pointer ):void;
+
+	remove( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
+
+	removeChildInheritance( subject:string | Pointer, permission:string | Pointer ):void;
+
+	removeChildInheritance( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
 }
 
 export class Factory {
@@ -70,8 +84,8 @@ export class Factory {
 
 }
 
-function parsePointer( element:string | Pointer.Class ):Pointer.Class {
-	return Pointer.Factory.is( element ) ? <Pointer.Class> element : (this as Class).getPointer( <string> element );
+function parsePointer( this:Class, element:string | Pointer ):Pointer {
+	return Utils.isObject( element ) ? element : this.getPointer( element );
 }
 
 export default Class;

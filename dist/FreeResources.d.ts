@@ -1,7 +1,7 @@
 import Documents from "./Documents";
-import * as Pointer from "./Pointer";
+import { PointerLibrary, PointerValidator } from "./Pointer";
 import * as Resource from "./Resource";
-export interface Class extends Pointer.Library, Pointer.Validator {
+export interface Class extends PointerLibrary, PointerValidator {
     _documents: Documents;
     _resourcesIndex: Map<string, Resource.Class>;
     hasResource(id: string): boolean;

@@ -42,7 +42,11 @@ import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as PersistedResource from "./PersistedResource";
-import * as Pointer from "./Pointer";
+import {
+	Pointer,
+	PointerLibrary,
+	PointerValidator,
+} from "./Pointer";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
@@ -72,7 +76,7 @@ import {
 import { C } from "./Vocabularies/C";
 import { LDP } from "./Vocabularies/LDP";
 
-export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Resolver {
 
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
@@ -81,7 +85,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	get documentDecorators():Map<string, ( object:object, documents?:Class ) => object> { return this._documentDecorators; }
 
 	private context:Context;
-	private pointers:Map<string, Pointer.Class>;
+	private pointers:Map<string, Pointer>;
 
 	// Tracks the documents that are being resolved to avoid triggering repeated requests
 	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>;
@@ -89,7 +93,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	constructor( context?:Context ) {
 		this.context = context;
 
-		this.pointers = new Map<string, Pointer.Class>();
+		this.pointers = new Map<string, Pointer>();
 		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, HTTP.Response.Class ]>>();
 
 		if( ! ! this.context && ! ! this.context.parentContext ) {
@@ -114,10 +118,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		this._documentDecorators = decorators;
 	}
 
-	inScope( pointer:Pointer.Class ):boolean;
+	inScope( pointer:Pointer ):boolean;
 	inScope( id:string ):boolean;
 	inScope( idOrPointer:any ):boolean {
-		let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+		let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
@@ -145,7 +149,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return false;
 	}
 
-	getPointer( id:string ):Pointer.Class {
+	getPointer( id:string ):Pointer {
 		let localID:string = this.getPointerID( id );
 
 		if( localID === null ) {
@@ -153,7 +157,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 			throw new Errors.IllegalArgumentError( "The pointer id is not supported by this module." );
 		}
 
-		let pointer:Pointer.Class;
+		let pointer:Pointer;
 		if( ! this.pointers.has( localID ) ) {
 			pointer = this.createPointer( localID );
 			this.pointers.set( localID, pointer );
@@ -162,8 +166,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return this.pointers.get( localID );
 	}
 
-	removePointer( idOrPointer:string | Pointer.Class ):boolean {
-		let id:string = Utils.isString( idOrPointer ) ? <string> idOrPointer : (<Pointer.Class> idOrPointer).id;
+	removePointer( idOrPointer:string | Pointer ):boolean {
+		let id:string = Utils.isString( idOrPointer ) ? idOrPointer : idOrPointer.id;
 		let localID:string = this.getPointerID( id );
 
 		if( localID === null ) {
@@ -410,16 +414,16 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	addMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	addMember( documentURI:string, member:Pointer, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 	addMember( documentURI:string, memberURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
-	addMember( documentURI:string, memberORUri:Pointer.Class | string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	addMember( documentURI:string, memberORUri:Pointer | string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return this.addMembers( documentURI, [ memberORUri ], requestOptions );
 	}
 
-	addMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
-	addMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
-			const pointers:Pointer.Class[] = this._parseMembers( members );
+			const pointers:Pointer[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -432,15 +436,15 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		} );
 	}
 
-	removeMember( documentURI:string, member:Pointer.Class, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
+	removeMember( documentURI:string, member:Pointer, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
 	removeMember( documentURI:string, memberURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class>;
-	removeMember( documentURI:string, memberORUri:Pointer.Class | string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	removeMember( documentURI:string, memberORUri:Pointer | string, requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return this.removeMembers( documentURI, [ memberORUri ], requestOptions );
 	}
 
-	removeMembers( documentURI:string, members:(Pointer.Class | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
+	removeMembers( documentURI:string, members:(Pointer | string)[], requestOptions:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
 		return promiseMethod( () => {
-			const pointers:Pointer.Class[] = this._parseMembers( members );
+			const pointers:Pointer[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -786,7 +790,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	private getFullDocument<T extends object>( uri:string, requestOptions:HTTP.Request.GETOptions ):Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]> {
 		if( this.hasPointer( uri ) ) {
-			const pointer:Pointer.Class = this.getPointer( uri );
+			const pointer:Pointer = this.getPointer( uri );
 			if( pointer.isResolved() ) {
 				const persistedDocument:T & PersistedDocument.Class = pointer as any;
 				if( ! persistedDocument.isPartial() || ! requestOptions.ensureLatest )
@@ -971,8 +975,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 						a = getPathProperty( a, path );
 						b = getPathProperty( b, path );
 
-						const aValue:any = Pointer.Factory.is( a ) ? a.id : a;
-						const bValue:any = Pointer.Factory.is( b ) ? b.id : b;
+						const aValue:any = Pointer.is( a ) ? a.id : a;
+						const bValue:any = Pointer.is( b ) ? b.id : b;
 
 						if( aValue === bValue ) return 0;
 
@@ -980,7 +984,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 						if( bValue === void 0 ) return inverter;
 
 						if( ! areDifferentType( a, b ) ) {
-							if( Pointer.Factory.is( a ) ) {
+							if( Pointer.is( a ) ) {
 								const aIsBNode:boolean = RDF.URI.Util.isBNodeID( aValue );
 								const bIsBNode:boolean = RDF.URI.Util.isBNodeID( bValue );
 
@@ -988,8 +992,8 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 								if( bIsBNode && ! aIsBNode ) return inverter;
 							}
 						} else {
-							if( Pointer.Factory.is( a ) ) return - 1 * inverter;
-							if( Pointer.Factory.is( b ) ) return inverter;
+							if( Pointer.is( a ) ) return - 1 * inverter;
+							if( Pointer.is( b ) ) return inverter;
 
 							if( Utils.isNumber( a ) ) return - 1 * inverter;
 							if( Utils.isNumber( b ) ) return inverter;
@@ -1108,7 +1112,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				const name:string = targetVar.toString().slice( 1 );
 				const documents:PersistedDocument.Class[] = results
 					.bindings
-					.map( x => x[ name ] as Pointer.Class )
+					.map( x => x[ name ] as Pointer )
 					.map( x => PersistedDocument.Factory.decorate( x, this ) );
 
 				return [ documents, response ];
@@ -1209,13 +1213,13 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		}
 	}
 
-	private createPointer( localID:string ):Pointer.Class {
+	private createPointer( localID:string ):Pointer {
 		return this.createPointerFrom( {}, localID );
 	}
 
-	private createPointerFrom<T extends Object>( object:T, localID:string ):T & Pointer.Class {
+	private createPointerFrom<T extends Object>( object:T, localID:string ):T & Pointer {
 		let id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
-		let pointer:T & Pointer.Class = Pointer.Factory.createFrom<T>( object, id );
+		let pointer:T & Pointer = Pointer.createFrom<T>( object, id );
 		Object.defineProperty( pointer, "resolve", {
 			writable: false,
 			enumerable: false,
@@ -1229,9 +1233,9 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 	}
 
 
-	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:Pointer.Library ):Object[];
-	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object;
-	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:Pointer.Library ):any {
+	private compact( expandedObjects:Object[], targetObjects:Object[], pointerLibrary:PointerLibrary ):Object[];
+	private compact( expandedObject:Object, targetObject:Object, pointerLibrary:PointerLibrary ):Object;
+	private compact( expandedObjectOrObjects:any, targetObjectOrObjects:any, pointerLibrary:PointerLibrary ):any {
 		if( ! Utils.isArray( expandedObjectOrObjects ) ) return this.compactSingle( expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary );
 
 		let expandedObjects:Object[] = expandedObjectOrObjects;
@@ -1246,7 +1250,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return targetObjects;
 	}
 
-	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:Pointer.Library ):Object {
+	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:PointerLibrary ):Object {
 		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
 
 		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
@@ -1333,10 +1337,10 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 		return [ persistedDocument, response ];
 	}
 
-	private _parseMembers( pointers:(string | Pointer.Class)[] ):Pointer.Class[] {
+	private _parseMembers( pointers:(string | Pointer)[] ):Pointer[] {
 		return pointers.map( pointer => {
 			if( Utils.isString( pointer ) ) return this.getPointer( pointer );
-			if( Pointer.Factory.is( pointer ) ) return pointer;
+			if( Pointer.is( pointer ) ) return pointer;
 
 			throw new Errors.IllegalArgumentError( "No Carbon.Pointer or URI provided." );
 		} );

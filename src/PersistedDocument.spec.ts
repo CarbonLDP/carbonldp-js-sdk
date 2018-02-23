@@ -11,7 +11,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 import * as URI from "./RDF/URI";
 import {
 	clazz,
@@ -66,35 +66,35 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"defaultInteractionModel",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A Pointer representing the default interaction model of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A Pointer with the member of relation of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"hasMemberRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A Pointer with the inverted relation the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"accessPoints",
-			"Carbon.Pointer.Class[]",
+			"Carbon.Pointer.Pointer[]",
 			"Array with the access points of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"contains",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Array with the children of the document."
 		), ():void => {} );
 
@@ -237,7 +237,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				"Adds the specified resource Pointer as a member of the document.", [
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+					{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {} );
@@ -255,7 +255,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"addMembers",
 			"Adds the specified resources as members of the document.", [
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
+				{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
@@ -516,7 +516,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				"Remove the specified resource Pointer as a member of the current document.", [
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+					{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {} );
@@ -534,7 +534,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"removeMembers",
 			"Remove the specified resources URI or Pointers as members of the current document.", [
-				{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
+				{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
@@ -1255,7 +1255,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				expect( document.getPointer ).toBeDefined();
 				expect( Utils.isFunction( document.getPointer ) ).toBe( true );
 
-				let pointer:Pointer.Class;
+				let pointer:Pointer;
 
 				pointer = document.getPointer( "http://example.com/document/" );
 				expect( pointer ).toBe( document );
@@ -1287,40 +1287,40 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the pointer provided is in the scope of the persisted document.", [
-						{ name: "pointer", type: "Carbon.Pointer.Class" },
+						{ name: "pointer", type: "Carbon.Pointer.Pointer" },
 					],
 					{ type: "boolean" }
 				), ():void => {
 					expect( document.inScope ).toBeDefined();
 					expect( Utils.isFunction( document.inScope ) ).toBe( true );
 
-					let pointer:Pointer.Class;
+					let pointer:Pointer;
 
 					expect( document.inScope.bind( document, undefined ) ).toThrowError();
 					expect( document.inScope.bind( document, null ) ).toThrowError();
 
 					expect( document.inScope( document ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/" );
+					pointer = Pointer.create( "http://example.com/document/" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/#fragment" );
+					pointer = Pointer.create( "http://example.com/document/#fragment" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/#another-fragment" );
+					pointer = Pointer.create( "http://example.com/document/#another-fragment" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "_:BlankNode" );
+					pointer = Pointer.create( "_:BlankNode" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "#fragment" );
+					pointer = Pointer.create( "#fragment" );
 					expect( document.inScope( pointer ) ).toBe( true );
 
 					// In Documents
-					pointer = Pointer.Factory.create( "this-uri-is-resolved-relative/" );
+					pointer = Pointer.create( "this-uri-is-resolved-relative/" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/in/documents/" );
+					pointer = Pointer.create( "http://example.com/in/documents/" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/child/" );
+					pointer = Pointer.create( "http://example.com/document/child/" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/another-document/" );
+					pointer = Pointer.create( "http://example.com/another-document/" );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.org/document/" );
+					pointer = Pointer.create( "http://example.org/document/" );
 					expect( document.inScope( pointer ) ).toBe( true );
 				} );
 
@@ -1680,7 +1680,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					"Adds the specified resource Pointer as a member of the document.", [
-						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
+						{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
 					],
 					{ type: "Promise<Carbon.HTTP.Response.Class>" }
 				), ():void => {
@@ -1689,7 +1689,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
 
-					let pointer:Pointer.Class = context.documents.getPointer( "new-member/" );
+					let pointer:Pointer = context.documents.getPointer( "new-member/" );
 					document.addMember( pointer );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer );
@@ -1717,7 +1717,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"addMembers",
 				"Adds the specified resources as members of the document.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
+					{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -1726,7 +1726,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( document._documents, "addMembers" );
 
-				let pointers:Pointer.Class[] = [];
+				let pointers:Pointer[] = [];
 				pointers.push( context.documents.getPointer( "new-member/" ) );
 				document.addMembers( pointers );
 
@@ -2288,7 +2288,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					"Remove the specified resource Pointer as a member of the current document.", [
-						{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
+						{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
 					],
 					{ type: "Promise<Carbon.HTTP.Response.Class>" }
 				), ():void => {
@@ -2297,7 +2297,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
 
-					let pointer:Pointer.Class = context.documents.getPointer( "remove-member/" );
+					let pointer:Pointer = context.documents.getPointer( "remove-member/" );
 					document.removeMember( pointer );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer );
@@ -2325,7 +2325,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"removeMembers",
 				"Remove the specified resources URI or Pointers as members of the current document.", [
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
+					{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -2334,7 +2334,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( document._documents, "removeMembers" );
 
-				let pointers:Pointer.Class[] = [];
+				let pointers:Pointer[] = [];
 				pointers.push( context.documents.getPointer( "remove-member/" ) );
 				document.removeMembers( pointers );
 

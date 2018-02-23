@@ -13,7 +13,10 @@ import {
 import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import {
+	Pointer,
+	PointerLibrary
+} from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as JSONLDConverter from "./Converter";
 import DefaultExport from "./Converter";
@@ -77,7 +80,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					{ name: "expandedObject", type: "Object", description: "The JSON-LD object to compact." },
 					{ name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object." },
 					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
-					{ name: "pointerLibrary", type: "Carbon.Pointer.Library", description: "An object from where one can obtain pointers to SDK Resources." },
+					{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary", description: "An object from where one can obtain pointers to SDK Resources." },
 				],
 				{ type: "Object", description: "The compacted target object." }
 			), ():void => {
@@ -180,12 +183,12 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					},
 				};
 
-				let mockedPointerLibrary:Pointer.Library = {
+				let mockedPointerLibrary:PointerLibrary = {
 					hasPointer: ( id:string ):boolean => {
 						return true;
 					},
-					getPointer: ( id:string ):Pointer.Class => {
-						let pointer:Pointer.Class = Pointer.Factory.create( id );
+					getPointer: ( id:string ):Pointer => {
+						let pointer:Pointer = Pointer.create( id );
 						pointer._resolved = true;
 						return pointer;
 					},
@@ -370,16 +373,16 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 						"en": "english",
 						"ja": "日本語",
 					},
-					"pointer": Pointer.Factory.create( "http://example.com/pointer/" ),
+					"pointer": Pointer.create( "http://example.com/pointer/" ),
 					"pointerList": [
-						Pointer.Factory.create( "http://example.com/pointer-1/" ),
-						Pointer.Factory.create( "http://example.com/pointer-2/" ),
-						Pointer.Factory.create( "http://example.com/pointer-3/" ),
+						Pointer.create( "http://example.com/pointer-1/" ),
+						Pointer.create( "http://example.com/pointer-2/" ),
+						Pointer.create( "http://example.com/pointer-3/" ),
 					],
 					"pointerSet": [
-						Pointer.Factory.create( "http://example.com/pointer-1/" ),
-						Pointer.Factory.create( "http://example.com/pointer-2/" ),
-						Pointer.Factory.create( "http://example.com/pointer-3/" ),
+						Pointer.create( "http://example.com/pointer-1/" ),
+						Pointer.create( "http://example.com/pointer-2/" ),
+						Pointer.create( "http://example.com/pointer-3/" ),
 					],
 					"unknownTypeLiteral": 1,
 					"unknownTypeArray": [
@@ -388,15 +391,15 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 						new Date( "2015-12-04T23:06:57.920Z" ),
 						"Some string",
 						function():void {},
-						Pointer.Factory.create( "http://example.com/pointer/" ),
+						Pointer.create( "http://example.com/pointer/" ),
 					],
-					"unknownTypePointer": Pointer.Factory.create( "http://example.com/pointer/" ),
+					"unknownTypePointer": Pointer.create( "http://example.com/pointer/" ),
 					"anotherPrefixedPointer": "ex:another-resource/",
 					"anotherPointerInSchema": "propertyInGeneral",
 					"notInSchemaLiteral": "Property Literal not defined in Schema",
-					"notInSchemaPointer": Pointer.Factory.create( "http://example.com/another-pointer/" ),
+					"notInSchemaPointer": Pointer.create( "http://example.com/another-pointer/" ),
 					"vocabPointer": "to-pointer",
-					"relativePointer": Pointer.Factory.create( "relative-pointer/" ),
+					"relativePointer": Pointer.create( "relative-pointer/" ),
 					"elementWithoutID": "This element will be converted into a set",
 					"relative@id": [ "Property with a relative @id" ],
 				};

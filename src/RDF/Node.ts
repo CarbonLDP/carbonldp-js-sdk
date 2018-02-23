@@ -1,11 +1,14 @@
+import { XSD } from "../Vocabularies/XSD";
+import {
+	Pointer,
+	PointerLibrary
+} from "./../Pointer";
 import * as Utils from "./../Utils";
 
 import * as Document from "./Document";
 import * as List from "./List";
 import * as Literal from "./Literal";
-import * as Pointer from "./../Pointer";
 import * as Value from "./Value";
-import { XSD } from "../Vocabularies/XSD";
 
 export interface Class {
 	"@id":string;
@@ -55,7 +58,7 @@ export class Util {
 			.filter( ( element ) => Factory.is( element ) );
 	}
 
-	static getProperty( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
+	static getProperty( expandedObject:any, propertyURI:string, pointerLibrary:PointerLibrary ):any {
 		let propertyValues:Array<any> = expandedObject[ propertyURI ];
 		if( ! propertyValues ) return null;
 		if( ! propertyValues.length ) return null;
@@ -65,7 +68,7 @@ export class Util {
 		return Value.Util.parseValue( propertyValue, pointerLibrary );
 	}
 
-	static getPropertyPointer( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
+	static getPropertyPointer( expandedObject:any, propertyURI:string, pointerLibrary:PointerLibrary ):any {
 		let propertyValues:Array<any> = expandedObject[ propertyURI ];
 		if( ! propertyValues ) return null;
 
@@ -92,7 +95,7 @@ export class Util {
 		return null;
 	}
 
-	static getPropertyList( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
+	static getPropertyList( expandedObject:any, propertyURI:string, pointerLibrary:PointerLibrary ):any {
 		let propertyValues:Array<any> = expandedObject[ propertyURI ];
 		if( ! propertyValues ) return null;
 
@@ -107,7 +110,7 @@ export class Util {
 		return listValues;
 	}
 
-	static getPropertyPointerList( expandedObject:any, propertyURI:string, pointerLibrary:Pointer.Library ):any {
+	static getPropertyPointerList( expandedObject:any, propertyURI:string, pointerLibrary:PointerLibrary ):any {
 		let propertyValues:Array<any> = expandedObject[ propertyURI ];
 		if( ! propertyValues ) return null;
 
@@ -118,7 +121,7 @@ export class Util {
 		for( let listValue of propertyList[ "@list" ] ) {
 			if( ! Factory.is( listValue ) ) continue;
 
-			let pointer:Pointer.Class = pointerLibrary.getPointer( listValue[ "@id" ] );
+			let pointer:Pointer = pointerLibrary.getPointer( listValue[ "@id" ] );
 			listPointers.push( pointer );
 		}
 
@@ -143,7 +146,7 @@ export class Util {
 		return listLiterals;
 	}
 
-	static getProperties( propertyValues:any[], pointerLibrary:Pointer.Library ):any {
+	static getProperties( propertyValues:any[], pointerLibrary:PointerLibrary ):any {
 		if( ! propertyValues ) return null;
 		if( ! propertyValues.length ) return null;
 
@@ -156,7 +159,7 @@ export class Util {
 		return properties;
 	}
 
-	static getPropertyPointers( propertyValues:any[], pointerLibrary:Pointer.Library ):any {
+	static getPropertyPointers( propertyValues:any[], pointerLibrary:PointerLibrary ):any {
 		if( ! propertyValues ) return [];
 		if( ! propertyValues.length ) return [];
 
@@ -164,7 +167,7 @@ export class Util {
 		for( let propertyValue of propertyValues ) {
 			if( ! Factory.is( propertyValue ) ) continue;
 
-			let pointer:Pointer.Class = pointerLibrary.getPointer( propertyValue[ "@id" ] );
+			let pointer:Pointer = pointerLibrary.getPointer( propertyValue[ "@id" ] );
 			if( pointer !== null )
 				propertyPointers.push( pointer );
 		}

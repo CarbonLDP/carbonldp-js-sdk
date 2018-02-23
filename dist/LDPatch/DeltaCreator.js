@@ -7,20 +7,13 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../JSONLD/Utils");
 var XSD_1 = require("../Vocabularies/XSD");
 var ObjectSchema_1 = require("../ObjectSchema");
-var Pointer = __importStar(require("../Pointer"));
+var Pointer_1 = require("../Pointer");
 var Utils_2 = require("../Utils");
 var Tokens_1 = require("./Tokens");
 var typesDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
@@ -146,7 +139,7 @@ var Class = (function () {
         var _this = this;
         var areDefinedLiteral = definition && definition.literal !== null ? definition.literal : null;
         return values.map(function (value) {
-            var isLiteral = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer.Factory.is(value);
+            var isLiteral = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer_1.Pointer.is(value);
             if (isLiteral)
                 return _this.expandLiteral(value, schema, definition);
             return _this.expandPointer(value, schema);
@@ -166,7 +159,7 @@ var Class = (function () {
         }).filter(isValidValue);
     };
     Class.prototype.expandPointer = function (value, schema) {
-        var id = Pointer.Factory.is(value) ? value.id : value;
+        var id = Pointer_1.Pointer.is(value) ? value.id : value;
         if (!Utils_2.isString(id))
             return null;
         return iri_1.isBNodeLabel(id) ?

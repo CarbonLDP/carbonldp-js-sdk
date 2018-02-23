@@ -1,4 +1,4 @@
-import * as Pointer from "./../Pointer";
+import { PointerLibrary } from "./../Pointer";
 import * as List from "./List";
 import * as Literal from "./Literal";
 import * as RDFNode from "./Node";
@@ -11,7 +11,7 @@ export interface Class {
 
 export class Util {
 
-	static parseValue( propertyValue:Class, pointerLibrary:Pointer.Library ):any {
+	static parseValue( propertyValue:Class, pointerLibrary:PointerLibrary ):any {
 		if( Literal.Factory.is( propertyValue ) ) {
 			return Literal.Factory.parse( <any> propertyValue );
 		} else if( RDFNode.Factory.is( propertyValue ) ) {

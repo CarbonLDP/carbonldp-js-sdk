@@ -1,5 +1,5 @@
 import * as Messaging from "../Messaging";
-import * as Pointer from "../Pointer";
+import { Pointer } from "../Pointer";
 import {
 	extendsClass,
 	hasDefaultExport,
@@ -74,9 +74,9 @@ describe( module( "Carbon/Messaging/MemberRemoved" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Class"
+			"Carbon.Pointer.Pointer"
 		), ():void => {
-			const target:MemberRemoved.Class[ "target" ] = {} as Pointer.Class;
+			const target:MemberRemoved.Class[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 

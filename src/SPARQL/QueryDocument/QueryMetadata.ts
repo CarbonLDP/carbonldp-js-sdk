@@ -1,6 +1,6 @@
 import * as VolatileResource from "../../LDP/VolatileResource";
 import * as ObjectSchema from "../../ObjectSchema";
-import * as Pointer from "../../Pointer";
+import { Pointer } from "../../Pointer";
 import { C } from "../../Vocabularies/C";
 
 export const RDF_CLASS:string = C.QueryMetadata;
@@ -14,7 +14,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends VolatileResource.Class {
-	target:Pointer.Class;
+	target:Pointer;
 }
 
 export class Factory {

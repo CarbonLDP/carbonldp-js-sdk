@@ -21,7 +21,7 @@ import {
 	IllegalArgumentError,
 	IllegalStateError,
 } from "./../../Errors";
-import * as Pointer from "./../../Pointer";
+import { Pointer } from "./../../Pointer";
 import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
@@ -91,7 +91,7 @@ export class Class {
 		return new QueryValue.Class( this._context, value );
 	}
 
-	object( object:Pointer.Class | string ):QueryObject.Class {
+	object( object:Pointer | string ):QueryObject.Class {
 		return new QueryObject.Class( this._context, object );
 	}
 

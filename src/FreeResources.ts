@@ -2,22 +2,29 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import JSONLDConverter from "./JSONLD/Converter";
 import * as ObjectSchema from "./ObjectSchema";
-import * as Pointer from "./Pointer";
+import {
+	Pointer,
+	PointerLibrary,
+	PointerValidator,
+} from "./Pointer";
 import * as RDF from "./RDF";
 import * as Resource from "./Resource";
 import * as Utils from "./Utils";
 
-export interface Class extends Pointer.Library, Pointer.Validator {
+export interface Class extends PointerLibrary, PointerValidator {
 	_documents:Documents;
 	_resourcesIndex:Map<string, Resource.Class>;
 
 	hasResource( id:string ):boolean;
+
 	getResource( id:string ):Resource.Class;
+
 	getResources():Resource.Class[];
 
 	getPointer( id:string ):Resource.Class;
 
 	createResource( id?:string ):Resource.Class;
+
 	createResourceFrom<T>( object:T, id?:string ):Resource.Class & T;
 
 	toJSON():string;
@@ -33,7 +40,7 @@ function hasPointer( id:string ):boolean {
 	return freeResources.hasResource( id );
 }
 
-function getPointer( id:string ):Pointer.Class {
+function getPointer( id:string ):Pointer {
 	let freeResources:Class = <Class> this;
 
 	if( ! inLocalScope( id ) ) {
@@ -49,11 +56,11 @@ function inLocalScope( id:string ):boolean {
 	return RDF.URI.Util.isBNodeID( id );
 }
 
-function inScope( pointer:Pointer.Class ):boolean;
+function inScope( pointer:Pointer ):boolean;
 function inScope( id:string ):boolean;
 function inScope( idOrPointer:any ):boolean {
 	let freeResources:Class = <Class> this;
-	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+	let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 	return inLocalScope( id ) || freeResources._documents.inScope( id );
 }
@@ -79,6 +86,7 @@ function getResources():Resource.Class[] {
 function createResource( id?:string ):Resource.Class {
 	return this.createResourceFrom( {}, id );
 }
+
 function createResourceFrom<T extends Object>( object:T, id?:string ):Resource.Class & T {
 	let freeResources:Class = <Class> this;
 

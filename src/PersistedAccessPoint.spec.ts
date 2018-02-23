@@ -31,28 +31,28 @@ describe( module( "Carbon/PersistedAccessPoint" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"membershipResource",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The membership resource the access point belongs to."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMemberRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The member relation of the access point manages."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"isMemberOfRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The inverted relation of the access point."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"insertedContentRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The inserted content relation of the access point."
 		), ():void => {} );
 

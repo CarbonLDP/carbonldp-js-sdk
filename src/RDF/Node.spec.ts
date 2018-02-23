@@ -1,7 +1,10 @@
-import AbstractContext from "./../AbstractContext";
 import { XSD } from "../Vocabularies/XSD";
+import AbstractContext from "./../AbstractContext";
 import * as PersistedDocument from "./../PersistedDocument";
-import * as Pointer from "./../Pointer";
+import {
+	Pointer,
+	PointerLibrary
+} from "./../Pointer";
 import {
 	clazz,
 	hasDefaultExport,
@@ -104,7 +107,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 	), ():void => {
 		let expandedObject:any;
 		let documentResource:any;
-		let pointerLibrary:Pointer.Library;
+		let pointerLibrary:PointerLibrary;
 		let result:any;
 		let context:AbstractContext;
 
@@ -416,7 +419,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns null if the property is not found or cannot be parsed.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -434,7 +437,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( result ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 
 			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#pointer", pointerLibrary );
-			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( Pointer.is( result ) ).toBe( true );
 			expect( result.id ).toBe( "http://example.com/pointer/1" );
 			expect( result.isResolved() ).toBe( false );
 
@@ -444,7 +447,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( result.length ).toBe( 3 );
 			expect( result[ 0 ] ).toBe( 100 );
 			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
-			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
 			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getProperty( documentResource, "http://example.com/ns#set", pointerLibrary );
@@ -465,21 +468,21 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns null if the property is not found or cannot be parsed as a Pointer.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
 			expect( RDFNode.Util.getPropertyPointer ).toBeDefined();
 			expect( Utils.isFunction( RDFNode.Util.getPropertyPointer ) ).toBe( true );
 
-			let pointer:Pointer.Class;
+			let pointer:Pointer;
 
 			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#pointer", pointerLibrary );
-			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( Pointer.is( result ) ).toBe( true );
 			expect( result.id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#pointerSet", pointerLibrary );
-			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( Pointer.is( result ) ).toBe( true );
 			expect( result.id ).toBe( "_:1" );
 
 			result = RDFNode.Util.getPropertyPointer( documentResource, "http://example.com/ns#string", pointerLibrary );
@@ -531,7 +534,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns null if the property is not found or cannot be parsed.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -543,7 +546,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( result.length ).toBe( 3 );
 			expect( result[ 0 ] ).toBe( 100 );
 			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
-			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
 			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getPropertyList( documentResource, "http://example.com/ns#no-property", pointerLibrary );
@@ -559,7 +562,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns null if the property is not found or is not a List.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -569,7 +572,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			result = RDFNode.Util.getPropertyPointerList( documentResource, "http://example.com/ns#list", pointerLibrary );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
-			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getPropertyPointerList( documentResource, "http://example.com/ns#no-property", pointerLibrary );
@@ -587,7 +590,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns null if the property is not found or is not a List.", [
 				{ name: "expandedObject", type: "any" },
 				{ name: "propertyURI", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -613,7 +616,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns the property array with the parsed Literal, Pointer or List.\n" +
 			"Returns an empty array if it cannot be parsed.", [
 				{ name: "expandedValues", type: "any[]" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -641,7 +644,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			result = RDFNode.Util.getProperties( documentResource[ "http://example.com/ns#pointer" ], pointerLibrary );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
-			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getProperties( documentResource[ "http://example.com/ns#list" ], pointerLibrary );
@@ -651,17 +654,17 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			expect( result[ 0 ].length ).toBe( 3 );
 			expect( result[ 0 ][ 0 ] ).toBe( 100 );
 			expect( result[ 0 ][ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
-			expect( Pointer.Factory.is( result[ 0 ][ 2 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 0 ][ 2 ] ) ).toBe( true );
 			expect( result[ 0 ][ 2 ].id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getProperties( documentResource[ "http://example.com/ns#pointerSet" ], pointerLibrary );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 3 );
-			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ].id ).toBe( "_:1" );
-			expect( Pointer.Factory.is( result[ 1 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 1 ] ) ).toBe( true );
 			expect( result[ 1 ].id ).toBe( "http://example.com/resource/#1" );
-			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
 			expect( result[ 2 ].id ).toBe( "http://example.com/external-resource/" );
 
 			result = RDFNode.Util.getProperties( documentResource[ "http://example.com/ns#empty-property" ], pointerLibrary );
@@ -678,7 +681,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns the property array with the parsed Pointers values.\n" +
 			"Returns an empty array if the property cannot be parsed as a pointer.", [
 				{ name: "expandedValues", type: "any[]" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -688,17 +691,17 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			result = RDFNode.Util.getPropertyPointers( documentResource[ "http://example.com/ns#pointer" ], pointerLibrary );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 1 );
-			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ].id ).toBe( "http://example.com/pointer/1" );
 
 			result = RDFNode.Util.getPropertyPointers( documentResource[ "http://example.com/ns#pointerSet" ], pointerLibrary );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 3 );
-			expect( Pointer.Factory.is( result[ 0 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 0 ] ) ).toBe( true );
 			expect( result[ 0 ].id ).toBe( "_:1" );
-			expect( Pointer.Factory.is( result[ 1 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 1 ] ) ).toBe( true );
 			expect( result[ 1 ].id ).toBe( "http://example.com/resource/#1" );
-			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
 			expect( result[ 2 ].id ).toBe( "http://example.com/external-resource/" );
 
 			result = RDFNode.Util.getPropertyPointers( documentResource[ "http://example.com/ns#string" ], pointerLibrary );
@@ -821,7 +824,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			"Returns an object associating the language with the parsed string literal.\n" +
 			"Returns an empty object if it is not a property with language.", [
 				{ name: "expandedValues", type: "any[]" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {

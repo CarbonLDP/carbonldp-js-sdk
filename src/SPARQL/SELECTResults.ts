@@ -1,7 +1,7 @@
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 
 export interface BindingObject {
-	[ binding:string ]:string | number | boolean | Date | Pointer.Class;
+	[ binding:string ]:string | number | boolean | Date | Pointer;
 }
 
 export interface Class<T = BindingObject> {

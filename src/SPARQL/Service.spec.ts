@@ -1,17 +1,18 @@
-import {
-	STATIC,
-
-	module,
-	clazz,
-
-	isDefined,
-	hasMethod,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
+import * as Errors from "./../Errors";
 
 import * as HTTP from "./../HTTP";
-import * as Errors from "./../Errors";
-import * as Pointer from "./../Pointer";
+import {
+	Pointer,
+	PointerLibrary
+} from "./../Pointer";
+import {
+	clazz,
+	hasDefaultExport,
+	hasMethod,
+	isDefined,
+	module,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as RawResults from "./RawResults";
@@ -142,7 +143,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			"Executes a SELECT Query and parses the results.", [
 				{ name: "url", type: "string" },
 				{ name: "selectQuery", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
@@ -197,12 +198,12 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					}`,
 				} );
 
-				class MockedPointerLibrary implements Pointer.Library {
+				class MockedPointerLibrary implements PointerLibrary {
 					hasPointer( id:string ):boolean {
 						return false;
 					}
 
-					getPointer( id:string ):Pointer.Class {
+					getPointer( id:string ):Pointer {
 						return {
 							_id: id,
 							_resolved: false,
@@ -213,7 +214,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					}
 				}
 
-				let pointerLibrary:Pointer.Library = new MockedPointerLibrary();
+				let pointerLibrary:PointerLibrary = new MockedPointerLibrary();
 
 				promises.push( Service.Class.executeSELECTQuery( "http://example.com/sparql-endpoint/", selectQuery, pointerLibrary ).then(
 					( [ results, response ]:[ SELECTResults.Class, HTTP.Response.Class ] ):void => {
@@ -234,13 +235,13 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( results.bindings[ 0 ][ "literalBinding" ] ).toEqual( "some string" );
 
 						expect( "uriBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( (<Pointer.Class> results.bindings[ 0 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-1/" );
+						expect( (<Pointer> results.bindings[ 0 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-1/" );
 
 						expect( "literalBinding" in results.bindings[ 1 ] ).toEqual( true );
 						expect( results.bindings[ 1 ][ "literalBinding" ] ).toEqual( 12 );
 
 						expect( "uriBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( (<Pointer.Class> results.bindings[ 1 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-2/" );
+						expect( (<Pointer> results.bindings[ 1 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-2/" );
 
 						expect( response ).toBeDefined();
 						expect( response instanceof HTTP.Response.Class ).toBe( true );
@@ -284,12 +285,12 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				`,
 				} );
 
-				class MockedPointerLibrary implements Pointer.Library {
+				class MockedPointerLibrary implements PointerLibrary {
 					hasPointer( id:string ):boolean {
 						return false;
 					}
 
-					getPointer( id:string ):Pointer.Class {
+					getPointer( id:string ):Pointer {
 						return {
 							_id: id,
 							_resolved: false,
@@ -300,7 +301,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 					}
 				}
 
-				let pointerLibrary:Pointer.Library = new MockedPointerLibrary();
+				let pointerLibrary:PointerLibrary = new MockedPointerLibrary();
 
 				promises.push( Service.Class.executeSELECTQuery( "http://example.com/sparql-endpoint/with-bnode/", selectQuery, pointerLibrary ).then(
 					():void => {

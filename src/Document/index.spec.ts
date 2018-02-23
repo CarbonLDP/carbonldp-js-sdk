@@ -41,21 +41,21 @@ describe( module( "Carbon/Document" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"defaultInteractionModel",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A Pointer URI representing the default interaction model of the document when persisted."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A Pointer with the member of relation of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"hasMemberRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A Pointer with the inverted relation the document will have."
 		), ():void => {} );
 
@@ -98,7 +98,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is inside the scope of the Document.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" },
+					{ name: "pointer", type: "Carbon.Pointer.Pointer" },
 				],
 				{ type: "boolean" }
 			), ():void => {} );

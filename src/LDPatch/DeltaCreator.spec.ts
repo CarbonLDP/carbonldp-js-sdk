@@ -14,7 +14,7 @@ import {
 	DigestedObjectSchema,
 	Digester,
 } from "../ObjectSchema";
-import * as Pointer from "../Pointer";
+import { Pointer } from "../Pointer";
 import * as Resource from "../Resource";
 import {
 	clazz,
@@ -209,7 +209,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 
 					const oldResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
@@ -229,7 +229,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 
 					const oldResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "_:blank-node" ),
+						property: Pointer.create( "_:blank-node" ),
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
@@ -254,7 +254,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
@@ -413,7 +413,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
 
 					deltaCreator.addResource( schema, oldResource, newResource );
@@ -432,7 +432,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "_:blank-node" ),
+						property: Pointer.create( "_:blank-node" ),
 					} );
 
 					deltaCreator.addResource( schema, oldResource, newResource );
@@ -456,7 +456,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 
@@ -623,14 +623,14 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							true,
 							false,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "_:1" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "_:1" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 							new Date( "2000-01-01" ),
 							new Date( "2010-10-10" ),
 							true,
@@ -859,7 +859,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 
 					const oldResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
@@ -886,7 +886,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 
 					const oldResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "_:blank-node" ),
+						property: Pointer.create( "_:blank-node" ),
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
@@ -917,7 +917,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
@@ -950,7 +950,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
@@ -1054,7 +1054,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
@@ -1297,7 +1297,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
 
 					deltaCreator.addResource( schema, oldResource, newResource );
@@ -1324,7 +1324,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "_:blank-node" ),
+						property: Pointer.create( "_:blank-node" ),
 					} );
 
 					deltaCreator.addResource( schema, oldResource, newResource );
@@ -1355,7 +1355,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 
@@ -1388,7 +1388,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 
@@ -1492,7 +1492,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.Factory.create( "http://example.org/pointer/" ),
+							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
 
@@ -2074,7 +2074,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
 
 					const spy:jasmine.Spy = spyOn( deltaCreator, "compactIRI" as any ).and.callThrough();
@@ -2102,7 +2102,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
 
 					deltaCreator.addResource( schema, oldResource, newResource );
@@ -2127,7 +2127,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 						integers: [ 1, 2 ],
 					} );
 
@@ -2153,7 +2153,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					} );
 					const newResource:Resource.Class = Resource.Factory.createFrom( {
 						id: "http://example.org/resource/",
-						property: Pointer.Factory.create( "http://example.org/pointer/" ),
+						property: Pointer.create( "http://example.org/pointer/" ),
 						integers: [ 1, 2 ],
 					} );
 
@@ -2424,7 +2424,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				} ), Resource.Factory.createFrom( {
 					id: "http://example.org/resource/",
 					property1: "string",
-					property2: [ "string", 1, new Date(), Pointer.Factory.create( "_:blank-node" ) ],
+					property2: [ "string", 1, new Date(), Pointer.create( "_:blank-node" ) ],
 				} ), Resource.Factory.createFrom( {
 					id: "http://example.org/resource/",
 				} ) );

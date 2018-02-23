@@ -1,16 +1,16 @@
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.Class;
 export interface Class extends Resource.Class {
-    focusNode: Pointer.Class;
-    resultPath?: Pointer.Class;
+    focusNode: Pointer;
+    resultPath?: Pointer;
     value?: any;
-    sourceShape?: Pointer.Class;
-    sourceConstraintComponent?: Pointer.Class;
-    detail?: Pointer.Class;
+    sourceShape?: Pointer;
+    sourceConstraintComponent?: Pointer;
+    detail?: Pointer;
     resultMessage?: string;
-    resultSeverity?: Pointer.Class;
+    resultSeverity?: Pointer;
 }
 export default Class;

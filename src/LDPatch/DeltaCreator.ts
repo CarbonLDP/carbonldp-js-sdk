@@ -23,7 +23,7 @@ import {
 	DigestedPropertyDefinition,
 	PointerType,
 } from "../ObjectSchema";
-import * as Pointer from "../Pointer";
+import { Pointer } from "../Pointer";
 import * as Resource from "../Resource";
 import { isString } from "../Utils";
 
@@ -215,7 +215,7 @@ export class Class {
 	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):ObjectToken[] {
 		const areDefinedLiteral:boolean = definition && definition.literal !== null ? definition.literal : null;
 		return values.map( value => {
-			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.Factory.is( value );
+			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.is( value );
 
 			if( isLiteral ) return this.expandLiteral( value, schema, definition );
 			return this.expandPointer( value, schema );
@@ -238,7 +238,7 @@ export class Class {
 	}
 
 	private expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
-		let id:string = Pointer.Factory.is( value ) ? value.id : value;
+		let id:string = Pointer.is( value ) ? value.id : value;
 		if( ! isString( id ) ) return null;
 
 		return isBNodeLabel( id ) ?

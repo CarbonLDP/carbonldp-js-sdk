@@ -1,7 +1,7 @@
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
 
-export interface Class extends Pointer.Class {
+export interface Class extends Pointer {
 	types:string[];
 
 	addType( type:string ):void;
@@ -32,7 +32,7 @@ export class Factory {
 	}
 
 	static is( object:object ):object is Class {
-		return Pointer.Factory.is( object )
+		return Pointer.is( object )
 			&& Factory.hasClassProperties( object );
 	}
 
@@ -52,7 +52,7 @@ export class Factory {
 		const resource:T & Class = object as T & Class;
 		if( Factory.hasClassProperties( object ) ) return resource;
 
-		Pointer.Factory.decorate<T>( resource );
+		Pointer.decorate<T>( resource );
 
 		Object.defineProperties( resource, {
 			"types": {

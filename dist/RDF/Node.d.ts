@@ -1,5 +1,5 @@
+import { PointerLibrary } from "./../Pointer";
 import * as List from "./List";
-import * as Pointer from "./../Pointer";
 export interface Class {
     "@id": string;
 }
@@ -13,14 +13,14 @@ export declare class Util {
     static getTypes(node: Class): string[];
     static getPropertyURI(node: Class, predicate: string): string;
     static getFreeNodes<T extends Object>(value: T): Class[];
-    static getProperty(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyPointer(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
+    static getProperty(expandedObject: any, propertyURI: string, pointerLibrary: PointerLibrary): any;
+    static getPropertyPointer(expandedObject: any, propertyURI: string, pointerLibrary: PointerLibrary): any;
     static getPropertyLiteral(expandedObject: any, propertyURI: string, literalType: string): any;
-    static getPropertyList(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyPointerList(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
+    static getPropertyList(expandedObject: any, propertyURI: string, pointerLibrary: PointerLibrary): any;
+    static getPropertyPointerList(expandedObject: any, propertyURI: string, pointerLibrary: PointerLibrary): any;
     static getPropertyLiteralList(expandedObject: any, propertyURI: string, literalType: string): any;
-    static getProperties(propertyValues: any[], pointerLibrary: Pointer.Library): any;
-    static getPropertyPointers(propertyValues: any[], pointerLibrary: Pointer.Library): any;
+    static getProperties(propertyValues: any[], pointerLibrary: PointerLibrary): any;
+    static getPropertyPointers(propertyValues: any[], pointerLibrary: PointerLibrary): any;
     static getPropertyURIs(expandedObject: any, propertyURI: string): string[];
     static getPropertyLiterals(propertyValues: any[], literalType: string): any;
     static getPropertyLanguageMap(propertyValues: any[]): any;

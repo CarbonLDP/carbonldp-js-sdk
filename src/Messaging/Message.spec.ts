@@ -1,4 +1,4 @@
-import * as Pointer from "../Pointer";
+import { Pointer } from "../Pointer";
 import * as Resource from "../Resource";
 import {
 	clazz,
@@ -60,9 +60,9 @@ describe( module( "Carbon/Messaging/Message" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Class"
+			"Carbon.Pointer.Pointer"
 		), ():void => {
-			const target:Message.Class[ "target" ] = {} as Pointer.Class;
+			const target:Message.Class[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 

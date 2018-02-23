@@ -1,7 +1,10 @@
 import { XSD } from "../Vocabularies/XSD";
 import * as Errors from "./../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import {
+	Pointer,
+	PointerLibrary
+} from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 import { guessXSDType } from "./Utils";
@@ -35,11 +38,11 @@ export class Class {
 		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
 	}
 
-	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object[];
-	compact( expandedObject:Object, targetObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library, strict?:boolean ):Object;
-	compact( expandedObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object[];
-	compact( expandedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):Object;
-	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary:Pointer.Library = null, strict?:boolean ):any {
+	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object[];
+	compact( expandedObject:Object, targetObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary, strict?:boolean ):Object;
+	compact( expandedObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object[];
+	compact( expandedObject:Object, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object;
+	compact( expandedObjectOrObjects:any, targetObjectOrObjectsOrDigestedContext:any, digestedSchemaOrPointerLibrary:any, pointerLibrary:PointerLibrary = null, strict?:boolean ):any {
 		let targetObjectOrObjects:any = ! pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
 		let digestedSchema:any = ! pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
 		pointerLibrary = ! pointerLibrary ? digestedSchemaOrPointerLibrary : pointerLibrary;
@@ -149,7 +152,7 @@ export class Class {
 
 	private expandPointerValue( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema, generalSchema:ObjectSchema.DigestedObjectSchema ):RDF.Node.Class {
 		const isString:boolean = Utils.isString( propertyValue );
-		const id:string = Pointer.Factory.is( propertyValue ) ?
+		const id:string = Pointer.is( propertyValue ) ?
 			propertyValue.id :
 			isString ?
 				propertyValue :
@@ -166,7 +169,7 @@ export class Class {
 		// TODO: Lists of lists are not currently supported by the spec
 		if( Utils.isArray( propertyValue ) ) return null;
 
-		return Pointer.Factory.is( propertyValue ) ?
+		return Pointer.is( propertyValue ) ?
 			this.expandPointerValue( propertyValue, generalSchema, digestedSchema ) :
 			this.expandLiteralValue( propertyValue, guessXSDType( propertyValue ) )
 			;
@@ -184,7 +187,7 @@ export class Class {
 		return { "@value": serializedValue, "@type": literalType };
 	}
 
-	private compactSingle( expandedObject:any, targetObject:any, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library, strict?:boolean ):void {
+	private compactSingle( expandedObject:any, targetObject:any, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary, strict?:boolean ):void {
 		if( ! expandedObject[ "@id" ] ) throw new Errors.IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 
 		targetObject[ "id" ] = expandedObject[ "@id" ];
@@ -223,7 +226,7 @@ export class Class {
 		return null;
 	}
 
-	private getPropertyValue( propertyName:string, propertyValues:any[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:Pointer.Library ):any {
+	private getPropertyValue( propertyName:string, propertyValues:any[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):any {
 		const definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
 		const propertyContainer:ObjectSchema.ContainerType = definition ?
 			definition.containerType :

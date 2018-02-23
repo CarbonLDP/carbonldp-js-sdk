@@ -7,10 +7,10 @@ import * as Fragment from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
 import * as NamedFragment from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
-import * as Pointer from "../Pointer";
-import * as URI from "../RDF/URI";
+import { Pointer } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
+import * as URI from "../RDF/URI";
 import * as Resource from "../Resource";
 
 import { createDocumentFrom } from "./factory";
@@ -118,7 +118,7 @@ describe( "Document methods", ():void => {
 		it( "should return the document when IRI of the document", ():void => {
 			const document:Document = createMockDocument();
 
-			const pointer:Pointer.Class = getPointer.call( document, "https://example.com/document/" );
+			const pointer:Pointer = getPointer.call( document, "https://example.com/document/" );
 			expect( pointer ).toBe( document );
 		} );
 
@@ -260,44 +260,44 @@ describe( "Document methods", ():void => {
 			it( "should return true when IRI of the document", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "https://example.com/document/" ) ) ).toBe( true );
+				expect( inScope.call( document, Pointer.create( "https://example.com/document/" ) ) ).toBe( true );
 			} );
 
 			it( "should return false when relative IRIs", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "document/" ) ) ).toBe( false );
-				expect( inScope.call( document, Pointer.Factory.create( "another/document/" ) ) ).toBe( false );
+				expect( inScope.call( document, Pointer.create( "document/" ) ) ).toBe( false );
+				expect( inScope.call( document, Pointer.create( "another/document/" ) ) ).toBe( false );
 			} );
 
 			it( "should return false when another absolute IRIs", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "https://example.com/another/document/" ) ) ).toBe( false );
+				expect( inScope.call( document, Pointer.create( "https://example.com/another/document/" ) ) ).toBe( false );
 			} );
 
 			it( "should return true when relative fragment label", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "#fragment" ) ) ).toBe( true );
+				expect( inScope.call( document, Pointer.create( "#fragment" ) ) ).toBe( true );
 			} );
 
 			it( "should return true when absolute fragment label", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "https://example.com/document/#fragment" ) ) ).toBe( true );
+				expect( inScope.call( document, Pointer.create( "https://example.com/document/#fragment" ) ) ).toBe( true );
 			} );
 
 			it( "should return false when another absolute fragment label", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "https://example.com/another/document/#fragment" ) ) ).toBe( false );
+				expect( inScope.call( document, Pointer.create( "https://example.com/another/document/#fragment" ) ) ).toBe( false );
 			} );
 
 			it( "should return true when blank node label", ():void => {
 				const document:Document = createMockDocument();
 
-				expect( inScope.call( document, Pointer.Factory.create( "_:1" ) ) ).toBe( true );
+				expect( inScope.call( document, Pointer.create( "_:1" ) ) ).toBe( true );
 			} );
 
 		} );

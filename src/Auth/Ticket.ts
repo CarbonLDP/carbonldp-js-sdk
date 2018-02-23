@@ -1,7 +1,7 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as Resource from "./../Resource";
 
@@ -26,7 +26,7 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Resource.Class {
-	forURI:Pointer.Class;
+	forURI:Pointer;
 	expirationTime:Date;
 	ticketKey:string;
 }
@@ -39,7 +39,7 @@ export class Factory {
 
 	static createFrom<T extends Resource.Class>( object:T, uri:string ):Class & T {
 		let ticket:Class & T = <any> object;
-		ticket.forURI = Pointer.Factory.create( uri );
+		ticket.forURI = Pointer.create( uri );
 		ticket.types.push( RDF_CLASS );
 
 		return ticket;

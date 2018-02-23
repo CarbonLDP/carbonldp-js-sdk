@@ -7,12 +7,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var XSD_1 = require("../Vocabularies/XSD");
 var Utils = __importStar(require("./../Utils"));
 var Document = __importStar(require("./Document"));
 var List = __importStar(require("./List"));
 var Literal = __importStar(require("./Literal"));
 var Value = __importStar(require("./Value"));
-var XSD_1 = require("../Vocabularies/XSD");
 var Factory = (function () {
     function Factory() {
     }

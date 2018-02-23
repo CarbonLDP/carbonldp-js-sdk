@@ -1,5 +1,5 @@
 import * as VolatileResource from "../../LDP/VolatileResource";
-import * as Pointer from "../../Pointer";
+import { Pointer } from "../../Pointer";
 import * as Resource from "../../Resource";
 import {
 	clazz,
@@ -66,10 +66,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The pointer to one of the targeted resources requested in the partial query."
 		), ():void => {
-			const target:QueryMetadata.Class[ "target" ] = {} as Pointer.Class;
+			const target:QueryMetadata.Class[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 

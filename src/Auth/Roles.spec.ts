@@ -3,7 +3,7 @@ import { CS } from "../Vocabularies/CS";
 import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import {
 	clazz,
 	hasConstructor,
@@ -86,7 +86,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "parentRole", type: "string | Carbon.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
@@ -107,9 +107,9 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
+					success: ( [ pointer, response ]:[ Pointer, HTTP.Response.Class ] ):void => {
 						expect( pointer ).toBeTruthy();
-						expect( Pointer.Factory.is( pointer ) ).toBe( true );
+						expect( Pointer.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/.system/roles/new-role/" );
 
 						expect( response ).toBeTruthy();
@@ -156,7 +156,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | Carbon.Pointer.Class", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "parentRole", type: "string | Carbon.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
 				],
@@ -176,9 +176,9 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer.Class, HTTP.Response.Class ] ):void => {
+					success: ( [ pointer, response ]:[ Pointer, HTTP.Response.Class ] ):void => {
 						expect( pointer ).toBeTruthy();
-						expect( Pointer.Factory.is( pointer ) ).toBe( true );
+						expect( Pointer.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/.system/roles/new-role/" );
 
 						expect( response ).toBeTruthy();
@@ -440,7 +440,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
-					success: ( [ pointers, response ]:[ Pointer.Class[], HTTP.Response.Class ] ):void => {
+					success: ( [ pointers, response ]:[ Pointer[], HTTP.Response.Class ] ):void => {
 						expect( pointers ).toBeTruthy();
 						expect( pointers.length ).toBe( 1 );
 						expect( pointers[ 0 ].id ).toBe( "http://example.com/users/an-user/" );
@@ -495,7 +495,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"addUser",
 			"Makes a relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add the user." },
-				{ name: "user", type: "string | Carbon.Pointer.Class", description: "The user that wants to add to the role." },
+				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The user that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -521,7 +521,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"addUsers",
 			"Makes a relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add users." },
-				{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -564,7 +564,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "addMembers" ).and.returnValue( Promise.resolve() );
-			let users:(string | Pointer.Class)[] = [ "http://example.com/users/an-user/", Pointer.Factory.create( "http://example.com/users/another-user/" ) ];
+			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( "http://example.com/users/another-user/" ) ];
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -596,7 +596,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"removeUser",
 			"Removes the relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the user." },
-				{ name: "user", type: "string | Carbon.Pointer.Class", description: "The user that wants to be removed from the role." },
+				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The user that wants to be removed from the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -622,7 +622,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"removeUsers",
 			"Remove the relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the users." },
-				{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
+				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -665,7 +665,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 			let options:HTTP.Request.Options = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
-			let users:(string | Pointer.Class)[] = [ "http://example.com/users/an-user/", Pointer.Factory.create( "http://example.com/users/another-user/" ) ];
+			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( "http://example.com/users/another-user/" ) ];
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;

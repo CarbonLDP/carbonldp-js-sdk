@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("./Errors"));
 var Converter_1 = __importDefault(require("./JSONLD/Converter"));
-var Pointer = __importStar(require("./Pointer"));
+var Pointer_1 = require("./Pointer");
 var RDF = __importStar(require("./RDF"));
 var Resource = __importStar(require("./Resource"));
 var Utils = __importStar(require("./Utils"));
@@ -36,7 +36,7 @@ function inLocalScope(id) {
 }
 function inScope(idOrPointer) {
     var freeResources = this;
-    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+    var id = Pointer_1.Pointer.is(idOrPointer) ? idOrPointer.id : idOrPointer;
     return inLocalScope(id) || freeResources._documents.inScope(id);
 }
 function hasResource(id) {

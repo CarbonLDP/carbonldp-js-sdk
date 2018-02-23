@@ -1,6 +1,9 @@
 import AbstractContext from "./../AbstractContext";
 import * as PersistedDocument from "./../PersistedDocument";
-import * as Pointer from "./../Pointer";
+import {
+	Pointer,
+	PointerLibrary
+} from "./../Pointer";
 import * as RDFDocument from "./../RDF/Document";
 import {
 	clazz,
@@ -67,7 +70,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 	), ():void => {
 		let expandedObject:any;
 		let documentResource:any;
-		let pointerLibrary:Pointer.Library;
+		let pointerLibrary:PointerLibrary;
 		let result:any;
 		let context:AbstractContext;
 
@@ -178,7 +181,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
 				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.Library" },
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 			],
 			{ type: "any" }
 		), ():void => {
@@ -199,7 +202,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			property = documentResource[ "http://example.com/ns#pointer" ][ 0 ];
 			result = Value.Util.parseValue( property, pointerLibrary );
-			expect( Pointer.Factory.is( result ) ).toBe( true );
+			expect( Pointer.is( result ) ).toBe( true );
 			expect( result.id ).toBe( "http://example.com/pointer/1" );
 
 			property = documentResource[ "http://example.com/ns#list" ][ 0 ];
@@ -208,7 +211,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( result.length ).toBe( 3 );
 			expect( result[ 0 ] ).toBe( 100 );
 			expect( result[ 1 ] ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
-			expect( Pointer.Factory.is( result[ 2 ] ) ).toBe( true );
+			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
 			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
 
 			property = documentResource[ "http://example.com/ns#empty-property" ][ 0 ];

@@ -9,11 +9,11 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
-import * as Pointer from "./Pointer";
+import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
-export declare class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.Resolver {
+export declare class Class implements PointerLibrary, PointerValidator, ObjectSchema.Resolver {
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
@@ -22,11 +22,11 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     private pointers;
     private documentsBeingResolved;
     constructor(context?: Context);
-    inScope(pointer: Pointer.Class): boolean;
+    inScope(pointer: Pointer): boolean;
     inScope(id: string): boolean;
     hasPointer(id: string): boolean;
-    getPointer(id: string): Pointer.Class;
-    removePointer(idOrPointer: string | Pointer.Class): boolean;
+    getPointer(id: string): Pointer;
+    removePointer(idOrPointer: string | Pointer): boolean;
     get<T extends object>(uri: string, requestOptions?: HTTP.Request.GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     get<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     exists(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
@@ -48,12 +48,12 @@ export declare class Class implements Pointer.Library, Pointer.Validator, Object
     listMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getMembers<T extends object>(uri: string, requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getMembers<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
-    addMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    addMember(documentURI: string, member: Pointer, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     addMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    addMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    removeMember(documentURI: string, member: Pointer.Class, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    addMembers(documentURI: string, members: (Pointer | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    removeMember(documentURI: string, member: Pointer, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeMember(documentURI: string, memberURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    removeMembers(documentURI: string, members: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    removeMembers(documentURI: string, members: (Pointer | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     removeAllMembers(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     save<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
     refresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;

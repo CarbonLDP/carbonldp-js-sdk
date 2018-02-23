@@ -1,5 +1,5 @@
 import { C } from "../Vocabularies/C";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 import {
 	clazz,
@@ -63,7 +63,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"targetMembers",
-			"Carbon.Pointer.Class[]",
+			"Carbon.Pointer.Pointer[]",
 			"Array with the members to be removed from the container."
 		), ():void => {} );
 
@@ -107,15 +107,15 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.LDP.RemoveMemberAction.Class` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "Carbon.Pointer.Class", description: "The target members of the remove action." },
+				{ name: "targetMembers", type: "Carbon.Pointer.Pointer", description: "The target members of the remove action." },
 			],
 			{ type: "Carbon.LDP.RemoveMemberAction.Class" }
 		), ():void => {
 			expect( RemoveMemberAction.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.Factory.create ) ).toBe( true );
 
-			const pointers:Pointer.Class[] = [];
-			pointers.push( Pointer.Factory.create( "the-pointer/" ) );
+			const pointers:Pointer[] = [];
+			pointers.push( Pointer.create( "the-pointer/" ) );
 
 			const removeMemberAction:RemoveMemberAction.Class = RemoveMemberAction.Factory.create( pointers );
 

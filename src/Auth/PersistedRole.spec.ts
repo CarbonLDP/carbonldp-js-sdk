@@ -15,7 +15,8 @@ import {
 	decoratedObject,
 	hasSignature,
 	extendsClass,
-	hasProperty, hasDefaultExport,
+	hasProperty,
+	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
 import * as Documents from "./../Documents";
@@ -23,7 +24,7 @@ import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
@@ -69,7 +70,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"users",
-			"Carbon.Pointer.Class[]",
+			"Carbon.Pointer.Pointer[]",
 			"An array of pointers that references to all the users that have the current role."
 		), ():void => {} );
 
@@ -125,7 +126,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			OBLIGATORY,
 			"addUser",
 			"Makes a relation in the role towards the users specified.", [
-				{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to add to the role." },
+				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -135,7 +136,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			OBLIGATORY,
 			"addUsers",
 			"Makes a relation in the role towards the users specified.", [
-				{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -145,7 +146,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			OBLIGATORY,
 			"removeUser",
 			"Removes the relation in the role towards the users specified.", [
-				{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to be removed from the role." },
+				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to be removed from the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -155,7 +156,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			OBLIGATORY,
 			"removeUsers",
 			"Remove the relation in the role towards the users specified.", [
-				{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
+				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -296,12 +297,15 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
+
 			let context:AbstractContext = new MockedContext();
 
 			interface ThePersistedRole {
 				myProperty?:string;
 			}
+
 			interface MyPersistedRole extends PersistedRole.Class, ThePersistedRole {}
+
 			let role:MyPersistedRole = PersistedRole.Factory.decorate<ThePersistedRole>( {}, context.documents );
 
 			expect( PersistedRole.Factory.hasClassProperties( role ) ).toBe( true );
@@ -325,6 +329,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				roles = context.auth.roles;
 
@@ -436,7 +441,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"addUser",
 				"Makes a relation in the role towards the users specified.", [
-					{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to add to the role." },
+					{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to add to the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -463,7 +468,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"addUsers",
 				"Makes a relation in the role towards the users specified.", [
-					{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+					{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -472,7 +477,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				expect( Utils.isFunction( role.addUsers ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( roles, "addUsers" );
-				let users:(string | Pointer.Class)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
+				let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
 
 				//noinspection JSIgnoredPromiseFromCall
 				role.addUsers( users );
@@ -491,7 +496,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"removeUser",
 				"Removes the relation in the role towards the users specified.", [
-					{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to be removed from the role." },
+					{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to be removed from the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -518,7 +523,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"removeUsers",
 				"Remove the relation in the role towards the users specified.", [
-					{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
+					{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
@@ -527,7 +532,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				expect( Utils.isFunction( role.removeUsers ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( roles, "removeUsers" );
-				let users:(Pointer.Class | string)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
+				let users:(Pointer | string)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
 
 				//noinspection JSIgnoredPromiseFromCall
 				role.removeUsers( users );

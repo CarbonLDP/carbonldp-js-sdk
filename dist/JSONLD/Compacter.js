@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument = __importStar(require("../PersistedDocument"));
-var Pointer = __importStar(require("../Pointer"));
+var Pointer_1 = require("../Pointer");
 var RDFDocument = __importStar(require("../RDF/Document"));
 var URI_1 = require("../RDF/URI");
 var QueryDocument_1 = require("../SPARQL/QueryDocument");
@@ -128,7 +128,7 @@ var Class = (function () {
                     continue;
                 var value = compactionNode.resource[propertyName];
                 var values = Array.isArray(value) ? value : [value];
-                var pointers = values.filter(Pointer.Factory.is);
+                var pointers = values.filter(Pointer_1.Pointer.is);
                 for (var _a = 0, pointers_1 = pointers; _a < pointers_1.length; _a++) {
                     var pointer = pointers_1[_a];
                     if (!this.compactionMap.has(pointer.id))

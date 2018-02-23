@@ -7,96 +7,83 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("./Errors"));
+var Errors_1 = require("./Errors");
 var Utils = __importStar(require("./Utils"));
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+function isPointerResolved() {
+    return this._resolved;
+}
+exports.isPointerResolved = isPointerResolved;
+function resolveStandalonePointer() {
+    return Promise.reject(new Errors_1.IllegalStateError("The pointer has not been assigned to a context."));
+}
+exports.resolveStandalonePointer = resolveStandalonePointer;
+exports.Pointer = {
+    isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_id") &&
             Utils.hasPropertyDefined(object, "_resolved") &&
             Utils.hasPropertyDefined(object, "id") &&
             Utils.hasFunction(object, "isResolved") &&
             Utils.hasPropertyDefined(object, "resolve"));
-    };
-    Factory.is = function (value) {
-        return (Utils.isObject(value) &&
-            Factory.hasClassProperties(value));
-    };
-    Factory.create = function (id) {
-        return Factory.createFrom({}, id);
-    };
-    Factory.createFrom = function (object, id) {
+    },
+    is: function (object) {
+        return (Utils.isObject(object) &&
+            exports.Pointer.isDecorated(object));
+    },
+    create: function (id) {
+        return exports.Pointer.createFrom({}, id);
+    },
+    createFrom: function (object, id) {
+        var pointer = exports.Pointer.decorate(object);
+        if (id)
+            pointer.id = id;
+        return pointer;
+    },
+    decorate: function (object) {
+        if (exports.Pointer.isDecorated(object))
+            return object;
         var pointer = object;
-        pointer.id = id || pointer.id;
-        return Factory.decorate(pointer);
-    };
-    Factory.decorate = function (object) {
-        var pointer = object;
-        if (Factory.hasClassProperties(object))
-            return pointer;
         Object.defineProperties(pointer, {
             "_id": {
                 writable: true,
-                enumerable: false,
                 configurable: true,
-                value: pointer.id,
+                value: pointer.id || "",
             },
             "_resolved": {
                 writable: true,
-                enumerable: false,
                 configurable: true,
-                value: !!pointer._resolved,
+                value: pointer._resolved || false,
             },
             "id": {
                 enumerable: false,
                 configurable: true,
                 get: function () {
-                    if (!this._id)
-                        return "";
-                    return this._id || "";
+                    return this._id;
                 },
                 set: function (value) {
                     this._id = value;
                 },
             },
             "isResolved": {
-                writable: false,
-                enumerable: false,
                 configurable: true,
-                value: function () {
-                    return this._resolved;
-                },
+                value: isPointerResolved,
             },
             "resolve": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: function () {
-                    return Promise.reject(new Errors.NotImplementedError("A simple pointer cannot be resolved by it self."));
-                },
+                value: resolveStandalonePointer,
             },
         });
         return pointer;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.areEqual = function (pointer1, pointer2) {
+    },
+    areEqual: function (pointer1, pointer2) {
         return pointer1.id === pointer2.id;
-    };
-    Util.getIDs = function (pointers) {
-        var ids = [];
-        for (var _i = 0, pointers_1 = pointers; _i < pointers_1.length; _i++) {
-            var pointer = pointers_1[_i];
-            ids.push(pointer.id);
-        }
-        return ids;
-    };
-    Util.resolveAll = function (pointers) {
+    },
+    getIDs: function (pointers) {
+        return pointers
+            .map(function (pointer) { return pointer.id; });
+    },
+    resolveAll: function (pointers) {
         var promises = pointers.map(function (pointer) { return pointer.resolve(); });
         return Promise
             .all(promises)
@@ -105,9 +92,8 @@ var Util = (function () {
             var responses = results.map(function (result) { return result[1]; });
             return [resolvedPointers, responses];
         });
-    };
-    return Util;
-}());
-exports.Util = Util;
+    },
+};
+exports.default = exports.Pointer;
 
 //# sourceMappingURL=Pointer.js.map

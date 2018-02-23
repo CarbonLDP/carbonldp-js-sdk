@@ -44,7 +44,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"accessControlList",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"A reference to the ACL of the document."
 		), ():void => {} );
 

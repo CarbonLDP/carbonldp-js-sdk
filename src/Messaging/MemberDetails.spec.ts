@@ -1,4 +1,4 @@
-import * as Pointer from "../Pointer";
+import { Pointer } from "../Pointer";
 import * as Resource from "../Resource";
 import {
 	extendsClass,
@@ -58,9 +58,9 @@ describe( module( "Carbon/Messaging/MemberDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"members",
-			"Carbon.Pointer.Class[]"
+			"Carbon.Pointer.Pointer[]"
 		), ():void => {
-			const target:MemberDetails.Class[ "members" ] = [] as Pointer.Class[];
+			const target:MemberDetails.Class[ "members" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
 		} );
 

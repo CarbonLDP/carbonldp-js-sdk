@@ -1,19 +1,19 @@
 import * as LDP from "./LDP";
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 import { C } from "./Vocabularies/C";
 
 export const RDF_CLASS:string = C.AccessPoint;
 
 export interface Class {
-	hasMemberRelation:string | Pointer.Class;
-	isMemberOfRelation?:string | Pointer.Class;
-	insertedContentRelation?:string | Pointer.Class;
+	hasMemberRelation:string | Pointer;
+	isMemberOfRelation?:string | Pointer;
+	insertedContentRelation?:string | Pointer;
 }
 
 export interface DocumentClass extends LDP.DirectContainer.Class {
-	hasMemberRelation:Pointer.Class;
-	isMemberOfRelation?:Pointer.Class;
-	insertedContentRelation?:Pointer.Class;
+	hasMemberRelation:Pointer;
+	isMemberOfRelation?:Pointer;
+	insertedContentRelation?:Pointer;
 }
 
 export class Factory {
@@ -21,11 +21,11 @@ export class Factory {
 		return LDP.DirectContainer.Factory.is( object );
 	}
 
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):DocumentClass {
+	static create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):DocumentClass {
 		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 
-	static createFrom<T extends object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & DocumentClass {
+	static createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DocumentClass {
 		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 }

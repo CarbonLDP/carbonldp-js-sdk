@@ -13,7 +13,7 @@ describe( module( "Carbon/ModelDecorator" ), ():void => {
 
 	describe( interfaze( "Carbon.ModelDecorator.ModelDecorator", [ "T extends object" ], "Interface with the standard methods of a model decorator" ), ():void => {
 
-		it( hasProperty( OBLIGATORY, "TYPE", "string", "The type the decorator interface is for." ), ():void => {
+		it( hasProperty( OPTIONAL, "TYPE", "string", "The type the decorator interface is for." ), ():void => {
 			const target:ModelDecorator<any>[ "TYPE" ] = "" as string;
 			expect( target ).toBeDefined();
 		} );

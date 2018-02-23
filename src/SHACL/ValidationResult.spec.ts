@@ -10,7 +10,7 @@ import {
 } from "../test/JasmineExtender";
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 import * as ValidationResult from "./ValidationResult";
 import DefaultExport from "./ValidationResult";
@@ -110,20 +110,20 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"focusNode",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The focus node that has caused the result."
 		), ():void => {
-			const target:ValidationResult.Class[ "focusNode" ] = {} as Pointer.Class;
+			const target:ValidationResult.Class[ "focusNode" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"resultPath",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The SHACL shape property path that where tested."
 		), ():void => {
-			const target:ValidationResult.Class[ "resultPath" ] = {} as Pointer.Class;
+			const target:ValidationResult.Class[ "resultPath" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
@@ -140,20 +140,20 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"sourceShape",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer to the source SHACL shape used in the validation."
 		), ():void => {
-			const target:ValidationResult.Class[ "sourceShape" ] = {} as Pointer.Class;
+			const target:ValidationResult.Class[ "sourceShape" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"detail",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer to the possible parent wih one or more SHACL results."
 		), ():void => {
-			const target:ValidationResult.Class[ "detail" ] = {} as Pointer.Class;
+			const target:ValidationResult.Class[ "detail" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
@@ -170,10 +170,10 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"resultSeverity",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"The severity described by the SHACL shape severity property."
 		), ():void => {
-			const target:ValidationResult.Class[ "resultSeverity" ] = {} as Pointer.Class;
+			const target:ValidationResult.Class[ "resultSeverity" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 

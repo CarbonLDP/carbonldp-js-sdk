@@ -29,7 +29,7 @@ import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "./../../Errors";
-import * as Pointer from "./../../Pointer";
+import { Pointer } from "./../../Pointer";
 import QueryContextBuilder from "./QueryContextBuilder";
 import * as Module from "./QueryDocumentBuilder";
 import { Class as QueryDocumentBuilder } from "./QueryDocumentBuilder";
@@ -265,7 +265,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( hasSignature(
 				"Wraps a pointer or URi to be used correctly in the query filters and values.",
 				[
-					{ name: "value", type: "Carbon.Pointer.Class | string", description: "Pointer or URI to be converted in a safe to use in query object." },
+					{ name: "value", type: "Carbon.Pointer.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
 				{ type: "Carbon.SPARQL.QueryDocument.QueryObject.Class" }
 			), ():void => {
@@ -283,7 +283,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				builder.object( "http://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( queryContext, "http://example.com/resource/" );
 
-				const pointer:Pointer.Class = context.documents.getPointer( "http://example.com/resource/" );
+				const pointer:Pointer = context.documents.getPointer( "http://example.com/resource/" );
 				builder.object( pointer );
 				expect( spy ).toHaveBeenCalledWith( queryContext, pointer );
 			} );
@@ -609,8 +609,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				);
 
 				builder.values(
-					builder.object( Pointer.Factory.create( "http://example.com/pointer-1" ) ),
-					builder.object( Pointer.Factory.create( "ex:pointer2" ) )
+					builder.object( Pointer.create( "http://example.com/pointer-1" ) ),
+					builder.object( Pointer.create( "ex:pointer2" ) )
 				);
 				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
 					.addValues(
@@ -627,7 +627,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( "should throw error if blank node is provided", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( label:string ) => void = label => () => {
-					builder.values( builder.object( Pointer.Factory.create( label ) ) );
+					builder.values( builder.object( Pointer.create( label ) ) );
 				};
 
 				expect( helper( "_:blank-node" ) ).toThrowError( IllegalArgumentError, `Blank node "_:blank-node" is not a valid value.` );

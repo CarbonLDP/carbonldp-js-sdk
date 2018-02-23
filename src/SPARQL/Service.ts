@@ -1,6 +1,6 @@
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as Pointer from "./../Pointer";
+import { PointerLibrary } from "./../Pointer";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
@@ -40,7 +40,7 @@ export class Class {
 		return HTTP.Request.Service.post( url, selectQuery, options, Class.resultsParser );
 	}
 
-	static executeSELECTQuery<T>( url:string, selectQuery:string, pointerLibrary:Pointer.Library, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class<T>, HTTP.Response.Class ]> {
+	static executeSELECTQuery<T>( url:string, selectQuery:string, pointerLibrary:PointerLibrary, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class<T>, HTTP.Response.Class ]> {
 		return Class
 			.executeRawSELECTQuery( url, selectQuery, options )
 			.then<[ SELECTResults.Class<T>, HTTP.Response.Class ]>( ( [ rawResults, response ]:[ RawResults.Class, HTTP.Response.Class ] ) => {
@@ -93,7 +93,7 @@ export class Class {
 		return HTTP.Request.Service.post( url, updateQuery, options );
 	}
 
-	private static parseRawBindingProperty( rawBindingProperty:RawResults.BindingProperty, pointerLibrary:Pointer.Library ):any {
+	private static parseRawBindingProperty( rawBindingProperty:RawResults.BindingProperty, pointerLibrary:PointerLibrary ):any {
 		switch( rawBindingProperty.type ) {
 			case "uri":
 				return pointerLibrary.getPointer( rawBindingProperty.value );

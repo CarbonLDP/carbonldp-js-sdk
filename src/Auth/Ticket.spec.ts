@@ -80,7 +80,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"forURI",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer that relates the document that the authentication ticket only works for."
 		), ():void => {} );
 

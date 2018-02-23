@@ -1,13 +1,13 @@
 import { LDP } from "../Vocabularies/LDP";
 import { Document } from "./../Document";
 import * as Errors from "./../Errors";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = LDP.DirectContainer;
 
 export interface Class extends Document {
-	membershipResource:Pointer.Class;
+	membershipResource:Pointer;
 }
 
 export class Factory {
@@ -23,11 +23,11 @@ export class Factory {
 			;
 	}
 
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):Class {
+	static create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):Class {
 		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 
-	static createFrom<T extends object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & Class {
+	static createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & Class {
 		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer." );
 		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The property membershipResource cannot be null." );
 		if( ! hasMemberRelation ) throw new Errors.IllegalArgumentError( "The property hasMemberRelation cannot be empty." );
@@ -42,8 +42,8 @@ export class Factory {
 		container.membershipResource = membershipResource;
 
 		// TODO: Handle properties correctly and validate them
-		container.hasMemberRelation = <Pointer.Class> hasMemberRelation;
-		container.isMemberOfRelation = <Pointer.Class> isMemberOfRelation;
+		container.hasMemberRelation = <Pointer> hasMemberRelation;
+		container.isMemberOfRelation = <Pointer> isMemberOfRelation;
 
 		return container;
 	}

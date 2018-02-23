@@ -4,7 +4,11 @@ import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
 import * as NamedFragment from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
-import * as Pointer from "../Pointer";
+import {
+	Pointer,
+	PointerLibrary,
+	PointerValidator,
+} from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as Resource from "../Resource";
 import { C } from "../Vocabularies/C";
@@ -19,10 +23,10 @@ import {
 	isDocument,
 } from "./factory";
 
-export interface Document extends Resource.Class, Pointer.Library, Pointer.Validator {
-	defaultInteractionModel?:Pointer.Class;
-	isMemberOfRelation?:Pointer.Class;
-	hasMemberRelation?:Pointer.Class;
+export interface Document extends Resource.Class, PointerLibrary, PointerValidator {
+	defaultInteractionModel?:Pointer;
+	isMemberOfRelation?:Pointer;
+	hasMemberRelation?:Pointer;
 
 	_fragmentsIndex:Map<string, Fragment.Class>;
 

@@ -1,4 +1,4 @@
-import * as Pointer from "./../../Pointer";
+import { Pointer } from "./../../Pointer";
 import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
@@ -17,7 +17,7 @@ export declare class Class {
     constructor(queryContext: QueryContextBuilder.Class, property: QueryProperty.Class);
     property(name?: string): QueryProperty.Class;
     value(value: string | number | boolean | Date): QueryValue.Class;
-    object(object: Pointer.Class | string): QueryObject.Class;
+    object(object: Pointer | string): QueryObject.Class;
     withType(type: string): this;
     properties(propertiesSchema: QueryPropertiesSchema.Class): this;
     filter(constraint: string): this;

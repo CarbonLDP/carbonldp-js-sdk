@@ -1,7 +1,7 @@
 import { CS } from "../Vocabularies/CS";
 import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 import * as ACE from "./ACE";
 
@@ -25,49 +25,49 @@ export const SCHEMA:ObjectSchema.Class = {
 };
 
 export interface Class extends Document {
-	accessTo:Pointer.Class;
+	accessTo:Pointer;
 	entries?:ACE.Class[];
 	inheritableEntries?:ACE.Class[];
 
-	_parsePointer( element:string | Pointer.Class ):Pointer.Class;
+	_parsePointer( element:string | Pointer ):Pointer;
 
-	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	grant( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	grant( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	deny( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	deny( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	configureChildInheritance( granting:boolean, subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
 
-	configureChildInheritance( granting:boolean, subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	grants( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean;
+	grants( subject:string | Pointer, permission:string | Pointer ):boolean;
 
-	denies( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean;
+	denies( subject:string | Pointer, permission:string | Pointer ):boolean;
 
-	getChildInheritance( subject:string | Pointer.Class, permissions:string | Pointer.Class ):boolean;
+	getChildInheritance( subject:string | Pointer, permissions:string | Pointer ):boolean;
 
-	remove( subject:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	remove( subject:string | Pointer, permission:string | Pointer ):void;
 
-	remove( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	remove( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	removeChildInheritance( subject:string | Pointer.Class, permission:string | Pointer.Class ):void;
+	removeChildInheritance( subject:string | Pointer, permission:string | Pointer ):void;
 
-	removeChildInheritance( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
+	removeChildInheritance( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
 }
 
 export class Factory {
@@ -152,17 +152,17 @@ export class Factory {
 
 }
 
-function parsePointer( element:string | Pointer.Class ):Pointer.Class {
-	return Pointer.Factory.is( element ) ? <Pointer.Class> element : Pointer.Factory.create( <string> element );
+function parsePointer( element:string | Pointer ):Pointer {
+	return Utils.isObject( element ) ? element : Pointer.create( element );
 }
 
-function parsePointers( elements:string | Pointer.Class | (string | Pointer.Class)[] ):Pointer.Class[] {
-	let elementsArray:(string | Pointer.Class)[] = Utils.isArray( elements ) ? <(string | Pointer.Class)[]> elements : [ <string | Pointer.Class> elements ];
-	return elementsArray.map( ( element:string | Pointer.Class ) => (this as Class)._parsePointer( element ) );
+function parsePointers( elements:string | Pointer | (string | Pointer)[] ):Pointer[] {
+	let elementsArray:(string | Pointer)[] = Utils.isArray( elements ) ? <(string | Pointer)[]> elements : [ <string | Pointer> elements ];
+	return elementsArray.map( ( element:string | Pointer ) => (this as Class)._parsePointer( element ) );
 }
 
-function configACE( granting:boolean, subject:Pointer.Class, subjectClass:Pointer.Class, permissions:Pointer.Class[], aces:ACE.Class[] ):ACE.Class {
-	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual( ace.subjects[ 0 ], subject ) );
+function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, permissions:Pointer[], aces:ACE.Class[] ):ACE.Class {
+	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.length === 1 && ace.granting === granting && Pointer.areEqual( ace.subjects[ 0 ], subject ) );
 
 	let ace:ACE.Class;
 	if( subjectACEs.length === 0 ) {
@@ -176,10 +176,10 @@ function configACE( granting:boolean, subject:Pointer.Class, subjectClass:Pointe
 	return ace;
 }
 
-function configACEs( granting:boolean, subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[], aces:ACE.Class[] ):void {
-	let subjectPointers:Pointer.Class[] = parsePointers.call( this, subjects );
-	let subjectClassPointer:Pointer.Class = (this as Class)._parsePointer( subjectsClass );
-	let permissionPointers:Pointer.Class[] = parsePointers.call( this, permissions );
+function configACEs( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE.Class[] ):void {
+	let subjectPointers:Pointer[] = parsePointers.call( this, subjects );
+	let subjectClassPointer:Pointer = (this as Class)._parsePointer( subjectsClass );
+	let permissionPointers:Pointer[] = parsePointers.call( this, permissions );
 
 	for( let subject of subjectPointers ) {
 		removePermissionsFrom.call( this, subject, permissionPointers, aces );
@@ -187,81 +187,81 @@ function configACEs( granting:boolean, subjects:string | Pointer.Class | (string
 	}
 }
 
-function grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function grant( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function grant( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function grant( subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ):void {
+function grant( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+function grant( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+function grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function grant( subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:Class = this;
 	acl.entries = acl.entries || [];
 	configACEs.call( this, true, subjects, subjectsClass, permissions, acl.entries );
 }
 
-function deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function deny( subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function deny( subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function deny( subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ):void {
+function deny( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+function deny( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+function deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function deny( subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:Class = this;
 	acl.entries = acl.entries || [];
 	configACEs.call( this, false, subjects, subjectsClass, permissions, acl.entries );
 }
 
-function configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function configureChildInheritance( granting:boolean, subject:string | Pointer.Class, subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function configureChildInheritance( granting:boolean, subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function configureChildInheritance( granting:boolean, subjects:(string | Pointer.Class)[], subjectClass:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function configureChildInheritance( granting:boolean, subjects:string | Pointer.Class | (string | Pointer.Class)[], subjectsClass:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ):void {
+function configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+function configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+function configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function configureChildInheritance( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:Class = this;
 	acl.inheritableEntries = acl.inheritableEntries || [];
 	configACEs.call( this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries );
 }
 
-function grantingFrom( subject:Pointer.Class, permission:Pointer.Class, aces:ACE.Class[] ):boolean {
-	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ) !== - 1 );
+function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE.Class[] ):boolean {
+	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 
 	for( let ace of subjectACEs ) {
-		if( Utils.A.indexOf( ace.permissions, permission, Pointer.Util.areEqual ) !== - 1 )
+		if( Utils.A.indexOf( ace.permissions, permission, Pointer.areEqual ) !== - 1 )
 			return ace.granting;
 	}
 	return null;
 }
 
-function getGranting( subject:string | Pointer.Class, permission:string | Pointer.Class, aces:ACE.Class[] ):boolean {
+function getGranting( subject:string | Pointer, permission:string | Pointer, aces:ACE.Class[] ):boolean {
 	if( ! aces ) return null;
 
-	let subjectPointer:Pointer.Class = (this as Class)._parsePointer( subject );
-	let permissionPointer:Pointer.Class = (this as Class)._parsePointer( permission );
+	let subjectPointer:Pointer = (this as Class)._parsePointer( subject );
+	let permissionPointer:Pointer = (this as Class)._parsePointer( permission );
 
 	return grantingFrom( subjectPointer, permissionPointer, aces );
 }
 
-function grants( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean {
+function grants( subject:string | Pointer, permission:string | Pointer ):boolean {
 	let acl:Class = this;
 	return getGranting.call( this, subject, permission, acl.entries );
 }
 
-function denies( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean {
+function denies( subject:string | Pointer, permission:string | Pointer ):boolean {
 	let acl:Class = this;
 	let granting:boolean = getGranting.call( this, subject, permission, acl.entries );
 	return granting === null ? null : ! granting;
 }
 
-function getChildInheritance( subject:string | Pointer.Class, permission:string | Pointer.Class ):boolean {
+function getChildInheritance( subject:string | Pointer, permission:string | Pointer ):boolean {
 	let acl:Class = this;
 	return getGranting.call( this, subject, permission, acl.inheritableEntries );
 }
 
-function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class[], aces:ACE.Class[] ):void {
+function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE.Class[] ):void {
 	if( ! aces ) return;
 
 	let acl:Class = <Class> this;
 	let opposedAces:ACE.Class[] = acl.entries === aces ? acl.inheritableEntries : acl.entries;
 
-	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ) !== - 1 );
+	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 	for( let ace of subjectACEs ) {
-		if( opposedAces && Utils.A.indexOf( opposedAces, ace, Pointer.Util.areEqual ) !== - 1 ) {
-			aces.splice( Utils.A.indexOf( aces, ace, Pointer.Util.areEqual ), 1 );
+		if( opposedAces && Utils.A.indexOf( opposedAces, ace, Pointer.areEqual ) !== - 1 ) {
+			aces.splice( Utils.A.indexOf( aces, ace, Pointer.areEqual ), 1 );
 
 			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
@@ -269,7 +269,7 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 		}
 
 		if( ace.subjects.length > 1 ) {
-			ace.subjects.splice( Utils.A.indexOf( ace.subjects, subject, Pointer.Util.areEqual ), 1 );
+			ace.subjects.splice( Utils.A.indexOf( ace.subjects, subject, Pointer.areEqual ), 1 );
 
 			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
@@ -277,35 +277,35 @@ function removePermissionsFrom( subject:Pointer.Class, permissions:Pointer.Class
 		}
 
 		for( let permission of permissions ) {
-			let index:number = Utils.A.indexOf( ace.permissions, permission, Pointer.Util.areEqual );
+			let index:number = Utils.A.indexOf( ace.permissions, permission, Pointer.areEqual );
 
 			if( index === - 1 ) continue;
 			ace.permissions.splice( index, 1 );
 		}
 
 		if( ace.permissions.length === 0 ) {
-			aces.splice( Utils.A.indexOf( aces, ace, Pointer.Util.areEqual ), 1 );
+			aces.splice( Utils.A.indexOf( aces, ace, Pointer.areEqual ), 1 );
 			acl._removeFragment( ace );
 		}
 	}
 }
 
-function removePermissions( subject:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[], aces:ACE.Class[] ):void {
-	let subjectPointer:Pointer.Class = (this as Class)._parsePointer( subject );
-	let permissionPointers:Pointer.Class[] = parsePointers.call( this, permissions );
+function removePermissions( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE.Class[] ):void {
+	let subjectPointer:Pointer = (this as Class)._parsePointer( subject );
+	let permissionPointers:Pointer[] = parsePointers.call( this, permissions );
 	removePermissionsFrom.call( this, subjectPointer, permissionPointers, aces );
 }
 
-function remove( subject:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function remove( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function remove( subject:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ):void {
+function remove( subject:string | Pointer, permission:string | Pointer ):void;
+function remove( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
+function remove( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:Class = this;
 	removePermissions.call( this, subject, permissions, acl.entries );
 }
 
-function removeChildInheritance( subject:string | Pointer.Class, permission:string | Pointer.Class ):void;
-function removeChildInheritance( subject:string | Pointer.Class, permissions:(string | Pointer.Class)[] ):void;
-function removeChildInheritance( subject:string | Pointer.Class, permissions:string | Pointer.Class | (string | Pointer.Class)[] ):void {
+function removeChildInheritance( subject:string | Pointer, permission:string | Pointer ):void;
+function removeChildInheritance( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
+function removeChildInheritance( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:Class = this;
 	removePermissions.call( this, subject, permissions, acl.inheritableEntries );
 }

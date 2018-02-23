@@ -1,5 +1,5 @@
 import { C } from "../Vocabularies/C";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as Resource from "./../Resource";
 import {
 	clazz,
@@ -62,7 +62,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"targetMembers",
-			"Carbon.Pointer.Class[]",
+			"Carbon.Pointer.Pointer[]",
 			"Array with the members to be added to the container."
 		), ():void => {} );
 
@@ -106,15 +106,15 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 			STATIC,
 			"create",
 			"Creates `Carbon.LDP.AddMemberAction.Class` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "Carbon.Pointer.Class[]", description: "The target members to add in a `addMember` request." },
+				{ name: "targetMembers", type: "Carbon.Pointer.Pointer[]", description: "The target members to add in a `addMember` request." },
 			],
 			{ type: "Carbon.LDP.AddMemberAction.Class" }
 		), ():void => {
 			expect( AddMemberAction.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.Factory.create ) ).toBe( true );
 
-			const pointers:Pointer.Class[] = [];
-			pointers.push( Pointer.Factory.create( "the-pointer/" ) );
+			const pointers:Pointer[] = [];
+			pointers.push( Pointer.create( "the-pointer/" ) );
 
 			const addMemberAction:AddMemberAction.Class = AddMemberAction.Factory.create( pointers );
 

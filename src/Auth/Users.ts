@@ -2,7 +2,7 @@ import { Context } from "../Context";
 import { promiseMethod } from "../Utils";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as Credentials from "./Credentials";
 import * as PersistedCredentials from "./PersistedCredentials";
@@ -49,7 +49,7 @@ export class Class {
 	private changeEnabledStatus( userURI:string, value:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
 		return Promise.resolve().then( () => {
 			const absoluteUserURI:string = this.resolveURI( userURI );
-			const userPointer:Pointer.Class = this.context.documents.getPointer( absoluteUserURI );
+			const userPointer:Pointer = this.context.documents.getPointer( absoluteUserURI );
 			const persistedUser:PersistedUser.Class = PersistedUser.Factory.decorate( userPointer, this.context.documents );
 
 			if( value ) return persistedUser.enableCredentials( requestOptions );

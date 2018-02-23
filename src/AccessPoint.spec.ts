@@ -1,7 +1,7 @@
 import * as AccessPoint from "./AccessPoint";
 import DefaultExport from "./AccessPoint";
 import * as DirectContainer from "./LDP/DirectContainer";
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 import {
 	clazz,
 	extendsClass,
@@ -44,21 +44,21 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMemberRelation",
-			"string | Carbon.Pointer.Class",
+			"string | Carbon.Pointer.Pointer",
 			"The string URI or pointer URI that represents the member relation that the access point will manage."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"string | Carbon.Pointer.Class",
+			"string | Carbon.Pointer.Pointer",
 			"The string URI or pointer URI that represents the inverted relation that the access point will create."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"insertedContentRelation",
-			"string | Carbon.Pointer.Class",
+			"string | Carbon.Pointer.Pointer",
 			"The string URI or pointer URI that represents the inserted content relation of the access point."
 		), ():void => {} );
 
@@ -74,21 +74,21 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMemberRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer that represents the member relation that the access point will manage."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer that represents the inverted relation that the access point will create."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"insertedContentRelation",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer that represents the inserted content relation of the access point."
 		), ():void => {} );
 
@@ -116,9 +116,9 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.AccessPoint.Class` object with the parameters specified.", [
-				{ name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint." },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
-				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
+				{ name: "membershipResource", type: "Carbon.Pointer.Pointer", description: "A Pointer to the parent of the AccessPoint." },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
+				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
 			{ type: "Carbon.AccessPoint.Class" }
 		), ():void => {
@@ -126,7 +126,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			expect( Utils.isFunction( AccessPoint.Factory.create ) ).toBe( true );
 
 			let spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" );
-			let pointer:Pointer.Class = Pointer.Factory.create();
+			let pointer:Pointer = Pointer.create();
 
 			AccessPoint.Factory.create( pointer, "http://example.com/myNamespace#some-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
@@ -150,9 +150,9 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			[ "T extends Object" ],
 			"Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object that will be converted into an AccessPoint." },
-				{ name: "membershipResource", type: "Carbon.Pointer.Class", description: "A Pointer to the parent of the AccessPoint." },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
-				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
+				{ name: "membershipResource", type: "Carbon.Pointer.Pointer", description: "A Pointer to the parent of the AccessPoint." },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
+				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
 			{ type: "T & Carbon.AccessPoint.Class" }
 		), ():void => {
@@ -160,7 +160,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			expect( Utils.isFunction( AccessPoint.Factory.createFrom ) ).toBe( true );
 
 			let spy:jasmine.Spy = spyOn( DirectContainer.Factory, "createFrom" );
-			let pointer:Pointer.Class = Pointer.Factory.create();
+			let pointer:Pointer = Pointer.create();
 
 			AccessPoint.Factory.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );

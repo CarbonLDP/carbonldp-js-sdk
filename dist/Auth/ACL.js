@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
-var Pointer = __importStar(require("./../Pointer"));
+var Pointer_1 = require("./../Pointer");
 var Utils = __importStar(require("./../Utils"));
 var ACE = __importStar(require("./ACE"));
 exports.RDF_CLASS = CS_1.CS.AccessControlList;
@@ -109,7 +109,7 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function parsePointer(element) {
-    return Pointer.Factory.is(element) ? element : Pointer.Factory.create(element);
+    return Utils.isObject(element) ? element : Pointer_1.Pointer.create(element);
 }
 function parsePointers(elements) {
     var _this = this;
@@ -117,7 +117,7 @@ function parsePointers(elements) {
     return elementsArray.map(function (element) { return _this._parsePointer(element); });
 }
 function configACE(granting, subject, subjectClass, permissions, aces) {
-    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual(ace.subjects[0], subject); });
+    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer_1.Pointer.areEqual(ace.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
         ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
@@ -155,10 +155,10 @@ function configureChildInheritance(granting, subjects, subjectsClass, permission
     configACEs.call(this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries);
 }
 function grantingFrom(subject, permission, aces) {
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
+    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_1 = subjectACEs; _i < subjectACEs_1.length; _i++) {
         var ace = subjectACEs_1[_i];
-        if (Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual) !== -1)
+        if (Utils.A.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual) !== -1)
             return ace.granting;
     }
     return null;
@@ -188,30 +188,30 @@ function removePermissionsFrom(subject, permissions, aces) {
         return;
     var acl = this;
     var opposedAces = acl.entries === aces ? acl.inheritableEntries : acl.entries;
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
+    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
         var ace = subjectACEs_2[_i];
-        if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer.Util.areEqual) !== -1) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
+        if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer_1.Pointer.areEqual) !== -1) {
+            aces.splice(Utils.A.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
             var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
             subjectACEs.push(newACE);
             continue;
         }
         if (ace.subjects.length > 1) {
-            ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual), 1);
+            ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual), 1);
             var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
             subjectACEs.push(newACE);
             continue;
         }
         for (var _a = 0, permissions_1 = permissions; _a < permissions_1.length; _a++) {
             var permission = permissions_1[_a];
-            var index = Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual);
+            var index = Utils.A.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual);
             if (index === -1)
                 continue;
             ace.permissions.splice(index, 1);
         }
         if (ace.permissions.length === 0) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
+            aces.splice(Utils.A.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
             acl._removeFragment(ace);
         }
     }

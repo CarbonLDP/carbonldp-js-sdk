@@ -14,7 +14,7 @@ var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedFragment = __importStar(require("./PersistedFragment"));
 var PersistedNamedFragment = __importStar(require("./PersistedNamedFragment"));
 var PersistedResource = __importStar(require("./PersistedResource"));
-var Pointer = __importStar(require("./Pointer"));
+var Pointer_1 = require("./Pointer");
 var RDF = __importStar(require("./RDF"));
 var URI = __importStar(require("./RDF/URI"));
 var ServiceAwareDocument = __importStar(require("./ServiceAwareDocument"));
@@ -331,7 +331,7 @@ var Factory = (function () {
                 value: (function () {
                     var superFunction = persistedDocument.inScope;
                     return function (idOrPointer) {
-                        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+                        var id = Pointer_1.Pointer.is(idOrPointer) ? idOrPointer.id : idOrPointer;
                         id = ObjectSchema.Util.resolveURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;

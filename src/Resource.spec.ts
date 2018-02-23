@@ -1,4 +1,4 @@
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 
 import * as Resource from "./Resource";
 import DefaultExport from "./Resource";
@@ -31,7 +31,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Pointer.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Pointer.Pointer" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -143,7 +143,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 			};
 			expect( Resource.Factory.is( object ) ).toBe( false );
 
-			let resource:Pointer.Class = Pointer.Factory.decorate( object );
+			let resource:Pointer = Pointer.decorate( object );
 			expect( Resource.Factory.is( resource ) ).toBe( true );
 		} );
 

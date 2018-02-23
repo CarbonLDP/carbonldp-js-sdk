@@ -2,7 +2,7 @@ import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
 import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as Pointer from "./../../Pointer";
+import { Pointer } from "./../../Pointer";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryObject";
 import { Class as QueryObject } from "./QueryObject";
@@ -44,7 +44,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 				"Creates an object for the specified object resource.",
 				[
 					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the object is been used." },
-					{ name: "object", type: "Carbon.Pointer.Class | string", description: "The object to be converted in a safe to use in query object resource." },
+					{ name: "object", type: "Carbon.Pointer.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
 				]
 			), ():void => {
 			} );
@@ -108,7 +108,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			} );
 
 			it( "should return the token created", ():void => {
-				const helper:( object:string | Pointer.Class ) => void = object => {
+				const helper:( object:string | Pointer ) => void = object => {
 					const queryObject:QueryObject = new QueryObject( queryContext, object );
 					expect( queryObject.getToken() ).toBe( queryObject[ "_resource" ] );
 				};
@@ -117,9 +117,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 				helper( "ex:resource" );
 				helper( "_:blank-node" );
 
-				helper( Pointer.Factory.create( "http://example.com/" ) );
-				helper( Pointer.Factory.create( "ex:resource" ) );
-				helper( Pointer.Factory.create( "_:blank-node" ) );
+				helper( Pointer.create( "http://example.com/" ) );
+				helper( Pointer.create( "ex:resource" ) );
+				helper( Pointer.create( "_:blank-node" ) );
 			} );
 
 		} );

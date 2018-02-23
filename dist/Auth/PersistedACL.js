@@ -8,7 +8,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var ACL = __importStar(require("./ACL"));
-var Pointer = __importStar(require("./../Pointer"));
 var Utils = __importStar(require("./../Utils"));
 var Factory = (function () {
     function Factory() {
@@ -41,7 +40,7 @@ var Factory = (function () {
 }());
 exports.Factory = Factory;
 function parsePointer(element) {
-    return Pointer.Factory.is(element) ? element : this.getPointer(element);
+    return Utils.isObject(element) ? element : this.getPointer(element);
 }
 
 //# sourceMappingURL=PersistedACL.js.map

@@ -1,7 +1,7 @@
 import { Context } from "./Context";
 
 export interface ModelDecorator<T extends object> {
-	TYPE:string;
+	TYPE?:string;
 
 	isDecorated?( object:object ):object is T;
 

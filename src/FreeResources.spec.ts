@@ -4,7 +4,7 @@ import * as Errors from "./Errors";
 
 import * as FreeResources from "./FreeResources";
 import DefaultExport from "./FreeResources";
-import * as Pointer from "./Pointer";
+import { Pointer } from "./Pointer";
 import * as URI from "./RDF/URI";
 import * as Resource from "./Resource";
 import {
@@ -37,8 +37,8 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 		"Interface that represents a set of free resources."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Pointer.Library" ), ():void => {} );
-		it( extendsClass( "Carbon.Pointer.Validator" ), ():void => {} );
+		it( extendsClass( "Carbon.Pointer.PointerLibrary" ), ():void => {} );
+		it( extendsClass( "Carbon.Pointer.PointerValidator" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -105,7 +105,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
 				{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." },
 			],
-			{ type: "Carbon.Pointer.Class" }
+			{ type: "Carbon.Pointer.Pointer" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -515,7 +515,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
 					{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." },
 				],
-				{ type: "Carbon.Pointer.Class" }
+				{ type: "Carbon.Pointer.Pointer" }
 			), ():void => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getPointer ) ).toBe( true );
@@ -524,7 +524,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 
-				let pointer:Pointer.Class = freeResources.getPointer( "_:another" );
+				let pointer:Pointer = freeResources.getPointer( "_:another" );
 				expect( pointer ).toBeTruthy();
 				expect( pointer.id ).toBe( "_:another" );
 				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as Resource.Class );
@@ -559,15 +559,15 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				it( hasSignature(
 					"Returns true if the the Pointer provided can be in the scope of the object.", [
-						{ name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to be evaluated if can be in the scope." },
+						{ name: "pointer", type: "Carbon.Pointer.Pointer", description: "Pointer to be evaluated if can be in the scope." },
 					],
 					{ type: "boolean" }
 				), ():void => {
-					expect( freeResources.inScope( Pointer.Factory.create( "_:some" ) ) ).toBe( true );
+					expect( freeResources.inScope( Pointer.create( "_:some" ) ) ).toBe( true );
 
 					// Asks to its documents instance
-					expect( freeResources.inScope( Pointer.Factory.create( "http://example.com/some/" ) ) ).toBe( true );
-					expect( freeResources.inScope( Pointer.Factory.create( "relative-document/" ) ) ).toBe( true );
+					expect( freeResources.inScope( Pointer.create( "http://example.com/some/" ) ) ).toBe( true );
+					expect( freeResources.inScope( Pointer.create( "relative-document/" ) ) ).toBe( true );
 				} );
 
 			} );

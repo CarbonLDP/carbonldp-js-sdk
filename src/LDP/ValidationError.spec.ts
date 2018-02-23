@@ -66,7 +66,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorDetails",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer with the error details of how the validation failed."
 		), ():void => {
 			const target:ValidationError.Class = { errorDetails: true } as any;

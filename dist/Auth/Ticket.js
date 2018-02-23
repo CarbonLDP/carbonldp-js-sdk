@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
-var Pointer = __importStar(require("./../Pointer"));
+var Pointer_1 = require("./../Pointer");
 var URI = __importStar(require("./../RDF/URI"));
 var Resource = __importStar(require("./../Resource"));
 exports.TICKETS_CONTAINER = "auth-tickets/";
@@ -36,7 +36,7 @@ var Factory = (function () {
     };
     Factory.createFrom = function (object, uri) {
         var ticket = object;
-        ticket.forURI = Pointer.Factory.create(uri);
+        ticket.forURI = Pointer_1.Pointer.create(uri);
         ticket.types.push(exports.RDF_CLASS);
         return ticket;
     };

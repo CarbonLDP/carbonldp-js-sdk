@@ -1,7 +1,7 @@
 import { LDP } from "../Vocabularies/LDP";
 import { Document } from "./../Document";
 import * as Errors from "./../Errors";
-import * as Pointer from "./../Pointer";
+import { Pointer } from "./../Pointer";
 import {
 	clazz,
 	extendsClass,
@@ -46,7 +46,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"membershipResource",
-			"Carbon.Pointer.Class",
+			"Carbon.Pointer.Pointer",
 			"Pointer that references the document that the direct container belongs to."
 		), ():void => {} );
 
@@ -118,9 +118,9 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `Carbon.LDP.DirectContainer.Class` object with the parameters specified.", [
-				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
-				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true },
+				{ name: "membershipResource", type: "Carbon.Pointer.Pointer" },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Pointer" },
+				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Pointer", optional: true },
 			],
 			{ type: "Carbon.LDP.DirectContainer.Class" }
 		), ():void => {
@@ -128,7 +128,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			expect( Utils.isFunction( DirectContainer.Factory.create ) ).toBe( true );
 
 			let spy:jasmine.Spy = spyOn( DirectContainer.Factory, "createFrom" );
-			let pointer:Pointer.Class = Pointer.Factory.create();
+			let pointer:Pointer = Pointer.create();
 
 			DirectContainer.Factory.create( pointer, "http://example.com/myNamespace#some-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
@@ -152,9 +152,9 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 			[ "T extends Object" ],
 			"Creates a `Carbon.LDP.DirectContainer.Class` object with the object provided and the parameters specified.", [
 				{ name: "object", type: "T" },
-				{ name: "membershipResource", type: "Carbon.Pointer.Class" },
-				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Class" },
-				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Class", optional: true },
+				{ name: "membershipResource", type: "Carbon.Pointer.Pointer" },
+				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Pointer" },
+				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Pointer", optional: true },
 			],
 			{ type: "T & Carbon.LDP.DirectContainer.Class" }
 		), ():void => {
@@ -167,9 +167,9 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 
 			interface MyDirectContainer extends DirectContainer.Class, TheDirectContainer {}
 
-			let membershipResource:Pointer.Class = Pointer.Factory.create( "http://example.com/theResource/" );
-			let hasMemberRelation:Pointer.Class = Pointer.Factory.create( "http://example.com/myNamespace#some-relation" );
-			let isMemberOfRelation:Pointer.Class = Pointer.Factory.create( "http://example.com/myNamespace#some-inverted-relation" );
+			let membershipResource:Pointer = Pointer.create( "http://example.com/theResource/" );
+			let hasMemberRelation:Pointer = Pointer.create( "http://example.com/myNamespace#some-relation" );
+			let isMemberOfRelation:Pointer = Pointer.create( "http://example.com/myNamespace#some-inverted-relation" );
 
 			let directContainer:MyDirectContainer;
 

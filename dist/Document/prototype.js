@@ -12,7 +12,7 @@ var Errors = __importStar(require("../Errors"));
 var JSONLDConverter = __importStar(require("../JSONLD/Converter"));
 var NamedFragment = __importStar(require("../NamedFragment"));
 var ObjectSchema = __importStar(require("../ObjectSchema"));
-var Pointer = __importStar(require("../Pointer"));
+var Pointer_1 = require("../Pointer");
 var RDF = __importStar(require("../RDF"));
 var Utils = __importStar(require("../Utils"));
 function hasPointer(id) {
@@ -34,7 +34,7 @@ function getPointer(id) {
 }
 exports.getPointer = getPointer;
 function inScope(idOrPointer) {
-    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+    var id = Utils.isObject(idOrPointer) ? idOrPointer.id : idOrPointer;
     if (id === this.id)
         return true;
     if (RDF.URI.Util.isBNodeID(id))
@@ -179,7 +179,7 @@ exports.convertNestedObjects = function (parent, actual, fragmentsTracker) {
         }
         if (!Utils.isPlainObject(next))
             continue;
-        if (Pointer.Factory.is(next)) {
+        if (Pointer_1.Pointer.is(next)) {
             if (parent.hasFragment(next.id) && !fragmentsTracker.has(next.id)) {
                 fragmentsTracker.add(next.id);
                 exports.convertNestedObjects(parent, next, fragmentsTracker);

@@ -51,7 +51,7 @@ describe( module( "Carbon/SPARQL/SELECTResults" ), ():void => {
 			OBLIGATORY,
 			"[ binding:string ]",
 			"any",
-			"An entry peer every `vars` selected for, which contains the parsed value requested. This elements can be from every literal type (`String`, `Number`, `Date`, etc.), to a `Carbon.Pointer.Class` if it is an URI."
+			"An entry peer every `vars` selected for, which contains the parsed value requested. This elements can be from every literal type (`String`, `Number`, `Date`, etc.), to a `Carbon.Pointer.Pointer` if it is an URI."
 		), ():void => {} );
 
 	} );

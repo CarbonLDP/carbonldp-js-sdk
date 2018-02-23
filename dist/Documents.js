@@ -27,7 +27,7 @@ var PersistedDocument = __importStar(require("./PersistedDocument"));
 var PersistedFragment = __importStar(require("./PersistedFragment"));
 var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
 var PersistedResource = __importStar(require("./PersistedResource"));
-var Pointer = __importStar(require("./Pointer"));
+var Pointer_1 = require("./Pointer");
 var ProtectedDocument = __importStar(require("./ProtectedDocument"));
 var RDF = __importStar(require("./RDF"));
 var Resource = __importStar(require("./Resource"));
@@ -77,7 +77,7 @@ var Class = (function () {
         configurable: true
     });
     Class.prototype.inScope = function (idOrPointer) {
-        var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
+        var id = Pointer_1.Pointer.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
@@ -784,8 +784,8 @@ var Class = (function () {
                 returned[0].sort(function (a, b) {
                     a = Utils_2.getPathProperty(a, path_1);
                     b = Utils_2.getPathProperty(b, path_1);
-                    var aValue = Pointer.Factory.is(a) ? a.id : a;
-                    var bValue = Pointer.Factory.is(b) ? b.id : b;
+                    var aValue = Pointer_1.Pointer.is(a) ? a.id : a;
+                    var bValue = Pointer_1.Pointer.is(b) ? b.id : b;
                     if (aValue === bValue)
                         return 0;
                     if (aValue === void 0)
@@ -793,7 +793,7 @@ var Class = (function () {
                     if (bValue === void 0)
                         return inverter_1;
                     if (!Utils_2.areDifferentType(a, b)) {
-                        if (Pointer.Factory.is(a)) {
+                        if (Pointer_1.Pointer.is(a)) {
                             var aIsBNode = RDF.URI.Util.isBNodeID(aValue);
                             var bIsBNode = RDF.URI.Util.isBNodeID(bValue);
                             if (aIsBNode && !bIsBNode)
@@ -803,9 +803,9 @@ var Class = (function () {
                         }
                     }
                     else {
-                        if (Pointer.Factory.is(a))
+                        if (Pointer_1.Pointer.is(a))
                             return -1 * inverter_1;
-                        if (Pointer.Factory.is(b))
+                        if (Pointer_1.Pointer.is(b))
                             return inverter_1;
                         if (Utils.isNumber(a))
                             return -1 * inverter_1;
@@ -999,7 +999,7 @@ var Class = (function () {
     Class.prototype.createPointerFrom = function (object, localID) {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
-        var pointer = Pointer.Factory.createFrom(object, id);
+        var pointer = Pointer_1.Pointer.createFrom(object, id);
         Object.defineProperty(pointer, "resolve", {
             writable: false,
             enumerable: false,
@@ -1105,7 +1105,7 @@ var Class = (function () {
         return pointers.map(function (pointer) {
             if (Utils.isString(pointer))
                 return _this.getPointer(pointer);
-            if (Pointer.Factory.is(pointer))
+            if (Pointer_1.Pointer.is(pointer))
                 return pointer;
             throw new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided.");
         });
