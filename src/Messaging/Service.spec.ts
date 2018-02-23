@@ -62,7 +62,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Class" },
+					{ name: "context", type: "Carbon" },
 				]
 			), ():void => {
 				expect( service ).toEqual( jasmine.any( MessagingService.Class ) );

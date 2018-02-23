@@ -53,15 +53,15 @@ describe( module( "Carbon" ), ():void => {
 		expect( Carbon ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "Carbon.Class", "The main class of the SDK, which contains all the references of the modules used in the the SDK." ), ():void => {
+	describe( clazz( "Carbon.Carbon", "The main class of the SDK, which contains all the references of the modules used in the the SDK." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( Carbon.Class ).toBeDefined();
-			expect( Carbon.Class ).toEqual( jasmine.any( Function ) );
+			expect( Carbon.Carbon ).toBeDefined();
+			expect( Carbon.Carbon ).toEqual( jasmine.any( Function ) );
 		} );
 
 		it( extendsClass( "Carbon.AbstractContext.AbstractContext" ), ():void => {
-			const carbon:Carbon.Class = new Carbon.Class( "https://example.com" );
+			const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com" );
 			expect( carbon ).toEqual( jasmine.any( AbstractContext.AbstractContext ) );
 		} );
 
@@ -71,10 +71,10 @@ describe( module( "Carbon" ), ():void => {
 			"string",
 			"Returns the version of the SDK."
 		), ():void => {
-			expect( Carbon.Class.version ).toBeDefined();
-			expect( Carbon.Class.version ).toEqual( jasmine.any( String ) );
+			expect( Carbon.Carbon.version ).toBeDefined();
+			expect( Carbon.Carbon.version ).toEqual( jasmine.any( String ) );
 
-			expect( Carbon.Class.version ).toMatch( /\d+\.\d+\.\d+.*/ );
+			expect( Carbon.Carbon.version ).toMatch( /\d+\.\d+\.\d+.*/ );
 		} );
 
 		it( reexports(
@@ -82,8 +82,8 @@ describe( module( "Carbon" ), ():void => {
 			"AbstractContext",
 			"Carbon/AbstractContext"
 		), ():void => {
-			expect( Carbon.Class.AbstractContext ).toBeDefined();
-			expect( Carbon.Class.AbstractContext ).toBe( AbstractContext );
+			expect( Carbon.Carbon.AbstractContext ).toBeDefined();
+			expect( Carbon.Carbon.AbstractContext ).toBe( AbstractContext );
 		} );
 
 		it( reexports(
@@ -91,8 +91,8 @@ describe( module( "Carbon" ), ():void => {
 			"AccessPoint",
 			"Carbon/AccessPoint"
 		), ():void => {
-			expect( Carbon.Class.AccessPoint ).toBeDefined();
-			expect( Carbon.Class.AccessPoint ).toBe( AccessPoint );
+			expect( Carbon.Carbon.AccessPoint ).toBeDefined();
+			expect( Carbon.Carbon.AccessPoint ).toBe( AccessPoint );
 		} );
 
 		it( reexports(
@@ -100,8 +100,8 @@ describe( module( "Carbon" ), ():void => {
 			"Auth",
 			"Carbon/Auth"
 		), ():void => {
-			expect( Carbon.Class.Auth ).toBeDefined();
-			expect( Carbon.Class.Auth ).toBe( Auth );
+			expect( Carbon.Carbon.Auth ).toBeDefined();
+			expect( Carbon.Carbon.Auth ).toBe( Auth );
 		} );
 
 		it( reexports(
@@ -109,8 +109,8 @@ describe( module( "Carbon" ), ():void => {
 			"BlankNode",
 			"Carbon/BlankNode"
 		), ():void => {
-			expect( Carbon.Class.BlankNode ).toBeDefined();
-			expect( Carbon.Class.BlankNode ).toBe( BlankNode );
+			expect( Carbon.Carbon.BlankNode ).toBeDefined();
+			expect( Carbon.Carbon.BlankNode ).toBe( BlankNode );
 		} );
 
 		it( reexports(
@@ -118,8 +118,8 @@ describe( module( "Carbon" ), ():void => {
 			"Document",
 			"Carbon/Document"
 		), ():void => {
-			expect( Carbon.Class.Document ).toBeDefined();
-			expect( Carbon.Class.Document ).toBe( Document );
+			expect( Carbon.Carbon.Document ).toBeDefined();
+			expect( Carbon.Carbon.Document ).toBe( Document );
 		} );
 
 		it( reexports(
@@ -127,8 +127,8 @@ describe( module( "Carbon" ), ():void => {
 			"Documents",
 			"Carbon/Documents"
 		), ():void => {
-			expect( Carbon.Class.Documents ).toBeDefined();
-			expect( Carbon.Class.Documents ).toBe( Documents );
+			expect( Carbon.Carbon.Documents ).toBeDefined();
+			expect( Carbon.Carbon.Documents ).toBe( Documents );
 		} );
 
 		it( reexports(
@@ -136,8 +136,8 @@ describe( module( "Carbon" ), ():void => {
 			"Errors",
 			"Carbon/Errors"
 		), ():void => {
-			expect( Carbon.Class.Errors ).toBeDefined();
-			expect( Carbon.Class.Errors ).toBe( Errors );
+			expect( Carbon.Carbon.Errors ).toBeDefined();
+			expect( Carbon.Carbon.Errors ).toBe( Errors );
 		} );
 
 		it( reexports(
@@ -145,8 +145,8 @@ describe( module( "Carbon" ), ():void => {
 			"Fragment",
 			"Carbon/Fragment"
 		), ():void => {
-			expect( Carbon.Class.Fragment ).toBeDefined();
-			expect( Carbon.Class.Fragment ).toBe( Fragment );
+			expect( Carbon.Carbon.Fragment ).toBeDefined();
+			expect( Carbon.Carbon.Fragment ).toBe( Fragment );
 		} );
 
 		it( reexports(
@@ -154,8 +154,8 @@ describe( module( "Carbon" ), ():void => {
 			"HTTP",
 			"Carbon/HTTP"
 		), ():void => {
-			expect( Carbon.Class.HTTP ).toBeDefined();
-			expect( Carbon.Class.HTTP ).toBe( HTTP );
+			expect( Carbon.Carbon.HTTP ).toBeDefined();
+			expect( Carbon.Carbon.HTTP ).toBe( HTTP );
 		} );
 
 		it( reexports(
@@ -163,8 +163,8 @@ describe( module( "Carbon" ), ():void => {
 			"JSONLD",
 			"Carbon/JSONLD"
 		), ():void => {
-			expect( Carbon.Class.JSONLD ).toBeDefined();
-			expect( Carbon.Class.JSONLD ).toBe( JSONLD );
+			expect( Carbon.Carbon.JSONLD ).toBeDefined();
+			expect( Carbon.Carbon.JSONLD ).toBe( JSONLD );
 		} );
 
 		it( reexports(
@@ -172,8 +172,8 @@ describe( module( "Carbon" ), ():void => {
 			"LDP",
 			"Carbon/LDP"
 		), ():void => {
-			expect( Carbon.Class.LDP ).toBeDefined();
-			expect( Carbon.Class.LDP ).toBe( LDP );
+			expect( Carbon.Carbon.LDP ).toBeDefined();
+			expect( Carbon.Carbon.LDP ).toBe( LDP );
 		} );
 
 		it( reexports(
@@ -181,8 +181,8 @@ describe( module( "Carbon" ), ():void => {
 			"LDPatch",
 			"Carbon/LDPatch"
 		), ():void => {
-			expect( Carbon.Class.LDPatch ).toBeDefined();
-			expect( Carbon.Class.LDPatch ).toBe( LDPatch );
+			expect( Carbon.Carbon.LDPatch ).toBeDefined();
+			expect( Carbon.Carbon.LDPatch ).toBe( LDPatch );
 		} );
 
 		it( reexports(
@@ -190,8 +190,8 @@ describe( module( "Carbon" ), ():void => {
 			"Messaging",
 			"Carbon/Messaging"
 		), ():void => {
-			expect( Carbon.Class.Messaging ).toBeDefined();
-			expect( Carbon.Class.Messaging ).toBe( Messaging );
+			expect( Carbon.Carbon.Messaging ).toBeDefined();
+			expect( Carbon.Carbon.Messaging ).toBe( Messaging );
 		} );
 
 		it( reexports(
@@ -199,8 +199,8 @@ describe( module( "Carbon" ), ():void => {
 			"ModelFactory",
 			"Carbon/ModelFactory"
 		), ():void => {
-			expect( Carbon.Class.ModelFactory ).toBeDefined();
-			expect( Carbon.Class.ModelFactory ).toBe( ModelFactory );
+			expect( Carbon.Carbon.ModelFactory ).toBeDefined();
+			expect( Carbon.Carbon.ModelFactory ).toBe( ModelFactory );
 		} );
 
 		it( reexports(
@@ -208,8 +208,8 @@ describe( module( "Carbon" ), ():void => {
 			"NamedFragment",
 			"Carbon/NamedFragment"
 		), ():void => {
-			expect( Carbon.Class.NamedFragment ).toBeDefined();
-			expect( Carbon.Class.NamedFragment ).toBe( NamedFragment );
+			expect( Carbon.Carbon.NamedFragment ).toBeDefined();
+			expect( Carbon.Carbon.NamedFragment ).toBe( NamedFragment );
 		} );
 
 		it( reexports(
@@ -217,8 +217,8 @@ describe( module( "Carbon" ), ():void => {
 			"Vocabularies",
 			"Carbon/Vocabularies"
 		), ():void => {
-			expect( Carbon.Class.Vocabularies ).toBeDefined();
-			expect( Carbon.Class.Vocabularies ).toBe( Vocabularies );
+			expect( Carbon.Carbon.Vocabularies ).toBeDefined();
+			expect( Carbon.Carbon.Vocabularies ).toBe( Vocabularies );
 		} );
 
 		it( reexports(
@@ -226,8 +226,8 @@ describe( module( "Carbon" ), ():void => {
 			"ObjectSchema",
 			"Carbon/ObjectSchema"
 		), ():void => {
-			expect( Carbon.Class.ObjectSchema ).toBeDefined();
-			expect( Carbon.Class.ObjectSchema ).toBe( ObjectSchema );
+			expect( Carbon.Carbon.ObjectSchema ).toBeDefined();
+			expect( Carbon.Carbon.ObjectSchema ).toBe( ObjectSchema );
 		} );
 
 		it( reexports(
@@ -235,8 +235,8 @@ describe( module( "Carbon" ), ():void => {
 			"PersistedDocument",
 			"Carbon/PersistedDocument"
 		), ():void => {
-			expect( Carbon.Class.PersistedDocument ).toBeDefined();
-			expect( Carbon.Class.PersistedDocument ).toBe( PersistedDocument );
+			expect( Carbon.Carbon.PersistedDocument ).toBeDefined();
+			expect( Carbon.Carbon.PersistedDocument ).toBe( PersistedDocument );
 		} );
 
 		it( reexports(
@@ -244,8 +244,8 @@ describe( module( "Carbon" ), ():void => {
 			"PersistedFragment",
 			"Carbon/PersistedFragment"
 		), ():void => {
-			expect( Carbon.Class.PersistedFragment ).toBeDefined();
-			expect( Carbon.Class.PersistedFragment ).toBe( PersistedFragment );
+			expect( Carbon.Carbon.PersistedFragment ).toBeDefined();
+			expect( Carbon.Carbon.PersistedFragment ).toBe( PersistedFragment );
 		} );
 
 		it( reexports(
@@ -253,8 +253,8 @@ describe( module( "Carbon" ), ():void => {
 			"PersistedNamedFragment",
 			"Carbon/PersistedNamedFragment"
 		), ():void => {
-			expect( Carbon.Class.PersistedNamedFragment ).toBeDefined();
-			expect( Carbon.Class.PersistedNamedFragment ).toBe( PersistedNamedFragment );
+			expect( Carbon.Carbon.PersistedNamedFragment ).toBeDefined();
+			expect( Carbon.Carbon.PersistedNamedFragment ).toBe( PersistedNamedFragment );
 		} );
 
 		it( reexports(
@@ -262,8 +262,8 @@ describe( module( "Carbon" ), ():void => {
 			"PersistedResource",
 			"Carbon/PersistedResource"
 		), ():void => {
-			expect( Carbon.Class.PersistedResource ).toBeDefined();
-			expect( Carbon.Class.PersistedResource ).toBe( PersistedResource );
+			expect( Carbon.Carbon.PersistedResource ).toBeDefined();
+			expect( Carbon.Carbon.PersistedResource ).toBe( PersistedResource );
 		} );
 
 		it( reexports(
@@ -271,8 +271,8 @@ describe( module( "Carbon" ), ():void => {
 			"Pointer",
 			"Carbon/Pointer"
 		), ():void => {
-			expect( Carbon.Class.Pointer ).toBeDefined();
-			expect( Carbon.Class.Pointer ).toBe( Pointer );
+			expect( Carbon.Carbon.Pointer ).toBeDefined();
+			expect( Carbon.Carbon.Pointer ).toBe( Pointer );
 		} );
 
 		it( reexports(
@@ -280,8 +280,8 @@ describe( module( "Carbon" ), ():void => {
 			"RDF",
 			"Carbon/RDF"
 		), ():void => {
-			expect( Carbon.Class.RDF ).toBeDefined();
-			expect( Carbon.Class.RDF ).toBe( RDF );
+			expect( Carbon.Carbon.RDF ).toBeDefined();
+			expect( Carbon.Carbon.RDF ).toBe( RDF );
 		} );
 
 		it( reexports(
@@ -289,8 +289,8 @@ describe( module( "Carbon" ), ():void => {
 			"Resource",
 			"Carbon/Resource"
 		), ():void => {
-			expect( Carbon.Class.Resource ).toBeDefined();
-			expect( Carbon.Class.Resource ).toBe( Resource );
+			expect( Carbon.Carbon.Resource ).toBeDefined();
+			expect( Carbon.Carbon.Resource ).toBe( Resource );
 		} );
 
 		it( reexports(
@@ -298,8 +298,8 @@ describe( module( "Carbon" ), ():void => {
 			"SDKContext",
 			"Carbon/SDKContext"
 		), ():void => {
-			expect( Carbon.Class.SDKContext ).toBeDefined();
-			expect( Carbon.Class.SDKContext ).toBe( SDKContext );
+			expect( Carbon.Carbon.SDKContext ).toBeDefined();
+			expect( Carbon.Carbon.SDKContext ).toBe( SDKContext );
 		} );
 
 		it( reexports(
@@ -307,8 +307,8 @@ describe( module( "Carbon" ), ():void => {
 			"Settings",
 			"Carbon/Settings"
 		), ():void => {
-			expect( Carbon.Class.Settings ).toBeDefined();
-			expect( Carbon.Class.Settings ).toBe( Settings );
+			expect( Carbon.Carbon.Settings ).toBeDefined();
+			expect( Carbon.Carbon.Settings ).toBe( Settings );
 		} );
 
 		it( reexports(
@@ -316,8 +316,8 @@ describe( module( "Carbon" ), ():void => {
 			"SHACL",
 			"Carbon/SHACL"
 		), ():void => {
-			expect( Carbon.Class.SHACL ).toBeDefined();
-			expect( Carbon.Class.SHACL ).toBe( SHACL );
+			expect( Carbon.Carbon.SHACL ).toBeDefined();
+			expect( Carbon.Carbon.SHACL ).toBe( SHACL );
 		} );
 
 		it( reexports(
@@ -325,8 +325,8 @@ describe( module( "Carbon" ), ():void => {
 			"SPARQL",
 			"Carbon/SPARQL"
 		), ():void => {
-			expect( Carbon.Class.SPARQL ).toBeDefined();
-			expect( Carbon.Class.SPARQL ).toBe( SPARQL );
+			expect( Carbon.Carbon.SPARQL ).toBeDefined();
+			expect( Carbon.Carbon.SPARQL ).toBe( SPARQL );
 		} );
 
 		it( reexports(
@@ -334,8 +334,8 @@ describe( module( "Carbon" ), ():void => {
 			"System",
 			"Carbon/System"
 		), ():void => {
-			expect( Carbon.Class.System ).toBeDefined();
-			expect( Carbon.Class.System ).toBe( System );
+			expect( Carbon.Carbon.System ).toBeDefined();
+			expect( Carbon.Carbon.System ).toBe( System );
 		} );
 
 		it( reexports(
@@ -343,8 +343,8 @@ describe( module( "Carbon" ), ():void => {
 			"Utils",
 			"Carbon/Utils"
 		), ():void => {
-			expect( Carbon.Class.Utils ).toBeDefined();
-			expect( Carbon.Class.Utils ).toBe( Utils );
+			expect( Carbon.Carbon.Utils ).toBeDefined();
+			expect( Carbon.Carbon.Utils ).toBe( Utils );
 		} );
 
 
@@ -359,20 +359,20 @@ describe( module( "Carbon" ), ():void => {
 			] ), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Carbon.Class.constructor ).toBeDefined();
-				expect( Carbon.Class.constructor ).toEqual( jasmine.any( Function ) );
+				expect( Carbon.Carbon.constructor ).toBeDefined();
+				expect( Carbon.Carbon.constructor ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should be instantiable", ():void => {
-				const target:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				const target:Carbon.Carbon = new Carbon.Carbon( "https://example.com/" );
 
 				expect( target ).toBeDefined();
-				expect( target ).toEqual( jasmine.any( Carbon.Class ) );
+				expect( target ).toEqual( jasmine.any( Carbon.Carbon ) );
 			} );
 
 			it( "should throw error when URL has not protocol", ():void => {
 				const helper:( url:string ) => () => void = url => () => {
-					new Carbon.Class( url );
+					new Carbon.Carbon( url );
 				};
 
 				expect( helper( "example.com/" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
@@ -382,7 +382,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should throw error when URL has invalid protocol", ():void => {
 				const helper:( url:string ) => () => void = url => () => {
-					new Carbon.Class( url );
+					new Carbon.Carbon( url );
 				};
 
 				expect( helper( "ftp://example.com/" ) ).toThrowError( Errors.IllegalArgumentError, `The URL must contain a valid protocol: "http://", "https://".` );
@@ -391,7 +391,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should assign the URL as the base URI with slash at the end", ():void => {
 				const helper:( url:string, uri:string ) => void = ( url, uri ) => {
-					const carbon:Carbon.Class = new Carbon.Class( url );
+					const carbon:Carbon.Carbon = new Carbon.Carbon( url );
 					expect( carbon.baseURI ).toBe( uri );
 				};
 
@@ -405,7 +405,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should throw error when invalid host property", ():void => {
 				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
-					new Carbon.Class( settings );
+					new Carbon.Carbon( settings );
 				};
 
 				expect( helper( { host: null } ) ).toThrowError( Errors.IllegalArgumentError, "The settings object must contains a valid host string." );
@@ -415,7 +415,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should throw error when invalid host with protocol", ():void => {
 				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
-					new Carbon.Class( settings );
+					new Carbon.Carbon( settings );
 				};
 
 				expect( helper( { host: "http://example.com" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a protocol." );
@@ -425,7 +425,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should throw error when invalid host with port", ():void => {
 				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
-					new Carbon.Class( settings );
+					new Carbon.Carbon( settings );
 				};
 
 				expect( helper( { host: "example.com:80" } ) ).toThrowError( Errors.IllegalArgumentError, "The host must not contain a port." );
@@ -434,7 +434,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should create base URI with settings host", ():void => {
 				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
-					const carbon:Carbon.Class = new Carbon.Class( settings );
+					const carbon:Carbon.Carbon = new Carbon.Carbon( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
 
@@ -444,7 +444,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should create base URI with settings host and ssl", ():void => {
 				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
-					const carbon:Carbon.Class = new Carbon.Class( settings );
+					const carbon:Carbon.Carbon = new Carbon.Carbon( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
 
@@ -454,7 +454,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should create base URI with settings host and port", ():void => {
 				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
-					const carbon:Carbon.Class = new Carbon.Class( settings );
+					const carbon:Carbon.Carbon = new Carbon.Carbon( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
 
@@ -464,7 +464,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
 				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
-					const carbon:Carbon.Class = new Carbon.Class( settings );
+					const carbon:Carbon.Carbon = new Carbon.Carbon( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
 
@@ -474,7 +474,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
 				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
-					const carbon:Carbon.Class = new Carbon.Class( settings );
+					const carbon:Carbon.Carbon = new Carbon.Carbon( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
 
@@ -484,7 +484,7 @@ describe( module( "Carbon" ), ():void => {
 
 
 			it( "should have the default settings when url provided", ():void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com/" );
 				expect( carbon[ "settings" ] ).toEqual( {
 					vocabulary: "vocabulary/#",
 					paths: {
@@ -502,7 +502,7 @@ describe( module( "Carbon" ), ():void => {
 			} );
 
 			it( "should merge when settings provided", ():void => {
-				const carbon:Carbon.Class = new Carbon.Class( {
+				const carbon:Carbon.Carbon = new Carbon.Carbon( {
 					host: "example.com",
 					vocabulary: "https://schema.org/",
 					paths: {
@@ -534,14 +534,14 @@ describe( module( "Carbon" ), ():void => {
 
 
 			it( "should retrieve the version form the class", ():void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com" );
 
 				expect( carbon.version ).toEqual( jasmine.any( String ) );
-				expect( carbon.version ).toBe( Carbon.Class.version );
+				expect( carbon.version ).toBe( Carbon.Carbon.version );
 			} );
 
 			it( "should instantiate the messaging service when url", ():void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com" );
 				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.Service.Class ) );
 			} );
 
@@ -578,19 +578,19 @@ describe( module( "Carbon" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Carbon.Class.prototype.resolve ).toBeDefined();
-				expect( Carbon.Class.prototype.resolve ).toEqual( jasmine.any( Function ) );
+				expect( Carbon.Carbon.prototype.resolve ).toBeDefined();
+				expect( Carbon.Carbon.prototype.resolve ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should resolve relative URIs", ():void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com/" );
 
 				expect( carbon.resolve( "my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 				expect( carbon.resolve( "a-parent/my-resource/" ) ).toBe( "https://example.com/a-parent/my-resource/" );
 			} );
 
 			it( "should not resolve absolute URIs", ():void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com/" );
 
 				expect( carbon.resolve( "https://example.com/my-resource/" ) ).toBe( "https://example.com/my-resource/" );
 				expect( carbon.resolve( "http://another-carbon.example.com/my-resource/" ) ).toBe( "http://another-carbon.example.com/my-resource/" );
@@ -614,13 +614,13 @@ describe( module( "Carbon" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Carbon.Class.prototype.getPlatformMetadata ).toBeDefined();
-				expect( Carbon.Class.prototype.getPlatformMetadata ).toEqual( jasmine.any( Function ) );
+				expect( Carbon.Carbon.prototype.getPlatformMetadata ).toBeDefined();
+				expect( Carbon.Carbon.prototype.getPlatformMetadata ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should ask for `system.platform` path", ( done:DoneFn ):void => {
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com/" );
 
 				const spy:jasmine.Spy = spyOn( carbon, "_resolvePath" )
 					.and.callFake( () => { throw new Error( "Should not resolve" ); } );
@@ -661,7 +661,7 @@ describe( module( "Carbon" ), ():void => {
 				} ]`,
 				} );
 
-				const carbon:Carbon.Class = new Carbon.Class( "https://example.com/" );
+				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com/" );
 				spyOn( carbon, "_resolvePath" ).and.returnValue( "https://example.com/.system/platform/" );
 
 				carbon
@@ -689,9 +689,9 @@ describe( module( "Carbon" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Class" ), () => {
+	it( hasDefaultExport( "Carbon.Carbon" ), () => {
 		expect( Carbon.default ).toBeDefined();
-		expect( Carbon.default ).toBe( Carbon.Class );
+		expect( Carbon.default ).toBe( Carbon.Carbon );
 	} );
 
 } );

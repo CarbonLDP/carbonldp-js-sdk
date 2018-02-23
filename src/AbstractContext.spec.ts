@@ -73,7 +73,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.AbstractContext" ), ():void => {
+	it( hasDefaultExport( "Carbon.AbstractContext.AbstractContext" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( AbstractContext );
 	} );

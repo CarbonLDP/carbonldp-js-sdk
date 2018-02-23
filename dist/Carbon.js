@@ -48,9 +48,9 @@ var SPARQL = __importStar(require("./SPARQL"));
 var System = __importStar(require("./System"));
 var Utils = __importStar(require("./Utils"));
 var Vocabularies = __importStar(require("./Vocabularies"));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(urlOrSettings) {
+var Carbon = (function (_super) {
+    __extends(Carbon, _super);
+    function Carbon(urlOrSettings) {
         var _this = _super.call(this) || this;
         _this.settings = {
             vocabulary: "vocabulary/#",
@@ -92,56 +92,56 @@ var Class = (function (_super) {
         _this.messaging = new Messaging.Service.Class(_this);
         return _this;
     }
-    Object.defineProperty(Class, "version", {
+    Object.defineProperty(Carbon, "version", {
         get: function () { return "1.0.0-alpha.11"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "version", {
-        get: function () { return Class.version; },
+    Object.defineProperty(Carbon.prototype, "version", {
+        get: function () { return Carbon.version; },
         enumerable: true,
         configurable: true
     });
-    Class.prototype.getPlatformMetadata = function () {
+    Carbon.prototype.getPlatformMetadata = function () {
         var _this = this;
         return Utils.promiseMethod(function () {
             var uri = _this._resolvePath("system.platform");
             return _this.documents.get(uri);
         });
     };
-    Class.AbstractContext = AbstractContext;
-    Class.AccessPoint = AccessPoint;
-    Class.Auth = Auth;
-    Class.BlankNode = BlankNode;
-    Class.Document = Document;
-    Class.Documents = Documents;
-    Class.Errors = Errors;
-    Class.Fragment = Fragment;
-    Class.HTTP = HTTP;
-    Class.JSONLD = JSONLD;
-    Class.LDP = LDP;
-    Class.LDPatch = LDPatch;
-    Class.Messaging = Messaging;
-    Class.ModelFactory = ModelFactory;
-    Class.NamedFragment = NamedFragment;
-    Class.Vocabularies = Vocabularies;
-    Class.ObjectSchema = ObjectSchema;
-    Class.PersistedDocument = PersistedDocument;
-    Class.PersistedFragment = PersistedFragment;
-    Class.PersistedNamedFragment = PersistedNamedFragment;
-    Class.PersistedResource = PersistedResource;
-    Class.Pointer = Pointer;
-    Class.RDF = RDF;
-    Class.Resource = Resource;
-    Class.SDKContext = SDKContext;
-    Class.Settings = Settings;
-    Class.SHACL = SHACL;
-    Class.SPARQL = SPARQL;
-    Class.System = System;
-    Class.Utils = Utils;
-    return Class;
+    Carbon.AbstractContext = AbstractContext;
+    Carbon.AccessPoint = AccessPoint;
+    Carbon.Auth = Auth;
+    Carbon.BlankNode = BlankNode;
+    Carbon.Document = Document;
+    Carbon.Documents = Documents;
+    Carbon.Errors = Errors;
+    Carbon.Fragment = Fragment;
+    Carbon.HTTP = HTTP;
+    Carbon.JSONLD = JSONLD;
+    Carbon.LDP = LDP;
+    Carbon.LDPatch = LDPatch;
+    Carbon.Messaging = Messaging;
+    Carbon.ModelFactory = ModelFactory;
+    Carbon.NamedFragment = NamedFragment;
+    Carbon.Vocabularies = Vocabularies;
+    Carbon.ObjectSchema = ObjectSchema;
+    Carbon.PersistedDocument = PersistedDocument;
+    Carbon.PersistedFragment = PersistedFragment;
+    Carbon.PersistedNamedFragment = PersistedNamedFragment;
+    Carbon.PersistedResource = PersistedResource;
+    Carbon.Pointer = Pointer;
+    Carbon.RDF = RDF;
+    Carbon.Resource = Resource;
+    Carbon.SDKContext = SDKContext;
+    Carbon.Settings = Settings;
+    Carbon.SHACL = SHACL;
+    Carbon.SPARQL = SPARQL;
+    Carbon.System = System;
+    Carbon.Utils = Utils;
+    return Carbon;
 }(AbstractContext.AbstractContext));
-exports.Class = Class;
-exports.default = Class;
+exports.Carbon = Carbon;
+exports.default = Carbon;
 
 //# sourceMappingURL=Carbon.js.map
