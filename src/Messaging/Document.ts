@@ -1,10 +1,10 @@
-import * as ServiceAwareDocument from "../ServiceAwareDocument";
+import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import { hasFunction, isObject } from "../Utils";
 import * as Messaging from "./../Messaging";
 import { Event } from "./Event";
 import * as Message from "./Message";
 
-export interface Class extends ServiceAwareDocument.Class {
+export interface Class extends ServiceAwareDocument {
 	on( event:Event.CHILD_CREATED, onEvent:( message:Messaging.ChildCreated.Class ) => void, onError:( error:Error ) => void ):void;
 	on( event:Event.ACCESS_POINT_CREATED, onEvent:( message:Messaging.AccessPointCreated.Class ) => void, onError:( error:Error ) => void ):void;
 	on( event:Event.DOCUMENT_CREATED, onEvent:( message:Messaging.DocumentCreated.Class ) => void, onError:( error:Error ) => void ):void;
@@ -105,7 +105,7 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends ServiceAwareDocument.Class>( object:T ):T & Class {
+	static decorate<T extends ServiceAwareDocument>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
 		return Object.defineProperties( object, {

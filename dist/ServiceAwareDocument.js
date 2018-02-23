@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Document_1 = require("./Document");
 var Utils_1 = require("./Utils");
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.ServiceAwareDocument = {
+    isDecorated: function (object) {
         return Utils_1.isObject(object)
             && object.hasOwnProperty("_documents");
-    };
-    Factory.decorate = function (document, documents) {
-        if (Factory.hasClassProperties(document))
-            return document;
-        return Object.defineProperties(document, {
+    },
+    decorate: function (object, documents) {
+        if (exports.ServiceAwareDocument.isDecorated(object))
+            return object;
+        Document_1.Document.decorate(object);
+        return Object.defineProperties(object, {
             "_documents": {
                 writable: false,
                 enumerable: false,
@@ -19,9 +19,8 @@ var Factory = (function () {
                 value: documents,
             },
         });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.ServiceAwareDocument;
 
 //# sourceMappingURL=ServiceAwareDocument.js.map

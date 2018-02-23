@@ -1,13 +1,25 @@
+import { Minus } from "../test/helpers/types";
+
 import { Document } from "./Document";
 import * as Documents from "./Documents";
-import * as ServiceAwareDocument from "./ServiceAwareDocument";
-import DefaultExport from "./ServiceAwareDocument";
-import { clazz, extendsClass, hasDefaultExport, hasMethod, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "./test/JasmineExtender";
+import DefaultExport, { ServiceAwareDocument } from "./ServiceAwareDocument";
+
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "./test/JasmineExtender";
 
 describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.ServiceAwareDocument.Class",
+		"Carbon.ServiceAwareDocument.ServiceAwareDocument",
 		"Interface that has a reference to its `Carbon.Documents.Class`."
 	), ():void => {
 
@@ -19,122 +31,114 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 			"Carbon.Documents.Class",
 			"Reference to the Documents instance where this documents belongs to."
 		), ():void => {
-			const serviceAwareDocument:ServiceAwareDocument.Class = <any> {};
-			serviceAwareDocument._documents;
+			const target:ServiceAwareDocument[ "_documents" ] = {} as Documents.Class;
+			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	describe( clazz(
-		"Carbon.ServiceAwareDocument.Factory",
-		"Factory class for `Carbon.DocumentDocumented.Class` objects."
+	describe( interfaze(
+		"Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory",
+		"Interface with the factory, decorate adn utils methods od a `Carbon.ServiceAwareDocument.ServiceAwareDocument`"
 	), ():void => {
 
 		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Returns true if the object has the specific properties of the `Carbon.ServiceAwareDocument.Class` interface.",
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object has the specific properties of the `Carbon.ServiceAwareDocument.ServiceAwareDocument` interface.",
 			[
 				{ name: "object", type: "object", description: "The object to be tested." },
 			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( ServiceAwareDocument.Factory.hasClassProperties ).toBeDefined();
-		} );
+			{ type: "object is Carbon.ServiceAwareDocument.ServiceAwareDocument" }
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"decorate",
 			[ "T extends Carbon.Document.Document" ],
-			"Decorates the provided document with the properties of the `Carbon.ServiceAwareDocument.Class` interface.",
+			"Decorates the provided document with the properties of the `Carbon.ServiceAwareDocument.ServiceAwareDocument` interface.",
 			[
 				{ name: "document", type: "T", description: "Document object to decorate." },
 				{ name: "documents", type: "Carbon.Documents.Class", description: "Documents instance where the provided document will belong to." },
 			],
-			{ type: "T & Carbon.ServiceAwareDocument.Class" }
-		), ():void => {
-			expect( ServiceAwareDocument.Factory.decorate ).toBeDefined();
+			{ type: "T & Carbon.ServiceAwareDocument.ServiceAwareDocument" }
+		), ():void => {} );
+
+	} );
+
+	describe( property( STATIC, "ServiceAwareDocument", "Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory", "Constant that implements the `Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory` interface." ), ():void => {
+
+		it( "should exist", ():void => {
+			expect( ServiceAwareDocument ).toBeDefined();
+			expect( ServiceAwareDocument ).toEqual( jasmine.any( Object ) );
+		} );
+
+		describe( "ServiceAwareDocument.isDecorated", ():void => {
+
+			it( "should exist", ():void => {
+				expect( ServiceAwareDocument.isDecorated ).toBeDefined();
+				expect( ServiceAwareDocument.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return false if falsy is provided", ():void => {
+				expect( ServiceAwareDocument.isDecorated( void 0 ) ).toBe( false );
+				expect( ServiceAwareDocument.isDecorated( null ) ).toBe( false );
+			} );
+
+			it( "should return false if has a missing class property", ():void => {
+				const object:Partial<ServiceAwareDocument> = {
+					_documents: null,
+				};
+
+				expect( ServiceAwareDocument.isDecorated( object ) ).toBe( true );
+
+				delete object._documents;
+				expect( ServiceAwareDocument.isDecorated( object ) ).toBe( false );
+				object._documents = null;
+			} );
+
+		} );
+
+		describe( "ServiceAwareDocument.decorate", ():void => {
+
+			it( "should exist", ():void => {
+				expect( ServiceAwareDocument.decorate ).toBeDefined();
+				expect( ServiceAwareDocument.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the same reference of the object provided", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				const object:object = {};
+
+				const decoratedObject:ServiceAwareDocument = ServiceAwareDocument.decorate( object, documents );
+				expect( object ).toBe( decoratedObject );
+			} );
+
+			it( "should not decorate if already has the specific properties", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				const object:Minus<Document, ServiceAwareDocument> = {
+					_documents: null,
+				};
+
+				const decoratedObject:ServiceAwareDocument = ServiceAwareDocument.decorate( object, documents );
+				expect( decoratedObject._documents ).toBeNull();
+			} );
+
+			it( "should add the new properties", ():void => {
+				const documents:Documents.Class = new Documents.Class();
+				const decoratedObject:ServiceAwareDocument = ServiceAwareDocument.decorate( {}, documents );
+				expect( decoratedObject ).toEqual( jasmine.objectContaining( {
+					_documents: documents,
+				} ) );
+			} );
+
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.ServiceAwareDocument.Class" ), ():void => {
-		const defaultTarget:ServiceAwareDocument.Class = <DefaultExport> {};
+	it( hasDefaultExport( "Carbon.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {
+		const defaultTarget:ServiceAwareDocument = <DefaultExport> {};
 		expect( defaultTarget ).toBeDefined();
-	} );
-} );
-
-
-describe( "Carbon.ServiceAwareDocument.Factory", ():void => {
-
-	it( "should exists", ():void => {
-		expect( ServiceAwareDocument.Factory ).toBeDefined();
-		expect( ServiceAwareDocument.Factory ).toEqual( jasmine.any( Function ) );
-	} );
-
-	describe( "hasClassProperties", ():void => {
-
-		it( "should exists", ():void => {
-			expect( ServiceAwareDocument.Factory.hasClassProperties ).toBeDefined();
-			expect( ServiceAwareDocument.Factory.hasClassProperties ).toEqual( jasmine.any( Function ) );
-		} );
-
-		it( "should return false if falsy is provided", ():void => {
-			expect( ServiceAwareDocument.Factory.hasClassProperties( void 0 ) ).toBe( false );
-			expect( ServiceAwareDocument.Factory.hasClassProperties( null ) ).toBe( false );
-		} );
-
-		it( "should return false if has a missing class property", ():void => {
-			const object:Partial<ServiceAwareDocument.Class> = {
-				_documents: null,
-			};
-
-			expect( ServiceAwareDocument.Factory.hasClassProperties( object ) ).toBe( true );
-
-			delete object._documents;
-			expect( ServiceAwareDocument.Factory.hasClassProperties( object ) ).toBe( false );
-			object._documents = null;
-		} );
-
-	} );
-
-	describe( "decorate", ():void => {
-
-		it( "should exists", ():void => {
-			expect( ServiceAwareDocument.Factory.decorate ).toBeDefined();
-			expect( ServiceAwareDocument.Factory.decorate ).toEqual( jasmine.any( Function ) );
-		} );
-
-		it( "should return the same reference of the object provided", ():void => {
-			const documents:Documents.Class = new Documents.Class();
-			const object:Document = Document.createFrom( {
-				_documents: null,
-			} );
-
-			const decoratedObject:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( object, documents );
-			expect( object ).toBe( decoratedObject );
-		} );
-
-		it( "should not decorate if already has the specific properties", ():void => {
-			const documents:Documents.Class = new Documents.Class();
-			const object:Document = Document.createFrom( {
-				_documents: null,
-			} );
-
-			const decoratedObject:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( object, documents );
-			expect( decoratedObject._documents ).toBeNull();
-		} );
-
-		it( "should add the new properties", ():void => {
-			const documents:Documents.Class = new Documents.Class();
-			const object:Document = Document.create();
-
-			const decoratedObject:ServiceAwareDocument.Class = ServiceAwareDocument.Factory.decorate( object, documents );
-			expect( decoratedObject ).toEqual( jasmine.objectContaining( {
-				_documents: documents,
-			} ) );
-		} );
-
 	} );
 
 } );

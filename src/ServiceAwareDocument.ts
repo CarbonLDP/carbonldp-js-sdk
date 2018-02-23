@@ -1,22 +1,33 @@
 import { Document } from "./Document";
 import { Class as Documents } from "./Documents";
+import { ModelDecorator } from "./ModelDecorator";
 import { isObject } from "./Utils";
 
-export interface Class extends Document {
+
+export interface ServiceAwareDocument extends Document {
 	_documents:Documents;
 }
 
-export class Factory {
-	static hasClassProperties( object:object ):object is Class {
+
+export interface ServiceAwareDocumentFactory extends ModelDecorator<ServiceAwareDocument> {
+	isDecorated( object:object ):object is ServiceAwareDocument;
+
+	decorate<T extends object>( object:T, documents:Documents ):T & ServiceAwareDocument;
+}
+
+export const ServiceAwareDocument:ServiceAwareDocumentFactory = {
+	isDecorated( object:object ):object is ServiceAwareDocument {
 		return isObject( object )
 			&& object.hasOwnProperty( "_documents" )
 			;
-	}
+	},
 
-	static decorate<T extends Document>( document:T, documents:Documents ):T & Class {
-		if( Factory.hasClassProperties( document ) ) return document;
+	decorate<T extends object>( object:T, documents:Documents ):T & ServiceAwareDocument {
+		if( ServiceAwareDocument.isDecorated( object ) ) return object;
 
-		return Object.defineProperties( document, {
+		Document.decorate( object );
+
+		return Object.defineProperties( object, {
 			"_documents": {
 				writable: false,
 				enumerable: false,
@@ -24,7 +35,8 @@ export class Factory {
 				value: documents,
 			},
 		} );
-	}
-}
+	},
+};
 
-export default Class;
+
+export default ServiceAwareDocument;

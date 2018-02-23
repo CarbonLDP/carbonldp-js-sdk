@@ -17,7 +17,7 @@ var PersistedResource = __importStar(require("./PersistedResource"));
 var Pointer_1 = require("./Pointer");
 var RDF = __importStar(require("./RDF"));
 var URI = __importStar(require("./RDF/URI"));
-var ServiceAwareDocument = __importStar(require("./ServiceAwareDocument"));
+var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
 var Utils = __importStar(require("./Utils"));
 function extendIsDirty(superFunction) {
     return function () {
@@ -250,7 +250,7 @@ var Factory = (function () {
             return object;
         Document_1.Document.decorate(object);
         PersistedResource.Factory.decorate(object);
-        ServiceAwareDocument.Factory.decorate(object, documents);
+        ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {

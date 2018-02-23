@@ -16,12 +16,12 @@ import * as PersistedResource from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
 import * as URI from "./RDF/URI";
-import * as ServiceAwareDocument from "./ServiceAwareDocument";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 import * as Utils from "./Utils";
 
-export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
+export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument, MessagingDocument.Class {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;
@@ -452,8 +452,8 @@ export class Factory {
 
 		Document.decorate( object );
 		PersistedResource.Factory.decorate( <T & Document> object );
-		ServiceAwareDocument.Factory.decorate( <T & Document> object, documents );
-		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument.Class> object );
+		ServiceAwareDocument.decorate( <T & Document> object, documents );
+		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument> object );
 
 		const persistedDocument:T & Class = <T & Class> object;
 

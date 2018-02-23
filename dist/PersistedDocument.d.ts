@@ -10,10 +10,10 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import * as PersistedResource from "./PersistedResource";
 import { Pointer } from "./Pointer";
-import * as ServiceAwareDocument from "./ServiceAwareDocument";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
-export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument.Class, MessagingDocument.Class {
+export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer;
