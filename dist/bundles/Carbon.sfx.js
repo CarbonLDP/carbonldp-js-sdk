@@ -7163,28 +7163,28 @@ var SHACL = __importStar(__webpack_require__(149));
 var SPARQL = __importStar(__webpack_require__(77));
 var System = __importStar(__webpack_require__(150));
 var Utils_1 = __webpack_require__(0);
-var Class = (function () {
-    function Class() {
+var SDKContext = (function () {
+    function SDKContext() {
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
         this.auth = new Auth.Class(this);
         this.documents = new Documents.Class(this);
         this.registerDefaultObjectSchemas();
     }
-    Object.defineProperty(Class.prototype, "baseURI", {
+    Object.defineProperty(SDKContext.prototype, "baseURI", {
         get: function () { return ""; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "parentContext", {
+    Object.defineProperty(SDKContext.prototype, "parentContext", {
         get: function () { return null; },
         enumerable: true,
         configurable: true
     });
-    Class.prototype.resolve = function (relativeURI) {
+    SDKContext.prototype.resolve = function (relativeURI) {
         return RDF.URI.Util.resolve(this.baseURI, relativeURI);
     };
-    Class.prototype._resolvePath = function (path) {
+    SDKContext.prototype._resolvePath = function (path) {
         var leftSearchedPaths = path.split(".");
         var currentSearchedPaths = [];
         var url = "";
@@ -7203,13 +7203,13 @@ var Class = (function () {
         }
         return this.resolve(url);
     };
-    Class.prototype.hasObjectSchema = function (type) {
+    SDKContext.prototype.hasObjectSchema = function (type) {
         type = this._resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
         return !!this.parentContext && this.parentContext.hasObjectSchema(type);
     };
-    Class.prototype.getObjectSchema = function (type) {
+    SDKContext.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!!type) {
             type = this._resolveTypeURI(type);
@@ -7232,7 +7232,7 @@ var Class = (function () {
             return clonedSchema;
         }
     };
-    Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
+    SDKContext.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
@@ -7244,7 +7244,7 @@ var Class = (function () {
             this.extendTypeObjectSchema(digestedSchema, type);
         }
     };
-    Class.prototype.clearObjectSchema = function (type) {
+    SDKContext.prototype.clearObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!type) {
             this.generalObjectSchema = !!this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
@@ -7254,7 +7254,7 @@ var Class = (function () {
             this.typeObjectSchemaMap.delete(type);
         }
     };
-    Class.prototype.extendGeneralObjectSchema = function (digestedSchema) {
+    SDKContext.prototype.extendGeneralObjectSchema = function (digestedSchema) {
         var digestedSchemaToExtend;
         if (!!this.generalObjectSchema) {
             digestedSchemaToExtend = this.generalObjectSchema;
@@ -7270,7 +7270,7 @@ var Class = (function () {
             digestedSchema,
         ]);
     };
-    Class.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
+    SDKContext.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
         type = this._resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this.typeObjectSchemaMap.has(type)) {
@@ -7288,7 +7288,7 @@ var Class = (function () {
         ]);
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
-    Class.prototype.registerDefaultObjectSchemas = function () {
+    SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
@@ -7322,14 +7322,14 @@ var Class = (function () {
         this.extendObjectSchema(Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA);
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
-    Class.prototype._resolveTypeURI = function (uri) {
+    SDKContext.prototype._resolveTypeURI = function (uri) {
         return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), { vocab: true });
     };
-    return Class;
+    return SDKContext;
 }());
-exports.Class = Class;
-exports.instance = new Class();
-exports.default = exports.instance;
+exports.SDKContext = SDKContext;
+exports.globalContext = new SDKContext();
+exports.default = exports.globalContext;
 
 
 /***/ }),
@@ -13854,20 +13854,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var SDKContext = __importStar(__webpack_require__(85));
+var SDKContext_1 = __webpack_require__(85);
 var AbstractContext = (function (_super) {
     __extends(AbstractContext, _super);
     function AbstractContext(parentContext) {
         var _this = _super.call(this) || this;
-        _this._parentContext = parentContext ? parentContext : SDKContext.instance;
+        _this._parentContext = parentContext ? parentContext : SDKContext_1.globalContext;
         _this.generalObjectSchema = null;
         _this.typeObjectSchemaMap = new Map();
         return _this;
@@ -13883,7 +13876,7 @@ var AbstractContext = (function (_super) {
         configurable: true
     });
     return AbstractContext;
-}(SDKContext.Class));
+}(SDKContext_1.SDKContext));
 exports.AbstractContext = AbstractContext;
 exports.default = AbstractContext;
 

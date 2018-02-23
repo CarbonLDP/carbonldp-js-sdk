@@ -1,6 +1,6 @@
 import Context from "./Context";
-import * as SDKContext from "./SDKContext";
-export declare abstract class AbstractContext extends SDKContext.Class {
+import { SDKContext } from "./SDKContext";
+export declare abstract class AbstractContext extends SDKContext {
     protected abstract _baseURI: string;
     readonly baseURI: string;
     protected _parentContext: Context;

@@ -1,5 +1,8 @@
 import DefaultExport, { AbstractContext } from "./AbstractContext";
-import * as SDKContext from "./SDKContext";
+import {
+	globalContext,
+	SDKContext
+} from "./SDKContext";
 
 import {
 	clazz,
@@ -33,8 +36,8 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			expect( context ).toEqual( jasmine.any( AbstractContext ) );
 		} );
 
-		it( extendsClass( "Carbon.SDKContext.Class" ), ():void => {
-			expect( context ).toEqual( jasmine.any( SDKContext.Class ) );
+		it( extendsClass( "Carbon.SDKContext.SDKContext" ), ():void => {
+			expect( context ).toEqual( jasmine.any( SDKContext ) );
 		} );
 
 		it( hasMethod(
@@ -56,11 +59,11 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			"parentContext",
 			"Carbon.Context.Context",
 			"The parent context provided in the constructor. " +
-			"If no context was provided, this property will be the singleton `Carbon.SDKContext.instance` of the class `Carbon.SDKContext.Class`."
+			"If no context was provided, this property will be the singleton `Carbon.SDKContext#globalContext` of the class `Carbon.SDKContext.SDKContext`."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 
-			expect( context.parentContext ).toBe( SDKContext.instance );
+			expect( context.parentContext ).toBe( globalContext );
 
 			let newContext:AbstractContext = new class extends AbstractContext {
 				protected _baseURI:string = "";

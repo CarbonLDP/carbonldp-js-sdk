@@ -2,7 +2,10 @@ import * as Auth from "./Auth";
 import * as Documents from "./Documents";
 import { IllegalStateError } from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
-import * as SDKContext from "./SDKContext";
+import DefaultExport, {
+	globalContext,
+	SDKContext,
+} from "./SDKContext";
 import { ContextSettings } from "./Settings";
 
 import {
@@ -18,43 +21,39 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
+
 describe( module( "Carbon/SDKContext" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( SDKContext ).toBeDefined();
-		expect( SDKContext ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( clazz( "Carbon.SDKContext.Class", "Base class of every Context in the SDK.", [ "Carbon.Context.Context" ] ), ():void => {
+	describe( clazz( "Carbon.SDKContext.SDKContext", "Base class of every Context in the SDK.", [ "Carbon.Context.Context" ] ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( SDKContext.Class ).toBeDefined();
-			expect( SDKContext.Class ).toEqual( jasmine.any( Function ) );
+			expect( SDKContext ).toBeDefined();
+			expect( SDKContext ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype ).toBeDefined();
-				expect( SDKContext.Class.prototype ).toEqual( jasmine.any( Object ) );
+				expect( SDKContext.prototype ).toBeDefined();
+				expect( SDKContext.prototype ).toEqual( jasmine.any( Object ) );
 			} );
 
 			it( "should be instantiable", ():void => {
-				const target:SDKContext.Class = new SDKContext.Class();
+				const target:SDKContext = new SDKContext();
 
 				expect( target ).toBeDefined();
-				expect( target ).toEqual( jasmine.any( SDKContext.Class ) );
+				expect( target ).toEqual( jasmine.any( SDKContext ) );
 			} );
 
 			it( "should instantiate auth as property", ():void => {
-				const target:SDKContext.Class = new SDKContext.Class();
+				const target:SDKContext = new SDKContext();
 
 				expect( target.auth ).toBeDefined();
 				expect( target.auth ).toEqual( jasmine.any( Auth.Class ) );
 			} );
 
 			it( "should instantiate documents as property", ():void => {
-				const target:SDKContext.Class = new SDKContext.Class();
+				const target:SDKContext = new SDKContext();
 
 				expect( target.documents ).toBeDefined();
 				expect( target.documents ).toEqual( jasmine.any( Documents.Class ) );
@@ -81,9 +80,9 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"baseURI",
 			"string",
-			"The base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string."
+			"The base URI of the context. For an instance of `Carbon.SDKContext.SDKContext`, this is an empty string."
 		), ():void => {
-			const context:SDKContext.Class = new SDKContext.Class();
+			const context:SDKContext = new SDKContext();
 
 			expect( context.baseURI ).toBeDefined();
 			expect( context.baseURI ).toEqual( jasmine.any( String ) );
@@ -95,19 +94,19 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			INSTANCE,
 			"parentContext",
 			"Carbon.Context.Context",
-			"Parent context of the current context. For an instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK."
+			"Parent context of the current context. For an instance of `Carbon.SDKContext.SDKContext`, this is set to null since it is the root parent of every context in the SDK."
 		), ():void => {
-			const context:SDKContext.Class = new SDKContext.Class();
+			const context:SDKContext = new SDKContext();
 
 			expect( context.parentContext ).toBeDefined();
 			expect( context.parentContext ).toBeNull();
 		} );
 
 
-		type ExtendedContext = SDKContext.Class & { _generalSchema:ObjectSchema.DigestedObjectSchema };
+		type ExtendedContext = SDKContext & { _generalSchema:ObjectSchema.DigestedObjectSchema };
 
 		function createContext( settings?:ContextSettings, generalSchema?:ObjectSchema.DigestedObjectSchema, schemasMap?:Map<string, ObjectSchema.DigestedObjectSchema> ):ExtendedContext {
-			return new class extends SDKContext.Class {
+			return new class extends SDKContext {
 				get baseURI():string { return "https://example.com/"; }
 
 				get _generalSchema():ObjectSchema.DigestedObjectSchema { return this.generalObjectSchema; }
@@ -136,12 +135,12 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype.resolve ).toBeDefined();
-				expect( SDKContext.Class.prototype.resolve ).toEqual( jasmine.any( Function ) );
+				expect( SDKContext.prototype.resolve ).toBeDefined();
+				expect( SDKContext.prototype.resolve ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should resolve using the baseURI", ():void => {
-				const context:SDKContext.Class = new SDKContext.Class();
+				const context:SDKContext = new SDKContext();
 
 				const spy:jasmine.Spy = spyOnProperty( context, "baseURI", "get" ).and
 					.returnValue( "https://example.com" );
@@ -166,13 +165,13 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype._resolvePath ).toBeDefined();
-				expect( SDKContext.Class.prototype._resolvePath ).toEqual( jasmine.any( Function ) );
+				expect( SDKContext.prototype._resolvePath ).toBeDefined();
+				expect( SDKContext.prototype._resolvePath ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should throw error when no settings paths", ():void => {
-				const context:SDKContext.Class = createContext( {} );
+				const context:SDKContext = createContext( {} );
 				const helper:( path:string ) => void = path => () => {
 					context._resolvePath( path );
 				};
@@ -182,7 +181,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in first level", ():void => {
-				const context:SDKContext.Class = createContext( { paths: {} } );
+				const context:SDKContext = createContext( { paths: {} } );
 				const helper:( path:string ) => void = path => () => {
 					context._resolvePath( path );
 				};
@@ -192,7 +191,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in second level string", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: "document/",
 					},
@@ -207,7 +206,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in parent level object without paths", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -224,7 +223,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in parent level object with empty paths", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -242,7 +241,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in parent level object with not target path", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -262,7 +261,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when no slug in parent level object", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							paths: {
@@ -281,7 +280,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when no slug in target level object", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -301,7 +300,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should throw error when no slug in target level object", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -322,7 +321,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 
 			it( "should resolve first level path string", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: "document/",
 					},
@@ -332,7 +331,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should resolve first level path object", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -344,7 +343,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should resolve second level path string", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -357,7 +356,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should resolve second level path object", ():void => {
-				const context:SDKContext.Class = createContext( {
+				const context:SDKContext = createContext( {
 					paths: {
 						document: {
 							slug: "document/",
@@ -385,20 +384,20 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype.hasObjectSchema ).toBeDefined();
-				expect( SDKContext.Class.prototype.hasObjectSchema ).toEqual( jasmine.any( Function ) );
+				expect( SDKContext.prototype.hasObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.hasObjectSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return false when not existing schema in schema maps", ():void => {
-				const context:SDKContext.Class = createContext();
+				const context:SDKContext = createContext();
 
 				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( false );
 				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
 			} );
 
 			it( "should return true when schema with absolute type", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					null,
 					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
@@ -409,7 +408,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should return true when prefixed type with defined prefix in general", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					createSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
 					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
@@ -420,7 +419,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should return true when relative and default vocab schema", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					{ vocabulary: "https://example.com/ns#" },
 					null,
 					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
@@ -447,12 +446,12 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype.getObjectSchema ).toBeDefined();
-				expect( SDKContext.Class.prototype.getObjectSchema ).toEqual( jasmine.any( Function ) );
+				expect( SDKContext.prototype.getObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.getObjectSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return null when not existing schema in schema maps", ():void => {
-				const context:SDKContext.Class = createContext();
+				const context:SDKContext = createContext();
 
 				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBeNull();
 				expect( context.getObjectSchema( "ex:MyType" ) ).toBeNull();
@@ -460,7 +459,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( "should return schema with absolute type", ():void => {
 				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					null,
 					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
@@ -472,7 +471,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( "should return schema when prefixed type with defined prefix in general", ():void => {
 				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					createSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
 					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
@@ -484,7 +483,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( "should return schema when relative and default vocab schema", ():void => {
 				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					{ vocabulary: "https://example.com/ns#" },
 					null,
 					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
@@ -495,7 +494,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should return general schema with base", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					createSchema( {
 						prefixes: new Map( [
@@ -513,7 +512,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should not replace base in general schema when already set", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					createSchema( {
 						base: "https://not-example.com/",
@@ -532,7 +531,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should return general schema with vocab when setting set", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					{ vocabulary: "https://example.com/ns#" },
 					createSchema( {
 						prefixes: new Map( [
@@ -551,7 +550,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			} );
 
 			it( "should not replace vocab in general schema when already set and setting set", ():void => {
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					{ vocabulary: "https://example.com/ns#" },
 					createSchema( {
 						vocab: "https://example.com/another-ns#",
@@ -588,13 +587,13 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype.extendObjectSchema ).toBeDefined();
-				expect( SDKContext.Class.prototype.extendObjectSchema ).toEqual( jasmine.any( Function ) );
+				expect( SDKContext.prototype.extendObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.extendObjectSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should add when absolute type schema does not exists", ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map();
-				const context:SDKContext.Class = createContext( null, null, schemasMap );
+				const context:SDKContext = createContext( null, null, schemasMap );
 
 				context.extendObjectSchema( "https://example.com/ns#Type", {
 					"ex": "https://example.com/ns#",
@@ -610,7 +609,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( "should add when prefixed type schema does not exists", ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map();
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					createSchema( {
 						prefixes: new Map( [
@@ -634,7 +633,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 
 			it( "should add when relative type schema does not exists and vocab is set", ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map();
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					{ vocabulary: "https://example.com/ns#" },
 					null,
 					schemasMap
@@ -658,7 +657,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
 					} ) ],
 				] );
-				const context:SDKContext.Class = createContext( null, null, schemasMap );
+				const context:SDKContext = createContext( null, null, schemasMap );
 
 				context.extendObjectSchema( "https://example.com/ns#Type", {
 					"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
@@ -708,15 +707,15 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( SDKContext.Class.prototype.clearObjectSchema ).toBeDefined();
-				expect( SDKContext.Class.prototype.clearObjectSchema ).toEqual( jasmine.any( Function ) );
+				expect( SDKContext.prototype.clearObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.clearObjectSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should remove absolute typed schema", ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createSchema() ],
 				] );
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					null,
 					schemasMap
@@ -730,7 +729,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createSchema() ],
 				] );
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					null,
 					createSchema( {
 						prefixes: new Map( [
@@ -748,7 +747,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createSchema() ],
 				] );
-				const context:SDKContext.Class = createContext(
+				const context:SDKContext = createContext(
 					{ vocabulary: "https://example.com/ns#" },
 					null,
 					schemasMap
@@ -780,18 +779,18 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"instance",
-		"Carbon.SDKContext.Class",
-		"Instance of `Carbon.SDKContext.Class` that is used as the root parent in every context."
+		"Carbon.SDKContext.SDKContext",
+		"Instance of `Carbon.SDKContext.SDKContext` that is used as the root parent in every context."
 	), ():void => {
-		expect( SDKContext.instance ).toBeDefined();
-		expect( SDKContext.instance ).toEqual( jasmine.any( SDKContext.Class ) );
+		expect( globalContext ).toBeDefined();
+		expect( globalContext ).toEqual( jasmine.any( SDKContext ) );
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.SDKContext.instance"
+		"Carbon.SDKContext#globalContext"
 	), ():void => {
-		expect( SDKContext.default ).toBeDefined();
-		expect( SDKContext.default ).toBe( SDKContext.instance );
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( globalContext );
 	} );
 
 } );

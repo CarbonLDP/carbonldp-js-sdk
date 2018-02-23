@@ -3,7 +3,7 @@ import { Context } from "./Context";
 import * as Documents from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Settings from "./Settings";
-export declare class Class implements Context {
+export declare class SDKContext implements Context {
     auth: Auth.Class;
     documents: Documents.Class;
     readonly baseURI: string;
@@ -24,5 +24,5 @@ export declare class Class implements Context {
     private registerDefaultObjectSchemas();
     private _resolveTypeURI(uri);
 }
-export declare const instance: Class;
-export default instance;
+export declare const globalContext: SDKContext;
+export default globalContext;

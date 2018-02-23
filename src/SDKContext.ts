@@ -18,7 +18,7 @@ import {
 	isString,
 } from "./Utils";
 
-export class Class implements Context {
+export class SDKContext implements Context {
 	auth:Auth.Class;
 	documents:Documents.Class;
 
@@ -229,6 +229,6 @@ export class Class implements Context {
 	}
 }
 
-export const instance:Class = new Class();
+export const globalContext:SDKContext = new SDKContext();
 
-export default instance;
+export default globalContext;
