@@ -1,4 +1,4 @@
-import * as BlankNode from "../BlankNode";
+import { BlankNode } from "../BlankNode";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,
@@ -803,8 +803,7 @@ describe( "Document methods", ():void => {
 		it( "should remove providing a `BlankNode`", ():void => {
 			const document:Document = createMockDocument();
 
-			// TODO: Use `.create`
-			const fragment:BlankNode.Class = BlankNode.Factory.createFrom( {}, "_:1", document );
+			const fragment:BlankNode = BlankNode.create( document, "_:1" );
 			document._fragmentsIndex.set( "_:1", fragment );
 
 			removeFragment.call( document, fragment );
@@ -868,8 +867,7 @@ describe( "Document methods", ():void => {
 		it( "should throw error providing a `BlankNode`", ():void => {
 			const document:Document = createMockDocument();
 
-			// TODO: Use `.create`
-			const fragment:BlankNode.Class = BlankNode.Factory.createFrom( {}, "_:1", document );
+			const fragment:BlankNode = BlankNode.create( document, "_:1" );
 			document._fragmentsIndex.set( "_:1", fragment );
 
 			expect( removeNamedFragment.bind( document, fragment ) ).toThrowError( IllegalArgumentError, "You can only remove NamedFragments." );

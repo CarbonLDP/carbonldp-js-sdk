@@ -7,19 +7,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = require("./Errors");
 var Fragment_1 = require("./Fragment");
-var RDF = __importStar(require("./RDF"));
-var Utils = __importStar(require("./Utils"));
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.createFrom = function (object, idOrDocument, document) {
-        var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : RDF.URI.Util.generateBNodeID();
-        document = document || idOrDocument;
+var URI = __importStar(require("./RDF/URI"));
+exports.BlankNode = {
+    is: function (object) {
+        return Fragment_1.Fragment.is(object) &&
+            URI.Util.isBNodeID(object.id);
+    },
+    create: function (document, id) {
+        return exports.BlankNode.createFrom({}, document, id);
+    },
+    createFrom: function (object, document, id) {
+        if (id && !URI.Util.isBNodeID(id))
+            throw new Errors_1.IllegalArgumentError("The id \"" + id + "\" is not an blank node label");
+        if (!id)
+            id = URI.Util.generateBNodeID();
         return Fragment_1.Fragment.createFrom(object, document, id);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.BlankNode;
 
 //# sourceMappingURL=BlankNode.js.map

@@ -3,6 +3,7 @@ import { hasProtocol } from "sparqler/iri";
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
+import * as BlankNode from "./BlankNode";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
 import * as Errors from "./Errors";
@@ -14,7 +15,6 @@ import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as ModelFactory from "./ModelFactory";
 import * as NamedFragment from "./NamedFragment";
-import * as Vocabularies from "./Vocabularies";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -29,6 +29,7 @@ import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
+import * as Vocabularies from "./Vocabularies";
 
 export class Class extends AbstractContext.AbstractContext {
 
@@ -36,6 +37,7 @@ export class Class extends AbstractContext.AbstractContext {
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static Auth:typeof Auth = Auth;
+	static BlankNode:typeof BlankNode = BlankNode;
 	static Document:typeof Document = Document;
 	static Documents:typeof Documents = Documents;
 	static Errors:typeof Errors = Errors;

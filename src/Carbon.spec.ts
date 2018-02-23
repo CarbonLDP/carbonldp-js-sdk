@@ -1,6 +1,7 @@
 import * as AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
+import * as BlankNode from "./BlankNode";
 import * as Carbon from "./Carbon";
 import * as Document from "./Document";
 import * as Documents from "./Documents";
@@ -13,7 +14,6 @@ import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import * as ModelFactory from "./ModelFactory";
 import * as NamedFragment from "./NamedFragment";
-import * as Vocabularies from "./Vocabularies/index";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
@@ -44,6 +44,7 @@ import {
 } from "./test/JasmineExtender";
 
 import * as Utils from "./Utils";
+import * as Vocabularies from "./Vocabularies/index";
 
 describe( module( "Carbon" ), ():void => {
 
@@ -101,6 +102,15 @@ describe( module( "Carbon" ), ():void => {
 		), ():void => {
 			expect( Carbon.Class.Auth ).toBeDefined();
 			expect( Carbon.Class.Auth ).toBe( Auth );
+		} );
+
+		it( reexports(
+			STATIC,
+			"BlankNode",
+			"Carbon/BlankNode"
+		), ():void => {
+			expect( Carbon.Class.BlankNode ).toBeDefined();
+			expect( Carbon.Class.BlankNode ).toBe( BlankNode );
 		} );
 
 		it( reexports(

@@ -101,7 +101,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
-			[ "T extends Object" ],
+			[ "T extends object" ],
 			"Creates a Resource object with the id and types provided.", [
 				{ name: "object", type: "T" },
 				{ name: "id", type: "string", optional: true },
@@ -113,7 +113,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
-			[ "T extends Object" ],
+			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Resource` object.", [
 				{ name: "object", type: "T" },
 			],

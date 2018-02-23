@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var BlankNode = __importStar(require("../BlankNode"));
+var BlankNode_1 = require("../BlankNode");
 var Errors = __importStar(require("../Errors"));
 var JSONLDConverter = __importStar(require("../JSONLD/Converter"));
 var NamedFragment_1 = require("../NamedFragment");
@@ -89,7 +89,7 @@ function createFragment(slugOrObject, slug) {
         if (this._fragmentsIndex.has(slug))
             throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    var fragment = BlankNode.Factory.createFrom(object, slug, this);
+    var fragment = BlankNode_1.BlankNode.createFrom(object, this, slug);
     this._fragmentsIndex.set(fragment.id, fragment);
     exports.convertNestedObjects(this, fragment);
     return fragment;

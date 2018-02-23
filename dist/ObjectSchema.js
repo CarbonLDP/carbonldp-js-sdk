@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("./Errors"));
-var RDF = __importStar(require("./RDF"));
+var URI = __importStar(require("./RDF/URI"));
 var Utils = __importStar(require("./Utils"));
 var XSD_1 = require("./Vocabularies/XSD");
 var ContainerType;
@@ -58,7 +58,7 @@ var Digester = (function () {
         var digestedDefinition = new DigestedPropertyDefinition();
         if ("@id" in definition) {
             var uri = definition["@id"];
-            if (RDF.URI.Util.isPrefixed(name))
+            if (URI.Util.isPrefixed(name))
                 throw new Errors.IllegalArgumentError("A prefixed property cannot have assigned another URI.");
             if (!Utils.isString(uri))
                 throw new Errors.IllegalArgumentError("@id needs to point to a string");
@@ -76,7 +76,7 @@ var Digester = (function () {
                 digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
             }
             else {
-                if (RDF.URI.Util.isRelative(type) && type in XSD_1.XSD)
+                if (URI.Util.isRelative(type) && type in XSD_1.XSD)
                     type = XSD_1.XSD[type];
                 digestedDefinition.literal = true;
                 digestedDefinition.literalType = type;
@@ -125,7 +125,7 @@ var Digester = (function () {
             var value = schema[propertyName];
             if (value !== null && !Utils.isString(value))
                 throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be a string or null.");
-            if ((propertyName === "@vocab" && value === "") || !RDF.URI.Util.isAbsolute(value) && !RDF.URI.Util.isBNodeID(value))
+            if ((propertyName === "@vocab" && value === "") || !URI.Util.isAbsolute(value) && !URI.Util.isBNodeID(value))
                 throw new Errors.IllegalArgumentError("The value of '" + propertyName + "' must be an absolute URI" + (propertyName === "@base" ? " or an empty string" : "") + ".");
             digestedSchema[propertyName.substr(1)] = value;
         }
@@ -151,7 +151,7 @@ var Digester = (function () {
                 continue;
             var propertyValue = schema[propertyName];
             if (Utils.isString(propertyValue)) {
-                if (RDF.URI.Util.isPrefixed(propertyName))
+                if (URI.Util.isPrefixed(propertyName))
                     throw new Errors.IllegalArgumentError("A prefixed property cannot be equal to another URI.");
                 digestedSchema.prefixes.set(propertyName, propertyValue);
             }
@@ -187,7 +187,7 @@ var Util = (function () {
     }
     Util.resolveURI = function (uri, schema, relativeTo) {
         if (relativeTo === void 0) { relativeTo = {}; }
-        if (uri === null || RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri))
+        if (uri === null || URI.Util.isAbsolute(uri) || URI.Util.isBNodeID(uri))
             return uri;
         var _a = uri.split(":"), prefix = _a[0], _b = _a[1], localName = _b === void 0 ? "" : _b;
         var definedReference = schema.prefixes.has(prefix) ?
@@ -202,7 +202,7 @@ var Util = (function () {
         if (relativeTo.vocab && schema.vocab !== null)
             return schema.vocab + uri;
         if (relativeTo.base)
-            return RDF.URI.Util.resolve(schema.base, uri);
+            return URI.Util.resolve(schema.base, uri);
         return uri;
     };
     Util.resolveProperty = function (schema, definition, inSame) {

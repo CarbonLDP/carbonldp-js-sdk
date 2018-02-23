@@ -6,6 +6,7 @@ import {
 } from "../../ObjectSchema";
 import * as URI from "../../RDF/URI";
 
+console.log( DigestedObjectSchema );
 export const ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
 
 export class Class {

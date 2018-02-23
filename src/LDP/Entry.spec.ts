@@ -48,7 +48,7 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 		"Entries of the `Carbon.LDP.Map.Class` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "Carbon.BlankNode.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.BlankNode.BlankNode" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

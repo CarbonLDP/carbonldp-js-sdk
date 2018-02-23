@@ -23,7 +23,7 @@ import {
 import AbstractContext from "./AbstractContext";
 import * as AccessPoint from "./AccessPoint";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
+import { BlankNode } from "./BlankNode";
 import Carbon from "./Carbon";
 import { Document } from "./Document";
 import * as Documents from "./Documents";
@@ -2494,7 +2494,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -3167,7 +3167,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -6170,7 +6170,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -10087,7 +10087,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -11770,7 +11770,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;

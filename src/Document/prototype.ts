@@ -1,4 +1,4 @@
-import * as BlankNode from "../BlankNode";
+import { BlankNode } from "../BlankNode";
 import * as Errors from "../Errors";
 import { Fragment } from "../Fragment";
 import * as JSONLDConverter from "../JSONLD/Converter";
@@ -78,7 +78,7 @@ export function createFragment<T extends object>( this:Document, slugOrObject?:a
 		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	const fragment:T & BlankNode.Class = BlankNode.Factory.createFrom<T>( object, slug, this );
+	const fragment:T & BlankNode = BlankNode.createFrom<T>( object, this, slug );
 	this._fragmentsIndex.set( fragment.id, fragment );
 
 	convertNestedObjects( this, fragment );

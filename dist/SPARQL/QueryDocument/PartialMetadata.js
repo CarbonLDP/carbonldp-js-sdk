@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
 var ObjectSchema_1 = require("../../ObjectSchema");
+console.log(ObjectSchema_1.DigestedObjectSchema);
 exports.ALL = Object.freeze(new ObjectSchema_1.DigestedObjectSchema());
 var Class = (function () {
     function Class(schema, previousPartial) {
