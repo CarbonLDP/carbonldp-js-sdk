@@ -30,7 +30,6 @@ var PersistedResource = __importStar(require("./PersistedResource"));
 var Pointer_1 = require("./Pointer");
 var ProtectedDocument = __importStar(require("./ProtectedDocument"));
 var RDF = __importStar(require("./RDF"));
-var Resource = __importStar(require("./Resource"));
 var SPARQL = __importStar(require("./SPARQL"));
 var Builder_1 = __importDefault(require("./SPARQL/Builder"));
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
@@ -1036,7 +1035,7 @@ var Class = (function () {
             return this.getProcessedSchema(schemas);
         }
         else {
-            var types = Resource.Util.getTypes(document);
+            var types = document.types || [];
             return this.getDigestedObjectSchema(types, document.id);
         }
     };

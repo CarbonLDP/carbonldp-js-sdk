@@ -12,7 +12,7 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as DocumentMetadata from "./DocumentMetadata";
@@ -158,7 +158,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 			object = null;
 			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
 
-			object = Resource.Factory.decorate( {
+			object = Resource.decorate( {
 				types: [
 					C.VolatileResource,
 					C.DocumentMetadata,

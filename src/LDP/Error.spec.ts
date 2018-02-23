@@ -65,7 +65,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		"Interface that represents an error occurred in the server."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

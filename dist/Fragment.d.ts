@@ -1,6 +1,6 @@
 import { Document } from "./Document";
-import * as Resource from "./Resource";
-export interface Class extends Resource.Class {
+import { Resource } from "./Resource";
+export interface Class extends Resource {
     document: Document;
 }
 export declare class Factory {

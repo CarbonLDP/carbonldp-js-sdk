@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = require("../Vocabularies/C");
-var Resource = __importStar(require("./../Resource"));
+var Resource_1 = require("./../Resource");
 var Utils = __importStar(require("./../Utils"));
 exports.RDF_CLASS = C_1.C.AddMemberAction;
 exports.SCHEMA = {
@@ -25,7 +25,7 @@ var Factory = (function () {
         return Utils.hasPropertyDefined(object, "targetMembers");
     };
     Factory.create = function (targetMembers) {
-        return Resource.Factory.createFrom({
+        return Resource_1.Resource.createFrom({
             types: [exports.RDF_CLASS],
             targetMembers: targetMembers,
         });

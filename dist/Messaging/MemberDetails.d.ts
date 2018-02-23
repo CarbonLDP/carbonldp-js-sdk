@@ -1,8 +1,8 @@
 import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class {
+export interface Class extends Resource {
     members: Pointer[];
 }
 export default Class;

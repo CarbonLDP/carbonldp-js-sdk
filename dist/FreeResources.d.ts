@@ -1,15 +1,15 @@
 import Documents from "./Documents";
 import { PointerLibrary, PointerValidator } from "./Pointer";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 export interface Class extends PointerLibrary, PointerValidator {
     _documents: Documents;
-    _resourcesIndex: Map<string, Resource.Class>;
+    _resourcesIndex: Map<string, Resource>;
     hasResource(id: string): boolean;
-    getResource(id: string): Resource.Class;
-    getResources(): Resource.Class[];
-    getPointer(id: string): Resource.Class;
-    createResource(id?: string): Resource.Class;
-    createResourceFrom<T>(object: T, id?: string): Resource.Class & T;
+    getResource(id: string): Resource;
+    getResources(): Resource[];
+    getPointer(id: string): Resource;
+    createResource(id?: string): Resource;
+    createResourceFrom<T>(object: T, id?: string): Resource & T;
     toJSON(): string;
 }
 export declare class Factory {

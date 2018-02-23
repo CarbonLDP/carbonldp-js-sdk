@@ -1,6 +1,6 @@
 import * as VolatileResource from "../../LDP/VolatileResource";
 import { Pointer } from "../../Pointer";
-import * as Resource from "../../Resource";
+import { Resource } from "../../Resource";
 import {
 	clazz,
 	hasDefaultExport,
@@ -107,7 +107,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 			} );
 
 			it( "should verify the resource RDF_CLASS", ():void => {
-				const target:QueryMetadata.Class = Resource.Factory.createFrom( {
+				const target:QueryMetadata.Class = Resource.createFrom( {
 					types: [ C.VolatileResource, C.QueryMetadata ],
 					"target": null,
 				} );

@@ -11,7 +11,7 @@ var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
 var Pointer_1 = require("./../Pointer");
 var URI = __importStar(require("./../RDF/URI"));
-var Resource = __importStar(require("./../Resource"));
+var Resource_1 = require("./../Resource");
 exports.TICKETS_CONTAINER = "auth-tickets/";
 exports.RDF_CLASS = CS_1.CS.Ticket;
 exports.SCHEMA = {
@@ -32,7 +32,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.create = function (uri) {
-        return Factory.createFrom(Resource.Factory.create(URI.Util.generateBNodeID()), uri);
+        return Factory.createFrom(Resource_1.Resource.create(URI.Util.generateBNodeID()), uri);
     };
     Factory.createFrom = function (object, uri) {
         var ticket = object;

@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import { Pointer } from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import {
 	clazz,
 	extendsClass,
@@ -58,7 +58,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -119,7 +119,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
 			const removeMemberAction:RemoveMemberAction.Class = RemoveMemberAction.Factory.create( pointers );
 
-			expect( Resource.Factory.is( removeMemberAction ) ).toBe( true );
+			expect( Resource.is( removeMemberAction ) ).toBe( true );
 			expect( RemoveMemberAction.Factory.hasClassProperties( removeMemberAction ) ).toBe( true );
 			expect( removeMemberAction.targetMembers ).toEqual( pointers );
 			expect( removeMemberAction.types ).toContain( RemoveMemberAction.RDF_CLASS );

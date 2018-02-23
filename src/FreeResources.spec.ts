@@ -6,7 +6,7 @@ import * as FreeResources from "./FreeResources";
 import DefaultExport from "./FreeResources";
 import { Pointer } from "./Pointer";
 import * as URI from "./RDF/URI";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import {
 	clazz,
 	decoratedObject,
@@ -51,7 +51,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			OBLIGATORY,
 			"_resourcesIndex",
 			"Private property that contains the references of every free resource in a map form.",
-			"Map<string, Carbon.Resource.Class>"
+			"Map<string, Carbon.Resource.Resource>"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -69,14 +69,14 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
 				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
 			],
-			{ type: "Carbon.Resource.Class" }
+			{ type: "Carbon.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getResources",
 			"Returns an array with all the resources inside the FreeResources object.",
-			{ type: "Carbon.Resource.Class[]" }
+			{ type: "Carbon.Resource.Resource[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -85,7 +85,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
-			{ type: "Carbon.Resource.Class" }
+			{ type: "Carbon.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -96,7 +96,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				{ name: "object", type: "T", description: "The object to be used as the new resource." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
-			{ type: "Carbon.Resource.Class" }
+			{ type: "Carbon.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -344,7 +344,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"_resourcesIndex",
 				"Private property that contains the references of every free resource in a map form.",
-				"Map<string, Carbon.Resource.Class>"
+				"Map<string, Carbon.Resource.Resource>"
 			), ():void => {
 				expect( freeResources._resourcesIndex ).toBeDefined();
 				expect( freeResources._resourcesIndex instanceof Map ).toBe( true );
@@ -363,7 +363,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				expect( freeResources.hasResource( "_:any..." ) ).toBe( false );
 
-				let resource:Resource.Class & { val:string } = Resource.Factory.createFrom( { val: "The resource" } );
+				let resource:Resource & { val:string } = Resource.createFrom( { val: "The resource" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.hasResource( "_:some" ) ).toBe( true );
 
@@ -376,7 +376,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
 					{ name: "id", type: "string", description: "The ID of the resource to sought for." },
 				],
-				{ type: "Carbon.Resource.Class" }
+				{ type: "Carbon.Resource.Resource" }
 			), ():void => {
 				expect( freeResources.getResource ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getResource ) ).toBe( true );
@@ -384,7 +384,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				expect( freeResources.getResource( "_:any..." ) ).toBeNull();
 
-				let resource:Resource.Class & { val:string } = Resource.Factory.createFrom( { val: "The resource" }, "_:some" );
+				let resource:Resource & { val:string } = Resource.createFrom( { val: "The resource" }, "_:some" );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getResource( "_:some" ) ).toBe( resource );
 
@@ -395,20 +395,20 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				INSTANCE,
 				"getResources",
 				"Returns an array with all the resources inside the FreeResources object.",
-				{ type: "Carbon.Resource.Class[]" }
+				{ type: "Carbon.Resource.Resource[]" }
 			), ():void => {
 				expect( freeResources.getResources ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getResources ) ).toBe( true );
 
-				let resources:Resource.Class[];
+				let resources:Resource[];
 
 				resources = freeResources.getResources();
 				expect( resources ).toBeTruthy();
 				expect( Utils.isArray( resources ) ).toBe( true );
 				expect( resources.length ).toBe( 0 );
 
-				freeResources._resourcesIndex.set( "_:some", Resource.Factory.create( "_:some" ) );
-				freeResources._resourcesIndex.set( "_:another", Resource.Factory.create( "_:another" ) );
+				freeResources._resourcesIndex.set( "_:some", Resource.create( "_:some" ) );
+				freeResources._resourcesIndex.set( "_:another", Resource.create( "_:another" ) );
 				resources = freeResources.getResources();
 				expect( resources ).toBeTruthy();
 				expect( Utils.isArray( resources ) ).toBe( true );
@@ -423,23 +423,23 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 				],
-				{ type: "Carbon.Resource.Class" }
+				{ type: "Carbon.Resource.Resource" }
 			), ():void => {
 				expect( freeResources.createResource ).toBeDefined();
 				expect( Utils.isFunction( freeResources.createResource ) ).toBe( true );
 
-				let resource00:Resource.Class;
+				let resource00:Resource;
 				resource00 = freeResources.createResource();
 				expect( resource00 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource00.id ) ).toBe( true );
 
-				let resource01:Resource.Class;
+				let resource01:Resource;
 				resource01 = freeResources.createResource();
 				expect( resource01 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
 
-				let resource02:Resource.Class;
+				let resource02:Resource;
 				resource02 = freeResources.createResource( "_:some" );
 				expect( resource02 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource02.id ) ).toBe( true );
@@ -457,33 +457,33 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					{ name: "object", type: "T", description: "The object to be used as the new resource." },
 					{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 				],
-				{ type: "Carbon.Resource.Class" }
+				{ type: "Carbon.Resource.Resource" }
 			), ():void => {
 				expect( freeResources.createResourceFrom ).toBeDefined();
 				expect( Utils.isFunction( freeResources.createResourceFrom ) ).toBe( true );
 
 				let resourceObject00:Object = {};
-				let resource00:Resource.Class;
+				let resource00:Resource;
 				resource00 = freeResources.createResourceFrom( resourceObject00 );
 				expect( resource00 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource00.id ) ).toBe( true );
-				expect( resource00 ).toEqual( resourceObject00 as Resource.Class );
+				expect( resource00 ).toEqual( resourceObject00 as Resource );
 
 				let resourceObject01:Object = {};
-				let resource01:Resource.Class;
+				let resource01:Resource;
 				resource01 = freeResources.createResourceFrom( resourceObject01 );
 				expect( resource01 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
-				expect( resource01 ).toEqual( resourceObject01 as Resource.Class );
+				expect( resource01 ).toEqual( resourceObject01 as Resource );
 
 				let resourceObject02:Object = {};
-				let resource02:Resource.Class;
+				let resource02:Resource;
 				resource02 = freeResources.createResourceFrom( resourceObject02, "_:some" );
 				expect( resource02 ).toBeTruthy();
 				expect( URI.Util.isBNodeID( resource02.id ) ).toBe( true );
 				expect( resource02.id ).toBe( "_:some" );
-				expect( resource02 ).toEqual( resourceObject02 as Resource.Class );
+				expect( resource02 ).toEqual( resourceObject02 as Resource );
 
 				expect( () => freeResources.createResourceFrom( {}, "no-valid-id" ) ).toThrowError( Errors.IllegalArgumentError );
 				expect( () => freeResources.createResourceFrom( {}, "_:some" ) ).toThrowError( Errors.IDAlreadyInUseError );
@@ -500,7 +500,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
 
-				freeResources._resourcesIndex.set( "_:some", Resource.Factory.create( "_:some" ) );
+				freeResources._resourcesIndex.set( "_:some", Resource.create( "_:some" ) );
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
 
 				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( false );
@@ -520,14 +520,14 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( Utils.isFunction( freeResources.getPointer ) ).toBe( true );
 
-				let resource:Resource.Class = Resource.Factory.create( "_:some" );
+				let resource:Resource = Resource.create( "_:some" );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 
 				let pointer:Pointer = freeResources.getPointer( "_:another" );
 				expect( pointer ).toBeTruthy();
 				expect( pointer.id ).toBe( "_:another" );
-				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as Resource.Class );
+				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as Resource );
 
 				pointer = freeResources.getPointer( "http://example.com/some/" );
 				expect( pointer ).toBeTruthy();
@@ -588,7 +588,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 					},
 				} );
 
-				let resource:Resource.Class = Resource.Factory.createFrom( {
+				let resource:Resource = Resource.createFrom( {
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
@@ -610,7 +610,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				let expectedString:string = JSON.stringify( [ expandedResource ] );
 				expect( freeResources.toJSON() ).toBe( expectedString );
 
-				let anotherResource:Resource.Class = Resource.Factory.createFrom( {
+				let anotherResource:Resource = Resource.createFrom( {
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",

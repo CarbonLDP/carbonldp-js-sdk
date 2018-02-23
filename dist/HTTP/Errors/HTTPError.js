@@ -12,22 +12,15 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(require("./../../Errors/AbstractError"));
-var Resource = __importStar(require("./../../Resource"));
+var Resource_1 = require("./../../Resource");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(message, response) {
         var _this = _super.call(this, message) || this;
         Object.setPrototypeOf(_this, Class.prototype);
-        Resource.Factory.createFrom(_this);
+        Resource_1.Resource.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;
         _this.response = response;

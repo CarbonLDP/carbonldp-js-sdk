@@ -11,7 +11,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import * as Map from "./Map";
 import DefaultExport from "./Map";
@@ -60,7 +60,7 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -97,7 +97,7 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 			object = null;
 			expect( Map.Factory.is( object ) ).toBe( false );
 
-			object = Resource.Factory.decorate( {
+			object = Resource.decorate( {
 				types: [
 					C.Map,
 				],

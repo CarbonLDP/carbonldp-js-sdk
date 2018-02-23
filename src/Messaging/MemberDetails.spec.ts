@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import * as Resource from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasDefaultExport,
@@ -50,8 +50,8 @@ describe( module( "Carbon/Messaging/MemberDetails" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
-			const target:Resource.Class = {} as MemberDetails.Class;
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
+			const target:Resource = {} as MemberDetails.Class;
 			expect( target ).toBeDefined();
 		} );
 

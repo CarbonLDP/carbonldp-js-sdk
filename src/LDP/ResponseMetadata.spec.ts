@@ -11,7 +11,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import * as ResponseMetadata from "./ResponseMetadata";
 import DefaultExport from "./ResponseMetadata";
@@ -98,7 +98,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 			object = {};
 			expect( ResponseMetadata.Factory.is( object ) ).toBe( false );
 
-			object = Resource.Factory.decorate( {
+			object = Resource.decorate( {
 				types: [
 					C.VolatileResource,
 					C.ResponseMetadata,

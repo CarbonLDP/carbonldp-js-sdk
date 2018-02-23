@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import { Pointer } from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import {
 	clazz,
 	extendsClass,
@@ -57,7 +57,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -118,7 +118,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 
 			const addMemberAction:AddMemberAction.Class = AddMemberAction.Factory.create( pointers );
 
-			expect( Resource.Factory.is( addMemberAction ) ).toBe( true );
+			expect( Resource.is( addMemberAction ) ).toBe( true );
 			expect( AddMemberAction.Factory.hasClassProperties( addMemberAction ) ).toBe( true );
 			expect( addMemberAction.targetMembers ).toEqual( pointers );
 			expect( addMemberAction.types ).toContain( AddMemberAction.RDF_CLASS );

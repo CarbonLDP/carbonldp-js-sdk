@@ -1,6 +1,6 @@
 import { Minus } from "../../test/helpers/types";
 
-import * as Resource from "../Resource";
+import { Resource } from "../Resource";
 import * as Module from "./factory";
 import {
 	createDocument,
@@ -12,7 +12,7 @@ import {
 import { Document } from "./index";
 
 
-type DocumentProperties = Minus<Document, Resource.Class>;
+type DocumentProperties = Minus<Document, Resource>;
 
 function mockDocumentProperties():DocumentProperties {
 	return {
@@ -181,7 +181,7 @@ describe( "isDocument", ():void => {
 	} );
 
 	it( "should assert that is a `Resource`", ():void => {
-		const spy:jasmine.Spy = spyOn( Resource.Factory, "is" );
+		const spy:jasmine.Spy = spyOn( Resource, "is" );
 
 		const target:object = { the: "object" };
 		isDocument( target );
@@ -190,7 +190,7 @@ describe( "isDocument", ():void => {
 	} );
 
 	it( "should assert that is decorated", ():void => {
-		spyOn( Resource.Factory, "is" ).and.returnValue( true );
+		spyOn( Resource, "is" ).and.returnValue( true );
 		const spy:jasmine.Spy = spyOn( Module, "isDecoratedDocument" );
 
 		const target:object = { the: "object" };
@@ -200,7 +200,7 @@ describe( "isDocument", ():void => {
 	} );
 
 	it( "should assert that is a document", ():void => {
-		spyOn( Resource.Factory, "is" ).and.returnValue( true );
+		spyOn( Resource, "is" ).and.returnValue( true );
 		spyOn( Module, "isDecoratedDocument" ).and.returnValue( true );
 
 		expect( isDocument( {} ) ).toBe( true );
@@ -240,7 +240,7 @@ describe( "createDocumentFrom", ():void => {
 		const target:TargetDocument = createDocumentFrom( { object: {} } );
 
 		// TODO use `isFragment` instead
-		expect( Resource.Factory.is( target.object ) ).toBe( true );
+		expect( Resource.is( target.object ) ).toBe( true );
 	} );
 
 } );
@@ -253,8 +253,8 @@ describe( "decorateDocument", ():void => {
 	} );
 
 	it( "should add the `Resource` properties", ():void => {
-		const target:Resource.Class = decorateDocument( {} );
-		expect( Resource.Factory.hasClassProperties( target ) ).toBe( true );
+		const target:Resource = decorateDocument( {} );
+		expect( Resource.isDecorated( target ) ).toBe( true );
 	} );
 
 	it( "should work with the `isDecorated` function", ():void => {

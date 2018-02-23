@@ -1,7 +1,7 @@
 import AbstractError from "./../../Errors/AbstractError";
 import * as PersistedDocument from "./../../PersistedDocument";
 import * as LDP from "./../../LDP";
-import * as Resource from "./../../Resource";
+import { Resource } from "./../../Resource";
 import Response from "./../Response";
 
 export class Class extends AbstractError implements LDP.ErrorResponse.Class {
@@ -31,7 +31,7 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 		super( message );
 		Object.setPrototypeOf( this, Class.prototype );
 
-		Resource.Factory.createFrom( this );
+		Resource.createFrom( this );
 
 		this.errors = [];
 		this.requestID = null;

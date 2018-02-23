@@ -22,7 +22,7 @@ import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedResource from "./PersistedResource";
 import * as Pointer from "./Pointer";
 import * as RDF from "./RDF";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import * as SDKContext from "./SDKContext";
 import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";

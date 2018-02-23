@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource = __importStar(require("./Resource"));
+var Resource_1 = require("./Resource");
 var Utils = __importStar(require("./Utils"));
 var Factory = (function () {
     function Factory() {
@@ -22,7 +22,7 @@ var Factory = (function () {
         if (document === void 0) { document = null; }
         var id = !!idOrDocument && Utils.isString(idOrDocument) ? idOrDocument : "";
         document = document || idOrDocument;
-        var resource = Resource.Factory.createFrom(object, id);
+        var resource = Resource_1.Resource.createFrom(object, id);
         if (Factory.hasClassProperties(resource))
             return resource;
         Object.defineProperties(resource, {

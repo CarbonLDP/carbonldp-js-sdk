@@ -16,7 +16,6 @@ var HTTP = __importStar(require("./../HTTP"));
 var JSONLD = __importStar(require("./../JSONLD"));
 var LDP_2 = require("./../LDP");
 var RDF = __importStar(require("./../RDF"));
-var Resource = __importStar(require("./../Resource"));
 var Utils = __importStar(require("./../Utils"));
 var BasicAuthenticator_1 = __importDefault(require("./BasicAuthenticator"));
 var Token = __importStar(require("./Token"));
@@ -72,7 +71,7 @@ var Class = (function () {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);
-            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, Token.RDF_CLASS); });
+            var tokenResources = freeResources.getResources().filter(function (resource) { return resource.hasType(Token.RDF_CLASS); });
             if (tokenResources.length === 0)
                 throw new HTTP.Errors.BadResponseError("No '" + Token.RDF_CLASS + "' was returned.", response);
             if (tokenResources.length > 1)

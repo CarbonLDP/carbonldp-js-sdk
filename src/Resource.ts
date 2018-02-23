@@ -1,27 +1,49 @@
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
 import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
 
-export interface Class extends Pointer {
+
+export interface Resource extends Pointer {
 	types:string[];
 
+
 	addType( type:string ):void;
+
 	hasType( type:string ):boolean;
+
 	removeType( type:string ):void;
 }
+
+export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<Resource> {
+	isDecorated( object:object ):object is Resource;
+
+	is( object:object ):object is Resource;
+
+
+	create( id?:string, types?:string[] ):Resource;
+
+	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & Resource;
+
+	decorate<T extends object>( object:T ):T & Resource;
+}
+
 
 function addType( type:string ):void {
 	this.types.push( type );
 }
+
 function hasType( type:string ):boolean {
 	return this.types.indexOf( type ) !== - 1;
 }
+
 function removeType( type:string ):void {
 	let index:number = this.types.indexOf( type );
 	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+export const Resource:ResourceFactory = {
+	isDecorated( object:object ):object is Resource {
 		return (
 			Utils.hasPropertyDefined( object, "types" )
 
@@ -29,28 +51,29 @@ export class Factory {
 			&& Utils.hasFunction( object, "hasType" )
 			&& Utils.hasFunction( object, "removeType" )
 		);
-	}
+	},
 
-	static is( object:object ):object is Class {
+	is( object:object ):object is Resource {
 		return Pointer.is( object )
-			&& Factory.hasClassProperties( object );
-	}
+			&& Resource.isDecorated( object );
+	},
 
-	static create( id:string = null, types:string[] = null ):Class {
-		return Factory.createFrom( {}, id, types );
-	}
+	create( id?:string, types?:string[] ):Resource {
+		return Resource.createFrom( {}, id, types );
+	},
 
-	static createFrom<T extends object>( object:T, id:string = null, types:string[] = null ):T & Class {
-		const resource:T & Class = object as T & Class;
-		resource.id = id || resource.id;
-		resource.types = types || resource.types;
+	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & Resource {
+		const resource:T & Resource = Resource.decorate<T>( object );
 
-		return Factory.decorate<T>( resource );
-	}
+		if( id ) resource.id = id;
+		if( types ) resource.types = types;
 
-	static decorate<T extends Object>( object:T ):T & Class {
-		const resource:T & Class = object as T & Class;
-		if( Factory.hasClassProperties( object ) ) return resource;
+		return resource;
+	},
+
+	decorate<T extends object>( object:T ):T & Resource {
+		const resource:T & Resource = object as T & Resource;
+		if( Resource.isDecorated( object ) ) return resource;
 
 		Pointer.decorate<T>( resource );
 
@@ -83,19 +106,7 @@ export class Factory {
 		} );
 
 		return resource;
-	}
-}
+	},
+};
 
-export class Util {
-
-	static hasType( resource:Object, type:string ):boolean {
-		return Util.getTypes( resource ).indexOf( type ) !== - 1;
-	}
-
-	static getTypes( resource:Object ):string[] {
-		return ( <Class> resource).types || [];
-	}
-
-}
-
-export default Class;
+export default Resource;

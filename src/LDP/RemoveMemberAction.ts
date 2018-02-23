@@ -1,7 +1,7 @@
 import { C } from "../Vocabularies/C";
 import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = C.RemoveMemberAction;
@@ -14,7 +14,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Resource.Class {
+export interface Class extends Resource {
 	targetMembers:Pointer[];
 }
 
@@ -24,7 +24,7 @@ export class Factory {
 	}
 
 	static create( targetMembers:Pointer[] ):Class {
-		return Resource.Factory.createFrom( {
+		return Resource.createFrom( {
 			types: [ RDF_CLASS ],
 			targetMembers,
 		} );

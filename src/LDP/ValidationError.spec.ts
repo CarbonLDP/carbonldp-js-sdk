@@ -8,7 +8,7 @@ import {
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as ValidationError from "./ValidationError";
 import DefaultExport from "./ValidationError";
 
@@ -53,8 +53,8 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		"Interface that contains the properties that describe how the validation failed."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
-			const target:Resource.Class = {} as ValidationError.Class;
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
+			const target:Resource = {} as ValidationError.Class;
 			expect( target ).toBeDefined();
 		} );
 

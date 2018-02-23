@@ -49,7 +49,7 @@ import {
 } from "./Pointer";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
 import {
@@ -756,7 +756,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources.Class {
 		let freeResourcesDocument:FreeResources.Class = FreeResources.Factory.create( this );
 
-		let resources:Resource.Class[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
+		let resources:Resource[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
 		this.compact( nodes, resources, freeResourcesDocument );
 
 		return freeResourcesDocument;
@@ -1268,7 +1268,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
 			return this.getProcessedSchema( schemas );
 		} else {
-			const types:string[] = Resource.Util.getTypes( document );
+			const types:string[] = document.types || [];
 			return this.getDigestedObjectSchema( types, document.id );
 		}
 	}

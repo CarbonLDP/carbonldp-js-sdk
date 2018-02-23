@@ -10,7 +10,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import * as VolatileResource from "./VolatileResource";
 import DefaultExport from "./VolatileResource";
@@ -38,7 +38,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 		"Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 	} );
 
@@ -70,7 +70,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 			object = {};
 			expect( VolatileResource.Factory.is( object ) ).toBe( false );
 
-			Resource.Factory.decorate( object );
+			Resource.decorate( object );
 			expect( VolatileResource.Factory.is( object ) ).toBe( false );
 
 			object[ "types" ].push( C.VolatileResource );

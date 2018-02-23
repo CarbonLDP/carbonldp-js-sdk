@@ -1,7 +1,7 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as URI from "./../RDF/URI";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import {
 	clazz,
 	extendsClass,
@@ -69,9 +69,9 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		"Interface that represents an authentication ticket."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
 			let ticket:Ticket.Class = <any> {};
-			let resource:Resource.Class;
+			let resource:Resource;
 
 			resource = ticket;
 			expect( resource ).toEqual( jasmine.any( Object ) );

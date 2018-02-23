@@ -1,8 +1,8 @@
 import { Document } from "./Document";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 
-export interface Class extends Resource.Class {
+export interface Class extends Resource {
 	document:Document;
 }
 
@@ -25,7 +25,7 @@ export class Factory {
 		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : "";
 		document = document || idOrDocument;
 
-		let resource:Resource.Class = Resource.Factory.createFrom( object, id );
+		let resource:Resource = Resource.createFrom( object, id );
 
 		if( Factory.hasClassProperties( resource ) ) return <any> resource;
 

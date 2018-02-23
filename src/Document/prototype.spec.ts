@@ -11,7 +11,7 @@ import { Pointer } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import * as URI from "../RDF/URI";
-import * as Resource from "../Resource";
+import { Resource } from "../Resource";
 
 import { createDocumentFrom } from "./factory";
 import { Document } from "./index";
@@ -140,7 +140,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = getPointer.call( document, "#fragment" );
 
 			// TODO: Use `NamedFragment.is`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 
 			expect( document._fragmentsIndex ).toEqual( new Map( [
@@ -161,7 +161,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = getPointer.call( document, "https://example.com/document/#fragment" );
 
 			// TODO: Use `NamedFragment.is`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 
 			expect( document._fragmentsIndex ).toEqual( new Map( [
@@ -182,7 +182,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = getPointer.call( document, "_:1" );
 
 			// TODO: Use `BlankNode.is`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 
 			expect( document._fragmentsIndex ).toEqual( new Map( [
@@ -550,7 +550,7 @@ describe( "Document methods", ():void => {
 			const fragment:{ string:string } = createFragment.call( document, { string: "a string" }, "fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 
 			expect( fragment ).toEqual( {
@@ -563,7 +563,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = createFragment.call( document, "fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 		} );
 
@@ -573,7 +573,7 @@ describe( "Document methods", ():void => {
 			const fragment:TargetFragment = createFragment.call( document, { string: "a string" }, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
@@ -586,7 +586,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = createFragment.call( document, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 		} );
 
@@ -595,7 +595,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = createFragment.call( document, {} );
 
 			// TODO: Use `isBlankNode`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 		} );
@@ -606,7 +606,7 @@ describe( "Document methods", ():void => {
 			const fragment:TargetFragment = createFragment.call( document, { string: "a string" }, "_:1" );
 
 			// TODO: Use `isBlankNode`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 
@@ -620,7 +620,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = createFragment.call( document, "_:1" );
 
 			// TODO: Use `isBlankNode`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
 		} );
@@ -692,7 +692,7 @@ describe( "Document methods", ():void => {
 			const fragment:TargetFragment = createNamedFragment.call( document, { string: "a string" }, "fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
@@ -705,7 +705,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = createNamedFragment.call( document, "fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 		} );
 
@@ -715,7 +715,7 @@ describe( "Document methods", ():void => {
 			const fragment:TargetFragment = createNamedFragment.call( document, { string: "a string" }, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
@@ -728,7 +728,7 @@ describe( "Document methods", ():void => {
 			const fragment:Fragment.Class = createNamedFragment.call( document, "https://example.com/document/#fragment" );
 
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( fragment ) ).toBe( true );
+			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
 		} );
 
@@ -1090,7 +1090,7 @@ describe( "Document methods", ():void => {
 
 			expect( document.object ).toBeDefined();
 			// TODO: Use `isFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( true );
+			expect( Resource.is( document.object ) ).toBe( true );
 			expect( document.hasFragment( "_:1" ) ).toBe( true );
 			expect( document.object.self ).toBe( document.object );
 		} );
@@ -1113,7 +1113,7 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { string: "new object" } );
 
 			// TODO: Use `isFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( true );
+			expect( Resource.is( document.object ) ).toBe( true );
 			expect( document.hasFragment( document.object[ "id" ] ) ).toBe( true );
 		} );
 
@@ -1129,10 +1129,10 @@ describe( "Document methods", ():void => {
 			] );
 
 			// TODO: Use `isFragment`
-			expect( Resource.Factory.is( document.array[ 0 ] ) ).toBe( true );
+			expect( Resource.is( document.array[ 0 ] ) ).toBe( true );
 			expect( document.hasFragment( document.array[ 0 ][ "id" ] ) ).toBe( true );
 
-			expect( Resource.Factory.is( document.array[ 1 ] ) ).toBe( true );
+			expect( Resource.is( document.array[ 1 ] ) ).toBe( true );
 			expect( document.hasFragment( document.array[ 1 ][ "id" ] ) ).toBe( true );
 		} );
 
@@ -1145,10 +1145,10 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { object: { string: "new object" } } );
 
 			// TODO: Use `isFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( true );
+			expect( Resource.is( document.object ) ).toBe( true );
 			expect( document.hasFragment( document.object[ "id" ] ) ).toBe( true );
 
-			expect( Resource.Factory.is( document.object.object ) ).toBe( true );
+			expect( Resource.is( document.object.object ) ).toBe( true );
 			expect( document.hasFragment( document.object.object[ "id" ] ) ).toBe( true );
 		} );
 
@@ -1161,9 +1161,9 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { object: { string: "new object" } } );
 
 			// TODO: Use `isFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( false );
+			expect( Resource.is( document.object ) ).toBe( false );
 
-			expect( Resource.Factory.is( document.object.object ) ).toBe( true );
+			expect( Resource.is( document.object.object ) ).toBe( true );
 			expect( document.hasFragment( document.object.object[ "id" ] ) ).toBe( true );
 		} );
 
@@ -1201,7 +1201,7 @@ describe( "Document methods", ():void => {
 			convertNestedObjects( document, document );
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( true );
+			expect( Resource.is( document.object ) ).toBe( true );
 			expect( NamedFragment.Factory.hasClassProperties( document.object ) ).toBe( true );
 
 			expect( document.hasFragment( "#fragment" ) ).toBe( true );
@@ -1216,7 +1216,7 @@ describe( "Document methods", ():void => {
 			convertNestedObjects( document, document );
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( true );
+			expect( Resource.is( document.object ) ).toBe( true );
 			expect( NamedFragment.Factory.hasClassProperties( document.object ) ).toBe( true );
 
 			expect( document.hasFragment( "#1" ) ).toBe( true );
@@ -1231,7 +1231,7 @@ describe( "Document methods", ():void => {
 			convertNestedObjects( document, document );
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isNamedFragment`
-			expect( Resource.Factory.is( document.object ) ).toBe( true );
+			expect( Resource.is( document.object ) ).toBe( true );
 			expect( NamedFragment.Factory.hasClassProperties( document.object ) ).toBe( true );
 
 			expect( document.hasFragment( "#fragment" ) ).toBe( true );

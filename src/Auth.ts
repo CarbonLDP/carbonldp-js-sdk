@@ -25,7 +25,7 @@ import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 import { LDP } from "./Vocabularies/LDP";
 
@@ -151,7 +151,7 @@ export class Class {
 			if( ticketNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
 
 			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
-			let ticket:Ticket.Class = <any> Resource.Factory.create();
+			let ticket:Ticket.Class = <any> Resource.create();
 
 			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
 

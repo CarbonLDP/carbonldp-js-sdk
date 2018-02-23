@@ -10,7 +10,7 @@ import {
 	PointerValidator,
 } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
-import * as Resource from "../Resource";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
 import { XSD } from "../Vocabularies/XSD";
@@ -23,7 +23,7 @@ import {
 	isDocument,
 } from "./factory";
 
-export interface Document extends Resource.Class, PointerLibrary, PointerValidator {
+export interface Document extends Resource, PointerLibrary, PointerValidator {
 	defaultInteractionModel?:Pointer;
 	isMemberOfRelation?:Pointer;
 	hasMemberRelation?:Pointer;

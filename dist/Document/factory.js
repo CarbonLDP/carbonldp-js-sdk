@@ -1,14 +1,7 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
-var Resource = __importStar(require("../Resource"));
+var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
 var prototype_1 = require("./prototype");
 exports.isDecoratedDocument = function (object) {
@@ -29,7 +22,7 @@ exports.isDecoratedDocument = function (object) {
         Utils_1.hasFunction(object, "toJSON");
 };
 exports.isDocument = function (object) {
-    return Resource.Factory.is(object) &&
+    return Resource_1.Resource.is(object) &&
         exports.isDecoratedDocument(object);
 };
 exports.createDocument = function () {
@@ -45,7 +38,7 @@ exports.createDocumentFrom = function (object) {
 exports.decorateDocument = function (object) {
     if (exports.isDecoratedDocument(object))
         return object;
-    Resource.Factory.decorate(object);
+    Resource_1.Resource.decorate(object);
     Object.defineProperties(object, {
         "_fragmentsIndex": {
             configurable: true,

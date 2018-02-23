@@ -20,35 +20,31 @@ function removeType(type) {
     if (index !== -1)
         this.types.splice(index, 1);
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.Resource = {
+    isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "types")
             && Utils.hasFunction(object, "addType")
             && Utils.hasFunction(object, "hasType")
             && Utils.hasFunction(object, "removeType"));
-    };
-    Factory.is = function (object) {
+    },
+    is: function (object) {
         return Pointer_1.Pointer.is(object)
-            && Factory.hasClassProperties(object);
-    };
-    Factory.create = function (id, types) {
-        if (id === void 0) { id = null; }
-        if (types === void 0) { types = null; }
-        return Factory.createFrom({}, id, types);
-    };
-    Factory.createFrom = function (object, id, types) {
-        if (id === void 0) { id = null; }
-        if (types === void 0) { types = null; }
+            && exports.Resource.isDecorated(object);
+    },
+    create: function (id, types) {
+        return exports.Resource.createFrom({}, id, types);
+    },
+    createFrom: function (object, id, types) {
+        var resource = exports.Resource.decorate(object);
+        if (id)
+            resource.id = id;
+        if (types)
+            resource.types = types;
+        return resource;
+    },
+    decorate: function (object) {
         var resource = object;
-        resource.id = id || resource.id;
-        resource.types = types || resource.types;
-        return Factory.decorate(resource);
-    };
-    Factory.decorate = function (object) {
-        var resource = object;
-        if (Factory.hasClassProperties(object))
+        if (exports.Resource.isDecorated(object))
             return resource;
         Pointer_1.Pointer.decorate(resource);
         Object.defineProperties(resource, {
@@ -78,21 +74,8 @@ var Factory = (function () {
             },
         });
         return resource;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.hasType = function (resource, type) {
-        return Util.getTypes(resource).indexOf(type) !== -1;
-    };
-    Util.getTypes = function (resource) {
-        return resource.types || [];
-    };
-    return Util;
-}());
-exports.Util = Util;
+    },
+};
+exports.default = exports.Resource;
 
 //# sourceMappingURL=Resource.js.map

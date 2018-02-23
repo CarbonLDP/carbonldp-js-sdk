@@ -24,7 +24,7 @@ import {
 	PointerType,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import * as Resource from "../Resource";
+import { Resource } from "../Resource";
 import { isString } from "../Utils";
 
 import {
@@ -81,7 +81,7 @@ export class Class {
 		return `${ patch }`;
 	}
 
-	addResource( schema:DigestedObjectSchema, oldResource:Resource.Class, newResource:Resource.Class ):void {
+	addResource( schema:DigestedObjectSchema, oldResource:Resource, newResource:Resource ):void {
 		const id:string = newResource.id;
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) : this.compactIRI( schema, id );

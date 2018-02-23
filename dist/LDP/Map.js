@@ -14,7 +14,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return Resource_1.Factory.is(object)
+        return Resource_1.Resource.is(object)
             && object.hasType(exports.RDF_CLASS)
             && object.hasOwnProperty("entries");
     };

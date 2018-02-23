@@ -1,11 +1,11 @@
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import * as PartialMetadata from "./SPARQL/QueryDocument/PartialMetadata";
 import * as Utils from "./Utils";
 
-export interface Class extends Resource.Class {
+export interface Class extends Resource {
 	_partialMetadata?:PartialMetadata.Class;
 
-	_snapshot:Resource.Class;
+	_snapshot:Resource;
 	_syncSnapshot:() => void;
 
 	isDirty():boolean;
@@ -24,19 +24,19 @@ function syncSnapshot( this:Class ):void {
 }
 
 function isDirty():boolean {
-	let resource:Class & Resource.Class = this;
+	let resource:Class & Resource = this;
 
 	if( ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true } ) ) return true;
 
 	let response:boolean = false;
-	if( "id" in resource ) response = response || (resource._snapshot as Resource.Class).id !== resource.id;
-	if( "types" in resource ) response = response || ! Utils.O.areEqual( (resource._snapshot as Resource.Class).types, resource.types );
+	if( "id" in resource ) response = response || (resource._snapshot as Resource).id !== resource.id;
+	if( "types" in resource ) response = response || ! Utils.O.areEqual( (resource._snapshot as Resource).types, resource.types );
 
 	return response;
 }
 
 function revert():void {
-	let resource:Class & Resource.Class = this;
+	let resource:Class & Resource = this;
 
 	for( let key of Object.keys( resource ) ) {
 		if( ! ( key in resource._snapshot ) ) delete resource[ key ];
@@ -60,7 +60,7 @@ export class Factory {
 		);
 	}
 
-	static decorate<T extends Resource.Class>( object:T ):T & Class {
+	static decorate<T extends Resource>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
 		let persistedResource:T & Class = <any> object;

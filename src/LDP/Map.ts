@@ -1,7 +1,7 @@
 import { Class as ObjectSchema } from "../ObjectSchema";
 import {
-	Class as Resource,
-	Factory as ResourceFactory
+	Resource as Resource,
+	Resource as ResourceFactory
 } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { Class as Entry } from "./Entry";

@@ -6,8 +6,8 @@ import * as NamedFragment from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
-import * as Resource from "../Resource";
-export interface Document extends Resource.Class, PointerLibrary, PointerValidator {
+import { Resource } from "../Resource";
+export interface Document extends Resource, PointerLibrary, PointerValidator {
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;
     hasMemberRelation?: Pointer;

@@ -7,7 +7,7 @@ import * as JSONLD from "./../JSONLD";
 import { ResponseMetadata } from "./../LDP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
@@ -79,7 +79,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
-			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => Resource.Util.hasType( resource, Token.RDF_CLASS ) );
+			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => resource.hasType( Token.RDF_CLASS ) );
 
 			if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
 			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );

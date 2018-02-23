@@ -49,7 +49,7 @@ var FreeResources = __importStar(require("./FreeResources"));
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
 var RDF = __importStar(require("./RDF"));
-var Resource = __importStar(require("./Resource"));
+var Resource_1 = require("./Resource");
 var Utils = __importStar(require("./Utils"));
 var LDP_1 = require("./Vocabularies/LDP");
 var Method;
@@ -138,7 +138,7 @@ var Class = (function () {
             if (ticketNodes.length > 1)
                 throw new HTTP.Errors.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
             var expandedTicket = ticketNodes[0];
-            var ticket = Resource.Factory.create();
+            var ticket = Resource_1.Resource.create();
             var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
             _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
             return [ticket, response];

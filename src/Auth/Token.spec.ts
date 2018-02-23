@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import {
 	clazz,
 	extendsClass,
@@ -63,7 +63,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		"Interface that represents an authentication token for every context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -135,7 +135,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			expect( Token.Factory.is( false ) ).toBe( false );
 			expect( Token.Factory.is( {} ) ).toBe( false );
 
-			let object:any = Resource.Factory.createFrom( {
+			let object:any = Resource.createFrom( {
 				key: null,
 				expirationTime: null,
 				user: null,

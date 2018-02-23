@@ -11,7 +11,7 @@ import {
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 import { Pointer } from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as ValidationResult from "./ValidationResult";
 import DefaultExport from "./ValidationResult";
 
@@ -102,8 +102,8 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
-			const target:Resource.Class = {} as ValidationResult.Class;
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
+			const target:Resource = {} as ValidationResult.Class;
 			expect( target ).toBeDefined();
 		} );
 

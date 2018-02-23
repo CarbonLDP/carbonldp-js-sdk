@@ -1,33 +1,32 @@
 import { Pointer } from "./Pointer";
+import * as Module from "./Resource";
+import DefaultExport, { Resource } from "./Resource";
 
-import * as Resource from "./Resource";
-import DefaultExport from "./Resource";
 import {
-	clazz,
-	decoratedObject,
 	extendsClass,
 	hasDefaultExport,
 	hasMethod,
 	hasProperty,
-	INSTANCE,
 	interfaze,
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+
 import { LDP } from "./Vocabularies/LDP";
+
 
 describe( module( "Carbon/Resource" ), ():void => {
 
 	it( isDefined(), ():void => {
-		expect( Resource ).toBeDefined();
-		expect( Utils.isObject( Resource ) ).toBe( true );
+		expect( Module ).toBeDefined();
+		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( interfaze(
-		"Carbon.Resource.Class",
+		"Carbon.Resource.Resource",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
@@ -66,134 +65,41 @@ describe( module( "Carbon/Resource" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Resource.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Resource.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( clazz(
-		"Carbon.Resource.Factory",
-		"Factory class for `Carbon.Resource.Class` objects."
+	describe( interfaze(
+		"Carbon.Resource.ResourceFactory",
+		"Interface with the factory, decorate, and utils methods of a `Carbon.Resource.Resource` object."
 	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Resource.Factory ).toBeDefined();
-			expect( Utils.isFunction( Resource.Factory ) ).toBe( true );
-		} );
-
 		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.Resource.Class` object.", [
-				{ name: "object", type: "Object" },
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object provided has the properties of a `Carbon.Resource.Resource` object.", [
+				{ name: "object", type: "object" },
 			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Resource.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( Resource.Factory.hasClassProperties ) ).toBe( true );
-
-			let object:any = undefined;
-			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
-			object = {
-				types: null,
-
-				addType: ():void => {},
-				hasType: ():void => {},
-				removeType: ():void => {},
-			};
-			expect( Resource.Factory.hasClassProperties( object ) ).toBe( true );
-
-			delete object.types;
-			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
-			object.types = null;
-
-			delete object.addType;
-			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
-			object.addType = ():void => {};
-
-			delete object.hasType;
-			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
-			object.hasType = ():void => {};
-
-			delete object.removeType;
-			expect( Resource.Factory.hasClassProperties( object ) ).toBe( false );
-			object.removeType = ():void => {};
-		} );
+			{ type: "object is Carbon.Resource.Resource" }
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Resource.Class` object.", [
-				{ name: "resource", type: "Object" },
+			"Returns true if the object provided is considered a `Carbon.Resource.Resource` object.", [
+				{ name: "object", type: "object" },
 			],
-			{ type: "boolean" }
-		), ():void => {
-			let object:Object = undefined;
-			expect( Resource.Factory.is( object ) ).toBe( false );
-
-			object = {
-				types: null,
-
-				addType: ():void => {},
-				hasType: ():void => {},
-				removeType: ():void => {},
-			};
-			expect( Resource.Factory.is( object ) ).toBe( false );
-
-			let resource:Pointer = Pointer.decorate( object );
-			expect( Resource.Factory.is( resource ) ).toBe( true );
-		} );
+			{ type: "object is Carbon.Resource.Resource" }
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"create",
 			"Creates a Resource object with the id and types provided.", [
 				{ name: "id", type: "string", optional: true },
 				{ name: "types", type: "string[]", optional: true },
 			],
-			{ type: "Carbon.Resource.Class" }
-		), ():void => {
-			expect( Resource.Factory.create ).toBeDefined();
-			expect( Utils.isFunction( Resource.Factory.create ) ).toBe( true );
-
-			let resource:Resource.Class;
-
-			resource = Resource.Factory.create();
-			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
-			expect( resource.id ).toBe( "" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
-			expect( resource.types.length ).toBe( 0 );
-
-			resource = Resource.Factory.create( "http://example.com/resource/" );
-			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
-			expect( resource.id ).toBe( "http://example.com/resource/" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
-			expect( resource.types.length ).toBe( 0 );
-
-			resource = Resource.Factory.create( "http://example.com/resource/", [ LDP.RDFSource ] );
-			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
-			expect( resource.id ).toBe( "http://example.com/resource/" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
-			expect( resource.types.length ).toBe( 1 );
-			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
-
-			resource = Resource.Factory.create( null, [ LDP.RDFSource, LDP.Container ] );
-			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
-			expect( resource.id ).toBe( "" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
-			expect( resource.types.length ).toBe( 2 );
-			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
-		} );
+			{ type: "Carbon.Resource.Resource" }
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"createFrom",
 			[ "T extends Object" ],
 			"Creates a Resource object with the id and types provided.", [
@@ -201,118 +107,221 @@ describe( module( "Carbon/Resource" ), ():void => {
 				{ name: "id", type: "string", optional: true },
 				{ name: "types", type: "string[]", optional: true },
 			],
-			{ type: "T & Carbon.Resource.Class" }
-		), ():void => {
-			expect( Resource.Factory.createFrom ).toBeDefined();
-			expect( Utils.isFunction( Resource.Factory.createFrom ) ).toBe( true );
+			{ type: "T & Carbon.Resource.Resource" }
+		), ():void => {} );
 
-			let simpleResource:Resource.Class = Resource.Factory.createFrom( {}, "http://example.com/simple-resource/" );
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends Object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Resource` object.", [
+				{ name: "object", type: "T" },
+			],
+			{ type: "T & Carbon.Resource.Resource" }
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Resource.Resource" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:Resource;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+	} );
+
+	describe( property( STATIC, "Resource", "Carbon.Resource.ResourceFactory", "Constant that implements the `Carbon.Resource.ResourceFactory` interface." ), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( Resource ).toBeDefined();
+			expect( Resource ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "Resource.isDecorated", ():void => {
+			expect( Resource.isDecorated ).toBeDefined();
+			expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
+
+			let object:any = undefined;
+			expect( Resource.isDecorated( object ) ).toBe( false );
+			object = {
+				types: null,
+
+				addType: ():void => {},
+				hasType: ():void => {},
+				removeType: ():void => {},
+			};
+			expect( Resource.isDecorated( object ) ).toBe( true );
+
+			delete object.types;
+			expect( Resource.isDecorated( object ) ).toBe( false );
+			object.types = null;
+
+			delete object.addType;
+			expect( Resource.isDecorated( object ) ).toBe( false );
+			object.addType = ():void => {};
+
+			delete object.hasType;
+			expect( Resource.isDecorated( object ) ).toBe( false );
+			object.hasType = ():void => {};
+
+			delete object.removeType;
+			expect( Resource.isDecorated( object ) ).toBe( false );
+			object.removeType = ():void => {};
+		} );
+
+		// TODO: Separate in different tests
+		it( "Resource.is", ():void => {
+			let object:Object = undefined;
+			expect( Resource.is( object ) ).toBe( false );
+
+			object = {
+				types: null,
+
+				addType: ():void => {},
+				hasType: ():void => {},
+				removeType: ():void => {},
+			};
+			expect( Resource.is( object ) ).toBe( false );
+
+			let resource:Pointer = Pointer.decorate( object );
+			expect( Resource.is( resource ) ).toBe( true );
+		} );
+
+		// TODO: Separate in different tests
+		it( "Resource.create", ():void => {
+			expect( Resource.create ).toBeDefined();
+			expect( Resource.create ).toEqual( jasmine.any( Function ) );
+
+			let resource:Resource;
+
+			resource = Resource.create();
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.id ).toBe( "" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 0 );
+
+			resource = Resource.create( "http://example.com/resource/" );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.id ).toBe( "http://example.com/resource/" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 0 );
+
+			resource = Resource.create( "http://example.com/resource/", [ LDP.RDFSource ] );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.id ).toBe( "http://example.com/resource/" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 1 );
+			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
+
+			resource = Resource.create( null, [ LDP.RDFSource, LDP.Container ] );
+			expect( resource ).toBeTruthy();
+			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( resource.id ).toBe( "" );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
+			expect( resource.types.length ).toBe( 2 );
+			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
+		} );
+
+		// TODO: Separate in different tests
+		it( "Resource.createFrom", ():void => {
+			expect( Resource.createFrom ).toBeDefined();
+			expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
+
+			let simpleResource:Resource = Resource.createFrom( {}, "http://example.com/simple-resource/" );
 			expect( simpleResource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( simpleResource ) ).toBe( true );
+			expect( Resource.isDecorated( simpleResource ) ).toBe( true );
 			expect( simpleResource.id ).toBe( "http://example.com/simple-resource/" );
-			expect( Utils.isArray( simpleResource.types ) ).toBe( true );
+			expect( simpleResource.types ).toEqual( jasmine.any( Array ) );
 			expect( simpleResource.types.length ).toBe( 0 );
 
 			interface MyResource {
 				myProperty:string;
 			}
 
-			let resource:Resource.Class & MyResource;
+			let resource:Resource & MyResource;
 
-			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" } );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property" } );
 			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/" );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/" );
 			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/", [ LDP.RDFSource ] );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/", [ LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 1 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.Factory.createFrom<MyResource>( { myProperty: "a property" }, null, [ LDP.RDFSource, LDP.Container ] );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property" }, null, [ LDP.RDFSource, LDP.Container ] );
 			expect( resource ).toBeTruthy();
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
-			expect( Utils.isArray( resource.types ) ).toBe( true );
+			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			[ "T extends Object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Class` object.", [
-				{ name: "object", type: "T" },
-			],
-			{ type: "T & Carbon.Resource.Class" }
-		), ():void => {
-			expect( Resource.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( Resource.Factory.decorate ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "Resource.decorate", ():void => {
+			expect( Resource.decorate ).toBeDefined();
+			expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
 
 
 			interface MyResource {
 				myProperty?:string;
 			}
 
-			let resource:Resource.Class & MyResource;
+			let resource:Resource & MyResource;
 
-			resource = Resource.Factory.decorate<MyResource>( {} );
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+			resource = Resource.decorate<MyResource>( {} );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.types ).toEqual( [] );
 
-			resource = Resource.Factory.decorate<MyResource>( { myProperty: "a property" } );
-			expect( Resource.Factory.hasClassProperties( resource ) ).toBe( true );
+			resource = Resource.decorate<MyResource>( { myProperty: "a property" } );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 			expect( resource.types ).toEqual( [] );
 
 
 			resource.types = [ LDP.RDFSource ];
-			resource = Resource.Factory.decorate<MyResource>( resource );
+			resource = Resource.decorate<MyResource>( resource );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 		} );
 
-		describe( decoratedObject(
-			"Object decorated by the `Carbon.Resource.Factory.decorate()` function.", [
-				"Carbon.Resource.Class",
-			]
-		), ():void => {
-			let resource:Resource.Class;
+		describe( "Decorated `Resource`", ():void => {
 
+			let resource:Resource;
 			beforeEach( ():void => {
-				resource = Resource.Factory.create();
+				resource = Resource.create();
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"addType",
-				"Adds a type to the Resource.", [
-					{ name: "type", type: "string", description: "The type to be added." },
-				]
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "Resource.addType", ():void => {
 				expect( resource.addType ).toBeDefined();
-				expect( Utils.isFunction( resource.addType ) ).toBe( true );
+				expect( resource.addType ).toEqual( jasmine.any( Function ) );
 
 				expect( resource.types.length ).toBe( 0 );
 
@@ -326,15 +335,10 @@ describe( module( "Carbon/Resource" ), ():void => {
 				expect( resource.types ).toContain( "http://example.com/types#Type-2" );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"hasType",
-				"Returns true if the Resource contains the type specified.", [
-					{ name: "type", type: "string", description: "The type to look for." },
-				]
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "Resource.hasType", ():void => {
 				expect( resource.hasType ).toBeDefined();
-				expect( Utils.isFunction( resource.hasType ) ).toBe( true );
+				expect( resource.hasType ).toEqual( jasmine.any( Function ) );
 
 				resource.types = [ "http://example.com/types#Type-1" ];
 				expect( resource.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
@@ -347,15 +351,10 @@ describe( module( "Carbon/Resource" ), ():void => {
 				expect( resource.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"removeType",
-				"Remove the type specified from the Resource.", [
-					{ name: "type", type: "string", description: "The type to be removed." },
-				]
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "Resource.removeType", ():void => {
 				expect( resource.removeType ).toBeDefined();
-				expect( Utils.isFunction( resource.removeType ) ).toBe( true );
+				expect( resource.removeType ).toEqual( jasmine.any( Function ) );
 
 				resource.types = [ "http://example.com/types#Type-1" ];
 				resource.removeType( "http://example.com/types#Type-2" );
@@ -382,4 +381,5 @@ describe( module( "Carbon/Resource" ), ():void => {
 
 	} );
 
-} );
+} )
+;

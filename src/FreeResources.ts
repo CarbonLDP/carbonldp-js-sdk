@@ -8,24 +8,24 @@ import {
 	PointerValidator,
 } from "./Pointer";
 import * as RDF from "./RDF";
-import * as Resource from "./Resource";
+import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 
 export interface Class extends PointerLibrary, PointerValidator {
 	_documents:Documents;
-	_resourcesIndex:Map<string, Resource.Class>;
+	_resourcesIndex:Map<string, Resource>;
 
 	hasResource( id:string ):boolean;
 
-	getResource( id:string ):Resource.Class;
+	getResource( id:string ):Resource;
 
-	getResources():Resource.Class[];
+	getResources():Resource[];
 
-	getPointer( id:string ):Resource.Class;
+	getPointer( id:string ):Resource;
 
-	createResource( id?:string ):Resource.Class;
+	createResource( id?:string ):Resource;
 
-	createResourceFrom<T>( object:T, id?:string ):Resource.Class & T;
+	createResourceFrom<T>( object:T, id?:string ):Resource & T;
 
 	toJSON():string;
 }
@@ -47,7 +47,7 @@ function getPointer( id:string ):Pointer {
 		return freeResources._documents.getPointer( id );
 	}
 
-	let resource:Resource.Class = freeResources.getResource( id );
+	let resource:Resource = freeResources.getResource( id );
 
 	return ! resource ? freeResources.createResource( id ) : resource;
 }
@@ -71,23 +71,23 @@ function hasResource( id:string ):boolean {
 	return freeResources._resourcesIndex.has( id );
 }
 
-function getResource( id:string ):Resource.Class {
+function getResource( id:string ):Resource {
 	let freeResources:Class = <Class> this;
 
 	return freeResources._resourcesIndex.get( id ) || null;
 }
 
-function getResources():Resource.Class[] {
+function getResources():Resource[] {
 	let freeResources:Class = <Class> this;
 
 	return Utils.A.from( freeResources._resourcesIndex.values() );
 }
 
-function createResource( id?:string ):Resource.Class {
+function createResource( id?:string ):Resource {
 	return this.createResourceFrom( {}, id );
 }
 
-function createResourceFrom<T extends Object>( object:T, id?:string ):Resource.Class & T {
+function createResourceFrom<T extends Object>( object:T, id?:string ):Resource & T {
 	let freeResources:Class = <Class> this;
 
 	if( id ) {
@@ -97,7 +97,7 @@ function createResourceFrom<T extends Object>( object:T, id?:string ):Resource.C
 		id = RDF.URI.Util.generateBNodeID();
 	}
 
-	let resource:Resource.Class & T = Resource.Factory.createFrom<T>( object, id );
+	let resource:Resource & T = Resource.createFrom<T>( object, id );
 	freeResources._resourcesIndex.set( id, resource );
 
 	return resource;
@@ -106,7 +106,7 @@ function createResourceFrom<T extends Object>( object:T, id?:string ):Resource.C
 function toJSON():string {
 	let generalSchema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
 	let jsonldConverter:JSONLDConverter = new JSONLDConverter();
-	let resources:Resource.Class[] = this.getResources();
+	let resources:Resource[] = this.getResources();
 	let expandedResources:RDF.Node.Class[] = [];
 
 	for( let resource of resources ) {
@@ -156,7 +156,7 @@ export class Factory {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: new Map<string, Resource.Class>(),
+				value: new Map<string, Resource>(),
 			},
 			"hasPointer": {
 				writable: false,

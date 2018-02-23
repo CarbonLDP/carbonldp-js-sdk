@@ -14,7 +14,7 @@ var Errors = __importStar(require("./Errors"));
 var Converter_1 = __importDefault(require("./JSONLD/Converter"));
 var Pointer_1 = require("./Pointer");
 var RDF = __importStar(require("./RDF"));
-var Resource = __importStar(require("./Resource"));
+var Resource_1 = require("./Resource");
 var Utils = __importStar(require("./Utils"));
 function hasPointer(id) {
     var freeResources = this;
@@ -65,7 +65,7 @@ function createResourceFrom(object, id) {
     else {
         id = RDF.URI.Util.generateBNodeID();
     }
-    var resource = Resource.Factory.createFrom(object, id);
+    var resource = Resource_1.Resource.createFrom(object, id);
     freeResources._resourcesIndex.set(id, resource);
     return resource;
 }

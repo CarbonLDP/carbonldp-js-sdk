@@ -1,7 +1,7 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
@@ -22,7 +22,7 @@ export const SCHEMA:ObjectSchema.Class = {
 	},
 };
 
-export interface Class extends Resource.Class {
+export interface Class extends Resource {
 	key:string;
 	expirationTime:Date;
 	user:PersistedUser.Class;
@@ -31,7 +31,7 @@ export interface Class extends Resource.Class {
 export class Factory {
 	static is( value:any ):boolean {
 		return (
-			Resource.Factory.is( value )
+			Resource.is( value )
 			&& Factory.hasClassProperties( value )
 		);
 	}

@@ -16,7 +16,7 @@ import {
 	STATIC
 } from "../test/JasmineExtender";
 import { Pointer } from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Message from "./Message";
 
 import * as MessagingService from "./Service";
@@ -499,7 +499,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 						target: jasmine.any( Object ),
 					} as any );
 
-					expect( Resource.Factory.is( message ) ).toBe( true );
+					expect( Resource.is( message ) ).toBe( true );
 					expect( message.id ).toBe( "_:1" );
 					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
@@ -550,7 +550,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 							target: jasmine.any( Object ),
 						} as any );
 
-						expect( Resource.Factory.is( message ) ).toBe( true );
+						expect( Resource.is( message ) ).toBe( true );
 						expect( message.id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
@@ -684,7 +684,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 							target: jasmine.any( Object ),
 						} as any );
 
-						expect( Resource.Factory.is( message ) ).toBe( true );
+						expect( Resource.is( message ) ).toBe( true );
 						expect( message.id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 

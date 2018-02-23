@@ -28,7 +28,7 @@ describe( module(
 		"Interface that serializer classes must implement."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,

@@ -1,5 +1,5 @@
 import { Class as ObjectSchema } from "../ObjectSchema";
-import { Class as Resource } from "../Resource";
+import { Resource as Resource } from "../Resource";
 import { Class as Entry } from "./Entry";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema;

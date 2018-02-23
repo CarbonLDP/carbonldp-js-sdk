@@ -1,6 +1,6 @@
 import { IllegalArgumentError } from "../Errors";
 import * as Fragment from "../Fragment";
-import * as Resource from "../Resource";
+import { Resource } from "../Resource";
 import {
 	hasFunction,
 	hasPropertyDefined,
@@ -50,7 +50,7 @@ export const isDecoratedDocument:( object:object ) => object is Document = ( obj
 
 
 export const isDocument:( object:object ) => object is Document = ( object ):object is Document =>
-	Resource.Factory.is( object ) &&
+	Resource.is( object ) &&
 	isDecoratedDocument( object )
 ;
 
@@ -70,7 +70,7 @@ export const createDocumentFrom:<T extends object>( object:T ) => T & Document =
 export const decorateDocument:<T extends object>( object:T ) => T & Document = <T extends object>( object:T ) => {
 	if( isDecoratedDocument( object ) ) return object;
 
-	Resource.Factory.decorate( object );
+	Resource.decorate( object );
 
 	Object.defineProperties( object, {
 		"_fragmentsIndex": {
