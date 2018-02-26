@@ -1,11 +1,11 @@
 import * as Auth from "./Auth";
 import { Context } from "./Context";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Settings from "./Settings";
 export declare class SDKContext implements Context {
     auth: Auth.Class;
-    documents: Documents.Class;
+    documents: Documents;
     readonly baseURI: string;
     readonly parentContext: Context;
     protected settings: Settings.ContextSettings;

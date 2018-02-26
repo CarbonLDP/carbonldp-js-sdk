@@ -1,7 +1,7 @@
 import * as Auth from "./Auth";
 import { Context } from "./Context";
 import { Document } from "./Document";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as Messaging from "./Messaging";
@@ -20,7 +20,7 @@ import {
 
 export class SDKContext implements Context {
 	auth:Auth.Class;
-	documents:Documents.Class;
+	documents:Documents;
 
 	get baseURI():string { return ""; }
 
@@ -36,7 +36,7 @@ export class SDKContext implements Context {
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
 		this.auth = new Auth.Class( this );
-		this.documents = new Documents.Class( this );
+		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();
 	}

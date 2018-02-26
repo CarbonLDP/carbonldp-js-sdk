@@ -1,5 +1,5 @@
 import { Document } from "../Document";
-import * as Documents from "../Documents";
+import { Documents } from "../Documents";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import { clazz, extendsClass, hasDefaultExport, hasMethod, hasSignature, interfaze, isDefined, method, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
 import * as MessagingDocument from "./Document";
@@ -488,7 +488,7 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 		} );
 
 		it( "should return the same reference of the object provided", ():void => {
-			const documents:Documents.Class = new Documents.Class();
+			const documents:Documents = new Documents();
 			const base:ServiceAwareDocument = ServiceAwareDocument.decorate( Document.create(), documents );
 
 			const target:MessagingDocument.Class = MessagingDocument.Factory.decorate( base );
@@ -496,7 +496,7 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 		} );
 
 		it( "should not decorate if already has the specific properties", ():void => {
-			const documents:Documents.Class = new Documents.Class();
+			const documents:Documents = new Documents();
 
 			const methodsFunction:() => void = () => {};
 			const base:ServiceAwareDocument = ServiceAwareDocument.decorate( Document.createFrom( {
@@ -528,7 +528,7 @@ describe( "Carbon.Messaging.Document.Factory", ():void => {
 		} );
 
 		it( "should add the new properties", ():void => {
-			const documents:Documents.Class = new Documents.Class();
+			const documents:Documents = new Documents();
 			const base:ServiceAwareDocument = ServiceAwareDocument.decorate( Document.create(), documents );
 
 			const target:MessagingDocument.Class = MessagingDocument.Factory.decorate( base );

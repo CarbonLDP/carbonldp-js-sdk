@@ -1,7 +1,7 @@
 import { Minus } from "../test/helpers/types";
 
 import { Document } from "./Document";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import DefaultExport, { ServiceAwareDocument } from "./ServiceAwareDocument";
 
 import {
@@ -20,7 +20,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.ServiceAwareDocument.ServiceAwareDocument",
-		"Interface that has a reference to its `Carbon.Documents.Class`."
+		"Interface that has a reference to its `Carbon.Documents.Documents`."
 	), ():void => {
 
 		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
@@ -28,10 +28,10 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_documents",
-			"Carbon.Documents.Class",
+			"Carbon.Documents.Documents",
 			"Reference to the Documents instance where this documents belongs to."
 		), ():void => {
-			const target:ServiceAwareDocument[ "_documents" ] = {} as Documents.Class;
+			const target:ServiceAwareDocument[ "_documents" ] = {} as Documents;
 			expect( target ).toBeDefined();
 		} );
 
@@ -59,7 +59,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 			"Decorates the provided document with the properties of the `Carbon.ServiceAwareDocument.ServiceAwareDocument` interface.",
 			[
 				{ name: "document", type: "T", description: "Document object to decorate." },
-				{ name: "documents", type: "Carbon.Documents.Class", description: "Documents instance where the provided document will belong to." },
+				{ name: "documents", type: "Carbon.Documents.Documents", description: "Documents instance where the provided document will belong to." },
 			],
 			{ type: "T & Carbon.ServiceAwareDocument.ServiceAwareDocument" }
 		), ():void => {} );
@@ -107,7 +107,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 			} );
 
 			it( "should return the same reference of the object provided", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const object:object = {};
 
 				const decoratedObject:ServiceAwareDocument = ServiceAwareDocument.decorate( object, documents );
@@ -115,7 +115,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 			} );
 
 			it( "should not decorate if already has the specific properties", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const object:Minus<Document, ServiceAwareDocument> = {
 					_documents: null,
 				};
@@ -125,7 +125,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 			} );
 
 			it( "should add the new properties", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const decoratedObject:ServiceAwareDocument = ServiceAwareDocument.decorate( {}, documents );
 				expect( decoratedObject ).toEqual( jasmine.objectContaining( {
 					_documents: documents,

@@ -5,7 +5,7 @@ import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as Messaging from "./Messaging";
-import * as ObjectSchema from "./ObjectSchema";
+import { DigestedObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
@@ -13,11 +13,11 @@ import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
-export declare class Class implements PointerLibrary, PointerValidator, ObjectSchema.ObjectSchemaResolver {
+export declare class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;
-    readonly documentDecorators: Map<string, (object: object, documents?: Class) => object>;
+    readonly documentDecorators: Map<string, (object: object, documents?: Documents) => object>;
     private context;
     private pointers;
     private documentsBeingResolved;
@@ -60,9 +60,9 @@ export declare class Class implements PointerLibrary, PointerValidator, ObjectSc
     saveAndRefresh<T extends object>(persistedDocument: T & PersistedDocument.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedDocument.Class, HTTP.Response.Class[]]>;
     delete(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
     getDownloadURL(documentURI: string, requestOptions?: HTTP.Request.Options): Promise<string>;
-    getGeneralSchema(): ObjectSchema.DigestedObjectSchema;
+    getGeneralSchema(): DigestedObjectSchema;
     hasSchemaFor(object: object, path?: string): boolean;
-    getSchemaFor(object: object): ObjectSchema.DigestedObjectSchema;
+    getSchemaFor(object: object): DigestedObjectSchema;
     executeRawASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
     executeASKQuery(documentURI: string, askQuery: string, requestOptions?: HTTP.Request.Options): Promise<[boolean, HTTP.Response.Class]>;
     executeRawSELECTQuery(documentURI: string, selectQuery: string, requestOptions?: HTTP.Request.Options): Promise<[SPARQL.RawResults.Class, HTTP.Response.Class]>;
@@ -136,4 +136,4 @@ export declare class Class implements PointerLibrary, PointerValidator, ObjectSc
     private sendRequest(method, uri, options, body?);
     private sendRequest<T>(method, uri, options, body?, parser?);
 }
-export default Class;
+export default Documents;

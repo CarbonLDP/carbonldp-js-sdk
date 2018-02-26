@@ -1,5 +1,5 @@
 import * as Auth from "./Auth";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import { IllegalStateError } from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
 import DefaultExport, {
@@ -56,7 +56,7 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 				const target:SDKContext = new SDKContext();
 
 				expect( target.documents ).toBeDefined();
-				expect( target.documents ).toEqual( jasmine.any( Documents.Class ) );
+				expect( target.documents ).toEqual( jasmine.any( Documents ) );
 			} );
 
 		} );
@@ -72,8 +72,8 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"documents",
-			"Carbon.Documents.Class",
-			"Instance of `Carbon.Documents.Class` class to manage all the documents in the context."
+			"Carbon.Documents.Documents",
+			"Instance of `Carbon.Documents.Documents` class to manage all the documents in the context."
 		), ():void => {} );
 
 		it( hasProperty(

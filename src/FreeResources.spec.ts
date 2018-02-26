@@ -32,7 +32,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			OBLIGATORY,
 			"_documents",
 			"Private property that contains the Documents class where the object scope is in.",
-			"Carbon.Documents.Class"
+			"Carbon.Documents.Documents"
 		), ():void => {} );
 
 		it( hasProperty(
@@ -132,7 +132,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			OBLIGATORY,
 			"create",
 			"Creates a empty `Carbon.FreeResources.FreeResources` object.", [
-				{ name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents.Class` object where the FreeResources scope is in." },
+				{ name: "documents", type: "Carbon.Documents.Documents", description: "A `Carbon.Documents.Documents` object where the FreeResources scope is in." },
 			],
 			{ type: "Carbon.FreeResources.FreeResources" }
 		), ():void => {} );
@@ -143,7 +143,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			[ "T extends object" ],
 			"Creates a `Carbon.FreeResources.FreeResources` object from the plain object provided.", [
 				{ name: "object", type: "T", description: "The object that wants be converted in a `Carbon.FreeResources.FreeResources`." },
-				{ name: "documents", type: "Carbon.Documents.Class", description: "A `Carbon.Documents.Class` object where the FreeResources scope is in." },
+				{ name: "documents", type: "Carbon.Documents.Documents", description: "A `Carbon.Documents.Documents` object where the FreeResources scope is in." },
 			],
 			{ type: "T & Carbon.FreeResources.FreeResources" }
 		), ():void => {} );

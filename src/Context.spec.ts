@@ -35,7 +35,7 @@ describe( module( "Carbon/Context" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"documents",
-			"Carbon.Documents.Class",
+			"Carbon.Documents.Documents",
 			"The documents class of the context."
 		), ():void => {} );
 

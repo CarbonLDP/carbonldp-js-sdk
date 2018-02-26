@@ -18,7 +18,7 @@ import {
 } from "./test/JasmineExtender";
 import AbstractContext from "./AbstractContext";
 import { Document } from "./Document";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import * as HTTP from "./HTTP";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedDocument from "./PersistedDocument";
@@ -126,7 +126,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			};
 			expect( PersistedProtectedDocument.Factory.is( object ) ).toBe( false );
 
-			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( object, new Documents.Class() );
+			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( object, new Documents() );
 			expect( PersistedProtectedDocument.Factory.is( document ) ).toBe( true );
 		} );
 
@@ -152,14 +152,14 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				accessControlList: null,
 				getACL: fn,
 			};
-			protectedDocument = PersistedProtectedDocument.Factory.decorate( document, new Documents.Class() );
+			protectedDocument = PersistedProtectedDocument.Factory.decorate( document, new Documents() );
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( protectedDocument ) ).toBe( true );
 			expect( protectedDocument.getACL ).toBe( fn );
 
 			document = {
 				accessControlList: null,
 			};
-			protectedDocument = PersistedProtectedDocument.Factory.decorate( document, new Documents.Class() );
+			protectedDocument = PersistedProtectedDocument.Factory.decorate( document, new Documents() );
 			expect( PersistedProtectedDocument.Factory.hasClassProperties( protectedDocument ) ).toBe( true );
 			expect( protectedDocument.getACL ).not.toBe( fn );
 
@@ -172,7 +172,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			]
 		), ():void => {
 			let protectedDocument:PersistedProtectedDocument.Class;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			beforeAll( ():void => {
 				jasmine.Ajax.install();

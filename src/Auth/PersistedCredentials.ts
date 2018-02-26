@@ -1,5 +1,5 @@
 import * as HTTP from "./../HTTP";
-import * as Documents from "./../Documents";
+import { Documents } from "./../Documents";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
@@ -22,7 +22,7 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends object>( persistedDocument:T, documents:Documents.Class ):T & Class {
+	static decorate<T extends object>( persistedDocument:T, documents:Documents ):T & Class {
 		const persistedCredentials:T & Class = <T & Class> persistedDocument;
 		if( Factory.hasClassProperties( persistedDocument ) ) return persistedCredentials;
 

@@ -4,7 +4,7 @@ import * as Auth from "./Auth";
 import * as BlankNode from "./BlankNode";
 import * as Carbon from "./Carbon";
 import * as Document from "./Document";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import * as Fragment from "./Fragment";
 import * as HTTP from "./HTTP";

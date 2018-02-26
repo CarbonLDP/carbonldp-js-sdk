@@ -937,7 +937,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"create",
 			"Creates an empty `Carbon.PersistedDocument.Class` object with the URI provided.", [
 				{ name: "uri", type: "string" },
-				{ name: "documents", type: "Carbon.Documents.Class", description: "The Documents instance to which the persisted document belongs." },
+				{ name: "documents", type: "Carbon.Documents.Documents", description: "The Documents instance to which the persisted document belongs." },
 			],
 			{ type: "Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -959,7 +959,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Creates a PersistedDocument object from the object and URI provided.", [
 				{ name: "object", type: "T" },
 				{ name: "uri", type: "string" },
-				{ name: "documents", type: "Carbon.Documents.Class", description: "The Documents instance to which the persisted document belongs." },
+				{ name: "documents", type: "Carbon.Documents.Documents", description: "The Documents instance to which the persisted document belongs." },
 			],
 			{ type: "T & Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -990,7 +990,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `Carbon.PersistedDocument.Class` object.", [
 				{ name: "object", type: "T" },
-				{ name: "documents", type: "Carbon.Documents.Class", description: "The Documents instance to which the persisted document belongs." },
+				{ name: "documents", type: "Carbon.Documents.Documents", description: "The Documents instance to which the persisted document belongs." },
 			],
 			{ type: "T & Carbon.PersistedDocument.Class" }
 		), ():void => {
@@ -1047,7 +1047,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasProperty(
 				INSTANCE,
 				"_documents",
-				"Carbon.Documents.Class",
+				"Carbon.Documents.Documents",
 				"The Documents instance to which the document belongs."
 			), ():void => {
 				expect( document._documents ).toBeDefined();

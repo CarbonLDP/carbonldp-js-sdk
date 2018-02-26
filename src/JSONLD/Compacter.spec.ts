@@ -1,4 +1,4 @@
-import * as Documents from "../Documents";
+import { Documents } from "../Documents";
 import { ObjectSchemaDigester } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as RDFNode from "../RDF/Node";
@@ -41,7 +41,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send root path when one level resources", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
@@ -73,7 +73,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send root path for only main documents", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
@@ -114,7 +114,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of second level resources when schema is available", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "hasSchemaFor" ).and
 					.returnValue( true );
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
@@ -178,7 +178,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level resources when schema is unavailable", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -239,7 +239,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of second level of main documents when schema is available", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "hasSchemaFor" ).and
 					.returnValue( true );
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
@@ -310,7 +310,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level of main documents when schema is unavailable", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -379,7 +379,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with path", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
@@ -428,7 +428,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with no path", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
@@ -477,7 +477,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when documents resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
@@ -533,7 +533,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
 				queryResolver
 					.addProperty( "target" )
@@ -595,7 +595,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only second level when related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
 				queryResolver
 					.addProperty( "target" )
@@ -669,7 +669,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
 				queryResolver
 					.addProperty( "target" )
@@ -744,7 +744,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
 				queryResolver
 					.addProperty( "target" )
@@ -819,7 +819,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should merge every level schema from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
 				queryResolver
 					.addProperty( "target" )
@@ -901,7 +901,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact same related document by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
 				queryResolver
 					.addProperty( "target" )

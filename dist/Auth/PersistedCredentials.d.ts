@@ -1,5 +1,5 @@
 import * as HTTP from "./../HTTP";
-import * as Documents from "./../Documents";
+import { Documents } from "./../Documents";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as PersistedUser from "./PersistedUser";
 export interface Class extends PersistedProtectedDocument.Class {
@@ -12,6 +12,6 @@ export interface Class extends PersistedProtectedDocument.Class {
 }
 export declare class Factory {
     static hasClassProperties(object: object): boolean;
-    static decorate<T extends object>(persistedDocument: T, documents: Documents.Class): T & Class;
+    static decorate<T extends object>(persistedDocument: T, documents: Documents): T & Class;
 }
 export default Class;

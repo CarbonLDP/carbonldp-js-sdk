@@ -17,7 +17,7 @@ import {
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
-import * as Documents from "./../Documents";
+import { Documents } from "./../Documents";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
@@ -199,7 +199,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				enable: fn,
 				disable: fn,
 			};
-			persistedCredentials = PersistedCredentials.Factory.decorate( completeCredentials, new Documents.Class() );
+			persistedCredentials = PersistedCredentials.Factory.decorate( completeCredentials, new Documents() );
 			expect( persistedCredentials ).toBe( completeCredentials as PersistedCredentials.Class & AnotherMockCredentials );
 			expect( persistedCredentials.myProperty ).toBe( "My Property" );
 			expect( persistedCredentials.enable ).toBeDefined();
@@ -212,7 +212,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				enabled: null,
 				myProperty: "My Property",
 			};
-			persistedCredentials = PersistedCredentials.Factory.decorate<any>( partialCredentials, new Documents.Class );
+			persistedCredentials = PersistedCredentials.Factory.decorate<any>( partialCredentials, new Documents );
 			expect( persistedCredentials ).toBe( partialCredentials as PersistedCredentials.Class & AnotherMockCredentials );
 			expect( persistedCredentials.myProperty ).toBe( "My Property" );
 			expect( persistedCredentials.enable ).toBeDefined();

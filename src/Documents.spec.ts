@@ -29,7 +29,7 @@ import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import Carbon from "./Carbon";
 import { Document } from "./Document";
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import DefaultExport from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
@@ -74,31 +74,8 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):SPARQL.QueryD
 
 describe( module( "Carbon/Documents" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( Documents ).toBeDefined();
-		expect( Documents ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( interfaze( "Carbon.Documents.DocumentDecorator", "Interface that describes the properties needed to decorate a document when requested" ), ():void => {
-
-		it( hasProperty(
-			OBLIGATORY,
-			"decorator",
-			"( object:Object, ...parameters:any[] ) => Object",
-			"Function that is called when a specific document will be decorated.\n\nThe function must accept the document to decorate as the first parameter, continued by optional parameters that where specified in the `parameters` property of this interface.\n\nThe function must return the same object provided."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"parameters",
-			"any[]",
-			"Optional parameters that will be provided to the decorator function when called."
-		), ():void => {} );
-
-	} );
-
 	describe( clazz(
-		"Carbon.Documents.Class",
+		"Carbon.Documents.Documents",
 		"Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.", [
 			"Carbon.Pointer.PointerLibrary",
 			"Carbon.Pointer.PointerValidator",
@@ -115,8 +92,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( isDefined(), ():void => {
-			expect( Documents.Class ).toBeDefined();
-			expect( Utils.isFunction( Documents.Class ) ).toBe( true );
+			expect( Documents ).toBeDefined();
+			expect( Utils.isFunction( Documents ) ).toBe( true );
 		} );
 
 		it( hasConstructor( [
@@ -134,13 +111,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			let context:MockedContext = new MockedContext();
 
-			let documents:Documents.Class = new Documents.Class( context );
+			let documents:Documents = new Documents( context );
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents.Class ).toBe( true );
+			expect( documents instanceof Documents ).toBe( true );
 
-			documents = new Documents.Class();
+			documents = new Documents();
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents.Class ).toBe( true );
+			expect( documents instanceof Documents ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -160,7 +137,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let documents:Documents = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
 			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
@@ -183,7 +160,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let documents:Documents = context.documents;
 
 			expect( documents.documentDecorators ).toBeDefined();
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
@@ -214,7 +191,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.inScope ).toBeDefined();
 				expect( Utils.isFunction( documents.inScope ) ).toBe( true );
@@ -237,7 +214,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				let pointer:Pointer;
 
@@ -280,7 +257,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.inScope( "http://example.com/document/" ) ).toBe( true );
 				expect( documents.inScope( "http://example.com/document/child/" ) ).toBe( true );
@@ -307,7 +284,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -358,7 +335,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -415,7 +392,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			INSTANCE,
 			"_parseErrorResponse"
 		), ():void => {
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			describe( "When Documents has a specified context", ():void => {
 
@@ -618,7 +595,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents does not have a context", ():void => {
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should generate an HTTP error with empty ErrorResponse properties", ( done:DoneFn ):void => {
@@ -748,7 +725,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				const context:MockedContext = new MockedContext();
-				const documents:Documents.Class = context.documents;
+				const documents:Documents = context.documents;
 
 				const spySend:jasmine.Spy = spyOn( HTTP.Request.Service, "send" );
 
@@ -787,7 +764,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should reject promise if URI is a BNode", ( done:DoneFn ):void => {
-				let promise:Promise<any> = new Documents.Class().get( "_:a-blank-node" );
+				let promise:Promise<any> = new Documents().get( "_:a-blank-node" );
 				promise.then( () => {
 					done.fail( "Should not resolve promise." );
 				} ).catch( error => {
@@ -799,7 +776,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -1821,9 +1798,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2215,7 +2192,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				let spies:any = {
 					exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
@@ -2267,7 +2244,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -2325,10 +2302,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2401,14 +2378,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChild ).toBeDefined();
-				expect( Documents.Class.prototype.createChild ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChild ).toBeDefined();
+				expect( Documents.prototype.createChild ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -2701,10 +2678,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2776,14 +2753,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChildren ).toBeDefined();
-				expect( Documents.Class.prototype.createChildren ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChildren ).toBeDefined();
+				expect( Documents.prototype.createChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -2972,10 +2949,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3047,14 +3024,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChildAndRetrieve ).toBeDefined();
-				expect( Documents.Class.prototype.createChildAndRetrieve ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChildAndRetrieve ).toBeDefined();
+				expect( Documents.prototype.createChildAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -3429,10 +3406,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3504,14 +3481,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChildrenAndRetrieve ).toBeDefined();
-				expect( Documents.Class.prototype.createChildrenAndRetrieve ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChildrenAndRetrieve ).toBeDefined();
+				expect( Documents.prototype.createChildrenAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -3756,10 +3733,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3819,14 +3796,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.listChildren ).toBeDefined();
-				expect( Documents.Class.prototype.listChildren ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.listChildren ).toBeDefined();
+				expect( Documents.prototype.listChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -3982,9 +3959,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -4128,14 +4105,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.getChildren ).toBeDefined();
-				expect( Documents.Class.prototype.getChildren ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.getChildren ).toBeDefined();
+				expect( Documents.prototype.getChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -5528,9 +5505,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6075,14 +6052,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.createAccessPoint ).toBeDefined();
-				expect( Documents.Class.prototype.createAccessPoint ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createAccessPoint ).toBeDefined();
+				expect( Documents.prototype.createAccessPoint ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -6395,10 +6372,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6472,14 +6449,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.createAccessPoints ).toBeDefined();
-				expect( Documents.Class.prototype.createAccessPoints ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createAccessPoints ).toBeDefined();
+				expect( Documents.prototype.createAccessPoints ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -6708,10 +6685,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -6773,14 +6750,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.listMembers ).toBeDefined();
-				expect( Documents.Class.prototype.listMembers ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.listMembers ).toBeDefined();
+				expect( Documents.prototype.listMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -6940,9 +6917,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7089,14 +7066,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.getMembers ).toBeDefined();
-				expect( Documents.Class.prototype.getMembers ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.getMembers ).toBeDefined();
+				expect( Documents.prototype.getMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -8503,9 +8480,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9044,7 +9021,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:AbstractContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -9148,7 +9125,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents does not have a context", ():void => {
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9240,7 +9217,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.addMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
@@ -9284,7 +9261,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -9342,10 +9319,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9429,7 +9406,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:AbstractContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -9533,7 +9510,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents does not have a context", ():void => {
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9625,7 +9602,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.removeMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
@@ -9669,7 +9646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -9727,10 +9704,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9821,7 +9798,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.removeAllMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
@@ -9858,7 +9835,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -9916,10 +9893,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9980,14 +9957,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.save ).toBeDefined();
-				expect( Documents.Class.prototype.save ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.save ).toBeDefined();
+				expect( Documents.prototype.save ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -10378,9 +10355,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -10447,14 +10424,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.refresh ).toBeDefined();
-				expect( Documents.Class.prototype.refresh ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.refresh ).toBeDefined();
+				expect( Documents.prototype.refresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -11331,10 +11308,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject promise if not a persisted document", ( done:DoneFn ):void => {
@@ -11636,14 +11613,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.saveAndRefresh ).toBeDefined();
-				expect( Documents.Class.prototype.saveAndRefresh ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.saveAndRefresh ).toBeDefined();
+				expect( Documents.prototype.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -12218,9 +12195,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -12299,7 +12276,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.delete ).toBeDefined();
 				expect( Utils.isFunction( documents.delete ) ).toBe( true );
@@ -12346,7 +12323,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					let context:AbstractContext = new class extends AbstractContext {
@@ -12404,10 +12381,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -12481,7 +12458,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.getDownloadURL ).toBeDefined();
 				expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
@@ -12495,7 +12472,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -12556,10 +12533,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject any request", ( done:DoneFn ):void => {
@@ -12590,13 +12567,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawASKQuery ).toBeDefined();
 				expect( documents.executeRawASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -12672,10 +12649,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -12746,13 +12723,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeASKQuery ).toBeDefined();
 				expect( documents.executeASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					let context:AbstractContext = new class extends AbstractContext {
@@ -12828,10 +12805,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -12902,13 +12879,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawSELECTQuery ).toBeDefined();
 				expect( documents.executeRawSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -12984,10 +12961,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -13059,13 +13036,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeSELECTQuery ).toBeDefined();
 				expect( documents.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13141,10 +13118,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -13215,13 +13192,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( documents.executeRawCONSTRUCTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13297,10 +13274,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -13371,13 +13348,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( documents.executeRawDESCRIBEQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13453,10 +13430,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -13527,13 +13504,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeUPDATE ).toBeDefined();
 				expect( documents.executeUPDATE ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13609,10 +13586,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
@@ -13688,7 +13665,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let documents:Documents = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -13815,13 +13792,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.on ).toBeDefined();
 				expect( documents.on ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return error when does not have context", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				documents.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
 				}, ( error:Error ) => {
@@ -13832,14 +13809,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( () => documents.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
 				done();
 			} );
 
 			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -13853,7 +13830,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -13981,13 +13958,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.off ).toBeDefined();
 				expect( documents.off ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return error when does not have context", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				documents.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
 				}, ( error:Error ) => {
@@ -13998,14 +13975,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( () => documents.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
 				done();
 			} );
 
 			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -14019,7 +13996,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -14147,7 +14124,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.one ).toBeDefined();
 				expect( documents.one ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14230,7 +14207,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onDocumentCreated ).toBeDefined();
 				expect( documents.onDocumentCreated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14271,7 +14248,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onChildCreated ).toBeDefined();
 				expect( documents.onChildCreated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14312,7 +14289,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onAccessPointCreated ).toBeDefined();
 				expect( documents.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14353,7 +14330,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onDocumentModified ).toBeDefined();
 				expect( documents.onDocumentModified ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14394,7 +14371,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onDocumentDeleted ).toBeDefined();
 				expect( documents.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14435,7 +14412,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onMemberAdded ).toBeDefined();
 				expect( documents.onMemberAdded ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14476,7 +14453,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onMemberRemoved ).toBeDefined();
 				expect( documents.onMemberRemoved ).toEqual( jasmine.any( Function ) );
 			} );
@@ -14504,9 +14481,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Documents.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Documents.Documents" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Documents.Class );
+		expect( DefaultExport ).toBe( Documents );
 	} );
 
 } )

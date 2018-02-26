@@ -1,5 +1,5 @@
 import { CS } from "../Vocabularies/CS";
-import * as Documents from "./../Documents";
+import { Documents } from "./../Documents";
 import * as HTTP from "./../HTTP";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import { Pointer } from "./../Pointer";
@@ -30,7 +30,7 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends object>( object:T, documents:Documents.Class ):Class & T {
+	static decorate<T extends object>( object:T, documents:Documents ):Class & T {
 		const persistedUser:T & Class = <any> object;
 
 		if( Factory.hasClassProperties( persistedUser ) ) return persistedUser;

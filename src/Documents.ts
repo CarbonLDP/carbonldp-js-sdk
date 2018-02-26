@@ -38,7 +38,12 @@ import {
 	createDestination,
 	validateEventContext,
 } from "./Messaging/Utils";
-import * as ObjectSchema from "./ObjectSchema";
+import {
+	DigestedObjectSchema,
+	ObjectSchemaDigester,
+	ObjectSchemaResolver,
+	ObjectSchemaUtils,
+} from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
@@ -79,13 +84,13 @@ import {
 import { C } from "./Vocabularies/C";
 import { LDP } from "./Vocabularies/LDP";
 
-export class Class implements PointerLibrary, PointerValidator, ObjectSchema.ObjectSchemaResolver {
+export class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
 
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
 
-	private _documentDecorators:Map<string, ( object:object, documents?:Class ) => object>;
-	get documentDecorators():Map<string, ( object:object, documents?:Class ) => object> { return this._documentDecorators; }
+	private _documentDecorators:Map<string, ( object:object, documents?:Documents ) => object>;
+	get documentDecorators():Map<string, ( object:object, documents?:Documents ) => object> { return this._documentDecorators; }
 
 	private context:Context;
 	private pointers:Map<string, Pointer>;
@@ -106,9 +111,9 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 			this._jsonldConverter = new JSONLD.Converter.Class();
 		}
 
-		let decorators:Class[ "documentDecorators" ] = new Map();
+		let decorators:Documents[ "documentDecorators" ] = new Map();
 		if( this.context && this.context.parentContext ) {
-			let parentDecorators:Class[ "documentDecorators" ] = this.context.parentContext.documents.documentDecorators;
+			let parentDecorators:Documents[ "documentDecorators" ] = this.context.parentContext.documents.documentDecorators;
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.MapUtils.extend( decorators, parentDecorators );
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate );
@@ -129,7 +134,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
 		if( ! ! this.context ) {
-			id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this.context.getObjectSchema() );
+			id = ObjectSchemaUtils.resolveURI( id, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isRelative( id ) ) return true;
 			if( RDF.URI.Util.isBaseOf( this.context.baseURI, id ) ) return true;
@@ -556,8 +561,8 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 	}
 
 
-	getGeneralSchema():ObjectSchema.DigestedObjectSchema {
-		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
+	getGeneralSchema():DigestedObjectSchema {
+		if( ! this.context ) return new DigestedObjectSchema();
 		return this.context.getObjectSchema();
 	}
 
@@ -566,7 +571,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		return "@id" in object || "id" in object;
 	}
 
-	getSchemaFor( object:object ):ObjectSchema.DigestedObjectSchema {
+	getSchemaFor( object:object ):DigestedObjectSchema {
 		return ("@id" in object) ?
 			this.getDigestedObjectSchemaForExpandedObject( object ) :
 			this.getDigestedObjectSchemaForDocument( <any> object );
@@ -655,7 +660,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		let builder:QueryClause<SPARQL.Builder.ExecuteSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
 
 		if( this.context ) {
-			const schema:ObjectSchema.DigestedObjectSchema = this.getProcessedSchema();
+			const schema:DigestedObjectSchema = this.getProcessedSchema();
 
 			builder = builder
 				.base( schema.base )
@@ -716,7 +721,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 	one( event:Messaging.Event.MEMBER_REMOVED, uriPattern:string, onEvent:( message:Messaging.MemberRemoved.Class ) => void, onError:( error:Error ) => void ):void;
 	one( event:Messaging.Event | string, uriPattern:string, onEvent:( message:Messaging.Message.Class ) => void, onError:( error:Error ) => void ):void;
 	one<T extends Messaging.Message.Class>( event:Messaging.Event | string, uriPattern:string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
-		const self:Class = this;
+		const self:Documents = this;
 		this.on( event, uriPattern, function onEventWrapper( message:T ):void {
 			onEvent( message );
 			self.off( event, uriPattern, onEventWrapper, onError );
@@ -870,7 +875,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		persistedDocument._normalize();
 		const deltaCreator:LDPatch.DeltaCreator.Class = new LDPatch.DeltaCreator.Class( this.jsonldConverter );
 		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource.Class ) => {
-			const schema:ObjectSchema.DigestedObjectSchema = this.getSchemaFor( resource );
+			const schema:DigestedObjectSchema = this.getSchemaFor( resource );
 			deltaCreator.addResource( schema, resource._snapshot, resource );
 		} );
 
@@ -1203,7 +1208,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		*/
 
 		if( ! ! this.context ) {
-			uri = ObjectSchema.ObjectSchemaUtils.resolveURI( uri, this.getGeneralSchema() );
+			uri = ObjectSchemaUtils.resolveURI( uri, this.getGeneralSchema() );
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				const baseURI:string = this.context.baseURI;
@@ -1258,21 +1263,21 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 	}
 
 	private compactSingle( expandedObject:Object, targetObject:Object, pointerLibrary:PointerLibrary ):Object {
-		let digestedSchema:ObjectSchema.DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
+		let digestedSchema:DigestedObjectSchema = this.getDigestedObjectSchemaForExpandedObject( expandedObject );
 
 		return this.jsonldConverter.compact( expandedObject, targetObject, digestedSchema, pointerLibrary );
 	}
 
 
-	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):DigestedObjectSchema {
 		let types:string[] = RDF.Node.Util.getTypes( <any> expandedObject );
 
 		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ] );
 	}
 
-	private getDigestedObjectSchemaForDocument( document:Document ):ObjectSchema.DigestedObjectSchema {
+	private getDigestedObjectSchemaForDocument( document:Document ):DigestedObjectSchema {
 		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
-			const schemas:ObjectSchema.DigestedObjectSchema[] = [ document._partialMetadata.schema ];
+			const schemas:DigestedObjectSchema[] = [ document._partialMetadata.schema ];
 			return this.getProcessedSchema( schemas );
 		} else {
 			const types:string[] = document.types || [];
@@ -1280,8 +1285,8 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		}
 	}
 
-	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):ObjectSchema.DigestedObjectSchema {
-		if( ! this.context ) return new ObjectSchema.DigestedObjectSchema();
+	private getDigestedObjectSchema( objectTypes:string[], objectID:string ):DigestedObjectSchema {
+		if( ! this.context ) return new DigestedObjectSchema();
 
 		if(
 			Utils.isDefined( objectID ) &&
@@ -1291,7 +1296,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		)
 			objectTypes = objectTypes.concat( Document.TYPE );
 
-		const schemas:ObjectSchema.DigestedObjectSchema[] = objectTypes
+		const schemas:DigestedObjectSchema[] = objectTypes
 			.filter( type => this.context.hasObjectSchema( type ) )
 			.map( type => this.context.getObjectSchema( type ) )
 		;
@@ -1299,9 +1304,9 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		return this.getProcessedSchema( schemas );
 	}
 
-	private getProcessedSchema( objectSchemas:ObjectSchema.DigestedObjectSchema[] = [] ):ObjectSchema.DigestedObjectSchema {
+	private getProcessedSchema( objectSchemas:DigestedObjectSchema[] = [] ):DigestedObjectSchema {
 		objectSchemas.unshift( this.context.getObjectSchema() );
-		return ObjectSchema.ObjectSchemaDigester
+		return ObjectSchemaDigester
 			.combineDigestedObjectSchemas( objectSchemas );
 	}
 
@@ -1311,7 +1316,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 			throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
 		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
-			uri = ObjectSchema.ObjectSchemaUtils.resolveURI( uri, this.context.getObjectSchema() );
+			uri = ObjectSchemaUtils.resolveURI( uri, this.context.getObjectSchema() );
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
 		} else if( RDF.URI.Util.isRelative( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
@@ -1394,4 +1399,4 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 	}
 }
 
-export default Class;
+export default Documents;

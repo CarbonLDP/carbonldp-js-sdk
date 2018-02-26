@@ -1,4 +1,4 @@
-import * as Documents from "./Documents";
+import { Documents } from "./Documents";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,
@@ -18,7 +18,7 @@ import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 
 export interface FreeResources extends PointerLibrary, PointerValidator {
-	_documents:Documents.Class;
+	_documents:Documents;
 	_resourcesIndex:Map<string, Resource>;
 
 	hasResource( id:string ):boolean;
@@ -43,11 +43,11 @@ export interface FreeResourcesFactory extends ModelFactory<FreeResources>, Model
 	isDecorated( object:object ):object is FreeResources;
 
 
-	create( documents:Documents.Class ):FreeResources;
+	create( documents:Documents ):FreeResources;
 
-	createFrom<T extends object>( object:T, documents:Documents.Class ):T & FreeResources;
+	createFrom<T extends object>( object:T, documents:Documents ):T & FreeResources;
 
-	decorate<T extends object>( object:T, documents:Documents.Class ):T & FreeResources;
+	decorate<T extends object>( object:T, documents:Documents ):T & FreeResources;
 }
 
 
@@ -149,15 +149,15 @@ export const FreeResources:FreeResourcesFactory = {
 	},
 
 
-	create( documents:Documents.Class ):FreeResources {
+	create( documents:Documents ):FreeResources {
 		return FreeResources.createFrom( {}, documents );
 	},
 
-	createFrom<T extends object>( object:T, documents:Documents.Class ):T & FreeResources {
+	createFrom<T extends object>( object:T, documents:Documents ):T & FreeResources {
 		return FreeResources.decorate<T>( object, documents );
 	},
 
-	decorate<T extends object>( object:T, documents:Documents.Class ):T & FreeResources {
+	decorate<T extends object>( object:T, documents:Documents ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
 		Object.defineProperties( object, {

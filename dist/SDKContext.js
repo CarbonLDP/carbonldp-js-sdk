@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(require("./Auth"));
 var Document_1 = require("./Document");
-var Documents = __importStar(require("./Documents"));
+var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
 var LDP = __importStar(require("./LDP"));
 var Messaging = __importStar(require("./Messaging"));
@@ -26,7 +26,7 @@ var SDKContext = (function () {
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
         this.auth = new Auth.Class(this);
-        this.documents = new Documents.Class(this);
+        this.documents = new Documents_1.Documents(this);
         this.registerDefaultObjectSchemas();
     }
     Object.defineProperty(SDKContext.prototype, "baseURI", {

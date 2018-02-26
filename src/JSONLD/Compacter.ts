@@ -16,7 +16,7 @@ import {
 	QueryContextBuilder,
 	QueryProperty,
 } from "../SPARQL/QueryDocument";
-import * as Documents from "./../Documents";
+import { Documents } from "./../Documents";
 import * as Converter from "./Converter";
 
 function getRelativeID( node:RDFNode.Class ):string {
@@ -33,13 +33,13 @@ interface CompactionNode {
 }
 
 export class Class {
-	private documents:Documents.Class;
+	private documents:Documents;
 	private root?:string;
 	private resolver?:ObjectSchemaResolver;
 	private converter?:Converter.Class;
 	private compactionMap:Map<string, CompactionNode>;
 
-	constructor( documents:Documents.Class, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:Converter.Class ) {
+	constructor( documents:Documents, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:Converter.Class ) {
 		this.documents = documents;
 		this.root = root;
 		this.resolver = schemaResolver || documents;

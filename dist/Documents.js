@@ -22,7 +22,7 @@ var LDP_1 = require("./LDP");
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
 var Utils_1 = require("./Messaging/Utils");
-var ObjectSchema = __importStar(require("./ObjectSchema"));
+var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedDocument = __importStar(require("./PersistedDocument"));
 var PersistedFragment = __importStar(require("./PersistedFragment"));
 var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
@@ -38,8 +38,8 @@ var Utils = __importStar(require("./Utils"));
 var Utils_3 = require("./Utils");
 var C_1 = require("./Vocabularies/C");
 var LDP_2 = require("./Vocabularies/LDP");
-var Class = (function () {
-    function Class(context) {
+var Documents = (function () {
+    function Documents(context) {
         this.context = context;
         this.pointers = new Map();
         this.documentsBeingResolved = new Map();
@@ -65,22 +65,22 @@ var Class = (function () {
         }
         this._documentDecorators = decorators;
     }
-    Object.defineProperty(Class.prototype, "jsonldConverter", {
+    Object.defineProperty(Documents.prototype, "jsonldConverter", {
         get: function () { return this._jsonldConverter; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "documentDecorators", {
+    Object.defineProperty(Documents.prototype, "documentDecorators", {
         get: function () { return this._documentDecorators; },
         enumerable: true,
         configurable: true
     });
-    Class.prototype.inScope = function (idOrPointer) {
+    Documents.prototype.inScope = function (idOrPointer) {
         var id = Pointer_1.Pointer.is(idOrPointer) ? idOrPointer.id : idOrPointer;
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
-            id = ObjectSchema.ObjectSchemaUtils.resolveURI(id, this.context.getObjectSchema());
+            id = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this.context.getObjectSchema());
             if (RDF.URI.Util.isRelative(id))
                 return true;
             if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
@@ -94,7 +94,7 @@ var Class = (function () {
             return this.context.parentContext.documents.inScope(id);
         return RDF.URI.Util.isRelative(id);
     };
-    Class.prototype.hasPointer = function (id) {
+    Documents.prototype.hasPointer = function (id) {
         id = this.getPointerID(id);
         if (this.pointers.has(id))
             return true;
@@ -102,7 +102,7 @@ var Class = (function () {
             return this.context.parentContext.documents.hasPointer(id);
         return false;
     };
-    Class.prototype.getPointer = function (id) {
+    Documents.prototype.getPointer = function (id) {
         var localID = this.getPointerID(id);
         if (localID === null) {
             if (!!this.context && !!this.context.parentContext)
@@ -116,7 +116,7 @@ var Class = (function () {
         }
         return this.pointers.get(localID);
     };
-    Class.prototype.removePointer = function (idOrPointer) {
+    Documents.prototype.removePointer = function (idOrPointer) {
         var id = Utils.isString(idOrPointer) ? idOrPointer : idOrPointer.id;
         var localID = this.getPointerID(id);
         if (localID === null) {
@@ -126,7 +126,7 @@ var Class = (function () {
         }
         return this.pointers.delete(localID);
     };
-    Class.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
+    Documents.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
         if (Utils.isFunction(optionsOrQueryBuilderFn))
@@ -138,7 +138,7 @@ var Class = (function () {
                 _this.getFullDocument(uri, requestOptions);
         });
     };
-    Class.prototype.exists = function (documentURI, requestOptions) {
+    Documents.prototype.exists = function (documentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -153,7 +153,7 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
-    Class.prototype.createChild = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
+    Documents.prototype.createChild = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
@@ -164,7 +164,7 @@ var Class = (function () {
             return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
-    Class.prototype.createChildren = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
+    Documents.prototype.createChildren = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : [];
@@ -178,7 +178,7 @@ var Class = (function () {
             }));
         }).then(Utils_3.mapTupleArray);
     };
-    Class.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
+    Documents.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
@@ -189,7 +189,7 @@ var Class = (function () {
             return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
-    Class.prototype.createChildrenAndRetrieve = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
+    Documents.prototype.createChildrenAndRetrieve = function (parentURI, childrenObjects, slugsOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : [];
@@ -203,7 +203,7 @@ var Class = (function () {
             }));
         }).then(Utils_3.mapTupleArray);
     };
-    Class.prototype.listChildren = function (parentURI, requestOptions) {
+    Documents.prototype.listChildren = function (parentURI, requestOptions) {
         var _this = this;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
@@ -217,7 +217,7 @@ var Class = (function () {
             return _this.executeSelectPatterns(parentURI, requestOptions, queryContext, "child", pattens);
         });
     };
-    Class.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+    Documents.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
@@ -236,7 +236,7 @@ var Class = (function () {
             return _this.executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn);
         });
     };
-    Class.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
+    Documents.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
@@ -247,7 +247,7 @@ var Class = (function () {
             return _this.persistAccessPoint(documentURI, accessPoint, slug, requestOptions);
         });
     };
-    Class.prototype.createAccessPoints = function (documentURI, accessPoints, slugsOrRequestOptions, requestOptions) {
+    Documents.prototype.createAccessPoints = function (documentURI, accessPoints, slugsOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var slugs = Utils.isArray(slugsOrRequestOptions) ? slugsOrRequestOptions : [];
@@ -261,7 +261,7 @@ var Class = (function () {
             }));
         }).then(Utils_3.mapTupleArray);
     };
-    Class.prototype.listMembers = function (uri, requestOptions) {
+    Documents.prototype.listMembers = function (uri, requestOptions) {
         var _this = this;
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
@@ -282,7 +282,7 @@ var Class = (function () {
             return _this.executeSelectPatterns(uri, requestOptions, queryContext, "member", pattens);
         });
     };
-    Class.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+    Documents.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
         var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
@@ -308,11 +308,11 @@ var Class = (function () {
             return _this.executeQueryBuilder(uri, requestOptions, queryContext, membersProperty, queryBuilderFn);
         });
     };
-    Class.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
+    Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         return this.addMembers(documentURI, [memberORUri], requestOptions);
     };
-    Class.prototype.addMembers = function (documentURI, members, requestOptions) {
+    Documents.prototype.addMembers = function (documentURI, members, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -326,11 +326,11 @@ var Class = (function () {
             return _this.sendRequest(HTTP.Method.PUT, documentURI, requestOptions, body);
         });
     };
-    Class.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
+    Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
         return this.removeMembers(documentURI, [memberORUri], requestOptions);
     };
-    Class.prototype.removeMembers = function (documentURI, members, requestOptions) {
+    Documents.prototype.removeMembers = function (documentURI, members, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -349,7 +349,7 @@ var Class = (function () {
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, body);
         });
     };
-    Class.prototype.removeAllMembers = function (documentURI, requestOptions) {
+    Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -370,7 +370,7 @@ var Class = (function () {
             return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
         });
     };
-    Class.prototype.save = function (persistedDocument, requestOptions) {
+    Documents.prototype.save = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -380,7 +380,7 @@ var Class = (function () {
             return _this.patchDocument(persistedDocument, requestOptions);
         });
     };
-    Class.prototype.refresh = function (persistedDocument, requestOptions) {
+    Documents.prototype.refresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils.promiseMethod(function () {
@@ -391,7 +391,7 @@ var Class = (function () {
                 _this.refreshFullDocument(persistedDocument, requestOptions);
         });
     };
-    Class.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
+    Documents.prototype.saveAndRefresh = function (persistedDocument, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
@@ -413,7 +413,7 @@ var Class = (function () {
             return [persistedDocument, responses];
         });
     };
-    Class.prototype.delete = function (documentURI, requestOptions) {
+    Documents.prototype.delete = function (documentURI, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -426,7 +426,7 @@ var Class = (function () {
             return response;
         });
     };
-    Class.prototype.getDownloadURL = function (documentURI, requestOptions) {
+    Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
         var _this = this;
         if (!this.context)
             return Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
@@ -435,22 +435,22 @@ var Class = (function () {
             return _this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
         });
     };
-    Class.prototype.getGeneralSchema = function () {
+    Documents.prototype.getGeneralSchema = function () {
         if (!this.context)
-            return new ObjectSchema.DigestedObjectSchema();
+            return new ObjectSchema_1.DigestedObjectSchema();
         return this.context.getObjectSchema();
     };
-    Class.prototype.hasSchemaFor = function (object, path) {
+    Documents.prototype.hasSchemaFor = function (object, path) {
         if (path !== void 0)
             return false;
         return "@id" in object || "id" in object;
     };
-    Class.prototype.getSchemaFor = function (object) {
+    Documents.prototype.getSchemaFor = function (object) {
         return ("@id" in object) ?
             this.getDigestedObjectSchemaForExpandedObject(object) :
             this.getDigestedObjectSchemaForDocument(object);
     };
-    Class.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
+    Documents.prototype.executeRawASKQuery = function (documentURI, askQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -461,7 +461,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
+    Documents.prototype.executeASKQuery = function (documentURI, askQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -472,7 +472,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
+    Documents.prototype.executeRawSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -483,7 +483,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
+    Documents.prototype.executeSELECTQuery = function (documentURI, selectQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -494,7 +494,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
+    Documents.prototype.executeRawCONSTRUCTQuery = function (documentURI, constructQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -505,7 +505,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
+    Documents.prototype.executeRawDESCRIBEQuery = function (documentURI, describeQuery, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -516,7 +516,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.executeUPDATE = function (documentURI, update, requestOptions) {
+    Documents.prototype.executeUPDATE = function (documentURI, update, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
@@ -527,7 +527,7 @@ var Class = (function () {
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
-    Class.prototype.sparql = function (documentURI) {
+    Documents.prototype.sparql = function (documentURI) {
         var builder = new Builder_1.default(this, this.getRequestURI(documentURI));
         if (this.context) {
             var schema = this.getProcessedSchema();
@@ -540,7 +540,7 @@ var Class = (function () {
         }
         return builder;
     };
-    Class.prototype.on = function (event, uriPattern, onEvent, onError) {
+    Documents.prototype.on = function (event, uriPattern, onEvent, onError) {
         try {
             Utils_1.validateEventContext(this.context);
             var destination = Utils_1.createDestination(event, uriPattern, this.context.baseURI);
@@ -552,7 +552,7 @@ var Class = (function () {
             onError(error);
         }
     };
-    Class.prototype.off = function (event, uriPattern, onEvent, onError) {
+    Documents.prototype.off = function (event, uriPattern, onEvent, onError) {
         try {
             Utils_1.validateEventContext(this.context);
             var destination = Utils_1.createDestination(event, uriPattern, this.context.baseURI);
@@ -564,35 +564,35 @@ var Class = (function () {
             onError(error);
         }
     };
-    Class.prototype.one = function (event, uriPattern, onEvent, onError) {
+    Documents.prototype.one = function (event, uriPattern, onEvent, onError) {
         var self = this;
         this.on(event, uriPattern, function onEventWrapper(message) {
             onEvent(message);
             self.off(event, uriPattern, onEventWrapper, onError);
         }, onError);
     };
-    Class.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError);
     };
-    Class.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError);
     };
-    Class.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
     };
-    Class.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
     };
-    Class.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError);
     };
-    Class.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError);
     };
-    Class.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
+    Documents.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
         return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
-    Class.prototype._getPersistedDocument = function (rdfDocument, response) {
+    Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResources = RDF.Document.Util.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
             throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
@@ -600,13 +600,13 @@ var Class = (function () {
             throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
         return new JSONLD.Compacter.Class(this).compactDocument(rdfDocument);
     };
-    Class.prototype._getFreeResources = function (nodes) {
+    Documents.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources_1.FreeResources.create(this);
         var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
         this.compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;
     };
-    Class.prototype._parseErrorResponse = function (response) {
+    Documents.prototype._parseErrorResponse = function (response) {
         var _this = this;
         if (response instanceof Error)
             return Promise.reject(response);
@@ -631,7 +631,7 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
-    Class.prototype.getFullDocument = function (uri, requestOptions) {
+    Documents.prototype.getFullDocument = function (uri, requestOptions) {
         var _this = this;
         if (this.hasPointer(uri)) {
             var pointer = this.getPointer(uri);
@@ -674,7 +674,7 @@ var Class = (function () {
         this.documentsBeingResolved.set(uri, promise);
         return promise;
     };
-    Class.prototype.getPartialDocument = function (uri, requestOptions, queryBuilderFn) {
+    Documents.prototype.getPartialDocument = function (uri, requestOptions, queryBuilderFn) {
         var queryContext = new QueryDocument_1.QueryContextBuilder.Class(this.context);
         var documentProperty = queryContext
             .addProperty("document")
@@ -687,7 +687,7 @@ var Class = (function () {
             return [documents[0], response];
         });
     };
-    Class.prototype.patchDocument = function (persistedDocument, requestOptions) {
+    Documents.prototype.patchDocument = function (persistedDocument, requestOptions) {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
         if (!persistedDocument.isDirty())
@@ -709,7 +709,7 @@ var Class = (function () {
             return _this.applyResponseData(persistedDocument, response);
         });
     };
-    Class.prototype.refreshFullDocument = function (persistedDocument, requestOptions) {
+    Documents.prototype.refreshFullDocument = function (persistedDocument, requestOptions) {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
@@ -733,7 +733,7 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
-    Class.prototype.refreshPartialDocument = function (persistedDocument, requestOptions) {
+    Documents.prototype.refreshPartialDocument = function (persistedDocument, requestOptions) {
         var uri = this.getRequestURI(persistedDocument.id);
         var queryContext = new QueryDocument_1.QueryContextPartial.Class(persistedDocument, this.context);
         var targetName = "document";
@@ -766,7 +766,7 @@ var Class = (function () {
             return [documents[0], response];
         });
     };
-    Class.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
+    Documents.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
         var Builder = targetProperty.name === "document" ?
             QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
@@ -834,7 +834,7 @@ var Class = (function () {
             return returned;
         });
     };
-    Class.prototype.executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
+    Documents.prototype.executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;
         var metadataVar = queryContext.getVariable("metadata");
         var construct = (_a = new tokens_1.ConstructToken()
@@ -895,7 +895,7 @@ var Class = (function () {
         });
         var _a, _b;
     };
-    Class.prototype.executeSelectPatterns = function (uri, requestOptions, queryContext, targetName, selectPatterns) {
+    Documents.prototype.executeSelectPatterns = function (uri, requestOptions, queryContext, targetName, selectPatterns) {
         var _this = this;
         var targetVar = queryContext.getVariable(targetName);
         var select = (_a = new tokens_1.SelectToken()
@@ -914,14 +914,14 @@ var Class = (function () {
         });
         var _a, _b;
     };
-    Class.prototype.persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
+    Documents.prototype.persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
         if (PersistedDocument.Factory.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
         var childDocument = Document_1.Document.is(childObject) ? childObject : Document_1.Document.createFrom(childObject);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
         return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
-    Class.prototype.persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
+    Documents.prototype.persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
         if (PersistedDocument.Factory.is(accessPoint))
             throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
         var accessPointDocument = AccessPoint_1.AccessPoint.is(accessPoint) ?
@@ -931,7 +931,7 @@ var Class = (function () {
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         return this.persistDocument(documentURI, slug, accessPointDocument, requestOptions);
     };
-    Class.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
+    Documents.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
         var _this = this;
         HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         if (document.id) {
@@ -965,17 +965,17 @@ var Class = (function () {
             return Promise.reject(error);
         });
     };
-    Class.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
+    Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
         if (rdfDocuments.length > 1)
             throw new HTTP.Errors.BadResponseError("Several documents share the same id.", response);
         return rdfDocuments.length > 0 ? rdfDocuments[0] : null;
     };
-    Class.prototype.getPointerID = function (uri) {
+    Documents.prototype.getPointerID = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            uri = ObjectSchema.ObjectSchemaUtils.resolveURI(uri, this.getGeneralSchema());
+            uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -994,10 +994,10 @@ var Class = (function () {
             return uri;
         }
     };
-    Class.prototype.createPointer = function (localID) {
+    Documents.prototype.createPointer = function (localID) {
         return this.createPointerFrom({}, localID);
     };
-    Class.prototype.createPointerFrom = function (object, localID) {
+    Documents.prototype.createPointerFrom = function (object, localID) {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
         var pointer = Pointer_1.Pointer.createFrom(object, id);
@@ -1011,7 +1011,7 @@ var Class = (function () {
         });
         return pointer;
     };
-    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
+    Documents.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary) {
         if (!Utils.isArray(expandedObjectOrObjects))
             return this.compactSingle(expandedObjectOrObjects, targetObjectOrObjects, pointerLibrary);
         var expandedObjects = expandedObjectOrObjects;
@@ -1023,15 +1023,15 @@ var Class = (function () {
         }
         return targetObjects;
     };
-    Class.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
+    Documents.prototype.compactSingle = function (expandedObject, targetObject, pointerLibrary) {
         var digestedSchema = this.getDigestedObjectSchemaForExpandedObject(expandedObject);
         return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
-    Class.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
+    Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
         var types = RDF.Node.Util.getTypes(expandedObject);
         return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
-    Class.prototype.getDigestedObjectSchemaForDocument = function (document) {
+    Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
         if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
             return this.getProcessedSchema(schemas);
@@ -1041,10 +1041,10 @@ var Class = (function () {
             return this.getDigestedObjectSchema(types, document.id);
         }
     };
-    Class.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
+    Documents.prototype.getDigestedObjectSchema = function (objectTypes, objectID) {
         var _this = this;
         if (!this.context)
-            return new ObjectSchema.DigestedObjectSchema();
+            return new ObjectSchema_1.DigestedObjectSchema();
         if (Utils.isDefined(objectID) &&
             !RDF.URI.Util.hasFragment(objectID) &&
             !RDF.URI.Util.isBNodeID(objectID) &&
@@ -1055,20 +1055,20 @@ var Class = (function () {
             .map(function (type) { return _this.context.getObjectSchema(type); });
         return this.getProcessedSchema(schemas);
     };
-    Class.prototype.getProcessedSchema = function (objectSchemas) {
+    Documents.prototype.getProcessedSchema = function (objectSchemas) {
         if (objectSchemas === void 0) { objectSchemas = []; }
         objectSchemas.unshift(this.context.getObjectSchema());
-        return ObjectSchema.ObjectSchemaDigester
+        return ObjectSchema_1.ObjectSchemaDigester
             .combineDigestedObjectSchemas(objectSchemas);
     };
-    Class.prototype.getRequestURI = function (uri) {
+    Documents.prototype.getRequestURI = function (uri) {
         if (RDF.URI.Util.isBNodeID(uri)) {
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         }
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.ObjectSchemaUtils.resolveURI(uri, this.context.getObjectSchema());
+            uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, this.context.getObjectSchema());
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
@@ -1082,7 +1082,7 @@ var Class = (function () {
         }
         return uri;
     };
-    Class.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
+    Documents.prototype.setDefaultRequestOptions = function (requestOptions, interactionModel) {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         if (interactionModel)
@@ -1090,7 +1090,7 @@ var Class = (function () {
         HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         return requestOptions;
     };
-    Class.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
+    Documents.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
         var eTag = HTTP.Response.Util.getETag(response);
         if (eTag === null)
             throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
@@ -1101,7 +1101,7 @@ var Class = (function () {
         persistedDocument._etag = eTag;
         return [persistedDocument, response];
     };
-    Class.prototype._parseMembers = function (pointers) {
+    Documents.prototype._parseMembers = function (pointers) {
         var _this = this;
         return pointers.map(function (pointer) {
             if (Utils.isString(pointer))
@@ -1111,7 +1111,7 @@ var Class = (function () {
             throw new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided.");
         });
     };
-    Class.prototype.applyResponseData = function (persistedProtectedDocument, response) {
+    Documents.prototype.applyResponseData = function (persistedProtectedDocument, response) {
         var _this = this;
         if (response.status === 204 || !response.data)
             return [persistedProtectedDocument, response];
@@ -1125,7 +1125,7 @@ var Class = (function () {
             return _this.updateFromPreferenceApplied(persistedProtectedDocument, rdfDocuments, response);
         });
     };
-    Class.prototype.applyNodeMap = function (freeNodes) {
+    Documents.prototype.applyNodeMap = function (freeNodes) {
         if (!freeNodes.length)
             return;
         var freeResources = this._getFreeResources(freeNodes);
@@ -1143,13 +1143,13 @@ var Class = (function () {
             document_1._syncSavedFragments();
         }
     };
-    Class.prototype.sendRequest = function (method, uri, options, body, parser) {
+    Documents.prototype.sendRequest = function (method, uri, options, body, parser) {
         return HTTP.Request.Service.send(method, uri, body || null, options, parser)
             .catch(this._parseErrorResponse.bind(this));
     };
-    return Class;
+    return Documents;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.Documents = Documents;
+exports.default = Documents;
 
 //# sourceMappingURL=Documents.js.map

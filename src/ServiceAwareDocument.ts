@@ -1,5 +1,5 @@
 import { Document } from "./Document";
-import { Class as Documents } from "./Documents";
+import { Documents as Documents } from "./Documents";
 import { ModelDecorator } from "./ModelDecorator";
 import { isObject } from "./Utils";
 

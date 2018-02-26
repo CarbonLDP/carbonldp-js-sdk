@@ -1,4 +1,4 @@
-import * as Documents from "./../Documents";
+import { Documents } from "./../Documents";
 import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
@@ -51,7 +51,7 @@ export class Factory {
 			&& PersistedProtectedDocument.Factory.is( object );
 	}
 
-	static decorate<T extends object>( object:T, documents:Documents.Class ):T & Class {
+	static decorate<T extends object>( object:T, documents:Documents ):T & Class {
 		let persistedRole:Class & T = <T & Class> object;
 		if( Factory.hasClassProperties( persistedRole ) ) return persistedRole;
 
