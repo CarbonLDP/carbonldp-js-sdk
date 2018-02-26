@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/clauses";
-import * as AccessPoint from "./AccessPoint";
+import { AccessPointBase } from "./AccessPoint";
 import Context from "./Context";
 import * as FreeResources from "./FreeResources";
 import * as HTTP from "./HTTP";
@@ -41,10 +41,10 @@ export declare class Class implements PointerLibrary, PointerValidator, ObjectSc
     listChildren(parentURI: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getChildren<T extends object>(parentURI: string, requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getChildren<T extends object>(parentURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
-    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPoint.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
-    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPoint.Class, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
-    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPoint.Class)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
-    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPoint.Class)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
+    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, requestOptions?: HTTP.Request.Options): Promise<[T & PersistedAccessPoint.Class, HTTP.Response.Class]>;
+    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
+    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedAccessPoint.Class)[], HTTP.Response.Class[]]>;
     listMembers(uri: string, requestOptions?: HTTP.Request.Options): Promise<[PersistedDocument.Class[], HTTP.Response.Class]>;
     getMembers<T extends object>(uri: string, requestOptions: HTTP.Request.Options, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;
     getMembers<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class]>;

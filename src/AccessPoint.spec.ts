@@ -1,9 +1,8 @@
-import * as AccessPoint from "./AccessPoint";
-import DefaultExport from "./AccessPoint";
+import DefaultExport, { AccessPoint } from "./AccessPoint";
+
 import { DirectContainer } from "./LDP/DirectContainer";
 import { Pointer } from "./Pointer";
 import {
-	clazz,
 	extendsClass,
 	hasDefaultExport,
 	hasMethod,
@@ -13,32 +12,16 @@ import {
 	module,
 	OBLIGATORY,
 	OPTIONAL,
+	property,
 	STATIC,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import { C } from "./Vocabularies/C";
 
 describe( module( "Carbon/AccessPoint" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( AccessPoint ).toBeDefined();
-		expect( Utils.isObject( AccessPoint ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( AccessPoint.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( AccessPoint.RDF_CLASS ) ).toBe( true );
-
-		expect( AccessPoint.RDF_CLASS ).toBe( C.AccessPoint );
-	} );
-
 	describe( interfaze(
-		"Carbon.AccessPoint.Class",
-		"Interface that represents the basic properties to construct a `Carbon.AccessPoint.DocumentClass`."
+		"Carbon.AccessPoint.AccessPointBase",
+		"Interface that represents the basic properties to construct a `Carbon.AccessPoint.AccessPoint`."
 	), ():void => {
 
 		it( hasProperty(
@@ -65,7 +48,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.AccessPoint.DocumentClass",
+		"Carbon.AccessPoint.AccessPoint",
 		"Interface that represents the document of an in-memory access point."
 	), ():void => {
 
@@ -94,90 +77,125 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.AccessPoint.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:AccessPoint.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( clazz(
-		"Carbon.AccessPoint.Factory",
-		"Factory class for `Carbon.AccessPoint.Class` objects."
+	describe( interfaze(
+		"Carbon.AccessPoint.AccessPointFactory",
+		"Interface with the factory, decorate and utils methods of a `Carbon.AccessPoint.AccessPoint` object."
 	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( AccessPoint.Factory ).toBeDefined();
-			expect( Utils.isFunction( AccessPoint.Factory ) ).toBe( true );
-		} );
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
+			"is",
+			"Returns true if the object provided is considered a `Carbon.AccessPoint.AccessPoint` object", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.AccessPoint.AccessPoint" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
 			"create",
-			"Creates a `Carbon.AccessPoint.Class` object with the parameters specified.", [
+			"Creates a `Carbon.AccessPoint.AccessPoint` object with the parameters specified.", [
 				{ name: "membershipResource", type: "Carbon.Pointer.Pointer", description: "A Pointer to the parent of the AccessPoint." },
 				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
 				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
-			{ type: "Carbon.AccessPoint.Class" }
-		), ():void => {
-			expect( AccessPoint.Factory.create ).toBeDefined();
-			expect( Utils.isFunction( AccessPoint.Factory.create ) ).toBe( true );
-
-			let spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" );
-			let pointer:Pointer = Pointer.create();
-
-			AccessPoint.Factory.create( pointer, "http://example.com/myNamespace#some-relation" );
-			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
-			spy.calls.reset();
-
-			AccessPoint.Factory.create( pointer, pointer );
-			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
-			spy.calls.reset();
-
-			AccessPoint.Factory.create( pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
-			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
-			spy.calls.reset();
-
-			AccessPoint.Factory.create( pointer, pointer, pointer );
-			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
-		} );
+			{ type: "Carbon.AccessPoint.AccessPoint" }
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"createFrom",
-			[ "T extends Object" ],
-			"Creates a `Carbon.AccessPoint.Class` object from the object and parameters specified.", [
+			[ "T extends object" ],
+			"Creates a `Carbon.AccessPoint.AccessPoint` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object that will be converted into an AccessPoint." },
 				{ name: "membershipResource", type: "Carbon.Pointer.Pointer", description: "A Pointer to the parent of the AccessPoint." },
 				{ name: "hasMemberRelation", type: "string | Carbon.Pointer.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
 				{ name: "isMemberOfRelation", type: "string | Carbon.Pointer.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
-			{ type: "T & Carbon.AccessPoint.Class" }
-		), ():void => {
-			expect( AccessPoint.Factory.createFrom ).toBeDefined();
-			expect( Utils.isFunction( AccessPoint.Factory.createFrom ) ).toBe( true );
+			{ type: "T & Carbon.AccessPoint.AccessPoint" }
+		), ():void => {} );
+
+	} );
+
+	describe( property( STATIC, "AccessPoint", "Carbon.AccessPoint.AccessPointFactory", "Constant that implements the `Carbon.AccessPoint.AccessPoint` interface." ), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( AccessPoint ).toBeDefined();
+			expect( AccessPoint ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "AccessPoint.TYPE", ():void => {
+			expect( AccessPoint.TYPE ).toBeDefined();
+			expect( AccessPoint.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( AccessPoint.TYPE ).toBe( C.AccessPoint );
+		} );
+
+		// TODO: Test `AccessPoint.is`
+
+		// TODO: Separate in different tests
+		it( "AccessPoint.create", ():void => {
+			expect( AccessPoint.create ).toBeDefined();
+			expect( AccessPoint.create ).toEqual( jasmine.any( Function ) );
+
+			let spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" );
+			let pointer:Pointer = Pointer.create();
+
+			AccessPoint.create( pointer, "http://example.com/myNamespace#some-relation" );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
+			spy.calls.reset();
+
+			AccessPoint.create( pointer, pointer );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
+			spy.calls.reset();
+
+			AccessPoint.create( pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			spy.calls.reset();
+
+			AccessPoint.create( pointer, pointer, pointer );
+			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
+		} );
+
+		// TODO: Separate in different tests
+		it( "AccessPoint.createFrom", ():void => {
+			expect( AccessPoint.createFrom ).toBeDefined();
+			expect( AccessPoint.createFrom ).toEqual( jasmine.any( Function ) );
 
 			let spy:jasmine.Spy = spyOn( DirectContainer, "createFrom" );
 			let pointer:Pointer = Pointer.create();
 
-			AccessPoint.Factory.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );
+			AccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
 			spy.calls.reset();
 
-			AccessPoint.Factory.createFrom( {}, pointer, pointer );
+			AccessPoint.createFrom( {}, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
 			spy.calls.reset();
 
-			AccessPoint.Factory.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			AccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
 			spy.calls.reset();
 
-			AccessPoint.Factory.createFrom( {}, pointer, pointer, pointer );
+			AccessPoint.createFrom( {}, pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
 		} );
 
+	} );
+
+	it( hasDefaultExport( "Carbon.AccessPoint.AccessPoint" ), ():void => {
+		let defaultExport:DefaultExport = <any> {};
+		let defaultTarget:AccessPoint;
+
+		defaultTarget = defaultExport;
+		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

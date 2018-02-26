@@ -9,8 +9,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AddMemberAction = __importStar(require("./LDP/AddMemberAction"));
 exports.AddMemberAction = AddMemberAction;
-var DirectContainer_1 = require("./LDP/DirectContainer");
-exports.DirectContainer = DirectContainer_1.DirectContainer;
+var DirectContainer = __importStar(require("./LDP/DirectContainer"));
+exports.DirectContainer = DirectContainer;
 var DocumentMetadata = __importStar(require("./LDP/DocumentMetadata"));
 exports.DocumentMetadata = DocumentMetadata;
 var Entry = __importStar(require("./LDP/Entry"));

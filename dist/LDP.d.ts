@@ -1,5 +1,5 @@
 import * as AddMemberAction from "./LDP/AddMemberAction";
-import { DirectContainer } from "./LDP/DirectContainer";
+import * as DirectContainer from "./LDP/DirectContainer";
 import * as DocumentMetadata from "./LDP/DocumentMetadata";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";

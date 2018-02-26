@@ -13,7 +13,10 @@ import {
 	VariableToken,
 } from "sparqler/tokens";
 
-import * as AccessPoint from "./AccessPoint";
+import {
+	AccessPoint,
+	AccessPointBase,
+} from "./AccessPoint";
 import * as Auth from "./Auth";
 import Carbon from "./Carbon";
 import Context from "./Context";
@@ -316,9 +319,9 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		} );
 	}
 
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPoint.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPoint.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPoint.Class, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slugOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
 		const slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -330,9 +333,9 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		} );
 	}
 
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPoint.Class)[], slugsOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]> {
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions:any, requestOptions:HTTP.Request.Options = {} ):Promise<[ (T & PersistedAccessPoint.Class)[], HTTP.Response.Class[] ]> {
 		const slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : [];
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
@@ -340,7 +343,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 			documentURI = this.getRequestURI( documentURI );
 			HTTP.Request.Util.setPreferredRetrieval( "minimal", requestOptions );
 
-			return Promise.all<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>( accessPoints.map( ( accessPoint:T & AccessPoint.Class, index:number ) => {
+			return Promise.all<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]>( accessPoints.map( ( accessPoint:T & AccessPointBase, index:number ) => {
 				const cloneOptions:HTTP.Request.Options = HTTP.Request.Util.cloneOptions( requestOptions );
 				return this.persistAccessPoint<T>( documentURI, accessPoint, slugs[ index ], cloneOptions );
 			} ) );
@@ -1128,16 +1131,16 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		return this.persistDocument<T & Document, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
-	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPoint.Class, slug:string, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
+	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:HTTP.Request.Options ):Promise<[ T & PersistedAccessPoint.Class, HTTP.Response.Class ]> {
 		if( PersistedDocument.Factory.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
 
-		const accessPointDocument:T & AccessPoint.DocumentClass = AccessPoint.Factory.is( accessPoint ) ?
-			accessPoint : AccessPoint.Factory.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation );
+		const accessPointDocument:T & AccessPoint = AccessPoint.is( accessPoint ) ?
+			accessPoint : AccessPoint.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation );
 
 		if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
 
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
-		return this.persistDocument<T & AccessPoint.DocumentClass, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
+		return this.persistDocument<T & AccessPoint, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
 	private persistDocument<T extends Document, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:HTTP.Request.Options ):Promise<[ T & W, HTTP.Response.Class ]> {

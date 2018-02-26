@@ -21,7 +21,10 @@ import {
 } from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
-import * as AccessPoint from "./AccessPoint";
+import {
+	AccessPoint,
+	AccessPointBase,
+} from "./AccessPoint";
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import Carbon from "./Carbon";
@@ -6054,7 +6057,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & Carbon.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
@@ -6065,7 +6068,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & Carbon.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>" }
@@ -6089,7 +6092,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "https://not-example.com", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6100,7 +6103,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6177,7 +6180,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						blankNode2:RawBlankNode;
 					}
 
-					const rawAccessPoint:RawDocument & AccessPoint.Class = {
+					const rawAccessPoint:RawDocument & AccessPointBase = {
 						blankNode1: {
 							id: "_:1",
 							value: "a value 1",
@@ -6232,10 +6235,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into a document access-point before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							expect( spy ).toHaveBeenCalledWith( accessPoint, documents.getPointer( "parent-resource/" ), "member-relation", void 0 );
@@ -6247,7 +6250,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class & PersistedDocument.Class = PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation" }, "https://example.com/some-resource/", documents );
+					const accessPoint:AccessPointBase & PersistedDocument.Class = PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation" }, "https://example.com/some-resource/", documents );
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -6261,7 +6264,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = AccessPoint.Factory.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
+					const accessPoint:AccessPointBase = AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
@@ -6283,7 +6286,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( [ document, response ]:[ PersistedAccessPoint.Class, HTTP.Response.Class ] ):void => {
 						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
 
@@ -6308,7 +6311,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.catch( error => {
@@ -6342,7 +6345,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( ():void => {
@@ -6369,7 +6372,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint, "child-slug" )
 						.then( ():void => {
@@ -6399,7 +6402,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "relative-uri/", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6410,7 +6413,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6451,7 +6454,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & Carbon.AccessPoint.Class", description: "Array with the access points to persist." },
+					{ name: "accessPoints", type: "T & Carbon.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
@@ -6462,7 +6465,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & Carbon.AccessPoint.Class", description: "Array with the access points to persist." },
+					{ name: "accessPoints", type: "T & Carbon.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
@@ -6486,7 +6489,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "https://not-example.com", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6497,7 +6500,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6530,10 +6533,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into document access-point before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6553,7 +6556,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoints:(AccessPoint.Class | AccessPoint.Class & PersistedDocument.Class)[] = [
+					const accessPoints:(AccessPointBase | AccessPointBase & PersistedDocument.Class)[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation-1" }, "https://example.com/some-resource-1/", documents ),
 						PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation-2" }, "https://example.com/some-resource-2/", documents ),
@@ -6572,10 +6575,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
-						AccessPoint.Factory.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
-						AccessPoint.Factory.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
-						AccessPoint.Factory.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
+					const accessPoints:AccessPointBase[] = [
+						AccessPoint.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
+						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
+						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -6591,7 +6594,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should process the access-points into a valid persisted access-points", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6631,7 +6634,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should send expected headers", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6666,7 +6669,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should send expected headers with slug", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6712,7 +6715,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "relative-uri/", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6723,7 +6726,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );

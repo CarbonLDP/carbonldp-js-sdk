@@ -1,33 +1,47 @@
-import * as LDP from "./LDP";
+import { DirectContainer } from "./LDP/DirectContainer";
+import { ModelFactory } from "./ModelFactory";
 import { Pointer } from "./Pointer";
 import { C } from "./Vocabularies/C";
 
-export const RDF_CLASS:string = C.AccessPoint;
 
-export interface Class {
+export interface AccessPointBase {
 	hasMemberRelation:string | Pointer;
 	isMemberOfRelation?:string | Pointer;
 	insertedContentRelation?:string | Pointer;
 }
 
-export interface DocumentClass extends LDP.DirectContainer {
+export interface AccessPoint extends DirectContainer {
 	hasMemberRelation:Pointer;
 	isMemberOfRelation?:Pointer;
 	insertedContentRelation?:Pointer;
 }
 
-export class Factory {
-	static is( object:object ):object is DocumentClass {
-		return LDP.DirectContainer.is( object );
-	}
 
-	static create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):DocumentClass {
-		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
-	}
+export interface AccessPointFactory extends ModelFactory<AccessPoint> {
+	TYPE:string;
 
-	static createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DocumentClass {
-		return <any> LDP.DirectContainer.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
-	}
+	is( object:object ):object is AccessPoint;
+
+
+	create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):AccessPoint;
+
+	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & AccessPoint;
 }
 
-export default Class;
+export const AccessPoint:AccessPointFactory = {
+	TYPE: C.AccessPoint,
+
+	is( object:object ):object is AccessPoint {
+		return DirectContainer.is( object );
+	},
+
+	create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):AccessPoint {
+		return AccessPoint.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
+	},
+
+	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & AccessPoint {
+		return <any> DirectContainer.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
+	},
+};
+
+export default AccessPoint;

@@ -25,7 +25,7 @@ describe( module( "Carbon/PersistedAccessPoint" ), ():void => {
 		"Interface that represents a persisted Carbon LDP AccessPoint."
 	), ():void => {
 
-		it( extendsClass( "Carbon.AccessPoint.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.AccessPoint.AccessPoint" ), ():void => {} );
 		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
 
 		it( hasProperty(
