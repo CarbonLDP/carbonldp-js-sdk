@@ -7,7 +7,7 @@ import * as ACE from "./ACE";
 
 export const RDF_CLASS:string = CS.AccessControlList;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"entries": {
 		"@id": CS.accessControlEntry,
 		"@type": "@id",

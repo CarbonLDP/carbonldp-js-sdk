@@ -71,13 +71,13 @@ export class Class {
 		let expandedObject:any = {};
 
 		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => ObjectSchema.Util.resolveURI( type, generalSchema, { vocab: true, base: true } ) );
+		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => ObjectSchema.ObjectSchemaUtils.resolveURI( type, generalSchema, { vocab: true, base: true } ) );
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;
 			if( propertyName === "types" ) return;
 
-			const expandedPropertyName:string = ObjectSchema.Util.resolveURI( propertyName, digestedSchema, { vocab: true } );
+			const expandedPropertyName:string = ObjectSchema.ObjectSchemaUtils.resolveURI( propertyName, digestedSchema, { vocab: true } );
 			if( RDF.URI.Util.isRelative( expandedPropertyName ) ) return;
 
 			const expandedValue:any[] = this.expandProperty( propertyName, value, digestedSchema, generalSchema );
@@ -90,7 +90,7 @@ export class Class {
 	}
 
 	private expandProperty( propertyName:string, propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema, generalSchema:ObjectSchema.DigestedObjectSchema ):any[] {
-		const definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
+		const definition:ObjectSchema.DigestedObjectSchemaProperty = digestedSchema.properties.get( propertyName );
 
 		const propertyContainer:ObjectSchema.ContainerType = definition ? definition.containerType : void 0;
 		if( propertyContainer === ObjectSchema.ContainerType.LANGUAGE ) return this.expandPropertyLanguageMap( propertyValue );
@@ -124,8 +124,8 @@ export class Class {
 		return propertyValue.map( value => this.expandPointerValue( value, digestedSchema, generalSchema ) );
 	}
 
-	private expandPropertyLiteral( propertyValue:any[], definition:ObjectSchema.DigestedPropertyDefinition, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
-		const literalType:string = ObjectSchema.Util.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
+	private expandPropertyLiteral( propertyValue:any[], definition:ObjectSchema.DigestedObjectSchemaProperty, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
+		const literalType:string = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
 		const expandedValues:any[] = propertyValue.map( value => this.expandLiteralValue( value, literalType ) );
 
 		if( definition.language ) expandedValues.forEach( value => value[ "@language" ] = definition.language );
@@ -161,7 +161,7 @@ export class Class {
 		// TODO: Warn of data loss
 		if( ! id ) return null;
 
-		const resolved:string = ObjectSchema.Util.resolveURI( id, generalSchema, { vocab: isString, base: true } );
+		const resolved:string = ObjectSchema.ObjectSchemaUtils.resolveURI( id, generalSchema, { vocab: isString, base: true } );
 		return { "@id": resolved };
 	}
 
@@ -227,7 +227,7 @@ export class Class {
 	}
 
 	private getPropertyValue( propertyName:string, propertyValues:any[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):any {
-		const definition:ObjectSchema.DigestedPropertyDefinition = digestedSchema.properties.get( propertyName );
+		const definition:ObjectSchema.DigestedObjectSchemaProperty = digestedSchema.properties.get( propertyName );
 		const propertyContainer:ObjectSchema.ContainerType = definition ?
 			definition.containerType :
 			this.getPropertyContainerType( propertyValues );
@@ -264,16 +264,16 @@ export class Class {
 
 	private getPropertyURINameMap( digestedSchema:ObjectSchema.DigestedObjectSchema ):Map<string, string> {
 		const map:Map<string, string> = new Map<string, string>();
-		digestedSchema.properties.forEach( ( definition:ObjectSchema.DigestedPropertyDefinition, propertyName:string ):void => {
-			const uri:string = ObjectSchema.Util.resolveURI( definition.uri, digestedSchema, { vocab: true } );
+		digestedSchema.properties.forEach( ( definition:ObjectSchema.DigestedObjectSchemaProperty, propertyName:string ):void => {
+			const uri:string = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.uri, digestedSchema, { vocab: true } );
 			map.set( uri, propertyName );
 		} );
 		return map;
 	}
 
-	private compactPropertyLiteral( propertyValues:any[], definition:ObjectSchema.DigestedPropertyDefinition, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
+	private compactPropertyLiteral( propertyValues:any[], definition:ObjectSchema.DigestedObjectSchemaProperty, digestedSchema:ObjectSchema.DigestedObjectSchema ):any[] {
 		const literalType:string = definition.literalType === null ?
-			XSD.string : ObjectSchema.Util.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
+			XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
 
 		return RDF.Node.Util.getPropertyLiterals( propertyValues, literalType );
 	}

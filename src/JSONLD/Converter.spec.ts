@@ -138,7 +138,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					],
 				};
 
-				let schema:ObjectSchema.Class = {
+				let schema:ObjectSchema.ObjectSchema = {
 					"@vocab": "http://example.com/my-vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -195,7 +195,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				};
 
 				let compactedObject:any = {};
-				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
@@ -271,7 +271,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
 
-				let generalSchema:ObjectSchema.Class = {
+				let generalSchema:ObjectSchema.ObjectSchema = {
 					"@vocab": "http://example.com/my-vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -281,7 +281,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					},
 				};
 
-				let schemas:ObjectSchema.Class[] = [ {
+				let schemas:ObjectSchema.ObjectSchema[] = [ {
 					"@vocab": "http://example.com/my-vocabulary#",
 					"ex": "http://example.com/ns#",
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
@@ -404,8 +404,8 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 					"relative@id": [ "Property with a relative @id" ],
 				};
 
-				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( generalSchema );
-				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schemas );
+				let digestedGeneralSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( generalSchema );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schemas );
 
 				expect( jsonldConverter.expand ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.expand ) ).toBeDefined();

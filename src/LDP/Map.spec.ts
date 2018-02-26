@@ -37,7 +37,7 @@ describe( module( "Carbon/LDP/Map" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Map.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Map.SCHEMA ) ).toBe( true );

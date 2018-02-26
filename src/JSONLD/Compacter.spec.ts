@@ -1,5 +1,5 @@
 import * as Documents from "../Documents";
-import { Digester } from "../ObjectSchema";
+import { ObjectSchemaDigester } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as RDFNode from "../RDF/Node";
 import * as QueryContextBuilder from "../SPARQL/QueryDocument/QueryContextBuilder";
@@ -43,7 +43,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should send root path when one level resources", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {} ) );
+					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
 				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
 				compacter.compactDocuments( [
@@ -75,7 +75,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should send root path for only main documents", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {} ) );
+					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
 				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
 				compacter.compactDocuments( [
@@ -118,7 +118,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				spyOn( documents, "hasSchemaFor" ).and
 					.returnValue( true );
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -180,7 +180,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should not send path of second level resources when schema is unavailable", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -243,7 +243,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				spyOn( documents, "hasSchemaFor" ).and
 					.returnValue( true );
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -312,7 +312,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should not send path of second level of main documents when schema is unavailable", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -381,7 +381,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should compact a resource with a fragment with path", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
 							"@type": "@id",
@@ -430,7 +430,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should compact a resource with a fragment with no path", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
 							"@type": "@id",
@@ -479,7 +479,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			it( "should send path of only fist level when related to each other when documents resolver", ():void => {
 				const documents:Documents.Class = new Documents.Class();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -541,7 +541,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				;
 
 				const spy:jasmine.Spy = spyOn( queryResolver, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -607,7 +607,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				;
 
 				const spy:jasmine.Spy = spyOn( queryResolver, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -683,13 +683,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer1": {
 									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer2": {
 									"@id": "https://example.com/ns#pointer-2",
 									"@type": "@id",
@@ -758,13 +758,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer1": {
 									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer2": {
 									"@id": "https://example.com/ns#pointer-2",
 									"@type": "@id",
@@ -833,14 +833,14 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"@vocab": "https://example.com/ns#",
 								"pointer1": {
 									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"@vocab": "https://example.com/ns#",
 								"pointer2": {
 									"@id": "https://example.com/ns#pointer-2",
@@ -877,7 +877,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					},
 				] );
 
-				expect( compacted[ 0 ]._partialMetadata.schema ).toEqual( Digester.digestSchema( {
+				expect( compacted[ 0 ]._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -888,7 +888,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					},
 				} ) );
 
-				expect( compacted[ 1 ]._partialMetadata.schema ).toEqual( Digester.digestSchema( {
+				expect( compacted[ 1 ]._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -915,13 +915,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer": {
 									"@id": "https://example.com/ns#pointer",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"string": {
 									"@id": "https://example.com/ns#string",
 									"@type": "string",

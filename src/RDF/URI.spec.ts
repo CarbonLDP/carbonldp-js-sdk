@@ -590,7 +590,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 				let anotherResourceURI:string = "http://another_example.com/resource/";
 				let prefixResourceURI:string = "prefix:resource/";
 
-				let schema:ObjectSchema.Class = {
+				let schema:ObjectSchema.ObjectSchema = {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"prefix": "http://example.com/",
 					"some_resource": {
@@ -598,7 +598,7 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 						"@type": "@id",
 					},
 				};
-				let anotherSchema:ObjectSchema.Class = {
+				let anotherSchema:ObjectSchema.ObjectSchema = {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"another_prefix": "http://another_example.com/",
 					"some_resource": {
@@ -606,8 +606,8 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 						"@type": "@id",
 					},
 				};
-				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-				let anotherDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( anotherSchema );
+				let digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
+				let anotherDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( anotherSchema );
 
 				expect( URI.Util.prefix( resourceURI, digestedSchema ) ).toBe( prefixResourceURI );
 				expect( URI.Util.prefix( resourceURI, anotherDigestedSchema ) ).toBe( resourceURI );

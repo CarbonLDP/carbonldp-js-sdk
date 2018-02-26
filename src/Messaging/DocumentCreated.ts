@@ -3,7 +3,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
 import * as Message from "./Message";
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	...Message.SCHEMA,
 	"details": {
 		"@id": C.details,

@@ -6,7 +6,7 @@ import { XSD } from "./Vocabularies/XSD";
 
 export const RDF_CLASS:string = C.RDFRepresentation;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"mediaType": {
 		"@id": C.mediaType,
 		"@type": XSD.string,

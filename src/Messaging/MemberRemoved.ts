@@ -5,7 +5,7 @@ import * as Message from "./Message";
 
 export const RDF_CLASS:string = C.MemberRemoved;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	...Message.SCHEMA,
 	"details": {
 		"@id": C.details,

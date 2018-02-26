@@ -23,11 +23,11 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     createNamedFragment<T>(object: T, slug: string): T & NamedFragment;
     createNamedFragment(slug: string): NamedFragment;
     removeNamedFragment(slugOrFragment: string | NamedFragment): void;
-    toJSON(objectSchemaResolver?: ObjectSchema.Resolver, jsonldConverter?: JSONLDConverter.Class): RDFDocument.Class;
+    toJSON(objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter.Class): RDFDocument.Class;
 }
 export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
     TYPE: string;
-    SCHEMA: ObjectSchema.Class;
+    SCHEMA: ObjectSchema.ObjectSchema;
     is(object: object): object is Document;
     isDecorated(object: object): object is Document;
     create(): Document;

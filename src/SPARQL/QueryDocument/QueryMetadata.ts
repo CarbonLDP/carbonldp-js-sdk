@@ -5,7 +5,7 @@ import { C } from "../../Vocabularies/C";
 
 export const RDF_CLASS:string = C.QueryMetadata;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"target": {
 		"@id": C.target,
 		"@type": "@id",

@@ -1,4 +1,4 @@
-import { Class as ObjectSchema } from "../ObjectSchema";
+import { ObjectSchema as ObjectSchema } from "../ObjectSchema";
 import {
 	Resource as Resource,
 	Resource as ResourceFactory

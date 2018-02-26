@@ -35,7 +35,7 @@ describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( MemberAddedDetails.SCHEMA ).toBeDefined();
 		expect( MemberAddedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );

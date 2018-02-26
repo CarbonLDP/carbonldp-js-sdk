@@ -2,7 +2,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 import * as DocumentMetadata from "./DocumentMetadata";
 import * as VolatileResource from "./VolatileResource";
 export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
+export declare const SCHEMA: ObjectSchema.ObjectSchema;
 export interface Class extends VolatileResource.Class {
     documentsMetadata?: DocumentMetadata.Class[];
 }

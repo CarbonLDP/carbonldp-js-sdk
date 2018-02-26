@@ -81,7 +81,7 @@ var SDKContext = (function () {
             if (!this.generalObjectSchema && !this.parentContext)
                 throw new Errors.IllegalStateError();
             var generalSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
-            var clonedSchema = ObjectSchema.Digester
+            var clonedSchema = ObjectSchema.ObjectSchemaDigester
                 .combineDigestedObjectSchemas([generalSchema]);
             if (clonedSchema.vocab === null && this.settings && this.settings.vocabulary)
                 clonedSchema.vocab = this.resolve(this.settings.vocabulary);
@@ -94,7 +94,7 @@ var SDKContext = (function () {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
+        var digestedSchema = ObjectSchema.ObjectSchemaDigester.digestSchema(objectSchema);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -123,7 +123,7 @@ var SDKContext = (function () {
         else {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
-        this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+        this.generalObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas([
             digestedSchemaToExtend,
             digestedSchema,
         ]);
@@ -140,7 +140,7 @@ var SDKContext = (function () {
         else {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
-        var extendedDigestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+        var extendedDigestedSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas([
             digestedSchemaToExtend,
             digestedSchema,
         ]);
@@ -181,7 +181,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
     };
     SDKContext.prototype._resolveTypeURI = function (uri) {
-        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), { vocab: true });
+        return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, this.getObjectSchema(), { vocab: true });
     };
     return SDKContext;
 }());

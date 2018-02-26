@@ -10,8 +10,8 @@ export interface Context {
     _resolvePath(path: string): string;
     hasObjectSchema(type: string): boolean;
     getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
-    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
-    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
+    extendObjectSchema(type: string, objectSchema: ObjectSchema.ObjectSchema): void;
+    extendObjectSchema(objectSchema: ObjectSchema.ObjectSchema): void;
     clearObjectSchema(type?: string): void;
 }
 export default Context;

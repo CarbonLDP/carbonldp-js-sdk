@@ -9,7 +9,7 @@ import * as VolatileResource from "./VolatileResource";
 
 export const RDF_CLASS:string = C.DocumentMetadata;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"relatedDocument": {
 		"@id": C.relatedDocument,
 		"@type": "@id",

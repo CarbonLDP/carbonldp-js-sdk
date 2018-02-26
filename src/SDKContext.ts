@@ -109,7 +109,7 @@ export class SDKContext implements Context {
 				throw new Errors.IllegalStateError();
 
 			const generalSchema:ObjectSchema.DigestedObjectSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
-			const clonedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester
+			const clonedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester
 				.combineDigestedObjectSchemas( [ generalSchema ] );
 
 			if( clonedSchema.vocab === null && this.settings && this.settings.vocabulary )
@@ -122,13 +122,13 @@ export class SDKContext implements Context {
 		}
 	}
 
-	extendObjectSchema( type:string, objectSchema:ObjectSchema.Class ):void;
-	extendObjectSchema( objectSchema:ObjectSchema.Class ):void;
-	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
+	extendObjectSchema( type:string, objectSchema:ObjectSchema.ObjectSchema ):void;
+	extendObjectSchema( objectSchema:ObjectSchema.ObjectSchema ):void;
+	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.ObjectSchema = null ):void {
 		const type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 
-		const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
+		const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( objectSchema );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -156,7 +156,7 @@ export class SDKContext implements Context {
 			digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
 		}
 
-		this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+		this.generalObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -174,7 +174,7 @@ export class SDKContext implements Context {
 			digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
 		}
 
-		let extendedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+		let extendedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -225,7 +225,7 @@ export class SDKContext implements Context {
 	}
 
 	private _resolveTypeURI( uri:string ):string {
-		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
+		return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
 	}
 }
 

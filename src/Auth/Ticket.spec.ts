@@ -40,7 +40,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Ticket.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Ticket.SCHEMA ) ).toBe( true );

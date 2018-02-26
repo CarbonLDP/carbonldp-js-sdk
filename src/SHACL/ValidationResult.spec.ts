@@ -36,7 +36,7 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ValidationResult.SCHEMA ).toBeDefined();
 		expect( ValidationResult.SCHEMA ).toEqual( jasmine.any( Object ) );

@@ -79,7 +79,7 @@ import {
 import { C } from "./Vocabularies/C";
 import { LDP } from "./Vocabularies/LDP";
 
-export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Resolver {
+export class Class implements PointerLibrary, PointerValidator, ObjectSchema.ObjectSchemaResolver {
 
 	private _jsonldConverter:JSONLD.Converter.Class;
 	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
@@ -129,7 +129,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		if( RDF.URI.Util.isBNodeID( id ) ) return false;
 
 		if( ! ! this.context ) {
-			id = ObjectSchema.Util.resolveURI( id, this.context.getObjectSchema() );
+			id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this.context.getObjectSchema() );
 
 			if( RDF.URI.Util.isRelative( id ) ) return true;
 			if( RDF.URI.Util.isBaseOf( this.context.baseURI, id ) ) return true;
@@ -1203,7 +1203,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		*/
 
 		if( ! ! this.context ) {
-			uri = ObjectSchema.Util.resolveURI( uri, this.getGeneralSchema() );
+			uri = ObjectSchema.ObjectSchemaUtils.resolveURI( uri, this.getGeneralSchema() );
 
 			if( ! RDF.URI.Util.isRelative( uri ) ) {
 				const baseURI:string = this.context.baseURI;
@@ -1301,7 +1301,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 
 	private getProcessedSchema( objectSchemas:ObjectSchema.DigestedObjectSchema[] = [] ):ObjectSchema.DigestedObjectSchema {
 		objectSchemas.unshift( this.context.getObjectSchema() );
-		return ObjectSchema.Digester
+		return ObjectSchema.ObjectSchemaDigester
 			.combineDigestedObjectSchemas( objectSchemas );
 	}
 
@@ -1311,7 +1311,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 			throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
 		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
-			uri = ObjectSchema.Util.resolveURI( uri, this.context.getObjectSchema() );
+			uri = ObjectSchema.ObjectSchemaUtils.resolveURI( uri, this.context.getObjectSchema() );
 			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
 		} else if( RDF.URI.Util.isRelative( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );

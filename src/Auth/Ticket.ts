@@ -10,7 +10,7 @@ export const TICKETS_CONTAINER:string = "auth-tickets/";
 
 export const RDF_CLASS:string = CS.Ticket;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"forURI": {
 		"@id": CS.forIRI,
 		"@type": "@id",

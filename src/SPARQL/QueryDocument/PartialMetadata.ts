@@ -1,8 +1,8 @@
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
-	DigestedPropertyDefinition,
-	Util as SchemaUtils,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaUtils as SchemaUtils,
 } from "../../ObjectSchema";
 import * as URI from "../../RDF/URI";
 
@@ -30,7 +30,7 @@ export class Class {
 		newSchema.properties.forEach( ( newDefinition, propertyName ) => {
 			if( ! oldSchema.properties.has( propertyName ) ) return oldSchema.properties.set( propertyName, newDefinition );
 
-			const oldDefinition:DigestedPropertyDefinition = oldSchema.properties.get( propertyName );
+			const oldDefinition:DigestedObjectSchemaProperty = oldSchema.properties.get( propertyName );
 			for( const key in newDefinition ) {
 				const newValue:any = newDefinition[ key ];
 				const oldValue:any = oldDefinition[ key ];

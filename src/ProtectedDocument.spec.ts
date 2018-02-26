@@ -50,7 +50,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ProtectedDocument.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ProtectedDocument.SCHEMA ) ).toBe( true );

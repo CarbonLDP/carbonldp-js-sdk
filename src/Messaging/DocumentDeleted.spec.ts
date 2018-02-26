@@ -35,7 +35,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( DocumentDeleted.SCHEMA ).toBeDefined();
 		expect( DocumentDeleted.SCHEMA ).toEqual( jasmine.any( Object ) );

@@ -41,7 +41,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ACE.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ACE.SCHEMA ) ).toBe( true );

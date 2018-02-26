@@ -39,7 +39,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( DocumentMetadata.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( DocumentMetadata.SCHEMA ) ).toBe( true );

@@ -36,7 +36,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Error.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Error.SCHEMA ) ).toBe( true );

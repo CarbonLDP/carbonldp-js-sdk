@@ -20,7 +20,7 @@ import { XSD } from "../Vocabularies/XSD";
 import {
 	ContainerType,
 	DigestedObjectSchema,
-	DigestedPropertyDefinition,
+	DigestedObjectSchemaProperty,
 	PointerType,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -46,7 +46,7 @@ interface UpdateDelta {
 	objects:ObjectToken[];
 }
 
-const typesDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+const typesDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
 typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
@@ -100,7 +100,7 @@ export class Class {
 			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
 				"a" : this.getPropertyIRI( schema, propertyName );
 
-			const definition:DigestedPropertyDefinition = predicateURI === "a" ?
+			const definition:DigestedObjectSchemaProperty = predicateURI === "a" ?
 				typesDefinition : schema.properties.get( propertyName );
 
 			const oldValue:any = oldResource[ propertyName ];
@@ -114,7 +114,7 @@ export class Class {
 					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
 
 				} else {
-					const tempDefinition:DigestedPropertyDefinition = { ...definition, containerType: ContainerType.SET };
+					const tempDefinition:DigestedObjectSchemaProperty = { ...definition, containerType: ContainerType.SET };
 
 					listUpdates.push( ...getListDelta(
 						this.getObjects( oldValue, schema, tempDefinition ),
@@ -182,7 +182,7 @@ export class Class {
 	}
 
 	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
-		const propertyDefinition:DigestedPropertyDefinition = schema.properties.get( propertyName );
+		const propertyDefinition:DigestedObjectSchemaProperty = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
 			propertyDefinition.uri :
 			propertyName;
@@ -190,7 +190,7 @@ export class Class {
 		return this.compactIRI( schema, uri );
 	}
 
-	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):ObjectToken[] {
+	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const values:any[] = (Array.isArray( value ) ?
 				! definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
 				[ value ]
@@ -212,7 +212,7 @@ export class Class {
 		return this.expandValues( values, schema, definition );
 	}
 
-	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):ObjectToken[] {
+	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const areDefinedLiteral:boolean = definition && definition.literal !== null ? definition.literal : null;
 		return values.map( value => {
 			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.is( value );
@@ -229,7 +229,7 @@ export class Class {
 		return Object.keys( languageMap ).map( key => {
 			const value:any = languageMap[ key ];
 
-			const tempDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+			const tempDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 			tempDefinition.language = key;
 			tempDefinition.literalType = XSD.string;
 
@@ -246,7 +246,7 @@ export class Class {
 			this.compactIRI( schema, id );
 	}
 
-	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):LiteralToken {
+	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):LiteralToken {
 		const type:string = definition && definition.literalType ?
 			definition.literalType :
 			guessXSDType( value );

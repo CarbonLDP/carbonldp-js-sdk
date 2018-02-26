@@ -7,7 +7,7 @@ import * as PersistedUser from "./PersistedUser";
 
 export const RDF_CLASS:string = CS.Token;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"key": {
 		"@id": CS.tokenKey,
 		"@type": XSD.string,

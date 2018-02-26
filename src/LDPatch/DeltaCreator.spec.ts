@@ -12,7 +12,7 @@ import { Converter } from "../JSONLD";
 import { XSD } from "../Vocabularies/XSD";
 import {
 	DigestedObjectSchema,
-	Digester,
+	ObjectSchemaDigester,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
@@ -119,7 +119,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 
 				let schema:DigestedObjectSchema;
 				beforeEach( ():void => {
-					schema = Digester.digestSchema( {
+					schema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 					} );
 				} );
@@ -687,7 +687,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted string", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -714,7 +714,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted string with language", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -742,7 +742,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted integer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
@@ -769,7 +769,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted float", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.float,
@@ -796,7 +796,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted boolean", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#the-property",
 							"@type": XSD.boolean,
@@ -823,7 +823,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted date", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.date,
@@ -850,7 +850,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted resource pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
@@ -877,7 +877,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted blank node pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
@@ -904,7 +904,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted first element from array without a type an container", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 						},
@@ -936,7 +936,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted set without a type", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
@@ -973,7 +973,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted string set", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
@@ -1006,7 +1006,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted language map", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1040,7 +1040,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted list without a type", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@list",
@@ -1081,7 +1081,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add deleted string list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -1122,7 +1122,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added string", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1149,7 +1149,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added string with language", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1177,7 +1177,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added integer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
@@ -1204,7 +1204,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added float", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.float,
@@ -1231,7 +1231,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added boolean", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#the-property",
 							"@type": XSD.boolean,
@@ -1258,7 +1258,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added date", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.date,
@@ -1285,7 +1285,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added resource pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
@@ -1312,7 +1312,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added blank node pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": "@id",
@@ -1339,7 +1339,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added first element from set without a type an container", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 						},
@@ -1371,7 +1371,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added set without a type", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
@@ -1408,7 +1408,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added string set", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@set",
@@ -1441,7 +1441,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added language map", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1475,7 +1475,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added list without a type", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@container": "@list",
@@ -1514,7 +1514,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add added string list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -1551,7 +1551,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete new property if set to null", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1578,7 +1578,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete new property if set to undefined", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1605,7 +1605,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add old property if set to null", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1633,7 +1633,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add old property if set to undefined", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -1662,7 +1662,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should allow relative strings to be converted to pointers", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": "@id",
@@ -1688,7 +1688,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should allow absolute strings to be converted to pointers", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": "@id",
@@ -1714,7 +1714,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should ignore non supported value to be pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property1": {
 							"@type": "@id",
@@ -1750,7 +1750,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should detect added and deleted elements from an integer set", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
@@ -1794,7 +1794,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should detect added and deleted elements from a list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@container": "@list",
@@ -1856,7 +1856,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should detect added and deleted elements from an integer list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.integer,
@@ -1913,7 +1913,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should compact updates list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@container": "@list",
@@ -1966,7 +1966,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should compact literal type", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"xsd": XSD.namespace,
 					} );
@@ -1993,7 +1993,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add literal type prefix in the prefix map", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"xsd": XSD.namespace,
 					} );
@@ -2015,7 +2015,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should compact property URI", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"ex": "http://example.org/vocab#",
 					} );
@@ -2042,7 +2042,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add property's prefix in the prefix map", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"ex": "http://example.org/vocab#",
 					} );
@@ -2064,7 +2064,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should compact any pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 					} );
@@ -2092,7 +2092,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add pointer's prefix to the prefix map", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 					} );
@@ -2115,7 +2115,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add used prefixes", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 						"xsd": XSD.namespace,
@@ -2141,7 +2141,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should ignore unused prefixes", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"base": "http://example.org/",
 						"xsd": XSD.namespace,
@@ -2170,7 +2170,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete simple properties", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -2197,7 +2197,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add simple properties", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -2224,7 +2224,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete simple properties", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"@vocab": "http://example.org/vocab#",
 						"property": {
 							"@type": XSD.string,
@@ -2251,7 +2251,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -2291,7 +2291,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add list", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const schema:DigestedObjectSchema = Digester.digestSchema( {
+					const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 						"property": {
 							"@id": "http://example.org/vocab#property",
 							"@type": XSD.string,
@@ -2329,7 +2329,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 			it( "should append multiple resources changes", ():void => {
 				const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-				deltaCreator.addResource( Digester.digestSchema( {
+				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"property": {
 						"@type": XSD.string,
@@ -2341,7 +2341,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					id: "http://example.org/resource/",
 				} ) );
 
-				deltaCreator.addResource( Digester.digestSchema( {
+				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"property": {
 						"@type": XSD.integer,
@@ -2353,7 +2353,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					property: 10.01,
 				} ) );
 
-				deltaCreator.addResource( Digester.digestSchema( {
+				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"property1": {
 						"@type": XSD.string,
@@ -2411,7 +2411,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 			it( "should return LD Patch string", ():void => {
 				const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-				deltaCreator.addResource( Digester.digestSchema( {
+				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"schema": "http://schema.org",
 					"xsd": XSD.namespace,
@@ -2429,7 +2429,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					id: "http://example.org/resource/",
 				} ) );
 
-				deltaCreator.addResource( Digester.digestSchema( {
+				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"schema": "http://schema.org",
 					"resource": "http://example.org/resource/#",
@@ -2449,7 +2449,7 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 					property2: [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ],
 				} ) );
 
-				deltaCreator.addResource( Digester.digestSchema( {
+				deltaCreator.addResource( ObjectSchemaDigester.digestSchema( {
 					"@vocab": "http://example.org/vocab#",
 					"schema": "http://schema.org",
 					"xsd": XSD.namespace,

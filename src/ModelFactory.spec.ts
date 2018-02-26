@@ -18,8 +18,8 @@ describe( module( "Carbon/ModelFactory" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasProperty( OPTIONAL, "SCHEMA", "Carbon.ObjectSchema.Class", "The schema the document interface is related to." ), ():void => {
-			const target:ModelFactory<any>[ "SCHEMA" ] = {} as ObjectSchema.Class;
+		it( hasProperty( OPTIONAL, "SCHEMA", "Carbon.ObjectSchema.ObjectSchema", "The schema the document interface is related to." ), ():void => {
+			const target:ModelFactory<any>[ "SCHEMA" ] = {} as ObjectSchema.ObjectSchema;
 			expect( target ).toBeDefined();
 		} );
 

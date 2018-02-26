@@ -128,9 +128,9 @@ export function removeNamedFragment( this:Document, fragmentOrSlug:NamedFragment
 }
 
 export function toJSON( this:Document, key:string ):RDF.Document.Class;
-export function toJSON( this:Document, objectSchemaResolver?:ObjectSchema.Resolver, jsonldConverter?:JSONLDConverter.Class ):RDF.Document.Class;
-export function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchema.Resolver, jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class() ):RDF.Document.Class {
-	const objectSchemaResolver:ObjectSchema.Resolver = Utils.isObject( keyOrObjectSchemaResolver ) ? keyOrObjectSchemaResolver : null;
+export function toJSON( this:Document, objectSchemaResolver?:ObjectSchema.ObjectSchemaResolver, jsonldConverter?:JSONLDConverter.Class ):RDF.Document.Class;
+export function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchema.ObjectSchemaResolver, jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class() ):RDF.Document.Class {
+	const objectSchemaResolver:ObjectSchema.ObjectSchemaResolver = Utils.isObject( keyOrObjectSchemaResolver ) ? keyOrObjectSchemaResolver : null;
 	const generalSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ?
 		objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
 

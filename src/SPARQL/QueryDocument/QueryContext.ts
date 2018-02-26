@@ -9,11 +9,11 @@ import { Context } from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
-	Resolver,
+	ObjectSchemaResolver,
 } from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
 
-export class Class implements Resolver {
+export class Class implements ObjectSchemaResolver {
 	readonly context?:Context;
 
 	private _variablesCounter:number;

@@ -12,7 +12,7 @@ var Class = (function () {
         if (newSchema === exports.ALL || oldSchema === exports.ALL)
             return exports.ALL;
         newSchema.prefixes.forEach(function (newURI, namespace) {
-            newURI = ObjectSchema_1.Util.resolveURI(newURI, newSchema);
+            newURI = ObjectSchema_1.ObjectSchemaUtils.resolveURI(newURI, newSchema);
             if (!oldSchema.prefixes.has(namespace))
                 return oldSchema.prefixes.set(namespace, newURI);
             var oldURI = oldSchema.prefixes.get(namespace);

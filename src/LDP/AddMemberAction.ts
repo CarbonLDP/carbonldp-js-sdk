@@ -6,7 +6,7 @@ import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = C.AddMemberAction;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"targetMembers": {
 		"@id": C.targetMember,
 		"@type": "@id",

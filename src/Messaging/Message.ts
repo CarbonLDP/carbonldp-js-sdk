@@ -4,7 +4,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
 import { Resource } from "./../Resource";
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"target": {
 		"@id": C.target,
 		"@type": "@id",

@@ -203,7 +203,7 @@ var Class = (function () {
     Class.expandURI = function (schema, uri, relativeTo) {
         if (Class.isKeyword(uri))
             return uri;
-        return ObjectSchema.Util.resolveURI(uri, schema, relativeTo);
+        return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, relativeTo);
     };
     Class.expandLanguageMap = function (languageMap) {
         var expandedLanguage = [];
@@ -241,7 +241,7 @@ var Class = (function () {
         else if (propertyName === "@type") {
             return Class.expandURI(context, value, { vocab: true, base: true });
         }
-        var definition = new ObjectSchema.DigestedPropertyDefinition();
+        var definition = new ObjectSchema.DigestedObjectSchemaProperty();
         if (context.properties.has(propertyName))
             definition = context.properties.get(propertyName);
         if (definition.literal === false || (propertyName === "@graph" && Utils.isString(value))) {
@@ -254,7 +254,7 @@ var Class = (function () {
             return value;
         var expandedValue = {};
         if (definition.literalType) {
-            expandedValue["@type"] = ObjectSchema.Util.resolveURI(definition.literalType, context, { vocab: true, base: true });
+            expandedValue["@type"] = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, context, { vocab: true, base: true });
         }
         else if (Utils.isString(value)) {
             var language = Utils.isDefined(definition.language) ? definition.language : context.language;
@@ -292,10 +292,10 @@ var Class = (function () {
             return expanded;
         }
         if ("@context" in element) {
-            context = ObjectSchema.Digester
+            context = ObjectSchema.ObjectSchemaDigester
                 .combineDigestedObjectSchemas([
                 context,
-                ObjectSchema.Digester.digestSchema(element["@context"]),
+                ObjectSchema.ObjectSchemaDigester.digestSchema(element["@context"]),
             ]);
         }
         var expandedElement = {};

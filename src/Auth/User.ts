@@ -6,7 +6,7 @@ import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = CS.User;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"name": {
 		"@id": CS.name,
 		"@type": XSD.string,

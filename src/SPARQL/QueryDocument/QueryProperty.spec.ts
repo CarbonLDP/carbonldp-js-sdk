@@ -7,7 +7,7 @@ import {
 import AbstractContext from "../../AbstractContext";
 import {
 	DigestedObjectSchema,
-	Digester,
+	ObjectSchemaDigester,
 } from "../../ObjectSchema";
 import { ContextSettings } from "../../Settings";
 import {
@@ -186,7 +186,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			it( "should initialize the schema with an empty schema", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 
-				const schema:DigestedObjectSchema = Digester.digestSchema( {} );
+				const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {} );
 				expect( queryProperty[ "_schema" ] ).toBeUndefined();
 
 				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();

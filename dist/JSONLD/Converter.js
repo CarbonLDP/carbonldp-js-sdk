@@ -64,13 +64,13 @@ var Class = (function () {
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, generalSchema, { vocab: true, base: true }); });
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.ObjectSchemaUtils.resolveURI(type, generalSchema, { vocab: true, base: true }); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
             if (propertyName === "types")
                 return;
-            var expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, digestedSchema, { vocab: true });
+            var expandedPropertyName = ObjectSchema.ObjectSchemaUtils.resolveURI(propertyName, digestedSchema, { vocab: true });
             if (RDF.URI.Util.isRelative(expandedPropertyName))
                 return;
             var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
@@ -113,7 +113,7 @@ var Class = (function () {
     };
     Class.prototype.expandPropertyLiteral = function (propertyValue, definition, digestedSchema) {
         var _this = this;
-        var literalType = ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+        var literalType = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
         var expandedValues = propertyValue.map(function (value) { return _this.expandLiteralValue(value, literalType); });
         if (definition.language)
             expandedValues.forEach(function (value) { return value["@language"] = definition.language; });
@@ -140,7 +140,7 @@ var Class = (function () {
                 null;
         if (!id)
             return null;
-        var resolved = ObjectSchema.Util.resolveURI(id, generalSchema, { vocab: isString, base: true });
+        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString, base: true });
         return { "@id": resolved };
     };
     Class.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
@@ -230,14 +230,14 @@ var Class = (function () {
     Class.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            var uri = ObjectSchema.Util.resolveURI(definition.uri, digestedSchema, { vocab: true });
+            var uri = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.uri, digestedSchema, { vocab: true });
             map.set(uri, propertyName);
         });
         return map;
     };
     Class.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
-            XSD_1.XSD.string : ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+            XSD_1.XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
         return RDF.Node.Util.getPropertyLiterals(propertyValues, literalType);
     };
     return Class;

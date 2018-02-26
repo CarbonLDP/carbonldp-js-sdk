@@ -7,7 +7,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 
 export const RDF_CLASS:string = CS.Credentials;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"email": {
 		"@id": VCARD.email,
 		"@type": XSD.string,

@@ -35,7 +35,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( AccessPointCreated.SCHEMA ).toBeDefined();
 		expect( AccessPointCreated.SCHEMA ).toEqual( jasmine.any( Object ) );

@@ -194,7 +194,7 @@ function resolveURI( uri:string ):string {
 	if( URI.Util.isAbsolute( uri ) ) return uri;
 
 	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
-	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
+	return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
@@ -509,7 +509,7 @@ export class Factory {
 				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( this:Class, id:string ):boolean {
-						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
+						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
 						return ! URI.Util.isBNodeID( id ) && this._documents.hasPointer( id );
@@ -524,7 +524,7 @@ export class Factory {
 					let superFunction:( id:string ) => Pointer = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( this:Class, id:string ):Pointer {
-						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
+						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
 						return this._documents.getPointer( id );
@@ -539,7 +539,7 @@ export class Factory {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( this:Class, idOrPointer:any ):boolean {
 						let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-						id = ObjectSchema.Util.resolveURI( id, this._documents.getGeneralSchema() );
+						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
 						return this._documents.inScope( id );

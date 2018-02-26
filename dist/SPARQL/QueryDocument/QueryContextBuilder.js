@@ -63,8 +63,8 @@ var Class = (function (_super) {
             var schema = schemas_1[_i];
             if (!schema.properties.has(propertyName))
                 continue;
-            var mergeSchema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([existingSchema, schema]);
-            var digestedProperty = ObjectSchema_1.Util.resolveProperty(mergeSchema, schema.properties.get(propertyName));
+            var mergeSchema = ObjectSchema_1.ObjectSchemaDigester.combineDigestedObjectSchemas([existingSchema, schema]);
+            var digestedProperty = ObjectSchema_1.ObjectSchemaUtils.resolveProperty(mergeSchema, schema.properties.get(propertyName));
             if (!propertyURI || propertyURI === digestedProperty.uri)
                 return digestedProperty;
         }

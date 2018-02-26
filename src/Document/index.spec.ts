@@ -258,7 +258,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns a JSON string from the Document using the ObjectSchema and then JSONLDConverter if provided.", [
-					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver", optional:true },
+					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.ObjectSchemaResolver", optional:true },
 					{ name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class", optional: true },
 				],
 				{ type: "Carbon.RDF.Document.Class" }

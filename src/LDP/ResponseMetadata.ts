@@ -5,7 +5,7 @@ import * as VolatileResource from "./VolatileResource";
 
 export const RDF_CLASS:string = C.ResponseMetadata;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"documentsMetadata": {
 		"@id": C.documentMetadata,
 		"@type": "@id",

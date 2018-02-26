@@ -12,7 +12,7 @@ import {
 import AbstractContext from "../../AbstractContext";
 import {
 	DigestedObjectSchema,
-	Digester,
+	ObjectSchemaDigester,
 } from "../../ObjectSchema";
 import {
 	clazz,
@@ -91,7 +91,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( "should initialize the schema with a general document schema", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
-				const schema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
+				const schema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					context.getObjectSchema(),
 					context.getObjectSchema( Document.TYPE ),
 				] );

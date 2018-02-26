@@ -4,7 +4,7 @@ import { CS } from "./Vocabularies/CS";
 
 export const RDF_CLASS:string = CS.ProtectedDocument;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"accessControlList": {
 		"@id": CS.accessControlList,
 		"@type": "@id",

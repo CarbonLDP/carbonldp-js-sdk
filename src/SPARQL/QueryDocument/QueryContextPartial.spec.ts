@@ -1,5 +1,5 @@
 import AbstractContext from "../../AbstractContext";
-import { Digester } from "../../ObjectSchema";
+import { ObjectSchemaDigester } from "../../ObjectSchema";
 import * as PersistedDocument from "../../PersistedDocument";
 import * as PersistedFragment from "../../PersistedFragment";
 import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
@@ -40,7 +40,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 				"https://example.com/resource/",
 				context.documents
 			);
-			persistedDocument._partialMetadata = new PartialMetadata.Class( Digester.digestSchema( {
+			persistedDocument._partialMetadata = new PartialMetadata.Class( ObjectSchemaDigester.digestSchema( {
 				"documentProperty": {
 					"@id": "https://example.com/ns#document-property",
 				},
@@ -109,7 +109,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 				const fragment:PersistedFragment.Class = persistedDocument.createFragment();
-				fragment._partialMetadata = new PartialMetadata.Class( Digester.digestSchema( {
+				fragment._partialMetadata = new PartialMetadata.Class( ObjectSchemaDigester.digestSchema( {
 					"fragmentProperty": {
 						"@id": "https://example.com/ns#fragment-property",
 					},

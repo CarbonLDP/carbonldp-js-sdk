@@ -5,7 +5,7 @@ import * as ValidationResult from "./ValidationResult";
 
 export const RDF_CLASS:string = SHACL.ValidationReport;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"conforms": {
 		"@id": SHACL.conforms,
 		"@type": XSD.boolean,

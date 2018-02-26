@@ -937,8 +937,8 @@ describe( "Document methods", ():void => {
 			document.createFragment( { then: "blank node" }, "_:1" );
 			document.createFragment( { then: "named fragment" }, "fragment" );
 
-			const schemaResolver:jasmine.SpyObj<ObjectSchema.Resolver> = jasmine
-				.createSpyObj<ObjectSchema.Resolver>(
+			const schemaResolver:jasmine.SpyObj<ObjectSchema.ObjectSchemaResolver> = jasmine
+				.createSpyObj<ObjectSchema.ObjectSchemaResolver>(
 					"ObjectSchemaResolver", {
 						"getGeneralSchema": new ObjectSchema.DigestedObjectSchema(),
 						"getSchemaFor": new ObjectSchema.DigestedObjectSchema(),
@@ -959,10 +959,10 @@ describe( "Document methods", ():void => {
 			document.createFragment( { then: "blank node" }, "_:1" );
 			document.createFragment( { then: "named fragment" }, "fragment" );
 
-			const generalSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( { "@base": "https://example.com/schema/general/" } );
-			const resourceSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( { "@base": "https://example.com/schema/resource/" } );
-			const schemaResolver:jasmine.SpyObj<ObjectSchema.Resolver> = jasmine
-				.createSpyObj<ObjectSchema.Resolver>(
+			const generalSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/general/" } );
+			const resourceSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/resource/" } );
+			const schemaResolver:jasmine.SpyObj<ObjectSchema.ObjectSchemaResolver> = jasmine
+				.createSpyObj<ObjectSchema.ObjectSchemaResolver>(
 					"ObjectSchemaResolver", {
 						"getGeneralSchema": generalSchema,
 						"getSchemaFor": resourceSchema,
@@ -984,10 +984,10 @@ describe( "Document methods", ():void => {
 			document.createFragment( { then: "blank node" }, "_:1" );
 			document.createFragment( { then: "named fragment" }, "fragment" );
 
-			const generalSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( { "@base": "https://example.com/schema/general/" } );
-			const resourceSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( { "@base": "https://example.com/schema/resource/" } );
-			const schemaResolver:jasmine.SpyObj<ObjectSchema.Resolver> = jasmine
-				.createSpyObj<ObjectSchema.Resolver>(
+			const generalSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/general/" } );
+			const resourceSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/resource/" } );
+			const schemaResolver:jasmine.SpyObj<ObjectSchema.ObjectSchemaResolver> = jasmine
+				.createSpyObj<ObjectSchema.ObjectSchemaResolver>(
 					"ObjectSchemaResolver", {
 						"getGeneralSchema": generalSchema,
 						"getSchemaFor": resourceSchema,

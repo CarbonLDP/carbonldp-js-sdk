@@ -33,7 +33,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ValidationError.SCHEMA ).toBeDefined();
 		expect( ValidationError.SCHEMA ).toEqual( jasmine.any( Object ) );

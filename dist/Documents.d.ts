@@ -13,7 +13,7 @@ import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import * as RDF from "./RDF";
 import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
-export declare class Class implements PointerLibrary, PointerValidator, ObjectSchema.Resolver {
+export declare class Class implements PointerLibrary, PointerValidator, ObjectSchema.ObjectSchemaResolver {
     private _jsonldConverter;
     readonly jsonldConverter: JSONLD.Converter.Class;
     private _documentDecorators;

@@ -3,7 +3,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
 import { Resource } from "./../Resource";
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"members": {
 		"@id": C.member,
 		"@type": "@id",

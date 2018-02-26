@@ -43,7 +43,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( User.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( User.SCHEMA ) ).toBe( true );

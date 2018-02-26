@@ -2,9 +2,9 @@ import { Context } from "../../Context";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
-	DigestedPropertyDefinition,
-	Digester,
-	Util as SchemaUtils,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaDigester,
+	ObjectSchemaUtils as SchemaUtils,
 } from "../../ObjectSchema";
 import * as QueryContext from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
@@ -50,14 +50,14 @@ export class Class extends QueryContext.Class {
 			.map( ( [ propertyName, property ] ) => property );
 	}
 
-	getInheritTypeDefinition( existingSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedPropertyDefinition {
+	getInheritTypeDefinition( existingSchema:DigestedObjectSchema, propertyName:string, propertyURI?:string ):DigestedObjectSchemaProperty {
 		const schemas:DigestedObjectSchema[] = [ existingSchema, ...this._getTypeSchemas() ];
 
 		for( const schema of schemas ) {
 			if( ! schema.properties.has( propertyName ) ) continue;
 
-			const mergeSchema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [ existingSchema, schema ] );
-			const digestedProperty:DigestedPropertyDefinition = SchemaUtils.resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
+			const mergeSchema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [ existingSchema, schema ] );
+			const digestedProperty:DigestedObjectSchemaProperty = SchemaUtils.resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
 
 			if( ! propertyURI || propertyURI === digestedProperty.uri ) return digestedProperty;
 		}

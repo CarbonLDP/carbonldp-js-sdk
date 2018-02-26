@@ -37,7 +37,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ResponseMetadata.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ResponseMetadata.SCHEMA ) ).toBe( true );

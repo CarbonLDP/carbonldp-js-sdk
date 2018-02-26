@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import { BlankNode } from "../BlankNode";
-import { Class as ObjectSchema } from "./../ObjectSchema";
+import { ObjectSchema as ObjectSchema } from "./../ObjectSchema";
 
 export const SCHEMA:ObjectSchema = {
 	"entryKey": {

@@ -5,7 +5,7 @@ import { Resource } from "./../Resource";
 
 export const RDF_CLASS:string = C.ValidationError;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"errorDetails": {
 		"@id": C.errorDetails,
 		"@type": "@id",

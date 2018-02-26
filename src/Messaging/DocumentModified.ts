@@ -4,7 +4,7 @@ import * as Message from "./Message";
 
 export const RDF_CLASS:string = C.DocumentModified;
 
-export const SCHEMA:ObjectSchema.Class = Message.SCHEMA;
+export const SCHEMA:ObjectSchema.ObjectSchema = Message.SCHEMA;
 
 export interface Class extends Message.Class {
 }

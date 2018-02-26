@@ -16,7 +16,7 @@ var ObjectSchema_1 = require("../ObjectSchema");
 var Pointer_1 = require("../Pointer");
 var Utils_2 = require("../Utils");
 var Tokens_1 = require("./Tokens");
-var typesDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
+var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
 typesDefinition.pointerType = ObjectSchema_1.PointerType.ID;
 typesDefinition.containerType = ObjectSchema_1.ContainerType.SET;
@@ -152,7 +152,7 @@ var Class = (function () {
         var languageMap = values[0];
         return Object.keys(languageMap).map(function (key) {
             var value = languageMap[key];
-            var tempDefinition = new ObjectSchema_1.DigestedPropertyDefinition();
+            var tempDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
             tempDefinition.language = key;
             tempDefinition.literalType = XSD_1.XSD.string;
             return _this.expandLiteral(value, schema, tempDefinition);

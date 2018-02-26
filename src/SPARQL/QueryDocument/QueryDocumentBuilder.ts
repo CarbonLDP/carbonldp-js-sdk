@@ -11,10 +11,10 @@ import {
 
 import {
 	DigestedObjectSchema,
-	DigestedPropertyDefinition,
-	Digester,
-	PropertyDefinition,
-	Util as SchemaUtils,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaDigester,
+	ObjectSchemaProperty,
+	ObjectSchemaUtils as SchemaUtils,
 } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
 import {
@@ -108,7 +108,7 @@ export class Class {
 
 		const schema:DigestedObjectSchema = this._context.context.getObjectSchema( type );
 		if( schema ) {
-			this._schema = Digester.combineDigestedObjectSchemas( [ this._schema, schema ] );
+			this._schema = ObjectSchemaDigester.combineDigestedObjectSchemas( [ this._schema, schema ] );
 		}
 
 		return this;
@@ -162,7 +162,7 @@ export class Class {
 	}
 
 	_addProperty( propertyName:string, propertyDefinition:QueryPropertySchema.Class ):QueryProperty.Class {
-		const digestedDefinition:DigestedPropertyDefinition = this.addPropertyDefinition( propertyName, propertyDefinition );
+		const digestedDefinition:DigestedObjectSchemaProperty = this.addPropertyDefinition( propertyName, propertyDefinition );
 		const name:string = `${ this._document.name }.${ propertyName }`;
 
 		const property:QueryProperty.Class = this._context
@@ -189,11 +189,11 @@ export class Class {
 		return property;
 	}
 
-	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
-		const digestedDefinition:DigestedPropertyDefinition = Digester.digestProperty( propertyName, propertyDefinition, this._schema );
+	private addPropertyDefinition( propertyName:string, propertyDefinition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
+		const digestedDefinition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( propertyName, propertyDefinition, this._schema );
 
 		const uri:string = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
-		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
+		const inheritDefinition:DigestedObjectSchemaProperty = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
 		if( inheritDefinition ) {
 			for( const key in inheritDefinition ) {
 				if( digestedDefinition[ key ] !== null && key !== "uri" ) continue;

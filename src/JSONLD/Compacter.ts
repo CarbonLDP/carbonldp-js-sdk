@@ -1,6 +1,6 @@
 import {
 	DigestedObjectSchema,
-	Resolver
+	ObjectSchemaResolver
 } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
@@ -35,11 +35,11 @@ interface CompactionNode {
 export class Class {
 	private documents:Documents.Class;
 	private root?:string;
-	private resolver?:Resolver;
+	private resolver?:ObjectSchemaResolver;
 	private converter?:Converter.Class;
 	private compactionMap:Map<string, CompactionNode>;
 
-	constructor( documents:Documents.Class, root?:string, schemaResolver?:Resolver, jsonldConverter?:Converter.Class ) {
+	constructor( documents:Documents.Class, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:Converter.Class ) {
 		this.documents = documents;
 		this.root = root;
 		this.resolver = schemaResolver || documents;

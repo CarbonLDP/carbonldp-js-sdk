@@ -23,7 +23,7 @@ describe( module( "Carbon/LDP/Entry" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Entry.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Entry.SCHEMA ) ).toBe( true );

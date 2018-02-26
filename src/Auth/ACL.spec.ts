@@ -49,7 +49,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ACL.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );

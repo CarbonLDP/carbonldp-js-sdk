@@ -6,7 +6,7 @@ import * as PersistedDocument from "./../PersistedDocument";
 
 export const RDF_CLASS:string = C.Platform;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"version": {
 		"@id": C.version,
 		"@type": XSD.string,

@@ -40,7 +40,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( QueryMetadata.SCHEMA ).toBeDefined();
 		expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );

@@ -7,7 +7,7 @@ import * as Utils from "./../Utils";
 
 export const RDF_CLASS:string = CS.AccessControlEntry;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"granting": {
 		"@id": CS.granting,
 		"@type": XSD.boolean,

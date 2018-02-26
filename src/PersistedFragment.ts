@@ -12,7 +12,7 @@ function resolveURI( this:Class, uri:string ):string {
 	if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
 	let schema:ObjectSchema.DigestedObjectSchema = this._document._documents.getGeneralSchema();
-	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
+	return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {

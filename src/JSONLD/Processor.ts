@@ -194,7 +194,7 @@ export class Class {
 
 	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string {
 		if( Class.isKeyword( uri ) ) return uri;
-		return ObjectSchema.Util.resolveURI( uri, schema, relativeTo );
+		return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, relativeTo );
 	}
 
 	private static expandLanguageMap( languageMap:any ):any {
@@ -232,7 +232,7 @@ export class Class {
 			return Class.expandURI( context, value, { vocab: true, base: true } );
 		}
 
-		let definition:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
+		let definition:ObjectSchema.DigestedObjectSchemaProperty = new ObjectSchema.DigestedObjectSchemaProperty();
 		if( context.properties.has( propertyName ) ) definition = context.properties.get( propertyName );
 
 		if( definition.literal === false || ( propertyName === "@graph" && Utils.isString( value ) ) ) {
@@ -246,7 +246,7 @@ export class Class {
 
 		let expandedValue:Object = {};
 		if( definition.literalType ) {
-			expandedValue[ "@type" ] = ObjectSchema.Util.resolveURI( definition.literalType, context, { vocab: true, base: true } );
+			expandedValue[ "@type" ] = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, context, { vocab: true, base: true } );
 		} else if( Utils.isString( value ) ) {
 			let language:string = Utils.isDefined( definition.language ) ? definition.language : context.language;
 			if( language !== null ) expandedValue[ "@language" ] = language;
@@ -288,10 +288,10 @@ export class Class {
 
 		// Expand current context
 		if( "@context" in element ) {
-			context = ObjectSchema.Digester
+			context = ObjectSchema.ObjectSchemaDigester
 				.combineDigestedObjectSchemas( [
 					context,
-					ObjectSchema.Digester.digestSchema( element[ "@context" ] ),
+					ObjectSchema.ObjectSchemaDigester.digestSchema( element[ "@context" ] ),
 				] );
 		}
 

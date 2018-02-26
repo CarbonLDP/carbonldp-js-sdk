@@ -6,7 +6,7 @@ import { Resource } from "./../Resource";
 
 export const RDF_CLASS:string = SHACL.ValidationResult;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"focusNode": {
 		"@id": SHACL.focusNode,
 		"@type": "@id",

@@ -16,8 +16,8 @@ export declare class SDKContext implements Context {
     _resolvePath(path: string): string;
     hasObjectSchema(type: string): boolean;
     getObjectSchema(type?: string): ObjectSchema.DigestedObjectSchema;
-    extendObjectSchema(type: string, objectSchema: ObjectSchema.Class): void;
-    extendObjectSchema(objectSchema: ObjectSchema.Class): void;
+    extendObjectSchema(type: string, objectSchema: ObjectSchema.ObjectSchema): void;
+    extendObjectSchema(objectSchema: ObjectSchema.ObjectSchema): void;
     clearObjectSchema(type?: string): void;
     protected extendGeneralObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema): void;
     protected extendTypeObjectSchema(digestedSchema: ObjectSchema.DigestedObjectSchema, type: string): void;

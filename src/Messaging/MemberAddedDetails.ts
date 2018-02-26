@@ -4,7 +4,7 @@ import * as MemberDetails from "./MemberDetails";
 
 export const RDF_CLASS:string = C.MemberAddedDetails;
 
-export const SCHEMA:ObjectSchema.Class = MemberDetails.SCHEMA;
+export const SCHEMA:ObjectSchema.ObjectSchema = MemberDetails.SCHEMA;
 
 export interface Class extends MemberDetails.Class {
 }

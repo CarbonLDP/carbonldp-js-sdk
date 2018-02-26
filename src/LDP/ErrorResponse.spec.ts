@@ -38,7 +38,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( ErrorResponse.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( ErrorResponse.SCHEMA ) ).toBe( true );

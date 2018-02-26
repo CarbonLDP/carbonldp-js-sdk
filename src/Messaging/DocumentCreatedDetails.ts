@@ -5,7 +5,7 @@ import { Resource } from "./../Resource";
 
 export const RDF_CLASS:string = C.DocumentCreatedDetails;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"createdDocuments": {
 		"@id": C.createdDocument,
 		"@type": "@id",

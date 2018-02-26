@@ -2,7 +2,7 @@ import * as ObjectSchema from "./ObjectSchema";
 
 export interface ModelFactory<T extends object> {
 	TYPE?:string;
-	SCHEMA?:ObjectSchema.Class;
+	SCHEMA?:ObjectSchema.ObjectSchema;
 
 
 	is( object:object ):object is T;

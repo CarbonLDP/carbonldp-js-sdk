@@ -1,8 +1,8 @@
 import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 import { Context } from "../../Context";
-import { DigestedObjectSchema, Resolver } from "../../ObjectSchema";
+import { DigestedObjectSchema, ObjectSchemaResolver } from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
-export declare class Class implements Resolver {
+export declare class Class implements ObjectSchemaResolver {
     readonly context?: Context;
     private _variablesCounter;
     private _variablesMap;

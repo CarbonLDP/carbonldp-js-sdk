@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"Carbon.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Token.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
@@ -98,7 +98,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"Carbon.ObjectSchema.Class"
+			"Carbon.ObjectSchema.ObjectSchema"
 		), ():void => {
 			expect( Token.SCHEMA ).toBeDefined();
 			expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );

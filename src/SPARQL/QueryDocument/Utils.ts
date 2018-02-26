@@ -10,7 +10,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import { DigestedPropertyDefinition } from "../../ObjectSchema";
+import { DigestedObjectSchemaProperty } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
 import * as QueryContext from "./QueryContext";
 
@@ -21,7 +21,7 @@ export function getLevelRegExp( property:string ):RegExp {
 	return new RegExp( `^${ parsedName }[^.]+$` );
 }
 
-export function createPropertyPatterns( context:QueryContext.Class, resourcePath:string, propertyPath:string, propertyDefinition:DigestedPropertyDefinition ):PatternToken[] {
+export function createPropertyPatterns( context:QueryContext.Class, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
 	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri );

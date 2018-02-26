@@ -80,7 +80,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(id))
             return false;
         if (!!this.context) {
-            id = ObjectSchema.Util.resolveURI(id, this.context.getObjectSchema());
+            id = ObjectSchema.ObjectSchemaUtils.resolveURI(id, this.context.getObjectSchema());
             if (RDF.URI.Util.isRelative(id))
                 return true;
             if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
@@ -975,7 +975,7 @@ var Class = (function () {
         if (RDF.URI.Util.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
-            uri = ObjectSchema.Util.resolveURI(uri, this.getGeneralSchema());
+            uri = ObjectSchema.ObjectSchemaUtils.resolveURI(uri, this.getGeneralSchema());
             if (!RDF.URI.Util.isRelative(uri)) {
                 var baseURI = this.context.baseURI;
                 if (!RDF.URI.Util.isBaseOf(baseURI, uri))
@@ -1058,7 +1058,7 @@ var Class = (function () {
     Class.prototype.getProcessedSchema = function (objectSchemas) {
         if (objectSchemas === void 0) { objectSchemas = []; }
         objectSchemas.unshift(this.context.getObjectSchema());
-        return ObjectSchema.Digester
+        return ObjectSchema.ObjectSchemaDigester
             .combineDigestedObjectSchemas(objectSchemas);
     };
     Class.prototype.getRequestURI = function (uri) {
@@ -1068,7 +1068,7 @@ var Class = (function () {
         else if (RDF.URI.Util.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            uri = ObjectSchema.Util.resolveURI(uri, this.context.getObjectSchema());
+            uri = ObjectSchema.ObjectSchemaUtils.resolveURI(uri, this.context.getObjectSchema());
             if (RDF.URI.Util.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
