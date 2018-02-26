@@ -29,24 +29,24 @@ var Util = (function () {
         return uri.indexOf("?") !== -1;
     };
     Util.hasProtocol = function (uri) {
-        return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
+        return Utils.StringUtils.startsWith(uri, "https://") || Utils.StringUtils.startsWith(uri, "http://");
     };
     Util.isAbsolute = function (uri) {
-        return Utils.S.startsWith(uri, "http://")
-            || Utils.S.startsWith(uri, "https://")
-            || Utils.S.startsWith(uri, "://");
+        return Utils.StringUtils.startsWith(uri, "http://")
+            || Utils.StringUtils.startsWith(uri, "https://")
+            || Utils.StringUtils.startsWith(uri, "://");
     };
     Util.isRelative = function (uri) {
         return !Util.isAbsolute(uri);
     };
     Util.isBNodeID = function (uri) {
-        return Utils.S.startsWith(uri, "_:");
+        return Utils.StringUtils.startsWith(uri, "_:");
     };
     Util.generateBNodeID = function () {
-        return "_:" + Utils.UUID.generate();
+        return "_:" + Utils.UUIDUtils.generate();
     };
     Util.isPrefixed = function (uri) {
-        return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
+        return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.StringUtils.contains(uri, ":");
     };
     Util.isFragmentOf = function (fragmentURI, uri) {
         if (!Util.hasFragment(fragmentURI))
@@ -61,10 +61,10 @@ var Util = (function () {
         if (Util.isRelative(uri) && !Util.isPrefixed(uri))
             return true;
         if (uri.startsWith(baseURI)) {
-            if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
+            if (Utils.StringUtils.endsWith(baseURI, "/") || Utils.StringUtils.endsWith(baseURI, "#"))
                 return true;
             var relativeURI = uri.substring(baseURI.length);
-            if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
+            if (Utils.StringUtils.startsWith(relativeURI, "/") || Utils.StringUtils.startsWith(relativeURI, "#"))
                 return true;
         }
         return false;
@@ -131,18 +131,18 @@ var Util = (function () {
         var path = parentURI.substr(parentURI.indexOf("://") + 3, parentURI.length - 1);
         if (path.lastIndexOf("/") === -1)
             path += "/";
-        if (Utils.S.startsWith(childURI, "?") || Utils.S.startsWith(childURI, "#")) {
+        if (Utils.StringUtils.startsWith(childURI, "?") || Utils.StringUtils.startsWith(childURI, "#")) {
             if (Util.hasQuery(path))
                 path = path.substr(0, path.indexOf("?"));
-            if (Util.hasFragment(path) && (!Utils.S.startsWith(childURI, "?") || Utils.S.endsWith(path, "#")))
+            if (Util.hasFragment(path) && (!Utils.StringUtils.startsWith(childURI, "?") || Utils.StringUtils.endsWith(path, "#")))
                 path = Util.getDocumentURI(path);
         }
         else {
             path = path.substr(0, path.lastIndexOf("/") + 1);
-            if (!Utils.S.endsWith(path, "?") && !Utils.S.endsWith(path, "#") && !Utils.S.endsWith(path, "/"))
+            if (!Utils.StringUtils.endsWith(path, "?") && !Utils.StringUtils.endsWith(path, "#") && !Utils.StringUtils.endsWith(path, "/"))
                 path += "/";
         }
-        if (Utils.S.startsWith(childURI, "/")) {
+        if (Utils.StringUtils.startsWith(childURI, "/")) {
             childURI = childURI.substr(1, childURI.length);
         }
         return protocol + path + childURI;

@@ -88,7 +88,7 @@ function getResource( this:FreeResources, id:string ):Resource {
 }
 
 function getResources( this:FreeResources ):Resource[] {
-	return Utils.A.from( this._resourcesIndex.values() );
+	return Utils.ArrayUtils.from( this._resourcesIndex.values() );
 }
 
 function createResource( this:FreeResources, id?:string ):Resource {

@@ -39,7 +39,7 @@ export function hasFragment( this:Document, id:string ):boolean {
 	if( RDF.URI.Util.isAbsolute( id ) ) {
 		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) return false;
 		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	} else if( Utils.S.startsWith( id, "#" ) ) {
+	} else if( Utils.StringUtils.startsWith( id, "#" ) ) {
 		id = id.substring( 1 );
 	}
 
@@ -56,7 +56,7 @@ export function getNamedFragment( this:Document, id:string ):NamedFragment {
 	if( RDF.URI.Util.isAbsolute( id ) ) {
 		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) throw new Errors.IllegalArgumentError( "The id is out of scope." );
 		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	} else if( Utils.S.startsWith( id, "#" ) ) {
+	} else if( Utils.StringUtils.startsWith( id, "#" ) ) {
 		id = id.substring( 1 );
 	}
 
@@ -64,7 +64,7 @@ export function getNamedFragment( this:Document, id:string ):NamedFragment {
 }
 
 export function getFragments( this:Document ):Fragment[] {
-	return Utils.A.from( this._fragmentsIndex.values() );
+	return Utils.ArrayUtils.from( this._fragmentsIndex.values() );
 }
 
 export function createFragment<T extends object>( object:T, slug?:string ):T & Fragment;
@@ -96,7 +96,7 @@ export function createNamedFragment<T extends Object>( this:Document, slugOrObje
 	if( RDF.URI.Util.isAbsolute( slug ) ) {
 		if( ! RDF.URI.Util.isFragmentOf( slug, this.id ) ) throw new Errors.IllegalArgumentError( "The slug is out of scope." );
 		slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
-	} else if( Utils.S.startsWith( slug, "#" ) ) slug = slug.substring( 1 );
+	} else if( Utils.StringUtils.startsWith( slug, "#" ) ) slug = slug.substring( 1 );
 
 	if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
@@ -113,7 +113,7 @@ export function removeFragment( this:Document, fragmentOrSlug:string | Fragment 
 	if( RDF.URI.Util.isAbsolute( id ) ) {
 		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) return;
 		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	} else if( Utils.S.startsWith( id, "#" ) ) {
+	} else if( Utils.StringUtils.startsWith( id, "#" ) ) {
 		id = id.substring( 1 );
 	}
 

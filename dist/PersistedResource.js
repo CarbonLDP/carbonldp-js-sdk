@@ -9,19 +9,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(require("./Utils"));
 function syncSnapshot() {
-    this._snapshot = Utils.O.clone(this, { arrays: true });
+    this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
     this._snapshot.id = this.id;
     this._snapshot.types = this.types.slice();
 }
 function isDirty() {
     var resource = this;
-    if (!Utils.O.areEqual(resource, resource._snapshot, { arrays: true }))
+    if (!Utils.ObjectUtils.areEqual(resource, resource._snapshot, { arrays: true }))
         return true;
     var response = false;
     if ("id" in resource)
         response = response || resource._snapshot.id !== resource.id;
     if ("types" in resource)
-        response = response || !Utils.O.areEqual(resource._snapshot.types, resource.types);
+        response = response || !Utils.ObjectUtils.areEqual(resource._snapshot.types, resource.types);
     return response;
 }
 function revert() {
@@ -31,7 +31,7 @@ function revert() {
         if (!(key in resource._snapshot))
             delete resource[key];
     }
-    Utils.O.extend(resource, resource._snapshot, { arrays: true });
+    Utils.ObjectUtils.extend(resource, resource._snapshot, { arrays: true });
 }
 function isPartial() {
     return !!this._partialMetadata;

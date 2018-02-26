@@ -206,7 +206,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 
 				expect( persistedResource._snapshot ).not.toEqual( resource );
 				let resourceSnapshot:Resource = persistedResource._snapshot as Resource;
-				expect( Utils.O.areEqual( resource, resourceSnapshot, { arrays: true } ) ).toBe( true );
+				expect( Utils.ObjectUtils.areEqual( resource, resourceSnapshot, { arrays: true } ) ).toBe( true );
 				expect( resourceSnapshot.id ).toEqual( resource.id );
 				expect( resourceSnapshot.types ).toEqual( resource.types );
 			} );

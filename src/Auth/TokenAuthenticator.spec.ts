@@ -441,7 +441,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 			})();
 
@@ -485,7 +485,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 			})();
 
@@ -533,7 +533,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 			})();
 
@@ -582,7 +582,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Another " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Another " ) ).toEqual( true );
 				expect( authorization.substring( 8 ) ).toEqual( "another-type-of-authorization" );
 			})();
 
@@ -631,7 +631,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "another-token-value" );
 			})();
 

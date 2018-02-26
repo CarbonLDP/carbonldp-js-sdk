@@ -97,7 +97,7 @@ var UnsignedIntegerSerializer = (function (_super) {
     }
     UnsignedIntegerSerializer.prototype.serialize = function (value) {
         var stringValue = _super.prototype.serialize.call(this, value);
-        stringValue = Utils.S.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
+        stringValue = Utils.StringUtils.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
         return stringValue;
     };
     return UnsignedIntegerSerializer;

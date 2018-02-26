@@ -38,7 +38,7 @@ function getResource(id) {
     return this._resourcesIndex.get(id) || null;
 }
 function getResources() {
-    return Utils.A.from(this._resourcesIndex.values());
+    return Utils.ArrayUtils.from(this._resourcesIndex.values());
 }
 function createResource(id) {
     return this.createResourceFrom({}, id);

@@ -187,30 +187,12 @@ function parseBoolean(value) {
     }
 }
 exports.parseBoolean = parseBoolean;
-function extend(target) {
-    var objects = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        objects[_i - 1] = arguments[_i];
-    }
-    for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
-        var toMerge = objects_1[_a];
-        if (!toMerge)
-            continue;
-        for (var name_1 in toMerge) {
-            if (toMerge.hasOwnProperty(name_1)) {
-                target[name_1] = toMerge[name_1];
-            }
-        }
-    }
-    return target;
-}
-exports.extend = extend;
 function forEachOwnProperty(object, action) {
     if (!(isObject(object) || isFunction(object)))
         throw new Error("IllegalArgument");
-    for (var name_2 in object) {
-        if (object.hasOwnProperty(name_2)) {
-            if (action(name_2, object[name_2]) === false)
+    for (var name_1 in object) {
+        if (object.hasOwnProperty(name_1)) {
+            if (action(name_1, object[name_1]) === false)
                 break;
         }
     }
@@ -230,10 +212,10 @@ function mapTupleArray(tuples) {
     return [firsts, seconds];
 }
 exports.mapTupleArray = mapTupleArray;
-var A = (function () {
-    function A() {
+var ArrayUtils = (function () {
+    function ArrayUtils() {
     }
-    A.from = function (iterator) {
+    ArrayUtils.from = function (iterator) {
         var array = [];
         var next = iterator.next();
         while (!next.done) {
@@ -242,7 +224,7 @@ var A = (function () {
         }
         return array;
     };
-    A.joinWithoutDuplicates = function () {
+    ArrayUtils.joinWithoutDuplicates = function () {
         var arrays = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             arrays[_i] = arguments[_i];
@@ -255,7 +237,7 @@ var A = (function () {
         }
         return result;
     };
-    A.indexOf = function (array, searchedElement, comparator) {
+    ArrayUtils.indexOf = function (array, searchedElement, comparator) {
         if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
         if (!array)
             return -1;
@@ -265,13 +247,13 @@ var A = (function () {
         }
         return -1;
     };
-    return A;
+    return ArrayUtils;
 }());
-exports.A = A;
-var O = (function () {
-    function O() {
+exports.ArrayUtils = ArrayUtils;
+var ObjectUtils = (function () {
+    function ObjectUtils() {
     }
-    O.extend = function (target, source, config) {
+    ObjectUtils.extend = function (target, source, config) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
         if (!isArray(source) && !isPlainObject(source) || !isArray(target) && !isPlainObject(target))
             return null;
@@ -287,8 +269,8 @@ var O = (function () {
                 }
                 else {
                     property = !(key in target) || target[key].constructor !== property.constructor ?
-                        O.clone(property, config) :
-                        O.extend(target[key], property, config);
+                        ObjectUtils.clone(property, config) :
+                        ObjectUtils.extend(target[key], property, config);
                 }
             }
             if (property === null) {
@@ -301,20 +283,20 @@ var O = (function () {
         delete source.__CarbonSDK_circularReferenceFlag;
         return target;
     };
-    O.clone = function (object, config) {
+    ObjectUtils.clone = function (object, config) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
         var clone = (isAnArray ? [] : Object.create(Object.getPrototypeOf(object)));
-        return O.extend(clone, object, config);
+        return ObjectUtils.extend(clone, object, config);
     };
-    O.areEqual = function (object1, object2, config, ignore) {
+    ObjectUtils.areEqual = function (object1, object2, config, ignore) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
         if (ignore === void 0) { ignore = {}; }
         return internalAreEqual(object1, object2, config, [object1], [object2], ignore);
     };
-    O.areShallowlyEqual = function (object1, object2) {
+    ObjectUtils.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
             return true;
         if (!isObject(object1) || !isObject(object2))
@@ -343,9 +325,9 @@ var O = (function () {
         }
         return true;
     };
-    return O;
+    return ObjectUtils;
 }());
-exports.O = O;
+exports.ObjectUtils = ObjectUtils;
 function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
     if (ignore === void 0) { ignore = {}; }
     if (object1 === object2)
@@ -354,7 +336,7 @@ function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
         return false;
     if (isDate(object1))
         return object1.getTime() === object2.getTime();
-    var keys = A.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
+    var keys = ArrayUtils.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
         var key = keys_1[_i];
         if (!(key in object1) || !(key in object2))
@@ -392,32 +374,32 @@ function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
     }
     return true;
 }
-var S = (function () {
-    function S() {
+var StringUtils = (function () {
+    function StringUtils() {
     }
-    S.startsWith = function (str, substring) {
+    StringUtils.startsWith = function (str, substring) {
         return str.lastIndexOf(substring, 0) === 0;
     };
-    S.endsWith = function (str, substring) {
+    StringUtils.endsWith = function (str, substring) {
         return str.indexOf(substring, str.length - substring.length) !== -1;
     };
-    S.contains = function (str, substring) {
+    StringUtils.contains = function (str, substring) {
         return str.indexOf(substring) !== -1;
     };
-    return S;
+    return StringUtils;
 }());
-exports.S = S;
-var M = (function () {
-    function M() {
+exports.StringUtils = StringUtils;
+var MapUtils = (function () {
+    function MapUtils() {
     }
-    M.from = function (object) {
+    MapUtils.from = function (object) {
         var map = new Map();
         forEachOwnProperty(object, function (name, value) {
             map.set(name, value);
         });
         return map;
     };
-    M.extend = function (toExtend) {
+    MapUtils.extend = function (toExtend) {
         var extenders = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             extenders[_i - 1] = arguments[_i];
@@ -436,26 +418,26 @@ var M = (function () {
         }
         return toExtend;
     };
-    return M;
+    return MapUtils;
 }());
-exports.M = M;
-var UUID = (function () {
-    function UUID() {
+exports.MapUtils = MapUtils;
+var UUIDUtils = (function () {
+    function UUIDUtils() {
     }
-    UUID.is = function (uuid) {
-        return UUID.regExp.test(uuid);
+    UUIDUtils.is = function (uuid) {
+        return UUIDUtils.regExp.test(uuid);
     };
-    UUID.generate = function () {
+    UUIDUtils.generate = function () {
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0;
             var v = c === "x" ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
-    UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return UUID;
+    UUIDUtils.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return UUIDUtils;
 }());
-exports.UUID = UUID;
+exports.UUIDUtils = UUIDUtils;
 
 
 /***/ }),
@@ -1248,8 +1230,8 @@ var ObjectSchemaDigester = (function () {
                 targetSchema.base = schema.base;
             if (schema.language !== null)
                 targetSchema.language = schema.language;
-            Utils.M.extend(targetSchema.prefixes, schema.prefixes);
-            Utils.M.extend(targetSchema.properties, schema.properties);
+            Utils.MapUtils.extend(targetSchema.prefixes, schema.prefixes);
+            Utils.MapUtils.extend(targetSchema.properties, schema.properties);
         });
         return targetSchema;
     };
@@ -1285,7 +1267,7 @@ var ObjectSchemaUtils = (function () {
         var resolvedURI = ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
         var resolvedType = ObjectSchemaUtils.resolveURI(type, schema, { vocab: true, base: true });
         if (resolvedURI !== uri || resolvedType !== type) {
-            definition = inSame ? definition : Utils.O.clone(definition);
+            definition = inSame ? definition : Utils.ObjectUtils.clone(definition);
             definition.uri = resolvedURI;
             definition.literalType = resolvedType;
         }
@@ -1418,24 +1400,24 @@ var Util = (function () {
         return uri.indexOf("?") !== -1;
     };
     Util.hasProtocol = function (uri) {
-        return Utils.S.startsWith(uri, "https://") || Utils.S.startsWith(uri, "http://");
+        return Utils.StringUtils.startsWith(uri, "https://") || Utils.StringUtils.startsWith(uri, "http://");
     };
     Util.isAbsolute = function (uri) {
-        return Utils.S.startsWith(uri, "http://")
-            || Utils.S.startsWith(uri, "https://")
-            || Utils.S.startsWith(uri, "://");
+        return Utils.StringUtils.startsWith(uri, "http://")
+            || Utils.StringUtils.startsWith(uri, "https://")
+            || Utils.StringUtils.startsWith(uri, "://");
     };
     Util.isRelative = function (uri) {
         return !Util.isAbsolute(uri);
     };
     Util.isBNodeID = function (uri) {
-        return Utils.S.startsWith(uri, "_:");
+        return Utils.StringUtils.startsWith(uri, "_:");
     };
     Util.generateBNodeID = function () {
-        return "_:" + Utils.UUID.generate();
+        return "_:" + Utils.UUIDUtils.generate();
     };
     Util.isPrefixed = function (uri) {
-        return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.S.contains(uri, ":");
+        return !Util.isAbsolute(uri) && !Util.isBNodeID(uri) && Utils.StringUtils.contains(uri, ":");
     };
     Util.isFragmentOf = function (fragmentURI, uri) {
         if (!Util.hasFragment(fragmentURI))
@@ -1450,10 +1432,10 @@ var Util = (function () {
         if (Util.isRelative(uri) && !Util.isPrefixed(uri))
             return true;
         if (uri.startsWith(baseURI)) {
-            if (Utils.S.endsWith(baseURI, "/") || Utils.S.endsWith(baseURI, "#"))
+            if (Utils.StringUtils.endsWith(baseURI, "/") || Utils.StringUtils.endsWith(baseURI, "#"))
                 return true;
             var relativeURI = uri.substring(baseURI.length);
-            if (Utils.S.startsWith(relativeURI, "/") || Utils.S.startsWith(relativeURI, "#"))
+            if (Utils.StringUtils.startsWith(relativeURI, "/") || Utils.StringUtils.startsWith(relativeURI, "#"))
                 return true;
         }
         return false;
@@ -1520,18 +1502,18 @@ var Util = (function () {
         var path = parentURI.substr(parentURI.indexOf("://") + 3, parentURI.length - 1);
         if (path.lastIndexOf("/") === -1)
             path += "/";
-        if (Utils.S.startsWith(childURI, "?") || Utils.S.startsWith(childURI, "#")) {
+        if (Utils.StringUtils.startsWith(childURI, "?") || Utils.StringUtils.startsWith(childURI, "#")) {
             if (Util.hasQuery(path))
                 path = path.substr(0, path.indexOf("?"));
-            if (Util.hasFragment(path) && (!Utils.S.startsWith(childURI, "?") || Utils.S.endsWith(path, "#")))
+            if (Util.hasFragment(path) && (!Utils.StringUtils.startsWith(childURI, "?") || Utils.StringUtils.endsWith(path, "#")))
                 path = Util.getDocumentURI(path);
         }
         else {
             path = path.substr(0, path.lastIndexOf("/") + 1);
-            if (!Utils.S.endsWith(path, "?") && !Utils.S.endsWith(path, "#") && !Utils.S.endsWith(path, "/"))
+            if (!Utils.StringUtils.endsWith(path, "?") && !Utils.StringUtils.endsWith(path, "#") && !Utils.StringUtils.endsWith(path, "/"))
                 path += "/";
         }
-        if (Utils.S.startsWith(childURI, "/")) {
+        if (Utils.StringUtils.startsWith(childURI, "/")) {
             childURI = childURI.substr(1, childURI.length);
         }
         return protocol + path + childURI;
@@ -3484,7 +3466,7 @@ function extendRevert(superFunction) {
 }
 function syncSavedFragments() {
     var document = this;
-    document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
+    document._savedFragments = Utils.ArrayUtils.from(document._fragmentsIndex.values());
 }
 function resolveURI(uri) {
     if (URI.Util.isAbsolute(uri))
@@ -4774,19 +4756,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(__webpack_require__(0));
 function syncSnapshot() {
-    this._snapshot = Utils.O.clone(this, { arrays: true });
+    this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
     this._snapshot.id = this.id;
     this._snapshot.types = this.types.slice();
 }
 function isDirty() {
     var resource = this;
-    if (!Utils.O.areEqual(resource, resource._snapshot, { arrays: true }))
+    if (!Utils.ObjectUtils.areEqual(resource, resource._snapshot, { arrays: true }))
         return true;
     var response = false;
     if ("id" in resource)
         response = response || resource._snapshot.id !== resource.id;
     if ("types" in resource)
-        response = response || !Utils.O.areEqual(resource._snapshot.types, resource.types);
+        response = response || !Utils.ObjectUtils.areEqual(resource._snapshot.types, resource.types);
     return response;
 }
 function revert() {
@@ -4796,7 +4778,7 @@ function revert() {
         if (!(key in resource._snapshot))
             delete resource[key];
     }
-    Utils.O.extend(resource, resource._snapshot, { arrays: true });
+    Utils.ObjectUtils.extend(resource, resource._snapshot, { arrays: true });
 }
 function isPartial() {
     return !!this._partialMetadata;
@@ -7305,10 +7287,10 @@ function configureChildInheritance(granting, subjects, subjectsClass, permission
     configACEs.call(this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries);
 }
 function grantingFrom(subject, permission, aces) {
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
+    var subjectACEs = aces.filter(function (ace) { return Utils.ArrayUtils.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_1 = subjectACEs; _i < subjectACEs_1.length; _i++) {
         var ace = subjectACEs_1[_i];
-        if (Utils.A.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual) !== -1)
+        if (Utils.ArrayUtils.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual) !== -1)
             return ace.granting;
     }
     return null;
@@ -7338,30 +7320,30 @@ function removePermissionsFrom(subject, permissions, aces) {
         return;
     var acl = this;
     var opposedAces = acl.entries === aces ? acl.inheritableEntries : acl.entries;
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
+    var subjectACEs = aces.filter(function (ace) { return Utils.ArrayUtils.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
         var ace = subjectACEs_2[_i];
-        if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer_1.Pointer.areEqual) !== -1) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
+        if (opposedAces && Utils.ArrayUtils.indexOf(opposedAces, ace, Pointer_1.Pointer.areEqual) !== -1) {
+            aces.splice(Utils.ArrayUtils.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
             var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
             subjectACEs.push(newACE);
             continue;
         }
         if (ace.subjects.length > 1) {
-            ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual), 1);
+            ace.subjects.splice(Utils.ArrayUtils.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual), 1);
             var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
             subjectACEs.push(newACE);
             continue;
         }
         for (var _a = 0, permissions_1 = permissions; _a < permissions_1.length; _a++) {
             var permission = permissions_1[_a];
-            var index = Utils.A.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual);
+            var index = Utils.ArrayUtils.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual);
             if (index === -1)
                 continue;
             ace.permissions.splice(index, 1);
         }
         if (ace.permissions.length === 0) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
+            aces.splice(Utils.ArrayUtils.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
             acl._removeFragment(ace);
         }
     }
@@ -8553,11 +8535,11 @@ var Class = (function () {
         function resolved(url, promise) {
             return promise.then(function (_a) {
                 var object = _a[0], response = _a[1];
-                var _contextsRequested = Utils.O.clone(contextsRequested);
+                var _contextsRequested = Utils.ObjectUtils.clone(contextsRequested);
                 _contextsRequested[url] = true;
                 var contextWrapper = { "@context": {} };
                 var header = response.getHeader("Content-Type");
-                if (!Utils.S.contains(header.toString(), "application/ld+json")) {
+                if (!Utils.StringUtils.contains(header.toString(), "application/ld+json")) {
                     header = response.getHeader("Link");
                     var link = void 0;
                     if (!!header)
@@ -9385,7 +9367,7 @@ function getResource(id) {
     return this._resourcesIndex.get(id) || null;
 }
 function getResources() {
-    return Utils.A.from(this._resourcesIndex.values());
+    return Utils.ArrayUtils.from(this._resourcesIndex.values());
 }
 function createResource(id) {
     return this.createResourceFrom({}, id);
@@ -9574,7 +9556,7 @@ var Class = (function () {
         if (this.context && this.context.parentContext) {
             var parentDecorators = this.context.parentContext.documents.documentDecorators;
             if (parentDecorators)
-                decorators = this._documentDecorators = Utils.M.extend(decorators, parentDecorators);
+                decorators = this._documentDecorators = Utils.MapUtils.extend(decorators, parentDecorators);
         }
         else {
             decorators.set(ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate);
@@ -10916,7 +10898,7 @@ var Class = (function () {
         var callbacksMap = this._subscriptionsMap.get(destination);
         if (callbacksMap.has(onEvent))
             return;
-        var subscriptionID = Utils_1.UUID.generate();
+        var subscriptionID = Utils_1.UUIDUtils.generate();
         callbacksMap.set(onEvent, {
             id: subscriptionID,
             errorCallback: onError,
@@ -13152,7 +13134,7 @@ var Carbon = (function (_super) {
                 _this._baseURI += ":" + urlOrSettings.port;
             }
             urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-            _this.settings = Utils.O.extend(_this.settings, urlOrSettings, { objects: true });
+            _this.settings = Utils.ObjectUtils.extend(_this.settings, urlOrSettings, { objects: true });
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
@@ -15383,7 +15365,7 @@ var Service = (function () {
         else {
             options = bodyOrOptions ? bodyOrOptions : options;
         }
-        options = Utils.extend({}, Service.defaultOptions, options);
+        options = Object.assign({}, Service.defaultOptions, options);
         if (Utils.isNumber(method))
             method = Method_1.default[method];
         var requestPromise;
@@ -15740,7 +15722,7 @@ function hasFragment(id) {
             return false;
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
-    else if (Utils.S.startsWith(id, "#")) {
+    else if (Utils.StringUtils.startsWith(id, "#")) {
         id = id.substring(1);
     }
     return this._fragmentsIndex.has(id);
@@ -15760,14 +15742,14 @@ function getNamedFragment(id) {
             throw new Errors.IllegalArgumentError("The id is out of scope.");
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
-    else if (Utils.S.startsWith(id, "#")) {
+    else if (Utils.StringUtils.startsWith(id, "#")) {
         id = id.substring(1);
     }
     return this._fragmentsIndex.get(id) || null;
 }
 exports.getNamedFragment = getNamedFragment;
 function getFragments() {
-    return Utils.A.from(this._fragmentsIndex.values());
+    return Utils.ArrayUtils.from(this._fragmentsIndex.values());
 }
 exports.getFragments = getFragments;
 function createFragment(slugOrObject, slug) {
@@ -15795,7 +15777,7 @@ function createNamedFragment(slugOrObject, slug) {
             throw new Errors.IllegalArgumentError("The slug is out of scope.");
         slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
     }
-    else if (Utils.S.startsWith(slug, "#"))
+    else if (Utils.StringUtils.startsWith(slug, "#"))
         slug = slug.substring(1);
     if (this._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
@@ -15812,7 +15794,7 @@ function removeFragment(fragmentOrSlug) {
             return;
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
-    else if (Utils.S.startsWith(id, "#")) {
+    else if (Utils.StringUtils.startsWith(id, "#")) {
         id = id.substring(1);
     }
     this._fragmentsIndex.delete(id);
@@ -16015,7 +15997,7 @@ var UnsignedIntegerSerializer = (function (_super) {
     }
     UnsignedIntegerSerializer.prototype.serialize = function (value) {
         var stringValue = _super.prototype.serialize.call(this, value);
-        stringValue = Utils.S.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
+        stringValue = Utils.StringUtils.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
         return stringValue;
     };
     return UnsignedIntegerSerializer;
@@ -22484,14 +22466,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(1));
 var HTTP = __importStar(__webpack_require__(19));
 var RDF = __importStar(__webpack_require__(17));
-var Utils = __importStar(__webpack_require__(0));
 var RawResultsParser_1 = __importDefault(__webpack_require__(149));
 var Class = (function () {
     function Class() {
     }
     Class.executeRawASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
+        options = Object.assign(options, Class.defaultOptions);
         HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, askQuery, options, Class.resultsParser);
@@ -22507,7 +22488,7 @@ var Class = (function () {
     };
     Class.executeRawSELECTQuery = function (url, selectQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
+        options = Object.assign(options, Class.defaultOptions);
         HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
         return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
@@ -22540,7 +22521,7 @@ var Class = (function () {
     };
     Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
+        options = Object.assign(options, Class.defaultOptions);
         if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
             HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
@@ -22548,7 +22529,7 @@ var Class = (function () {
     };
     Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
+        options = Object.assign(options, Class.defaultOptions);
         if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
             HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
@@ -22556,7 +22537,7 @@ var Class = (function () {
     };
     Class.executeUPDATE = function (url, updateQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
+        options = Object.assign(options, Class.defaultOptions);
         if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
             HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
         HTTP.Request.Util.setContentTypeHeader("application/sparql-update", options);

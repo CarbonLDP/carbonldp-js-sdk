@@ -6,7 +6,7 @@ import Carbon from "../Carbon";
 import { IllegalStateError } from "../Errors";
 import JSONLDParser from "../JSONLD/Parser";
 import RDFNode from "../RDF/Node";
-import { UUID } from "../Utils";
+import { UUIDUtils } from "../Utils";
 import { FreeResources } from "./../FreeResources";
 import * as Message from "./Message";
 import Options from "./Options";
@@ -100,7 +100,7 @@ export class Class {
 		const callbacksMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
 
 		if( callbacksMap.has( onEvent ) ) return;
-		const subscriptionID:string = UUID.generate();
+		const subscriptionID:string = UUIDUtils.generate();
 		callbacksMap.set( onEvent, {
 			id: subscriptionID,
 			errorCallback: onError,

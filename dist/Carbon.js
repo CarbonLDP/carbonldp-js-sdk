@@ -85,7 +85,7 @@ var Carbon = (function (_super) {
                 _this._baseURI += ":" + urlOrSettings.port;
             }
             urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-            _this.settings = Utils.O.extend(_this.settings, urlOrSettings, { objects: true });
+            _this.settings = Utils.ObjectUtils.extend(_this.settings, urlOrSettings, { objects: true });
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";

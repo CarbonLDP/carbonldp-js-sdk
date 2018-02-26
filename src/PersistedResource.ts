@@ -17,7 +17,7 @@ export interface Class extends Resource {
 }
 
 function syncSnapshot( this:Class ):void {
-	this._snapshot = Utils.O.clone( this, { arrays: true } );
+	this._snapshot = Utils.ObjectUtils.clone( this, { arrays: true } );
 
 	this._snapshot.id = this.id;
 	this._snapshot.types = this.types.slice();
@@ -26,11 +26,11 @@ function syncSnapshot( this:Class ):void {
 function isDirty():boolean {
 	let resource:Class & Resource = this;
 
-	if( ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true } ) ) return true;
+	if( ! Utils.ObjectUtils.areEqual( resource, resource._snapshot, { arrays: true } ) ) return true;
 
 	let response:boolean = false;
 	if( "id" in resource ) response = response || (resource._snapshot as Resource).id !== resource.id;
-	if( "types" in resource ) response = response || ! Utils.O.areEqual( (resource._snapshot as Resource).types, resource.types );
+	if( "types" in resource ) response = response || ! Utils.ObjectUtils.areEqual( (resource._snapshot as Resource).types, resource.types );
 
 	return response;
 }
@@ -42,7 +42,7 @@ function revert():void {
 		if( ! ( key in resource._snapshot ) ) delete resource[ key ];
 	}
 
-	Utils.O.extend( resource, resource._snapshot, { arrays: true } );
+	Utils.ObjectUtils.extend( resource, resource._snapshot, { arrays: true } );
 }
 
 function isPartial( this:Class ):boolean {

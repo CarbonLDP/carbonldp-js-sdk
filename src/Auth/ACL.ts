@@ -218,10 +218,10 @@ function configureChildInheritance( granting:boolean, subjects:string | Pointer 
 }
 
 function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE.Class[] ):boolean {
-	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
+	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 
 	for( let ace of subjectACEs ) {
-		if( Utils.A.indexOf( ace.permissions, permission, Pointer.areEqual ) !== - 1 )
+		if( Utils.ArrayUtils.indexOf( ace.permissions, permission, Pointer.areEqual ) !== - 1 )
 			return ace.granting;
 	}
 	return null;
@@ -258,10 +258,10 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 	let acl:Class = <Class> this;
 	let opposedAces:ACE.Class[] = acl.entries === aces ? acl.inheritableEntries : acl.entries;
 
-	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.A.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
+	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 	for( let ace of subjectACEs ) {
-		if( opposedAces && Utils.A.indexOf( opposedAces, ace, Pointer.areEqual ) !== - 1 ) {
-			aces.splice( Utils.A.indexOf( aces, ace, Pointer.areEqual ), 1 );
+		if( opposedAces && Utils.ArrayUtils.indexOf( opposedAces, ace, Pointer.areEqual ) !== - 1 ) {
+			aces.splice( Utils.ArrayUtils.indexOf( aces, ace, Pointer.areEqual ), 1 );
 
 			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
@@ -269,7 +269,7 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 		}
 
 		if( ace.subjects.length > 1 ) {
-			ace.subjects.splice( Utils.A.indexOf( ace.subjects, subject, Pointer.areEqual ), 1 );
+			ace.subjects.splice( Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ), 1 );
 
 			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
@@ -277,14 +277,14 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 		}
 
 		for( let permission of permissions ) {
-			let index:number = Utils.A.indexOf( ace.permissions, permission, Pointer.areEqual );
+			let index:number = Utils.ArrayUtils.indexOf( ace.permissions, permission, Pointer.areEqual );
 
 			if( index === - 1 ) continue;
 			ace.permissions.splice( index, 1 );
 		}
 
 		if( ace.permissions.length === 0 ) {
-			aces.splice( Utils.A.indexOf( aces, ace, Pointer.areEqual ), 1 );
+			aces.splice( Utils.ArrayUtils.indexOf( aces, ace, Pointer.areEqual ), 1 );
 			acl._removeFragment( ace );
 		}
 	}

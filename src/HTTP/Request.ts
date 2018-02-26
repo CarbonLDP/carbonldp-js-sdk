@@ -155,7 +155,7 @@ export class Service {
 			options = bodyOrOptions ? bodyOrOptions : options;
 		}
 
-		options = Utils.extend( {}, Service.defaultOptions, options );
+		options = Object.assign( {}, Service.defaultOptions, options );
 
 		if( Utils.isNumber( method ) ) method = Method[ method ];
 

@@ -119,11 +119,11 @@ var Class = (function () {
         function resolved(url, promise) {
             return promise.then(function (_a) {
                 var object = _a[0], response = _a[1];
-                var _contextsRequested = Utils.O.clone(contextsRequested);
+                var _contextsRequested = Utils.ObjectUtils.clone(contextsRequested);
                 _contextsRequested[url] = true;
                 var contextWrapper = { "@context": {} };
                 var header = response.getHeader("Content-Type");
-                if (!Utils.S.contains(header.toString(), "application/ld+json")) {
+                if (!Utils.StringUtils.contains(header.toString(), "application/ld+json")) {
                     header = response.getHeader("Link");
                     var link = void 0;
                     if (!!header)

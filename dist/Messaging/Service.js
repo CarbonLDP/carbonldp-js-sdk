@@ -101,7 +101,7 @@ var Class = (function () {
         var callbacksMap = this._subscriptionsMap.get(destination);
         if (callbacksMap.has(onEvent))
             return;
-        var subscriptionID = Utils_1.UUID.generate();
+        var subscriptionID = Utils_1.UUIDUtils.generate();
         callbacksMap.set(onEvent, {
             id: subscriptionID,
             errorCallback: onError,

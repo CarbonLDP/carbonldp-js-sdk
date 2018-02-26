@@ -54,7 +54,7 @@ var Class = (function () {
         if (this.context && this.context.parentContext) {
             var parentDecorators = this.context.parentContext.documents.documentDecorators;
             if (parentDecorators)
-                decorators = this._documentDecorators = Utils.M.extend(decorators, parentDecorators);
+                decorators = this._documentDecorators = Utils.MapUtils.extend(decorators, parentDecorators);
         }
         else {
             decorators.set(ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate);

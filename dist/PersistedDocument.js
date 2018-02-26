@@ -56,7 +56,7 @@ function extendRevert(superFunction) {
 }
 function syncSavedFragments() {
     var document = this;
-    document._savedFragments = Utils.A.from(document._fragmentsIndex.values());
+    document._savedFragments = Utils.ArrayUtils.from(document._fragmentsIndex.values());
 }
 function resolveURI(uri) {
     if (URI.Util.isAbsolute(uri))

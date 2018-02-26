@@ -171,7 +171,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
 
 				let auth:string = ( typeof atob !== "undefined" ) ? atob( authorization.substring( 6 ) ) : ( new Buffer( authorization.substring( 6 ), "base64" ) ).toString( "utf8" );
 				expect( auth ).toEqual( "user:pass" );
@@ -197,7 +197,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
 
 				let auth:string = ( typeof atob !== "undefined" ) ? atob( authorization.substring( 6 ) ) : ( new Buffer( authorization.substring( 6 ), "base64" ) ).toString( "utf8" );
 				expect( auth ).toEqual( "user:pass" );
@@ -227,7 +227,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
 
 				let auth:string = ( typeof atob !== "undefined" ) ? atob( authorization.substring( 6 ) ) : ( new Buffer( authorization.substring( 6 ), "base64" ) ).toString( "utf8" );
 				expect( auth ).toEqual( "user:pass" );
@@ -258,7 +258,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Another " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Another " ) ).toEqual( true );
 
 				let auth:string = ( typeof atob !== "undefined" ) ? atob( authorization.substring( 7 ) ) : ( new Buffer( authorization.substring( 7 ), "base64" ) ).toString( "utf8" );
 				expect( auth ).toEqual( "another-authorization-type" );
@@ -289,7 +289,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
 
 				let auth:string = ( typeof atob !== "undefined" ) ? atob( authorization.substring( 6 ) ) : ( new Buffer( authorization.substring( 6 ), "base64" ) ).toString( "utf8" );
 				expect( auth ).toEqual( "another-user:another-pass" );

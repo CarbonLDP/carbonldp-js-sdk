@@ -110,13 +110,13 @@ export class Class {
 
 		function resolved( url:string, promise:Promise<[ any, HTTP.Response.Class ]> ):Promise<void> {
 			return promise.then( ( [ object, response ]:[ any, HTTP.Response.Class ] ) => {
-				let _contextsRequested:{ [ index:string ]:boolean } = Utils.O.clone<{ [ index:string ]:boolean }>( contextsRequested );
+				let _contextsRequested:{ [ index:string ]:boolean } = Utils.ObjectUtils.clone<{ [ index:string ]:boolean }>( contextsRequested );
 				_contextsRequested[ url ] = true;
 
 				let contextWrapper:Object = { "@context": {} };
 
 				let header:HTTP.Header.Class = response.getHeader( "Content-Type" );
-				if( ! Utils.S.contains( header.toString(), "application/ld+json" ) ) {
+				if( ! Utils.StringUtils.contains( header.toString(), "application/ld+json" ) ) {
 					header = response.getHeader( "Link" );
 					let link:string;
 					if( ! ! header ) link = Class.getTargetFromLinkHeader( header );

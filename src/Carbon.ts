@@ -112,7 +112,7 @@ export class Carbon extends AbstractContext.AbstractContext {
 			}
 
 			urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-			this.settings = Utils.O.extend( this.settings, urlOrSettings, { objects: true } );
+			this.settings = Utils.ObjectUtils.extend( this.settings, urlOrSettings, { objects: true } );
 		}
 
 		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";

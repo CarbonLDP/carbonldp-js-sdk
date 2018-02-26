@@ -70,7 +70,7 @@ export class UnsignedIntegerSerializer extends IntegerSerializer {
 	serialize( value:any ):string {
 		let stringValue:string = super.serialize( value );
 
-		stringValue = Utils.S.startsWith( stringValue, "-" ) ? stringValue.substring( 1 ) : stringValue;
+		stringValue = Utils.StringUtils.startsWith( stringValue, "-" ) ? stringValue.substring( 1 ) : stringValue;
 
 		return stringValue;
 	}

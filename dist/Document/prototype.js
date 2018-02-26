@@ -50,7 +50,7 @@ function hasFragment(id) {
             return false;
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
-    else if (Utils.S.startsWith(id, "#")) {
+    else if (Utils.StringUtils.startsWith(id, "#")) {
         id = id.substring(1);
     }
     return this._fragmentsIndex.has(id);
@@ -70,14 +70,14 @@ function getNamedFragment(id) {
             throw new Errors.IllegalArgumentError("The id is out of scope.");
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
-    else if (Utils.S.startsWith(id, "#")) {
+    else if (Utils.StringUtils.startsWith(id, "#")) {
         id = id.substring(1);
     }
     return this._fragmentsIndex.get(id) || null;
 }
 exports.getNamedFragment = getNamedFragment;
 function getFragments() {
-    return Utils.A.from(this._fragmentsIndex.values());
+    return Utils.ArrayUtils.from(this._fragmentsIndex.values());
 }
 exports.getFragments = getFragments;
 function createFragment(slugOrObject, slug) {
@@ -105,7 +105,7 @@ function createNamedFragment(slugOrObject, slug) {
             throw new Errors.IllegalArgumentError("The slug is out of scope.");
         slug = RDF.URI.Util.hasFragment(slug) ? RDF.URI.Util.getFragment(slug) : slug;
     }
-    else if (Utils.S.startsWith(slug, "#"))
+    else if (Utils.StringUtils.startsWith(slug, "#"))
         slug = slug.substring(1);
     if (this._fragmentsIndex.has(slug))
         throw new Errors.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
@@ -122,7 +122,7 @@ function removeFragment(fragmentOrSlug) {
             return;
         id = RDF.URI.Util.hasFragment(id) ? RDF.URI.Util.getFragment(id) : id;
     }
-    else if (Utils.S.startsWith(id, "#")) {
+    else if (Utils.StringUtils.startsWith(id, "#")) {
         id = id.substring(1);
     }
     this._fragmentsIndex.delete(id);

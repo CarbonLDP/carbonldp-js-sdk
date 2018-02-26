@@ -109,7 +109,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Obj
 		let decorators:Class[ "documentDecorators" ] = new Map();
 		if( this.context && this.context.parentContext ) {
 			let parentDecorators:Class[ "documentDecorators" ] = this.context.parentContext.documents.documentDecorators;
-			if( parentDecorators ) decorators = this._documentDecorators = Utils.M.extend( decorators, parentDecorators );
+			if( parentDecorators ) decorators = this._documentDecorators = Utils.MapUtils.extend( decorators, parentDecorators );
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate );
 			decorators.set( Auth.ACL.RDF_CLASS, Auth.PersistedACL.Factory.decorate );

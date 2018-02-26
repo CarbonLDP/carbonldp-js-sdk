@@ -2,7 +2,6 @@ import * as Errors from "./../Errors";
 import * as HTTP from "./../HTTP";
 import { PointerLibrary } from "./../Pointer";
 import * as RDF from "./../RDF";
-import * as Utils from "./../Utils";
 
 import * as RawResults from "./RawResults";
 import ResultsParser from "./RawResultsParser";
@@ -15,7 +14,7 @@ export class Class {
 	private static stringParser:HTTP.StringParser.Class = new HTTP.StringParser.Class();
 
 	static executeRawASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, HTTP.Response.Class ]> {
-		options = Utils.extend( options, Class.defaultOptions );
+		options = Object.assign( options, Class.defaultOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/sparql-results+json", options );
 		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
@@ -32,7 +31,7 @@ export class Class {
 	}
 
 	static executeRawSELECTQuery( url:string, selectQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, HTTP.Response.Class ]> {
-		options = Utils.extend( options, Class.defaultOptions );
+		options = Object.assign( options, Class.defaultOptions );
 
 		HTTP.Request.Util.setAcceptHeader( "application/sparql-results+json", options );
 		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
@@ -67,7 +66,7 @@ export class Class {
 	}
 
 	static executeRawCONSTRUCTQuery( url:string, constructQuery:string, options:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
-		options = Utils.extend( options, Class.defaultOptions );
+		options = Object.assign( options, Class.defaultOptions );
 
 		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
 		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
@@ -76,7 +75,7 @@ export class Class {
 	}
 
 	static executeRawDESCRIBEQuery( url:string, describeQuery:string, options:HTTP.Request.Options = {} ):Promise<[ string, HTTP.Response.Class ]> {
-		options = Utils.extend( options, Class.defaultOptions );
+		options = Object.assign( options, Class.defaultOptions );
 
 		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
 		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
@@ -85,7 +84,7 @@ export class Class {
 	}
 
 	static executeUPDATE( url:string, updateQuery:string, options:HTTP.Request.Options = {} ):Promise<HTTP.Response.Class> {
-		options = Utils.extend( options, Class.defaultOptions );
+		options = Object.assign( options, Class.defaultOptions );
 
 		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
 		HTTP.Request.Util.setContentTypeHeader( "application/sparql-update", options );

@@ -206,8 +206,8 @@ export class ObjectSchemaDigester {
 			if( schema.base !== "" ) targetSchema.base = schema.base;
 			if( schema.language !== null ) targetSchema.language = schema.language;
 
-			Utils.M.extend( targetSchema.prefixes, schema.prefixes );
-			Utils.M.extend( targetSchema.properties, schema.properties );
+			Utils.MapUtils.extend( targetSchema.prefixes, schema.prefixes );
+			Utils.MapUtils.extend( targetSchema.properties, schema.properties );
 		} );
 
 		return targetSchema;
@@ -246,7 +246,7 @@ export class ObjectSchemaUtils {
 		const resolvedType:string = ObjectSchemaUtils.resolveURI( type, schema, { vocab: true, base: true } );
 
 		if( resolvedURI !== uri || resolvedType !== type ) {
-			definition = inSame ? definition : Utils.O.clone( definition );
+			definition = inSame ? definition : Utils.ObjectUtils.clone( definition );
 			definition.uri = resolvedURI;
 			definition.literalType = resolvedType;
 		}

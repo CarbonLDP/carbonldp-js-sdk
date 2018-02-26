@@ -24,13 +24,13 @@ export class Util {
 	}
 
 	static hasProtocol( uri:string ):boolean {
-		return Utils.S.startsWith( uri, "https://" ) || Utils.S.startsWith( uri, "http://" );
+		return Utils.StringUtils.startsWith( uri, "https://" ) || Utils.StringUtils.startsWith( uri, "http://" );
 	}
 
 	static isAbsolute( uri:string ):boolean {
-		return Utils.S.startsWith( uri, "http://" )
-			|| Utils.S.startsWith( uri, "https://" )
-			|| Utils.S.startsWith( uri, "://" );
+		return Utils.StringUtils.startsWith( uri, "http://" )
+			|| Utils.StringUtils.startsWith( uri, "https://" )
+			|| Utils.StringUtils.startsWith( uri, "://" );
 	}
 
 	static isRelative( uri:string ):boolean {
@@ -38,15 +38,15 @@ export class Util {
 	}
 
 	static isBNodeID( uri:string ):boolean {
-		return Utils.S.startsWith( uri, "_:" );
+		return Utils.StringUtils.startsWith( uri, "_:" );
 	}
 
 	static generateBNodeID():string {
-		return "_:" + Utils.UUID.generate();
+		return "_:" + Utils.UUIDUtils.generate();
 	}
 
 	static isPrefixed( uri:string ):boolean {
-		return ! Util.isAbsolute( uri ) && ! Util.isBNodeID( uri ) && Utils.S.contains( uri, ":" );
+		return ! Util.isAbsolute( uri ) && ! Util.isBNodeID( uri ) && Utils.StringUtils.contains( uri, ":" );
 	}
 
 	static isFragmentOf( fragmentURI:string, uri:string ):boolean {
@@ -61,10 +61,10 @@ export class Util {
 		if( Util.isRelative( uri ) && ! Util.isPrefixed( uri ) ) return true;
 
 		if( uri.startsWith( baseURI ) ) {
-			if( Utils.S.endsWith( baseURI, "/" ) || Utils.S.endsWith( baseURI, "#" ) ) return true;
+			if( Utils.StringUtils.endsWith( baseURI, "/" ) || Utils.StringUtils.endsWith( baseURI, "#" ) ) return true;
 
 			let relativeURI:string = uri.substring( baseURI.length );
-			if( Utils.S.startsWith( relativeURI, "/" ) || Utils.S.startsWith( relativeURI, "#" ) ) return true;
+			if( Utils.StringUtils.startsWith( relativeURI, "/" ) || Utils.StringUtils.startsWith( relativeURI, "#" ) ) return true;
 		}
 
 		return false;
@@ -138,15 +138,15 @@ export class Util {
 		let path:string = parentURI.substr( parentURI.indexOf( "://" ) + 3, parentURI.length - 1 );
 		if( path.lastIndexOf( "/" ) === - 1 ) path += "/";
 
-		if( Utils.S.startsWith( childURI, "?" ) || Utils.S.startsWith( childURI, "#" ) ) {
+		if( Utils.StringUtils.startsWith( childURI, "?" ) || Utils.StringUtils.startsWith( childURI, "#" ) ) {
 			if( Util.hasQuery( path ) ) path = path.substr( 0, path.indexOf( "?" ) );
-			if( Util.hasFragment( path ) && ( ! Utils.S.startsWith( childURI, "?" ) || Utils.S.endsWith( path, "#" ) ) ) path = Util.getDocumentURI( path );
+			if( Util.hasFragment( path ) && ( ! Utils.StringUtils.startsWith( childURI, "?" ) || Utils.StringUtils.endsWith( path, "#" ) ) ) path = Util.getDocumentURI( path );
 		} else {
 			path = path.substr( 0, path.lastIndexOf( "/" ) + 1 );
-			if( ! Utils.S.endsWith( path, "?" ) && ! Utils.S.endsWith( path, "#" ) && ! Utils.S.endsWith( path, "/" ) ) path += "/";
+			if( ! Utils.StringUtils.endsWith( path, "?" ) && ! Utils.StringUtils.endsWith( path, "#" ) && ! Utils.StringUtils.endsWith( path, "/" ) ) path += "/";
 		}
 
-		if( Utils.S.startsWith( childURI, "/" ) ) {
+		if( Utils.StringUtils.startsWith( childURI, "/" ) ) {
 			childURI = childURI.substr( 1, childURI.length );
 		}
 
