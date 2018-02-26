@@ -22,6 +22,7 @@ var http_1 = __importDefault(require("http"));
 var https_1 = __importDefault(require("https"));
 var url_1 = __importDefault(require("url"));
 var Utils = __importStar(require("./../Utils"));
+var Errors_1 = require("./Errors");
 var Header = __importStar(require("./Header"));
 var Method_1 = __importDefault(require("./Method"));
 var Response_1 = __importDefault(require("./Response"));
@@ -79,7 +80,7 @@ function sendWithNode(method, url, body, options) {
             });
         }
         var numberOfRedirects = 0;
-        function sendRequest(_url) {
+        function sendRequestWithRedirect(_url) {
             var parsedURL = url_1.default.parse(_url);
             var Adapter = parsedURL.protocol === "http:" ? http_1.default : https_1.default;
             var requestOptions = {
@@ -98,7 +99,7 @@ function sendWithNode(method, url, body, options) {
             request.on("response", function (res) {
                 if (res.statusCode >= 300 && res.statusCode <= 399 && "location" in res.headers) {
                     if (++numberOfRedirects < 10)
-                        return sendRequest(url_1.default.resolve(_url, res.headers.location));
+                        return sendRequestWithRedirect(url_1.default.resolve(_url, res.headers.location));
                 }
                 returnResponse(request, res);
             });
@@ -108,8 +109,13 @@ function sendWithNode(method, url, body, options) {
             });
             request.end(body);
         }
-        sendRequest(url);
+        sendRequestWithRedirect(url);
     });
+}
+function sendRequest(method, url, body, options) {
+    return typeof XMLHttpRequest !== "undefined" ?
+        sendWithBrowser(method, url, body, options) :
+        sendWithNode(method, url, body, options);
 }
 function isBody(data) {
     return Utils.isString(data)
@@ -120,6 +126,7 @@ var Service = (function () {
     function Service() {
     }
     Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
+        var _this = this;
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
@@ -135,13 +142,13 @@ var Service = (function () {
         options = Object.assign({}, Service.defaultOptions, options);
         if (Utils.isNumber(method))
             method = Method_1.default[method];
-        var requestPromise;
-        if (typeof XMLHttpRequest !== "undefined") {
-            requestPromise = sendWithBrowser(method, url, body, options);
-        }
-        else {
-            requestPromise = sendWithNode(method, url, body, options);
-        }
+        var requestPromise = sendRequest(method, url, body, options)
+            .then(function (response) {
+            if (method === "GET" && options.headers)
+                return _this._handleGETResponse(url, options, response);
+            else
+                return response;
+        });
         if (parser === null)
             return requestPromise;
         return requestPromise.then(function (response) {
@@ -186,6 +193,44 @@ var Service = (function () {
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
         return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+    };
+    Service._handleGETResponse = function (url, requestOptions, response) {
+        var _this = this;
+        return Promise.resolve()
+            .then(function () {
+            if (_this._contentTypeIsAccepted(requestOptions, response))
+                return response;
+            _this._setNoCacheHeaders(requestOptions);
+            if (!_this._isChromiumAgent())
+                _this._setFalseETag(requestOptions);
+            return sendRequest("GET", url, null, requestOptions)
+                .then(function (noCachedResponse) {
+                if (!_this._contentTypeIsAccepted(requestOptions, response)) {
+                    throw new Errors_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
+                }
+                return noCachedResponse;
+            });
+        });
+    };
+    Service._contentTypeIsAccepted = function (requestOptions, response) {
+        var accepts = requestOptions.headers.has("accept") ?
+            requestOptions.headers.get("accept").values :
+            [];
+        var contentType = response.headers.has("content-type") ?
+            response.headers.get("content-type") :
+            null;
+        return !contentType || accepts.some(contentType.hasValue, contentType);
+    };
+    Service._setNoCacheHeaders = function (requestOptions) {
+        requestOptions.headers
+            .set("pragma", new Header.Class("no-cache"))
+            .set("cache-control", new Header.Class("no-cache, max-age=0"));
+    };
+    Service._isChromiumAgent = function () {
+        return typeof window !== "undefined" && !window["chrome"];
+    };
+    Service._setFalseETag = function (requestOptions) {
+        requestOptions.headers.set("if-none-match", new Header.Class(""));
     };
     Service.defaultOptions = {
         sendCredentialsOnCORS: true,
@@ -234,12 +279,12 @@ var Util = (function () {
     };
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value(interactionModelURI + "; rel=interaction-model"));
+        prefer.values.push(interactionModelURI + "; rel=interaction-model");
         return requestOptions;
     };
     Util.setPreferredRetrieval = function (retrievalType, requestOptions) {
         var prefer = Util.getHeader("prefer", requestOptions, true);
-        prefer.values.push(new Header.Value("return=" + retrievalType));
+        prefer.values.push("return=" + retrievalType);
         return requestOptions;
     };
     Util.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
@@ -250,14 +295,14 @@ var Util = (function () {
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (key in preferences && preferences[key].length > 0) {
-                prefer.values.push(new Header.Value("" + representation + key + "=\"" + preferences[key].join(" ") + "\""));
+                prefer.values.push("" + representation + key + "=\"" + preferences[key].join(" ") + "\"");
             }
         }
         return requestOptions;
     };
     Util.setSlug = function (slug, requestOptions) {
         var slugHeader = Util.getHeader("slug", requestOptions, true);
-        slugHeader.values.push(new Header.Value(slug));
+        slugHeader.values.push(slug);
         return requestOptions;
     };
     Util.isOptions = function (object) {

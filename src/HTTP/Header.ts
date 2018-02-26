@@ -1,29 +1,21 @@
-export class Value {
-	private value:string;
-
-	constructor( value:string ) {
-		this.value = value;
-	}
-
-	toString():string {
-		return this.value;
-	}
-}
-
 export class Class {
-	values:Value[] = [];
+	values:string[] = [];
 
 	constructor();
-	constructor( values:Value[] );
+	constructor( values:string[] );
 	constructor( value:string );
-	constructor( valueOrValues?:(string | Value[]) ) {
-		if( ! valueOrValues ) {
-			return;
-		} else if( Array.isArray( valueOrValues ) ) {
-			this.values = <Value[]> valueOrValues;
+	constructor( valueOrValues?:(string | string[]) ) {
+		if( ! valueOrValues ) return;
+
+		if( Array.isArray( valueOrValues ) ) {
+			this.values = valueOrValues;
 		} else {
-			this.setValues( <string> valueOrValues );
+			this.setValues( valueOrValues );
 		}
+	}
+
+	hasValue( value:string ) {
+		return this.values.indexOf( value ) !== -1;
 	}
 
 	toString():string {
@@ -36,7 +28,7 @@ export class Class {
 		let valueStrings:string[] = valuesString.split( "," );
 		for( let i:number = 0, length:number = valueStrings.length; i < length; i ++ ) {
 			let valueString:string = valueStrings[ i ].trim();
-			this.values.push( new Value( valueString ) );
+			this.values.push( valueString );
 		}
 	}
 }

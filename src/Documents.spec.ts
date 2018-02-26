@@ -1119,8 +1119,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -1924,8 +1924,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -4264,8 +4264,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -4328,8 +4328,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -4407,8 +4407,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -5643,8 +5643,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -7227,8 +7227,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -7293,8 +7293,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -7374,8 +7374,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new HTTP.Header.Class( [
-											new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-											new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -8620,8 +8620,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new HTTP.Header.Class( [
-										new HTTP.Header.Value( `include="${ C.PreferResultsContext }"` ),
-										new HTTP.Header.Value( `include="${ C.PreferDocumentETags }"` ),
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )

@@ -45,7 +45,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, User
 		headers.set( "authorization", header );
 
 		let authorization:string = "Basic " + toB64( this.credentials.username + ":" + this.credentials.password );
-		header.values.push( new HTTP.Header.Value( authorization ) );
+		header.values.push( authorization );
 	}
 }
 

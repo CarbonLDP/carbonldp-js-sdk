@@ -46,7 +46,8 @@
 		"vcard": "http://www.w3.org/2001/vcard-rdf/3.0#",
 		"wot": "http://xmlns.com/wot/0.1/",
 		"xhtml": "http://www.w3.org/1999/xhtml#",
-		"xsd": "http://www.w3.org/2001/XMLSchema#"
+		"xsd": "http://www.w3.org/2001/XMLSchema#",
+		"schema": "https://schema.org/"
 	};
 
 	carbon1.extendObjectSchema( prefixes );

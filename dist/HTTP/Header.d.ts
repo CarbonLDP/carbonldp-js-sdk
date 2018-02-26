@@ -1,13 +1,9 @@
-export declare class Value {
-    private value;
-    constructor(value: string);
-    toString(): string;
-}
 export declare class Class {
-    values: Value[];
+    values: string[];
     constructor();
-    constructor(values: Value[]);
+    constructor(values: string[]);
     constructor(value: string);
+    hasValue(value: string): boolean;
     toString(): string;
     private setValues(valuesString);
 }

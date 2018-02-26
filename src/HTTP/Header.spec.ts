@@ -7,7 +7,6 @@ import {
 	constructor,
 
 	isDefined,
-	hasConstructor,
 	hasProperty,
 	hasMethod,
 	hasSignature,
@@ -28,49 +27,15 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Header.Value",
-		"Wrapper class for a value of an HTTP header."
-	), ():void => {
-
-		it( isDefined(), ():void => {
-			expect( Header.Value ).toBeDefined();
-			expect( Utils.isFunction( Header.Value ) ).toBe( true );
-		} );
-
-		it( hasConstructor( [
-			{ name: "value", type: "string" },
-		] ), ():void => {
-			let value:Header.Value = new Header.Value( "a value" );
-
-			expect( value ).toBeTruthy();
-			expect( value instanceof Header.Value ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let value:Header.Value = new Header.Value( "a value" );
-
-			expect( value.toString ).toBeDefined();
-			expect( Utils.isFunction( value.toString ) ).toBe( true );
-
-			expect( value.toString() ).toBe( "a value" );
-		} );
-
-	} );
-
-	describe( clazz(
 		"Carbon.HTTP.Header.Class",
 		"Class to manage the values in an HTTP header."
 	), ():void => {
 
 		// Mock data
-		let valuesArray:Header.Value[] = [
-			new Header.Value( "a_value" ),
-			new Header.Value( "another_value" ),
-			new Header.Value( "last_value" ),
+		let valuesArray:string[] = [
+			"a_value",
+			"another_value",
+			"last_value",
 		];
 		let valuesString:string = "a_value, another_value, last_value";
 
@@ -82,7 +47,7 @@ describe( module(
 		describe( constructor(), ():void => {
 
 			it( hasSignature( [
-				{ name: "values", type: "Array<Carbon.HTTP.Header.Value>" },
+				{ name: "values", type: "string[]" },
 			] ), ():void => {
 				let header:Header.Class = new Header.Class( valuesArray );
 
@@ -138,7 +103,7 @@ describe( module(
 		it( hasProperty(
 			INSTANCE,
 			"values",
-			"Array<Carbon.HTTP.Header.Value>",
+			"string[]",
 			"Array that contains each value of the header."
 		), ():void => {
 			let header:Header.Class = new Header.Class( valuesArray );
