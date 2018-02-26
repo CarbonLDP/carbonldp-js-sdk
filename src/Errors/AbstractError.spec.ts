@@ -12,6 +12,7 @@ import * as Utils from "./../Utils";
 import * as AbstractError from "./AbstractError";
 import DefaultExport from "./AbstractError";
 
+// TODO: Refactor tests
 describe( module( "Carbon/Errors/AbstractError" ), function():void {
 
 	it( isDefined(), ():void => {

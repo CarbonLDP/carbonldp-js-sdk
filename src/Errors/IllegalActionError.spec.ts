@@ -1,13 +1,11 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
 	extendsClass,
-	hasProperty,
 	hasDefaultExport,
+	hasProperty,
+	INSTANCE,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -16,6 +14,7 @@ import AbstractError from "./AbstractError";
 import * as IllegalActionError from "./IllegalActionError";
 import DefaultExport from "./IllegalActionError";
 
+// TODO: Refactor tests
 describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -24,22 +23,22 @@ describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IllegalActionError.Class",
+		"Carbon.Errors.IllegalActionError.IllegalActionError",
 		"Error class to indicate that an action not allowed was attempted."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( IllegalActionError.Class ).toBeDefined();
-			expect( Utils.isFunction( IllegalActionError.Class ) ).toBe( true );
+			expect( IllegalActionError.IllegalActionError ).toBeDefined();
+			expect( Utils.isFunction( IllegalActionError.IllegalActionError ) ).toBe( true );
 
-			let error:IllegalActionError.Class = new IllegalActionError.Class( "Message of the error" );
-			expect( error instanceof IllegalActionError.Class ).toBe( true );
+			let error:IllegalActionError.IllegalActionError = new IllegalActionError.IllegalActionError( "Message of the error" );
+			expect( error instanceof IllegalActionError.IllegalActionError ).toBe( true );
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError"
+			"Carbon.Errors.AbstractError.AbstractError"
 		), ():void => {
-			let error:IllegalActionError.Class = new IllegalActionError.Class( "Message of the error" );
+			let error:IllegalActionError.IllegalActionError = new IllegalActionError.IllegalActionError( "Message of the error" );
 
 			expect( error instanceof AbstractError ).toBe( true );
 		} );
@@ -49,7 +48,7 @@ describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 			"name",
 			"string"
 		), ():void => {
-			let error:IllegalActionError.Class = new IllegalActionError.Class( "Message of the error" );
+			let error:IllegalActionError.IllegalActionError = new IllegalActionError.IllegalActionError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -59,9 +58,9 @@ describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IllegalActionError.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Errors.IllegalActionError.IllegalActionError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IllegalActionError.Class );
+		expect( DefaultExport ).toBe( IllegalActionError.IllegalActionError );
 	} );
 
 } );

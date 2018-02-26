@@ -14,22 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(require("./AbstractError"));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        if (message === void 0) { message = ""; }
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var NotImplementedError = (function (_super) {
+    __extends(NotImplementedError, _super);
+    function NotImplementedError(message) {
+        return _super.call(this, message) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(NotImplementedError.prototype, "name", {
         get: function () { return "NotImplementedError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return NotImplementedError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.NotImplementedError = NotImplementedError;
+exports.default = NotImplementedError;
 
 //# sourceMappingURL=NotImplementedError.js.map

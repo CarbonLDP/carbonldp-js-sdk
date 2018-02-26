@@ -1,13 +1,11 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasProperty,
+	INSTANCE,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -16,6 +14,7 @@ import AbstractError from "./AbstractError";
 import * as IllegalArgumentError from "./IllegalArgumentError";
 import DefaultExport from "./IllegalArgumentError";
 
+// TODO: Refactor tests
 describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -24,22 +23,22 @@ describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IllegalArgumentError.Class",
+		"Carbon.Errors.IllegalArgumentError.IllegalArgumentError",
 		"Error class to indicate that a different argument than the expected was provided."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( IllegalArgumentError.Class ).toBeDefined();
-			expect( Utils.isFunction( IllegalArgumentError.Class ) ).toBe( true );
+			expect( IllegalArgumentError.IllegalArgumentError ).toBeDefined();
+			expect( Utils.isFunction( IllegalArgumentError.IllegalArgumentError ) ).toBe( true );
 
-			let error:IllegalArgumentError.Class = new IllegalArgumentError.Class( "Message of the error" );
-			expect( error instanceof IllegalArgumentError.Class ).toBe( true );
+			let error:IllegalArgumentError.IllegalArgumentError = new IllegalArgumentError.IllegalArgumentError( "Message of the error" );
+			expect( error instanceof IllegalArgumentError.IllegalArgumentError ).toBe( true );
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError"
+			"Carbon.Errors.AbstractError.AbstractError"
 		), ():void => {
-			let error:IllegalArgumentError.Class = new IllegalArgumentError.Class( "Message of the error" );
+			let error:IllegalArgumentError.IllegalArgumentError = new IllegalArgumentError.IllegalArgumentError( "Message of the error" );
 
 			expect( error instanceof AbstractError ).toBe( true );
 		} );
@@ -49,7 +48,7 @@ describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 			"name",
 			"string"
 		), ():void => {
-			let error:IllegalArgumentError.Class = new IllegalArgumentError.Class( "Message of the error" );
+			let error:IllegalArgumentError.IllegalArgumentError = new IllegalArgumentError.IllegalArgumentError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -59,9 +58,9 @@ describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IllegalArgumentError.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Errors.IllegalArgumentError.IllegalArgumentError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IllegalArgumentError.Class );
+		expect( DefaultExport ).toBe( IllegalArgumentError.IllegalArgumentError );
 	} );
 
 } );

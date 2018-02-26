@@ -61,7 +61,7 @@ describe( module(
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError"
+			"Carbon.Errors.AbstractError.AbstractError"
 		), ():void => {
 			let error:HTTPError.Class = new HTTPError.Class( "Message of the error", response );
 

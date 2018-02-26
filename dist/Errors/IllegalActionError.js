@@ -14,21 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(require("./AbstractError"));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var IllegalActionError = (function (_super) {
+    __extends(IllegalActionError, _super);
+    function IllegalActionError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(IllegalActionError.prototype, "name", {
         get: function () { return "IllegalActionError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return IllegalActionError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.IllegalActionError = IllegalActionError;
+exports.default = IllegalActionError;
 
 //# sourceMappingURL=IllegalActionError.js.map

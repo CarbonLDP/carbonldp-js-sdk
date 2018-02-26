@@ -14,6 +14,7 @@ import * as Utils from "../Utils";
 import * as InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
 import DefaultExport from "./InvalidJSONLDSyntaxError";
 
+// TODO: Refactor tests
 describe( module( "Carbon/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -22,22 +23,22 @@ describe( module( "Carbon/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.InvalidJSONLDSyntaxError.Class",
+		"Carbon.Errors.InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError",
 		"Error class to indicate that there an invalid syntax in a JSON-LD object."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( InvalidJSONLDSyntaxError.Class ).toBeDefined();
-			expect( Utils.isFunction( InvalidJSONLDSyntaxError.Class ) ).toBe( true );
+			expect( InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError ).toBeDefined();
+			expect( Utils.isFunction( InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError ) ).toBe( true );
 
-			let error:InvalidJSONLDSyntaxError.Class = new InvalidJSONLDSyntaxError.Class( "Message of the error" );
-			expect( error instanceof InvalidJSONLDSyntaxError.Class ).toBe( true );
+			let error:InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError = new InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError( "Message of the error" );
+			expect( error instanceof InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError ).toBe( true );
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError"
+			"Carbon.Errors.AbstractError.AbstractError"
 		), ():void => {
-			let error:InvalidJSONLDSyntaxError.Class = new InvalidJSONLDSyntaxError.Class( "Message of the error" );
+			let error:InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError = new InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError( "Message of the error" );
 
 			expect( error instanceof AbstractError ).toBe( true );
 		} );
@@ -47,7 +48,7 @@ describe( module( "Carbon/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 			"name",
 			"string"
 		), ():void => {
-			let error:InvalidJSONLDSyntaxError.Class = new InvalidJSONLDSyntaxError.Class( "Message of the error" );
+			let error:InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError = new InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -57,9 +58,9 @@ describe( module( "Carbon/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.InvalidJSONLDSyntaxError.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Errors.InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( InvalidJSONLDSyntaxError.Class );
+		expect( DefaultExport ).toBe( InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError );
 	} );
 
 } );

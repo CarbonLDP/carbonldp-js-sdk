@@ -7383,22 +7383,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(__webpack_require__(24));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var IllegalArgumentError = (function (_super) {
+    __extends(IllegalArgumentError, _super);
+    function IllegalArgumentError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(IllegalArgumentError.prototype, "name", {
         get: function () { return "IllegalArgumentError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return IllegalArgumentError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.IllegalArgumentError = IllegalArgumentError;
+exports.default = IllegalArgumentError;
 
 
 /***/ }),
@@ -7422,22 +7420,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(__webpack_require__(24));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var InvalidJSONLDSyntaxError = (function (_super) {
+    __extends(InvalidJSONLDSyntaxError, _super);
+    function InvalidJSONLDSyntaxError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(InvalidJSONLDSyntaxError.prototype, "name", {
         get: function () { return "InvalidJSONLDSyntaxError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return InvalidJSONLDSyntaxError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError;
+exports.default = InvalidJSONLDSyntaxError;
 
 
 /***/ }),
@@ -13908,22 +13904,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(__webpack_require__(24));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var IDAlreadyInUseError = (function (_super) {
+    __extends(IDAlreadyInUseError, _super);
+    function IDAlreadyInUseError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(IDAlreadyInUseError.prototype, "name", {
         get: function () { return "IDAlreadyInUseError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return IDAlreadyInUseError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.IDAlreadyInUseError = IDAlreadyInUseError;
+exports.default = IDAlreadyInUseError;
 
 
 /***/ }),
@@ -13947,22 +13941,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(__webpack_require__(24));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var IllegalActionError = (function (_super) {
+    __extends(IllegalActionError, _super);
+    function IllegalActionError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(IllegalActionError.prototype, "name", {
         get: function () { return "IllegalActionError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return IllegalActionError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.IllegalActionError = IllegalActionError;
+exports.default = IllegalActionError;
 
 
 /***/ }),
@@ -13986,23 +13978,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(__webpack_require__(24));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        if (message === void 0) { message = ""; }
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var IllegalStateError = (function (_super) {
+    __extends(IllegalStateError, _super);
+    function IllegalStateError(message) {
+        return _super.call(this, message) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(IllegalStateError.prototype, "name", {
         get: function () { return "IllegalStateError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return IllegalStateError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.IllegalStateError = IllegalStateError;
+exports.default = IllegalStateError;
 
 
 /***/ }),
@@ -14026,23 +14015,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = __importDefault(__webpack_require__(24));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        if (message === void 0) { message = ""; }
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var NotImplementedError = (function (_super) {
+    __extends(NotImplementedError, _super);
+    function NotImplementedError(message) {
+        return _super.call(this, message) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(NotImplementedError.prototype, "name", {
         get: function () { return "NotImplementedError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return NotImplementedError;
 }(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+exports.NotImplementedError = NotImplementedError;
+exports.default = NotImplementedError;
 
 
 /***/ }),
