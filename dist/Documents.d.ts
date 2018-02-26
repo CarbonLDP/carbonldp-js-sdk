@@ -1,7 +1,7 @@
 import { QueryClause } from "sparqler/clauses";
 import { AccessPointBase } from "./AccessPoint";
 import Context from "./Context";
-import * as FreeResources from "./FreeResources";
+import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as Messaging from "./Messaging";
@@ -103,7 +103,7 @@ export declare class Class implements PointerLibrary, PointerValidator, ObjectSc
     onMemberAdded(uriPattern: string, onEvent: (message: Messaging.MemberAdded.Class) => void, onError: (error: Error) => void): void;
     onMemberRemoved(uriPattern: string, onEvent: (message: Messaging.MemberRemoved.Class) => void, onError: (error: Error) => void): void;
     _getPersistedDocument<T extends object>(rdfDocument: RDF.Document.Class, response: HTTP.Response.Class): T & PersistedDocument.Class;
-    _getFreeResources(nodes: RDF.Node.Class[]): FreeResources.Class;
+    _getFreeResources(nodes: RDF.Node.Class[]): FreeResources;
     _parseErrorResponse<T extends object>(response: HTTP.Response.Class | Error): any;
     private getFullDocument<T>(uri, requestOptions);
     private getPartialDocument<T>(uri, requestOptions, queryBuilderFn?);

@@ -128,7 +128,7 @@ export class Class {
 		const literalType:string = ObjectSchema.Util.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
 		const expandedValues:any[] = propertyValue.map( value => this.expandLiteralValue( value, literalType ) );
 
-		if( ! definition.language ) expandedValues.forEach( value => value[ "@language" ] = definition.language );
+		if( definition.language ) expandedValues.forEach( value => value[ "@language" ] = definition.language );
 
 		return expandedValues;
 	}

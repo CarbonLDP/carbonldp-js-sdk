@@ -22,7 +22,7 @@ import Carbon from "./Carbon";
 import Context from "./Context";
 import { Document } from "./Document";
 import * as Errors from "./Errors";
-import * as FreeResources from "./FreeResources";
+import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import {
@@ -432,10 +432,12 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 			this.setDefaultRequestOptions( requestOptions, LDP.Container );
 			HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
 
-			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
+			const freeResources:FreeResources = FreeResources.create( this );
 			freeResources.createResourceFrom( AddMemberAction.Factory.create( pointers ) );
 
-			return this.sendRequest( HTTP.Method.PUT, documentURI, requestOptions, freeResources.toJSON() );
+			const body:string = JSON.stringify( freeResources );
+
+			return this.sendRequest( HTTP.Method.PUT, documentURI, requestOptions, body );
 		} );
 	}
 
@@ -459,10 +461,12 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 			};
 			HTTP.Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
-			const freeResources:FreeResources.Class = FreeResources.Factory.create( this );
+			const freeResources:FreeResources = FreeResources.create( this );
 			freeResources.createResourceFrom( RemoveMemberAction.Factory.create( pointers ) );
 
-			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON() );
+			const body:string = JSON.stringify( freeResources );
+
+			return this.sendRequest( HTTP.Method.DELETE, documentURI, requestOptions, body );
 		} );
 	}
 
@@ -756,8 +760,8 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		return new JSONLD.Compacter.Class( this ).compactDocument( rdfDocument );
 	}
 
-	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources.Class {
-		let freeResourcesDocument:FreeResources.Class = FreeResources.Factory.create( this );
+	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources {
+		let freeResourcesDocument:FreeResources = FreeResources.create( this );
 
 		let resources:Resource[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
 		this.compact( nodes, resources, freeResourcesDocument );
@@ -775,7 +779,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 		if( ! response.data || ! this.context ) return Promise.reject( error );
 
 		return new JSONLD.Parser.Class().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
-			const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
+			const freeResources:FreeResources = this._getFreeResources( freeNodes );
 			const errorResponses:ErrorResponse.Class[] = freeResources
 				.getResources()
 				.filter( ( resource ):resource is ErrorResponse.Class => resource.hasType( ErrorResponse.RDF_CLASS ) );
@@ -1051,7 +1055,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 			return new JSONLD.Parser.Class().parse( jsonldString );
 
 		} ).then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class ]>( ( rdfNodes:RDF.Node.Class[] ) => {
-			const freeResources:FreeResources.Class = this._getFreeResources( rdfNodes
+			const freeResources:FreeResources = this._getFreeResources( rdfNodes
 				.filter( node => ! RDF.Document.Factory.is( node ) )
 			);
 
@@ -1366,7 +1370,7 @@ export class Class implements PointerLibrary, PointerValidator, ObjectSchema.Res
 
 	private applyNodeMap( freeNodes:RDF.Node.Class[] ):void {
 		if( ! freeNodes.length ) return;
-		const freeResources:FreeResources.Class = this._getFreeResources( freeNodes );
+		const freeResources:FreeResources = this._getFreeResources( freeNodes );
 		const responseMetadata:ResponseMetadata.Class = <ResponseMetadata.Class> freeResources.getResources().find( ResponseMetadata.Factory.is );
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {

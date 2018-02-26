@@ -1,18 +1,24 @@
-import Documents from "./Documents";
-import * as Errors from "./Errors";
-import JSONLDConverter from "./JSONLD/Converter";
+import * as Documents from "./Documents";
+import {
+	IDAlreadyInUseError,
+	IllegalArgumentError,
+} from "./Errors";
+import * as JSONLDConverter from "./JSONLD/Converter";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
 import * as ObjectSchema from "./ObjectSchema";
 import {
 	Pointer,
 	PointerLibrary,
 	PointerValidator,
 } from "./Pointer";
-import * as RDF from "./RDF";
+import * as URI from "./RDF/URI";
+import * as RDFNode from "./RDF/Node";
 import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 
-export interface Class extends PointerLibrary, PointerValidator {
-	_documents:Documents;
+export interface FreeResources extends PointerLibrary, PointerValidator {
+	_documents:Documents.Class;
 	_resourcesIndex:Map<string, Resource>;
 
 	hasResource( id:string ):boolean;
@@ -27,97 +33,102 @@ export interface Class extends PointerLibrary, PointerValidator {
 
 	createResourceFrom<T>( object:T, id?:string ):Resource & T;
 
-	toJSON():string;
+	toJSON():object;
 }
 
-function hasPointer( id:string ):boolean {
-	let freeResources:Class = <Class> this;
 
-	if( ! inLocalScope( id ) ) {
-		return freeResources._documents.hasPointer( id );
-	}
+export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
+	is( object:object ):object is FreeResources;
 
-	return freeResources.hasResource( id );
+	isDecorated( object:object ):object is FreeResources;
+
+
+	create( documents:Documents.Class ):FreeResources;
+
+	createFrom<T extends object>( object:T, documents:Documents.Class ):T & FreeResources;
+
+	decorate<T extends object>( object:T, documents:Documents.Class ):T & FreeResources;
 }
 
-function getPointer( id:string ):Pointer {
-	let freeResources:Class = <Class> this;
 
+function hasPointer( this:FreeResources, id:string ):boolean {
 	if( ! inLocalScope( id ) ) {
-		return freeResources._documents.getPointer( id );
+		return this._documents.hasPointer( id );
 	}
 
-	let resource:Resource = freeResources.getResource( id );
+	return this.hasResource( id );
+}
 
-	return ! resource ? freeResources.createResource( id ) : resource;
+function getPointer( this:FreeResources, id:string ):Pointer {
+	if( ! inLocalScope( id ) ) {
+		return this._documents.getPointer( id );
+	}
+
+	let resource:Resource = this.getResource( id );
+
+	return ! resource ? this.createResource( id ) : resource;
 }
 
 function inLocalScope( id:string ):boolean {
-	return RDF.URI.Util.isBNodeID( id );
+	return URI.Util.isBNodeID( id );
 }
 
-function inScope( pointer:Pointer ):boolean;
-function inScope( id:string ):boolean;
-function inScope( idOrPointer:any ):boolean {
-	let freeResources:Class = <Class> this;
-	let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
+function inScope( this:FreeResources, idOrPointer:string | Pointer ):boolean {
+	let id:string = Utils.isString( idOrPointer ) ? idOrPointer : idOrPointer.id;
 
-	return inLocalScope( id ) || freeResources._documents.inScope( id );
+	return inLocalScope( id ) || this._documents.inScope( id );
 }
 
-function hasResource( id:string ):boolean {
-	let freeResources:Class = <Class> this;
-
-	return freeResources._resourcesIndex.has( id );
+function hasResource( this:FreeResources, id:string ):boolean {
+	return this._resourcesIndex.has( id );
 }
 
-function getResource( id:string ):Resource {
-	let freeResources:Class = <Class> this;
-
-	return freeResources._resourcesIndex.get( id ) || null;
+function getResource( this:FreeResources, id:string ):Resource {
+	return this._resourcesIndex.get( id ) || null;
 }
 
-function getResources():Resource[] {
-	let freeResources:Class = <Class> this;
-
-	return Utils.A.from( freeResources._resourcesIndex.values() );
+function getResources( this:FreeResources ):Resource[] {
+	return Utils.A.from( this._resourcesIndex.values() );
 }
 
-function createResource( id?:string ):Resource {
+function createResource( this:FreeResources, id?:string ):Resource {
 	return this.createResourceFrom( {}, id );
 }
 
-function createResourceFrom<T extends Object>( object:T, id?:string ):Resource & T {
-	let freeResources:Class = <Class> this;
-
+function createResourceFrom<T extends object>( this:FreeResources, object:T, id?:string ):Resource & T {
 	if( id ) {
-		if( ! inLocalScope( id ) ) throw new Errors.IllegalArgumentError( `The id "${ id }" is out of scope.` );
-		if( freeResources._resourcesIndex.has( id ) ) throw new Errors.IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
+		if( ! inLocalScope( id ) ) throw new IllegalArgumentError( `The id "${ id }" is out of scope.` );
+		if( this._resourcesIndex.has( id ) ) throw new IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
 	} else {
-		id = RDF.URI.Util.generateBNodeID();
+		id = URI.Util.generateBNodeID();
 	}
 
 	let resource:Resource & T = Resource.createFrom<T>( object, id );
-	freeResources._resourcesIndex.set( id, resource );
+	this._resourcesIndex.set( id, resource );
 
 	return resource;
 }
 
-function toJSON():string {
-	let generalSchema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
-	let jsonldConverter:JSONLDConverter = new JSONLDConverter();
-	let resources:Resource[] = this.getResources();
-	let expandedResources:RDF.Node.Class[] = [];
+function toJSON( this:FreeResources, key?:string ):RDFNode.Class[] {
+	const generalSchema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
+	const jsonldConverter:JSONLDConverter.Class = this._documents.jsonldConverter;
 
-	for( let resource of resources ) {
-		expandedResources.push( jsonldConverter.expand( resource, generalSchema, this._documents.getSchemaFor( resource ) ) );
-	}
-
-	return JSON.stringify( expandedResources );
+	return this
+		.getResources()
+		.map( resource => {
+			const resourceSchema:ObjectSchema.DigestedObjectSchema = this._documents.getSchemaFor( resource );
+			return jsonldConverter.expand( resource, generalSchema, resourceSchema );
+		} )
+		;
 }
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+export const FreeResources:FreeResourcesFactory = {
+	is( object:object ):object is FreeResources {
+		return FreeResources.isDecorated( object )
+			;
+	},
+
+	isDecorated( object:object ):object is FreeResources {
 		return (
 			Utils.hasPropertyDefined( object, "_documents" ) &&
 			Utils.hasPropertyDefined( object, "_resourcesIndex" ) &&
@@ -135,23 +146,25 @@ export class Factory {
 
 			Utils.hasFunction( object, "toJSON" )
 		);
-	}
+	},
 
-	static create( documents:Documents ):Class {
-		return Factory.createFrom( {}, documents );
-	}
 
-	static createFrom<T extends Object>( object:T, documents:Documents ):T & Class {
-		let freeResources:T & Class = Factory.decorate<T>( object );
-		freeResources._documents = documents;
+	create( documents:Documents.Class ):FreeResources {
+		return FreeResources.createFrom( {}, documents );
+	},
 
-		return freeResources;
-	}
+	createFrom<T extends object>( object:T, documents:Documents.Class ):T & FreeResources {
+		return FreeResources.decorate<T>( object, documents );
+	},
 
-	static decorate<T extends Object>( object:T ):T & Class {
-		if( Factory.hasClassProperties( object ) ) return <any> object;
+	decorate<T extends object>( object:T, documents:Documents.Class ):T & FreeResources {
+		if( FreeResources.isDecorated( object ) ) return object;
 
 		Object.defineProperties( object, {
+			"_documents": {
+				configurable: true,
+				value: documents,
+			},
 			"_resourcesIndex": {
 				writable: false,
 				enumerable: false,
@@ -215,7 +228,8 @@ export class Factory {
 		} );
 
 		return <any> object;
-	}
-}
+	},
+};
 
-export default Class;
+
+export default FreeResources;

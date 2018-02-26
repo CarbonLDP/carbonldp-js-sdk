@@ -1,8 +1,10 @@
-import Documents from "./Documents";
+import * as Documents from "./Documents";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
 import { PointerLibrary, PointerValidator } from "./Pointer";
 import { Resource } from "./Resource";
-export interface Class extends PointerLibrary, PointerValidator {
-    _documents: Documents;
+export interface FreeResources extends PointerLibrary, PointerValidator {
+    _documents: Documents.Class;
     _resourcesIndex: Map<string, Resource>;
     hasResource(id: string): boolean;
     getResource(id: string): Resource;
@@ -10,12 +12,14 @@ export interface Class extends PointerLibrary, PointerValidator {
     getPointer(id: string): Resource;
     createResource(id?: string): Resource;
     createResourceFrom<T>(object: T, id?: string): Resource & T;
-    toJSON(): string;
+    toJSON(): object;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static create(documents: Documents): Class;
-    static createFrom<T extends Object>(object: T, documents: Documents): T & Class;
-    static decorate<T extends Object>(object: T): T & Class;
+export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
+    is(object: object): object is FreeResources;
+    isDecorated(object: object): object is FreeResources;
+    create(documents: Documents.Class): FreeResources;
+    createFrom<T extends object>(object: T, documents: Documents.Class): T & FreeResources;
+    decorate<T extends object>(object: T, documents: Documents.Class): T & FreeResources;
 }
-export default Class;
+export declare const FreeResources: FreeResourcesFactory;
+export default FreeResources;

@@ -20,7 +20,7 @@ import * as Users from "./Auth/Users";
 
 import Context from "./Context";
 import * as Errors from "./Errors";
-import * as FreeResources from "./FreeResources";
+import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as ObjectSchema from "./ObjectSchema";
@@ -130,7 +130,7 @@ export class Class {
 	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
 		let resourceURI:string = this.context.resolve( uri );
 
-		let freeResources:FreeResources.Class = FreeResources.Factory.create( this.context.documents );
+		let freeResources:FreeResources = FreeResources.create( this.context.documents );
 		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
 
 		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
@@ -140,8 +140,11 @@ export class Class {
 
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context._resolvePath( "system" ) + Ticket.TICKETS_CONTAINER;
-			return HTTP.Request.Service.post( containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class() )
+			const body:string = JSON.stringify( freeResources );
+
+			return HTTP.Request.Service.post( containerURI, body, requestOptions, new JSONLD.Parser.Class() )
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
+
 		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 

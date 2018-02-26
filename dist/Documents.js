@@ -15,7 +15,7 @@ var AccessPoint_1 = require("./AccessPoint");
 var Auth = __importStar(require("./Auth"));
 var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
-var FreeResources = __importStar(require("./FreeResources"));
+var FreeResources_1 = require("./FreeResources");
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP_1 = require("./LDP");
@@ -320,9 +320,10 @@ var Class = (function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
             HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-            var freeResources = FreeResources.Factory.create(_this);
+            var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.AddMemberAction.Factory.create(pointers));
-            return _this.sendRequest(HTTP.Method.PUT, documentURI, requestOptions, freeResources.toJSON());
+            var body = JSON.stringify(freeResources);
+            return _this.sendRequest(HTTP.Method.PUT, documentURI, requestOptions, body);
         });
     };
     Class.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
@@ -342,9 +343,10 @@ var Class = (function () {
                 omit: [C_1.C.PreferMembershipTriples],
             };
             HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
-            var freeResources = FreeResources.Factory.create(_this);
+            var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.RemoveMemberAction.Factory.create(pointers));
-            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, freeResources.toJSON());
+            var body = JSON.stringify(freeResources);
+            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, body);
         });
     };
     Class.prototype.removeAllMembers = function (documentURI, requestOptions) {
@@ -599,7 +601,7 @@ var Class = (function () {
         return new JSONLD.Compacter.Class(this).compactDocument(rdfDocument);
     };
     Class.prototype._getFreeResources = function (nodes) {
-        var freeResourcesDocument = FreeResources.Factory.create(this);
+        var freeResourcesDocument = FreeResources_1.FreeResources.create(this);
         var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
         this.compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;

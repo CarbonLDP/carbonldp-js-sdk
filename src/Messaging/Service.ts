@@ -7,7 +7,7 @@ import { IllegalStateError } from "../Errors";
 import JSONLDParser from "../JSONLD/Parser";
 import RDFNode from "../RDF/Node";
 import { UUID } from "../Utils";
-import * as FreeResources from "./../FreeResources";
+import { FreeResources } from "./../FreeResources";
 import * as Message from "./Message";
 import Options from "./Options";
 
@@ -137,7 +137,7 @@ export class Class {
 			new JSONLDParser()
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
-					const freeResources:FreeResources.Class = this.context.documents._getFreeResources( data );
+					const freeResources:FreeResources = this.context.documents._getFreeResources( data );
 					return freeResources.getResources().find( Message.Factory.hasClassProperties );
 				} )
 				.then( eventCallback )

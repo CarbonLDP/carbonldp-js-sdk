@@ -1,7 +1,7 @@
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
 import * as Errors from "./../Errors";
-import * as FreeResources from "./../FreeResources";
+import { FreeResources } from "./../FreeResources";
 import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";
 import { ResponseMetadata } from "./../LDP";
@@ -78,7 +78,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		} ).then<[ Token.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
-			let freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
+			let freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );
 			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => resource.hasType( Token.RDF_CLASS ) );
 
 			if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );

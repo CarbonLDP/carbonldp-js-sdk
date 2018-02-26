@@ -115,7 +115,7 @@ var Class = (function () {
         var _this = this;
         var literalType = ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
         var expandedValues = propertyValue.map(function (value) { return _this.expandLiteralValue(value, literalType); });
-        if (!definition.language)
+        if (definition.language)
             expandedValues.forEach(function (value) { return value["@language"] = definition.language; });
         return expandedValues;
     };

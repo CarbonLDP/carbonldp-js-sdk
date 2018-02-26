@@ -45,7 +45,7 @@ exports.UsernameAndPasswordToken = UsernameAndPasswordToken_1.default;
 var Users = __importStar(require("./Auth/Users"));
 exports.Users = Users;
 var Errors = __importStar(require("./Errors"));
-var FreeResources = __importStar(require("./FreeResources"));
+var FreeResources_1 = require("./FreeResources");
 var HTTP = __importStar(require("./HTTP"));
 var JSONLD = __importStar(require("./JSONLD"));
 var RDF = __importStar(require("./RDF"));
@@ -118,7 +118,7 @@ var Class = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         var resourceURI = this.context.resolve(uri);
-        var freeResources = FreeResources.Factory.create(this.context.documents);
+        var freeResources = FreeResources_1.FreeResources.create(this.context.documents);
         Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
         if (this.isAuthenticated())
             this.addAuthentication(requestOptions);
@@ -127,7 +127,8 @@ var Class = (function () {
         HTTP.Request.Util.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
-            return HTTP.Request.Service.post(containerURI, freeResources.toJSON(), requestOptions, new JSONLD.Parser.Class())
+            var body = JSON.stringify(freeResources);
+            return HTTP.Request.Service.post(containerURI, body, requestOptions, new JSONLD.Parser.Class())
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
