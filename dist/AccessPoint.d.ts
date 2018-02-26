@@ -6,7 +6,7 @@ export interface Class {
     isMemberOfRelation?: string | Pointer;
     insertedContentRelation?: string | Pointer;
 }
-export interface DocumentClass extends LDP.DirectContainer.Class {
+export interface DocumentClass extends LDP.DirectContainer {
     hasMemberRelation: Pointer;
     isMemberOfRelation?: Pointer;
     insertedContentRelation?: Pointer;

@@ -14,13 +14,13 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return LDP.DirectContainer.Factory.is(object);
+        return LDP.DirectContainer.is(object);
     };
     Factory.create = function (membershipResource, hasMemberRelation, isMemberOfRelation) {
         return Factory.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
     };
     Factory.createFrom = function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
-        return LDP.DirectContainer.Factory.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
+        return LDP.DirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
     };
     return Factory;
 }());

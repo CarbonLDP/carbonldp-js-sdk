@@ -10,7 +10,7 @@ export interface Class {
 	insertedContentRelation?:string | Pointer;
 }
 
-export interface DocumentClass extends LDP.DirectContainer.Class {
+export interface DocumentClass extends LDP.DirectContainer {
 	hasMemberRelation:Pointer;
 	isMemberOfRelation?:Pointer;
 	insertedContentRelation?:Pointer;
@@ -18,7 +18,7 @@ export interface DocumentClass extends LDP.DirectContainer.Class {
 
 export class Factory {
 	static is( object:object ):object is DocumentClass {
-		return LDP.DirectContainer.Factory.is( object );
+		return LDP.DirectContainer.is( object );
 	}
 
 	static create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):DocumentClass {
@@ -26,7 +26,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DocumentClass {
-		return <any> LDP.DirectContainer.Factory.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
+		return <any> LDP.DirectContainer.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
 	}
 }
 

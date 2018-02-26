@@ -1,6 +1,6 @@
 import * as AccessPoint from "./AccessPoint";
 import DefaultExport from "./AccessPoint";
-import * as DirectContainer from "./LDP/DirectContainer";
+import { DirectContainer } from "./LDP/DirectContainer";
 import { Pointer } from "./Pointer";
 import {
 	clazz,
@@ -69,7 +69,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 		"Interface that represents the document of an in-memory access point."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.DirectContainer.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.LDP.DirectContainer.DirectContainer" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -159,7 +159,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 			expect( AccessPoint.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( AccessPoint.Factory.createFrom ) ).toBe( true );
 
-			let spy:jasmine.Spy = spyOn( DirectContainer.Factory, "createFrom" );
+			let spy:jasmine.Spy = spyOn( DirectContainer, "createFrom" );
 			let pointer:Pointer = Pointer.create();
 
 			AccessPoint.Factory.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );

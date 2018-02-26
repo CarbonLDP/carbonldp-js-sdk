@@ -10,7 +10,7 @@ import * as Utils from "./Utils";
 
 import * as AddMemberAction from "./LDP/AddMemberAction";
 import * as Map from "./LDP/Map";
-import * as DirectContainer from "./LDP/DirectContainer";
+import { DirectContainer } from "./LDP/DirectContainer";
 import * as Entry from "./LDP/Entry";
 import * as Error from "./LDP/Error";
 import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
