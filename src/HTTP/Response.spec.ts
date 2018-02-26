@@ -13,7 +13,7 @@ import {
 	hasSignature,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as Header from "./Header";
+import { Header } from "./Header";
 import { ClientRequest, IncomingMessage } from "http";
 
 import * as Response from "./Response";
@@ -131,7 +131,7 @@ describe( module(
 		it( hasProperty(
 			INSTANCE,
 			"headers",
-			"Map<string, Carbon.HTTP.Header.Class>",
+			"Map<string, Carbon.HTTP.Header.Header>",
 			"A map object containing the headers returned by the request."
 		), ( done:{ ():void, fail:() => void } ):void => {
 
@@ -142,7 +142,7 @@ describe( module(
 				let objectKeys:Array<string> = Object.keys( rawResponse.responseHeaders );
 				expect( response.headers.size ).toBe( objectKeys.length );
 				for ( let header of objectKeys ) {
-					expect( response.getHeader( header ) ).toEqual( new Header.Class( rawResponse.responseHeaders[ header ] ) );
+					expect( response.getHeader( header ) ).toEqual( new Header( rawResponse.responseHeaders[ header ] ) );
 				}
 
 				done();
@@ -179,7 +179,7 @@ describe( module(
 			"Return the Header object referred by the name specified.", [
 				{ name: "name", type: "string" },
 			],
-			{ type: "Carbon.HTTP.Header.Class" }
+			{ type: "Carbon.HTTP.Header.Header" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 
 			createResponse().then( ( [ response, request ]:[ Response.Class, XMLHttpRequest | ClientRequest ] ) => {
@@ -187,8 +187,8 @@ describe( module(
 				expect( response.getHeader ).toBeDefined();
 				expect( Utils.isFunction( response.getHeader ) ).toBe( true );
 
-				let header:Header.Class = response.getHeader( "Content-Type" );
-				expect( header instanceof Header.Class ).toBe( true );
+				let header:Header = response.getHeader( "Content-Type" );
+				expect( header instanceof Header ).toBe( true );
 
 				done();
 			} ).catch( done.fail );

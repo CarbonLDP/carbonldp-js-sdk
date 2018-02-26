@@ -1,4 +1,4 @@
-import * as HTTP from "../HTTP";
+import * as Request from "../HTTP/Request";
 import Authenticator from "./Authenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
@@ -6,7 +6,7 @@ export declare class Class implements Authenticator<UsernameAndPasswordToken.Cla
     private credentials;
     isAuthenticated(): boolean;
     authenticate(authenticationToken: UsernameAndPasswordToken.Class): Promise<UsernameAndPasswordCredentials.Class>;
-    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
+    addAuthentication(requestOptions: Request.Options): Request.Options;
     clearAuthentication(): void;
     private addBasicAuthenticationHeader(headers);
 }

@@ -15,6 +15,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
+import { Header } from "../HTTP/Header";
 import * as RawResults from "./RawResults";
 import * as SELECTResults from "./SELECTResults";
 
@@ -530,7 +531,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						ldp:contains <l1>, <l2>, <l3>.
 				`;
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = { headers: new Map().set( "some", new HTTP.Header.Class( "some" ) ) };
+				let requestOptions:HTTP.Request.Options = { headers: new Map().set( "some", new Header( "some" ) ) };
 				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {

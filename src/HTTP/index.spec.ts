@@ -1,13 +1,11 @@
 import {
-	STATIC,
-
-	module,
-
 	isDefined,
+	module,
 	reexports,
+	STATIC,
 } from "../test/JasmineExtender";
-import * as Utils from "../Utils";
 
+import * as Utils from "../Utils";
 import * as Errors from "./Errors";
 import * as Header from "./Header";
 import * as JSONParser from "./JSONParser";
@@ -18,7 +16,7 @@ import * as Response from "./Response";
 import StatusCode from "./StatusCode";
 import * as StringParser from "./StringParser";
 
-import * as HTTP from "./index";
+import * as HTTP from "./";
 
 describe( module( "Carbon/HTTP" ), ():void => {
 

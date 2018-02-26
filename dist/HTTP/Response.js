@@ -1,14 +1,7 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("../Utils");
-var Header = __importStar(require("./Header"));
+var Header_1 = require("./Header");
 var Class = (function () {
     function Class(request, data, response) {
         if (response === void 0) { response = {}; }
@@ -31,14 +24,14 @@ var Class = (function () {
     };
     Class.prototype.setHeaders = function (headers) {
         if (Utils_1.isString(headers)) {
-            this.headers = Header.Util.parseHeaders(headers);
+            this.headers = Header_1.Header.parseHeaders(headers);
         }
         else {
             this.headers = new Map();
             if (Utils_1.isObject(headers)) {
                 for (var _i = 0, _a = Object.keys(headers); _i < _a.length; _i++) {
                     var name_1 = _a[_i];
-                    this.headers.set(name_1.toLowerCase(), new Header.Class(headers[name_1]));
+                    this.headers.set(name_1.toLowerCase(), new Header_1.Header(headers[name_1]));
                 }
             }
         }

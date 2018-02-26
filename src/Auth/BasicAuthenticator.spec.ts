@@ -12,7 +12,8 @@ import {
 } from "./../test/JasmineExtender";
 
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import { Header } from "../HTTP/Header";
+import * as Request from "../HTTP/Request";
 import * as Utils from "./../Utils";
 
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
@@ -156,7 +157,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ).toThrow( new Errors.IllegalStateError( "The authenticator isn't authenticated." ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
+				let requestOptions:Request.Options = authenticator.addAuthentication( {} );
 
 				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
@@ -164,9 +165,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
@@ -178,8 +179,8 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:Request.Options = {
+					headers: new Map<string, Header>(),
 				};
 				authenticator.addAuthentication( requestOptions );
 
@@ -190,9 +191,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( requestOptions.headers.size ).toEqual( 1 );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
@@ -204,11 +205,11 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:Request.Options = {
+					headers: new Map<string, Header>(),
 				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
+				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
+				requestOptions.headers.set( "accept", new Header( "text/plain" ) );
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
@@ -220,9 +221,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
@@ -234,12 +235,12 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:Request.Options = {
+					headers: new Map<string, Header>(),
 				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Another YW5vdGhlci1hdXRob3JpemF0aW9uLXR5cGU=" ) );
+				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
+				requestOptions.headers.set( "accept", new Header( "text/plain" ) );
+				requestOptions.headers.set( "authorization", new Header( "Another YW5vdGhlci1hdXRob3JpemF0aW9uLXR5cGU=" ) );
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
@@ -251,9 +252,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
@@ -265,12 +266,12 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:Request.Options = {
+					headers: new Map<string, Header>(),
 				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Basic YW5vdGhlci11c2VyOmFub3RoZXItcGFzcw==" ) );
+				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
+				requestOptions.headers.set( "accept", new Header( "text/plain" ) );
+				requestOptions.headers.set( "authorization", new Header( "Basic YW5vdGhlci11c2VyOmFub3RoZXItcGFzcw==" ) );
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
@@ -282,9 +283,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();

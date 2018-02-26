@@ -13,7 +13,7 @@ import {
 	STATIC,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as Header from "./Header";
+import { Header } from "./Header";
 import Parser from "./JSONParser";
 
 import * as Request from "./Request";
@@ -34,10 +34,10 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 		it( hasProperty(
 			OPTIONAL,
 			"headers",
-			"Map<string, Carbon.HTTP.Header.Class>",
+			"Map<string, Carbon.HTTP.Header.Header>",
 			"Map that contains the references to the headers to include in the request."
 		), ():void => {
-			let headers:Map<string, Header.Class> = new Map();
+			let headers:Map<string, Header> = new Map();
 			let options:Request.Options = {};
 
 			options.headers = headers;
@@ -134,9 +134,9 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			responseText: "May contains text that says something about the API",
 		};
 
-		let headersMap:Map<string, Header.Class> = new Map()
-			.set( "Content-Type", new Header.Class( "application/json" ) )
-			.set( "Accept", new Header.Class( "application/json" ) );
+		let headersMap:Map<string, Header> = new Map()
+			.set( "Content-Type", new Header( "application/json" ) )
+			.set( "Accept", new Header( "application/json" ) );
 		let options:Request.Options = {
 			headers: headersMap,
 			timeout: 5000,
@@ -1046,10 +1046,10 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 		}
 
 		function testHTTPResponseHeaders( response:Response, originalHeaders:{ [ key:string ]:string } ):void {
-			let headers:Map<string, Header.Class> = response.headers;
+			let headers:Map<string, Header> = response.headers;
 			for( let header of Object.keys( originalHeaders ) ) {
 				expect( headers.has( header.toLowerCase() ) ).toBe( true );
-				expect( headers.get( header.toLowerCase() ) ).toEqual( new Header.Class( originalHeaders[ header ] ) );
+				expect( headers.get( header.toLowerCase() ) ).toEqual( new Header( originalHeaders[ header ] ) );
 			}
 		}
 
@@ -1077,8 +1077,8 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			options = newOptionsObject();
 			optionsWithHeaders = {
 				headers: new Map()
-					.set( "authorization", new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) )
-					.set( "location", new Header.Class( "http://example.com/resource/" ) ),
+					.set( "authorization", new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) )
+					.set( "location", new Header( "http://example.com/resource/" ) ),
 				timeout: 5000,
 				sendCredentialsOnCORS: false,
 			};
@@ -1097,20 +1097,20 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
 				{ name: "initialize", type: "boolean", optional: true, defaultValue: "false" },
 			],
-			{ type: "Carbon.HTTP.Header.Class" }
+			{ type: "Carbon.HTTP.Header.Header" }
 		), ():void => {
 			expect( Request.Util.getHeader ).toBeDefined();
 			expect( Utils.isFunction( Request.Util.getHeader ) ).toBe( true );
 
-			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders ) ).toEqual( new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 
 			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders ) ).toBeUndefined();
 			expect( Request.Util.getHeader( "Authorization", options ) ).toBeUndefined();
 
-			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header.Class() );
-			expect( Request.Util.getHeader( "Authorization", options, true ) ).toEqual( new Header.Class() );
-			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders, true ) ).toEqual( new Header.Class( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
+			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header() );
+			expect( Request.Util.getHeader( "Authorization", options, true ) ).toEqual( new Header() );
+			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders, true ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
 		} );
 
 		it( hasMethod(
@@ -1126,11 +1126,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setAcceptHeader ) ).toBe( true );
 
 			options = Request.Util.setAcceptHeader( "application/json", options );
-			expect( Request.Util.getHeader( "Accept", options ) ).toEqual( new Header.Class( "application/json" ) );
+			expect( Request.Util.getHeader( "Accept", options ) ).toEqual( new Header( "application/json" ) );
 
 			optionsWithHeaders = Request.Util.setAcceptHeader( "application/json", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Accept", optionsWithHeaders ) ).toEqual( new Header.Class( "application/json" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "Accept", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1146,11 +1146,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setContentTypeHeader ) ).toBe( true );
 
 			options = Request.Util.setContentTypeHeader( "application/json", options );
-			expect( Request.Util.getHeader( "Content-Type", options ) ).toEqual( new Header.Class( "application/json" ) );
+			expect( Request.Util.getHeader( "Content-Type", options ) ).toEqual( new Header( "application/json" ) );
 
 			optionsWithHeaders = Request.Util.setContentTypeHeader( "application/json", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Content-Type", optionsWithHeaders ) ).toEqual( new Header.Class( "application/json" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "Content-Type", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1166,11 +1166,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setIfMatchHeader ) ).toBe( true );
 
 			options = Request.Util.setIfMatchHeader( 'W/"123456789"', options );
-			expect( Request.Util.getHeader( "If-Match", options ) ).toEqual( new Header.Class( 'W/"123456789"' ) );
+			expect( Request.Util.getHeader( "If-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
 
 			optionsWithHeaders = Request.Util.setIfMatchHeader( 'W/"123456789"', optionsWithHeaders );
-			expect( Request.Util.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header.Class( 'W/"123456789"' ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1186,11 +1186,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setIfNoneMatchHeader ) ).toBe( true );
 
 			options = Request.Util.setIfNoneMatchHeader( 'W/"123456789"', options );
-			expect( Request.Util.getHeader( "If-None-Match", options ) ).toEqual( new Header.Class( 'W/"123456789"' ) );
+			expect( Request.Util.getHeader( "If-None-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
 
 			optionsWithHeaders = Request.Util.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
-			expect( Request.Util.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header.Class( 'W/"123456789"' ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1206,11 +1206,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setPreferredInteractionModel ) ).toBe( true );
 
 			options = Request.Util.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
 
 			optionsWithHeaders = Request.Util.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1227,19 +1227,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 			options = newOptionsObject();
 			options = Request.Util.setPreferredRetrieval( "representation", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=representation" ) );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header( "return=representation" ) );
 
 			options = newOptionsObject();
 			options = Request.Util.setPreferredRetrieval( "minimal", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class( "return=minimal" ) );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header( "return=minimal" ) );
 
 			options = {
 				headers: new Map()
-					.set( "prefer", new Header.Class( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
+					.set( "prefer", new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
 			};
 			options = Request.Util.setPreferredRetrieval( "representation", options );
 			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual(
-				new Header.Class(
+				new Header(
 					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
 					"return=representation"
 				)
@@ -1259,11 +1259,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( Request.Util.setSlug ) ).toBe( true );
 
 			options = Request.Util.setSlug( "a-slug-name", options );
-			expect( Request.Util.getHeader( "Slug", options ) ).toEqual( new Header.Class( "a-slug-name" ) );
+			expect( Request.Util.getHeader( "Slug", options ) ).toEqual( new Header( "a-slug-name" ) );
 
 			optionsWithHeaders = Request.Util.setSlug( "a-slug-name", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Slug", optionsWithHeaders ) ).toEqual( new Header.Class( "a-slug-name" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header.Class( "http://example.com/resource/" ) );
+			expect( Request.Util.getHeader( "Slug", optionsWithHeaders ) ).toEqual( new Header( "a-slug-name" ) );
+			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1322,13 +1322,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 
 			options = Request.Util.setRetrievalPreferences( preferencesEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
 			options = Request.Util.setRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
 			options = Request.Util.setRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
 			options = Request.Util.setRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header.Class() );
+			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
 
 			options = Request.Util.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
 			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeString );

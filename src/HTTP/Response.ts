@@ -7,12 +7,12 @@ import {
 	isObject,
 	isString,
 } from "../Utils";
-import * as Header from "./Header";
+import { Header } from "./Header";
 
 export class Class {
 	status:number;
 	data:string;
-	headers:Map<string, Header.Class>;
+	headers:Map<string, Header>;
 	request:XMLHttpRequest | ClientRequest;
 
 	constructor( request:XMLHttpRequest );
@@ -26,13 +26,13 @@ export class Class {
 		} else {
 			this.status = response.statusCode;
 			this.data = data || "";
-			this.setHeaders( <Object> response.headers );
+			this.setHeaders( response.headers );
 		}
 
 		this.request = request;
 	}
 
-	public getHeader( name:string ):Header.Class {
+	public getHeader( name:string ):Header {
 		name = name.toLowerCase();
 		return this.headers.get( name ) || null;
 	}
@@ -41,12 +41,12 @@ export class Class {
 	private setHeaders( headerObject:Object ):void;
 	private setHeaders( headers:any ):void {
 		if( isString( headers ) ) {
-			this.headers = Header.Util.parseHeaders( headers );
+			this.headers = Header.parseHeaders( headers );
 		} else {
-			this.headers = new Map<string, Header.Class>();
+			this.headers = new Map<string, Header>();
 			if( isObject( headers ) ) {
 				for( let name of Object.keys( headers ) ) {
-					this.headers.set( name.toLowerCase(), new Header.Class( headers[ name ] ) );
+					this.headers.set( name.toLowerCase(), new Header( headers[ name ] ) );
 				}
 			}
 		}
@@ -57,7 +57,7 @@ export class Util {
 	static getETag( response:Class ):string {
 		if( ! response || ! response.headers ) return null;
 
-		let etagHeader:Header.Class = response.getHeader( "ETag" );
+		let etagHeader:Header = response.getHeader( "ETag" );
 
 		if( ! etagHeader ) return null;
 		if( ! etagHeader.values.length ) return null;

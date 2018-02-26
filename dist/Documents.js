@@ -16,7 +16,10 @@ var Auth = __importStar(require("./Auth"));
 var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
-var HTTP = __importStar(require("./HTTP"));
+var HTTPErrors = __importStar(require("./HTTP/Errors"));
+var Method_1 = __importDefault(require("./HTTP/Method"));
+var Request = __importStar(require("./HTTP/Request"));
+var Response = __importStar(require("./HTTP/Response"));
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP_1 = require("./LDP");
 var LDPatch = __importStar(require("./LDPatch"));
@@ -128,7 +131,7 @@ var Documents = (function () {
     };
     Documents.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = HTTP.Request.Util.isOptions(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
+        var requestOptions = Request.Util.isOptions(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
         if (Utils.isFunction(optionsOrQueryBuilderFn))
             queryBuilderFn = optionsOrQueryBuilderFn;
         return Utils_3.promiseMethod(function () {
@@ -144,7 +147,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-            return _this.sendRequest(HTTP.Method.HEAD, documentURI, requestOptions);
+            return _this.sendRequest(Method_1.default.HEAD, documentURI, requestOptions);
         }).then(function (response) {
             return [true, response];
         }).catch(function (error) {
@@ -160,7 +163,7 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request.Util.setPreferredRetrieval("minimal", requestOptions);
             return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
@@ -171,9 +174,9 @@ var Documents = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request.Util.setPreferredRetrieval("minimal", requestOptions);
             return Promise.all(childrenObjects.map(function (childObject, index) {
-                var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+                var cloneOptions = Request.Util.cloneOptions(requestOptions);
                 return _this.persistChildDocument(parentURI, childObject, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
@@ -181,11 +184,11 @@ var Documents = (function () {
     Documents.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        requestOptions = Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            HTTP.Request.Util.setPreferredRetrieval("representation", requestOptions);
+            Request.Util.setPreferredRetrieval("representation", requestOptions);
             return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
@@ -196,9 +199,9 @@ var Documents = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            HTTP.Request.Util.setPreferredRetrieval("representation", requestOptions);
+            Request.Util.setPreferredRetrieval("representation", requestOptions);
             return Promise.all(childrenObjects.map(function (childObject, index) {
-                var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+                var cloneOptions = Request.Util.cloneOptions(requestOptions);
                 return _this.persistChildDocument(parentURI, childObject, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
@@ -219,7 +222,7 @@ var Documents = (function () {
     };
     Documents.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
+        var requestOptions = Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
@@ -243,7 +246,7 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request.Util.setPreferredRetrieval("minimal", requestOptions);
             return _this.persistAccessPoint(documentURI, accessPoint, slug, requestOptions);
         });
     };
@@ -254,9 +257,9 @@ var Documents = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request.Util.setPreferredRetrieval("minimal", requestOptions);
             return Promise.all(accessPoints.map(function (accessPoint, index) {
-                var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
+                var cloneOptions = Request.Util.cloneOptions(requestOptions);
                 return _this.persistAccessPoint(documentURI, accessPoint, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
@@ -284,7 +287,7 @@ var Documents = (function () {
     };
     Documents.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = HTTP.Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
+        var requestOptions = Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
@@ -319,11 +322,11 @@ var Documents = (function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
-            HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+            Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.AddMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
-            return _this.sendRequest(HTTP.Method.PUT, documentURI, requestOptions, body);
+            return _this.sendRequest(Method_1.default.PUT, documentURI, requestOptions, body);
         });
     };
     Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
@@ -337,16 +340,16 @@ var Documents = (function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
-            HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+            Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
             var containerRetrievalPreferences = {
                 include: [C_1.C.PreferSelectedMembershipTriples],
                 omit: [C_1.C.PreferMembershipTriples],
             };
-            HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.RemoveMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
-            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions, body);
+            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions, body);
         });
     };
     Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
@@ -366,8 +369,8 @@ var Documents = (function () {
                     C_1.C.PreferContainer,
                 ],
             };
-            HTTP.Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
-            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
+            Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions);
         });
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
@@ -376,7 +379,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
-            HTTP.Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request.Util.setPreferredRetrieval("minimal", requestOptions);
             return _this.patchDocument(persistedDocument, requestOptions);
         });
     };
@@ -398,8 +401,8 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
-            var cloneOptions = HTTP.Request.Util.cloneOptions(requestOptions);
-            HTTP.Request.Util.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
+            var cloneOptions = Request.Util.cloneOptions(requestOptions);
+            Request.Util.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
             return _this.patchDocument(persistedDocument, cloneOptions);
         }).then(function (_a) {
             var response = _a[1];
@@ -419,7 +422,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-            return _this.sendRequest(HTTP.Method.DELETE, documentURI, requestOptions);
+            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions);
         }).then(function (response) {
             var pointerID = _this.getPointerID(documentURI);
             _this.pointers.delete(pointerID);
@@ -595,9 +598,9 @@ var Documents = (function () {
     Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResources = RDF.Document.Util.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
+            throw new HTTPErrors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
-            throw new HTTP.Errors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
+            throw new HTTPErrors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
         return new JSONLD.Compacter.Class(this).compactDocument(rdfDocument);
     };
     Documents.prototype._getFreeResources = function (nodes) {
@@ -610,9 +613,9 @@ var Documents = (function () {
         var _this = this;
         if (response instanceof Error)
             return Promise.reject(response);
-        if (!(response.status >= 400 && response.status < 600 && HTTP.Errors.statusCodeMap.has(response.status)))
-            return Promise.reject(new HTTP.Errors.UnknownError(response.data, response));
-        var error = new (HTTP.Errors.statusCodeMap.get(response.status))(response.data, response);
+        if (!(response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has(response.status)))
+            return Promise.reject(new HTTPErrors.UnknownError(response.data, response));
+        var error = new (HTTPErrors.statusCodeMap.get(response.status))(response.data, response);
         if (!response.data || !this.context)
             return Promise.reject(error);
         return new JSONLD.Parser.Class().parse(response.data).then(function (freeNodes) {
@@ -644,25 +647,25 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
-        var promise = this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser())
+        var promise = this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new RDF.Document.Parser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
-            var eTag = HTTP.Response.Util.getETag(response);
+            var eTag = Response.Util.getETag(response);
             if (eTag === null)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+                throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
             var targetURI = uri;
             var locationHeader = response.getHeader("Content-Location");
             if (locationHeader) {
                 if (locationHeader.values.length !== 1)
-                    throw new HTTP.Errors.BadResponseError("The response must contain one Content-Location header.", response);
+                    throw new HTTPErrors.BadResponseError("The response must contain one Content-Location header.", response);
                 var locationString = "" + locationHeader;
                 if (!locationString)
-                    throw new HTTP.Errors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
+                    throw new HTTPErrors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
                 targetURI = locationString;
             }
             var rdfDocument = _this.getRDFDocument(targetURI, rdfDocuments, response);
             if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                throw new HTTPErrors.BadResponseError("No document was returned.", response);
             var document = _this._getPersistedDocument(rdfDocument, response);
             document._etag = eTag;
             _this.documentsBeingResolved.delete(uri);
@@ -695,8 +698,8 @@ var Documents = (function () {
         if (persistedDocument.isLocallyOutDated())
             throw new Errors.IllegalStateError("Cannot save an outdated document.");
         this.setDefaultRequestOptions(requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("text/ldpatch", requestOptions);
-        HTTP.Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        Request.Util.setContentTypeHeader("text/ldpatch", requestOptions);
+        Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
         persistedDocument._normalize();
         var deltaCreator = new LDPatch.DeltaCreator.Class(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
@@ -704,7 +707,7 @@ var Documents = (function () {
             deltaCreator.addResource(schema, resource._snapshot, resource);
         });
         var body = deltaCreator.getPatch();
-        return this.sendRequest(HTTP.Method.PATCH, uri, requestOptions, body)
+        return this.sendRequest(Method_1.default.PATCH, uri, requestOptions, body)
             .then(function (response) {
             return _this.applyResponseData(persistedDocument, response);
         });
@@ -713,17 +716,17 @@ var Documents = (function () {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-        HTTP.Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
-        return this.sendRequest(HTTP.Method.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
+        Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        return this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
-            var eTag = HTTP.Response.Util.getETag(response);
+            var eTag = Response.Util.getETag(response);
             if (eTag === null)
-                throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+                throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
-                throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+                throw new HTTPErrors.BadResponseError("No document was returned.", response);
             var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
@@ -848,8 +851,8 @@ var Documents = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions, false);
-        HTTP.Request.Util.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions, false);
+        Request.Util.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions, false);
+        Request.Util.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions, false);
         var response;
         return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
@@ -933,7 +936,7 @@ var Documents = (function () {
     };
     Documents.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
         var _this = this;
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
         if (document.id) {
             var childURI = document.id;
             if (!!this.context)
@@ -947,14 +950,14 @@ var Documents = (function () {
         Object.defineProperty(document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = JSON.stringify(document.toJSON(this, this.jsonldConverter));
         if (!!slug)
-            HTTP.Request.Util.setSlug(slug, requestOptions);
-        return this.sendRequest(HTTP.Method.POST, parentURI, requestOptions, body).then(function (response) {
+            Request.Util.setSlug(slug, requestOptions);
+        return this.sendRequest(Method_1.default.POST, parentURI, requestOptions, body).then(function (response) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
-                throw new HTTP.Errors.BadResponseError("The response is missing a Location header.", response);
+                throw new HTTPErrors.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
-                throw new HTTP.Errors.BadResponseError("The response contains more than one Location header.", response);
+                throw new HTTPErrors.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this.createPointerFrom(document, localID));
             var persistedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
@@ -968,7 +971,7 @@ var Documents = (function () {
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
         if (rdfDocuments.length > 1)
-            throw new HTTP.Errors.BadResponseError("Several documents share the same id.", response);
+            throw new HTTPErrors.BadResponseError("Several documents share the same id.", response);
         return rdfDocuments.length > 0 ? rdfDocuments[0] : null;
     };
     Documents.prototype.getPointerID = function (uri) {
@@ -1086,17 +1089,17 @@ var Documents = (function () {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         if (interactionModel)
-            HTTP.Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+            Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
+        Request.Util.setAcceptHeader("application/ld+json", requestOptions);
         return requestOptions;
     };
     Documents.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
-        var eTag = HTTP.Response.Util.getETag(response);
+        var eTag = Response.Util.getETag(response);
         if (eTag === null)
-            throw new HTTP.Errors.BadResponseError("The response doesn't contain an ETag", response);
+            throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
         var rdfDocument = this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
         if (rdfDocument === null)
-            throw new HTTP.Errors.BadResponseError("No document was returned.", response);
+            throw new HTTPErrors.BadResponseError("No document was returned.", response);
         persistedDocument = this._getPersistedDocument(rdfDocument, response);
         persistedDocument._etag = eTag;
         return [persistedDocument, response];
@@ -1144,7 +1147,7 @@ var Documents = (function () {
         }
     };
     Documents.prototype.sendRequest = function (method, uri, options, body, parser) {
-        return HTTP.Request.Service.send(method, uri, body || null, options, parser)
+        return Request.Service.send(method, uri, body || null, options, parser)
             .catch(this._parseErrorResponse.bind(this));
     };
     return Documents;

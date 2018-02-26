@@ -1,5 +1,6 @@
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import { Header } from "../HTTP/Header";
+import * as Request from "../HTTP/Request";
 import Authenticator from "./Authenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
@@ -24,10 +25,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, User
 		} );
 	}
 
-	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
+	addAuthentication( requestOptions:Request.Options ):Request.Options {
 		if( ! this.isAuthenticated() ) throw new Errors.IllegalStateError( "The authenticator isn't authenticated." );
 
-		let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
 
 		this.addBasicAuthenticationHeader( headers );
 
@@ -38,10 +39,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, User
 		this.credentials = null;
 	}
 
-	private addBasicAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
+	private addBasicAuthenticationHeader( headers:Map<string, Header> ):void {
 		if( headers.has( "authorization" ) ) return;
 
-		let header:HTTP.Header.Class = new HTTP.Header.Class();
+		let header:Header = new Header();
 		headers.set( "authorization", header );
 
 		let authorization:string = "Basic " + toB64( this.credentials.username + ":" + this.credentials.password );

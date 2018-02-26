@@ -1,13 +1,15 @@
+import * as Errors from "../Errors";
+import { BadResponseError } from "../HTTP/Errors";
+import { Header } from "../HTTP/Header";
+import * as Request from "../HTTP/Request";
+import * as Response from "../HTTP/Response";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
-import * as Errors from "../Errors";
 import { FreeResources } from "./../FreeResources";
-import * as HTTP from "../HTTP";
 import * as JSONLD from "./../JSONLD";
 import { ResponseMetadata } from "./../LDP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
-import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
@@ -38,7 +40,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
 		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
 			return this.createToken();
-		} ).then( ( [ token, response ]:[ Token.Class, HTTP.Response.Class ] ):Token.Class => {
+		} ).then( ( [ token, response ]:[ Token.Class, Response.Class ] ):Token.Class => {
 			this.basicAuthenticator.clearAuthentication();
 			this._credentials = token;
 			return token;
@@ -52,8 +54,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return Promise.resolve( credentials );
 	}
 
-	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
-		let headers:Map<string, HTTP.Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+	addAuthentication( requestOptions:Request.Options ):Request.Options {
+		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
 
 		this.addTokenAuthenticationHeader( headers );
 
@@ -64,25 +66,25 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		this._credentials = null;
 	}
 
-	private createToken():Promise<[ Token.Class, HTTP.Response.Class ]> {
-		let requestOptions:HTTP.Request.Options = {};
+	private createToken():Promise<[ Token.Class, Response.Class ]> {
+		let requestOptions:Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
 
-		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
+		Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		Request.Util.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
-			return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
-		} ).then<[ Token.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+			return Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
+		} ).then<[ Token.Class, Response.Class ]>( ( [ expandedResult, response ]:[ any, Response.Class ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );
 			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => resource.hasType( Token.RDF_CLASS ) );
 
-			if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
-			if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
+			if( tokenResources.length === 0 ) throw new BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
+			if( tokenResources.length > 1 ) throw new BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
 			let token:Token.Class = tokenResources[ 0 ];
 
 			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
@@ -103,10 +105,10 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		}, response => this.context.documents._parseErrorResponse( response ) );
 	}
 
-	private addTokenAuthenticationHeader( headers:Map<string, HTTP.Header.Class> ):void {
+	private addTokenAuthenticationHeader( headers:Map<string, Header> ):void {
 		if( headers.has( "authorization" ) ) return;
 
-		let header:HTTP.Header.Class = new HTTP.Header.Class();
+		let header:Header = new Header();
 		headers.set( "authorization", header );
 
 		let authorization:string = "Token " + this._credentials.key;

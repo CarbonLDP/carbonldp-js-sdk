@@ -1,10 +1,10 @@
 /// <reference types="node" />
-import * as Header from "./Header";
+import { Header } from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
 import Response from "./Response";
 export interface Options {
-    headers?: Map<string, Header.Class>;
+    headers?: Map<string, Header>;
     sendCredentialsOnCORS?: boolean;
     timeout?: number;
     request?: XMLHttpRequest;
@@ -48,7 +48,7 @@ export declare class Service {
     private static _setFalseETag(requestOptions);
 }
 export declare class Util {
-    static getHeader(headerName: string, requestOptions: Options, initialize?: boolean): Header.Class;
+    static getHeader(headerName: string, requestOptions: Options, initialize?: boolean): Header;
     static setAcceptHeader(accept: string, requestOptions: Options): Options;
     static setContentTypeHeader(contentType: string, requestOptions: Options): Options;
     static setIfMatchHeader(eTag: string, requestOptions: Options): Options;

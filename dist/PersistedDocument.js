@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("./Document");
-var HTTP = __importStar(require("./HTTP"));
+var Request = __importStar(require("./HTTP/Request"));
 var MessagingDocument = __importStar(require("./Messaging/Document"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedFragment = __importStar(require("./PersistedFragment"));
@@ -120,8 +120,8 @@ function addMembers(members) {
 }
 function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    requestOptions = HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-    var object = Utils.isString(objectOrSlugOrRequestOptions) || HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    requestOptions = Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request.Util.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
     return this._documents.createChild(this.id, object, slug, requestOptions);
 }
@@ -130,8 +130,8 @@ function createChildren(objects, slugsOrRequestOptions, requestOptions) {
 }
 function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
-    requestOptions = HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-    var object = Utils.isString(objectOrSlugOrRequestOptions) || HTTP.Request.Util.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    requestOptions = Request.Util.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request.Util.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
     return this._documents.createChildAndRetrieve(this.id, object, slug, requestOptions);
 }

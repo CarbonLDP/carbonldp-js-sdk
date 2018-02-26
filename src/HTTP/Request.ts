@@ -8,13 +8,13 @@ import URL from "url";
 
 import * as Utils from "./../Utils";
 import { BadResponseError } from "./Errors";
-import * as Header from "./Header";
+import { Header } from "./Header";
 import Method from "./Method";
 import Parser from "./Parser";
 import Response from "./Response";
 
 export interface Options {
-	headers?:Map<string, Header.Class>;
+	headers?:Map<string, Header>;
 	sendCredentialsOnCORS?:boolean;
 	timeout?:number;
 	request?:XMLHttpRequest;
@@ -33,12 +33,12 @@ interface ResponseCallback {
 	( response:Response ):void;
 }
 
-function forEachHeaders( headers:Map<string, Header.Class>, setHeader:( name:string, value:string ) => any ):void {
+function forEachHeaders( headers:Map<string, Header>, setHeader:( name:string, value:string ) => any ):void {
 	let namesIterator:Iterator<string> = headers.keys();
 	let next:IteratorResult<string> = namesIterator.next();
 	while( ! next.done ) {
 		let name:string = next.value;
-		let value:Header.Class = headers.get( name );
+		let value:Header = headers.get( name );
 		setHeader( name, value.toString() );
 		next = namesIterator.next();
 	}
@@ -255,7 +255,7 @@ export class Service {
 			[]
 		;
 
-		const contentType:Header.Class = response.headers.has( "content-type" ) ?
+		const contentType:Header = response.headers.has( "content-type" ) ?
 			response.headers.get( "content-type" ) :
 			null
 		;
@@ -264,8 +264,8 @@ export class Service {
 
 	private static _setNoCacheHeaders( requestOptions:Options ):void {
 		requestOptions.headers
-			.set( "pragma", new Header.Class( "no-cache" ) )
-			.set( "cache-control", new Header.Class( "no-cache, max-age=0" ) )
+			.set( "pragma", new Header( "no-cache" ) )
+			.set( "cache-control", new Header( "no-cache, max-age=0" ) )
 		;
 	}
 
@@ -274,19 +274,19 @@ export class Service {
 	}
 
 	private static _setFalseETag( requestOptions:Options ):void {
-		requestOptions.headers.set( "if-none-match", new Header.Class( "" ) );
+		requestOptions.headers.set( "if-none-match", new Header() );
 	}
 }
 
 export class Util {
 
-	static getHeader( headerName:string, requestOptions:Options, initialize:boolean = false ):Header.Class {
+	static getHeader( headerName:string, requestOptions:Options, initialize:boolean = false ):Header {
 		headerName = headerName.toLowerCase();
 
 		if( initialize ) {
-			let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
+			let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
 			if( ! headers.has( headerName ) )
-				headers.set( headerName, new Header.Class() );
+				headers.set( headerName, new Header() );
 		}
 
 		if( ! requestOptions.headers ) return undefined;
@@ -294,49 +294,49 @@ export class Util {
 	}
 
 	static setAcceptHeader( accept:string, requestOptions:Options ):Options {
-		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "accept", new Header.Class( accept ) );
+		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
+		headers.set( "accept", new Header( accept ) );
 		return requestOptions;
 	}
 
 	static setContentTypeHeader( contentType:string, requestOptions:Options ):Options {
-		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "content-type", new Header.Class( contentType ) );
+		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
+		headers.set( "content-type", new Header( contentType ) );
 		return requestOptions;
 	}
 
 	static setIfMatchHeader( eTag:string, requestOptions:Options ):Options {
 		if( ! eTag ) return;
 
-		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "if-match", new Header.Class( eTag ) );
+		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
+		headers.set( "if-match", new Header( eTag ) );
 		return requestOptions;
 	}
 
 	static setIfNoneMatchHeader( eTag:string, requestOptions:Options ):Options {
 		if( ! eTag ) return;
 
-		let headers:Map<string, Header.Class> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header.Class>();
-		headers.set( "if-none-match", new Header.Class( eTag ) );
+		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
+		headers.set( "if-none-match", new Header( eTag ) );
 		return requestOptions;
 	}
 
 	static setPreferredInteractionModel( interactionModelURI:string, requestOptions:Options ):Options {
-		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+		let prefer:Header = Util.getHeader( "prefer", requestOptions, true );
 		prefer.values.push( interactionModelURI + "; rel=interaction-model" );
 
 		return requestOptions;
 	}
 
 	static setPreferredRetrieval( retrievalType:"representation" | "minimal", requestOptions:Options ):Options {
-		const prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+		const prefer:Header = Util.getHeader( "prefer", requestOptions, true );
 
 		prefer.values.push( `return=${ retrievalType }` );
 		return requestOptions;
 	}
 
 	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:Options, returnRepresentation:boolean = true ):Options {
-		let prefer:Header.Class = Util.getHeader( "prefer", requestOptions, true );
+		let prefer:Header = Util.getHeader( "prefer", requestOptions, true );
 		let representation:string = returnRepresentation ? "return=representation; " : "";
 
 		let keys:string[] = [ "include", "omit" ];
@@ -350,7 +350,7 @@ export class Util {
 	}
 
 	static setSlug( slug:string, requestOptions:Options ):Options {
-		let slugHeader:Header.Class = Util.getHeader( "slug", requestOptions, true );
+		let slugHeader:Header = Util.getHeader( "slug", requestOptions, true );
 		slugHeader.values.push( slug );
 
 		return requestOptions;
@@ -370,7 +370,7 @@ export class Util {
 		};
 
 		if( options.headers ) options.headers
-			.forEach( ( value, key ) => clone.headers.set( key, new Header.Class( value.values.slice() ) ) );
+			.forEach( ( value, key ) => clone.headers.set( key, new Header( value.values.slice() ) ) );
 
 		return clone;
 	}

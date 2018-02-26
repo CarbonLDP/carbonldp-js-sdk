@@ -12,10 +12,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var InvalidJSONLDSyntaxError_1 = __importDefault(require("../Errors/InvalidJSONLDSyntaxError"));
 var Errors = __importStar(require("../Errors"));
-var HTTP = __importStar(require("../HTTP"));
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var RDF = __importStar(require("./../RDF"));
 var Utils = __importStar(require("./../Utils"));
+var Request = __importStar(require("../HTTP/Request"));
+var JSONParser = __importStar(require("../HTTP/JSONParser"));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
 var Class = (function () {
@@ -143,9 +144,9 @@ var Class = (function () {
             if (url in contextsRequested)
                 return { value: Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected.")) };
             var requestOptions = { sendCredentialsOnCORS: false };
-            HTTP.Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
-            var promise = HTTP.Request.Service
-                .get(url, requestOptions, new HTTP.JSONParser.Class())
+            Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
+            var promise = Request.Service
+                .get(url, requestOptions, new JSONParser.Class())
                 .catch(function (response) {
                 return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });

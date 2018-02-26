@@ -23,7 +23,7 @@ var https_1 = __importDefault(require("https"));
 var url_1 = __importDefault(require("url"));
 var Utils = __importStar(require("./../Utils"));
 var Errors_1 = require("./Errors");
-var Header = __importStar(require("./Header"));
+var Header_1 = require("./Header");
 var Method_1 = __importDefault(require("./Method"));
 var Response_1 = __importDefault(require("./Response"));
 function forEachHeaders(headers, setHeader) {
@@ -223,14 +223,14 @@ var Service = (function () {
     };
     Service._setNoCacheHeaders = function (requestOptions) {
         requestOptions.headers
-            .set("pragma", new Header.Class("no-cache"))
-            .set("cache-control", new Header.Class("no-cache, max-age=0"));
+            .set("pragma", new Header_1.Header("no-cache"))
+            .set("cache-control", new Header_1.Header("no-cache, max-age=0"));
     };
     Service._isChromiumAgent = function () {
         return typeof window !== "undefined" && !window["chrome"];
     };
     Service._setFalseETag = function (requestOptions) {
-        requestOptions.headers.set("if-none-match", new Header.Class(""));
+        requestOptions.headers.set("if-none-match", new Header_1.Header());
     };
     Service.defaultOptions = {
         sendCredentialsOnCORS: true,
@@ -247,7 +247,7 @@ var Util = (function () {
         if (initialize) {
             var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
             if (!headers.has(headerName))
-                headers.set(headerName, new Header.Class());
+                headers.set(headerName, new Header_1.Header());
         }
         if (!requestOptions.headers)
             return undefined;
@@ -255,26 +255,26 @@ var Util = (function () {
     };
     Util.setAcceptHeader = function (accept, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("accept", new Header.Class(accept));
+        headers.set("accept", new Header_1.Header(accept));
         return requestOptions;
     };
     Util.setContentTypeHeader = function (contentType, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("content-type", new Header.Class(contentType));
+        headers.set("content-type", new Header_1.Header(contentType));
         return requestOptions;
     };
     Util.setIfMatchHeader = function (eTag, requestOptions) {
         if (!eTag)
             return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("if-match", new Header.Class(eTag));
+        headers.set("if-match", new Header_1.Header(eTag));
         return requestOptions;
     };
     Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
         if (!eTag)
             return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
-        headers.set("if-none-match", new Header.Class(eTag));
+        headers.set("if-none-match", new Header_1.Header(eTag));
         return requestOptions;
     };
     Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
@@ -315,7 +315,7 @@ var Util = (function () {
         var clone = __assign({}, options, { headers: new Map() });
         if (options.headers)
             options.headers
-                .forEach(function (value, key) { return clone.headers.set(key, new Header.Class(value.values.slice())); });
+                .forEach(function (value, key) { return clone.headers.set(key, new Header_1.Header(value.values.slice())); });
         return clone;
     };
     return Util;

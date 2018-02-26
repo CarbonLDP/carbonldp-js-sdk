@@ -1,9 +1,12 @@
 import Error from "../Errors/InvalidJSONLDSyntaxError";
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
+import { Header } from "../HTTP/Header";
+import * as Request from "../HTTP/Request";
+import * as Response from "../HTTP/Response";
+import * as JSONParser from "../HTTP/JSONParser";
 
 const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
@@ -30,7 +33,7 @@ export class Class {
 		} );
 	}
 
-	private static getTargetFromLinkHeader( header:HTTP.Header.Class ):string {
+	private static getTargetFromLinkHeader( header:Header ):string {
 		let rLinkHeader:RegExp = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
 		for( let value of header.values ) {
 			let match:string[] = value.toString().match( rLinkHeader );
@@ -108,14 +111,14 @@ export class Class {
 		let contextToResolved:{ [ index:string ]:Object } = Object.create( null );
 		if( ! Class.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
 
-		function resolved( url:string, promise:Promise<[ any, HTTP.Response.Class ]> ):Promise<void> {
-			return promise.then( ( [ object, response ]:[ any, HTTP.Response.Class ] ) => {
+		function resolved( url:string, promise:Promise<[ any, Response.Class ]> ):Promise<void> {
+			return promise.then( ( [ object, response ]:[ any, Response.Class ] ) => {
 				let _contextsRequested:{ [ index:string ]:boolean } = Utils.ObjectUtils.clone<{ [ index:string ]:boolean }>( contextsRequested );
 				_contextsRequested[ url ] = true;
 
 				let contextWrapper:Object = { "@context": {} };
 
-				let header:HTTP.Header.Class = response.getHeader( "Content-Type" );
+				let header:Header = response.getHeader( "Content-Type" );
 				if( ! Utils.StringUtils.contains( header.toString(), "application/ld+json" ) ) {
 					header = response.getHeader( "Link" );
 					let link:string;
@@ -134,12 +137,12 @@ export class Class {
 		for( let url in contextToResolved ) {
 			if( url in contextsRequested ) return Promise.reject<void>( new Error( "Cyclical @context URLs detected." ) );
 
-			let requestOptions:HTTP.Request.Options = { sendCredentialsOnCORS: false };
-			HTTP.Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
+			let requestOptions:Request.Options = { sendCredentialsOnCORS: false };
+			Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
 
-			let promise:Promise<[ any, HTTP.Response.Class ]> = HTTP.Request.Service
-				.get( url, requestOptions, new HTTP.JSONParser.Class() )
-				.catch( ( response:HTTP.Response.Class ) =>
+			let promise:Promise<[ any, Response.Class ]> = Request.Service
+				.get( url, requestOptions, new JSONParser.Class() )
+				.catch( ( response:Response.Class ) =>
 					Promise.reject( new Error( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
 				);
 			promises.push( resolved( url, promise ) );

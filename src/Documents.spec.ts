@@ -29,11 +29,11 @@ import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import Carbon from "./Carbon";
 import { Document } from "./Document";
-import { Documents } from "./Documents";
-import DefaultExport from "./Documents";
+import DefaultExport, { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
 import * as HTTP from "./HTTP";
+import { Header } from "./HTTP/Header";
 import * as JSONLD from "./JSONLD";
 import MessagingEvent from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
@@ -53,12 +53,9 @@ import {
 	hasProperty,
 	hasSignature,
 	INSTANCE,
-	interfaze,
 	isDefined,
 	method,
 	module,
-	OBLIGATORY,
-	OPTIONAL,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 import { C } from "./Vocabularies/C";
@@ -1118,7 +1115,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
+									[ "prefer", new Header( [
 										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
@@ -1923,7 +1920,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
+									[ "prefer", new Header( [
 										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
@@ -4263,7 +4260,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
+									[ "prefer", new Header( [
 										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
@@ -4327,7 +4324,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
+										[ "prefer", new Header( [
 											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
@@ -4406,7 +4403,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
+										[ "prefer", new Header( [
 											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
@@ -5642,7 +5639,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
+									[ "prefer", new Header( [
 										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
@@ -7226,7 +7223,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
+									[ "prefer", new Header( [
 										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
@@ -7292,7 +7289,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
+										[ "prefer", new Header( [
 											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
@@ -7373,7 +7370,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
+										[ "prefer", new Header( [
 											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
@@ -8619,7 +8616,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
+									[ "prefer", new Header( [
 										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
 									] ) ],

@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var HTTP = __importStar(require("../HTTP"));
+var Header_1 = require("../HTTP/Header");
 var UsernameAndPasswordCredentials = __importStar(require("./UsernameAndPasswordCredentials"));
 var Class = (function () {
     function Class() {
@@ -42,7 +42,7 @@ var Class = (function () {
     Class.prototype.addBasicAuthenticationHeader = function (headers) {
         if (headers.has("authorization"))
             return;
-        var header = new HTTP.Header.Class();
+        var header = new Header_1.Header();
         headers.set("authorization", header);
         var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
         header.values.push(authorization);
