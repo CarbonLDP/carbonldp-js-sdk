@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("./../Errors"));
+var Errors = __importStar(require("../Errors"));
 var HTTP = __importStar(require("./../HTTP"));
 var RDF = __importStar(require("./../RDF"));
 var RawResultsParser_1 = __importDefault(require("./RawResultsParser"));

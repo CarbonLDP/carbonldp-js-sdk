@@ -24,7 +24,7 @@ import {
 import {
 	IllegalArgumentError,
 	IllegalStateError
-} from "./../../Errors";
+} from "../../Errors";
 import QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as Module from "./QueryDocumentsBuilder";

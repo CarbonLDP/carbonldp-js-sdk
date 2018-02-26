@@ -1,6 +1,6 @@
 import * as Utils from "./../Utils";
 import { XSD } from "../Vocabularies/XSD" ;
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 
 import Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";

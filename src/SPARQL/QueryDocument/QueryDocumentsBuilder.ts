@@ -10,7 +10,7 @@ import {
 import {
 	IllegalArgumentError,
 	IllegalStateError
-} from "./../../Errors";
+} from "../../Errors";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryProperty from "./QueryProperty";
 import { getParentPath } from "./Utils";

@@ -18,7 +18,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var Errors_1 = require("./../../Errors");
+var Errors_1 = require("../../Errors");
 var QueryDocumentBuilder = __importStar(require("./QueryDocumentBuilder"));
 var Utils_1 = require("./Utils");
 var Class = (function (_super) {

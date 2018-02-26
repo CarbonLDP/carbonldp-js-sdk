@@ -1,8 +1,8 @@
+import { IllegalArgumentError } from "../Errors";
 import { ModelFactory } from "../ModelFactory";
 import { Pointer } from "../Pointer";
 import { LDP } from "../Vocabularies/LDP";
 import { Document } from "./../Document";
-import { IllegalArgumentError } from "./../Errors";
 
 interface DirectContainerBase {
 	membershipResource:Pointer;

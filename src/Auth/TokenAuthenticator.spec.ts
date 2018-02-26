@@ -3,7 +3,7 @@ import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
 import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import {
 	clazz,

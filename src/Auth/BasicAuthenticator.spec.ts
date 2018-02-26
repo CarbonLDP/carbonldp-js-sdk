@@ -11,7 +11,7 @@ import {
 	hasMethod, hasDefaultExport,
 } from "./../test/JasmineExtender";
 
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
 

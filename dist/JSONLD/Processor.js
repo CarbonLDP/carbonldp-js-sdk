@@ -11,7 +11,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var InvalidJSONLDSyntaxError_1 = __importDefault(require("../Errors/InvalidJSONLDSyntaxError"));
-var Errors = __importStar(require("./../Errors"));
+var Errors = __importStar(require("../Errors"));
 var HTTP = __importStar(require("./../HTTP"));
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var RDF = __importStar(require("./../RDF"));

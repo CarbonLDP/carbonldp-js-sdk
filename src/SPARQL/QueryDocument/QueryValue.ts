@@ -2,7 +2,7 @@ import { isAbsolute } from "sparqler/iri";
 import { LiteralToken } from "sparqler/tokens";
 
 import { isDate } from "../../Utils";
-import { IllegalArgumentError } from "./../../Errors";
+import { IllegalArgumentError } from "../../Errors";
 import { XSD } from "../../Vocabularies/XSD";
 import * as QueryContext from "./QueryContext";
 

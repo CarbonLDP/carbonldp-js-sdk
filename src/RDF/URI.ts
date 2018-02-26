@@ -1,4 +1,4 @@
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 

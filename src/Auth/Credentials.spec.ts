@@ -2,7 +2,7 @@ import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
 import { Document } from "./../Document";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import {
 	clazz,
 	extendsClass,

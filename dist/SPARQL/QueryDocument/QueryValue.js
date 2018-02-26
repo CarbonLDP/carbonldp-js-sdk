@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../../Utils");
-var Errors_1 = require("./../../Errors");
+var Errors_1 = require("../../Errors");
 var XSD_1 = require("../../Vocabularies/XSD");
 var Class = (function () {
     function Class(context, value) {

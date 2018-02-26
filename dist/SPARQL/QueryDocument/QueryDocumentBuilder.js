@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
-var Errors_1 = require("./../../Errors");
+var Errors_1 = require("../../Errors");
 var QueryObject = __importStar(require("./QueryObject"));
 var QueryProperty = __importStar(require("./QueryProperty"));
 var QueryValue = __importStar(require("./QueryValue"));

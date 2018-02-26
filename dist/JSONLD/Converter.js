@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var XSD_1 = require("../Vocabularies/XSD");
-var Errors = __importStar(require("./../Errors"));
+var Errors = __importStar(require("../Errors"));
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var Pointer_1 = require("./../Pointer");
 var RDF = __importStar(require("./../RDF"));

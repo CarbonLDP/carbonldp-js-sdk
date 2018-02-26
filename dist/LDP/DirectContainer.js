@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = require("../Errors");
 var LDP_1 = require("../Vocabularies/LDP");
 var Document_1 = require("./../Document");
-var Errors_1 = require("./../Errors");
 exports.DirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (object) {

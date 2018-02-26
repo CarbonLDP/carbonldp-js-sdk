@@ -9259,9 +9259,9 @@ exports.Factory = Factory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = __webpack_require__(1);
 var LDP_1 = __webpack_require__(30);
 var Document_1 = __webpack_require__(24);
-var Errors_1 = __webpack_require__(1);
 exports.DirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (object) {

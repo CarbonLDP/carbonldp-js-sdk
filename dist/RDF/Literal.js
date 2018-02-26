@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(require("./../Utils"));
 var XSD_1 = require("../Vocabularies/XSD");
-var Errors = __importStar(require("./../Errors"));
+var Errors = __importStar(require("../Errors"));
 var Serializers = __importStar(require("./Literal/Serializers"));
 exports.Serializers = Serializers;
 var Factory = (function () {

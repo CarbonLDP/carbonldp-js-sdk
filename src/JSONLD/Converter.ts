@@ -1,5 +1,5 @@
 import { XSD } from "../Vocabularies/XSD";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 import {
 	Pointer,

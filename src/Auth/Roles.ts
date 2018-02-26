@@ -1,5 +1,5 @@
 import Context from "./../Context";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";

@@ -11,7 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = require("../Vocabularies/LDP");
-var Errors = __importStar(require("./../Errors"));
+var Errors = __importStar(require("../Errors"));
 var HTTP = __importStar(require("./../HTTP"));
 var JSONLD = __importStar(require("./../JSONLD"));
 var LDP_2 = require("./../LDP");

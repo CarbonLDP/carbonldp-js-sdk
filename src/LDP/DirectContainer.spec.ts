@@ -1,3 +1,4 @@
+import * as Errors from "../Errors";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -14,7 +15,6 @@ import {
 
 import { LDP } from "../Vocabularies/LDP";
 import { Document } from "./../Document";
-import * as Errors from "./../Errors";
 
 import DefaultExport, { DirectContainer } from "./DirectContainer";
 

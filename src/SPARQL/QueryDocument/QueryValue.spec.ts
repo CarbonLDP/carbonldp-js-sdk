@@ -14,7 +14,7 @@ import {
 	module,
 } from "../../test/JasmineExtender";
 import { XSD } from "../../Vocabularies/XSD";
-import { IllegalArgumentError } from "./../../Errors";
+import { IllegalArgumentError } from "../../Errors";
 import QueryContext from "./QueryContext";
 import * as Module from "./QueryValue";
 import { Class as QueryValue } from "./QueryValue";

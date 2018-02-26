@@ -15,7 +15,7 @@ import {
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import { XSD } from "../Vocabularies/XSD";
 
 import Serializer from "./Literal/Serializer";

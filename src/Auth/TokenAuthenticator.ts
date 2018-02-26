@@ -1,6 +1,6 @@
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import { FreeResources } from "./../FreeResources";
 import * as HTTP from "./../HTTP";
 import * as JSONLD from "./../JSONLD";

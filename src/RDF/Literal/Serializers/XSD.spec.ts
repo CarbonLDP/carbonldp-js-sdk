@@ -12,7 +12,7 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as XSD from "./XSD";
-import * as Errors from "./../../../Errors";
+import * as Errors from "../../../Errors";
 
 describe( module(
 	"Carbon/RDF/Literal/Serializers/XSD"

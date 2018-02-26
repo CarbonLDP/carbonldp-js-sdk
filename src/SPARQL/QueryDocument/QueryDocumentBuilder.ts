@@ -20,7 +20,7 @@ import { isObject } from "../../Utils";
 import {
 	IllegalArgumentError,
 	IllegalStateError,
-} from "./../../Errors";
+} from "../../Errors";
 import { Pointer } from "./../../Pointer";
 import * as QueryContextBuilder from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";

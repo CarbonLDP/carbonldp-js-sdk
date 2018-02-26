@@ -1,4 +1,4 @@
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import Authenticator from "./Authenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";

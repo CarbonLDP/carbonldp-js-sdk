@@ -1,27 +1,24 @@
 import {
-	STATIC,
-
-	module,
-
 	isDefined,
-	reexports
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+	module,
+	reexports,
+	STATIC
+} from "../test/JasmineExtender";
 
-import IDAlreadyInUseError from "./Errors/IDAlreadyInUseError";
-import IllegalActionError from "./Errors/IllegalActionError";
-import IllegalArgumentError from "./Errors/IllegalArgumentError";
-import IllegalStateError from "./Errors/IllegalStateError";
-import InvalidJSONLDSyntaxError from "./Errors/InvalidJSONLDSyntaxError";
-import NotImplementedError from "./Errors/NotImplementedError";
+import * as Errors from "./";
 
-import * as Errors from "./Errors";
+import IDAlreadyInUseError from "./IDAlreadyInUseError";
+import IllegalActionError from "./IllegalActionError";
+import IllegalArgumentError from "./IllegalArgumentError";
+import IllegalStateError from "./IllegalStateError";
+import InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
+import NotImplementedError from "./NotImplementedError";
 
 describe( module( "Carbon/Errors" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Errors ).toBeDefined();
-		expect( Utils.isObject( Errors ) ).toBe( true );
+		expect( Errors ).toEqual( jasmine.any( Object ) );
 	} );
 
 	it( reexports(

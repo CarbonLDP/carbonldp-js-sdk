@@ -1,5 +1,5 @@
 import { Documents } from "./../Documents";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import { Pointer } from "./../Pointer";

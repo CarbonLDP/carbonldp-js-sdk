@@ -4,7 +4,7 @@ var CS_1 = require("../Vocabularies/CS");
 var VCARD_1 = require("../Vocabularies/VCARD");
 var XSD_1 = require("../Vocabularies/XSD");
 var Document_1 = require("./../Document");
-var Errors_1 = require("./../Errors");
+var Errors_1 = require("../Errors");
 exports.RDF_CLASS = CS_1.CS.Credentials;
 exports.SCHEMA = {
     "email": {

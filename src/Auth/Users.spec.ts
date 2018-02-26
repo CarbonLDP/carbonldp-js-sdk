@@ -12,7 +12,7 @@ import {
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";

@@ -1,4 +1,4 @@
-import * as Errors from "./../../../Errors";
+import * as Errors from "../../../Errors";
 import * as Utils from "./../../../Utils";
 
 import Serializer from "./../Serializer";

@@ -2,7 +2,7 @@ import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
 import { Document } from "./../Document";
-import { IllegalArgumentError } from "./../Errors";
+import { IllegalArgumentError } from "../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
 
 export const RDF_CLASS:string = CS.Credentials;

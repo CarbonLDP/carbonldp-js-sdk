@@ -1,7 +1,7 @@
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
+import * as Errors from "../Errors";
 import * as HTTP from "./../HTTP";
 import { Pointer } from "./../Pointer";
 import {
