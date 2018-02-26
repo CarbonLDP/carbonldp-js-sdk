@@ -1,4 +1,4 @@
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as JSONLD from "./../JSONLD";
 import * as Node from "./Node";
 import * as Utils from "./../Utils";

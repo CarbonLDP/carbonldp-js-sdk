@@ -7,6 +7,9 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -14,17 +17,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Header = __importStar(require("./Header"));
-var Method_1 = __importDefault(require("./Method"));
-var Response_1 = __importDefault(require("./Response"));
-var Utils = __importStar(require("./../Utils"));
 var http_1 = __importDefault(require("http"));
 var https_1 = __importDefault(require("https"));
 var url_1 = __importDefault(require("url"));
+var Utils = __importStar(require("./../Utils"));
+var Header = __importStar(require("./Header"));
+var Method_1 = __importDefault(require("./Method"));
+var Response_1 = __importDefault(require("./Response"));
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
     var next = namesIterator.next();

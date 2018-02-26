@@ -1,4 +1,4 @@
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 export interface Class<T extends Object, W extends Object> {
     isAuthenticated(): boolean;
     authenticate(authenticationToken: T): Promise<W>;

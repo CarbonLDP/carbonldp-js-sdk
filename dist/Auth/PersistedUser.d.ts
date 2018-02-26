@@ -1,5 +1,5 @@
 import { Documents } from "./../Documents";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as PersistedCredentials from "./PersistedCredentials";
 export interface Class extends PersistedProtectedDocument.Class {

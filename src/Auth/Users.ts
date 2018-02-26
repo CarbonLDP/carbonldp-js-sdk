@@ -1,7 +1,7 @@
 import { Context } from "../Context";
 import { promiseMethod } from "../Utils";
 import * as Errors from "../Errors";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import { Pointer } from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as Credentials from "./Credentials";

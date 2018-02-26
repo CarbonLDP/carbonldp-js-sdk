@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Header = __importStar(require("./Header"));
 var Utils_1 = require("../Utils");
+var Header = __importStar(require("./Header"));
 var Class = (function () {
     function Class(request, data, response) {
         if (response === void 0) { response = {}; }

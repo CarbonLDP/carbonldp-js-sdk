@@ -1,6 +1,6 @@
 /// <reference types="node" />
-import * as Header from "./Header";
 import { ClientRequest, IncomingMessage } from "http";
+import * as Header from "./Header";
 export declare class Class {
     status: number;
     data: string;

@@ -1,9 +1,3 @@
-import * as Header from "./Header";
-import Method from "./Method";
-import Parser from "./Parser";
-import Response from "./Response";
-import * as Utils from "./../Utils";
-
 import HTTP, {
 	ClientRequest,
 	IncomingMessage,
@@ -11,6 +5,12 @@ import HTTP, {
 } from "http";
 import HTTPS from "https";
 import URL from "url";
+
+import * as Utils from "./../Utils";
+import * as Header from "./Header";
+import Method from "./Method";
+import Parser from "./Parser";
+import Response from "./Response";
 
 export interface Options {
 	headers?:Map<string, Header.Class>;

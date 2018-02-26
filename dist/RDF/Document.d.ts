@@ -1,4 +1,4 @@
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as Node from "./Node";
 export interface Class {
     "@id"?: string;

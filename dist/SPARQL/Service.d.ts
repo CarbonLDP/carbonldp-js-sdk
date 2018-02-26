@@ -1,4 +1,4 @@
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import { PointerLibrary } from "./../Pointer";
 import * as RawResults from "./RawResults";
 import * as SELECTResults from "./SELECTResults";

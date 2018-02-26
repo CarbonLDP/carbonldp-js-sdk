@@ -1,5 +1,5 @@
 import Context from "./../Context";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import { Pointer } from "./../Pointer";
 import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";

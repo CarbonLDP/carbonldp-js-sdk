@@ -1,6 +1,13 @@
+import {
+	ClientRequest,
+	IncomingMessage,
+} from "http";
+
+import {
+	isObject,
+	isString,
+} from "../Utils";
 import * as Header from "./Header";
-import {ClientRequest, IncomingMessage} from "http";
-import {isString, isObject} from "../Utils";
 
 export class Class {
 	status:number;

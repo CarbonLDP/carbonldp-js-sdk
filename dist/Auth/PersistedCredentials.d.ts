@@ -1,4 +1,4 @@
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import { Documents } from "./../Documents";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as PersistedUser from "./PersistedUser";

@@ -1,6 +1,6 @@
 import Error from "../Errors/InvalidJSONLDSyntaxError";
 import * as Errors from "../Errors";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";

@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { Documents } from "./../Documents";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import { Pointer } from "./../Pointer";
 import * as SELECTResults from "./../SPARQL/SELECTResults";

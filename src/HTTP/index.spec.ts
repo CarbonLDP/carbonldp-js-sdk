@@ -5,20 +5,20 @@ import {
 
 	isDefined,
 	reexports,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
-import * as Errors from "./HTTP/Errors";
-import * as Header from "./HTTP/Header";
-import * as JSONParser from "./HTTP/JSONParser";
-import Method from "./HTTP/Method";
-import * as Parser from "./HTTP/Parser";
-import * as Request from "./HTTP/Request";
-import * as Response from "./HTTP/Response";
-import StatusCode from "./HTTP/StatusCode";
-import * as StringParser from "./HTTP/StringParser";
+import * as Errors from "./Errors";
+import * as Header from "./Header";
+import * as JSONParser from "./JSONParser";
+import Method from "./Method";
+import * as Parser from "./Parser";
+import * as Request from "./Request";
+import * as Response from "./Response";
+import StatusCode from "./StatusCode";
+import * as StringParser from "./StringParser";
 
-import * as HTTP from "./HTTP";
+import * as HTTP from "./index";
 
 describe( module( "Carbon/HTTP" ), ():void => {
 
@@ -57,7 +57,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Method",
-		"Carbon/HTTP/Method"
+		"Carbon.HTTP.Method.Method"
 	), ():void => {
 		expect( HTTP.Method ).toBeDefined();
 		expect( HTTP.Method ).toBe( Method );
@@ -93,7 +93,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"StatusCode",
-		"Carbon/HTTP/StatusCode"
+		"Carbon.HTTP.StatusCode.StatusCode"
 	), ():void => {
 		expect( HTTP.StatusCode ).toBeDefined();
 		expect( HTTP.StatusCode ).toBe( StatusCode );

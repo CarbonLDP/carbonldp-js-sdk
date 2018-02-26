@@ -7533,8 +7533,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Header = __importStar(__webpack_require__(57));
 var Utils_1 = __webpack_require__(0);
+var Header = __importStar(__webpack_require__(57));
 var Class = (function () {
     function Class(request, data, response) {
         if (response === void 0) { response = {}; }
@@ -15225,6 +15225,9 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -15232,17 +15235,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Header = __importStar(__webpack_require__(57));
-var Method_1 = __importDefault(__webpack_require__(90));
-var Response_1 = __importDefault(__webpack_require__(91));
-var Utils = __importStar(__webpack_require__(0));
 var http_1 = __importDefault(__webpack_require__(206));
 var https_1 = __importDefault(__webpack_require__(207));
 var url_1 = __importDefault(__webpack_require__(208));
+var Utils = __importStar(__webpack_require__(0));
+var Header = __importStar(__webpack_require__(57));
+var Method_1 = __importDefault(__webpack_require__(90));
+var Response_1 = __importDefault(__webpack_require__(91));
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
     var next = namesIterator.next();

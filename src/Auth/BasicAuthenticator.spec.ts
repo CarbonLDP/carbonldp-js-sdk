@@ -12,7 +12,7 @@ import {
 } from "./../test/JasmineExtender";
 
 import * as Errors from "../Errors";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as Utils from "./../Utils";
 
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";

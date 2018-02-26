@@ -10,23 +10,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("./HTTP/Errors"));
+var Errors = __importStar(require("./Errors"));
 exports.Errors = Errors;
-var Header = __importStar(require("./HTTP/Header"));
+var Header = __importStar(require("./Header"));
 exports.Header = Header;
-var JSONParser = __importStar(require("./HTTP/JSONParser"));
+var JSONParser = __importStar(require("./JSONParser"));
 exports.JSONParser = JSONParser;
-var Method_1 = __importDefault(require("./HTTP/Method"));
+var Method_1 = __importDefault(require("./Method"));
 exports.Method = Method_1.default;
-var Parser = __importStar(require("./HTTP/Parser"));
+var Parser = __importStar(require("./Parser"));
 exports.Parser = Parser;
-var Response = __importStar(require("./HTTP/Response"));
+var Response = __importStar(require("./Response"));
 exports.Response = Response;
-var StatusCode_1 = __importDefault(require("./HTTP/StatusCode"));
+var StatusCode_1 = __importDefault(require("./StatusCode"));
 exports.StatusCode = StatusCode_1.default;
-var StringParser = __importStar(require("./HTTP/StringParser"));
+var StringParser = __importStar(require("./StringParser"));
 exports.StringParser = StringParser;
-var Request = __importStar(require("./HTTP/Request"));
+var Request = __importStar(require("./Request"));
 exports.Request = Request;
 
-//# sourceMappingURL=HTTP.js.map
+//# sourceMappingURL=index.js.map

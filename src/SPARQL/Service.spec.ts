@@ -1,6 +1,6 @@
 import * as Errors from "../Errors";
 
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import {
 	Pointer,
 	PointerLibrary

@@ -1,5 +1,5 @@
 import { Context } from "../Context";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as PersistedUser from "./PersistedUser";
 export declare class Class {
     private context;

@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var HTTP = __importStar(require("./../HTTP"));
+var HTTP = __importStar(require("../HTTP"));
 var UsernameAndPasswordCredentials = __importStar(require("./UsernameAndPasswordCredentials"));
 var Class = (function () {
     function Class() {

@@ -21,7 +21,7 @@ describe( module(
 	} );
 
 	describe( enumeration(
-		"Carbon.HTTP.MethodModule.Method",
+		"Carbon.HTTP.Method.Method",
 		"Enum with the HTTP/1.1 methods."
 	), ():void => {
 

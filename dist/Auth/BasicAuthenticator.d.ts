@@ -1,4 +1,4 @@
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import Authenticator from "./Authenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";

@@ -2,7 +2,7 @@ import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
 import * as Errors from "../Errors";
 import { FreeResources } from "./../FreeResources";
-import * as HTTP from "./../HTTP";
+import * as HTTP from "../HTTP";
 import * as JSONLD from "./../JSONLD";
 import { ResponseMetadata } from "./../LDP";
 import * as PersistedDocument from "./../PersistedDocument";
