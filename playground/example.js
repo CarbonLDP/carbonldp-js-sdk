@@ -77,7 +77,7 @@
 		}
 	} );
 
-	describe( "Tests >", () => {
+	xdescribe( "Tests >", () => {
 		let childrenToCreate = 6;
 		let parent;
 		let children;
@@ -233,4 +233,5 @@
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
 		} ) );
 	} );
+
 })();

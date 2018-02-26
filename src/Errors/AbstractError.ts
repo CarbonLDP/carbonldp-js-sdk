@@ -1,18 +1,15 @@
-export abstract class Class extends Error {
-	public message:string;
+export abstract class AbstractError extends Error {
+	message:string;
 
 	get name():string { return "AbstractError"; }
 
 	constructor( message:string ) {
 		super( message );
-		Object.setPrototypeOf( this, Class.prototype );
-		if( "captureStackTrace" in Error ) (<any>Error).captureStackTrace( this, this.constructor );
-		this.message = message;
+		Object.setPrototypeOf( this, new.target.prototype );
+
+		if( "captureStackTrace" in Error ) Error.captureStackTrace( this, this.constructor );
 	}
 
-	toString():string {
-		return this.name + ": " + this.message;
-	}
 }
 
-export default Class;
+export default AbstractError;

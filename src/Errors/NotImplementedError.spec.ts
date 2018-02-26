@@ -57,22 +57,6 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 			expect( error instanceof NotImplementedError.Class ).toBe( true );
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:NotImplementedError.Class = new NotImplementedError.Class( "Message of the error" );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "NotImplementedError: Message of the error" );
-
-			error = new NotImplementedError.Class();
-			expect( error.toString() ).toBe( "NotImplementedError: " );
-		} );
-
 		it( hasProperty(
 			INSTANCE,
 			"name",

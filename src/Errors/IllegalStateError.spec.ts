@@ -54,22 +54,6 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 			expect( error instanceof IllegalStateError.Class ).toBe( true );
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:IllegalStateError.Class = new IllegalStateError.Class( "Message of the error" );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "IllegalStateError: Message of the error" );
-
-			error = new IllegalStateError.Class();
-			expect( error.toString() ).toBe( "IllegalStateError: " );
-		} );
-
 		it( hasProperty(
 			INSTANCE,
 			"name",

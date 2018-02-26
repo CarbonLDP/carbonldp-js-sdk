@@ -1,3 +1,4 @@
+import AbstractError from "./AbstractError";
 import IDAlreadyInUseError from "./IDAlreadyInUseError";
 import IllegalActionError from "./IllegalActionError";
 import IllegalArgumentError from "./IllegalArgumentError";
@@ -7,6 +8,7 @@ import NotImplementedError from "./NotImplementedError";
 
 
 export {
+	AbstractError,
 	IDAlreadyInUseError,
 	IllegalActionError,
 	IllegalArgumentError,
