@@ -4,19 +4,18 @@ import {
 	reexports,
 	STATIC,
 } from "../test/JasmineExtender";
-
 import * as Utils from "../Utils";
+
+import * as HTTP from "./";
 import * as Errors from "./Errors";
 import * as Header from "./Header";
+import { HTTPMethod } from "./HTTPMethod";
 import * as JSONParser from "./JSONParser";
-import Method from "./Method";
 import * as Parser from "./Parser";
 import * as Request from "./Request";
 import * as Response from "./Response";
 import StatusCode from "./StatusCode";
 import * as StringParser from "./StringParser";
-
-import * as HTTP from "./";
 
 describe( module( "Carbon/HTTP" ), ():void => {
 
@@ -54,11 +53,11 @@ describe( module( "Carbon/HTTP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Method",
-		"Carbon.HTTP.Method.Method"
+		"HTTPMethod",
+		"Carbon.HTTP.HTTPMethod.HTTPMethod"
 	), ():void => {
-		expect( HTTP.Method ).toBeDefined();
-		expect( HTTP.Method ).toBe( Method );
+		expect( HTTP.HTTPMethod ).toBeDefined();
+		expect( HTTP.HTTPMethod ).toBe( HTTPMethod );
 	} );
 
 	it( reexports(

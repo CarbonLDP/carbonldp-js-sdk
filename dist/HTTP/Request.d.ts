@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { Header } from "./Header";
-import Method from "./Method";
+import { HTTPMethod } from "./HTTPMethod";
 import Parser from "./Parser";
 import Response from "./Response";
 export interface Options {
@@ -18,11 +18,11 @@ export interface RetrievalPreferences {
 }
 export declare class Service {
     private static defaultOptions;
-    static send(method: (Method | string), url: string, options?: Options): Promise<Response>;
-    static send(method: (Method | string), url: string, body: string | Blob | Buffer, options?: Options): Promise<Response>;
-    static send(method: (Method | string), url: string, body: string | Blob | Buffer, options?: Options): Promise<Response>;
-    static send<T>(method: (Method | string), url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
-    static send<T>(method: (Method | string), url: string, body: string | Blob | Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static send(method: (HTTPMethod | string), url: string, options?: Options): Promise<Response>;
+    static send(method: (HTTPMethod | string), url: string, body: string | Blob | Buffer, options?: Options): Promise<Response>;
+    static send(method: (HTTPMethod | string), url: string, body: string | Blob | Buffer, options?: Options): Promise<Response>;
+    static send<T>(method: (HTTPMethod | string), url: string, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
+    static send<T>(method: (HTTPMethod | string), url: string, body: string | Blob | Buffer, options?: Options, parser?: Parser<T>): Promise<[T, Response]>;
     static options(url: string, options?: Options): Promise<Response>;
     static head(url: string, options?: Options): Promise<Response>;
     static get(url: string, options?: Options): Promise<Response>;

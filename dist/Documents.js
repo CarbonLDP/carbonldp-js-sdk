@@ -17,7 +17,7 @@ var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
 var HTTPErrors = __importStar(require("./HTTP/Errors"));
-var Method_1 = __importDefault(require("./HTTP/Method"));
+var HTTPMethod_1 = require("./HTTP/HTTPMethod");
 var Request = __importStar(require("./HTTP/Request"));
 var Response = __importStar(require("./HTTP/Response"));
 var JSONLD = __importStar(require("./JSONLD"));
@@ -148,7 +148,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-            return _this.sendRequest(Method_1.default.HEAD, documentURI, requestOptions);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.HEAD, documentURI, requestOptions);
         }).then(function (response) {
             return [true, response];
         }).catch(function (error) {
@@ -327,7 +327,7 @@ var Documents = (function () {
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.AddMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
-            return _this.sendRequest(Method_1.default.PUT, documentURI, requestOptions, body);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.PUT, documentURI, requestOptions, body);
         });
     };
     Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
@@ -350,7 +350,7 @@ var Documents = (function () {
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.RemoveMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
-            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions, body);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions, body);
         });
     };
     Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
@@ -371,7 +371,7 @@ var Documents = (function () {
                 ],
             };
             Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
-            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions);
         });
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
@@ -423,7 +423,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions);
         }).then(function (response) {
             var pointerID = _this.getPointerID(documentURI);
             _this.pointers.delete(pointerID);
@@ -648,7 +648,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
-        var promise = this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
+        var promise = this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = Response.Util.getETag(response);
@@ -708,7 +708,7 @@ var Documents = (function () {
             deltaCreator.addResource(schema, resource._snapshot, resource);
         });
         var body = deltaCreator.getPatch();
-        return this.sendRequest(Method_1.default.PATCH, uri, requestOptions, body)
+        return this.sendRequest(HTTPMethod_1.HTTPMethod.PATCH, uri, requestOptions, body)
             .then(function (response) {
             return _this.applyResponseData(persistedDocument, response);
         });
@@ -718,7 +718,7 @@ var Documents = (function () {
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
-        return this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
+        return this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
@@ -952,7 +952,7 @@ var Documents = (function () {
         var body = JSON.stringify(document.toJSON(this, this.jsonldConverter));
         if (!!slug)
             Request.Util.setSlug(slug, requestOptions);
-        return this.sendRequest(Method_1.default.POST, parentURI, requestOptions, body).then(function (response) {
+        return this.sendRequest(HTTPMethod_1.HTTPMethod.POST, parentURI, requestOptions, body).then(function (response) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)

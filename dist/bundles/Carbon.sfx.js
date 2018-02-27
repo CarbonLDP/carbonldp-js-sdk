@@ -3994,7 +3994,7 @@ var url_1 = __importDefault(__webpack_require__(189));
 var Utils = __importStar(__webpack_require__(0));
 var Errors_1 = __webpack_require__(49);
 var Header_1 = __webpack_require__(35);
-var Method_1 = __importDefault(__webpack_require__(63));
+var HTTPMethod_1 = __webpack_require__(63);
 var Response_1 = __importDefault(__webpack_require__(64));
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
@@ -4111,7 +4111,7 @@ var Service = (function () {
         }
         options = Object.assign({}, Service.defaultOptions, options);
         if (Utils.isNumber(method))
-            method = Method_1.default[method];
+            method = HTTPMethod_1.HTTPMethod[method];
         var requestPromise = sendRequest(method, url, body, options)
             .then(function (response) {
             if (method === "GET" && options.headers)
@@ -4129,40 +4129,40 @@ var Service = (function () {
     };
     Service.options = function (url, options) {
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.OPTIONS, url, options);
+        return Service.send(HTTPMethod_1.HTTPMethod.OPTIONS, url, options);
     };
     Service.head = function (url, options) {
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.HEAD, url, options);
+        return Service.send(HTTPMethod_1.HTTPMethod.HEAD, url, options);
     };
     Service.get = function (url, options, parser) {
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.GET, url, null, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.GET, url, null, options, parser);
     };
     Service.post = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.POST, url, bodyOrOptions, options, parser);
     };
     Service.put = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.PUT, url, bodyOrOptions, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.PUT, url, bodyOrOptions, options, parser);
     };
     Service.patch = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.PATCH, url, bodyOrOptions, options, parser);
     };
     Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
     Service._handleGETResponse = function (url, requestOptions, response) {
         var _this = this;
@@ -4435,20 +4435,20 @@ var Errors = __importStar(__webpack_require__(49));
 exports.Errors = Errors;
 var Header = __importStar(__webpack_require__(35));
 exports.Header = Header;
+var HTTPMethod_1 = __webpack_require__(63);
+exports.HTTPMethod = HTTPMethod_1.HTTPMethod;
 var JSONParser = __importStar(__webpack_require__(52));
 exports.JSONParser = JSONParser;
-var Method_1 = __importDefault(__webpack_require__(63));
-exports.Method = Method_1.default;
 var Parser = __importStar(__webpack_require__(223));
 exports.Parser = Parser;
+var Request = __importStar(__webpack_require__(38));
+exports.Request = Request;
 var Response = __importStar(__webpack_require__(64));
 exports.Response = Response;
 var StatusCode_1 = __importDefault(__webpack_require__(224));
 exports.StatusCode = StatusCode_1.default;
 var StringParser = __importStar(__webpack_require__(225));
 exports.StringParser = StringParser;
-var Request = __importStar(__webpack_require__(38));
-exports.Request = Request;
 
 
 /***/ }),
@@ -6121,17 +6121,17 @@ exports.Factory = Factory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Method;
-(function (Method) {
-    Method[Method["OPTIONS"] = 0] = "OPTIONS";
-    Method[Method["HEAD"] = 1] = "HEAD";
-    Method[Method["GET"] = 2] = "GET";
-    Method[Method["POST"] = 3] = "POST";
-    Method[Method["PUT"] = 4] = "PUT";
-    Method[Method["PATCH"] = 5] = "PATCH";
-    Method[Method["DELETE"] = 6] = "DELETE";
-})(Method = exports.Method || (exports.Method = {}));
-exports.default = Method;
+var HTTPMethod;
+(function (HTTPMethod) {
+    HTTPMethod[HTTPMethod["OPTIONS"] = 0] = "OPTIONS";
+    HTTPMethod[HTTPMethod["HEAD"] = 1] = "HEAD";
+    HTTPMethod[HTTPMethod["GET"] = 2] = "GET";
+    HTTPMethod[HTTPMethod["POST"] = 3] = "POST";
+    HTTPMethod[HTTPMethod["PUT"] = 4] = "PUT";
+    HTTPMethod[HTTPMethod["PATCH"] = 5] = "PATCH";
+    HTTPMethod[HTTPMethod["DELETE"] = 6] = "DELETE";
+})(HTTPMethod = exports.HTTPMethod || (exports.HTTPMethod = {}));
+exports.default = HTTPMethod;
 
 
 /***/ }),
@@ -9908,7 +9908,7 @@ var Document_1 = __webpack_require__(24);
 var Errors = __importStar(__webpack_require__(1));
 var FreeResources_1 = __webpack_require__(115);
 var HTTPErrors = __importStar(__webpack_require__(49));
-var Method_1 = __importDefault(__webpack_require__(63));
+var HTTPMethod_1 = __webpack_require__(63);
 var Request = __importStar(__webpack_require__(38));
 var Response = __importStar(__webpack_require__(64));
 var JSONLD = __importStar(__webpack_require__(36));
@@ -10039,7 +10039,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-            return _this.sendRequest(Method_1.default.HEAD, documentURI, requestOptions);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.HEAD, documentURI, requestOptions);
         }).then(function (response) {
             return [true, response];
         }).catch(function (error) {
@@ -10218,7 +10218,7 @@ var Documents = (function () {
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.AddMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
-            return _this.sendRequest(Method_1.default.PUT, documentURI, requestOptions, body);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.PUT, documentURI, requestOptions, body);
         });
     };
     Documents.prototype.removeMember = function (documentURI, memberORUri, requestOptions) {
@@ -10241,7 +10241,7 @@ var Documents = (function () {
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.RemoveMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
-            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions, body);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions, body);
         });
     };
     Documents.prototype.removeAllMembers = function (documentURI, requestOptions) {
@@ -10262,7 +10262,7 @@ var Documents = (function () {
                 ],
             };
             Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
-            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions);
         });
     };
     Documents.prototype.save = function (persistedDocument, requestOptions) {
@@ -10314,7 +10314,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-            return _this.sendRequest(Method_1.default.DELETE, documentURI, requestOptions);
+            return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions);
         }).then(function (response) {
             var pointerID = _this.getPointerID(documentURI);
             _this.pointers.delete(pointerID);
@@ -10539,7 +10539,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
-        var promise = this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
+        var promise = this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = Response.Util.getETag(response);
@@ -10599,7 +10599,7 @@ var Documents = (function () {
             deltaCreator.addResource(schema, resource._snapshot, resource);
         });
         var body = deltaCreator.getPatch();
-        return this.sendRequest(Method_1.default.PATCH, uri, requestOptions, body)
+        return this.sendRequest(HTTPMethod_1.HTTPMethod.PATCH, uri, requestOptions, body)
             .then(function (response) {
             return _this.applyResponseData(persistedDocument, response);
         });
@@ -10609,7 +10609,7 @@ var Documents = (function () {
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
-        return this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
+        return this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
@@ -10843,7 +10843,7 @@ var Documents = (function () {
         var body = JSON.stringify(document.toJSON(this, this.jsonldConverter));
         if (!!slug)
             Request.Util.setSlug(slug, requestOptions);
-        return this.sendRequest(Method_1.default.POST, parentURI, requestOptions, body).then(function (response) {
+        return this.sendRequest(HTTPMethod_1.HTTPMethod.POST, parentURI, requestOptions, body).then(function (response) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)

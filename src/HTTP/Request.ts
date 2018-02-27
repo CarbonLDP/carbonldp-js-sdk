@@ -9,7 +9,7 @@ import URL from "url";
 import * as Utils from "./../Utils";
 import { BadResponseError } from "./Errors";
 import { Header } from "./Header";
-import Method from "./Method";
+import { HTTPMethod } from "./HTTPMethod";
 import Parser from "./Parser";
 import Response from "./Response";
 
@@ -145,11 +145,11 @@ export class Service {
 		sendCredentialsOnCORS: true,
 	};
 
-	static send( method:(Method | string), url:string, options?:Options ):Promise<Response>;
-	static send( method:(Method | string), url:string, body:string | Blob | Buffer, options?:Options ):Promise<Response>;
-	static send( method:(Method | string), url:string, body:string | Blob | Buffer, options?:Options ):Promise<Response>;
-	static send<T>( method:(Method | string), url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	static send<T>( method:(Method | string), url:string, body:string | Blob | Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static send( method:(HTTPMethod | string), url:string, options?:Options ):Promise<Response>;
+	static send( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:Options ):Promise<Response>;
+	static send( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:Options ):Promise<Response>;
+	static send<T>( method:(HTTPMethod | string), url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	static send<T>( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string | Blob | Buffer = null;
 		let options:Options = Utils.hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
@@ -163,7 +163,7 @@ export class Service {
 
 		options = Object.assign( {}, Service.defaultOptions, options );
 
-		if( Utils.isNumber( method ) ) method = Method[ method ];
+		if( Utils.isNumber( method ) ) method = HTTPMethod[ method ];
 
 		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
 			.then( response => {
@@ -182,17 +182,17 @@ export class Service {
 	}
 
 	static options( url:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.OPTIONS, url, options );
+		return Service.send( HTTPMethod.OPTIONS, url, options );
 	}
 
 	static head( url:string, options:Options = Service.defaultOptions ):Promise<Response> {
-		return Service.send( Method.HEAD, url, options );
+		return Service.send( HTTPMethod.HEAD, url, options );
 	}
 
 	static get( url:string, options?:Options ):Promise<Response>;
 	static get<T>( url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static get<T>( url:string, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.GET, url, null, options, parser );
+		return Service.send( HTTPMethod.GET, url, null, options, parser );
 	}
 
 	static post( url:string, body:Buffer, options?:Options ):Promise<Response>;
@@ -202,19 +202,19 @@ export class Service {
 	static post( url:string, body:string, options?:Options ):Promise<Response>;
 	static post<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static post<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.POST, url, bodyOrOptions, options, parser );
+		return Service.send( HTTPMethod.POST, url, bodyOrOptions, options, parser );
 	}
 
 	static put( url:string, body:string, options?:Options ):Promise<Response>;
 	static put<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static put<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.PUT, url, bodyOrOptions, options, parser );
+		return Service.send( HTTPMethod.PUT, url, bodyOrOptions, options, parser );
 	}
 
 	static patch( url:string, body:string, options?:Options ):Promise<Response>;
 	static patch<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static patch<T>( url:string, bodyOrOptions:any = Service.defaultOptions, options:Options = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.PATCH, url, bodyOrOptions, options, parser );
+		return Service.send( HTTPMethod.PATCH, url, bodyOrOptions, options, parser );
 	}
 
 	static delete( url:string, options?:Options ):Promise<Response>;
@@ -222,7 +222,7 @@ export class Service {
 	static delete<T>( url:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static delete<T>( url:string, body:string, options?:Options, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static delete<T>( url:string, bodyOrOptions:any = Service.defaultOptions, optionsOrParser:any = Service.defaultOptions, parser:Parser<T> = null ):any {
-		return Service.send( Method.DELETE, url, bodyOrOptions, optionsOrParser, parser );
+		return Service.send( HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser );
 	}
 
 	/**

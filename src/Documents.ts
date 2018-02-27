@@ -25,7 +25,7 @@ import * as Errors from "./Errors";
 import { FreeResources } from "./FreeResources";
 import * as HTTPErrors from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
-import Method from "./HTTP/Method";
+import { HTTPMethod } from "./HTTP/HTTPMethod";
 import { Parser } from "./HTTP/Parser";
 import * as Request from "./HTTP/Request";
 import * as Response from "./HTTP/Response";
@@ -212,7 +212,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
-			return this.sendRequest( Method.HEAD, documentURI, requestOptions );
+			return this.sendRequest( HTTPMethod.HEAD, documentURI, requestOptions );
 		} ).then<[ boolean, Response.Class ]>( ( response:Response.Class ) => {
 			return [ true, response ];
 		} ).catch<[ boolean, Response.Class ]>( ( error:HTTPErrors.Error ) => {
@@ -448,7 +448,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			const body:string = JSON.stringify( freeResources );
 
-			return this.sendRequest( Method.PUT, documentURI, requestOptions, body );
+			return this.sendRequest( HTTPMethod.PUT, documentURI, requestOptions, body );
 		} );
 	}
 
@@ -477,7 +477,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			const body:string = JSON.stringify( freeResources );
 
-			return this.sendRequest( Method.DELETE, documentURI, requestOptions, body );
+			return this.sendRequest( HTTPMethod.DELETE, documentURI, requestOptions, body );
 		} );
 	}
 
@@ -499,7 +499,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			};
 			Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
-			return this.sendRequest( Method.DELETE, documentURI, requestOptions );
+			return this.sendRequest( HTTPMethod.DELETE, documentURI, requestOptions );
 		} );
 	}
 
@@ -549,7 +549,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
-			return this.sendRequest( Method.DELETE, documentURI, requestOptions );
+			return this.sendRequest( HTTPMethod.DELETE, documentURI, requestOptions );
 		} ).then( ( response:Response.Class ) => {
 			let pointerID:string = this.getPointerID( documentURI );
 			this.pointers.delete( pointerID );
@@ -821,7 +821,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( this.documentsBeingResolved.has( uri ) )
 			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument.Class, Response.Class ]>;
 
-		const promise:Promise<[ T & PersistedDocument.Class, Response.Class ]> = this.sendRequest( Method.GET, uri, requestOptions, null, new RDFDocumentParser() )
+		const promise:Promise<[ T & PersistedDocument.Class, Response.Class ]> = this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() )
 			.then<[ T & PersistedDocument.Class, Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response.Class ] ) => {
 				const eTag:string = Response.Util.getETag( response );
 				if( eTag === null ) throw new HTTPErrors.BadResponseError( "The response doesn't contain an ETag", response );
@@ -887,7 +887,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		const body:string = deltaCreator.getPatch();
 
-		return this.sendRequest( Method.PATCH, uri, requestOptions, body )
+		return this.sendRequest( HTTPMethod.PATCH, uri, requestOptions, body )
 			.then<[ T & PersistedDocument.Class, Response.Class ]>( ( response:Response.Class ) => {
 				return this.applyResponseData( persistedDocument, response );
 			} );
@@ -900,7 +900,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 		Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
-		return this.sendRequest( Method.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument.Class, Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response.Class ] ) => {
+		return this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument.Class, Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response.Class ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
 			let eTag:string = Response.Util.getETag( response );
@@ -1176,7 +1176,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		if( ! ! slug ) Request.Util.setSlug( slug, requestOptions );
 
-		return this.sendRequest( Method.POST, parentURI, requestOptions, body ).then<[ T & W, Response.Class ]>( ( response:Response.Class ) => {
+		return this.sendRequest( HTTPMethod.POST, parentURI, requestOptions, body ).then<[ T & W, Response.Class ]>( ( response:Response.Class ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 
 			let locationHeader:Header = response.getHeader( "Location" );
@@ -1397,9 +1397,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		}
 	}
 
-	private sendRequest( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer ):Promise<Response.Class>;
-	private sendRequest<T extends object>( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<T> ):Promise<[ T, Response.Class ]>;
-	private sendRequest( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<any> ):any {
+	private sendRequest( method:HTTPMethod, uri:string, options:Request.Options, body?:string | Blob | Buffer ):Promise<Response.Class>;
+	private sendRequest<T extends object>( method:HTTPMethod, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<T> ):Promise<[ T, Response.Class ]>;
+	private sendRequest( method:HTTPMethod, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<any> ):any {
 		return Request.Service.send( method, uri, body || null, options, parser )
 			.catch( this._parseErrorResponse.bind( this ) );
 	}

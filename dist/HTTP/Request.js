@@ -24,7 +24,7 @@ var url_1 = __importDefault(require("url"));
 var Utils = __importStar(require("./../Utils"));
 var Errors_1 = require("./Errors");
 var Header_1 = require("./Header");
-var Method_1 = __importDefault(require("./Method"));
+var HTTPMethod_1 = require("./HTTPMethod");
 var Response_1 = __importDefault(require("./Response"));
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
@@ -141,7 +141,7 @@ var Service = (function () {
         }
         options = Object.assign({}, Service.defaultOptions, options);
         if (Utils.isNumber(method))
-            method = Method_1.default[method];
+            method = HTTPMethod_1.HTTPMethod[method];
         var requestPromise = sendRequest(method, url, body, options)
             .then(function (response) {
             if (method === "GET" && options.headers)
@@ -159,40 +159,40 @@ var Service = (function () {
     };
     Service.options = function (url, options) {
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.OPTIONS, url, options);
+        return Service.send(HTTPMethod_1.HTTPMethod.OPTIONS, url, options);
     };
     Service.head = function (url, options) {
         if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(Method_1.default.HEAD, url, options);
+        return Service.send(HTTPMethod_1.HTTPMethod.HEAD, url, options);
     };
     Service.get = function (url, options, parser) {
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.GET, url, null, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.GET, url, null, options, parser);
     };
     Service.post = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.POST, url, bodyOrOptions, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.POST, url, bodyOrOptions, options, parser);
     };
     Service.put = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.PUT, url, bodyOrOptions, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.PUT, url, bodyOrOptions, options, parser);
     };
     Service.patch = function (url, bodyOrOptions, options, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (options === void 0) { options = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.PATCH, url, bodyOrOptions, options, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.PATCH, url, bodyOrOptions, options, parser);
     };
     Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
         if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
         if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(Method_1.default.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+        return Service.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
     Service._handleGETResponse = function (url, requestOptions, response) {
         var _this = this;

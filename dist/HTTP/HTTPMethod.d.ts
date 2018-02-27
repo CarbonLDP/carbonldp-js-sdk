@@ -1,4 +1,4 @@
-export declare enum Method {
+export declare enum HTTPMethod {
     OPTIONS = 0,
     HEAD = 1,
     GET = 2,
@@ -7,4 +7,4 @@ export declare enum Method {
     PATCH = 5,
     DELETE = 6,
 }
-export default Method;
+export default HTTPMethod;
