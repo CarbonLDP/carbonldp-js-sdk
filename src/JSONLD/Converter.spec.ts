@@ -1,4 +1,8 @@
 import {
+	Pointer,
+	PointerLibrary,
+} from "../Pointer";
+import {
 	clazz,
 	hasConstructor,
 	hasDefaultExport,
@@ -9,14 +13,9 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-
 import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import {
-	Pointer,
-	PointerLibrary
-} from "../Pointer";
 import * as RDF from "./../RDF";
 
 import DefaultExport, { JSONLDConverter } from "./Converter";
@@ -30,6 +29,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			expect( Utils.isFunction( JSONLDConverter ) ).toEqual( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasConstructor( [
 			{ name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle." },
 		] ), ():void => {
@@ -47,6 +47,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			expect( jsonldConverter instanceof JSONLDConverter ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasProperty(
 			INSTANCE,
 			"literalSerializers",
@@ -68,6 +69,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			expect( serializers.size ).toBe( 1 );
 		} );
 
+		// TODO: Separate in different tests
 		describe( method( INSTANCE, "compact" ), ():void => {
 
 			it( hasSignature(
@@ -251,6 +253,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			} );
 		} );
 
+		// TODO: Separate in different tests
 		describe( method( INSTANCE, "expand" ), ():void => {
 
 

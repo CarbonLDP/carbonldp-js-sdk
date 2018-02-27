@@ -16,19 +16,19 @@ function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
 }
-var Class = (function () {
-    function Class(documents, root, schemaResolver, jsonldConverter) {
+var JSONLDCompacter = (function () {
+    function JSONLDCompacter(documents, root, schemaResolver, jsonldConverter) {
         this.documents = documents;
         this.root = root;
         this.resolver = schemaResolver || documents;
         this.converter = jsonldConverter || documents.jsonldConverter;
         this.compactionMap = new Map();
     }
-    Class.prototype.compactDocument = function (rdfDocument) {
+    JSONLDCompacter.prototype.compactDocument = function (rdfDocument) {
         var rdfDocuments = [rdfDocument];
         return this.compactDocuments(rdfDocuments)[0];
     };
-    Class.prototype.compactDocuments = function (rdfDocuments, mainDocuments) {
+    JSONLDCompacter.prototype.compactDocuments = function (rdfDocuments, mainDocuments) {
         var _this = this;
         if (mainDocuments === void 0) { mainDocuments = rdfDocuments; }
         rdfDocuments.forEach(function (rdfDocument) {
@@ -75,7 +75,7 @@ var Class = (function () {
         });
         return mainCompactedDocuments;
     };
-    Class.prototype.compactNode = function (node, resource, containerLibrary, path) {
+    JSONLDCompacter.prototype.compactNode = function (node, resource, containerLibrary, path) {
         var schema = this.resolver.getSchemaFor(node, path);
         if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
             var type = this.resolver.hasProperty(path) ?
@@ -105,14 +105,14 @@ var Class = (function () {
         return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
     };
-    Class.prototype.getResource = function (node, containerLibrary, isDocument) {
+    JSONLDCompacter.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);
         if (isDocument)
             containerLibrary = PersistedDocument.Factory.decorate(resource, this.documents);
         this.compactionMap.set(resource.id, { paths: [], node: node, resource: resource, containerLibrary: containerLibrary });
         return resource;
     };
-    Class.prototype.processCompactionQueue = function (compactionQueue) {
+    JSONLDCompacter.prototype.processCompactionQueue = function (compactionQueue) {
         while (compactionQueue.length) {
             var targetNode = compactionQueue.shift();
             if (!this.compactionMap.has(targetNode))
@@ -145,9 +145,9 @@ var Class = (function () {
             }
         }
     };
-    return Class;
+    return JSONLDCompacter;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.JSONLDCompacter = JSONLDCompacter;
+exports.default = JSONLDCompacter;
 
 //# sourceMappingURL=Compacter.js.map

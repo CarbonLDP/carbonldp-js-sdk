@@ -4,7 +4,7 @@ import { Context } from "./Context";
 import { FreeResources } from "./FreeResources";
 import { GETOptions, RequestOptions } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as JSONLD from "./JSONLD";
+import { JSONLDConverter } from "./JSONLD/Converter";
 import * as Messaging from "./Messaging";
 import { DigestedObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
@@ -16,7 +16,7 @@ import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 export declare class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
     private _jsonldConverter;
-    readonly jsonldConverter: JSONLD.Converter.JSONLDConverter;
+    readonly jsonldConverter: JSONLDConverter;
     private _documentDecorators;
     readonly documentDecorators: Map<string, (object: object, documents?: Documents) => object>;
     private context;

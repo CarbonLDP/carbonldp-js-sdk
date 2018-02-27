@@ -12,32 +12,31 @@ import {
 	module
 } from "../test/JasmineExtender";
 
-import * as Compacter from "./Compacter";
+import DefaultExport, { JSONLDCompacter } from "./Compacter";
 
 describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
-	it( "should exists", ():void => {
-		expect( Compacter ).toBeDefined();
-		expect( Compacter ).toEqual( jasmine.any( Object ) );
+	it( hasDefaultExport( "Carbon.JSONLD.Compacter.JSONLDCompacter" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( JSONLDCompacter );
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLD.Compacter.Class" ), ():void => {
-		expect( Compacter.default ).toBeDefined();
-		expect( Compacter.default ).toBe( Compacter.Class );
-	} );
-
-	describe( clazz( "Carbon.JSONLD.Compacter.Class", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
+	describe( clazz( "Carbon.JSONLD.Compacter.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
 
 		it( "should exists", ():void => {
-			expect( Compacter.Class ).toBeDefined();
-			expect( Compacter.Class ).toEqual( jasmine.any( Function ) );
+			expect( JSONLDCompacter ).toBeDefined();
+			expect( JSONLDCompacter ).toEqual( jasmine.any( Function ) );
 		} );
+
+		// TODO: Tests `JSONLDCompacter.constructor`
+
+		// TODO: Test `JSONLDCompacter.compactDocument`
 
 		describe( method( INSTANCE, "compactDocuments" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( Compacter.Class.prototype.compactDocuments ).toBeDefined();
-				expect( Compacter.Class.prototype.compactDocuments ).toEqual( jasmine.any( Function ) );
+				expect( JSONLDCompacter.prototype.compactDocuments ).toBeDefined();
+				expect( JSONLDCompacter.prototype.compactDocuments ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should send root path when one level resources", ():void => {
@@ -45,7 +44,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -77,7 +76,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -130,7 +129,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -192,7 +191,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -255,7 +254,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -324,7 +323,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -392,7 +391,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 
 				interface Expected {
 					pointer:{
@@ -441,7 +440,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents );
 
 				interface Expected {
 					pointer:{
@@ -491,7 +490,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -553,7 +552,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -619,7 +618,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -697,7 +696,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 
 				interface Expected {
 					pointer1:Expected;
@@ -772,7 +771,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 
 				interface Expected {
 					pointer1:Expected;
@@ -849,7 +848,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 				const compacted:PersistedDocument.Class[] = compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -929,7 +928,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 
 				interface Expected {
 					pointer:{

@@ -1,12 +1,13 @@
+import { Documents } from "../Documents";
 import {
 	DigestedObjectSchema,
-	ObjectSchemaResolver
+	ObjectSchemaResolver,
 } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as PersistedResource from "../PersistedResource";
 import {
 	Pointer,
-	PointerLibrary
+	PointerLibrary,
 } from "../Pointer";
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
@@ -16,8 +17,7 @@ import {
 	QueryContextBuilder,
 	QueryProperty,
 } from "../SPARQL/QueryDocument";
-import { Documents } from "./../Documents";
-import * as Converter from "./Converter";
+import { JSONLDConverter } from "./Converter";
 
 function getRelativeID( node:RDFNode.Class ):string {
 	const id:string = node[ "@id" ];
@@ -32,14 +32,14 @@ interface CompactionNode {
 	processed?:boolean;
 }
 
-export class Class {
+export class JSONLDCompacter {
 	private documents:Documents;
 	private root?:string;
 	private resolver?:ObjectSchemaResolver;
-	private converter?:Converter.JSONLDConverter;
+	private converter?:JSONLDConverter;
 	private compactionMap:Map<string, CompactionNode>;
 
-	constructor( documents:Documents, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:Converter.JSONLDConverter ) {
+	constructor( documents:Documents, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
 		this.documents = documents;
 		this.root = root;
 		this.resolver = schemaResolver || documents;
@@ -200,4 +200,4 @@ export class Class {
 
 }
 
-export default Class;
+export default JSONLDCompacter;

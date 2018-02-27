@@ -22,6 +22,7 @@ var UnknownError_1 = require("./HTTP/Errors/UnknownError");
 var HTTPMethod_1 = require("./HTTP/HTTPMethod");
 var Request_1 = require("./HTTP/Request");
 var JSONLD = __importStar(require("./JSONLD"));
+var Converter_1 = require("./JSONLD/Converter");
 var LDP_1 = require("./LDP");
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
@@ -50,10 +51,10 @@ var Documents = (function () {
         this.documentsBeingResolved = new Map();
         if (!!this.context && !!this.context.parentContext) {
             var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
-            this._jsonldConverter = new JSONLD.Converter.JSONLDConverter(contextJSONLDConverter.literalSerializers);
+            this._jsonldConverter = new Converter_1.JSONLDConverter(contextJSONLDConverter.literalSerializers);
         }
         else {
-            this._jsonldConverter = new JSONLD.Converter.JSONLDConverter();
+            this._jsonldConverter = new Converter_1.JSONLDConverter();
         }
         var decorators = new Map();
         if (this.context && this.context.parentContext) {
@@ -603,7 +604,7 @@ var Documents = (function () {
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
-        return new JSONLD.Compacter.Class(this).compactDocument(rdfDocument);
+        return new JSONLD.Compacter.JSONLDCompacter(this).compactDocument(rdfDocument);
     };
     Documents.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources_1.FreeResources.create(this);
@@ -894,7 +895,7 @@ var Documents = (function () {
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new JSONLD.Compacter
-                .Class(_this, targetName, queryContext)
+                .JSONLDCompacter(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
             return [documents, response];
         });

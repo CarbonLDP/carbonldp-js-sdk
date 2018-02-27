@@ -39,6 +39,7 @@ import {
 } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import * as JSONLD from "./JSONLD";
+import { JSONLDConverter } from "./JSONLD/Converter";
 import {
 	AddMemberAction,
 	DocumentMetadata,
@@ -101,8 +102,8 @@ import { LDP } from "./Vocabularies/LDP";
 
 export class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
 
-	private _jsonldConverter:JSONLD.Converter.JSONLDConverter;
-	get jsonldConverter():JSONLD.Converter.JSONLDConverter { return this._jsonldConverter; }
+	private _jsonldConverter:JSONLDConverter;
+	get jsonldConverter():JSONLDConverter { return this._jsonldConverter; }
 
 	private _documentDecorators:Map<string, ( object:object, documents?:Documents ) => object>;
 	get documentDecorators():Map<string, ( object:object, documents?:Documents ) => object> { return this._documentDecorators; }
@@ -120,10 +121,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, Response ]>>();
 
 		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let contextJSONLDConverter:JSONLD.Converter.JSONLDConverter = this.context.parentContext.documents.jsonldConverter;
-			this._jsonldConverter = new JSONLD.Converter.JSONLDConverter( contextJSONLDConverter.literalSerializers );
+			let contextJSONLDConverter:JSONLDConverter = this.context.parentContext.documents.jsonldConverter;
+			this._jsonldConverter = new JSONLDConverter( contextJSONLDConverter.literalSerializers );
 		} else {
-			this._jsonldConverter = new JSONLD.Converter.JSONLDConverter();
+			this._jsonldConverter = new JSONLDConverter();
 		}
 
 		let decorators:Documents[ "documentDecorators" ] = new Map();
@@ -777,7 +778,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
-		return new JSONLD.Compacter.Class( this ).compactDocument( rdfDocument );
+		return new JSONLD.Compacter.JSONLDCompacter( this ).compactDocument( rdfDocument );
 	}
 
 	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources {
@@ -1116,7 +1117,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.filter( x => targetSet.has( x[ "@id" ] ) );
 
 			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-				.Class( this, targetName, queryContext )
+				.JSONLDCompacter( this, targetName, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
 
 			return [ documents, response ];
