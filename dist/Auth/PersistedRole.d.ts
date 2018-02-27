@@ -1,8 +1,8 @@
-import * as HTTP from "../HTTP";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import { Documents } from "./../Documents";
+import { Pointer } from "../Pointer";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import { Pointer } from "./../Pointer";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 export interface Class extends PersistedProtectedDocument.Class {
@@ -12,13 +12,13 @@ export interface Class extends PersistedProtectedDocument.Class {
     parentRole?: Pointer;
     childRoles?: Pointer[];
     users?: Pointer[];
-    createChild<T extends object>(role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & Class, Response]>;
-    createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, Response]>;
-    getUsers<T>(requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], Response]>;
-    addUser(user: Pointer | string, requestOptions?: HTTP.Request.Options): Promise<Response>;
-    addUsers(users: (Pointer | string)[], requestOptions?: HTTP.Request.Options): Promise<Response>;
-    removeUser(user: Pointer | string, requestOptions?: HTTP.Request.Options): Promise<Response>;
-    removeUsers(users: (Pointer | string)[], requestOptions?: HTTP.Request.Options): Promise<Response>;
+    createChild<T extends object>(role: T & Role.Class, requestOptions?: RequestOptions): Promise<[T & Class, Response]>;
+    createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: RequestOptions): Promise<[T & Class, Response]>;
+    getUsers<T>(requestOptions?: RequestOptions): Promise<[(T & PersistedProtectedDocument.Class)[], Response]>;
+    addUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<Response>;
+    addUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<Response>;
+    removeUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<Response>;
+    removeUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<Response>;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;

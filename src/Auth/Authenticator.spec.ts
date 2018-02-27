@@ -54,9 +54,9 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			OBLIGATORY,
 			"addAuthentication",
 			"If the authenticator is authenticated, it adds an authentication header in the request options object provided.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "The request options object where to add the authentication header." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", description: "The request options object where to add the authentication header." },
 			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options object provided after adding the authentication header." }
+			{ type: "Carbon.HTTP.Request.RequestOptions", description: "The request options object provided after adding the authentication header." }
 		), ():void => {} );
 
 	} );

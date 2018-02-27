@@ -1,36 +1,34 @@
+import AbstractContext from "../AbstractContext";
+import { Documents } from "../Documents";
+import * as Errors from "../Errors";
+import { RequestOptions } from "../HTTP/Request";
+import { Pointer } from "../Pointer";
 import {
-	STATIC,
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
 	INSTANCE,
-
+	interfaze,
+	isDefined,
+	method,
+	module,
 	OBLIGATORY,
 	OPTIONAL,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	decoratedObject,
-	hasSignature,
-	extendsClass,
-	hasProperty,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
-import AbstractContext from "../AbstractContext";
-import { Documents } from "./../Documents";
-import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+	STATIC,
+} from "../test/JasmineExtender";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
-import * as Role from "./Role";
-import * as Roles from "./Roles";
 
 import * as PersistedRole from "./PersistedRole";
 import DefaultExport from "./PersistedRole";
+
+import * as Role from "./Role";
+import * as Roles from "./Roles";
 
 describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
@@ -84,7 +82,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"Persists a new role with the slug specified as a child of the current role.", [
 					{ name: "role", type: "T", description: "The role to be persisted." },
 					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -93,7 +91,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				[ "T extends Carbon.Auth.Roles.Class" ],
 				"Persists a new role as a child of the current one.", [
 					{ name: "role", type: "T", description: "The role to be persisted." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -107,7 +105,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves an array of resolved pointers for all the users of the role.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -115,7 +113,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			it( hasSignature(
 				"Retrieves an array of resolved pointers for the users of the role, in accordance of the retrievalPreferences provided.", [
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ():void => {} );
@@ -127,7 +125,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			"addUser",
 			"Makes a relation in the role towards the users specified.", [
 				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
@@ -137,7 +135,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			"addUsers",
 			"Makes a relation in the role towards the users specified.", [
 				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
@@ -147,7 +145,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			"removeUser",
 			"Removes the relation in the role towards the users specified.", [
 				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
@@ -157,7 +155,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			"removeUsers",
 			"Remove the relation in the role towards the users specified.", [
 				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {} );
@@ -352,14 +350,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					"Persists a new role with the slug specified as a child of the current role.", [
 						{ name: "role", type: "T", description: "The role to be persisted." },
 						{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
 					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "createChild" );
 
 					let newRole:Role.Class = Role.Factory.create( "Role Name" );
-					let options:HTTP.Request.Options = { timeout: 5050 };
+					let options:RequestOptions = { timeout: 5050 };
 
 					//noinspection JSIgnoredPromiseFromCall
 					role.createChild( newRole, "role-slug", options );
@@ -381,14 +379,14 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					[ "T extends Carbon.Auth.Roles.Class" ],
 					"Persists a new role as a child of the current one.", [
 						{ name: "role", type: "T", description: "The role to be persisted." },
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
 					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "createChild" );
 
 					let newRole:Role.Class = Role.Factory.create( "Role Name" );
-					let options:HTTP.Request.Options = { timeout: 5050 };
+					let options:RequestOptions = { timeout: 5050 };
 
 					//noinspection JSIgnoredPromiseFromCall
 					role.createChild( newRole, options );
@@ -419,7 +417,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 				it( hasSignature(
 					"Retrieves an array of resolved pointers for all the users of the role.", [
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 					],
 					{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 				), ():void => {
@@ -429,7 +427,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					role.getUsers();
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
 
-					let options:HTTP.Request.Options = { timeout: 5050 };
+					let options:RequestOptions = { timeout: 5050 };
 					//noinspection JSIgnoredPromiseFromCall
 					role.getUsers( options );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
@@ -442,7 +440,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"addUser",
 				"Makes a relation in the role towards the users specified.", [
 					{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to add to the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -455,7 +453,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.addUser( "http://example.com/users/an-user/" );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.addUser( role.getPointer( "http://example.com/users/another-user/" ), options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
@@ -469,7 +467,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"addUsers",
 				"Makes a relation in the role towards the users specified.", [
 					{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -483,7 +481,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.addUsers( users );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.addUsers( users, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, options );
@@ -497,7 +495,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"removeUser",
 				"Removes the relation in the role towards the users specified.", [
 					{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to be removed from the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -510,7 +508,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.removeUser( "http://example.com/users/an-user/" );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.removeUser( role.getPointer( "http://example.com/users/another-user/" ), options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
@@ -524,7 +522,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"removeUsers",
 				"Remove the relation in the role towards the users specified.", [
 					{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				{ type: "Promise<Carbon.HTTP.Response.Class>" }
 			), ():void => {
@@ -538,7 +536,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.removeUsers( users );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.removeUsers( users, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, options );

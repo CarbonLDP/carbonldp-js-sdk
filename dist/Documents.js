@@ -18,7 +18,7 @@ var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
 var HTTPErrors = __importStar(require("./HTTP/Errors"));
 var HTTPMethod_1 = require("./HTTP/HTTPMethod");
-var Request = __importStar(require("./HTTP/Request"));
+var Request_1 = require("./HTTP/Request");
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP_1 = require("./LDP");
 var LDPatch = __importStar(require("./LDPatch"));
@@ -131,7 +131,7 @@ var Documents = (function () {
     };
     Documents.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = Request.Util.isOptions(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
+        var requestOptions = Request_1.RequestUtils.isOptions(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
         if (Utils.isFunction(optionsOrQueryBuilderFn))
             queryBuilderFn = optionsOrQueryBuilderFn;
         return Utils_3.promiseMethod(function () {
@@ -163,7 +163,7 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
@@ -174,9 +174,9 @@ var Documents = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return Promise.all(childrenObjects.map(function (childObject, index) {
-                var cloneOptions = Request.Util.cloneOptions(requestOptions);
+                var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
                 return _this.persistChildDocument(parentURI, childObject, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
@@ -184,11 +184,11 @@ var Documents = (function () {
     Documents.prototype.createChildAndRetrieve = function (parentURI, childObject, slugOrRequestOptions, requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        requestOptions = Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        requestOptions = Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            Request.Util.setPreferredRetrieval("representation", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("representation", requestOptions);
             return _this.persistChildDocument(parentURI, childObject, slug, requestOptions);
         });
     };
@@ -199,9 +199,9 @@ var Documents = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            Request.Util.setPreferredRetrieval("representation", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("representation", requestOptions);
             return Promise.all(childrenObjects.map(function (childObject, index) {
-                var cloneOptions = Request.Util.cloneOptions(requestOptions);
+                var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
                 return _this.persistChildDocument(parentURI, childObject, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
@@ -222,7 +222,7 @@ var Documents = (function () {
     };
     Documents.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
+        var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
@@ -246,7 +246,7 @@ var Documents = (function () {
         requestOptions = !Utils.isString(slugOrRequestOptions) && !!slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return _this.persistAccessPoint(documentURI, accessPoint, slug, requestOptions);
         });
     };
@@ -257,9 +257,9 @@ var Documents = (function () {
         requestOptions = !Utils.isArray(slugsOrRequestOptions) && !!slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
         return Utils_3.promiseMethod(function () {
             documentURI = _this.getRequestURI(documentURI);
-            Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return Promise.all(accessPoints.map(function (accessPoint, index) {
-                var cloneOptions = Request.Util.cloneOptions(requestOptions);
+                var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
                 return _this.persistAccessPoint(documentURI, accessPoint, slugs[index], cloneOptions);
             }));
         }).then(Utils_3.mapTupleArray);
@@ -287,7 +287,7 @@ var Documents = (function () {
     };
     Documents.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var _this = this;
-        var requestOptions = Request.Util.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
+        var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
@@ -322,7 +322,7 @@ var Documents = (function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
-            Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+            Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.AddMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
@@ -340,12 +340,12 @@ var Documents = (function () {
             var pointers = _this._parseMembers(members);
             documentURI = _this.getRequestURI(documentURI);
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
-            Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+            Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
             var containerRetrievalPreferences = {
                 include: [C_1.C.PreferSelectedMembershipTriples],
                 omit: [C_1.C.PreferMembershipTriples],
             };
-            Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(LDP_1.RemoveMemberAction.Factory.create(pointers));
             var body = JSON.stringify(freeResources);
@@ -369,7 +369,7 @@ var Documents = (function () {
                     C_1.C.PreferContainer,
                 ],
             };
-            Request.Util.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions);
         });
     };
@@ -379,7 +379,7 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
-            Request.Util.setPreferredRetrieval("minimal", requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return _this.patchDocument(persistedDocument, requestOptions);
         });
     };
@@ -401,8 +401,8 @@ var Documents = (function () {
         return Utils_3.promiseMethod(function () {
             if (!PersistedDocument.Factory.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
-            var cloneOptions = Request.Util.cloneOptions(requestOptions);
-            Request.Util.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
+            var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
+            Request_1.RequestUtils.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
             return _this.patchDocument(persistedDocument, cloneOptions);
         }).then(function (_a) {
             var response = _a[1];
@@ -698,8 +698,8 @@ var Documents = (function () {
         if (persistedDocument.isLocallyOutDated())
             throw new Errors.IllegalStateError("Cannot save an outdated document.");
         this.setDefaultRequestOptions(requestOptions);
-        Request.Util.setContentTypeHeader("text/ldpatch", requestOptions);
-        Request.Util.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
+        Request_1.RequestUtils.setIfMatchHeader(persistedDocument._etag, requestOptions);
         persistedDocument._normalize();
         var deltaCreator = new LDPatch.DeltaCreator.Class(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
@@ -716,7 +716,7 @@ var Documents = (function () {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-        Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        Request_1.RequestUtils.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
         return this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
@@ -851,8 +851,8 @@ var Documents = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
-        Request.Util.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions, false);
-        Request.Util.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions, false);
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions, false);
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions, false);
         var response;
         return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
@@ -936,7 +936,7 @@ var Documents = (function () {
     };
     Documents.prototype.persistDocument = function (parentURI, slug, document, requestOptions) {
         var _this = this;
-        Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
+        Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         if (document.id) {
             var childURI = document.id;
             if (!!this.context)
@@ -950,7 +950,7 @@ var Documents = (function () {
         Object.defineProperty(document, "__CarbonSDK_InProgressOfPersisting", { configurable: true, enumerable: false, writable: false, value: true });
         var body = JSON.stringify(document.toJSON(this, this.jsonldConverter));
         if (!!slug)
-            Request.Util.setSlug(slug, requestOptions);
+            Request_1.RequestUtils.setSlug(slug, requestOptions);
         return this.sendRequest(HTTPMethod_1.HTTPMethod.POST, parentURI, requestOptions, body).then(function (response) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
@@ -1089,8 +1089,8 @@ var Documents = (function () {
         if (this.context && this.context.auth.isAuthenticated())
             this.context.auth.addAuthentication(requestOptions);
         if (interactionModel)
-            Request.Util.setPreferredInteractionModel(interactionModel, requestOptions);
-        Request.Util.setAcceptHeader("application/ld+json", requestOptions);
+            Request_1.RequestUtils.setPreferredInteractionModel(interactionModel, requestOptions);
+        Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
         return requestOptions;
     };
     Documents.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
@@ -1147,7 +1147,7 @@ var Documents = (function () {
         }
     };
     Documents.prototype.sendRequest = function (method, uri, options, body, parser) {
-        return Request.Service.send(method, uri, body || null, options, parser)
+        return Request_1.RequestService.send(method, uri, body || null, options, parser)
             .catch(this._parseErrorResponse.bind(this));
     };
     return Documents;

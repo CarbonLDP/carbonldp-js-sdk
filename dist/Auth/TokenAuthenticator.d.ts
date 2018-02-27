@@ -1,4 +1,4 @@
-import * as Request from "../HTTP/Request";
+import { RequestOptions } from "../HTTP/Request";
 import Context from "./../Context";
 import Authenticator from "./Authenticator";
 import * as Token from "./Token";
@@ -12,7 +12,7 @@ export declare class Class implements Authenticator<UsernameAndPasswordToken.Cla
     isAuthenticated(): boolean;
     authenticate(authenticationToken: UsernameAndPasswordToken.Class): Promise<Token.Class>;
     authenticate(credentials: Token.Class): Promise<Token.Class>;
-    addAuthentication(requestOptions: Request.Options): Request.Options;
+    addAuthentication(requestOptions: RequestOptions): RequestOptions;
     clearAuthentication(): void;
     private createToken();
     private addTokenAuthenticationHeader(headers);

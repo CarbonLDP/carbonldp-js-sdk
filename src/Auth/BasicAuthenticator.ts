@@ -1,6 +1,6 @@
 import * as Errors from "../Errors";
 import { Header } from "../HTTP/Header";
-import * as Request from "../HTTP/Request";
+import { RequestOptions } from "../HTTP/Request";
 import Authenticator from "./Authenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
@@ -25,7 +25,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, User
 		} );
 	}
 
-	addAuthentication( requestOptions:Request.Options ):Request.Options {
+	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
 		if( ! this.isAuthenticated() ) throw new Errors.IllegalStateError( "The authenticator isn't authenticated." );
 
 		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();

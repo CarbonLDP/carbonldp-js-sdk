@@ -1,6 +1,6 @@
-import * as HTTP from "../HTTP";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import { Documents } from "./../Documents";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
@@ -11,8 +11,9 @@ export interface Class extends PersistedProtectedDocument.Class {
 	enabled?:boolean;
 	user?:PersistedUser.Class;
 
-	enable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]>;
-	disable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]>;
+	enable( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
+
+	disable( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
 }
 
 export class Factory {
@@ -53,7 +54,7 @@ export class Factory {
 	}
 }
 
-function changeEnabled( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]> {
+function changeEnabled( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]> {
 	const responses:Response[] = [];
 	const promise:Promise<[ Class, Response ]> = this.isResolved() ? Promise.resolve<any>( [] ) : this.resolve();
 	return promise.then( ( [ _credentials, response ] ) => {

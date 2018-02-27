@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var Errors_1 = require("../HTTP/Errors");
 var Header_1 = require("../HTTP/Header");
-var Request = __importStar(require("../HTTP/Request"));
+var Request_1 = require("../HTTP/Request");
 var LDP_1 = require("../Vocabularies/LDP");
 var JSONLD = __importStar(require("./../JSONLD"));
 var LDP_2 = require("./../LDP");
@@ -64,11 +64,11 @@ var Class = (function () {
         var _this = this;
         var requestOptions = {};
         this.basicAuthenticator.addAuthentication(requestOptions);
-        Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        Request.Util.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
+        Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
+        Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
-            return Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
+            return Request_1.RequestService.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);

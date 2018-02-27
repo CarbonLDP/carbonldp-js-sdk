@@ -10,7 +10,7 @@ import {
 	module,
 	STATIC,
 } from "../../test/JasmineExtender";
-import { Service } from "../Request";
+import { RequestService } from "../Request";
 import { Response } from "../Response";
 import AbstractError from "./../../Errors/AbstractError";
 import * as Utils from "./../../Utils";
@@ -41,7 +41,7 @@ describe( module(
 				"responseText": "A response",
 			} );
 
-			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
 				response = _response;
 				done();
 			} ).catch( done.fail );

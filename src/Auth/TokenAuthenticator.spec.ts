@@ -1,10 +1,12 @@
+import * as Errors from "../Errors";
+import { UnauthorizedError } from "../HTTP/Errors";
+import { Header } from "../HTTP/Header";
+import { RequestOptions } from "../HTTP/Request";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
 import AbstractContext from "./../AbstractContext";
-import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
 import {
 	clazz,
 	hasConstructor,
@@ -24,7 +26,6 @@ import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
 
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-import { Header } from "../HTTP/Header";
 
 describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
@@ -268,7 +269,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( () => {
 						done.fail( new Error( "The authentication should have been unsuccessful." ) );
 					}, ( error:Error ) => {
-						expect( error instanceof HTTP.Errors.UnauthorizedError ).toEqual( true );
+						expect( error instanceof UnauthorizedError ).toEqual( true );
 
 						expect( authenticator.isAuthenticated() ).toEqual( false );
 					} ) );
@@ -382,10 +383,10 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Token Authentication header to the passed request options object.\n" +
-			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." },
+			"The `Carbon.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." }
+			{ type: "Carbon.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
 		), ():void => {
 
 			// Property Integrity
@@ -427,7 +428,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
+				let requestOptions:RequestOptions = authenticator.addAuthentication( {} );
 
 				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
@@ -467,7 +468,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				authenticator.addAuthentication( requestOptions );
@@ -511,7 +512,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
@@ -559,7 +560,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
@@ -608,7 +609,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );

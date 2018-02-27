@@ -1,5 +1,9 @@
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+} from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { StringParser } from "../HTTP/StringParser";
 import { PointerLibrary } from "../Pointer";
@@ -11,20 +15,20 @@ import * as SELECTResults from "./SELECTResults";
 
 
 export class Class {
-	private static defaultOptions:HTTP.Request.Options = {};
+	private static defaultOptions:RequestOptions = {};
 	private static resultsParser:ResultsParser = new ResultsParser();
 	private static stringParser:StringParser = new StringParser();
 
-	static executeRawASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, Response ]> {
+	static executeRawASKQuery( url:string, askQuery:string, options:RequestOptions = {} ):Promise<[ RawResults.Class, Response ]> {
 		options = Object.assign( options, Class.defaultOptions );
 
-		HTTP.Request.Util.setAcceptHeader( "application/sparql-results+json", options );
-		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
+		RequestUtils.setAcceptHeader( "application/sparql-results+json", options );
+		RequestUtils.setContentTypeHeader( "application/sparql-query", options );
 
-		return HTTP.Request.Service.post( url, askQuery, options, Class.resultsParser );
+		return RequestService.post( url, askQuery, options, Class.resultsParser );
 	}
 
-	static executeASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ boolean, Response ]> {
+	static executeASKQuery( url:string, askQuery:string, options:RequestOptions = {} ):Promise<[ boolean, Response ]> {
 		return Class
 			.executeRawASKQuery( url, askQuery, options )
 			.then<[ boolean, Response ]>( ( [ rawResults, response ]:[ RawResults.Class, Response ] ) => {
@@ -32,16 +36,16 @@ export class Class {
 			} );
 	}
 
-	static executeRawSELECTQuery( url:string, selectQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, Response ]> {
+	static executeRawSELECTQuery( url:string, selectQuery:string, options:RequestOptions = {} ):Promise<[ RawResults.Class, Response ]> {
 		options = Object.assign( options, Class.defaultOptions );
 
-		HTTP.Request.Util.setAcceptHeader( "application/sparql-results+json", options );
-		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
+		RequestUtils.setAcceptHeader( "application/sparql-results+json", options );
+		RequestUtils.setContentTypeHeader( "application/sparql-query", options );
 
-		return HTTP.Request.Service.post( url, selectQuery, options, Class.resultsParser );
+		return RequestService.post( url, selectQuery, options, Class.resultsParser );
 	}
 
-	static executeSELECTQuery<T>( url:string, selectQuery:string, pointerLibrary:PointerLibrary, options:HTTP.Request.Options = {} ):Promise<[ SELECTResults.Class<T>, Response ]> {
+	static executeSELECTQuery<T>( url:string, selectQuery:string, pointerLibrary:PointerLibrary, options:RequestOptions = {} ):Promise<[ SELECTResults.Class<T>, Response ]> {
 		return Class
 			.executeRawSELECTQuery( url, selectQuery, options )
 			.then<[ SELECTResults.Class<T>, Response ]>( ( [ rawResults, response ]:[ RawResults.Class, Response ] ) => {
@@ -67,31 +71,31 @@ export class Class {
 			} );
 	}
 
-	static executeRawCONSTRUCTQuery( url:string, constructQuery:string, options:HTTP.Request.Options = {} ):Promise<[ string, Response ]> {
+	static executeRawCONSTRUCTQuery( url:string, constructQuery:string, options:RequestOptions = {} ):Promise<[ string, Response ]> {
 		options = Object.assign( options, Class.defaultOptions );
 
-		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
-		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
+		if( RequestUtils.getHeader( "Accept", options ) === undefined ) RequestUtils.setAcceptHeader( "application/ld+json", options );
+		RequestUtils.setContentTypeHeader( "application/sparql-query", options );
 
-		return HTTP.Request.Service.post( url, constructQuery, options, Class.stringParser );
+		return RequestService.post( url, constructQuery, options, Class.stringParser );
 	}
 
-	static executeRawDESCRIBEQuery( url:string, describeQuery:string, options:HTTP.Request.Options = {} ):Promise<[ string, Response ]> {
+	static executeRawDESCRIBEQuery( url:string, describeQuery:string, options:RequestOptions = {} ):Promise<[ string, Response ]> {
 		options = Object.assign( options, Class.defaultOptions );
 
-		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
-		HTTP.Request.Util.setContentTypeHeader( "application/sparql-query", options );
+		if( RequestUtils.getHeader( "Accept", options ) === undefined ) RequestUtils.setAcceptHeader( "application/ld+json", options );
+		RequestUtils.setContentTypeHeader( "application/sparql-query", options );
 
-		return HTTP.Request.Service.post( url, describeQuery, options, Class.stringParser );
+		return RequestService.post( url, describeQuery, options, Class.stringParser );
 	}
 
-	static executeUPDATE( url:string, updateQuery:string, options:HTTP.Request.Options = {} ):Promise<Response> {
+	static executeUPDATE( url:string, updateQuery:string, options:RequestOptions = {} ):Promise<Response> {
 		options = Object.assign( options, Class.defaultOptions );
 
-		if( HTTP.Request.Util.getHeader( "Accept", options ) === undefined ) HTTP.Request.Util.setAcceptHeader( "application/ld+json", options );
-		HTTP.Request.Util.setContentTypeHeader( "application/sparql-update", options );
+		if( RequestUtils.getHeader( "Accept", options ) === undefined ) RequestUtils.setAcceptHeader( "application/ld+json", options );
+		RequestUtils.setContentTypeHeader( "application/sparql-update", options );
 
-		return HTTP.Request.Service.post( url, updateQuery, options );
+		return RequestService.post( url, updateQuery, options );
 	}
 
 	private static parseRawBindingProperty( rawBindingProperty:RawResults.BindingProperty, pointerLibrary:PointerLibrary ):any {

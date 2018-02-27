@@ -1,9 +1,9 @@
-import * as HTTP from "../HTTP";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
-import { Documents } from "./../Documents";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import { Pointer } from "./../Pointer";
 import * as SELECTResults from "./../SPARQL/SELECTResults";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
@@ -12,9 +12,9 @@ export interface Class extends PersistedProtectedDocument.Class {
 	name?:string;
 	credentials?:PersistedCredentials.Class;
 
-	enableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]>;
+	enableCredentials( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
 
-	disableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]>;
+	disableCredentials( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
 }
 
 export class Factory {
@@ -58,7 +58,7 @@ export class Factory {
 
 }
 
-function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]> {
+function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]> {
 	const promise:Promise<void | Response> = "credentials" in this ?
 		Promise.resolve() : obtainCredentials( this );
 

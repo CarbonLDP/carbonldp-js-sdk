@@ -17,11 +17,15 @@ import * as User from "./Auth/User";
 import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import * as Users from "./Auth/Users";
-
 import Context from "./Context";
 import * as Errors from "./Errors";
 import { FreeResources } from "./FreeResources";
-import * as HTTP from "./HTTP";
+import { BadResponseError } from "./HTTP/Errors";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+} from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import * as JSONLD from "./JSONLD";
 import * as ObjectSchema from "./ObjectSchema";
@@ -110,7 +114,7 @@ export class Class {
 		}
 	}
 
-	addAuthentication( requestOptions:HTTP.Request.Options ):void {
+	addAuthentication( requestOptions:RequestOptions ):void {
 		if( this.isAuthenticated( false ) ) {
 			this.authenticator.addAuthentication( requestOptions );
 		} else if( ! ! this.context.parentContext && ! ! this.context.parentContext.auth ) {
@@ -128,22 +132,22 @@ export class Class {
 		this._authenticatedUser = null;
 	}
 
-	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, Response ]> {
+	createTicket( uri:string, requestOptions:RequestOptions = {} ):Promise<[ Ticket.Class, Response ]> {
 		let resourceURI:string = this.context.resolve( uri );
 
 		let freeResources:FreeResources = FreeResources.create( this.context.documents );
 		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
 
 		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
-		HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
-		HTTP.Request.Util.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
+		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
+		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
+		RequestUtils.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const containerURI:string = this.context._resolvePath( "system" ) + Ticket.TICKETS_CONTAINER;
 			const body:string = JSON.stringify( freeResources );
 
-			return HTTP.Request.Service.post( containerURI, body, requestOptions, new JSONLD.Parser.Class() )
+			return RequestService.post( containerURI, body, requestOptions, new JSONLD.Parser.Class() )
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
 
 		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
@@ -151,8 +155,8 @@ export class Class {
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
 
-			if( ticketNodes.length === 0 ) throw new HTTP.Errors.BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
-			if( ticketNodes.length > 1 ) throw new HTTP.Errors.BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
+			if( ticketNodes.length === 0 ) throw new BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
+			if( ticketNodes.length > 1 ) throw new BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
 
 			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
 			let ticket:Ticket.Class = <any> Resource.create();
@@ -165,7 +169,7 @@ export class Class {
 		} );
 	}
 
-	getAuthenticatedURL( uri:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
+	getAuthenticatedURL( uri:string, requestOptions?:RequestOptions ):Promise<string> {
 		let resourceURI:string = this.context.resolve( uri );
 
 		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, Response ] ) => {
@@ -226,7 +230,7 @@ export class Class {
 	}
 
 	private getAuthenticatedUser( authenticator:Authenticator<Object, Object> ):Promise<PersistedUser.Class> {
-		let requestOptions:HTTP.Request.Options = {};
+		let requestOptions:RequestOptions = {};
 		authenticator.addAuthentication( requestOptions );
 
 		return this.context.documents.get<PersistedUser.Class>( "users/me/", requestOptions ).then(

@@ -122,13 +122,13 @@ function isBody(data) {
         || typeof Blob !== "undefined" && data instanceof Blob
         || typeof Buffer !== "undefined" && data instanceof Buffer;
 }
-var Service = (function () {
-    function Service() {
+var RequestService = (function () {
+    function RequestService() {
     }
-    Service.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
+    RequestService.send = function (method, url, bodyOrOptions, optionsOrParser, parser) {
         var _this = this;
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
+        if (bodyOrOptions === void 0) { bodyOrOptions = RequestService.defaultOptions; }
+        if (optionsOrParser === void 0) { optionsOrParser = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
         var body = null;
         var options = Utils.hasProperty(optionsOrParser, "parse") ? bodyOrOptions : optionsOrParser;
@@ -139,7 +139,7 @@ var Service = (function () {
         else {
             options = bodyOrOptions ? bodyOrOptions : options;
         }
-        options = Object.assign({}, Service.defaultOptions, options);
+        options = Object.assign({}, RequestService.defaultOptions, options);
         if (Utils.isNumber(method))
             method = HTTPMethod_1.HTTPMethod[method];
         var requestPromise = sendRequest(method, url, body, options)
@@ -157,44 +157,44 @@ var Service = (function () {
             });
         });
     };
-    Service.options = function (url, options) {
-        if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(HTTPMethod_1.HTTPMethod.OPTIONS, url, options);
+    RequestService.options = function (url, options) {
+        if (options === void 0) { options = RequestService.defaultOptions; }
+        return RequestService.send(HTTPMethod_1.HTTPMethod.OPTIONS, url, options);
     };
-    Service.head = function (url, options) {
-        if (options === void 0) { options = Service.defaultOptions; }
-        return Service.send(HTTPMethod_1.HTTPMethod.HEAD, url, options);
+    RequestService.head = function (url, options) {
+        if (options === void 0) { options = RequestService.defaultOptions; }
+        return RequestService.send(HTTPMethod_1.HTTPMethod.HEAD, url, options);
     };
-    Service.get = function (url, options, parser) {
-        if (options === void 0) { options = Service.defaultOptions; }
+    RequestService.get = function (url, options, parser) {
+        if (options === void 0) { options = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(HTTPMethod_1.HTTPMethod.GET, url, null, options, parser);
+        return RequestService.send(HTTPMethod_1.HTTPMethod.GET, url, null, options, parser);
     };
-    Service.post = function (url, bodyOrOptions, options, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
+    RequestService.post = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = RequestService.defaultOptions; }
+        if (options === void 0) { options = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(HTTPMethod_1.HTTPMethod.POST, url, bodyOrOptions, options, parser);
+        return RequestService.send(HTTPMethod_1.HTTPMethod.POST, url, bodyOrOptions, options, parser);
     };
-    Service.put = function (url, bodyOrOptions, options, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
+    RequestService.put = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = RequestService.defaultOptions; }
+        if (options === void 0) { options = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(HTTPMethod_1.HTTPMethod.PUT, url, bodyOrOptions, options, parser);
+        return RequestService.send(HTTPMethod_1.HTTPMethod.PUT, url, bodyOrOptions, options, parser);
     };
-    Service.patch = function (url, bodyOrOptions, options, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (options === void 0) { options = Service.defaultOptions; }
+    RequestService.patch = function (url, bodyOrOptions, options, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = RequestService.defaultOptions; }
+        if (options === void 0) { options = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(HTTPMethod_1.HTTPMethod.PATCH, url, bodyOrOptions, options, parser);
+        return RequestService.send(HTTPMethod_1.HTTPMethod.PATCH, url, bodyOrOptions, options, parser);
     };
-    Service.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
-        if (bodyOrOptions === void 0) { bodyOrOptions = Service.defaultOptions; }
-        if (optionsOrParser === void 0) { optionsOrParser = Service.defaultOptions; }
+    RequestService.delete = function (url, bodyOrOptions, optionsOrParser, parser) {
+        if (bodyOrOptions === void 0) { bodyOrOptions = RequestService.defaultOptions; }
+        if (optionsOrParser === void 0) { optionsOrParser = RequestService.defaultOptions; }
         if (parser === void 0) { parser = null; }
-        return Service.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
+        return RequestService.send(HTTPMethod_1.HTTPMethod.DELETE, url, bodyOrOptions, optionsOrParser, parser);
     };
-    Service._handleGETResponse = function (url, requestOptions, response) {
+    RequestService._handleGETResponse = function (url, requestOptions, response) {
         var _this = this;
         return Promise.resolve()
             .then(function () {
@@ -212,7 +212,7 @@ var Service = (function () {
             });
         });
     };
-    Service._contentTypeIsAccepted = function (requestOptions, response) {
+    RequestService._contentTypeIsAccepted = function (requestOptions, response) {
         var accepts = requestOptions.headers.has("accept") ?
             requestOptions.headers.get("accept").values :
             [];
@@ -221,27 +221,27 @@ var Service = (function () {
             null;
         return !contentType || accepts.some(contentType.hasValue, contentType);
     };
-    Service._setNoCacheHeaders = function (requestOptions) {
+    RequestService._setNoCacheHeaders = function (requestOptions) {
         requestOptions.headers
             .set("pragma", new Header_1.Header("no-cache"))
             .set("cache-control", new Header_1.Header("no-cache, max-age=0"));
     };
-    Service._isChromiumAgent = function () {
+    RequestService._isChromiumAgent = function () {
         return typeof window !== "undefined" && !window["chrome"];
     };
-    Service._setFalseETag = function (requestOptions) {
+    RequestService._setFalseETag = function (requestOptions) {
         requestOptions.headers.set("if-none-match", new Header_1.Header());
     };
-    Service.defaultOptions = {
+    RequestService.defaultOptions = {
         sendCredentialsOnCORS: true,
     };
-    return Service;
+    return RequestService;
 }());
-exports.Service = Service;
-var Util = (function () {
-    function Util() {
+exports.RequestService = RequestService;
+var RequestUtils = (function () {
+    function RequestUtils() {
     }
-    Util.getHeader = function (headerName, requestOptions, initialize) {
+    RequestUtils.getHeader = function (headerName, requestOptions, initialize) {
         if (initialize === void 0) { initialize = false; }
         headerName = headerName.toLowerCase();
         if (initialize) {
@@ -253,43 +253,43 @@ var Util = (function () {
             return undefined;
         return requestOptions.headers.get(headerName);
     };
-    Util.setAcceptHeader = function (accept, requestOptions) {
+    RequestUtils.setAcceptHeader = function (accept, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("accept", new Header_1.Header(accept));
         return requestOptions;
     };
-    Util.setContentTypeHeader = function (contentType, requestOptions) {
+    RequestUtils.setContentTypeHeader = function (contentType, requestOptions) {
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("content-type", new Header_1.Header(contentType));
         return requestOptions;
     };
-    Util.setIfMatchHeader = function (eTag, requestOptions) {
+    RequestUtils.setIfMatchHeader = function (eTag, requestOptions) {
         if (!eTag)
             return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("if-match", new Header_1.Header(eTag));
         return requestOptions;
     };
-    Util.setIfNoneMatchHeader = function (eTag, requestOptions) {
+    RequestUtils.setIfNoneMatchHeader = function (eTag, requestOptions) {
         if (!eTag)
             return;
         var headers = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map();
         headers.set("if-none-match", new Header_1.Header(eTag));
         return requestOptions;
     };
-    Util.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
-        var prefer = Util.getHeader("prefer", requestOptions, true);
+    RequestUtils.setPreferredInteractionModel = function (interactionModelURI, requestOptions) {
+        var prefer = RequestUtils.getHeader("prefer", requestOptions, true);
         prefer.values.push(interactionModelURI + "; rel=interaction-model");
         return requestOptions;
     };
-    Util.setPreferredRetrieval = function (retrievalType, requestOptions) {
-        var prefer = Util.getHeader("prefer", requestOptions, true);
+    RequestUtils.setPreferredRetrieval = function (retrievalType, requestOptions) {
+        var prefer = RequestUtils.getHeader("prefer", requestOptions, true);
         prefer.values.push("return=" + retrievalType);
         return requestOptions;
     };
-    Util.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
+    RequestUtils.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
         if (returnRepresentation === void 0) { returnRepresentation = true; }
-        var prefer = Util.getHeader("prefer", requestOptions, true);
+        var prefer = RequestUtils.getHeader("prefer", requestOptions, true);
         var representation = returnRepresentation ? "return=representation; " : "";
         var keys = ["include", "omit"];
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
@@ -300,26 +300,26 @@ var Util = (function () {
         }
         return requestOptions;
     };
-    Util.setSlug = function (slug, requestOptions) {
-        var slugHeader = Util.getHeader("slug", requestOptions, true);
+    RequestUtils.setSlug = function (slug, requestOptions) {
+        var slugHeader = RequestUtils.getHeader("slug", requestOptions, true);
         slugHeader.values.push(slug);
         return requestOptions;
     };
-    Util.isOptions = function (object) {
+    RequestUtils.isOptions = function (object) {
         return Utils.hasPropertyDefined(object, "headers")
             || Utils.hasPropertyDefined(object, "sendCredentialsOnCORS")
             || Utils.hasPropertyDefined(object, "timeout")
             || Utils.hasPropertyDefined(object, "request");
     };
-    Util.cloneOptions = function (options) {
+    RequestUtils.cloneOptions = function (options) {
         var clone = __assign({}, options, { headers: new Map() });
         if (options.headers)
             options.headers
                 .forEach(function (value, key) { return clone.headers.set(key, new Header_1.Header(value.values.slice())); });
         return clone;
     };
-    return Util;
+    return RequestUtils;
 }());
-exports.Util = Util;
+exports.RequestUtils = RequestUtils;
 
 //# sourceMappingURL=Request.js.map

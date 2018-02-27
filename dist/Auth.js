@@ -46,7 +46,8 @@ var Users = __importStar(require("./Auth/Users"));
 exports.Users = Users;
 var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
-var HTTP = __importStar(require("./HTTP"));
+var Errors_1 = require("./HTTP/Errors");
+var Request_1 = require("./HTTP/Request");
 var JSONLD = __importStar(require("./JSONLD"));
 var RDF = __importStar(require("./RDF"));
 var Resource_1 = require("./Resource");
@@ -122,22 +123,22 @@ var Class = (function () {
         Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
         if (this.isAuthenticated())
             this.addAuthentication(requestOptions);
-        HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setContentTypeHeader("application/ld+json", requestOptions);
-        HTTP.Request.Util.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
+        Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
+        Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
+        Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             var body = JSON.stringify(freeResources);
-            return HTTP.Request.Service.post(containerURI, body, requestOptions, new JSONLD.Parser.Class())
+            return Request_1.RequestService.post(containerURI, body, requestOptions, new JSONLD.Parser.Class())
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });
             if (ticketNodes.length === 0)
-                throw new HTTP.Errors.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
+                throw new Errors_1.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
             if (ticketNodes.length > 1)
-                throw new HTTP.Errors.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
+                throw new Errors_1.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
             var expandedTicket = ticketNodes[0];
             var ticket = Resource_1.Resource.create();
             var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);

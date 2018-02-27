@@ -1,8 +1,14 @@
-import * as Errors from "../Errors";
-import Error from "../Errors/InvalidJSONLDSyntaxError";
+import {
+	InvalidJSONLDSyntaxError,
+	NotImplementedError,
+} from "../Errors";
 import { Header } from "../HTTP/Header";
 import { JSONParser } from "../HTTP/JSONParser";
-import * as Request from "../HTTP/Request";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+} from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
@@ -106,7 +112,7 @@ export class Class {
 	}
 
 	private static retrieveContexts( input:Object, contextsRequested:{ [ index:string ]:boolean }, base:string ):Promise<void> {
-		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new Error( "Maximum number of @context URLs exceeded." ) );
+		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new InvalidJSONLDSyntaxError( "Maximum number of @context URLs exceeded." ) );
 
 		let contextToResolved:{ [ index:string ]:Object } = Object.create( null );
 		if( ! Class.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
@@ -135,15 +141,15 @@ export class Class {
 
 		let promises:Promise<void>[] = [];
 		for( let url in contextToResolved ) {
-			if( url in contextsRequested ) return Promise.reject<void>( new Error( "Cyclical @context URLs detected." ) );
+			if( url in contextsRequested ) return Promise.reject<void>( new InvalidJSONLDSyntaxError( "Cyclical @context URLs detected." ) );
 
-			let requestOptions:Request.Options = { sendCredentialsOnCORS: false };
-			Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
+			let requestOptions:RequestOptions = { sendCredentialsOnCORS: false };
+			RequestUtils.setAcceptHeader( "application/ld+json, application/json", requestOptions );
 
-			let promise:Promise<[ any, Response ]> = Request.Service
+			let promise:Promise<[ any, Response ]> = RequestService
 				.get( url, requestOptions, new JSONParser() )
 				.catch( ( response:Response ) =>
-					Promise.reject( new Error( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
+					Promise.reject( new InvalidJSONLDSyntaxError( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
 				);
 			promises.push( resolved( url, promise ) );
 		}
@@ -210,7 +216,7 @@ export class Class {
 
 			for( let item of values ) {
 				if( item === null ) continue;
-				if( ! Utils.isString( item ) ) throw new Error( "Language map values must be strings." );
+				if( ! Utils.isString( item ) ) throw new InvalidJSONLDSyntaxError( "Language map values must be strings." );
 
 				expandedLanguage.push( {
 					"@value": item,
@@ -281,7 +287,7 @@ export class Class {
 				let expandedItem:any = Class.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
-				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new Error( "Lists of lists are not permitted." );
+				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
 
 				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
 				expanded.push( ...expandedItem );
@@ -311,20 +317,20 @@ export class Class {
 
 			// Validate value
 			if( Class.isKeyword( uri ) ) {
-				if( uri === "@id" && ! Utils.isString( value ) ) throw new Error( `"@id" value must a string.` );
-				if( uri === "@type" && ! Class.isValidType( value ) ) throw new Error( `"@type" value must a string, an array of strings.` );
-				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new Error( `"@graph" value must not be an object or an array.` );
-				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new Error( `"@value" value must not be an object or an array.` );
+				if( uri === "@id" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@id" value must a string.` );
+				if( uri === "@type" && ! Class.isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
+				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
+				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@value" value must not be an object or an array.` );
 				if( uri === "@language" ) {
 					if( value === null ) continue;
-					if( ! Utils.isString( value ) ) throw new Error( `"@language" value must be a string.` );
+					if( ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@language" value must be a string.` );
 					value = (<string> value).toLowerCase();
 				}
 
-				if( uri === "@index" && ! Utils.isString( value ) ) throw new Error( `"@index" value must be a string.` );
-				if( uri === "@reverse" && ! Utils.isObject( value ) ) throw new Error( `"@reverse" value must be an object.` );
+				if( uri === "@index" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@index" value must be a string.` );
+				if( uri === "@reverse" && ! Utils.isObject( value ) ) throw new InvalidJSONLDSyntaxError( `"@reverse" value must be an object.` );
 				// TODO: Not supported
-				if( uri === "@index" || uri === "@reverse" ) throw new Errors.NotImplementedError( `The SDK does not support "@index" and "@reverse" tags.` );
+				if( uri === "@index" || uri === "@reverse" ) throw new NotImplementedError( `The SDK does not support "@index" and "@reverse" tags.` );
 			}
 
 			let expandedValue:any;

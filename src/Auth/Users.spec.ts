@@ -1,5 +1,5 @@
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import {
 	clazz,
@@ -182,7 +182,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"get",
 			"Retrieves the user specified from the current context.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
@@ -206,7 +206,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.get ).toBeDefined();
 			expect( Utils.isFunction( users.get ) ).toBe( true );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
 
 			let promises:Promise<any>[] = [];
@@ -335,7 +335,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Activate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to deactivate its credentials." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
 		), () => {} );
@@ -437,7 +437,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Deactivate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to activate its credentials." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
 		), () => {} );
@@ -447,7 +447,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"delete",
 			"Deletes the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
@@ -470,7 +470,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.delete ).toBeDefined();
 			expect( Utils.isFunction( users.delete ) ).toBe( true );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "delete" ).and.returnValue( Promise.resolve() );
 
 			let promises:Promise<any>[] = [];

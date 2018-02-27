@@ -1,9 +1,12 @@
+import { Context } from "../Context";
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import {
+	RequestOptions,
+	RequestUtils,
+} from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import Context from "./../Context";
+import { Pointer } from "../Pointer";
 import * as PersistedDocument from "./../PersistedDocument";
-import { Pointer } from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as SPARQL from "./../SPARQL";
 import * as Utils from "./../Utils";
@@ -19,12 +22,12 @@ export class Class {
 	}
 
 	// TODO: Requests must return all the responses made
-	createChild<T extends object>( parentRole:string | Pointer, role:T & Role.Class, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, Response ]>;
-	createChild<T extends object>( parentRole:string | Pointer, role:T & Role.Class, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, Response ]>;
-	createChild<T extends object>( parentRole:string | Pointer, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, Response ]> {
+	createChild<T extends object>( parentRole:string | Pointer, role:T & Role.Class, requestOptions?:RequestOptions ):Promise<[ T & PersistedRole.Class, Response ]>;
+	createChild<T extends object>( parentRole:string | Pointer, role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedRole.Class, Response ]>;
+	createChild<T extends object>( parentRole:string | Pointer, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ T & PersistedRole.Class, Response ]> {
 		let parentURI:string = Utils.isString( parentRole ) ? parentRole : parentRole.id;
 		let slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
-		requestOptions = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+		requestOptions = RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 
 		let containerURI:string;
 		let persistedRole:T & PersistedRole.Class;
@@ -50,33 +53,33 @@ export class Class {
 		} );
 	}
 
-	get<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, Response ]> {
+	get<T>( roleURI:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedRole.Class, Response ]> {
 		return Utils.promiseMethod( () => {
 			return this.context.documents.get<T & PersistedRole.Class>( this.resolveURI( roleURI ), requestOptions );
 		} );
 	}
 
-	getUsers<T>( roleURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], Response ]>;
-	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ (T & PersistedUser.Class)[], Response ]> {
+	getUsers<T>( roleURI:string, requestOptions?:RequestOptions ):Promise<[ (T & PersistedUser.Class)[], Response ]>;
+	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ (T & PersistedUser.Class)[], Response ]> {
 		// TODO: Implement in milestone:Security
 		throw new Errors.NotImplementedError( "To be re-implemented in milestone:Security" );
 	}
 
-	addUser( roleURI:string, user:Pointer | string, requestOptions?:HTTP.Request.Options ):Promise<Response> {
+	addUser( roleURI:string, user:Pointer | string, requestOptions?:RequestOptions ):Promise<Response> {
 		return this.addUsers( roleURI, [ user ], requestOptions );
 	}
 
-	addUsers( roleURI:string, users:(Pointer | string)[], requestOptions?:HTTP.Request.Options ):Promise<Response> {
+	addUsers( roleURI:string, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response> {
 		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer ) => {
 			return this.context.documents.addMembers( accessPoint.id, users, requestOptions );
 		} );
 	}
 
-	removeUser( roleURI:string, user:Pointer | string, requestOptions?:HTTP.Request.Options ):Promise<Response> {
+	removeUser( roleURI:string, user:Pointer | string, requestOptions?:RequestOptions ):Promise<Response> {
 		return this.removeUsers( roleURI, [ user ], requestOptions );
 	}
 
-	removeUsers( roleURI:string, users:(Pointer | string)[], requestOptions?:HTTP.Request.Options ):Promise<Response> {
+	removeUsers( roleURI:string, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response> {
 		return this.getUsersAccessPoint( roleURI ).then( ( accessPoint:Pointer ) => {
 			return this.context.documents.removeMembers( accessPoint.id, users, requestOptions );
 		} );

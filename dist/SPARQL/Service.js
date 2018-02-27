@@ -11,7 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var HTTP = __importStar(require("../HTTP"));
+var Request_1 = require("../HTTP/Request");
 var StringParser_1 = require("../HTTP/StringParser");
 var RDF = __importStar(require("./../RDF"));
 var RawResultsParser_1 = __importDefault(require("./RawResultsParser"));
@@ -21,9 +21,9 @@ var Class = (function () {
     Class.executeRawASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
         options = Object.assign(options, Class.defaultOptions);
-        HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, askQuery, options, Class.resultsParser);
+        Request_1.RequestUtils.setAcceptHeader("application/sparql-results+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, askQuery, options, Class.resultsParser);
     };
     Class.executeASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
@@ -37,9 +37,9 @@ var Class = (function () {
     Class.executeRawSELECTQuery = function (url, selectQuery, options) {
         if (options === void 0) { options = {}; }
         options = Object.assign(options, Class.defaultOptions);
-        HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
+        Request_1.RequestUtils.setAcceptHeader("application/sparql-results+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, selectQuery, options, Class.resultsParser);
     };
     Class.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
         if (options === void 0) { options = {}; }
@@ -70,26 +70,26 @@ var Class = (function () {
     Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
         if (options === void 0) { options = {}; }
         options = Object.assign(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, constructQuery, options, Class.stringParser);
+        if (Request_1.RequestUtils.getHeader("Accept", options) === undefined)
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, constructQuery, options, Class.stringParser);
     };
     Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
         if (options === void 0) { options = {}; }
         options = Object.assign(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
+        if (Request_1.RequestUtils.getHeader("Accept", options) === undefined)
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, describeQuery, options, Class.stringParser);
     };
     Class.executeUPDATE = function (url, updateQuery, options) {
         if (options === void 0) { options = {}; }
         options = Object.assign(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-update", options);
-        return HTTP.Request.Service.post(url, updateQuery, options);
+        if (Request_1.RequestUtils.getHeader("Accept", options) === undefined)
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-update", options);
+        return Request_1.RequestService.post(url, updateQuery, options);
     };
     Class.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {

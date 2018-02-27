@@ -1,11 +1,15 @@
 import * as Errors from "../Errors";
+import { FreeResources } from "../FreeResources";
 import { BadResponseError } from "../HTTP/Errors";
 import { Header } from "../HTTP/Header";
-import * as Request from "../HTTP/Request";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+} from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
-import { FreeResources } from "./../FreeResources";
 import * as JSONLD from "./../JSONLD";
 import { ResponseMetadata } from "./../LDP";
 import * as PersistedDocument from "./../PersistedDocument";
@@ -54,7 +58,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return Promise.resolve( credentials );
 	}
 
-	addAuthentication( requestOptions:Request.Options ):Request.Options {
+	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
 		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
 
 		this.addTokenAuthenticationHeader( headers );
@@ -67,16 +71,16 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 	}
 
 	private createToken():Promise<[ Token.Class, Response ]> {
-		let requestOptions:Request.Options = {};
+		let requestOptions:RequestOptions = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
 
-		Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-		Request.Util.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
+		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
+		RequestUtils.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
 
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
-			return Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
+			return RequestService.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
 		} ).then<[ Token.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 

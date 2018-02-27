@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import { Response } from "./../../Response";
 
 import HTTPError from "./../HTTPError";
-import { Service } from "../../Request";
+import { RequestService } from "../../Request";
 
 import * as RequestHeaderFieldsTooLargeError from "./RequestHeaderFieldsTooLargeError";
 import DefaultExport from "./RequestHeaderFieldsTooLargeError";
@@ -43,7 +43,7 @@ describe( module( "Carbon/HTTP/Errors/client/RequestHeaderFieldsTooLargeError" )
 				"responseText": "A response",
 			} );
 
-			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
 				response = _response;
 				done();
 			} ).catch( done.fail );

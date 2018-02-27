@@ -52,7 +52,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			OBLIGATORY,
 			"getACL",
 			"Obtains and resolve the ACL of the actual document.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 			],
 			{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
 		), ():void => {} );
@@ -208,7 +208,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				INSTANCE,
 				"getACL",
 				"Obtains and resolve the ACL of the actual document.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: " Customizable options for the request." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 				],
 				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {

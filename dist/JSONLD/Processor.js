@@ -6,14 +6,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("../Errors"));
-var InvalidJSONLDSyntaxError_1 = __importDefault(require("../Errors/InvalidJSONLDSyntaxError"));
+var Errors_1 = require("../Errors");
 var JSONParser_1 = require("../HTTP/JSONParser");
-var Request = __importStar(require("../HTTP/Request"));
+var Request_1 = require("../HTTP/Request");
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var RDF = __importStar(require("./../RDF"));
 var Utils = __importStar(require("./../Utils"));
@@ -113,7 +109,7 @@ var Class = (function () {
     };
     Class.retrieveContexts = function (input, contextsRequested, base) {
         if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
-            return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Maximum number of @context URLs exceeded."));
+            return Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Maximum number of @context URLs exceeded."));
         var contextToResolved = Object.create(null);
         if (!Class.findContextURLs(input, contextToResolved, base))
             return Promise.resolve();
@@ -142,13 +138,13 @@ var Class = (function () {
         var promises = [];
         var _loop_1 = function (url) {
             if (url in contextsRequested)
-                return { value: Promise.reject(new InvalidJSONLDSyntaxError_1.default("Cyclical @context URLs detected.")) };
+                return { value: Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Cyclical @context URLs detected.")) };
             var requestOptions = { sendCredentialsOnCORS: false };
-            Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
-            var promise = Request.Service
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json, application/json", requestOptions);
+            var promise = Request_1.RequestService
                 .get(url, requestOptions, new JSONParser_1.JSONParser())
                 .catch(function (response) {
-                return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
+                return Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });
             promises.push(resolved(url, promise));
         };
@@ -219,7 +215,7 @@ var Class = (function () {
                 if (item === null)
                     continue;
                 if (!Utils.isString(item))
-                    throw new InvalidJSONLDSyntaxError_1.default("Language map values must be strings.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("Language map values must be strings.");
                 expandedLanguage.push({
                     "@value": item,
                     "@language": key.toLowerCase(),
@@ -285,7 +281,7 @@ var Class = (function () {
                 if (expandedItem === null)
                     continue;
                 if (insideList && (Utils.isArray(expandedItem) || RDF.List.Factory.is(expandedItem)))
-                    throw new InvalidJSONLDSyntaxError_1.default("Lists of lists are not permitted.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("Lists of lists are not permitted.");
                 if (!Utils.isArray(expandedItem))
                     expandedItem = [expandedItem];
                 expanded.push.apply(expanded, expandedItem);
@@ -311,26 +307,26 @@ var Class = (function () {
             var value = element[key];
             if (Class.isKeyword(uri)) {
                 if (uri === "@id" && !Utils.isString(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@id\" value must a string.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@id\" value must a string.");
                 if (uri === "@type" && !Class.isValidType(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@type\" value must a string, an array of strings.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@type\" value must a string, an array of strings.");
                 if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@graph\" value must not be an object or an array.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@graph\" value must not be an object or an array.");
                 if (uri === "@value" && (Utils.isObject(value) || Utils.isArray(value)))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@value\" value must not be an object or an array.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@value\" value must not be an object or an array.");
                 if (uri === "@language") {
                     if (value === null)
                         continue;
                     if (!Utils.isString(value))
-                        throw new InvalidJSONLDSyntaxError_1.default("\"@language\" value must be a string.");
+                        throw new Errors_1.InvalidJSONLDSyntaxError("\"@language\" value must be a string.");
                     value = value.toLowerCase();
                 }
                 if (uri === "@index" && !Utils.isString(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@index\" value must be a string.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@index\" value must be a string.");
                 if (uri === "@reverse" && !Utils.isObject(value))
-                    throw new InvalidJSONLDSyntaxError_1.default("\"@reverse\" value must be an object.");
+                    throw new Errors_1.InvalidJSONLDSyntaxError("\"@reverse\" value must be an object.");
                 if (uri === "@index" || uri === "@reverse")
-                    throw new Errors.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
+                    throw new Errors_1.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
             }
             var expandedValue = void 0;
             var container = Class.getContainer(context, key);

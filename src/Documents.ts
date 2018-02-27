@@ -27,7 +27,13 @@ import * as HTTPErrors from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import { HTTPMethod } from "./HTTP/HTTPMethod";
 import { Parser } from "./HTTP/Parser";
-import * as Request from "./HTTP/Request";
+import {
+	GETOptions,
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+	RetrievalPreferences,
+} from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import * as JSONLD from "./JSONLD";
 import {
@@ -192,10 +198,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
-	get<T extends object>( uri:string, requestOptions?:Request.GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]>;
 	get<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]>;
 	get<T extends object>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]> {
-		const requestOptions:Request.Options = Request.Util.isOptions( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
+		const requestOptions:RequestOptions = RequestUtils.isOptions( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
 		if( Utils.isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
 
 		return promiseMethod( () => {
@@ -207,7 +213,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	exists( documentURI:string, requestOptions:Request.Options = {} ):Promise<[ boolean, Response ]> {
+	exists( documentURI:string, requestOptions:RequestOptions = {} ):Promise<[ boolean, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
@@ -221,70 +227,70 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	createChild<T extends object>( parentURI:string, childObject:T, slug?:string, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-	createChild<T extends object>( parentURI:string, childObject:T, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-	createChild<T extends object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
+	createChild<T extends object>( parentURI:string, childObject:T, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChild<T extends object>( parentURI:string, childObject:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChild<T extends object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
 		const slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
-			Request.Util.setPreferredRetrieval( "minimal", requestOptions );
+			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 
 			return this.persistChildDocument<T>( parentURI, childObject, slug, requestOptions );
 		} );
 	}
 
-	createChildren<T extends object>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-	createChildren<T extends object>( parentURI:string, childrenObjects:T[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-	createChildren<T extends object>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
+	createChildren<T extends object>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildren<T extends object>( parentURI:string, childrenObjects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildren<T extends object>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:RequestOptions = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
 		const slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : [];
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
-			Request.Util.setPreferredRetrieval( "minimal", requestOptions );
+			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 
 			return Promise.all<[ T & PersistedProtectedDocument.Class, Response ]>( childrenObjects.map( ( childObject:T, index:number ) => {
-				const cloneOptions:Request.Options = Request.Util.cloneOptions( requestOptions );
+				const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 				return this.persistChildDocument<T>( parentURI, childObject, slugs[ index ], cloneOptions );
 			} ) );
 		} ).then( mapTupleArray );
 	}
 
-	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, slug?:string, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
-		requestOptions = Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChildAndRetrieve<T extends object>( parentURI:string, childObject:T, slugOrRequestOptions?:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
+		requestOptions = RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 		const slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
-			Request.Util.setPreferredRetrieval( "representation", requestOptions );
+			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
 
 			return this.persistChildDocument<T>( parentURI, childObject, slug, requestOptions );
 		} );
 	}
 
-	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:Request.Options = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
+	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildrenAndRetrieve<T extends object>( parentURI:string, childrenObjects:T[], slugsOrRequestOptions?:any, requestOptions:RequestOptions = {} ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
 		const slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : [];
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
-			Request.Util.setPreferredRetrieval( "representation", requestOptions );
+			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
 
 			return Promise.all<[ T & PersistedProtectedDocument.Class, Response ]>( childrenObjects.map( ( childObject:T, index:number ) => {
-				const cloneOptions:Request.Options = Request.Util.cloneOptions( requestOptions );
+				const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 				return this.persistChildDocument<T>( parentURI, childObject, slugs[ index ], cloneOptions );
 			} ) );
 		} ).then( mapTupleArray );
 	}
 
 
-	listChildren( parentURI:string, requestOptions?:Request.Options ):Promise<[ PersistedDocument.Class[], Response ]> {
+	listChildren( parentURI:string, requestOptions?:RequestOptions ):Promise<[ PersistedDocument.Class[], Response ]> {
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
 
@@ -302,10 +308,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getChildren<T extends object>( parentURI:string, requestOptions:Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
+	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
 	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
 	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
-		const requestOptions:Request.Options = Request.Util.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
+		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
 		return promiseMethod( () => {
@@ -330,38 +336,38 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:Request.Options ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, requestOptions?:Request.Options ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slugOrRequestOptions:any, requestOptions:Request.Options = {} ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slugOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
 		const slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			Request.Util.setPreferredRetrieval( "minimal", requestOptions );
+			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 
 			return this.persistAccessPoint( documentURI, accessPoint, slug, requestOptions );
 		} );
 	}
 
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions:any, requestOptions:Request.Options = {} ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]> {
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]> {
 		const slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : [];
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
-			Request.Util.setPreferredRetrieval( "minimal", requestOptions );
+			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 
 			return Promise.all<[ T & PersistedAccessPoint.Class, Response ]>( accessPoints.map( ( accessPoint:T & AccessPointBase, index:number ) => {
-				const cloneOptions:Request.Options = Request.Util.cloneOptions( requestOptions );
+				const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 				return this.persistAccessPoint<T>( documentURI, accessPoint, slugs[ index ], cloneOptions );
 			} ) );
 		} ).then( mapTupleArray );
 	}
 
-	listMembers( uri:string, requestOptions?:Request.Options ):Promise<[ PersistedDocument.Class[], Response ]> {
+	listMembers( uri:string, requestOptions?:RequestOptions ):Promise<[ PersistedDocument.Class[], Response ]> {
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
 
@@ -390,10 +396,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getMembers<T extends object>( uri:string, requestOptions:Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
+	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
 	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
 	getMembers<T extends object>( uri:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
-		const requestOptions:Request.Options = Request.Util.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
+		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
 		return promiseMethod( () => {
@@ -428,20 +434,20 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	addMember( documentURI:string, member:Pointer, requestOptions?:Request.Options ):Promise<Response>;
-	addMember( documentURI:string, memberURI:string, requestOptions?:Request.Options ):Promise<Response>;
-	addMember( documentURI:string, memberORUri:Pointer | string, requestOptions:Request.Options = {} ):Promise<Response> {
+	addMember( documentURI:string, member:Pointer, requestOptions?:RequestOptions ):Promise<Response>;
+	addMember( documentURI:string, memberURI:string, requestOptions?:RequestOptions ):Promise<Response>;
+	addMember( documentURI:string, memberORUri:Pointer | string, requestOptions:RequestOptions = {} ):Promise<Response> {
 		return this.addMembers( documentURI, [ memberORUri ], requestOptions );
 	}
 
-	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions?:Request.Options ):Promise<Response>;
-	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions:Request.Options = {} ):Promise<Response> {
+	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response>;
+	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions:RequestOptions = {} ):Promise<Response> {
 		return promiseMethod( () => {
 			const pointers:Pointer[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.Container );
-			Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+			RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			const freeResources:FreeResources = FreeResources.create( this );
 			freeResources.createResourceFrom( AddMemberAction.Factory.create( pointers ) );
@@ -452,25 +458,25 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	removeMember( documentURI:string, member:Pointer, requestOptions?:Request.Options ):Promise<Response>;
-	removeMember( documentURI:string, memberURI:string, requestOptions?:Request.Options ):Promise<Response>;
-	removeMember( documentURI:string, memberORUri:Pointer | string, requestOptions:Request.Options = {} ):Promise<Response> {
+	removeMember( documentURI:string, member:Pointer, requestOptions?:RequestOptions ):Promise<Response>;
+	removeMember( documentURI:string, memberURI:string, requestOptions?:RequestOptions ):Promise<Response>;
+	removeMember( documentURI:string, memberORUri:Pointer | string, requestOptions:RequestOptions = {} ):Promise<Response> {
 		return this.removeMembers( documentURI, [ memberORUri ], requestOptions );
 	}
 
-	removeMembers( documentURI:string, members:(Pointer | string)[], requestOptions:Request.Options = {} ):Promise<Response> {
+	removeMembers( documentURI:string, members:(Pointer | string)[], requestOptions:RequestOptions = {} ):Promise<Response> {
 		return promiseMethod( () => {
 			const pointers:Pointer[] = this._parseMembers( members );
 
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.Container );
-			Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+			RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
-			let containerRetrievalPreferences:Request.RetrievalPreferences = {
+			let containerRetrievalPreferences:RetrievalPreferences = {
 				include: [ C.PreferSelectedMembershipTriples ],
 				omit: [ C.PreferMembershipTriples ],
 			};
-			Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 			const freeResources:FreeResources = FreeResources.create( this );
 			freeResources.createResourceFrom( RemoveMemberAction.Factory.create( pointers ) );
@@ -481,12 +487,12 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	removeAllMembers( documentURI:string, requestOptions:Request.Options = {} ):Promise<Response> {
+	removeAllMembers( documentURI:string, requestOptions:RequestOptions = {} ):Promise<Response> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.Container );
 
-			let containerRetrievalPreferences:Request.RetrievalPreferences = {
+			let containerRetrievalPreferences:RetrievalPreferences = {
 				include: [
 					C.PreferMembershipTriples,
 				],
@@ -497,23 +503,23 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					C.PreferContainer,
 				],
 			};
-			Request.Util.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 			return this.sendRequest( HTTPMethod.DELETE, documentURI, requestOptions );
 		} );
 	}
 
 
-	save<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:Request.Options = {} ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	save<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		return promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
-			Request.Util.setPreferredRetrieval( "minimal", requestOptions );
+			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 			return this.patchDocument<T>( persistedDocument, requestOptions );
 		} );
 	}
 
-	refresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:Request.Options = {} ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	refresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		return Utils.promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
@@ -523,13 +529,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:Request.Options = {} ):Promise<[ T & PersistedDocument.Class, Response[] ]> {
+	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument.Class, Response[] ]> {
 		const responses:Response[] = [];
 		return promiseMethod( () => {
 			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
-			const cloneOptions:Request.Options = Request.Util.cloneOptions( requestOptions );
-			Request.Util.setPreferredRetrieval( persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions );
+			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
+			RequestUtils.setPreferredRetrieval( persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions );
 
 			return this.patchDocument<T>( persistedDocument, cloneOptions );
 		} ).then<[ T & PersistedDocument.Class, Response ]>( ( [ , response ] ) => {
@@ -544,7 +550,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	delete( documentURI:string, requestOptions:Request.Options = {} ):Promise<Response> {
+	delete( documentURI:string, requestOptions:RequestOptions = {} ):Promise<Response> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 			this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
@@ -558,7 +564,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getDownloadURL( documentURI:string, requestOptions?:Request.Options ):Promise<string> {
+	getDownloadURL( documentURI:string, requestOptions?:RequestOptions ):Promise<string> {
 		if( ! this.context ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
@@ -584,7 +590,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -595,7 +601,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	executeASKQuery( documentURI:string, askQuery:string, requestOptions:Request.Options = {} ):Promise<[ boolean, Response ]> {
+	executeASKQuery( documentURI:string, askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ boolean, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -606,7 +612,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -617,7 +623,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	executeSELECTQuery<T extends object>( documentURI:string, selectQuery:string, requestOptions:Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]> {
+	executeSELECTQuery<T extends object>( documentURI:string, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -628,7 +634,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	executeRawCONSTRUCTQuery( documentURI:string, constructQuery:string, requestOptions:Request.Options = {} ):Promise<[ string, Response ]> {
+	executeRawCONSTRUCTQuery( documentURI:string, constructQuery:string, requestOptions:RequestOptions = {} ):Promise<[ string, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -639,7 +645,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	executeRawDESCRIBEQuery( documentURI:string, describeQuery:string, requestOptions:Request.Options = {} ):Promise<[ string, Response ]> {
+	executeRawDESCRIBEQuery( documentURI:string, describeQuery:string, requestOptions:RequestOptions = {} ):Promise<[ string, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -650,7 +656,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	executeUPDATE( documentURI:string, update:string, requestOptions:Request.Options = {} ):Promise<Response> {
+	executeUPDATE( documentURI:string, update:string, requestOptions:RequestOptions = {} ):Promise<Response> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
@@ -806,7 +812,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private getFullDocument<T extends object>( uri:string, requestOptions:Request.GETOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private getFullDocument<T extends object>( uri:string, requestOptions:GETOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		if( this.hasPointer( uri ) ) {
 			const pointer:Pointer = this.getPointer( uri );
 			if( pointer.isResolved() ) {
@@ -853,7 +859,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promise;
 	}
 
-	private getPartialDocument<T extends object>( uri:string, requestOptions:Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private getPartialDocument<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
 
 		const documentProperty:QueryProperty.Class = queryContext
@@ -868,15 +874,15 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private patchDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:Request.Options ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private patchDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
 		if( ! persistedDocument.isDirty() ) return Promise.resolve<[ T & PersistedDocument.Class, Response ]>( [ persistedDocument, null ] );
 		if( persistedDocument.isLocallyOutDated() ) throw new Errors.IllegalStateError( "Cannot save an outdated document." );
 
 		this.setDefaultRequestOptions( requestOptions );
-		Request.Util.setContentTypeHeader( "text/ldpatch", requestOptions );
-		Request.Util.setIfMatchHeader( persistedDocument._etag, requestOptions );
+		RequestUtils.setContentTypeHeader( "text/ldpatch", requestOptions );
+		RequestUtils.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 		persistedDocument._normalize();
 		const deltaCreator:LDPatch.DeltaCreator.Class = new LDPatch.DeltaCreator.Class( this.jsonldConverter );
@@ -894,11 +900,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private refreshFullDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:Request.Options ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private refreshFullDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
-		Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
+		RequestUtils.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
 		return this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument.Class, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
@@ -919,7 +925,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	private refreshPartialDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:Request.Options ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private refreshPartialDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 		const queryContext:QueryContextPartial.Class = new QueryContextPartial.Class( persistedDocument, this.context );
 
@@ -965,7 +971,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private executeQueryBuilder<T extends object>( uri:string, requestOptions:Request.Options, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
 		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
 		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
@@ -1036,7 +1042,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			;
 	}
 
-	private executeConstructPatterns<T extends object>( uri:string, requestOptions:Request.Options, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	private executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
 		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
@@ -1057,8 +1063,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
 
-		Request.Util.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions, false );
-		Request.Util.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions, false );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions, false );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions, false );
 
 		let response:Response;
 		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, Response ] ) => {
@@ -1114,7 +1120,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	private executeSelectPatterns( uri:string, requestOptions:Request.Options, queryContext:QueryContext.Class, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], Response ]> {
+	private executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext.Class, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], Response ]> {
 		const targetVar:VariableToken = queryContext.getVariable( targetName );
 		const select:SelectToken = new SelectToken()
 			.addVariable( targetVar )
@@ -1138,7 +1144,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private persistChildDocument<T extends object>( parentURI:string, childObject:T, slug:string, requestOptions:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
+	private persistChildDocument<T extends object>( parentURI:string, childObject:T, slug:string, requestOptions:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
 		if( PersistedDocument.Factory.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
 		let childDocument:T & Document = Document.is( childObject ) ? <T & Document> childObject : Document.createFrom<T>( childObject );
 
@@ -1146,7 +1152,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.persistDocument<T & Document, PersistedProtectedDocument.Class>( parentURI, slug, childDocument, requestOptions );
 	}
 
-	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:Request.Options ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
+	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
 		if( PersistedDocument.Factory.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
 
 		const accessPointDocument:T & AccessPoint = AccessPoint.is( accessPoint ) ?
@@ -1158,8 +1164,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.persistDocument<T & AccessPoint, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
-	private persistDocument<T extends Document, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:Request.Options ):Promise<[ T & W, Response ]> {
-		Request.Util.setContentTypeHeader( "application/ld+json", requestOptions );
+	private persistDocument<T extends Document, W extends PersistedProtectedDocument.Class>( parentURI:string, slug:string, document:T, requestOptions:RequestOptions ):Promise<[ T & W, Response ]> {
+		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 		if( document.id ) {
 			let childURI:string = document.id;
@@ -1174,7 +1180,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		let body:string = JSON.stringify( document.toJSON( this, this.jsonldConverter ) );
 
-		if( ! ! slug ) Request.Util.setSlug( slug, requestOptions );
+		if( ! ! slug ) RequestUtils.setSlug( slug, requestOptions );
 
 		return this.sendRequest( HTTPMethod.POST, parentURI, requestOptions, body ).then<[ T & W, Response ]>( ( response:Response ) => {
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
@@ -1333,11 +1339,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return uri;
 	}
 
-	private setDefaultRequestOptions( requestOptions:Request.Options, interactionModel?:string ):Request.Options {
+	private setDefaultRequestOptions( requestOptions:RequestOptions, interactionModel?:string ):RequestOptions {
 		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
-		if( interactionModel ) Request.Util.setPreferredInteractionModel( interactionModel, requestOptions );
+		if( interactionModel ) RequestUtils.setPreferredInteractionModel( interactionModel, requestOptions );
 
-		Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
+		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
 
 		return requestOptions;
 	}
@@ -1397,10 +1403,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		}
 	}
 
-	private sendRequest( method:HTTPMethod, uri:string, options:Request.Options, body?:string | Blob | Buffer ):Promise<Response>;
-	private sendRequest<T extends object>( method:HTTPMethod, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<T> ):Promise<[ T, Response ]>;
-	private sendRequest( method:HTTPMethod, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<any> ):any {
-		return Request.Service.send( method, uri, body || null, options, parser )
+	private sendRequest( method:HTTPMethod, uri:string, options:RequestOptions, body?:string | Blob | Buffer ):Promise<Response>;
+	private sendRequest<T extends object>( method:HTTPMethod, uri:string, options:RequestOptions, body?:string | Blob | Buffer, parser?:Parser<T> ):Promise<[ T, Response ]>;
+	private sendRequest( method:HTTPMethod, uri:string, options:RequestOptions, body?:string | Blob | Buffer, parser?:Parser<any> ):any {
+		return RequestService.send( method, uri, body || null, options, parser )
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }

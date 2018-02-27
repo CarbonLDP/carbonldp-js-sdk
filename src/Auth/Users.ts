@@ -1,9 +1,9 @@
 import { Context } from "../Context";
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { Pointer } from "../Pointer";
 import { promiseMethod } from "../Utils";
-import { Pointer } from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as Credentials from "./Credentials";
 import * as PersistedCredentials from "./PersistedCredentials";
@@ -27,27 +27,27 @@ export class Class {
 		} );
 	}
 
-	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response ]> {
+	get( userURI:string, requestOptions?:RequestOptions ):Promise<[ PersistedUser.Class, Response ]> {
 		return new Promise( resolve =>
 			resolve( this.context.documents.get( this.resolveURI( userURI ), requestOptions ) )
 		);
 	}
 
-	enableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response[] ]> {
+	enableCredentials( userURI:string, requestOptions?:RequestOptions ):Promise<[ PersistedUser.Class, Response[] ]> {
 		return this.changeEnabledStatus( userURI, true, requestOptions );
 	}
 
-	disableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response[] ]> {
+	disableCredentials( userURI:string, requestOptions?:RequestOptions ):Promise<[ PersistedUser.Class, Response[] ]> {
 		return this.changeEnabledStatus( userURI, false, requestOptions );
 	}
 
-	delete( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<Response> {
+	delete( userURI:string, requestOptions?:RequestOptions ):Promise<Response> {
 		return new Promise( resolve =>
 			resolve( this.context.documents.delete( this.resolveURI( userURI ), requestOptions ) )
 		);
 	}
 
-	private changeEnabledStatus( userURI:string, value:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response[] ]> {
+	private changeEnabledStatus( userURI:string, value:boolean, requestOptions?:RequestOptions ):Promise<[ PersistedUser.Class, Response[] ]> {
 		return Promise.resolve().then( () => {
 			const absoluteUserURI:string = this.resolveURI( userURI );
 			const userPointer:Pointer = this.context.documents.getPointer( absoluteUserURI );

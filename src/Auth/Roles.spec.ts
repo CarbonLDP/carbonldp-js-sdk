@@ -1,5 +1,5 @@
 import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { Pointer } from "../Pointer";
 import { C } from "../Vocabularies/C";
@@ -90,7 +90,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					{ name: "parentRole", type: "string | Carbon.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -159,7 +159,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
 					{ name: "parentRole", type: "string | Carbon.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
 				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
@@ -196,7 +196,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let options:HTTP.Request.Options = {
+				let options:RequestOptions = {
 					timeout: 5555,
 				};
 
@@ -232,7 +232,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			[ "T" ],
 			"Retrieves a role from the current context.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -435,7 +435,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				[ "T" ],
 				"Retrieves an array of resolved pointers for all the users of the specified role.", [
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				// TODO: Change to `PersistedUser`
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
@@ -462,7 +462,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let options:HTTP.Request.Options = {
+				let options:RequestOptions = {
 					timeout: 5555,
 				};
 
@@ -497,14 +497,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"Makes a relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add the user." },
 				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The user that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			expect( roles.addUser ).toBeDefined();
 			expect( Utils.isFunction( roles.addUser ) );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( roles, "addUsers" );
 
 			roles.addUser( "http://example.com/.system/roles/a-role/", "http://example.com/users/an-user/" );
@@ -523,7 +523,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"Makes a relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add users." },
 				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -563,7 +563,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: constructAccessPointResponse( "http://example.com/.system/roles/another-role/" ),
 			} );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "addMembers" ).and.returnValue( Promise.resolve() );
 			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( "http://example.com/users/another-user/" ) ];
 
@@ -598,14 +598,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"Removes the relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the user." },
 				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The user that wants to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ():void => {
 			expect( roles.removeUser ).toBeDefined();
 			expect( Utils.isFunction( roles.removeUser ) );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( roles, "removeUsers" );
 
 			roles.removeUser( "http://example.com/.system/roles/a-role/", "http://example.com/users/an-user/" );
@@ -624,7 +624,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"Remove the relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the users." },
 				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -664,7 +664,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				responseText: constructAccessPointResponse( "http://example.com/.system/roles/another-role/" ),
 			} );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
 			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( "http://example.com/users/another-user/" ) ];
 

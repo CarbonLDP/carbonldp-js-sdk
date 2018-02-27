@@ -16,18 +16,18 @@ import * as Utils from "./../Utils";
 import { Header } from "./Header";
 import Parser from "./JSONParser";
 
-import * as Request from "./Request";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+	RetrievalPreferences,
+} from "./Request";
 import { Response } from "./Response";
 
 describe( module( "Carbon/HTTP/Request" ), function():void {
 
-	it( isDefined(), ():void => {
-		expect( Request ).toBeDefined();
-		expect( Utils.isObject( Request ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.HTTP.Request.Options",
+		"Carbon.HTTP.Request.RequestOptions",
 		"Customizable options that can change the behaviour of the request."
 	), ():void => {
 
@@ -38,7 +38,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"Map that contains the references to the headers to include in the request."
 		), ():void => {
 			let headers:Map<string, Header> = new Map();
-			let options:Request.Options = {};
+			let options:RequestOptions = {};
 
 			options.headers = headers;
 			expect( options.headers ).toEqual( jasmine.any( Map ) );
@@ -51,7 +51,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"Flag that enables Cross-Origin Resource Sharing (CORS)."
 		), ():void => {
 			let enableCORS:boolean = true;
-			let options:Request.Options = {};
+			let options:RequestOptions = {};
 
 			options.sendCredentialsOnCORS = enableCORS;
 			expect( options.sendCredentialsOnCORS ).toEqual( jasmine.any( Boolean ) );
@@ -61,7 +61,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 	describe( interfaze(
 		"Carbon.HTTP.Request.RetrievalPreferences",
-		"Object used at `Carbon.HTTP.Request.Util.setRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
+		"Object used at `Carbon.HTTP.Request.RequestUtils.setRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
 	), ():void => {
 
 		it( hasProperty(
@@ -71,7 +71,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"Prefer URIs that indicates some specific information should be returned in the request's response."
 		), ():void => {
 			let include:string[] = [ "http://example.com/ns#Some-Prefer" ];
-			let preferences:Request.RetrievalPreferences = {};
+			let preferences:RetrievalPreferences = {};
 
 			preferences.include = include;
 			expect( preferences.include ).toEqual( jasmine.any( Array ) );
@@ -85,7 +85,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"Prefer URIs that indicates some specific information should NOT be included in the request's response."
 		), ():void => {
 			let omit:string[] = [ "http://example.com/ns#Some-Prefer" ];
-			let preferences:Request.RetrievalPreferences = {};
+			let preferences:RetrievalPreferences = {};
 
 			preferences.omit = omit;
 			expect( preferences.omit ).toEqual( jasmine.any( Array ) );
@@ -95,13 +95,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Request.Service",
+		"Carbon.HTTP.Request.RequestService",
 		"Class with functions to easily manage HTTP requests."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( Request.Service ).toBeDefined();
-			expect( Utils.isFunction( Request.Service ) ).toBe( true );
+			expect( RequestService ).toBeDefined();
+			expect( Utils.isFunction( RequestService ) ).toBe( true );
 		} );
 
 		let responseHeaders:JasmineAjaxRequestStubReturnOptions = {
@@ -137,7 +137,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 		let headersMap:Map<string, Header> = new Map()
 			.set( "Content-Type", new Header( "application/json" ) )
 			.set( "Accept", new Header( "application/json" ) );
-		let options:Request.Options = {
+		let options:RequestOptions = {
 			headers: headersMap,
 			timeout: 5000,
 			sendCredentialsOnCORS: false,
@@ -177,8 +177,8 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Request.Service.send ).toBeDefined();
-				expect( Request.Service.send ).toEqual( jasmine.any( Function ) );
+				expect( RequestService.send ).toBeDefined();
+				expect( RequestService.send ).toEqual( jasmine.any( Function ) );
 			} );
 
 		} );
@@ -191,13 +191,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			],
 			{ type: "Promise<Carbon.HTTP.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( Request.Service.head ).toBeDefined();
-			expect( Utils.isFunction( Request.Service.head ) ).toBe( true );
+			expect( RequestService.head ).toBeDefined();
+			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
 
-			promise = Request.Service.head( "http://example.com/200" );
+			promise = RequestService.head( "http://example.com/200" );
 			testPromise( promise );
 			promises.push( promise.then( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -206,7 +206,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
 			} ) );
 
-			promise = Request.Service.head( "http://example.com/200", options );
+			promise = RequestService.head( "http://example.com/200", options );
 			testPromise( promise );
 			promises.push( promise.then( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -215,7 +215,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				testHTTPResponseHeaders( response, responseHeaders.responseHeaders );
 			} ) );
 
-			promise = Request.Service.head( "http://example.com/404" );
+			promise = RequestService.head( "http://example.com/404" );
 			testPromise( promise );
 			promise = promise.catch( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -225,7 +225,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			} );
 			promises.push( promise );
 
-			promise = Request.Service.head( "http://example.com/500", options );
+			promise = RequestService.head( "http://example.com/500", options );
 			testPromise( promise );
 			promise = promise.catch( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -246,13 +246,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			],
 			{ type: "Promise<Carbon.HTTP.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
-			expect( Request.Service.head ).toBeDefined();
-			expect( Utils.isFunction( Request.Service.head ) ).toBe( true );
+			expect( RequestService.head ).toBeDefined();
+			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
 
-			promise = Request.Service.options( "http://example.com/200" );
+			promise = RequestService.options( "http://example.com/200" );
 			testPromise( promise );
 			promises.push( promise.then( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -261,7 +261,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				testHTTPResponseHeaders( response, responseOptions.responseHeaders );
 			} ) );
 
-			promise = Request.Service.options( "http://example.com/200", options );
+			promise = RequestService.options( "http://example.com/200", options );
 			testPromise( promise );
 			promises.push( promise.then( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -270,7 +270,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				testHTTPResponseHeaders( response, responseOptions.responseHeaders );
 			} ) );
 
-			promise = Request.Service.options( "http://example.com/404" );
+			promise = RequestService.options( "http://example.com/404" );
 			testPromise( promise );
 			promise = promise.catch( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -280,7 +280,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			} );
 			promises.push( promise );
 
-			promise = Request.Service.options( "http://example.com/500", options );
+			promise = RequestService.options( "http://example.com/500", options );
 			testPromise( promise );
 			promise = promise.catch( function( response:Response ):void {
 				testHTTPResponse( response );
@@ -305,13 +305,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.get ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.get ) ).toBe( true );
+				expect( RequestService.get ).toBeDefined();
+				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.get( "http://example.com/200" );
+				promise = RequestService.get( "http://example.com/200" );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -320,7 +320,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					testHTTPResponseData( response, responseFull.responseText );
 				} ) );
 
-				promise = Request.Service.get( "http://example.com/200", options );
+				promise = RequestService.get( "http://example.com/200", options );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -330,7 +330,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.get( "http://example.com/404" );
+				promise = RequestService.get( "http://example.com/404" );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -340,7 +340,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.get( "http://example.com/500", options );
+				promise = RequestService.get( "http://example.com/500", options );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -361,13 +361,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<[Object, Carbon.HTTP.Response]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.get ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.get ) ).toBe( true );
+				expect( RequestService.get ).toBeDefined();
+				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.get( "http://example.com/200", null, parser );
+				promise = RequestService.get( "http://example.com/200", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -379,7 +379,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					} );
 				} ) );
 
-				promise = Request.Service.get( "http://example.com/200", options, parser );
+				promise = RequestService.get( "http://example.com/200", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -392,7 +392,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.get( "http://example.com/404", null, parser );
+				promise = RequestService.get( "http://example.com/404", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -402,7 +402,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.get( "http://example.com/500", options, parser );
+				promise = RequestService.get( "http://example.com/500", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -430,13 +430,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.post ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.post ) ).toBe( true );
+				expect( RequestService.post ).toBeDefined();
+				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.post( "http://example.com/200", "some body data" );
+				promise = RequestService.post( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -445,7 +445,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					testHTTPResponseData( response, responseFull.responseText );
 				} ) );
 
-				promise = Request.Service.post( "http://example.com/200", "some body data", options );
+				promise = RequestService.post( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -455,7 +455,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.post( "http://example.com/404", "some body data" );
+				promise = RequestService.post( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -465,7 +465,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.post( "http://example.com/500", "some body data", options );
+				promise = RequestService.post( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -486,13 +486,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.post ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.post ) ).toBe( true );
+				expect( RequestService.post ).toBeDefined();
+				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.post( "http://example.com/200", "some body data", null, parser );
+				promise = RequestService.post( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -504,7 +504,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					} );
 				} ) );
 
-				promise = Request.Service.post( "http://example.com/200", "some body data", options, parser );
+				promise = RequestService.post( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -517,7 +517,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.post( "http://example.com/404", "some body data", null, parser );
+				promise = RequestService.post( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -527,7 +527,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.post( "http://example.com/500", "some body data", options, parser );
+				promise = RequestService.post( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -555,13 +555,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.put ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.put ) ).toBe( true );
+				expect( RequestService.put ).toBeDefined();
+				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.put( "http://example.com/200", "some body data" );
+				promise = RequestService.put( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -570,7 +570,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					testHTTPResponseData( response, responseFull.responseText );
 				} ) );
 
-				promise = Request.Service.put( "http://example.com/200", "some body data", options );
+				promise = RequestService.put( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -580,7 +580,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.put( "http://example.com/404", "some body data" );
+				promise = RequestService.put( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -590,7 +590,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.put( "http://example.com/500", "some body data", options );
+				promise = RequestService.put( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -611,13 +611,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.put ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.put ) ).toBe( true );
+				expect( RequestService.put ).toBeDefined();
+				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.put( "http://example.com/200", "some body data", null, parser );
+				promise = RequestService.put( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -629,7 +629,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					} );
 				} ) );
 
-				promise = Request.Service.put( "http://example.com/200", "some body data", options, parser );
+				promise = RequestService.put( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -642,7 +642,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.put( "http://example.com/404", "some body data", null, parser );
+				promise = RequestService.put( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -652,7 +652,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.put( "http://example.com/500", "some body data", options, parser );
+				promise = RequestService.put( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -680,13 +680,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.patch ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.patch ) ).toBe( true );
+				expect( RequestService.patch ).toBeDefined();
+				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.patch( "http://example.com/200", "some body data" );
+				promise = RequestService.patch( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -695,7 +695,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					testHTTPResponseData( response, responseFull.responseText );
 				} ) );
 
-				promise = Request.Service.patch( "http://example.com/200", "some body data", options );
+				promise = RequestService.patch( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -705,7 +705,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.patch( "http://example.com/404", "some body data" );
+				promise = RequestService.patch( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -715,7 +715,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.patch( "http://example.com/500", "some body data", options );
+				promise = RequestService.patch( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -736,13 +736,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.patch ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.patch ) ).toBe( true );
+				expect( RequestService.patch ).toBeDefined();
+				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.patch( "http://example.com/200", "some body data", null, parser );
+				promise = RequestService.patch( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -754,7 +754,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					} );
 				} ) );
 
-				promise = Request.Service.patch( "http://example.com/200", "some body data", options, parser );
+				promise = RequestService.patch( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -767,7 +767,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.patch( "http://example.com/404", "some body data", null, parser );
+				promise = RequestService.patch( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -777,7 +777,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.patch( "http://example.com/500", "some body data", options, parser );
+				promise = RequestService.patch( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -805,13 +805,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.delete ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
+				expect( RequestService.delete ).toBeDefined();
+				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "http://example.com/200", "some body data" );
+				promise = RequestService.delete( "http://example.com/200", "some body data" );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -820,7 +820,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					testHTTPResponseData( response, responseFull.responseText );
 				} ) );
 
-				promise = Request.Service.delete( "http://example.com/200", "some body data", options );
+				promise = RequestService.delete( "http://example.com/200", "some body data", options );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -830,7 +830,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.delete( "http://example.com/404", "some body data" );
+				promise = RequestService.delete( "http://example.com/404", "some body data" );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -840,7 +840,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "http://example.com/500", "some body data", options );
+				promise = RequestService.delete( "http://example.com/500", "some body data", options );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -861,13 +861,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.delete ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
+				expect( RequestService.delete ).toBeDefined();
+				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "http://example.com/200", "some body data", null, parser );
+				promise = RequestService.delete( "http://example.com/200", "some body data", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -879,7 +879,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					} );
 				} ) );
 
-				promise = Request.Service.delete( "http://example.com/200", "some body data", options, parser );
+				promise = RequestService.delete( "http://example.com/200", "some body data", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -892,7 +892,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.delete( "http://example.com/404", "some body data", null, parser );
+				promise = RequestService.delete( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -902,7 +902,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "http://example.com/500", "some body data", options, parser );
+				promise = RequestService.delete( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -923,13 +923,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.delete ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
+				expect( RequestService.delete ).toBeDefined();
+				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "http://example.com/200" );
+				promise = RequestService.delete( "http://example.com/200" );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -938,7 +938,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					testHTTPResponseData( response, responseFull.responseText );
 				} ) );
 
-				promise = Request.Service.delete( "http://example.com/200", options );
+				promise = RequestService.delete( "http://example.com/200", options );
 				testPromise( promise );
 				promises.push( promise.then( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -948,7 +948,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.delete( "http://example.com/404" );
+				promise = RequestService.delete( "http://example.com/404" );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -958,7 +958,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "http://example.com/500", options );
+				promise = RequestService.delete( "http://example.com/500", options );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -979,13 +979,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				],
 				{ type: "Promise<Carbon.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
-				expect( Request.Service.delete ).toBeDefined();
-				expect( Utils.isFunction( Request.Service.delete ) ).toBe( true );
+				expect( RequestService.delete ).toBeDefined();
+				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
-				promise = Request.Service.delete( "http://example.com/200", null, parser );
+				promise = RequestService.delete( "http://example.com/200", null, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -997,7 +997,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					} );
 				} ) );
 
-				promise = Request.Service.delete( "http://example.com/200", options, parser );
+				promise = RequestService.delete( "http://example.com/200", options, parser );
 				testPromise( promise );
 				promises.push( promise.then( function( [ object, response ]:[ Object, Response ] ):Promise<any> {
 					testHTTPResponse( response );
@@ -1010,7 +1010,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} ) );
 
 
-				promise = Request.Service.delete( "http://example.com/404", null, parser );
+				promise = RequestService.delete( "http://example.com/404", null, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -1020,7 +1020,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				} );
 				promises.push( promise );
 
-				promise = Request.Service.delete( "http://example.com/500", options, parser );
+				promise = RequestService.delete( "http://example.com/500", options, parser );
 				testPromise( promise );
 				promise = promise.catch( function( response:Response ):void {
 					testHTTPResponse( response );
@@ -1067,11 +1067,11 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Request.Util",
+		"Carbon.HTTP.Request.RequestUtils",
 		"Class with useful functions to manage the options object of a request."
 	), ():void => {
-		let options:Request.Options,
-			optionsWithHeaders:Request.Options;
+		let options:RequestOptions,
+			optionsWithHeaders:RequestOptions;
 
 		beforeEach( ():void => {
 			options = newOptionsObject();
@@ -1085,8 +1085,8 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 		} );
 
 		it( isDefined(), ():void => {
-			expect( Request.Util ).toBeDefined();
-			expect( Utils.isFunction( Request.Util ) ).toBe( true );
+			expect( RequestUtils ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils ) ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -1094,23 +1094,23 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"getHeader",
 			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header doesn't exists. If `initialize` flag is provided with true, an empty header will be created even if it already exits.", [
 				{ name: "headerName", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 				{ name: "initialize", type: "boolean", optional: true, defaultValue: "false" },
 			],
 			{ type: "Carbon.HTTP.Header.Header" }
 		), ():void => {
-			expect( Request.Util.getHeader ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.getHeader ) ).toBe( true );
+			expect( RequestUtils.getHeader ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.getHeader ) ).toBe( true );
 
-			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 
-			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders ) ).toBeUndefined();
-			expect( Request.Util.getHeader( "Authorization", options ) ).toBeUndefined();
+			expect( RequestUtils.getHeader( "Other-header", optionsWithHeaders ) ).toBeUndefined();
+			expect( RequestUtils.getHeader( "Authorization", options ) ).toBeUndefined();
 
-			expect( Request.Util.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header() );
-			expect( Request.Util.getHeader( "Authorization", options, true ) ).toEqual( new Header() );
-			expect( Request.Util.getHeader( "Authorization", optionsWithHeaders, true ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
+			expect( RequestUtils.getHeader( "Other-header", optionsWithHeaders, true ) ).toEqual( new Header() );
+			expect( RequestUtils.getHeader( "Authorization", options, true ) ).toEqual( new Header() );
+			expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders, true ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
 		} );
 
 		it( hasMethod(
@@ -1118,19 +1118,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setAcceptHeader",
 			"Set an Accept header in an options object request.", [
 				{ name: "accept", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setAcceptHeader ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setAcceptHeader ) ).toBe( true );
+			expect( RequestUtils.setAcceptHeader ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setAcceptHeader ) ).toBe( true );
 
-			options = Request.Util.setAcceptHeader( "application/json", options );
-			expect( Request.Util.getHeader( "Accept", options ) ).toEqual( new Header( "application/json" ) );
+			options = RequestUtils.setAcceptHeader( "application/json", options );
+			expect( RequestUtils.getHeader( "Accept", options ) ).toEqual( new Header( "application/json" ) );
 
-			optionsWithHeaders = Request.Util.setAcceptHeader( "application/json", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Accept", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			optionsWithHeaders = RequestUtils.setAcceptHeader( "application/json", optionsWithHeaders );
+			expect( RequestUtils.getHeader( "Accept", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1138,19 +1138,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setContentTypeHeader",
 			"Set a Content-Type header in an options object request.", [
 				{ name: "contentType", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setContentTypeHeader ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setContentTypeHeader ) ).toBe( true );
+			expect( RequestUtils.setContentTypeHeader ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setContentTypeHeader ) ).toBe( true );
 
-			options = Request.Util.setContentTypeHeader( "application/json", options );
-			expect( Request.Util.getHeader( "Content-Type", options ) ).toEqual( new Header( "application/json" ) );
+			options = RequestUtils.setContentTypeHeader( "application/json", options );
+			expect( RequestUtils.getHeader( "Content-Type", options ) ).toEqual( new Header( "application/json" ) );
 
-			optionsWithHeaders = Request.Util.setContentTypeHeader( "application/json", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Content-Type", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			optionsWithHeaders = RequestUtils.setContentTypeHeader( "application/json", optionsWithHeaders );
+			expect( RequestUtils.getHeader( "Content-Type", optionsWithHeaders ) ).toEqual( new Header( "application/json" ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1158,19 +1158,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setIfMatchHeader",
 			"Set an If-Match header in an options object request.", [
 				{ name: "etag", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setIfMatchHeader ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setIfMatchHeader ) ).toBe( true );
+			expect( RequestUtils.setIfMatchHeader ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setIfMatchHeader ) ).toBe( true );
 
-			options = Request.Util.setIfMatchHeader( 'W/"123456789"', options );
-			expect( Request.Util.getHeader( "If-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
+			options = RequestUtils.setIfMatchHeader( 'W/"123456789"', options );
+			expect( RequestUtils.getHeader( "If-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
 
-			optionsWithHeaders = Request.Util.setIfMatchHeader( 'W/"123456789"', optionsWithHeaders );
-			expect( Request.Util.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			optionsWithHeaders = RequestUtils.setIfMatchHeader( 'W/"123456789"', optionsWithHeaders );
+			expect( RequestUtils.getHeader( "If-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1178,19 +1178,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setIfNoneMatchHeader",
 			"Set an If-None-Match header in an options object request.", [
 				{ name: "eTag", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
 			{ type: "Object" }
 		), ():void => {
-			expect( Request.Util.setIfNoneMatchHeader ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setIfNoneMatchHeader ) ).toBe( true );
+			expect( RequestUtils.setIfNoneMatchHeader ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setIfNoneMatchHeader ) ).toBe( true );
 
-			options = Request.Util.setIfNoneMatchHeader( 'W/"123456789"', options );
-			expect( Request.Util.getHeader( "If-None-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
+			options = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', options );
+			expect( RequestUtils.getHeader( "If-None-Match", options ) ).toEqual( new Header( 'W/"123456789"' ) );
 
-			optionsWithHeaders = Request.Util.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
-			expect( Request.Util.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			optionsWithHeaders = RequestUtils.setIfNoneMatchHeader( 'W/"123456789"', optionsWithHeaders );
+			expect( RequestUtils.getHeader( "If-None-Match", optionsWithHeaders ) ).toEqual( new Header( 'W/"123456789"' ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1198,19 +1198,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setPreferredInteractionModel",
 			"Set a Prefer header with `rel=interaction-model` in an options object request.", [
 				{ name: "interactionModelURI", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setPreferredInteractionModel ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setPreferredInteractionModel ) ).toBe( true );
+			expect( RequestUtils.setPreferredInteractionModel ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setPreferredInteractionModel ) ).toBe( true );
 
-			options = Request.Util.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
+			options = RequestUtils.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", options );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
 
-			optionsWithHeaders = Request.Util.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			optionsWithHeaders = RequestUtils.setPreferredInteractionModel( "http://www.w3.org/ns/ldp#RDFSource", optionsWithHeaders );
+			expect( RequestUtils.getHeader( "Prefer", optionsWithHeaders ) ).toEqual( new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1218,27 +1218,27 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setPreferredRetrieval",
 			"Set a Prefer header which indicates to the platform to type of retrieval to make.", [
 				{ name: "retrievalType", type: `"representation" | "minimal"`, description: `If "representation" is chosen the platform must retrieve the entire resource; otherwise when "minimal" is sent the minimal data will be returned generally an empty one.` },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setPreferredRetrieval ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setPreferredRetrieval ) ).toBe( true );
+			expect( RequestUtils.setPreferredRetrieval ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setPreferredRetrieval ) ).toBe( true );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrieval( "representation", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header( "return=representation" ) );
+			options = RequestUtils.setPreferredRetrieval( "representation", options );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "return=representation" ) );
 
 			options = newOptionsObject();
-			options = Request.Util.setPreferredRetrieval( "minimal", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header( "return=minimal" ) );
+			options = RequestUtils.setPreferredRetrieval( "minimal", options );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header( "return=minimal" ) );
 
 			options = {
 				headers: new Map()
 					.set( "prefer", new Header( "http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model" ) ),
 			};
-			options = Request.Util.setPreferredRetrieval( "representation", options );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual(
+			options = RequestUtils.setPreferredRetrieval( "representation", options );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual(
 				new Header(
 					"http://www.w3.org/ns/ldp#RDFSource; rel=interaction-model," +
 					"return=representation"
@@ -1251,19 +1251,19 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setSlug",
 			"Set a Slug header in an options object request.", [
 				{ name: "slug", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setSlug ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setSlug ) ).toBe( true );
+			expect( RequestUtils.setSlug ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setSlug ) ).toBe( true );
 
-			options = Request.Util.setSlug( "a-slug-name", options );
-			expect( Request.Util.getHeader( "Slug", options ) ).toEqual( new Header( "a-slug-name" ) );
+			options = RequestUtils.setSlug( "a-slug-name", options );
+			expect( RequestUtils.getHeader( "Slug", options ) ).toEqual( new Header( "a-slug-name" ) );
 
-			optionsWithHeaders = Request.Util.setSlug( "a-slug-name", optionsWithHeaders );
-			expect( Request.Util.getHeader( "Slug", optionsWithHeaders ) ).toEqual( new Header( "a-slug-name" ) );
-			expect( Request.Util.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
+			optionsWithHeaders = RequestUtils.setSlug( "a-slug-name", optionsWithHeaders );
+			expect( RequestUtils.getHeader( "Slug", optionsWithHeaders ) ).toEqual( new Header( "a-slug-name" ) );
+			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
 		it( hasMethod(
@@ -1271,16 +1271,16 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"setRetrievalPreferences",
 			"Set a Prefer header with `return=representation` in an options object request.", [
 				{ name: "preference", type: "Carbon.HTTP.Request.RetrievalPreferences" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options" },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." },
 			],
-			{ type: "Carbon.HTTP.Request.Options" }
+			{ type: "Carbon.HTTP.Request.RequestOptions" }
 		), ():void => {
-			expect( Request.Util.setRetrievalPreferences ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.setRetrievalPreferences ) ).toBe( true );
+			expect( RequestUtils.setRetrievalPreferences ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.setRetrievalPreferences ) ).toBe( true );
 
-			let preferencesEmpty:Request.RetrievalPreferences = {};
-			let preferencesIncludeNormal:Request.RetrievalPreferences = {
+			let preferencesEmpty:RetrievalPreferences = {};
+			let preferencesIncludeNormal:RetrievalPreferences = {
 				include: [
 					LDP.PreferMinimalContainer,
 					LDP.PreferMembership,
@@ -1288,10 +1288,10 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 			let preferencesIncludeString:string = `return=representation; include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"`;
 			let preferencesIncludeStringNoRepresentation:string = `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"`;
-			let preferencesIncludeEmpty:Request.RetrievalPreferences = {
+			let preferencesIncludeEmpty:RetrievalPreferences = {
 				include: [],
 			};
-			let preferencesOmitNormal:Request.RetrievalPreferences = {
+			let preferencesOmitNormal:RetrievalPreferences = {
 				omit: [
 					LDP.PreferContainment,
 					C.PreferContainmentResources,
@@ -1300,10 +1300,10 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 			let preferencesOmitString:string = `return=representation; omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
 			let preferencesOmitStringNoRepresentation:string = `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
-			let preferencesOmitEmpty:Request.RetrievalPreferences = {
+			let preferencesOmitEmpty:RetrievalPreferences = {
 				omit: [],
 			};
-			let preferencesFullNormal:Request.RetrievalPreferences = {
+			let preferencesFullNormal:RetrievalPreferences = {
 				include: [
 					LDP.PreferMinimalContainer,
 					LDP.PreferMembership,
@@ -1316,33 +1316,33 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			};
 			let preferencesFullString:string = `return=representation; include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", return=representation; omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
 			let preferencesFullStringNoRepresentation:string = `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
-			let preferencesFullEmpty:Request.RetrievalPreferences = {
+			let preferencesFullEmpty:RetrievalPreferences = {
 				include: [],
 				omit: [],
 			};
 
-			options = Request.Util.setRetrievalPreferences( preferencesEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
-			options = Request.Util.setRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
-			options = Request.Util.setRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
-			options = Request.Util.setRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			options = RequestUtils.setRetrievalPreferences( preferencesEmpty, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			options = RequestUtils.setRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			options = RequestUtils.setRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+			options = RequestUtils.setRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
 
-			options = Request.Util.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeString );
-			options = Request.Util.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitString );
-			options = Request.Util.setRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
+			options = RequestUtils.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeString );
+			options = RequestUtils.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitString );
+			options = RequestUtils.setRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
 
-			options = Request.Util.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentation );
-			options = Request.Util.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentation );
-			options = Request.Util.setRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
-			expect( Request.Util.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentation );
+			options = RequestUtils.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentation );
+			options = RequestUtils.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentation );
+			options = RequestUtils.setRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentation );
 
 		} );
 
@@ -1354,39 +1354,39 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			],
 			{ type: "boolean" }
 		), ():void => {
-			expect( Request.Util.isOptions ).toBeDefined();
-			expect( Utils.isFunction( Request.Util.isOptions ) ).toBe( true );
+			expect( RequestUtils.isOptions ).toBeDefined();
+			expect( Utils.isFunction( RequestUtils.isOptions ) ).toBe( true );
 
-			let anotherOptions:Request.Options = {
+			let anotherOptions:RequestOptions = {
 				headers: null,
 				sendCredentialsOnCORS: null,
 				timeout: null,
 				request: null,
 			};
-			expect( Request.Util.isOptions( anotherOptions ) ).toBe( true );
+			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
 
 			delete anotherOptions.headers;
-			expect( Request.Util.isOptions( anotherOptions ) ).toBe( true );
+			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
 			anotherOptions.headers = null;
 
 			delete anotherOptions.sendCredentialsOnCORS;
-			expect( Request.Util.isOptions( anotherOptions ) ).toBe( true );
+			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
 			anotherOptions.sendCredentialsOnCORS = null;
 
 			delete anotherOptions.timeout;
-			expect( Request.Util.isOptions( anotherOptions ) ).toBe( true );
+			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
 			anotherOptions.timeout = null;
 
 			delete anotherOptions.request;
-			expect( Request.Util.isOptions( anotherOptions ) ).toBe( true );
+			expect( RequestUtils.isOptions( anotherOptions ) ).toBe( true );
 			anotherOptions.request = null;
 
-			expect( Request.Util.isOptions( {} ) ).toBe( false );
-			expect( Request.Util.isOptions( null ) ).toBe( false );
-			expect( Request.Util.isOptions( undefined ) ).toBe( false );
+			expect( RequestUtils.isOptions( {} ) ).toBe( false );
+			expect( RequestUtils.isOptions( null ) ).toBe( false );
+			expect( RequestUtils.isOptions( undefined ) ).toBe( false );
 		} );
 
-		function newOptionsObject():Request.Options {
+		function newOptionsObject():RequestOptions {
 			return {
 				timeout: 5000,
 				sendCredentialsOnCORS: false,

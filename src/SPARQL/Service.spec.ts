@@ -1,11 +1,15 @@
 import * as Errors from "../Errors";
 
-import * as HTTP from "../HTTP";
+import { Header } from "../HTTP/Header";
+import {
+	RequestOptions,
+	RequestUtils,
+} from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import {
 	Pointer,
-	PointerLibrary
-} from "./../Pointer";
+	PointerLibrary,
+} from "../Pointer";
 import {
 	clazz,
 	hasDefaultExport,
@@ -15,8 +19,6 @@ import {
 	STATIC,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-
-import { Header } from "../HTTP/Header";
 import * as RawResults from "./RawResults";
 import * as SELECTResults from "./SELECTResults";
 
@@ -47,7 +49,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawASKQuery", "Executes an ASK Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -98,7 +100,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeASKQuery", "Executes an ASK Query and returns a boolean.", [
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -146,7 +148,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				{ name: "url", type: "string" },
 				{ name: "selectQuery", type: "string" },
 				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
@@ -323,7 +325,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawSELECTQuery", "Executes a SELECT Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -471,7 +473,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawCONSTRUCTQuery", "Executes a CONSTRUCT Query and returns a string with the resulting model.", [
 			{ name: "url", type: "string" },
 			{ name: "constructQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -532,8 +534,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						ldp:contains <l1>, <l2>, <l3>.
 				`;
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = { headers: new Map().set( "some", new Header( "some" ) ) };
-				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
+				let requestOptions:RequestOptions = { headers: new Map().set( "some", new Header( "some" ) ) };
+				RequestUtils.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {
 					status: 200,
@@ -568,7 +570,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawDESCRIBEQuery", "Executes a DESCRIBE Query and returns a string with the resulting model.", [
 			{ name: "url", type: "string" },
 			{ name: "describeQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -629,8 +631,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						ldp:contains <l1>, <l2>, <l3>.
 				`;
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = {};
-				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
+				let requestOptions:RequestOptions = {};
+				RequestUtils.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {
 					status: 200,
@@ -667,7 +669,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			"executeUPDATE", "Executes an UPDATE query.", [
 				{ name: "url", type: "string" },
 				{ name: "update", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<Carbon.HTTP.Response.Class>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
@@ -710,8 +712,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			(() => {
 				let constructQuery:string = `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`;
 				let acceptHeader:string = "text/turtle";
-				let requestOptions:HTTP.Request.Options = {};
-				HTTP.Request.Util.setAcceptHeader( acceptHeader, requestOptions );
+				let requestOptions:RequestOptions = {};
+				RequestUtils.setAcceptHeader( acceptHeader, requestOptions );
 
 				jasmine.Ajax.stubRequest( "http://example.com/sparql-endpoint/turtle/", constructQuery, "POST" ).andReturn( {
 					status: 200,

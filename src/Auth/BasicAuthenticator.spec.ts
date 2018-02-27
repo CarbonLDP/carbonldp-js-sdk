@@ -1,26 +1,22 @@
-import {
-	INSTANCE,
-
-	module,
-
-	isDefined,
-
-	clazz,
-
-	hasConstructor,
-	hasMethod, hasDefaultExport,
-} from "./../test/JasmineExtender";
-
 import * as Errors from "../Errors";
 import { Header } from "../HTTP/Header";
-import * as Request from "../HTTP/Request";
+import { RequestOptions } from "../HTTP/Request";
+import {
+	clazz,
+	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
+	INSTANCE,
+	isDefined,
+	module,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 
 import * as BasicAuthenticator from "./BasicAuthenticator";
 import DefaultExport from "./BasicAuthenticator";
+
+import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
@@ -79,7 +75,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 				{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
 			],
 			{ type: "Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >" }
-		), ( done:{():void; fail:( error:any ) => void} ):void => {
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
 			(() => {
@@ -141,11 +137,11 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Basic authentication header to the passed request options object.\n" +
-			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." },
+			"The `Carbon.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." }
-		), ( done:{():void; fail:( error:any ) => void} ):void => {
+			{ type: "Carbon.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
+		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
 
@@ -157,7 +153,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ).toThrow( new Errors.IllegalStateError( "The authenticator isn't authenticated." ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:Request.Options = authenticator.addAuthentication( {} );
+				let requestOptions:RequestOptions = authenticator.addAuthentication( {} );
 
 				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
@@ -179,7 +175,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				authenticator.addAuthentication( requestOptions );
@@ -205,7 +201,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
@@ -235,7 +231,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
@@ -266,7 +262,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			} ) );
 
 			promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-				let requestOptions:Request.Options = {
+				let requestOptions:RequestOptions = {
 					headers: new Map<string, Header>(),
 				};
 				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );

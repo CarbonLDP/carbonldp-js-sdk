@@ -2,9 +2,12 @@ import { QueryClause } from "sparqler/clauses";
 
 import { AccessPointBase } from "./AccessPoint";
 import { Document } from "./Document";
-import Documents from "./Documents";
+import { Documents } from "./Documents";
 import { Fragment } from "./Fragment";
-import * as Request from "./HTTP/Request";
+import {
+	RequestOptions,
+	RequestUtils,
+} from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import * as MessagingDocument from "./Messaging/Document";
 import { NamedFragment } from "./NamedFragment";
@@ -59,7 +62,7 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 
 	refresh<T extends object>():Promise<[ T & Class, Response ]>;
 
-	save<T extends object>( requestOptions?:Request.Options ):Promise<[ T & Class, Response ]>;
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<[ T & Class, Response ]>;
 
 	saveAndRefresh<T extends object>():Promise<[ T & Class, Response[] ]>;
 
@@ -73,51 +76,51 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 
 	addMembers( members:(Pointer | string)[] ):Promise<Response>;
 
-	createChild<T extends object>( object:T, slug:string, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChild<T extends object>( object:T, slug:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
 
-	createChild<T extends object>( object:T, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChild<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
 
-	createChild( slug:string, requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+	createChild( slug:string, requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
 
-	createChild( requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+	createChild( requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
 
-	createChildren<T extends object>( objects:T[], slugs:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildren<T extends object>( objects:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
 
-	createChildren<T extends object>( objects:T[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildren<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
 
-	createChildAndRetrieve<T extends object>( object:T, slug:string, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChildAndRetrieve<T extends object>( object:T, slug:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
 
-	createChildAndRetrieve<T extends object>( object:T, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+	createChildAndRetrieve<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
 
-	createChildAndRetrieve( slug:string, requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+	createChildAndRetrieve( slug:string, requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
 
-	createChildAndRetrieve( requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+	createChildAndRetrieve( requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
 
-	createChildrenAndRetrieve<T extends object>( objects:T[], slugs:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildrenAndRetrieve<T extends object>( objects:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
 
-	createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+	createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
 
-	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:Request.Options ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
+	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
 
-	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:Request.Options ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
+	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
 
-	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
 
-	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-
-
-	listChildren( requestOptions?:Request.Options ):Promise<[ Class[], Response ]>;
+	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
 
 
-	getChildren<T extends object>( requestOptions?:Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+	listChildren( requestOptions?:RequestOptions ):Promise<[ Class[], Response ]>;
+
+
+	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 
 	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 
 
-	listMembers( requestOptions?:Request.Options ):Promise<[ Class[], Response ]>;
+	listMembers( requestOptions?:RequestOptions ):Promise<[ Class[], Response ]>;
 
 
-	getMembers<T extends object>( requestOptions?:Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 
 	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 
@@ -131,19 +134,19 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 	removeAllMembers():Promise<Response>;
 
 
-	executeRawASKQuery( askQuery:string, requestOptions?:Request.Options ):Promise<[ SPARQL.RawResults.Class, Response ]>;
+	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.Class, Response ]>;
 
-	executeASKQuery( askQuery:string, requestOptions?:Request.Options ):Promise<[ boolean, Response ]>;
+	executeASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ boolean, Response ]>;
 
-	executeRawSELECTQuery( selectQuery:string, requestOptions?:Request.Options ):Promise<[ SPARQL.RawResults.Class, Response ]>;
+	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.Class, Response ]>;
 
-	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:Request.Options ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]>;
+	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]>;
 
-	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:Request.Options ):Promise<[ string, Response ]>;
+	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:RequestOptions ):Promise<[ string, Response ]>;
 
-	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:Request.Options ):Promise<[ string, Response ]>;
+	executeRawDESCRIBEQuery( describeQuery:string, requestOptions?:RequestOptions ):Promise<[ string, Response ]>;
 
-	executeUPDATE( updateQuery:string, requestOptions?:Request.Options ):Promise<Response>;
+	executeUPDATE( updateQuery:string, requestOptions?:RequestOptions ):Promise<Response>;
 
 	sparql():QueryClause;
 }
@@ -246,7 +249,7 @@ function refresh<T extends Class>():Promise<[ T, Response ]> {
 	return this._documents.refresh( this );
 }
 
-function save<T extends Class>( requestOptions?:Request.Options ):Promise<[ T, Response ]> {
+function save<T extends Class>( requestOptions?:RequestOptions ):Promise<[ T, Response ]> {
 	return this._documents.save( this, requestOptions );
 }
 
@@ -272,71 +275,71 @@ function addMembers( members:(Pointer | string)[] ):Promise<Response> {
 	return this._documents.addMembers( this.id, members );
 }
 
-function createChild<T extends object>( object:T, slug:string, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-function createChild<T extends object>( object:T, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-function createChild( slug:string, requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
-function createChild( requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
-function createChild<T extends object>( this:Class, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions:Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
-	requestOptions = Request.Util.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
-	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) || Request.Util.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
+function createChild<T extends object>( object:T, slug:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+function createChild<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+function createChild( slug:string, requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+function createChild( requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+function createChild<T extends object>( this:Class, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
+	requestOptions = RequestUtils.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) || RequestUtils.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
 	let slug:string = Utils.isString( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 
 	return this._documents.createChild<T>( this.id, object, slug, requestOptions );
 }
 
-function createChildren<T extends object>( objects:T[], slugs:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-function createChildren<T extends object>( objects:T[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-function createChildren<T extends object>( this:Class, objects:T[], slugsOrRequestOptions?:any, requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
+function createChildren<T extends object>( objects:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+function createChildren<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+function createChildren<T extends object>( this:Class, objects:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
 	return this._documents.createChildren<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
-function createChildAndRetrieve<T extends object>( object:T, slug:string, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-function createChildAndRetrieve<T extends object>( object:T, requestOptions?:Request.Options ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
-function createChildAndRetrieve( slug:string, requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
-function createChildAndRetrieve( requestOptions?:Request.Options ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
-function createChildAndRetrieve<T extends object>( this:Class, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions:Request.Options = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
-	requestOptions = Request.Util.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
-	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) || Request.Util.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
+function createChildAndRetrieve<T extends object>( object:T, slug:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+function createChildAndRetrieve<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]>;
+function createChildAndRetrieve( slug:string, requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+function createChildAndRetrieve( requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument.Class, Response ]>;
+function createChildAndRetrieve<T extends object>( this:Class, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
+	requestOptions = RequestUtils.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) || RequestUtils.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
 	let slug:string = Utils.isString( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 
 	return this._documents.createChildAndRetrieve<T>( this.id, object, slug, requestOptions );
 }
 
-function createChildrenAndRetrieve<T extends object>( objects:T[], slugs:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-function createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
-function createChildrenAndRetrieve<T extends object>( this:Class, objects:T[], slugsOrRequestOptions?:any, requestOptions?:Request.Options ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
+function createChildrenAndRetrieve<T extends object>( objects:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+function createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]>;
+function createChildrenAndRetrieve<T extends object>( this:Class, objects:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument.Class)[], Response[] ]> {
 	return this._documents.createChildrenAndRetrieve<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
-function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:Request.Options ):Promise<[ PersistedAccessPoint.Class, Response ]>;
-function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:Request.Options ):Promise<[ PersistedAccessPoint.Class, Response ]>;
-function createAccessPoint<T extends object>( this:Class, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:Request.Options ):Promise<[ PersistedAccessPoint.Class, Response ]> {
+function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint.Class, Response ]>;
+function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint.Class, Response ]>;
+function createAccessPoint<T extends object>( this:Class, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint.Class, Response ]> {
 	return this._documents.createAccessPoint<T>( this.id, accessPoint, slugOrRequestOptions, requestOptions );
 }
 
-function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-function createAccessPoints<T extends object>( this:Class, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:Request.Options ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]> {
+function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+function createAccessPoints<T extends object>( this:Class, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]> {
 	return this._documents.createAccessPoints<T>( this.id, accessPoints, slugsOrRequestOptions, requestOptions );
 }
 
 
-function listChildren( this:Class, requestOptions?:Request.Options ):Promise<[ Class[], Response ]> {
+function listChildren( this:Class, requestOptions?:RequestOptions ):Promise<[ Class[], Response ]> {
 	return this._documents.listChildren( this.id, requestOptions );
 }
 
-function getChildren<T extends object>( this:Class, requestOptions?:Request.Options, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+function getChildren<T extends object>( this:Class, requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 function getChildren<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 function getChildren<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]> {
 	return this._documents.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
 }
 
 
-function listMembers( this:Class, requestOptions?:Request.Options ):Promise<[ Class[], Response ]> {
+function listMembers( this:Class, requestOptions?:RequestOptions ):Promise<[ Class[], Response ]> {
 	return this._documents.listMembers( this.id, requestOptions );
 }
 
-function getMembers<T extends object>( this:Class, requestOptions?:Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+function getMembers<T extends object>( this:Class, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 function getMembers<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
 function getMembers<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]> {
 	return this._documents.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery );
@@ -356,31 +359,31 @@ function removeAllMembers():Promise<Response> {
 	return this._documents.removeAllMembers( this.id );
 }
 
-function executeRawASKQuery( askQuery:string, requestOptions:Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+function executeRawASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeASKQuery( askQuery:string, requestOptions:Request.Options = {} ):Promise<[ boolean, Response ]> {
+function executeASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ boolean, Response ]> {
 	return this._documents.executeASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeRawSELECTQuery( selectQuery:string, requestOptions:Request.Options = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+function executeRawSELECTQuery( selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 
-function executeSELECTQuery<T extends object>( this:Class, selectQuery:string, requestOptions:Request.Options = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]> {
+function executeSELECTQuery<T extends object>( this:Class, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]> {
 	return this._documents.executeSELECTQuery<T>( this.id, selectQuery, requestOptions );
 }
 
-function executeRawCONSTRUCTQuery( constructQuery:string, requestOptions:Request.Options = {} ):Promise<[ string, Response ]> {
+function executeRawCONSTRUCTQuery( constructQuery:string, requestOptions:RequestOptions = {} ):Promise<[ string, Response ]> {
 	return this._documents.executeRawCONSTRUCTQuery( this.id, constructQuery, requestOptions );
 }
 
-function executeRawDESCRIBEQuery( describeQuery:string, requestOptions:Request.Options = {} ):Promise<[ string, Response ]> {
+function executeRawDESCRIBEQuery( describeQuery:string, requestOptions:RequestOptions = {} ):Promise<[ string, Response ]> {
 	return this._documents.executeRawDESCRIBEQuery( this.id, describeQuery, requestOptions );
 }
 
-function executeUPDATE( updateQuery:string, requestOptions:Request.Options = {} ):Promise<[ string, Response ]> {
+function executeUPDATE( updateQuery:string, requestOptions:RequestOptions = {} ):Promise<[ string, Response ]> {
 	return this._documents.executeUPDATE( this.id, updateQuery, requestOptions );
 }
 

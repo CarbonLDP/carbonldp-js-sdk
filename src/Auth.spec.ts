@@ -24,7 +24,8 @@ import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
 import * as Users from "./Auth/Users";
 
 import * as Errors from "./Errors";
-import * as HTTP from "./HTTP";
+import { BadResponseError } from "./HTTP/Errors";
+import { RequestOptions } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import * as URI from "./RDF/URI";
 import {
@@ -980,8 +981,8 @@ describe( module( "Carbon/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
-			"Adds the authentication header to a `Carbon.HTTP.Request.Options` object.", [
-				{ name: "options", type: "Carbon.HTTP.Request.Options" },
+			"Adds the authentication header to a `Carbon.HTTP.Request.RequestOptions` object.", [
+				{ name: "options", type: "Carbon.HTTP.Request.RequestOptions" },
 			]
 		), ():void => {
 
@@ -1024,7 +1025,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					mockOptions[ "parentAuth" ] = "no authenticated";
 				} );
 
-				let options:HTTP.Request.Options & { parentAuth?:string } = {};
+				let options:RequestOptions & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
@@ -1051,7 +1052,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					mockOptions[ "parentAuth" ] = "is authenticated";
 				} );
 
-				let options:HTTP.Request.Options & { parentAuth?:string } = {};
+				let options:RequestOptions & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).toHaveBeenCalledWith( options );
@@ -1083,7 +1084,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					mockOptions[ "parentAuth" ] = "is authenticated";
 				} );
 
-				let options:HTTP.Request.Options & { currentAuth?:string } = {};
+				let options:RequestOptions & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -1114,7 +1115,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 					mockOptions[ "parentAuth" ] = "no authenticated";
 				} );
 
-				let options:HTTP.Request.Options & { currentAuth?:string } = {};
+				let options:RequestOptions & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -1202,7 +1203,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"createTicket",
 			"Retrieves an authentication ticket for the URI specified.", [
 				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -1317,7 +1318,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			}
 
 			function checkFail( error:Error ):void {
-				expect( error instanceof HTTP.Errors.BadResponseError ).toBe( true );
+				expect( error instanceof BadResponseError ).toBe( true );
 			}
 
 			promise = auth.createTicket( "http://example.com/resource/" );
@@ -1344,7 +1345,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 			"getAuthenticatedURL",
 			"Returns a Promise with a one time use only authenticated URI.", [
 				{ name: "uri", type: "string", description: "The URI to generate an authenticated URI for." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
 			{ type: "Promise<string>" }
 		), ( done:{ ():void, fail:() => void } ) => {
