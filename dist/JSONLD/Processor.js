@@ -1,7 +1,4 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -9,14 +6,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var InvalidJSONLDSyntaxError_1 = __importDefault(require("../Errors/InvalidJSONLDSyntaxError"));
 var Errors = __importStar(require("../Errors"));
+var InvalidJSONLDSyntaxError_1 = __importDefault(require("../Errors/InvalidJSONLDSyntaxError"));
+var JSONParser_1 = require("../HTTP/JSONParser");
+var Request = __importStar(require("../HTTP/Request"));
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
 var RDF = __importStar(require("./../RDF"));
 var Utils = __importStar(require("./../Utils"));
-var Request = __importStar(require("../HTTP/Request"));
-var JSONParser = __importStar(require("../HTTP/JSONParser"));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
 var Class = (function () {
@@ -146,7 +146,7 @@ var Class = (function () {
             var requestOptions = { sendCredentialsOnCORS: false };
             Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
             var promise = Request.Service
-                .get(url, requestOptions, new JSONParser.Class())
+                .get(url, requestOptions, new JSONParser_1.JSONParser())
                 .catch(function (response) {
                 return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });

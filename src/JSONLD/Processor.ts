@@ -1,12 +1,12 @@
-import Error from "../Errors/InvalidJSONLDSyntaxError";
 import * as Errors from "../Errors";
+import Error from "../Errors/InvalidJSONLDSyntaxError";
+import { Header } from "../HTTP/Header";
+import { JSONParser } from "../HTTP/JSONParser";
+import * as Request from "../HTTP/Request";
+import * as Response from "../HTTP/Response";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
-import { Header } from "../HTTP/Header";
-import * as Request from "../HTTP/Request";
-import * as Response from "../HTTP/Response";
-import * as JSONParser from "../HTTP/JSONParser";
 
 const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
@@ -141,7 +141,7 @@ export class Class {
 			Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
 
 			let promise:Promise<[ any, Response.Class ]> = Request.Service
-				.get( url, requestOptions, new JSONParser.Class() )
+				.get( url, requestOptions, new JSONParser() )
 				.catch( ( response:Response.Class ) =>
 					Promise.reject( new Error( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
 				);

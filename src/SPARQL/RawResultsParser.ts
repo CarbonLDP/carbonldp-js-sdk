@@ -1,6 +1,5 @@
-import Parser from "./../HTTP/Parser";
-import JSONParser from "./../HTTP/JSONParser";
-
+import { JSONParser } from "../HTTP/JSONParser";
+import { Parser } from "../HTTP/Parser";
 import RawResults from "./RawResults";
 
 export class Class implements Parser<RawResults> {

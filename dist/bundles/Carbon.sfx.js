@@ -5468,23 +5468,16 @@ exports.Factory = Factory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Class = (function () {
-    function Class() {
+var JSONParser = (function () {
+    function JSONParser() {
     }
-    Class.prototype.parse = function (body) {
-        return new Promise(function (resolve, reject) {
-            try {
-                resolve(JSON.parse(body));
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
+    JSONParser.prototype.parse = function (body) {
+        return new Promise(function (resolve) { return resolve(JSON.parse(body)); });
     };
-    return Class;
+    return JSONParser;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.JSONParser = JSONParser;
+exports.default = JSONParser;
 
 
 /***/ }),
@@ -8787,13 +8780,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var JSONParser_1 = __importDefault(__webpack_require__(52));
+var JSONParser_1 = __webpack_require__(52);
 var Processor_1 = __importDefault(__webpack_require__(105));
 var Class = (function () {
     function Class() {
     }
     Class.prototype.parse = function (input) {
-        var jsonParser = new JSONParser_1.default();
+        var jsonParser = new JSONParser_1.JSONParser();
         return jsonParser.parse(input).then(function (parsedObject) {
             return Processor_1.default.expand(parsedObject);
         });
@@ -8810,9 +8803,6 @@ exports.default = Class;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -8820,14 +8810,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var InvalidJSONLDSyntaxError_1 = __importDefault(__webpack_require__(92));
 var Errors = __importStar(__webpack_require__(1));
+var InvalidJSONLDSyntaxError_1 = __importDefault(__webpack_require__(92));
+var JSONParser_1 = __webpack_require__(52);
+var Request = __importStar(__webpack_require__(38));
 var ObjectSchema = __importStar(__webpack_require__(11));
 var RDF = __importStar(__webpack_require__(17));
 var Utils = __importStar(__webpack_require__(0));
-var Request = __importStar(__webpack_require__(38));
-var JSONParser = __importStar(__webpack_require__(52));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
 var Class = (function () {
@@ -8957,7 +8950,7 @@ var Class = (function () {
             var requestOptions = { sendCredentialsOnCORS: false };
             Request.Util.setAcceptHeader("application/ld+json, application/json", requestOptions);
             var promise = Request.Service
-                .get(url, requestOptions, new JSONParser.Class())
+                .get(url, requestOptions, new JSONParser_1.JSONParser())
                 .catch(function (response) {
                 return Promise.reject(new InvalidJSONLDSyntaxError_1.default("Unable to resolve context from \"" + url + "\". Status code: " + response.status));
             });
@@ -13371,16 +13364,13 @@ exports.isMultiLine = isMultiLine;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var JSONParser_1 = __importDefault(__webpack_require__(52));
+var JSONParser_1 = __webpack_require__(52);
 var Class = (function () {
     function Class() {
     }
     Class.prototype.parse = function (input) {
-        var jsonParser = new JSONParser_1.default();
+        var jsonParser = new JSONParser_1.JSONParser();
         return jsonParser.parse(input).then(function (parsedObject) {
             return parsedObject;
         });
