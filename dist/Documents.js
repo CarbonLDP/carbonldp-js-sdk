@@ -19,7 +19,6 @@ var FreeResources_1 = require("./FreeResources");
 var HTTPErrors = __importStar(require("./HTTP/Errors"));
 var HTTPMethod_1 = require("./HTTP/HTTPMethod");
 var Request = __importStar(require("./HTTP/Request"));
-var Response = __importStar(require("./HTTP/Response"));
 var JSONLD = __importStar(require("./JSONLD"));
 var LDP_1 = require("./LDP");
 var LDPatch = __importStar(require("./LDPatch"));
@@ -651,7 +650,7 @@ var Documents = (function () {
         var promise = this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
-            var eTag = Response.Util.getETag(response);
+            var eTag = response.getETag();
             if (eTag === null)
                 throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
             var targetURI = uri;
@@ -722,7 +721,7 @@ var Documents = (function () {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];
-            var eTag = Response.Util.getETag(response);
+            var eTag = response.getETag();
             if (eTag === null)
                 throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
@@ -1095,7 +1094,7 @@ var Documents = (function () {
         return requestOptions;
     };
     Documents.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
-        var eTag = Response.Util.getETag(response);
+        var eTag = response.getETag();
         if (eTag === null)
             throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
         var rdfDocument = this.getRDFDocument(persistedDocument.id, rdfDocuments, response);

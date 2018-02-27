@@ -1,5 +1,5 @@
 import HTTPError from "./../HTTPError";
-import Response from "./../../Response";
+import { Response } from "./../../Response";
 
 const name:string = "PreconditionFailedError";
 const statusCode:number = 412;

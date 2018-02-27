@@ -2,7 +2,7 @@ import * as Errors from "../Errors";
 import { BadResponseError } from "../HTTP/Errors";
 import { Header } from "../HTTP/Header";
 import * as Request from "../HTTP/Request";
-import * as Response from "../HTTP/Response";
+import { Response } from "../HTTP/Response";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
 import { FreeResources } from "./../FreeResources";
@@ -40,7 +40,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
 		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
 			return this.createToken();
-		} ).then( ( [ token, response ]:[ Token.Class, Response.Class ] ):Token.Class => {
+		} ).then( ( [ token, response ]:[ Token.Class, Response ] ):Token.Class => {
 			this.basicAuthenticator.clearAuthentication();
 			this._credentials = token;
 			return token;
@@ -66,7 +66,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		this._credentials = null;
 	}
 
-	private createToken():Promise<[ Token.Class, Response.Class ]> {
+	private createToken():Promise<[ Token.Class, Response ]> {
 		let requestOptions:Request.Options = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
@@ -77,7 +77,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
 			return Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
-		} ).then<[ Token.Class, Response.Class ]>( ( [ expandedResult, response ]:[ any, Response.Class ] ) => {
+		} ).then<[ Token.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );

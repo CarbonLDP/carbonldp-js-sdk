@@ -1,3 +1,6 @@
+import * as Errors from "../Errors";
+import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
 import {
 	clazz,
 	hasConstructor,
@@ -12,8 +15,6 @@ import {
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import AbstractContext from "./../AbstractContext";
-import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
@@ -84,7 +85,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<[ PersistedUser.Class, Response ]> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -107,7 +108,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<[ PersistedUser.Class, Response ]> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -156,11 +157,11 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					}`,
 				} );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<[ PersistedUser.Class, Response ]> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 
-				promise.then( ( [ persistedUser, response ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => {
-					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+				promise.then( ( [ persistedUser, response ]:[ PersistedUser.Class, Response ] ) => {
+					expect( response ).toEqual( jasmine.any( Response ) );
 
 					expect( PersistedUser.Factory.is( persistedUser ) ).toBe( true );
 					expect( persistedUser ).toEqual( jasmine.objectContaining( { credentials: jasmine.any( Object ) as any } ) );
@@ -255,7 +256,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "a-user/" );
+				const promise:Promise<[ PersistedUser.Class, Response[] ]> = users.enableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -277,7 +278,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "http://example.com/not-users-container/a-user/" );
+				const promise:Promise<[ PersistedUser.Class, Response[] ]> = users.enableCredentials( "http://example.com/not-users-container/a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -300,7 +301,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				const users:Users.Class = new Users.Class( context );
 
 				// Spies decorator and function called
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const mockedUser:PersistedUser.Class = PersistedUser.Factory.decorate(
 					context.documents.getPointer( "http://example.com/users/a-user/" ),
 					context.documents
@@ -309,7 +310,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				Object.defineProperty( mockedUser, "enableCredentials", { writable: true } );
 				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "enableCredentials" ).and.returnValue( [ null, [ mockedResponse ] ] );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "a-user/" );
+				const promise:Promise<[ PersistedUser.Class, Response[] ]> = users.enableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise.then( ( [ returnedUser, responses ] ) => {
 					expect( responses ).toEqual( jasmine.any( Array ) );
@@ -357,7 +358,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "a-user/" );
+				const promise:Promise<[ PersistedUser.Class, Response[] ]> = users.disableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -379,7 +380,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "http://example.com/not-users-container/a-user/" );
+				const promise:Promise<[ PersistedUser.Class, Response[] ]> = users.disableCredentials( "http://example.com/not-users-container/a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -402,7 +403,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				const users:Users.Class = new Users.Class( context );
 
 				// Spies decorator and function called
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const mockedUser:PersistedUser.Class = PersistedUser.Factory.decorate(
 					context.documents.getPointer( "http://example.com/users/a-user/" ),
 					context.documents
@@ -411,7 +412,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				Object.defineProperty( mockedUser, "disableCredentials", { writable: true } );
 				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "disableCredentials" ).and.returnValue( [ null, [ mockedResponse ] ] );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "a-user/" );
+				const promise:Promise<[ PersistedUser.Class, Response[] ]> = users.disableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise.then( ( [ returnedUser, responses ] ) => {
 					expect( responses ).toEqual( jasmine.any( Array ) );

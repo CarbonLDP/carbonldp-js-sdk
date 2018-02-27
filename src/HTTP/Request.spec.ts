@@ -17,7 +17,7 @@ import { Header } from "./Header";
 import Parser from "./JSONParser";
 
 import * as Request from "./Request";
-import Response from "./Response";
+import { Response } from "./Response";
 
 describe( module( "Carbon/HTTP/Request" ), function():void {
 

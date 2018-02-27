@@ -1,8 +1,8 @@
+import { Resource } from "../../Resource";
+import { Response } from "../Response";
 import AbstractError from "./../../Errors/AbstractError";
-import * as PersistedDocument from "./../../PersistedDocument";
 import * as LDP from "./../../LDP";
-import { Resource } from "./../../Resource";
-import Response from "./../Response";
+import * as PersistedDocument from "./../../PersistedDocument";
 
 export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 	static get statusCode():number { return null; }

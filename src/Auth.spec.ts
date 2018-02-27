@@ -25,6 +25,7 @@ import * as Users from "./Auth/Users";
 
 import * as Errors from "./Errors";
 import * as HTTP from "./HTTP";
+import { Response } from "./HTTP/Response";
 import * as URI from "./RDF/URI";
 import {
 	clazz,
@@ -1307,12 +1308,12 @@ describe( module( "Carbon/Auth" ), ():void => {
 			let promises:Promise<any> [] = [];
 			let promise:Promise<any>;
 
-			function checkSuccess( [ ticket, response ]:[ Ticket.Class, HTTP.Response.Class ] ):void {
+			function checkSuccess( [ ticket, response ]:[ Ticket.Class, Response ] ):void {
 				expect( ticket.expirationTime.getTime() ).toBeGreaterThan( Date.now() );
 				expect( ticket.forURI.id ).toBe( "http://example.com/resource/" );
 				expect( Utils.isString( ticket.ticketKey ) ).toBe( true );
 
-				expect( response instanceof HTTP.Response.Class ).toBe( true );
+				expect( response instanceof Response ).toBe( true );
 			}
 
 			function checkFail( error:Error ):void {

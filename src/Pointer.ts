@@ -1,5 +1,5 @@
 import { IllegalStateError } from "./Errors";
-import * as HTTP from "./HTTP";
+import { Response } from "./HTTP/Response";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import * as PersistedDocument from "./PersistedDocument";
@@ -14,7 +14,7 @@ export interface Pointer {
 
 	isResolved():boolean;
 
-	resolve<T>():Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	resolve<T>():Promise<[ T & PersistedDocument.Class, Response ]>;
 }
 
 
@@ -47,7 +47,7 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
 
 	getIDs( pointers:Pointer[] ):string[];
 
-	resolveAll<T extends object>( pointers:Pointer[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]>;
+	resolveAll<T extends object>( pointers:Pointer[] ):Promise<[ (T & PersistedDocument.Class)[], Response[] ]>;
 }
 
 
@@ -55,7 +55,7 @@ export function isPointerResolved( this:Pointer ):boolean {
 	return this._resolved;
 }
 
-export function resolveStandalonePointer( this:Pointer ):Promise<[ Pointer, HTTP.Response.Class ]> {
+export function resolveStandalonePointer( this:Pointer ):Promise<[ Pointer, Response ]> {
 	return Promise.reject( new IllegalStateError( "The pointer has not been assigned to a context." ) );
 }
 
@@ -142,13 +142,13 @@ export const Pointer:PointerFactory = {
 			;
 	},
 
-	resolveAll<T extends object>( pointers:Pointer[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]> {
-		const promises:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Pointer ) => pointer.resolve<T>() );
+	resolveAll<T extends object>( pointers:Pointer[] ):Promise<[ (T & PersistedDocument.Class)[], Response[] ]> {
+		const promises:Promise<[ T & PersistedDocument.Class, Response ]>[] = pointers.map( ( pointer:Pointer ) => pointer.resolve<T>() );
 		return Promise
-			.all<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( promises )
-			.then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]>( ( results:[ T & PersistedDocument.Class, HTTP.Response.Class ][] ) => {
-				let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
-				let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
+			.all<[ T & PersistedDocument.Class, Response ]>( promises )
+			.then<[ (T & PersistedDocument.Class)[], Response[] ]>( ( results:[ T & PersistedDocument.Class, Response ][] ) => {
+				let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, Response ] ) => result[ 0 ] );
+				let responses:Response[] = results.map( ( result:[ T & PersistedDocument.Class, Response ] ) => result[ 1 ] );
 
 				return [ resolvedPointers, responses ];
 			} );

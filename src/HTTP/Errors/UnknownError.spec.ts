@@ -14,7 +14,7 @@ import {
 } from "./../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
 
-import Response from "./../Response";
+import { Response } from "./../Response";
 
 import HTTPError from "./HTTPError";
 import { Service } from "../Request";

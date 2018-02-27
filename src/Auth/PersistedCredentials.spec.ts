@@ -18,7 +18,7 @@ import {
 } from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
 import { Documents } from "./../Documents";
-import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
@@ -187,6 +187,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 			interface AnotherMockCredentials extends MockCredentials {
 				myProperty:string;
 			}
+
 			let persistedCredentials:PersistedCredentials.Class & AnotherMockCredentials;
 			let fn:Function = ():void => {};
 
@@ -236,6 +237,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				context = new MockedContext();
 			} );
 
@@ -245,10 +247,10 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				"Activate user's credentials.",
 				{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:DoneFn ):void => {
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				let spy:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, mockedResponse ] ) );
 
-				function checkReturnedValues( currentCredentials:PersistedCredentials.Class, expectedResponses:number, [ returnedCredentials, responses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ):void {
+				function checkReturnedValues( currentCredentials:PersistedCredentials.Class, expectedResponses:number, [ returnedCredentials, responses ]:[ PersistedCredentials.Class, Response[] ] ):void {
 					expect( returnedCredentials ).toBe( currentCredentials );
 					expect( returnedCredentials ).toEqual( jasmine.objectContaining( { enabled: true } ) );
 
@@ -256,10 +258,11 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 					expect( responses.length ).toBe( expectedResponses );
 					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
 				}
-				let currentCheck:( returnedData:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => void;
+
+				let currentCheck:( returnedData:[ PersistedCredentials.Class, Response[] ] ) => void;
 
 				let credentials:PersistedCredentials.Class;
-				let promise:Promise<[ PersistedCredentials.Class, HTTP.Response.Class[] ]>;
+				let promise:Promise<[ PersistedCredentials.Class, Response[] ]>;
 				const promises:Promise<void>[] = [];
 
 				credentials = PersistedCredentials.Factory.decorate( {}, context.documents );
@@ -269,9 +272,9 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 
 				credentials = PersistedCredentials.Factory.decorate( {}, context.documents );
 				Object.defineProperty( credentials, "resolve", {
-					value: ():Promise<[ PersistedCredentials.Class, HTTP.Response.Class ]> => {
+					value: ():Promise<[ PersistedCredentials.Class, Response ]> => {
 						credentials._resolved = true;
-						return Promise.resolve<[ PersistedCredentials.Class, HTTP.Response.Class ]>( [ credentials, mockedResponse ] );
+						return Promise.resolve<[ PersistedCredentials.Class, Response ]>( [ credentials, mockedResponse ] );
 					},
 				} );
 				promise = credentials.enable();
@@ -316,10 +319,10 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				"Deactivate the user's credentials.",
 				{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:DoneFn ):void => {
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				let spy:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, mockedResponse ] ) );
 
-				function checkReturnedValues( currentCredentials:PersistedCredentials.Class, expectedResponses:number, [ returnedCredentials, responses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ):void {
+				function checkReturnedValues( currentCredentials:PersistedCredentials.Class, expectedResponses:number, [ returnedCredentials, responses ]:[ PersistedCredentials.Class, Response[] ] ):void {
 					expect( returnedCredentials ).toBe( currentCredentials );
 					expect( returnedCredentials ).toEqual( jasmine.objectContaining( { enabled: false } ) );
 
@@ -327,10 +330,11 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 					expect( responses.length ).toBe( expectedResponses );
 					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
 				}
-				let currentCheck:( returnedData:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => void;
+
+				let currentCheck:( returnedData:[ PersistedCredentials.Class, Response[] ] ) => void;
 
 				let credentials:PersistedCredentials.Class;
-				let promise:Promise<[ PersistedCredentials.Class, HTTP.Response.Class[] ]>;
+				let promise:Promise<[ PersistedCredentials.Class, Response[] ]>;
 				const promises:Promise<void>[] = [];
 
 				credentials = PersistedCredentials.Factory.decorate( {}, context.documents );
@@ -340,9 +344,9 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 
 				credentials = PersistedCredentials.Factory.decorate( {}, context.documents );
 				Object.defineProperty( credentials, "resolve", {
-					value: ():Promise<[ PersistedCredentials.Class, HTTP.Response.Class ]> => {
+					value: ():Promise<[ PersistedCredentials.Class, Response ]> => {
 						credentials._resolved = true;
-						return Promise.resolve<[ PersistedCredentials.Class, HTTP.Response.Class ]>( [ credentials, mockedResponse ] );
+						return Promise.resolve<[ PersistedCredentials.Class, Response ]>( [ credentials, mockedResponse ] );
 					},
 				} );
 				promise = credentials.disable();

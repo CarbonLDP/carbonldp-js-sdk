@@ -19,7 +19,7 @@ import {
 import AbstractContext from "./AbstractContext";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
-import * as HTTP from "./HTTP";
+import { Response } from "./HTTP/Response";
 import * as PersistedACL from "./Auth/PersistedACL";
 import * as PersistedDocument from "./PersistedDocument";
 import * as Utils from "./Utils";
@@ -338,7 +338,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 
-				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
+				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, Response ] ) => {
 					expect( acl ).toBeDefined();
 					expect( response ).toBeDefined();
 
@@ -351,7 +351,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				} ) );
 
 				const unresolvedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( { id: "http://example.com/resource/" }, documents );
-				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, HTTP.Response.Class ] ) => {
+				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, Response ] ) => {
 					expect( acl ).toBeDefined();
 					expect( response ).toBeDefined();
 

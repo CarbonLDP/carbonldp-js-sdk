@@ -1,22 +1,19 @@
 import {
-	INSTANCE,
-	STATIC,
-
-	module,
 	clazz,
-
-	isDefined,
 	extendsClass,
 	hasConstructor,
+	hasDefaultExport,
+	hasMethod,
 	hasProperty,
-	hasMethod, hasDefaultExport,
-} from "./../../test/JasmineExtender";
-import * as Utils from "./../../Utils";
-
-import Response from "./../Response";
-
-import AbstractError from "./../../Errors/AbstractError";
+	INSTANCE,
+	isDefined,
+	module,
+	STATIC,
+} from "../../test/JasmineExtender";
 import { Service } from "../Request";
+import { Response } from "../Response";
+import AbstractError from "./../../Errors/AbstractError";
+import * as Utils from "./../../Utils";
 
 import * as HTTPError from "./HTTPError";
 import DefaultExport from "./HTTPError";

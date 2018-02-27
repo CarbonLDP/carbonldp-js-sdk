@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = require("../../Resource");
 var AbstractError_1 = __importDefault(require("./../../Errors/AbstractError"));
-var Resource_1 = require("./../../Resource");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(message, response) {

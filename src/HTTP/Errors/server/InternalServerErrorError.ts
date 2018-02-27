@@ -1,5 +1,5 @@
 import HTTPError from "./../HTTPError";
-import Response from "./../../Response";
+import { Response } from "./../../Response";
 
 const name:string = "InternalServerErrorError";
 const statusCode:number = 500;

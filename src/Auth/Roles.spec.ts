@@ -1,9 +1,10 @@
+import * as Errors from "../Errors";
+import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
+import { Pointer } from "../Pointer";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import AbstractContext from "./../AbstractContext";
-import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
-import { Pointer } from "./../Pointer";
 import {
 	clazz,
 	hasConstructor,
@@ -107,13 +108,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer, HTTP.Response.Class ] ):void => {
+					success: ( [ pointer, response ]:[ Pointer, Response ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/.system/roles/new-role/" );
 
 						expect( response ).toBeTruthy();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
@@ -176,13 +177,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				} );
 
 				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer, HTTP.Response.Class ] ):void => {
+					success: ( [ pointer, response ]:[ Pointer, Response ] ):void => {
 						expect( pointer ).toBeTruthy();
 						expect( Pointer.is( pointer ) ).toBe( true );
 						expect( pointer.id ).toBe( "http://example.com/.system/roles/new-role/" );
 
 						expect( response ).toBeTruthy();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
 					error: function( error:Error ):void {
 						expect( error instanceof Errors.IllegalArgumentError );
@@ -267,13 +268,13 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			context.documents.documentDecorators.set( "http://example.com/ns#Role", PersistedRole.Factory.decorate );
 
 			let spies:any = {
-				success: ( [ pointer, response ]:[ PersistedRole.Class, HTTP.Response.Class ] ):void => {
+				success: ( [ pointer, response ]:[ PersistedRole.Class, Response ] ):void => {
 					expect( pointer ).toBeTruthy();
 					expect( PersistedRole.Factory.is( pointer ) ).toBe( true );
 					expect( pointer.id ).toBe( "http://example.com/.system/roles/a-role/" );
 
 					expect( response ).toBeTruthy();
-					expect( response instanceof HTTP.Response.Class ).toBe( true );
+					expect( response instanceof Response ).toBe( true );
 				},
 				error: function( error:Error ):void {
 					expect( error instanceof Errors.IllegalArgumentError );
@@ -440,14 +441,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
-					success: ( [ pointers, response ]:[ Pointer[], HTTP.Response.Class ] ):void => {
+					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {
 						expect( pointers ).toBeTruthy();
 						expect( pointers.length ).toBe( 1 );
 						expect( pointers[ 0 ].id ).toBe( "http://example.com/users/an-user/" );
 						expect( pointers[ 0 ].isResolved() ).toBe( true );
 
 						expect( response ).toBeTruthy();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 
 					},
 					error: function( error:Error ):void {

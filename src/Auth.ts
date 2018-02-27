@@ -22,6 +22,7 @@ import Context from "./Context";
 import * as Errors from "./Errors";
 import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
+import { Response } from "./HTTP/Response";
 import * as JSONLD from "./JSONLD";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
@@ -127,7 +128,7 @@ export class Class {
 		this._authenticatedUser = null;
 	}
 
-	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, HTTP.Response.Class ]> {
+	createTicket( uri:string, requestOptions:HTTP.Request.Options = {} ):Promise<[ Ticket.Class, Response ]> {
 		let resourceURI:string = this.context.resolve( uri );
 
 		let freeResources:FreeResources = FreeResources.create( this.context.documents );
@@ -145,7 +146,7 @@ export class Class {
 			return HTTP.Request.Service.post( containerURI, body, requestOptions, new JSONLD.Parser.Class() )
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
 
-		} ).then<[ Ticket.Class, HTTP.Response.Class ]>( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
+		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
@@ -167,7 +168,7 @@ export class Class {
 	getAuthenticatedURL( uri:string, requestOptions?:HTTP.Request.Options ):Promise<string> {
 		let resourceURI:string = this.context.resolve( uri );
 
-		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, HTTP.Response.Class ] ) => {
+		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, Response ] ) => {
 			resourceURI += RDF.URI.Util.hasQuery( resourceURI ) ? "&" : "?";
 			resourceURI += `ticket=${ ticket.ticketKey }`;
 
@@ -229,7 +230,7 @@ export class Class {
 		authenticator.addAuthentication( requestOptions );
 
 		return this.context.documents.get<PersistedUser.Class>( "users/me/", requestOptions ).then(
-			( [ userDocument, response ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => userDocument
+			( [ userDocument, response ]:[ PersistedUser.Class, Response ] ) => userDocument
 		);
 	}
 

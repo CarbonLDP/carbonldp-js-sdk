@@ -10,8 +10,8 @@ import * as Utils from "./../Utils";
 import { BadResponseError } from "./Errors";
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
-import Parser from "./Parser";
-import Response from "./Response";
+import { Parser } from "./Parser";
+import { Response } from "./Response";
 
 export interface Options {
 	headers?:Map<string, Header>;

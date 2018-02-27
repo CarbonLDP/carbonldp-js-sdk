@@ -25,7 +25,7 @@ var Utils = __importStar(require("./../Utils"));
 var Errors_1 = require("./Errors");
 var Header_1 = require("./Header");
 var HTTPMethod_1 = require("./HTTPMethod");
-var Response_1 = __importDefault(require("./Response"));
+var Response_1 = require("./Response");
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
     var next = namesIterator.next();
@@ -54,7 +54,7 @@ function sendWithBrowser(method, url, body, options) {
         if (options.timeout)
             request.timeout = options.timeout;
         request.onload = request.onerror = function () {
-            var response = new Response_1.default(request);
+            var response = new Response_1.Response(request);
             onResolve(resolve, reject, response);
         };
         if (body) {
@@ -75,7 +75,7 @@ function sendWithNode(method, url, body, options) {
                 rawData.push(chunk);
             }).on("end", function () {
                 var data = Buffer.concat(rawData).toString("utf8");
-                var response = new Response_1.default(request, data, res);
+                var response = new Response_1.Response(request, data, res);
                 onResolve(resolve, reject, response);
             });
         }
@@ -104,7 +104,7 @@ function sendWithNode(method, url, body, options) {
                 returnResponse(request, res);
             });
             request.on("error", function (error) {
-                var response = new Response_1.default(request, error.message);
+                var response = new Response_1.Response(request, error.message);
                 onResolve(resolve, reject, response);
             });
             request.end(body);

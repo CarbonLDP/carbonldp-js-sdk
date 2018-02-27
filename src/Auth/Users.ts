@@ -1,7 +1,8 @@
 import { Context } from "../Context";
-import { promiseMethod } from "../Utils";
 import * as Errors from "../Errors";
 import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
+import { promiseMethod } from "../Utils";
 import { Pointer } from "./../Pointer";
 import * as URI from "./../RDF/URI";
 import * as Credentials from "./Credentials";
@@ -15,38 +16,38 @@ export class Class {
 		this.context = context;
 	}
 
-	register( email:string, password:string, enabled?:boolean ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
+	register( email:string, password:string, enabled?:boolean ):Promise<[ PersistedUser.Class, Response ]> {
 		const credentials:Credentials.Class = Credentials.Factory.create( email, password );
 		credentials.enabled = enabled;
 		return promiseMethod( () => {
 			const containerURI:string = this.getCredentialsContainerURI();
 			return this.context.documents.createChildAndRetrieve<PersistedCredentials.Class>( containerURI, credentials as any );
-		} ).then<[ PersistedUser.Class, HTTP.Response.Class ]>( ( [ persistedCredentials, response ] ) => {
+		} ).then<[ PersistedUser.Class, Response ]>( ( [ persistedCredentials, response ] ) => {
 			return [ persistedCredentials.user, response ];
 		} );
 	}
 
-	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
+	get( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response ]> {
 		return new Promise( resolve =>
 			resolve( this.context.documents.get( this.resolveURI( userURI ), requestOptions ) )
 		);
 	}
 
-	enableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+	enableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response[] ]> {
 		return this.changeEnabledStatus( userURI, true, requestOptions );
 	}
 
-	disableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+	disableCredentials( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response[] ]> {
 		return this.changeEnabledStatus( userURI, false, requestOptions );
 	}
 
-	delete( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	delete( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<Response> {
 		return new Promise( resolve =>
 			resolve( this.context.documents.delete( this.resolveURI( userURI ), requestOptions ) )
 		);
 	}
 
-	private changeEnabledStatus( userURI:string, value:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+	private changeEnabledStatus( userURI:string, value:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, Response[] ]> {
 		return Promise.resolve().then( () => {
 			const absoluteUserURI:string = this.resolveURI( userURI );
 			const userPointer:Pointer = this.context.documents.getPointer( absoluteUserURI );

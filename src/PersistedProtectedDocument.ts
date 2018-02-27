@@ -1,6 +1,7 @@
 import * as Auth from "./Auth";
 import { Documents } from "./Documents";
 import * as HTTP from "./HTTP";
+import { Response } from "./HTTP/Response";
 import * as PersistedDocument from "./PersistedDocument";
 import { Pointer } from "./Pointer";
 import SELECTResults from "./SPARQL/SELECTResults";
@@ -10,7 +11,7 @@ import { CS } from "./Vocabularies/CS";
 export interface Class extends PersistedDocument.Class {
 	accessControlList?:Pointer;
 
-	getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>;
+	getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, Response ]>;
 }
 
 export class Factory {
@@ -51,7 +52,7 @@ interface ACLResult {
 	acl:Pointer;
 }
 
-function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]> {
+function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, Response ]> {
 	let protectedDocument:Class = <Class> this;
 
 	let aclPromise:Promise<Pointer>;
@@ -61,14 +62,14 @@ function getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.Persisted
 	} else {
 		aclPromise = protectedDocument.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {
 			<${ protectedDocument.id }> <${ CS.accessControlList }> ?acl.
-		}` ).then( ( [ results ]:[ SELECTResults<ACLResult>, HTTP.Response.Class ] ) => {
+		}` ).then( ( [ results ]:[ SELECTResults<ACLResult>, Response ] ) => {
 			return results.bindings[ 0 ].acl;
 		} );
 	}
 
 	return aclPromise.then( ( acl:Pointer ) => {
 		return protectedDocument._documents.get( acl.id, requestOptions );
-	} ).then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, HTTP.Response.Class ] ) => {
+	} ).then<[ Auth.PersistedACL.Class, Response ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, Response ] ) => {
 		if( ! acl.hasType( Auth.ACL.RDF_CLASS ) ) throw new HTTP.Errors.BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
 		return [ acl, response ];
 	} );

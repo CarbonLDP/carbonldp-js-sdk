@@ -1,27 +1,23 @@
-import {
-	STATIC,
-	INSTANCE,
-
-	OPTIONAL,
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-	decoratedObject,
-
-	isDefined,
-	hasMethod,
-	extendsClass,
-	hasProperty,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
 import AbstractContext from "../AbstractContext";
-import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import {
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	STATIC,
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-
 import * as PersistedCredentials from "./PersistedCredentials";
 
 import * as PersistedUser from "./PersistedUser";
@@ -248,10 +244,10 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 				"Activate the account of the user.",
 				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:DoneFn ):void => {
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const promises:Promise<void>[] = [];
 
-				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, HTTP.Response.Class[] ] ):void {
+				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, Response[] ] ):void {
 					expect( currentObject ).toBe( returnedObject );
 					expect( responses.length ).toBe( expectedResponses );
 					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
@@ -277,7 +273,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {
 						id: "http://example.com/user/my-user/",
 					}, context.documents );
-					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.enableCredentials();
+					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.enableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
 					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
 						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
@@ -294,7 +290,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {
 						credentials: mockCredentials,
 					}, context.documents );
-					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.enableCredentials();
+					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.enableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
 					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
@@ -310,10 +306,10 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 				"Deactivate the account of the user.",
 				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
 			), ( done:DoneFn ):void => {
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
+				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const promises:Promise<void>[] = [];
 
-				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, HTTP.Response.Class[] ] ):void {
+				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, Response[] ] ):void {
 					expect( currentObject ).toBe( returnedObject );
 					expect( responses.length ).toBe( expectedResponses );
 					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
@@ -338,7 +334,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( { id: "http://example.com/user/my-user/" }, context.documents );
 
-					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.disableCredentials();
+					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.disableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
 					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
 						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
@@ -354,7 +350,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( { credentials: mockCredentials }, context.documents );
 
-					const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = user.disableCredentials();
+					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.disableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
 					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );

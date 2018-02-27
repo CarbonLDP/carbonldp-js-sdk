@@ -1,6 +1,7 @@
+import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
 import { CS } from "../Vocabularies/CS";
 import { Documents } from "./../Documents";
-import * as HTTP from "../HTTP";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import { Pointer } from "./../Pointer";
 import * as SELECTResults from "./../SPARQL/SELECTResults";
@@ -11,9 +12,9 @@ export interface Class extends PersistedProtectedDocument.Class {
 	name?:string;
 	credentials?:PersistedCredentials.Class;
 
-	enableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	enableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]>;
 
-	disableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	disableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]>;
 }
 
 export class Factory {
@@ -57,27 +58,27 @@ export class Factory {
 
 }
 
-function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	const promise:Promise<void | HTTP.Response.Class> = "credentials" in this ?
+function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, Response[] ]> {
+	const promise:Promise<void | Response> = "credentials" in this ?
 		Promise.resolve() : obtainCredentials( this );
 
-	let responses:HTTP.Response.Class[] = [];
+	let responses:Response[] = [];
 	return promise.then( ( response ) => {
 		if( response ) responses.push( response );
 
 		if( enabled ) return this.credentials.enable( requestOptions );
 		return this.credentials.disable( requestOptions );
-	} ).then<[ Class, HTTP.Response.Class[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => {
+	} ).then<[ Class, Response[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, Response[] ] ) => {
 		responses.push( ...credentialsResponses );
 
 		return [ this, responses ];
 	} );
 }
 
-function obtainCredentials( user:Class ):Promise<HTTP.Response.Class> {
+function obtainCredentials( user:Class ):Promise<Response> {
 	return user
 		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ CS.credentials }>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer }>, HTTP.Response.Class ] ) => {
+		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer }>, Response ] ) => {
 			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
 			return response;
 		} );

@@ -1,4 +1,5 @@
 import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
 import { Documents } from "./../Documents";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import * as PersistedUser from "./PersistedUser";
@@ -7,8 +8,8 @@ export interface Class extends PersistedProtectedDocument.Class {
     password?: string;
     enabled?: boolean;
     user?: PersistedUser.Class;
-    enable(requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
-    disable(requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
+    enable(requestOptions?: HTTP.Request.Options): Promise<[Class, Response[]]>;
+    disable(requestOptions?: HTTP.Request.Options): Promise<[Class, Response[]]>;
 }
 export declare class Factory {
     static hasClassProperties(object: object): boolean;

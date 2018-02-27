@@ -34,9 +34,6 @@ export class Header {
 			;
 	}
 
-	constructor();
-	constructor( values?:string[] );
-	constructor( value?:string );
 	constructor( values?:(string | string[]) ) {
 		this.values = Array.isArray( values ) ?
 			values : Header._parseValues( values );

@@ -123,7 +123,7 @@ export class Carbon extends AbstractContext.AbstractContext {
 	/**
 	 * Retrieves the Metadata related to the CarbonLDP Platform.
 	 */
-	getPlatformMetadata():Promise<[ System.PlatformMetadata.Class, HTTP.Response.Class ]> {
+	getPlatformMetadata():Promise<[ System.PlatformMetadata.Class, HTTP.Response.Response ]> {
 		return Utils.promiseMethod( () => {
 			const uri:string = this._resolvePath( "system.platform" );
 			return this.documents.get<System.PlatformMetadata.Class>( uri );

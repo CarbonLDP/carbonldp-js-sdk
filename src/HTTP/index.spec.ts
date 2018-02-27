@@ -83,8 +83,8 @@ describe( module( "Carbon/HTTP" ), ():void => {
 		"Response",
 		"Carbon/HTTP/Response"
 	), ():void => {
-		expect( HTTP.Response ).toBeDefined();
-		expect( HTTP.Response ).toBe( Response );
+		expect( Response ).toBeDefined();
+		expect( Response ).toBe( Response );
 	} );
 
 	it( reexports(

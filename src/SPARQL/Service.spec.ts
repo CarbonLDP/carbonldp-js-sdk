@@ -1,6 +1,7 @@
 import * as Errors from "../Errors";
 
 import * as HTTP from "../HTTP";
+import { Response } from "../HTTP/Response";
 import {
 	Pointer,
 	PointerLibrary
@@ -69,7 +70,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeRawASKQuery( "http://example.com/sparql-endpoint/", askQuery ).then(
-					( [ results, response ]:[ RawResults.Class, HTTP.Response.Class ] ):void => {
+					( [ results, response ]:[ RawResults.Class, Response ] ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
@@ -86,7 +87,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( results.boolean ).toEqual( true );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -122,7 +123,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				let spyRaw:jasmine.Spy = spyOn( Service.Class, "executeRawASKQuery" ).and.callThrough();
 
 				promises.push( Service.Class.executeASKQuery( "http://example.com/sparql-endpoint/", askQuery ).then(
-					( [ result, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+					( [ result, response ]:[ boolean, Response ] ):void => {
 						expect( spyRaw ).toHaveBeenCalledWith( "http://example.com/sparql-endpoint/", askQuery, jasmine.any( Object ) );
 
 						// Inspect results
@@ -131,7 +132,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( result ).toEqual( true );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -218,7 +219,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				let pointerLibrary:PointerLibrary = new MockedPointerLibrary();
 
 				promises.push( Service.Class.executeSELECTQuery( "http://example.com/sparql-endpoint/", selectQuery, pointerLibrary ).then(
-					( [ results, response ]:[ SELECTResults.Class, HTTP.Response.Class ] ):void => {
+					( [ results, response ]:[ SELECTResults.Class, Response ] ):void => {
 						expect( spyRaw ).toHaveBeenCalledWith( "http://example.com/sparql-endpoint/", selectQuery, jasmine.any( Object ) );
 
 						// Inspect results
@@ -245,7 +246,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( (<Pointer> results.bindings[ 1 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-2/" );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -434,7 +435,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeRawSELECTQuery( "http://example.com/sparql-endpoint/", selectQuery ).then(
-					( [ results, response ]:[ RawResults.Class, HTTP.Response.Class ] ):void => {
+					( [ results, response ]:[ RawResults.Class, Response ] ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
@@ -446,7 +447,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 						// Inspect results
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 
 						expect( results ).toBeDefined();
 						expect( RawResults.Factory.is( results ) ).toEqual( true );
@@ -498,7 +499,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeRawCONSTRUCTQuery( "http://example.com/sparql-endpoint/json/", constructQuery ).then(
-					( [ resultModel, response ]:[ string, HTTP.Response.Class ] ):void => {
+					( [ resultModel, response ]:[ string, Response ] ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
@@ -514,7 +515,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -540,7 +541,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeRawCONSTRUCTQuery( "http://example.com/sparql-endpoint/turtle/", constructQuery, requestOptions ).then(
-					( [ resultModel, response ]:[ string, HTTP.Response.Class ] ):void => {
+					( [ resultModel, response ]:[ string, Response ] ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
 						expect( request.method ).toEqual( "POST" );
@@ -556,7 +557,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -595,7 +596,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeRawDESCRIBEQuery( "http://example.com/sparql-endpoint/json/", constructQuery ).then(
-					( [ resultModel, response ]:[ string, HTTP.Response.Class ] ):void => {
+					( [ resultModel, response ]:[ string, Response ] ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
@@ -611,7 +612,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -637,7 +638,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeRawDESCRIBEQuery( "http://example.com/sparql-endpoint/turtle/", constructQuery, requestOptions ).then(
-					( [ resultModel, response ]:[ string, HTTP.Response.Class ] ):void => {
+					( [ resultModel, response ]:[ string, Response ] ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
@@ -653,7 +654,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					} )
 				);
 			})();
@@ -688,7 +689,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeUPDATE( "http://example.com/sparql-endpoint/json/", constructQuery ).then(
-					( response:HTTP.Response.Class ):void => {
+					( response:Response ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 						expect( request.method ).toEqual( "POST" );
@@ -700,7 +701,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 						// Inspect response
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toEqual( true );
+						expect( response instanceof Response ).toEqual( true );
 					} )
 				);
 			})();
@@ -718,7 +719,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				} );
 
 				promises.push( Service.Class.executeUPDATE( "http://example.com/sparql-endpoint/turtle/", constructQuery, requestOptions ).then(
-					( response:HTTP.Response.Class ):void => {
+					( response:Response ):void => {
 						// Inspect request sent
 						let request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.method ).toEqual( "POST" );
@@ -730,7 +731,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 						// Inspect response
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toEqual( true );
+						expect( response instanceof Response ).toEqual( true );
 					} )
 				);
 			})();

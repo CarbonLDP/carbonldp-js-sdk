@@ -10,8 +10,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var HTTP = __importStar(require("../HTTP"));
 var URI = __importStar(require("./../RDF/URI"));
-var PersistedRole = __importStar(require("./PersistedRole"));
 var Utils = __importStar(require("./../Utils"));
+var PersistedRole = __importStar(require("./PersistedRole"));
 var Class = (function () {
     function Class(context) {
         this.context = context;

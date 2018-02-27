@@ -66,6 +66,6 @@ export declare class Carbon extends AbstractContext.AbstractContext {
     messaging: Messaging.Service.Class;
     constructor(url: string);
     constructor(settings: Settings.CarbonSettings);
-    getPlatformMetadata(): Promise<[System.PlatformMetadata.Class, HTTP.Response.Class]>;
+    getPlatformMetadata(): Promise<[System.PlatformMetadata.Class, HTTP.Response.Response]>;
 }
 export default Carbon;
