@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var HTTP = __importStar(require("../HTTP"));
+var StringParser_1 = require("../HTTP/StringParser");
 var RDF = __importStar(require("./../RDF"));
 var RawResultsParser_1 = __importDefault(require("./RawResultsParser"));
 var Class = (function () {
@@ -109,7 +110,7 @@ var Class = (function () {
     };
     Class.defaultOptions = {};
     Class.resultsParser = new RawResultsParser_1.default();
-    Class.stringParser = new HTTP.StringParser.Class();
+    Class.stringParser = new StringParser_1.StringParser();
     return Class;
 }());
 exports.Class = Class;

@@ -1,5 +1,5 @@
 import { Parser } from "./Parser";
-export declare class Class implements Parser<string> {
+export declare class StringParser implements Parser<string> {
     parse(body: string): Promise<string>;
 }
-export default Class;
+export default StringParser;

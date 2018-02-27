@@ -1,6 +1,7 @@
 import * as Errors from "../Errors";
 import * as HTTP from "../HTTP";
-import { PointerLibrary } from "./../Pointer";
+import { StringParser } from "../HTTP/StringParser";
+import { PointerLibrary } from "../Pointer";
 import * as RDF from "./../RDF";
 
 import * as RawResults from "./RawResults";
@@ -11,7 +12,7 @@ import * as SELECTResults from "./SELECTResults";
 export class Class {
 	private static defaultOptions:HTTP.Request.Options = {};
 	private static resultsParser:ResultsParser = new ResultsParser();
-	private static stringParser:HTTP.StringParser.Class = new HTTP.StringParser.Class();
+	private static stringParser:StringParser = new StringParser();
 
 	static executeRawASKQuery( url:string, askQuery:string, options:HTTP.Request.Options = {} ):Promise<[ RawResults.Class, HTTP.Response.Class ]> {
 		options = Object.assign( options, Class.defaultOptions );
@@ -108,6 +109,7 @@ export class Class {
 				throw new Errors.IllegalArgumentError( "The bindingProperty has an unsupported type" );
 		}
 	}
+
 }
 
 export default Class;
