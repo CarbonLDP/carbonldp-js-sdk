@@ -26,7 +26,7 @@ import { FreeResources } from "./FreeResources";
 import * as HTTPErrors from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import Method from "./HTTP/Method";
-import * as Parser from "./HTTP/Parser";
+import { Parser } from "./HTTP/Parser";
 import * as Request from "./HTTP/Request";
 import * as Response from "./HTTP/Response";
 import * as JSONLD from "./JSONLD";
@@ -62,6 +62,7 @@ import {
 } from "./Pointer";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
+import { RDFDocumentParser } from "./RDF/Document";
 import { Resource } from "./Resource";
 import * as SPARQL from "./SPARQL";
 import SparqlBuilder from "./SPARQL/Builder";
@@ -820,7 +821,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( this.documentsBeingResolved.has( uri ) )
 			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument.Class, Response.Class ]>;
 
-		const promise:Promise<[ T & PersistedDocument.Class, Response.Class ]> = this.sendRequest( Method.GET, uri, requestOptions, null, new RDF.Document.Parser() )
+		const promise:Promise<[ T & PersistedDocument.Class, Response.Class ]> = this.sendRequest( Method.GET, uri, requestOptions, null, new RDFDocumentParser() )
 			.then<[ T & PersistedDocument.Class, Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response.Class ] ) => {
 				const eTag:string = Response.Util.getETag( response );
 				if( eTag === null ) throw new HTTPErrors.BadResponseError( "The response doesn't contain an ETag", response );
@@ -899,7 +900,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 		Request.Util.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
 
-		return this.sendRequest( Method.GET, uri, requestOptions, null, new RDF.Document.Parser() ).then<[ T & PersistedDocument.Class, Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response.Class ] ) => {
+		return this.sendRequest( Method.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument.Class, Response.Class ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response.Class ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
 			let eTag:string = Response.Util.getETag( response );
@@ -1397,8 +1398,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private sendRequest( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer ):Promise<Response.Class>;
-	private sendRequest<T extends object>( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser.Class<T> ):Promise<[ T, Response.Class ]>;
-	private sendRequest( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser.Class<any> ):any {
+	private sendRequest<T extends object>( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<T> ):Promise<[ T, Response.Class ]>;
+	private sendRequest( method:Method, uri:string, options:Request.Options, body?:string | Blob | Buffer, parser?:Parser<any> ):any {
 		return Request.Service.send( method, uri, body || null, options, parser )
 			.catch( this._parseErrorResponse.bind( this ) );
 	}

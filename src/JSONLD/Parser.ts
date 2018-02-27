@@ -1,5 +1,5 @@
+import { Parser } from "../HTTP/Parser";
 import JSONParser from "./../HTTP/JSONParser";
-import Parser from "./../HTTP/Parser";
 import Processor from "./Processor";
 
 export class Class implements Parser<Object[]> {

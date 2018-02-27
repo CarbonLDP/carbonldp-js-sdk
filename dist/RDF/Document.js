@@ -1,4 +1,14 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -8,8 +18,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var JSONLD = __importStar(require("./../JSONLD"));
-var Node = __importStar(require("./Node"));
 var Utils = __importStar(require("./../Utils"));
+var Node = __importStar(require("./Node"));
 var URI = __importStar(require("./URI"));
 var Factory = (function () {
     function Factory() {
@@ -117,17 +127,16 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
-var Parser = (function () {
-    function Parser() {
+var RDFDocumentParser = (function (_super) {
+    __extends(RDFDocumentParser, _super);
+    function RDFDocumentParser() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Parser.prototype.parse = function (input) {
-        var jsonLDParser = new JSONLD.Parser.Class();
-        return jsonLDParser.parse(input).then(function (expandedResult) {
-            return Util.getDocuments(expandedResult);
-        });
+    RDFDocumentParser.prototype.parse = function (input) {
+        return _super.prototype.parse.call(this, input).then(Util.getDocuments);
     };
-    return Parser;
-}());
-exports.Parser = Parser;
+    return RDFDocumentParser;
+}(JSONLD.Parser.Class));
+exports.RDFDocumentParser = RDFDocumentParser;
 
 //# sourceMappingURL=Document.js.map

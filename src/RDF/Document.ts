@@ -1,7 +1,7 @@
-import * as HTTP from "../HTTP";
+import { Parser } from "../HTTP/Parser";
 import * as JSONLD from "./../JSONLD";
-import * as Node from "./Node";
 import * as Utils from "./../Utils";
+import * as Node from "./Node";
 import * as URI from "./URI";
 
 export interface Class {
@@ -130,12 +130,9 @@ export class Util {
 	}
 }
 
-export class Parser implements HTTP.Parser.Class<Class[]> {
-	parse( input:string ):Promise<any> {
-		let jsonLDParser:JSONLD.Parser.Class = new JSONLD.Parser.Class();
-		return jsonLDParser.parse( input ).then( ( expandedResult:any ) => {
-			return Util.getDocuments( expandedResult );
-		} );
+export class RDFDocumentParser extends JSONLD.Parser.Class implements Parser<Class[]> {
+	parse( input:string ):Promise<Class[]> {
+		return super.parse( input ).then( Util.getDocuments );
 	}
 }
 

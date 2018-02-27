@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 	describe( clazz(
 		"Carbon.HTTP.StringParser.Class",
 		"Parses a `Carbon.HTTP.Response.Class` and returns a string.", [
-			"Carbon.HTTP.Parser.Class<string>",
+			"Carbon.HTTP.Parser.Parser<string>",
 		]
 	), ():void => {
 

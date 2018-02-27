@@ -583,7 +583,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Document.Parser",
+		"Carbon.RDF.Document.RDFDocumentParser",
 		"Class to parse a JSON-LD string to an array of RDFDocuments."
 	), ():void => {
 		let compactedObject:any = {
@@ -655,24 +655,26 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			],
 		} ];
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
-			expect( RDFDocument.Parser ).toBeDefined();
-			expect( Utils.isFunction( RDFDocument.Parser ) ).toBe( true );
+			expect( RDFDocument.RDFDocumentParser ).toBeDefined();
+			expect( Utils.isFunction( RDFDocument.RDFDocumentParser ) ).toBe( true );
 
-			let parser:RDFDocument.Parser = new RDFDocument.Parser();
+			let parser:RDFDocument.RDFDocumentParser = new RDFDocument.RDFDocumentParser();
 			expect( parser ).toBeDefined();
-			expect( parser instanceof RDFDocument.Parser ).toBe( true );
+			expect( parser instanceof RDFDocument.RDFDocumentParser ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"parse",
 			"Parse the a JSON-LD string to an array of RDFDocuments.", [
 				{ name: "input", type: "string" },
 			],
-			{ type: "Promise<any>" }
+			{ type: "Promise<Carbon.RDF.Document.Class>" }
 		), ( done ):void => {
-			let parser:RDFDocument.Parser = new RDFDocument.Parser();
+			let parser:RDFDocument.RDFDocumentParser = new RDFDocument.RDFDocumentParser();
 			let input:string;
 
 			input = JSON.stringify( compactedObject );

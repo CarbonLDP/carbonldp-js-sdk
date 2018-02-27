@@ -24,7 +24,7 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 	describe( clazz(
 		"Carbon.SPARQL.RawResultsParser",
 		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.", [
-			"Carbon.HTTP.Parser.Class<Carbon.SPARQL.RawResults.Class>",
+			"Carbon.HTTP.Parser.Parser<Carbon.SPARQL.RawResults.Class>",
 		]
 	), ():void => {
 

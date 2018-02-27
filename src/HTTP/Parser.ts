@@ -1,5 +1,5 @@
-export interface Class<T> {
+export interface Parser<T> {
 	parse( body:string ):Promise<T>;
 }
 
-export default Class;
+export default Parser;

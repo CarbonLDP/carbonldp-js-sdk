@@ -33,6 +33,7 @@ var PersistedResource = __importStar(require("./PersistedResource"));
 var Pointer_1 = require("./Pointer");
 var ProtectedDocument = __importStar(require("./ProtectedDocument"));
 var RDF = __importStar(require("./RDF"));
+var Document_2 = require("./RDF/Document");
 var SPARQL = __importStar(require("./SPARQL"));
 var Builder_1 = __importDefault(require("./SPARQL/Builder"));
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
@@ -647,7 +648,7 @@ var Documents = (function () {
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
-        var promise = this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new RDF.Document.Parser())
+        var promise = this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = Response.Util.getETag(response);
@@ -717,7 +718,7 @@ var Documents = (function () {
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         Request.Util.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
-        return this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new RDF.Document.Parser()).then(function (_a) {
+        return this.sendRequest(Method_1.default.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
                 return [rdfDocuments, response];

@@ -1,4 +1,4 @@
-import Parser from "./Parser";
+import { Parser } from "./Parser";
 export declare class Class implements Parser<string> {
     parse(body: string): Promise<string>;
 }
