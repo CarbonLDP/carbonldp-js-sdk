@@ -1,7 +1,7 @@
+import { PointerLibrary } from "../Pointer";
 import * as ObjectSchema from "./../ObjectSchema";
-import { PointerLibrary } from "./../Pointer";
 import * as RDF from "./../RDF";
-export declare class Class {
+export declare class JSONLDConverter {
     private _literalSerializers;
     readonly literalSerializers: Map<string, RDF.Literal.Serializer>;
     private static getDefaultSerializers();
@@ -27,4 +27,4 @@ export declare class Class {
     private getPropertyURINameMap(digestedSchema);
     private compactPropertyLiteral(propertyValues, definition, digestedSchema);
 }
-export default Class;
+export default JSONLDConverter;

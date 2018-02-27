@@ -36,10 +36,10 @@ export class Class {
 	private documents:Documents;
 	private root?:string;
 	private resolver?:ObjectSchemaResolver;
-	private converter?:Converter.Class;
+	private converter?:Converter.JSONLDConverter;
 	private compactionMap:Map<string, CompactionNode>;
 
-	constructor( documents:Documents, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:Converter.Class ) {
+	constructor( documents:Documents, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:Converter.JSONLDConverter ) {
 		this.documents = documents;
 		this.root = root;
 		this.resolver = schemaResolver || documents;

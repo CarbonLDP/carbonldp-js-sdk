@@ -1,5 +1,5 @@
 import { Fragment } from "../Fragment";
-import * as JSONLDConverter from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
 import { NamedFragment } from "../NamedFragment";
@@ -23,7 +23,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     createNamedFragment<T>(object: T, slug: string): T & NamedFragment;
     createNamedFragment(slug: string): NamedFragment;
     removeNamedFragment(slugOrFragment: string | NamedFragment): void;
-    toJSON(objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter.Class): RDFDocument.Class;
+    toJSON(objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument.Class;
 }
 export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
     TYPE: string;

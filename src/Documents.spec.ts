@@ -122,8 +122,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"jsonldConverter",
-			"Carbon.JSONLD.Converter.Class",
-			"Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
+			"Carbon.JSONLD.Converter.JSONLDConverter",
+			"Instance of `Carbon.JSONLD.Converter.JSONLDConverter` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -139,7 +139,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let documents:Documents = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
-			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
+			expect( documents.jsonldConverter instanceof JSONLD.Converter.JSONLDConverter ).toBe( true );
 		} );
 
 		it( hasProperty(

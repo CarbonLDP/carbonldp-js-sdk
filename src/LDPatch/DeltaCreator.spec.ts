@@ -55,16 +55,16 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 			expect( DeltaCreator ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let jsonldConverter:Converter.Class;
+		let jsonldConverter:Converter.JSONLDConverter;
 		beforeEach( () => {
-			jsonldConverter = new Converter.Class();
+			jsonldConverter = new Converter.JSONLDConverter();
 		} );
 
 		describe( constructor(), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "jsonldConverter", type: "Carbon.JSONLD.Converter.Class", description: "The converted of JSON-LD to Javascript and viceversa to use." },
+					{ name: "jsonldConverter", type: "Carbon.JSONLD.Converter.JSONLDConverter", description: "The converted of JSON-LD to Javascript and viceversa to use." },
 				]
 			), ():void => {
 			} );

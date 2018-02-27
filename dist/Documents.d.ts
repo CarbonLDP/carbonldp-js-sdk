@@ -16,7 +16,7 @@ import * as SPARQL from "./SPARQL";
 import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
 export declare class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
     private _jsonldConverter;
-    readonly jsonldConverter: JSONLD.Converter.Class;
+    readonly jsonldConverter: JSONLD.Converter.JSONLDConverter;
     private _documentDecorators;
     readonly documentDecorators: Map<string, (object: object, documents?: Documents) => object>;
     private context;

@@ -4,7 +4,8 @@ import {
 	IllegalArgumentError,
 } from "../Errors";
 import { Fragment } from "../Fragment";
-import * as JSONLDConverter from "../JSONLD/Converter";
+import * as JSONLDConverterModule from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -922,9 +923,9 @@ describe( "Document methods", ():void => {
 			document.createFragment( { then: "blank node" }, "_:1" );
 			document.createFragment( { then: "named fragment" }, "fragment" );
 
-			const jsonldConverter:jasmine.SpyObj<JSONLDConverter.Class> = jasmine
-				.createSpyObj<JSONLDConverter.Class>( "JSONLDConverter", { "expand": {} } );
-			spyOn( JSONLDConverter, "Class" ).and.returnValue( jsonldConverter );
+			const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
+				.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
+			spyOn( JSONLDConverterModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
 
 			toJSON.call( document );
 			expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, new ObjectSchema.DigestedObjectSchema(), new ObjectSchema.DigestedObjectSchema() );
@@ -969,9 +970,9 @@ describe( "Document methods", ():void => {
 					}
 				);
 
-			const jsonldConverter:jasmine.SpyObj<JSONLDConverter.Class> = jasmine
-				.createSpyObj<JSONLDConverter.Class>( "JSONLDConverter", { "expand": {} } );
-			spyOn( JSONLDConverter, "Class" ).and.returnValue( jsonldConverter );
+			const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
+				.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
+			spyOn( JSONLDConverterModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
 
 			toJSON.call( document, schemaResolver );
 			expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, generalSchema, resourceSchema );
@@ -994,8 +995,8 @@ describe( "Document methods", ():void => {
 					}
 				);
 
-			const jsonldConverter:jasmine.SpyObj<JSONLDConverter.Class> = jasmine
-				.createSpyObj<JSONLDConverter.Class>( "JSONLDConverter", { "expand": {} } );
+			const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
+				.createSpyObj<JSONLDConverter>( "JSONLDConverter", { "expand": {} } );
 
 			toJSON.call( document, schemaResolver, jsonldConverter );
 			expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, generalSchema, resourceSchema );
@@ -1008,7 +1009,7 @@ describe( "Document methods", ():void => {
 			document.createFragment( { then: "blank node" }, "_:1" );
 			document.createFragment( { then: "named fragment" }, "fragment" );
 
-			const jsonldConverter:jasmine.SpyObj<JSONLDConverter.Class> = jasmine.createSpyObj<JSONLDConverter.Class>( "JSONLDConverter", [ "expand" ] );
+			const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
 			jsonldConverter.expand.and.callFake( ( resource ) => {
 				if( resource === document ) return { the: "expanded document" };
 				if( resource === document.getFragment( "_:1" ) ) return { the: "expanded blank node" };

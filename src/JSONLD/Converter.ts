@@ -1,16 +1,16 @@
-import { XSD } from "../Vocabularies/XSD";
-import * as Errors from "../Errors";
-import * as ObjectSchema from "./../ObjectSchema";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import {
 	Pointer,
-	PointerLibrary
-} from "./../Pointer";
+	PointerLibrary,
+} from "../Pointer";
+import { XSD } from "../Vocabularies/XSD";
+import * as ObjectSchema from "./../ObjectSchema";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 import { guessXSDType } from "./Utils";
 
 // TODO: Use Literal.Parsers to parse literals
-export class Class {
+export class JSONLDConverter {
 	private _literalSerializers:Map<string, RDF.Literal.Serializer>;
 
 	get literalSerializers():Map<string, RDF.Literal.Serializer> { return this._literalSerializers; }
@@ -35,7 +35,7 @@ export class Class {
 	}
 
 	constructor( literalSerializers?:Map<string, RDF.Literal.Serializer> ) {
-		this._literalSerializers = ! ! literalSerializers ? literalSerializers : Class.getDefaultSerializers();
+		this._literalSerializers = ! ! literalSerializers ? literalSerializers : JSONLDConverter.getDefaultSerializers();
 	}
 
 	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object[];
@@ -188,7 +188,7 @@ export class Class {
 	}
 
 	private compactSingle( expandedObject:any, targetObject:any, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary, strict?:boolean ):void {
-		if( ! expandedObject[ "@id" ] ) throw new Errors.IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
+		if( ! expandedObject[ "@id" ] ) throw new IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 
 		targetObject[ "id" ] = expandedObject[ "@id" ];
 		targetObject[ "types" ] = ! ! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
@@ -280,4 +280,4 @@ export class Class {
 
 }
 
-export default Class;
+export default JSONLDConverter;

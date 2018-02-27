@@ -54,13 +54,13 @@ typesDefinition.containerType = ContainerType.SET;
 export class Class {
 
 	private prefixesMap:Map<string, PrefixToken>;
-	private jsonldConverter:Converter.Class;
+	private jsonldConverter:Converter.JSONLDConverter;
 
 	private addToken:AddToken;
 	private deleteToken:DeleteToken;
 	private updateLists:UpdateListToken[];
 
-	constructor( jsonldConverter:Converter.Class ) {
+	constructor( jsonldConverter:Converter.JSONLDConverter ) {
 		this.prefixesMap = new Map();
 		this.jsonldConverter = jsonldConverter;
 

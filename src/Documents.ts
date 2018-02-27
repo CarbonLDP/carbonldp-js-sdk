@@ -101,8 +101,8 @@ import { LDP } from "./Vocabularies/LDP";
 
 export class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
 
-	private _jsonldConverter:JSONLD.Converter.Class;
-	get jsonldConverter():JSONLD.Converter.Class { return this._jsonldConverter; }
+	private _jsonldConverter:JSONLD.Converter.JSONLDConverter;
+	get jsonldConverter():JSONLD.Converter.JSONLDConverter { return this._jsonldConverter; }
 
 	private _documentDecorators:Map<string, ( object:object, documents?:Documents ) => object>;
 	get documentDecorators():Map<string, ( object:object, documents?:Documents ) => object> { return this._documentDecorators; }
@@ -120,10 +120,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, Response ]>>();
 
 		if( ! ! this.context && ! ! this.context.parentContext ) {
-			let contextJSONLDConverter:JSONLD.Converter.Class = this.context.parentContext.documents.jsonldConverter;
-			this._jsonldConverter = new JSONLD.Converter.Class( contextJSONLDConverter.literalSerializers );
+			let contextJSONLDConverter:JSONLD.Converter.JSONLDConverter = this.context.parentContext.documents.jsonldConverter;
+			this._jsonldConverter = new JSONLD.Converter.JSONLDConverter( contextJSONLDConverter.literalSerializers );
 		} else {
-			this._jsonldConverter = new JSONLD.Converter.Class();
+			this._jsonldConverter = new JSONLD.Converter.JSONLDConverter();
 		}
 
 		let decorators:Documents[ "documentDecorators" ] = new Map();

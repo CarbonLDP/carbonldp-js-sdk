@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode_1 = require("../BlankNode");
 var Errors = __importStar(require("../Errors"));
-var JSONLDConverter = __importStar(require("../JSONLD/Converter"));
+var Converter_1 = require("../JSONLD/Converter");
 var NamedFragment_1 = require("../NamedFragment");
 var ObjectSchema = __importStar(require("../ObjectSchema"));
 var Pointer_1 = require("../Pointer");
@@ -136,7 +136,7 @@ function removeNamedFragment(fragmentOrSlug) {
 }
 exports.removeNamedFragment = removeNamedFragment;
 function toJSON(keyOrObjectSchemaResolver, jsonldConverter) {
-    if (jsonldConverter === void 0) { jsonldConverter = new JSONLDConverter.Class(); }
+    if (jsonldConverter === void 0) { jsonldConverter = new Converter_1.JSONLDConverter(); }
     var objectSchemaResolver = Utils.isObject(keyOrObjectSchemaResolver) ? keyOrObjectSchemaResolver : null;
     var generalSchema = objectSchemaResolver ?
         objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();

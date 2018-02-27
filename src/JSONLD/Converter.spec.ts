@@ -16,40 +16,35 @@ import * as ObjectSchema from "./../ObjectSchema";
 import {
 	Pointer,
 	PointerLibrary
-} from "./../Pointer";
+} from "../Pointer";
 import * as RDF from "./../RDF";
-import * as JSONLDConverter from "./Converter";
-import DefaultExport from "./Converter";
+
+import DefaultExport, { JSONLDConverter } from "./Converter";
 
 describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( JSONLDConverter ).toBeDefined();
-		expect( Utils.isObject( JSONLDConverter ) ).toEqual( true );
-	} );
-
-	describe( clazz( "Carbon.JSONLD.Converter.Class", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+	describe( clazz( "Carbon.JSONLD.Converter.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( JSONLDConverter.Class ).toBeDefined();
-			expect( Utils.isFunction( JSONLDConverter.Class ) ).toEqual( true );
+			expect( JSONLDConverter ).toBeDefined();
+			expect( Utils.isFunction( JSONLDConverter ) ).toEqual( true );
 		} );
 
 		it( hasConstructor( [
 			{ name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle." },
 		] ), ():void => {
-			let jsonldConverter:JSONLDConverter.Class;
+			let jsonldConverter:JSONLDConverter;
 
-			jsonldConverter = new JSONLDConverter.Class();
+			jsonldConverter = new JSONLDConverter();
 			expect( jsonldConverter ).toBeTruthy();
-			expect( jsonldConverter instanceof JSONLDConverter.Class ).toBe( true );
+			expect( jsonldConverter instanceof JSONLDConverter ).toBe( true );
 
 			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
 			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
 
-			jsonldConverter = new JSONLDConverter.Class( customSerializers );
+			jsonldConverter = new JSONLDConverter( customSerializers );
 			expect( jsonldConverter ).toBeTruthy();
-			expect( jsonldConverter instanceof JSONLDConverter.Class ).toBe( true );
+			expect( jsonldConverter instanceof JSONLDConverter ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -58,17 +53,17 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			"Map<string, Carbon.RDF.Literal.Serializer>",
 			"A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it."
 		), ():void => {
-			let jsonldConverter:JSONLDConverter.Class;
+			let jsonldConverter:JSONLDConverter;
 			let serializers:Map<string, RDF.Literal.Serializer>;
 
-			jsonldConverter = new JSONLDConverter.Class();
+			jsonldConverter = new JSONLDConverter();
 			serializers = jsonldConverter.literalSerializers;
 			expect( serializers.size ).toBeGreaterThan( 1 );
 
 			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
 			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
 
-			jsonldConverter = new JSONLDConverter.Class( customSerializers );
+			jsonldConverter = new JSONLDConverter( customSerializers );
 			serializers = jsonldConverter.literalSerializers;
 			expect( serializers.size ).toBe( 1 );
 		} );
@@ -84,7 +79,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				],
 				{ type: "Object", description: "The compacted target object." }
 			), ():void => {
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
+				let jsonldConverter:JSONLDConverter = new JSONLDConverter();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
@@ -266,7 +261,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				],
 				{ type: "Object", description: "The expanded JSON-LD object generated." }
 			), ():void => {
-				let jsonldConverter:JSONLDConverter.Class = new JSONLDConverter.Class();
+				let jsonldConverter:JSONLDConverter = new JSONLDConverter();
 
 				expect( jsonldConverter.compact ).toBeDefined();
 				expect( Utils.isFunction( jsonldConverter.compact ) ).toBeDefined();
@@ -588,9 +583,9 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLD.Converter.Class" ), () => {
+	it( hasDefaultExport( "Carbon.JSONLD.Converter.JSONLDConverter" ), () => {
 		expect( DefaultExport ).toBeDefined();
-		expect( JSONLDConverter.Class ).toBe( DefaultExport );
+		expect( JSONLDConverter ).toBe( DefaultExport );
 	} );
 
 } );

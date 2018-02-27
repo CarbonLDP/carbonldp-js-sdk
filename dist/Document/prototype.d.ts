@@ -1,5 +1,5 @@
 import { Fragment } from "../Fragment";
-import * as JSONLDConverter from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -19,6 +19,6 @@ export declare function createNamedFragment(slug: string): NamedFragment;
 export declare function removeFragment(this: Document, fragmentOrSlug: string | Fragment): void;
 export declare function removeNamedFragment(this: Document, fragmentOrSlug: NamedFragment | string): void;
 export declare function toJSON(this: Document, key: string): RDF.Document.Class;
-export declare function toJSON(this: Document, objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter.Class): RDF.Document.Class;
+export declare function toJSON(this: Document, objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDF.Document.Class;
 export declare function normalize(this: Document): void;
 export declare const convertNestedObjects: (parent: Document, actual: any, fragmentsTracker?: Set<string>) => void;

@@ -50,10 +50,10 @@ var Documents = (function () {
         this.documentsBeingResolved = new Map();
         if (!!this.context && !!this.context.parentContext) {
             var contextJSONLDConverter = this.context.parentContext.documents.jsonldConverter;
-            this._jsonldConverter = new JSONLD.Converter.Class(contextJSONLDConverter.literalSerializers);
+            this._jsonldConverter = new JSONLD.Converter.JSONLDConverter(contextJSONLDConverter.literalSerializers);
         }
         else {
-            this._jsonldConverter = new JSONLD.Converter.Class();
+            this._jsonldConverter = new JSONLD.Converter.JSONLDConverter();
         }
         var decorators = new Map();
         if (this.context && this.context.parentContext) {

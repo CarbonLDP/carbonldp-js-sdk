@@ -3,7 +3,7 @@ import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,
 } from "./Errors";
-import * as JSONLDConverter from "./JSONLD/Converter";
+import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import * as ObjectSchema from "./ObjectSchema";
@@ -12,8 +12,8 @@ import {
 	PointerLibrary,
 	PointerValidator,
 } from "./Pointer";
-import * as URI from "./RDF/URI";
 import * as RDFNode from "./RDF/Node";
+import * as URI from "./RDF/URI";
 import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 
@@ -111,7 +111,7 @@ function createResourceFrom<T extends object>( this:FreeResources, object:T, id?
 
 function toJSON( this:FreeResources, key?:string ):RDFNode.Class[] {
 	const generalSchema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
-	const jsonldConverter:JSONLDConverter.Class = this._documents.jsonldConverter;
+	const jsonldConverter:JSONLDConverter = this._documents.jsonldConverter;
 
 	return this
 		.getResources()

@@ -7,7 +7,7 @@ export declare class Class {
     private addToken;
     private deleteToken;
     private updateLists;
-    constructor(jsonldConverter: Converter.Class);
+    constructor(jsonldConverter: Converter.JSONLDConverter);
     getPatch(): string;
     addResource(schema: DigestedObjectSchema, oldResource: Resource, newResource: Resource): void;
     private getPropertyIRI(schema, propertyName);
