@@ -27,12 +27,12 @@ import {
 } from "./AccessPoint";
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
-import Carbon from "./Carbon";
+import { Carbon } from "./Carbon";
 import { Document } from "./Document";
 import DefaultExport, { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
-import { Error as HTTPError } from "./HTTP/Errors";
+import { HTTPError } from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";

@@ -9,27 +9,22 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var HTTPError_1 = __importDefault(require("./HTTPError"));
+var HTTPError_1 = require("./HTTPError");
 var name = "UnknownError";
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
-        var _this = _super.call(this, message, response) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var UnknownError = (function (_super) {
+    __extends(UnknownError, _super);
+    function UnknownError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(UnknownError.prototype, "name", {
         get: function () { return name; },
         enumerable: true,
         configurable: true
     });
-    return Class;
-}(HTTPError_1.default));
-exports.Class = Class;
-exports.default = Class;
+    return UnknownError;
+}(HTTPError_1.HTTPError));
+exports.UnknownError = UnknownError;
+exports.default = UnknownError;
 
 //# sourceMappingURL=UnknownError.js.map

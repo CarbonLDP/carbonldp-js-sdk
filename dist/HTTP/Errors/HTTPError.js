@@ -9,17 +9,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = require("../../Errors");
 var Resource_1 = require("../../Resource");
-var AbstractError_1 = __importDefault(require("./../../Errors/AbstractError"));
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message, response) {
+var HTTPError = (function (_super) {
+    __extends(HTTPError, _super);
+    function HTTPError(message, response) {
         var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
         Resource_1.Resource.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;
@@ -27,19 +23,19 @@ var Class = (function (_super) {
         _this.statusCode = response.status;
         return _this;
     }
-    Object.defineProperty(Class, "statusCode", {
+    Object.defineProperty(HTTPError, "statusCode", {
         get: function () { return null; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(HTTPError.prototype, "name", {
         get: function () { return "HTTPError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+    return HTTPError;
+}(Errors_1.AbstractError));
+exports.HTTPError = HTTPError;
+exports.default = HTTPError;
 
 //# sourceMappingURL=HTTPError.js.map

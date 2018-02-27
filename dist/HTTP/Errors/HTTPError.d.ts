@@ -1,8 +1,8 @@
+import { AbstractError } from "../../Errors";
 import { Response } from "../Response";
-import AbstractError from "./../../Errors/AbstractError";
 import * as LDP from "./../../LDP";
 import * as PersistedDocument from "./../../PersistedDocument";
-export declare class Class extends AbstractError implements LDP.ErrorResponse.Class {
+export declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
     static readonly statusCode: number;
     readonly name: string;
     _id: string;
@@ -20,4 +20,4 @@ export declare class Class extends AbstractError implements LDP.ErrorResponse.Cl
     removeType: (type: string) => void;
     constructor(message: string, response: Response);
 }
-export default Class;
+export default HTTPError;

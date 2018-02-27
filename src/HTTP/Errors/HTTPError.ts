@@ -1,10 +1,10 @@
+import { AbstractError } from "../../Errors";
 import { Resource } from "../../Resource";
 import { Response } from "../Response";
-import AbstractError from "./../../Errors/AbstractError";
 import * as LDP from "./../../LDP";
 import * as PersistedDocument from "./../../PersistedDocument";
 
-export class Class extends AbstractError implements LDP.ErrorResponse.Class {
+export class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 	static get statusCode():number { return null; }
 
 	get name():string { return "HTTPError"; }
@@ -29,7 +29,6 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 
 	constructor( message:string, response:Response ) {
 		super( message );
-		Object.setPrototypeOf( this, Class.prototype );
 
 		Resource.createFrom( this );
 
@@ -40,4 +39,4 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 	}
 }
 
-export default Class;
+export default HTTPError;

@@ -1,6 +1,6 @@
 import { QueryClause } from "sparqler/clauses";
 import { AccessPointBase } from "./AccessPoint";
-import Context from "./Context";
+import { Context } from "./Context";
 import { FreeResources } from "./FreeResources";
 import { GETOptions, RequestOptions } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";

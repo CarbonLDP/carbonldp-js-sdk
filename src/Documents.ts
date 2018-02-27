@@ -18,12 +18,15 @@ import {
 	AccessPointBase,
 } from "./AccessPoint";
 import * as Auth from "./Auth";
-import Carbon from "./Carbon";
-import Context from "./Context";
+import { Carbon } from "./Carbon";
+import { Context } from "./Context";
 import { Document } from "./Document";
 import * as Errors from "./Errors";
 import { FreeResources } from "./FreeResources";
-import * as HTTPErrors from "./HTTP/Errors";
+import { statusCodeMap } from "./HTTP/Errors";
+import { HTTPError } from "./HTTP/Errors/HTTPError";
+import { BadResponseError } from "./HTTP/Errors/ServerErrors/BadResponseError";
+import { UnknownError } from "./HTTP/Errors/UnknownError";
 import { Header } from "./HTTP/Header";
 import { HTTPMethod } from "./HTTP/HTTPMethod";
 import { Parser } from "./HTTP/Parser";
@@ -221,7 +224,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			return this.sendRequest( HTTPMethod.HEAD, documentURI, requestOptions );
 		} ).then<[ boolean, Response ]>( ( response:Response ) => {
 			return [ true, response ];
-		} ).catch<[ boolean, Response ]>( ( error:HTTPErrors.Error ) => {
+		} ).catch<[ boolean, Response ]>( ( error:HTTPError ) => {
 			if( error.statusCode === 404 ) return [ false, error.response ];
 			return Promise.reject( error );
 		} );
@@ -771,8 +774,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	_getPersistedDocument<T extends object>( rdfDocument:RDF.Document.Class, response:Response ):T & PersistedDocument.Class {
 		const [ documentResources ] = RDF.Document.Util.getNodes( rdfDocument );
-		if( documentResources.length === 0 ) throw new HTTPErrors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
-		if( documentResources.length > 1 ) throw new HTTPErrors.BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
+		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
+		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
 		return new JSONLD.Compacter.Class( this ).compactDocument( rdfDocument );
 	}
@@ -789,10 +792,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	_parseErrorResponse<T extends object>( response:Response | Error ):any {
 		if( response instanceof Error ) return Promise.reject( response );
 
-		if( ! (response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has( response.status )) )
-			return Promise.reject( new HTTPErrors.UnknownError( response.data, response ) );
+		if( ! (response.status >= 400 && response.status < 600 && statusCodeMap.has( response.status )) )
+			return Promise.reject( new UnknownError( response.data, response ) );
 
-		const error:HTTPErrors.Error = new (HTTPErrors.statusCodeMap.get( response.status ))( response.data, response );
+		const error:HTTPError = new (statusCodeMap.get( response.status ))( response.data, response );
 		if( ! response.data || ! this.context ) return Promise.reject( error );
 
 		return new JSONLD.Parser.Class().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
@@ -830,20 +833,20 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const promise:Promise<[ T & PersistedDocument.Class, Response ]> = this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() )
 			.then<[ T & PersistedDocument.Class, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
 				const eTag:string = response.getETag();
-				if( eTag === null ) throw new HTTPErrors.BadResponseError( "The response doesn't contain an ETag", response );
+				if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
 				let targetURI:string = uri;
 				const locationHeader:Header = response.getHeader( "Content-Location" );
 				if( locationHeader ) {
-					if( locationHeader.values.length !== 1 ) throw new HTTPErrors.BadResponseError( "The response must contain one Content-Location header.", response );
+					if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response must contain one Content-Location header.", response );
 
 					const locationString:string = "" + locationHeader;
-					if( ! locationString ) throw new HTTPErrors.BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
+					if( ! locationString ) throw new BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
 					targetURI = locationString;
 				}
 
 				const rdfDocument:RDF.Document.Class = this.getRDFDocument( targetURI, rdfDocuments, response );
-				if( rdfDocument === null ) throw new HTTPErrors.BadResponseError( "No document was returned.", response );
+				if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 				let document:T & PersistedDocument.Class = this._getPersistedDocument<T>( rdfDocument, response );
 				document._etag = eTag;
@@ -910,16 +913,16 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
 			let eTag:string = response.getETag();
-			if( eTag === null ) throw new HTTPErrors.BadResponseError( "The response doesn't contain an ETag", response );
+			if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
-			if( rdfDocument === null ) throw new HTTPErrors.BadResponseError( "No document was returned.", response );
+			if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
 			updatedPersistedDocument._etag = eTag;
 
 			return [ updatedPersistedDocument, response ];
-		} ).catch<[ T & PersistedDocument.Class, Response ]>( ( error:HTTPErrors.Error ) => {
+		} ).catch<[ T & PersistedDocument.Class, Response ]>( ( error:HTTPError ) => {
 			if( error.statusCode === 304 ) return [ persistedDocument, null ];
 			return Promise.reject( error );
 		} );
@@ -1186,8 +1189,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			delete document[ "__CarbonSDK_InProgressOfPersisting" ];
 
 			let locationHeader:Header = response.getHeader( "Location" );
-			if( locationHeader === null || locationHeader.values.length < 1 ) throw new HTTPErrors.BadResponseError( "The response is missing a Location header.", response );
-			if( locationHeader.values.length !== 1 ) throw new HTTPErrors.BadResponseError( "The response contains more than one Location header.", response );
+			if( locationHeader === null || locationHeader.values.length < 1 ) throw new BadResponseError( "The response is missing a Location header.", response );
+			if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response contains more than one Location header.", response );
 
 			const localID:string = this.getPointerID( locationHeader.values[ 0 ].toString() );
 			this.pointers.set( localID, this.createPointerFrom( document, localID ) );
@@ -1206,7 +1209,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:Response ):RDF.Document.Class {
 		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );
 
-		if( rdfDocuments.length > 1 ) throw new HTTPErrors.BadResponseError( "Several documents share the same id.", response );
+		if( rdfDocuments.length > 1 ) throw new BadResponseError( "Several documents share the same id.", response );
 
 		return rdfDocuments.length > 0 ? rdfDocuments[ 0 ] : null;
 	}
@@ -1350,10 +1353,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	private updateFromPreferenceApplied<T extends object>( persistedDocument:T & PersistedDocument.Class, rdfDocuments:RDF.Document.Class[], response:Response ):[ T, Response ] {
 		let eTag:string = response.getETag();
-		if( eTag === null ) throw new HTTPErrors.BadResponseError( "The response doesn't contain an ETag", response );
+		if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
 		let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
-		if( rdfDocument === null ) throw new HTTPErrors.BadResponseError( "No document was returned.", response );
+		if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 		persistedDocument = this._getPersistedDocument<T>( rdfDocument, response );
 		persistedDocument._etag = eTag;

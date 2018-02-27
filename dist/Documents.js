@@ -16,7 +16,9 @@ var Auth = __importStar(require("./Auth"));
 var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
-var HTTPErrors = __importStar(require("./HTTP/Errors"));
+var Errors_1 = require("./HTTP/Errors");
+var BadResponseError_1 = require("./HTTP/Errors/ServerErrors/BadResponseError");
+var UnknownError_1 = require("./HTTP/Errors/UnknownError");
 var HTTPMethod_1 = require("./HTTP/HTTPMethod");
 var Request_1 = require("./HTTP/Request");
 var JSONLD = __importStar(require("./JSONLD"));
@@ -598,9 +600,9 @@ var Documents = (function () {
     Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResources = RDF.Document.Util.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
-            throw new HTTPErrors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
+            throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
-            throw new HTTPErrors.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
+            throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
         return new JSONLD.Compacter.Class(this).compactDocument(rdfDocument);
     };
     Documents.prototype._getFreeResources = function (nodes) {
@@ -613,9 +615,9 @@ var Documents = (function () {
         var _this = this;
         if (response instanceof Error)
             return Promise.reject(response);
-        if (!(response.status >= 400 && response.status < 600 && HTTPErrors.statusCodeMap.has(response.status)))
-            return Promise.reject(new HTTPErrors.UnknownError(response.data, response));
-        var error = new (HTTPErrors.statusCodeMap.get(response.status))(response.data, response);
+        if (!(response.status >= 400 && response.status < 600 && Errors_1.statusCodeMap.has(response.status)))
+            return Promise.reject(new UnknownError_1.UnknownError(response.data, response));
+        var error = new (Errors_1.statusCodeMap.get(response.status))(response.data, response);
         if (!response.data || !this.context)
             return Promise.reject(error);
         return new JSONLD.Parser.Class().parse(response.data).then(function (freeNodes) {
@@ -652,20 +654,20 @@ var Documents = (function () {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = response.getETag();
             if (eTag === null)
-                throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
+                throw new BadResponseError_1.BadResponseError("The response doesn't contain an ETag", response);
             var targetURI = uri;
             var locationHeader = response.getHeader("Content-Location");
             if (locationHeader) {
                 if (locationHeader.values.length !== 1)
-                    throw new HTTPErrors.BadResponseError("The response must contain one Content-Location header.", response);
+                    throw new BadResponseError_1.BadResponseError("The response must contain one Content-Location header.", response);
                 var locationString = "" + locationHeader;
                 if (!locationString)
-                    throw new HTTPErrors.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
+                    throw new BadResponseError_1.BadResponseError("The response doesn't contain a valid 'Content-Location' header.", response);
                 targetURI = locationString;
             }
             var rdfDocument = _this.getRDFDocument(targetURI, rdfDocuments, response);
             if (rdfDocument === null)
-                throw new HTTPErrors.BadResponseError("No document was returned.", response);
+                throw new BadResponseError_1.BadResponseError("No document was returned.", response);
             var document = _this._getPersistedDocument(rdfDocument, response);
             document._etag = eTag;
             _this.documentsBeingResolved.delete(uri);
@@ -723,10 +725,10 @@ var Documents = (function () {
                 return [rdfDocuments, response];
             var eTag = response.getETag();
             if (eTag === null)
-                throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
+                throw new BadResponseError_1.BadResponseError("The response doesn't contain an ETag", response);
             var rdfDocument = _this.getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
-                throw new HTTPErrors.BadResponseError("No document was returned.", response);
+                throw new BadResponseError_1.BadResponseError("No document was returned.", response);
             var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
             updatedPersistedDocument._etag = eTag;
             return [updatedPersistedDocument, response];
@@ -955,9 +957,9 @@ var Documents = (function () {
             delete document["__CarbonSDK_InProgressOfPersisting"];
             var locationHeader = response.getHeader("Location");
             if (locationHeader === null || locationHeader.values.length < 1)
-                throw new HTTPErrors.BadResponseError("The response is missing a Location header.", response);
+                throw new BadResponseError_1.BadResponseError("The response is missing a Location header.", response);
             if (locationHeader.values.length !== 1)
-                throw new HTTPErrors.BadResponseError("The response contains more than one Location header.", response);
+                throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this.createPointerFrom(document, localID));
             var persistedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
@@ -971,7 +973,7 @@ var Documents = (function () {
     Documents.prototype.getRDFDocument = function (requestURL, rdfDocuments, response) {
         rdfDocuments = rdfDocuments.filter(function (rdfDocument) { return rdfDocument["@id"] === requestURL; });
         if (rdfDocuments.length > 1)
-            throw new HTTPErrors.BadResponseError("Several documents share the same id.", response);
+            throw new BadResponseError_1.BadResponseError("Several documents share the same id.", response);
         return rdfDocuments.length > 0 ? rdfDocuments[0] : null;
     };
     Documents.prototype.getPointerID = function (uri) {
@@ -1096,10 +1098,10 @@ var Documents = (function () {
     Documents.prototype.updateFromPreferenceApplied = function (persistedDocument, rdfDocuments, response) {
         var eTag = response.getETag();
         if (eTag === null)
-            throw new HTTPErrors.BadResponseError("The response doesn't contain an ETag", response);
+            throw new BadResponseError_1.BadResponseError("The response doesn't contain an ETag", response);
         var rdfDocument = this.getRDFDocument(persistedDocument.id, rdfDocuments, response);
         if (rdfDocument === null)
-            throw new HTTPErrors.BadResponseError("No document was returned.", response);
+            throw new BadResponseError_1.BadResponseError("No document was returned.", response);
         persistedDocument = this._getPersistedDocument(rdfDocument, response);
         persistedDocument._etag = eTag;
         return [persistedDocument, response];
