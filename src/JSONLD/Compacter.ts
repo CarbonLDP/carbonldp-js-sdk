@@ -4,7 +4,7 @@ import {
 	ObjectSchemaResolver,
 } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
-import * as PersistedResource from "../PersistedResource";
+import { PersistedResource } from "../PersistedResource";
 import {
 	Pointer,
 	PointerLibrary,
@@ -25,7 +25,7 @@ function getRelativeID( node:RDFNode.Class ):string {
 interface CompactionNode {
 	paths:string[];
 	node:RDFNode.Class;
-	resource:PersistedResource.Class;
+	resource:PersistedResource;
 	containerLibrary:PointerLibrary;
 	processed?:boolean;
 }
@@ -106,7 +106,7 @@ export class JSONLDCompacter {
 		return mainCompactedDocuments;
 	}
 
-	private compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:PointerLibrary, path:string ):string[] {
+	private compactNode( node:RDFNode.Class, resource:PersistedResource, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		if( this.resolver instanceof QueryContextBuilder ) {
@@ -151,7 +151,7 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private getResource<T extends PersistedResource.Class>( node:RDFNode.Class, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
+	private getResource<T extends PersistedResource>( node:RDFNode.Class, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = PersistedDocument.Factory.decorate( resource, this.documents );

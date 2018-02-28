@@ -29,7 +29,7 @@ var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedDocument = __importStar(require("./PersistedDocument"));
 var PersistedFragment = __importStar(require("./PersistedFragment"));
 var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
-var PersistedResource = __importStar(require("./PersistedResource"));
+var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
 var ProtectedDocument = __importStar(require("./ProtectedDocument"));
 var RDF = __importStar(require("./RDF"));
@@ -1041,7 +1041,7 @@ var Documents = (function () {
         return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
-        if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
+        if (PersistedResource_1.PersistedResource.isDecorated(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
             return this.getProcessedSchema(schemas);
         }

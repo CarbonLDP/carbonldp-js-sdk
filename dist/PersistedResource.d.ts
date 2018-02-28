@@ -1,15 +1,17 @@
+import { ModelDecorator } from "./ModelDecorator";
 import { Resource } from "./Resource";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
-export interface Class extends Resource {
+export interface PersistedResource extends Resource {
     _snapshot: Resource;
-    _syncSnapshot: () => void;
     _partialMetadata?: PartialMetadata;
+    _syncSnapshot(): void;
     isDirty(): boolean;
     revert(): void;
     isPartial(): boolean;
 }
-export declare class Factory {
-    static hasClassProperties(object: object): object is Class;
-    static decorate<T extends Resource>(object: T): T & Class;
+export interface PersistedResourceFactory extends ModelDecorator<PersistedResource> {
+    isDecorated(object: object): object is PersistedResource;
+    decorate<T extends object>(object: T): T & PersistedResource;
 }
-export default Class;
+export declare const PersistedResource: PersistedResourceFactory;
+export default PersistedResource;

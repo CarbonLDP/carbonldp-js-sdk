@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment_1 = require("./Fragment");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
-var PersistedResource = __importStar(require("./PersistedResource"));
+var PersistedResource_1 = require("./PersistedResource");
 var RDF = __importStar(require("./RDF"));
 function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
@@ -39,11 +39,11 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return PersistedResource.Factory.hasClassProperties(object)
+        return PersistedResource_1.PersistedResource.isDecorated(object)
             && Fragment_1.Fragment.isDecorated(object);
     };
     Factory.decorate = function (fragment) {
-        PersistedResource.Factory.decorate(fragment);
+        PersistedResource_1.PersistedResource.decorate(fragment);
         Object.defineProperties(fragment, {
             "addType": {
                 writable: false,

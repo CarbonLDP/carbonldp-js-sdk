@@ -13,7 +13,7 @@ var MessagingDocument = __importStar(require("./Messaging/Document"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedFragment = __importStar(require("./PersistedFragment"));
 var PersistedNamedFragment = __importStar(require("./PersistedNamedFragment"));
-var PersistedResource = __importStar(require("./PersistedResource"));
+var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
 var RDF = __importStar(require("./RDF"));
 var URI = __importStar(require("./RDF/URI"));
@@ -249,7 +249,7 @@ var Factory = (function () {
         if (Factory.hasClassProperties(object))
             return object;
         Document_1.Document.decorate(object);
-        PersistedResource.Factory.decorate(object);
+        PersistedResource_1.PersistedResource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;

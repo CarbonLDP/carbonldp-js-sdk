@@ -1,7 +1,7 @@
 import { Fragment } from "./Fragment";
 import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedResource from "./PersistedResource";
-export interface Class extends PersistedResource.Class, Fragment {
+import { PersistedResource } from "./PersistedResource";
+export interface Class extends PersistedResource, Fragment {
     _document: PersistedDocument.Class;
 }
 export declare class Factory {

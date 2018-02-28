@@ -3845,7 +3845,7 @@ var MessagingDocument = __importStar(__webpack_require__(107));
 var ObjectSchema = __importStar(__webpack_require__(11));
 var PersistedFragment = __importStar(__webpack_require__(53));
 var PersistedNamedFragment = __importStar(__webpack_require__(108));
-var PersistedResource = __importStar(__webpack_require__(54));
+var PersistedResource_1 = __webpack_require__(54);
 var Pointer_1 = __webpack_require__(18);
 var RDF = __importStar(__webpack_require__(17));
 var URI = __importStar(__webpack_require__(13));
@@ -4081,7 +4081,7 @@ var Factory = (function () {
         if (Factory.hasClassProperties(object))
             return object;
         Document_1.Document.decorate(object);
-        PersistedResource.Factory.decorate(object);
+        PersistedResource_1.PersistedResource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;
@@ -5418,7 +5418,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment_1 = __webpack_require__(49);
 var ObjectSchema = __importStar(__webpack_require__(11));
-var PersistedResource = __importStar(__webpack_require__(54));
+var PersistedResource_1 = __webpack_require__(54);
 var RDF = __importStar(__webpack_require__(17));
 function resolveURI(uri) {
     if (RDF.URI.Util.isAbsolute(uri))
@@ -5448,11 +5448,11 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (object) {
-        return PersistedResource.Factory.hasClassProperties(object)
+        return PersistedResource_1.PersistedResource.isDecorated(object)
             && Fragment_1.Fragment.isDecorated(object);
     };
     Factory.decorate = function (fragment) {
-        PersistedResource.Factory.decorate(fragment);
+        PersistedResource_1.PersistedResource.decorate(fragment);
         Object.defineProperties(fragment, {
             "addType": {
                 writable: false,
@@ -5494,6 +5494,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = __webpack_require__(12);
 var Utils = __importStar(__webpack_require__(0));
 function syncSnapshot() {
     this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
@@ -5501,41 +5502,38 @@ function syncSnapshot() {
     this._snapshot.types = this.types.slice();
 }
 function isDirty() {
-    var resource = this;
-    if (!Utils.ObjectUtils.areEqual(resource, resource._snapshot, { arrays: true }))
+    if (!Utils.ObjectUtils.areEqual(this, this._snapshot, { arrays: true }))
         return true;
     var response = false;
-    if ("id" in resource)
-        response = response || resource._snapshot.id !== resource.id;
-    if ("types" in resource)
-        response = response || !Utils.ObjectUtils.areEqual(resource._snapshot.types, resource.types);
+    if ("id" in this)
+        response = response || this._snapshot.id !== this.id;
+    if ("types" in this)
+        response = response || !Utils.ObjectUtils.areEqual(this._snapshot.types, this.types);
     return response;
 }
 function revert() {
-    var resource = this;
-    for (var _i = 0, _a = Object.keys(resource); _i < _a.length; _i++) {
+    for (var _i = 0, _a = Object.keys(this); _i < _a.length; _i++) {
         var key = _a[_i];
-        if (!(key in resource._snapshot))
-            delete resource[key];
+        if (!(key in this._snapshot))
+            delete this[key];
     }
-    Utils.ObjectUtils.extend(resource, resource._snapshot, { arrays: true });
+    Utils.ObjectUtils.extend(this, this._snapshot, { arrays: true });
 }
 function isPartial() {
     return !!this._partialMetadata;
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.PersistedResource = {
+    isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_snapshot")
             && Utils.hasFunction(object, "_syncSnapshot")
             && Utils.hasFunction(object, "isDirty")
             && Utils.hasFunction(object, "isPartial")
             && Utils.hasFunction(object, "revert"));
-    };
-    Factory.decorate = function (object) {
-        if (Factory.hasClassProperties(object))
+    },
+    decorate: function (object) {
+        if (exports.PersistedResource.isDecorated(object))
             return object;
+        Resource_1.Resource.decorate(object);
         var persistedResource = object;
         Object.defineProperties(persistedResource, {
             "_snapshot": {
@@ -5575,10 +5573,9 @@ var Factory = (function () {
             },
         });
         return persistedResource;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.PersistedResource;
 
 
 /***/ }),
@@ -9855,7 +9852,7 @@ var ObjectSchema_1 = __webpack_require__(11);
 var PersistedDocument = __importStar(__webpack_require__(40));
 var PersistedFragment = __importStar(__webpack_require__(53));
 var PersistedProtectedDocument = __importStar(__webpack_require__(52));
-var PersistedResource = __importStar(__webpack_require__(54));
+var PersistedResource_1 = __webpack_require__(54);
 var Pointer_1 = __webpack_require__(18);
 var ProtectedDocument = __importStar(__webpack_require__(136));
 var RDF = __importStar(__webpack_require__(17));
@@ -10867,7 +10864,7 @@ var Documents = (function () {
         return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
-        if (PersistedResource.Factory.hasClassProperties(document) && document.isPartial()) {
+        if (PersistedResource_1.PersistedResource.isDecorated(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
             return this.getProcessedSchema(schemas);
         }

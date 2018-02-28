@@ -16,7 +16,7 @@ import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
-import * as PersistedResource from "./PersistedResource";
+import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
 import * as URI from "./RDF/URI";
@@ -25,7 +25,7 @@ import * as SPARQL from "./SPARQL";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import * as Utils from "./Utils";
 
-export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument, MessagingDocument.Class {
+export interface Class extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument.Class {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;
@@ -455,7 +455,7 @@ export class Factory {
 		if( Factory.hasClassProperties( object ) ) return object;
 
 		Document.decorate( object );
-		PersistedResource.Factory.decorate( <T & Document> object );
+		PersistedResource.decorate( <T & Document> object );
 		ServiceAwareDocument.decorate( <T & Document> object, documents );
 		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument> object );
 

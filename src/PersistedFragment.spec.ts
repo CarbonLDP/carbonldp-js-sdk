@@ -4,7 +4,7 @@ import * as PersistedDocument from "./PersistedDocument";
 
 import * as PersistedFragment from "./PersistedFragment";
 import DefaultExport from "./PersistedFragment";
-import * as PersistedResource from "./PersistedResource";
+import { PersistedResource } from "./PersistedResource";
 import {
 	clazz,
 	decoratedObject,
@@ -33,7 +33,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 		"Interface that represents a persisted fragment of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedResource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedResource.PersistedResource" ), ():void => {} );
 		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {} );
 
 		it( hasProperty(
@@ -70,7 +70,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			expect( PersistedFragment.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedFragment.Factory.decorate ) ).toBe( true );
 
-			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource.Factory, "decorate" );
+			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
 
 			let fragment:Fragment = Fragment.create( null, "_:01" );
 			let persistedFragment:PersistedFragment.Class = PersistedFragment.Factory.decorate( fragment );

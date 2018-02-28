@@ -29,7 +29,9 @@ import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import { Carbon } from "./Carbon";
 import { Document } from "./Document";
+
 import DefaultExport, { Documents } from "./Documents";
+
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
 import { HTTPError } from "./HTTP/Errors";
@@ -43,7 +45,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
-import * as PersistedResource from "./PersistedResource";
+import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
@@ -1414,7 +1416,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1476,7 +1478,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				it( "should merge partial metadata of a partial document", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1694,7 +1696,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -10650,7 +10652,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( {
@@ -11058,7 +11060,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class & {
+						property2:PersistedResource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11218,7 +11220,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class & {
+						property2:PersistedResource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11417,7 +11419,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(

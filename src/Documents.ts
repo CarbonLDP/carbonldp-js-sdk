@@ -65,7 +65,7 @@ import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
 import * as PersistedFragment from "./PersistedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
-import * as PersistedResource from "./PersistedResource";
+import { PersistedResource } from "./PersistedResource";
 import {
 	Pointer,
 	PointerLibrary,
@@ -899,7 +899,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		persistedDocument._normalize();
 		const deltaCreator:LDPatch.DeltaCreator.DeltaCreator = new LDPatch.DeltaCreator.DeltaCreator( this.jsonldConverter );
-		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource.Class ) => {
+		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource ) => {
 			const schema:DigestedObjectSchema = this.getSchemaFor( resource );
 			deltaCreator.addResource( schema, resource._snapshot, resource );
 		} );
@@ -949,7 +949,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			)
 		;
 
-		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
+		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource, parentName:string ):void {
 			if( resource._partialMetadata.schema === PartialMetadata.ALL ) {
 				parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 				return;
@@ -1300,7 +1300,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private getDigestedObjectSchemaForDocument( document:Document ):DigestedObjectSchema {
-		if( PersistedResource.Factory.hasClassProperties( document ) && document.isPartial() ) {
+		if( PersistedResource.isDecorated( document ) && document.isPartial() ) {
 			const schemas:DigestedObjectSchema[] = [ document._partialMetadata.schema ];
 			return this.getProcessedSchema( schemas );
 		} else {
