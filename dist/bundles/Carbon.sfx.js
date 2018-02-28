@@ -7149,7 +7149,7 @@ var IllegalArgumentError_1 = __webpack_require__(23);
 var IllegalStateError_1 = __webpack_require__(62);
 var ObjectSchema_1 = __webpack_require__(11);
 var Utils_1 = __webpack_require__(0);
-var QueryObject = __importStar(__webpack_require__(120));
+var QueryObject_1 = __webpack_require__(120);
 var QueryProperty = __importStar(__webpack_require__(74));
 var QueryValue = __importStar(__webpack_require__(121));
 var Utils_2 = __webpack_require__(41);
@@ -7190,7 +7190,7 @@ var QueryDocumentBuilder = (function () {
         return new QueryValue.Class(this._context, value);
     };
     QueryDocumentBuilder.prototype.object = function (object) {
-        return new QueryObject.Class(this._context, object);
+        return new QueryObject_1.QueryObject(this._context, object);
     };
     QueryDocumentBuilder.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
@@ -11328,22 +11328,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(29);
 var tokens_1 = __webpack_require__(4);
 var Utils_1 = __webpack_require__(0);
-var Class = (function () {
-    function Class(context, object) {
+var QueryObject = (function () {
+    function QueryObject(context, object) {
         this._context = context;
         var id = Utils_1.isString(object) ? object : object.id;
         this._resource = iri_1.isBNodeLabel(id) ? new tokens_1.BlankNodeToken(id) : this._context.compactIRI(id);
     }
-    Class.prototype.getToken = function () {
+    QueryObject.prototype.getToken = function () {
         return this._resource;
     };
-    Class.prototype.toString = function () {
+    QueryObject.prototype.toString = function () {
         return "" + this._resource;
     };
-    return Class;
+    return QueryObject;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.QueryObject = QueryObject;
+exports.default = QueryObject;
 
 
 /***/ }),

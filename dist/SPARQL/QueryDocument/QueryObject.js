@@ -3,21 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../../Utils");
-var Class = (function () {
-    function Class(context, object) {
+var QueryObject = (function () {
+    function QueryObject(context, object) {
         this._context = context;
         var id = Utils_1.isString(object) ? object : object.id;
         this._resource = iri_1.isBNodeLabel(id) ? new tokens_1.BlankNodeToken(id) : this._context.compactIRI(id);
     }
-    Class.prototype.getToken = function () {
+    QueryObject.prototype.getToken = function () {
         return this._resource;
     };
-    Class.prototype.toString = function () {
+    QueryObject.prototype.toString = function () {
         return "" + this._resource;
     };
-    return Class;
+    return QueryObject;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.QueryObject = QueryObject;
+exports.default = QueryObject;
 
 //# sourceMappingURL=QueryObject.js.map

@@ -1,4 +1,8 @@
-import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
+import {
+	BlankNodeToken,
+	IRIToken,
+	PrefixedNameToken
+} from "sparqler/tokens";
 
 import { AbstractContext } from "../../AbstractContext";
 import { Pointer } from "../../Pointer";
@@ -12,8 +16,9 @@ import {
 	module
 } from "../../test/JasmineExtender";
 import { QueryContext } from "./QueryContext";
+
 import * as Module from "./QueryObject";
-import { Class as QueryObject } from "./QueryObject";
+import DefaultExport, { QueryObject } from "./QueryObject";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 
@@ -22,12 +27,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryObject.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryObject );
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryObject.QueryObject" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( QueryObject );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryObject.Class", "Class that represents any resource." ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryObject.QueryObject", "Class that represents any resource." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryObject ).toBeDefined();

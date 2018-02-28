@@ -12,7 +12,7 @@ var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
 var IllegalStateError_1 = require("../../Errors/IllegalStateError");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
-var QueryObject = __importStar(require("./QueryObject"));
+var QueryObject_1 = require("./QueryObject");
 var QueryProperty = __importStar(require("./QueryProperty"));
 var QueryValue = __importStar(require("./QueryValue"));
 var Utils_2 = require("./Utils");
@@ -53,7 +53,7 @@ var QueryDocumentBuilder = (function () {
         return new QueryValue.Class(this._context, value);
     };
     QueryDocumentBuilder.prototype.object = function (object) {
-        return new QueryObject.Class(this._context, object);
+        return new QueryObject_1.QueryObject(this._context, object);
     };
     QueryDocumentBuilder.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))

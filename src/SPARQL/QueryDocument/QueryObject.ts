@@ -5,7 +5,7 @@ import { Pointer } from "../../Pointer";
 import { isString } from "../../Utils";
 import { QueryContext } from "./QueryContext";
 
-export class Class {
+export class QueryObject {
 	private _context:QueryContext;
 	private _resource:IRIToken | BlankNodeToken | PrefixedNameToken;
 
@@ -24,4 +24,4 @@ export class Class {
 	}
 }
 
-export default Class;
+export default QueryObject;

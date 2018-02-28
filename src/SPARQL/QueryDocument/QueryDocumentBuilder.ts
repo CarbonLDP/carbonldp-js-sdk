@@ -21,7 +21,7 @@ import {
 import { Pointer } from "../../Pointer";
 import { isObject } from "../../Utils";
 import { QueryContextBuilder } from "./QueryContextBuilder";
-import * as QueryObject from "./QueryObject";
+import { QueryObject } from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
@@ -89,8 +89,8 @@ export class QueryDocumentBuilder {
 		return new QueryValue.Class( this._context, value );
 	}
 
-	object( object:Pointer | string ):QueryObject.Class {
-		return new QueryObject.Class( this._context, object );
+	object( object:Pointer | string ):QueryObject {
+		return new QueryObject( this._context, object );
 	}
 
 	withType( type:string ):this {
@@ -137,7 +137,7 @@ export class QueryDocumentBuilder {
 		return this;
 	}
 
-	values( ...values:( QueryValue.Class | QueryObject.Class )[] ):this {
+	values( ...values:( QueryValue.Class | QueryObject )[] ):this {
 		const termTokens:( LiteralToken | IRIToken | PrefixedNameToken )[] = values.map( value => {
 			const token:TermToken = value.getToken();
 			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );

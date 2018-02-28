@@ -18,6 +18,7 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
 } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
 import {
 	clazz,
 	constructor,
@@ -29,13 +30,13 @@ import {
 	property,
 } from "../../test/JasmineExtender";
 import { Document } from "./../../Document";
-import { Pointer } from "./../../Pointer";
-import QueryContextBuilder from "./QueryContextBuilder";
+import { QueryContextBuilder } from "./QueryContextBuilder";
 
 import * as Module from "./QueryDocumentBuilder";
-import DefaultExpot, { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import DefaultExport, { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
-import * as QueryObject from "./QueryObject";
+import * as QueryObjectModule from "./QueryObject";
+import { QueryObject } from "./QueryObject";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
 import * as QueryVariable from "./QueryVariable";
@@ -48,8 +49,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 	} );
 
 	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder" ), ():void => {
-		expect( DefaultExpot ).toBeDefined();
-		expect( DefaultExpot ).toBe( QueryDocumentBuilder );
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( QueryDocumentBuilder );
 	} );
 
 	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
@@ -269,7 +270,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "value", type: "Carbon.Pointer.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryObject.Class" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryObject.QueryObject" }
 			), ():void => {
 			} );
 
@@ -279,7 +280,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			} );
 
 			it( "should create a QueryObject with the name provided", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryObject, "Class" );
+				const spy:jasmine.Spy = spyOn( QueryObjectModule, "QueryObject" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
 				builder.object( "http://example.com/resource/" );
@@ -292,8 +293,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 			it( "should return a QueryObject", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject.Class ) );
-				expect( builder.object( context.documents.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject.Class ) );
+				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject ) );
+				expect( builder.object( context.documents.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
 			} );
 
 		} );
@@ -584,7 +585,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				"Adds a filter to the specific values of the property where the query is been applied.\n" +
 				"NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.",
 				[
-					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.Class | Carbon.SPARQL.QueryDocument.QueryObject.Class)[]", description: "Values the property must have so that the document would be returned." },
+					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.Class | Carbon.SPARQL.QueryDocument.QueryObject.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
 				],
 				{ type: "this" }
 			), ():void => {
