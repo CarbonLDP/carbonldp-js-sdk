@@ -1,4 +1,4 @@
-export declare class Class {
+export declare class JSONLDProcessor {
     static expand(input: object): Promise<object[]>;
     private static getTargetFromLinkHeader(header);
     private static findContextURLs(input, contexts, base, replace?);
@@ -17,4 +17,4 @@ export declare class Class {
 }
 export declare class Util {
 }
-export default Class;
+export default JSONLDProcessor;

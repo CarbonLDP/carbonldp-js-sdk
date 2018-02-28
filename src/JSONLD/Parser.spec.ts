@@ -43,7 +43,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the string provided using the `Carbon.JSONLD.Processor.Class#expand()` method.", [
+			"Parse the string provided using the `Carbon.JSONLD.Processor.JSONLDProcessor#expand()` method.", [
 				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
 			{ type: "Promise<object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }

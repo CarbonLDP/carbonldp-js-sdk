@@ -17,13 +17,13 @@ import * as Utils from "./../Utils";
 const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
 
-export class Class {
+export class JSONLDProcessor {
 
 	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
-		return Class.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
+		return JSONLDProcessor.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
-			let expanded:any = Class.process( new ObjectSchema.DigestedObjectSchema(), input );
+			let expanded:any = JSONLDProcessor.process( new ObjectSchema.DigestedObjectSchema(), input );
 
 			// Optimize @graph
 			if( Utils.isObject( expanded ) && "@graph" in expanded && Object.keys( expanded ).length === 1 ) {
@@ -66,12 +66,12 @@ export class Class {
 
 		if( Utils.isArray( input ) ) {
 			for( let element of (<Array<Object>> input) ) {
-				Class.findContextURLs( element, contexts, base );
+				JSONLDProcessor.findContextURLs( element, contexts, base );
 			}
 		} else if( Utils.isPlainObject( input ) ) {
 			for( let key in input ) {
 				if( "@context" !== key ) {
-					Class.findContextURLs( input[ key ], contexts, base );
+					JSONLDProcessor.findContextURLs( input[ key ], contexts, base );
 					continue;
 				}
 
@@ -115,7 +115,7 @@ export class Class {
 		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new InvalidJSONLDSyntaxError( "Maximum number of @context URLs exceeded." ) );
 
 		let contextToResolved:{ [ index:string ]:Object } = Object.create( null );
-		if( ! Class.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
+		if( ! JSONLDProcessor.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
 
 		function resolved( url:string, promise:Promise<[ any, Response ]> ):Promise<void> {
 			return promise.then( ( [ object, response ]:[ any, Response ] ) => {
@@ -128,14 +128,14 @@ export class Class {
 				if( ! Utils.StringUtils.contains( header.toString(), "application/ld+json" ) ) {
 					header = response.getHeader( "Link" );
 					let link:string;
-					if( ! ! header ) link = Class.getTargetFromLinkHeader( header );
+					if( ! ! header ) link = JSONLDProcessor.getTargetFromLinkHeader( header );
 					if( ! ! link ) contextWrapper[ "@context" ] = link;
 				} else {
 					contextWrapper[ "@context" ] = ( "@context" in object ) ? object[ "@context" ] : {};
 				}
 				contextToResolved[ url ] = contextWrapper[ "@context" ];
 
-				return Class.retrieveContexts( contextWrapper, _contextsRequested, url );
+				return JSONLDProcessor.retrieveContexts( contextWrapper, _contextsRequested, url );
 			} );
 		}
 
@@ -155,7 +155,7 @@ export class Class {
 		}
 
 		return Promise.all<void>( promises ).then( () => {
-			Class.findContextURLs( input, contextToResolved, base, true );
+			JSONLDProcessor.findContextURLs( input, contextToResolved, base, true );
 		} );
 	}
 
@@ -202,7 +202,7 @@ export class Class {
 	}
 
 	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string {
-		if( Class.isKeyword( uri ) ) return uri;
+		if( JSONLDProcessor.isKeyword( uri ) ) return uri;
 		return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, relativeTo );
 	}
 
@@ -236,9 +236,9 @@ export class Class {
 		if( Utils.isNull( value ) || ! Utils.isDefined( value ) ) return null;
 
 		if( propertyName === "@id" ) {
-			return Class.expandURI( context, value, { base: true } );
+			return JSONLDProcessor.expandURI( context, value, { base: true } );
 		} else if( propertyName === "@type" ) {
-			return Class.expandURI( context, value, { vocab: true, base: true } );
+			return JSONLDProcessor.expandURI( context, value, { vocab: true, base: true } );
 		}
 
 		let definition:ObjectSchema.DigestedObjectSchemaProperty = new ObjectSchema.DigestedObjectSchemaProperty();
@@ -248,10 +248,10 @@ export class Class {
 			let options:{ base:boolean, vocab?:boolean } = { base: true };
 			if( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
 
-			return { "@id": Class.expandURI( context, value, options ) };
+			return { "@id": JSONLDProcessor.expandURI( context, value, options ) };
 		}
 
-		if( Class.isKeyword( propertyName ) ) return value;
+		if( JSONLDProcessor.isKeyword( propertyName ) ) return value;
 
 		let expandedValue:Object = {};
 		if( definition.literalType ) {
@@ -274,17 +274,17 @@ export class Class {
 		// Expand an element according to the context
 		if( ! Utils.isArray( element ) && ! Utils.isObject( element ) ) {
 			if( ! insideList && ( activeProperty === null || activeProperty === "@graph" ) ) return null;
-			return Class.expandValue( context, element, activeProperty );
+			return JSONLDProcessor.expandValue( context, element, activeProperty );
 		}
 
 		// Recursively expand the array
 		if( Utils.isArray( element ) ) {
-			let container:ObjectSchema.ContainerType = Class.getContainer( context, activeProperty );
+			let container:ObjectSchema.ContainerType = JSONLDProcessor.getContainer( context, activeProperty );
 			insideList = insideList || container === ObjectSchema.ContainerType.LIST;
 
 			const expanded:object[] = [];
 			for( let item of element as any[] ) {
-				let expandedItem:any = Class.process( context, item, activeProperty );
+				let expandedItem:any = JSONLDProcessor.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
 				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
@@ -310,15 +310,15 @@ export class Class {
 		for( let key of keys ) {
 			if( key === "@context" ) continue;
 
-			let uri:string = Class.expandURI( context, key, { vocab: true } );
-			if( ! uri || ! ( RDF.URI.Util.isAbsolute( uri ) || RDF.URI.Util.isBNodeID( uri ) || Class.isKeyword( uri ) ) ) continue;
+			let uri:string = JSONLDProcessor.expandURI( context, key, { vocab: true } );
+			if( ! uri || ! ( RDF.URI.Util.isAbsolute( uri ) || RDF.URI.Util.isBNodeID( uri ) || JSONLDProcessor.isKeyword( uri ) ) ) continue;
 
 			let value:any = element[ key ];
 
 			// Validate value
-			if( Class.isKeyword( uri ) ) {
+			if( JSONLDProcessor.isKeyword( uri ) ) {
 				if( uri === "@id" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@id" value must a string.` );
-				if( uri === "@type" && ! Class.isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
+				if( uri === "@type" && ! JSONLDProcessor.isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
 				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
 				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@value" value must not be an object or an array.` );
 				if( uri === "@language" ) {
@@ -334,9 +334,9 @@ export class Class {
 			}
 
 			let expandedValue:any;
-			let container:ObjectSchema.ContainerType = Class.getContainer( context, key );
+			let container:ObjectSchema.ContainerType = JSONLDProcessor.getContainer( context, key );
 			if( container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject( value ) ) {
-				expandedValue = Class.expandLanguageMap( value );
+				expandedValue = JSONLDProcessor.expandLanguageMap( value );
 			} else {
 				let nextActiveProperty:string = key;
 
@@ -346,7 +346,7 @@ export class Class {
 					if( isList && activeProperty === "@graph" ) nextActiveProperty = null;
 				}
 
-				expandedValue = Class.process( context, value, nextActiveProperty, isList );
+				expandedValue = JSONLDProcessor.process( context, value, nextActiveProperty, isList );
 			}
 
 			// Drop null values if is not a "@value" property
@@ -358,7 +358,7 @@ export class Class {
 			}
 
 			let useArray:boolean = [ "@type", "@id", "@value", "@language" ].indexOf( uri ) === - 1;
-			Class.addValue( expandedElement, uri, expandedValue, { propertyIsArray: useArray } );
+			JSONLDProcessor.addValue( expandedElement, uri, expandedValue, { propertyIsArray: useArray } );
 		}
 
 		if( "@value" in expandedElement ) {
@@ -377,11 +377,11 @@ export class Class {
 			let values:Array<any> = value;
 			if( values.length === 0 && options.propertyIsArray && ! Utils.hasProperty( element, propertyName ) ) element[ propertyName ] = [];
 			for( let item of values ) {
-				Class.addValue( element, propertyName, item, options );
+				JSONLDProcessor.addValue( element, propertyName, item, options );
 			}
 
 		} else if( propertyName in element ) {
-			if( ! Class.hasValue( element, propertyName, value ) ) {
+			if( ! JSONLDProcessor.hasValue( element, propertyName, value ) ) {
 				let items:Array<any> = element[ propertyName ];
 				if( ! Utils.isArray( items ) ) items = element[ propertyName ] = [ items ];
 				items.push( value );
@@ -420,7 +420,7 @@ export class Class {
 	}
 
 	private static hasValue( element:Object, propertyName:string, value:any ):boolean {
-		if( Class.hasProperty( element, propertyName ) ) {
+		if( JSONLDProcessor.hasProperty( element, propertyName ) ) {
 			let item:any = element[ propertyName ];
 			let isList:boolean = RDF.List.Factory.is( item );
 
@@ -428,10 +428,10 @@ export class Class {
 				let items:any[] = isList ? item[ "@list" ] : item;
 
 				for( let entry of items ) {
-					if( Class.compareValues( entry, value ) ) return true;
+					if( JSONLDProcessor.compareValues( entry, value ) ) return true;
 				}
 			} else if( ! Utils.isArray( value ) ) {
-				return Class.compareValues( item, value );
+				return JSONLDProcessor.compareValues( item, value );
 			}
 		}
 
@@ -444,4 +444,4 @@ export class Util {
 
 }
 
-export default Class;
+export default JSONLDProcessor;

@@ -15,12 +15,12 @@ var RDF = __importStar(require("./../RDF"));
 var Utils = __importStar(require("./../Utils"));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
-var Class = (function () {
-    function Class() {
+var JSONLDProcessor = (function () {
+    function JSONLDProcessor() {
     }
-    Class.expand = function (input) {
-        return Class.retrieveContexts(input, Object.create(null), "").then(function () {
-            var expanded = Class.process(new ObjectSchema.DigestedObjectSchema(), input);
+    JSONLDProcessor.expand = function (input) {
+        return JSONLDProcessor.retrieveContexts(input, Object.create(null), "").then(function () {
+            var expanded = JSONLDProcessor.process(new ObjectSchema.DigestedObjectSchema(), input);
             if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
                 expanded = expanded["@graph"];
             }
@@ -32,7 +32,7 @@ var Class = (function () {
             return expanded;
         });
     };
-    Class.getTargetFromLinkHeader = function (header) {
+    JSONLDProcessor.getTargetFromLinkHeader = function (header) {
         var rLinkHeader = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
         for (var _i = 0, _a = header.values; _i < _a.length; _i++) {
             var value = _a[_i];
@@ -54,19 +54,19 @@ var Class = (function () {
         }
         return null;
     };
-    Class.findContextURLs = function (input, contexts, base, replace) {
+    JSONLDProcessor.findContextURLs = function (input, contexts, base, replace) {
         if (replace === void 0) { replace = false; }
         var previousContexts = Object.keys(contexts).length;
         if (Utils.isArray(input)) {
             for (var _i = 0, _a = input; _i < _a.length; _i++) {
                 var element = _a[_i];
-                Class.findContextURLs(element, contexts, base);
+                JSONLDProcessor.findContextURLs(element, contexts, base);
             }
         }
         else if (Utils.isPlainObject(input)) {
             for (var key in input) {
                 if ("@context" !== key) {
-                    Class.findContextURLs(input[key], contexts, base);
+                    JSONLDProcessor.findContextURLs(input[key], contexts, base);
                     continue;
                 }
                 var urlOrArrayOrContext = input[key];
@@ -107,11 +107,11 @@ var Class = (function () {
         }
         return previousContexts < Object.keys(contexts).length;
     };
-    Class.retrieveContexts = function (input, contextsRequested, base) {
+    JSONLDProcessor.retrieveContexts = function (input, contextsRequested, base) {
         if (Object.keys(contextsRequested).length > MAX_CONTEXT_URLS)
             return Promise.reject(new Errors_1.InvalidJSONLDSyntaxError("Maximum number of @context URLs exceeded."));
         var contextToResolved = Object.create(null);
-        if (!Class.findContextURLs(input, contextToResolved, base))
+        if (!JSONLDProcessor.findContextURLs(input, contextToResolved, base))
             return Promise.resolve();
         function resolved(url, promise) {
             return promise.then(function (_a) {
@@ -124,7 +124,7 @@ var Class = (function () {
                     header = response.getHeader("Link");
                     var link = void 0;
                     if (!!header)
-                        link = Class.getTargetFromLinkHeader(header);
+                        link = JSONLDProcessor.getTargetFromLinkHeader(header);
                     if (!!link)
                         contextWrapper["@context"] = link;
                 }
@@ -132,7 +132,7 @@ var Class = (function () {
                     contextWrapper["@context"] = ("@context" in object) ? object["@context"] : {};
                 }
                 contextToResolved[url] = contextWrapper["@context"];
-                return Class.retrieveContexts(contextWrapper, _contextsRequested, url);
+                return JSONLDProcessor.retrieveContexts(contextWrapper, _contextsRequested, url);
             });
         }
         var promises = [];
@@ -154,10 +154,10 @@ var Class = (function () {
                 return state_1.value;
         }
         return Promise.all(promises).then(function () {
-            Class.findContextURLs(input, contextToResolved, base, true);
+            JSONLDProcessor.findContextURLs(input, contextToResolved, base, true);
         });
     };
-    Class.isKeyword = function (value) {
+    JSONLDProcessor.isKeyword = function (value) {
         if (!Utils.isString(value))
             return false;
         switch (value) {
@@ -185,7 +185,7 @@ var Class = (function () {
                 return false;
         }
     };
-    Class.isValidType = function (value) {
+    JSONLDProcessor.isValidType = function (value) {
         if (Utils.isString(value))
             return true;
         if (!Utils.isArray(value))
@@ -197,12 +197,12 @@ var Class = (function () {
         }
         return true;
     };
-    Class.expandURI = function (schema, uri, relativeTo) {
-        if (Class.isKeyword(uri))
+    JSONLDProcessor.expandURI = function (schema, uri, relativeTo) {
+        if (JSONLDProcessor.isKeyword(uri))
             return uri;
         return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, relativeTo);
     };
-    Class.expandLanguageMap = function (languageMap) {
+    JSONLDProcessor.expandLanguageMap = function (languageMap) {
         var expandedLanguage = [];
         var keys = Object.keys(languageMap).sort();
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
@@ -224,19 +224,19 @@ var Class = (function () {
         }
         return expandedLanguage;
     };
-    Class.getContainer = function (context, property) {
+    JSONLDProcessor.getContainer = function (context, property) {
         if (context.properties.has(property))
             return context.properties.get(property).containerType;
         return void 0;
     };
-    Class.expandValue = function (context, value, propertyName) {
+    JSONLDProcessor.expandValue = function (context, value, propertyName) {
         if (Utils.isNull(value) || !Utils.isDefined(value))
             return null;
         if (propertyName === "@id") {
-            return Class.expandURI(context, value, { base: true });
+            return JSONLDProcessor.expandURI(context, value, { base: true });
         }
         else if (propertyName === "@type") {
-            return Class.expandURI(context, value, { vocab: true, base: true });
+            return JSONLDProcessor.expandURI(context, value, { vocab: true, base: true });
         }
         var definition = new ObjectSchema.DigestedObjectSchemaProperty();
         if (context.properties.has(propertyName))
@@ -245,9 +245,9 @@ var Class = (function () {
             var options = { base: true };
             if (definition.pointerType === ObjectSchema.PointerType.VOCAB)
                 options.vocab = true;
-            return { "@id": Class.expandURI(context, value, options) };
+            return { "@id": JSONLDProcessor.expandURI(context, value, options) };
         }
-        if (Class.isKeyword(propertyName))
+        if (JSONLDProcessor.isKeyword(propertyName))
             return value;
         var expandedValue = {};
         if (definition.literalType) {
@@ -263,21 +263,21 @@ var Class = (function () {
         expandedValue["@value"] = value;
         return expandedValue;
     };
-    Class.process = function (context, element, activeProperty, insideList) {
+    JSONLDProcessor.process = function (context, element, activeProperty, insideList) {
         if (Utils.isNull(element) || !Utils.isDefined(element))
             return null;
         if (!Utils.isArray(element) && !Utils.isObject(element)) {
             if (!insideList && (activeProperty === null || activeProperty === "@graph"))
                 return null;
-            return Class.expandValue(context, element, activeProperty);
+            return JSONLDProcessor.expandValue(context, element, activeProperty);
         }
         if (Utils.isArray(element)) {
-            var container = Class.getContainer(context, activeProperty);
+            var container = JSONLDProcessor.getContainer(context, activeProperty);
             insideList = insideList || container === ObjectSchema.ContainerType.LIST;
             var expanded = [];
             for (var _i = 0, _a = element; _i < _a.length; _i++) {
                 var item = _a[_i];
-                var expandedItem = Class.process(context, item, activeProperty);
+                var expandedItem = JSONLDProcessor.process(context, item, activeProperty);
                 if (expandedItem === null)
                     continue;
                 if (insideList && (Utils.isArray(expandedItem) || RDF.List.Factory.is(expandedItem)))
@@ -301,14 +301,14 @@ var Class = (function () {
             var key = keys_2[_b];
             if (key === "@context")
                 continue;
-            var uri = Class.expandURI(context, key, { vocab: true });
-            if (!uri || !(RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri) || Class.isKeyword(uri)))
+            var uri = JSONLDProcessor.expandURI(context, key, { vocab: true });
+            if (!uri || !(RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri) || JSONLDProcessor.isKeyword(uri)))
                 continue;
             var value = element[key];
-            if (Class.isKeyword(uri)) {
+            if (JSONLDProcessor.isKeyword(uri)) {
                 if (uri === "@id" && !Utils.isString(value))
                     throw new Errors_1.InvalidJSONLDSyntaxError("\"@id\" value must a string.");
-                if (uri === "@type" && !Class.isValidType(value))
+                if (uri === "@type" && !JSONLDProcessor.isValidType(value))
                     throw new Errors_1.InvalidJSONLDSyntaxError("\"@type\" value must a string, an array of strings.");
                 if (uri === "@graph" && !(Utils.isObject(value) || Utils.isArray(value)))
                     throw new Errors_1.InvalidJSONLDSyntaxError("\"@graph\" value must not be an object or an array.");
@@ -329,9 +329,9 @@ var Class = (function () {
                     throw new Errors_1.NotImplementedError("The SDK does not support \"@index\" and \"@reverse\" tags.");
             }
             var expandedValue = void 0;
-            var container = Class.getContainer(context, key);
+            var container = JSONLDProcessor.getContainer(context, key);
             if (container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject(value)) {
-                expandedValue = Class.expandLanguageMap(value);
+                expandedValue = JSONLDProcessor.expandLanguageMap(value);
             }
             else {
                 var nextActiveProperty = key;
@@ -341,7 +341,7 @@ var Class = (function () {
                     if (isList && activeProperty === "@graph")
                         nextActiveProperty = null;
                 }
-                expandedValue = Class.process(context, value, nextActiveProperty, isList);
+                expandedValue = JSONLDProcessor.process(context, value, nextActiveProperty, isList);
             }
             if (expandedValue === null && uri !== "@value")
                 continue;
@@ -351,7 +351,7 @@ var Class = (function () {
                 expandedValue = { "@list": expandedValue };
             }
             var useArray = ["@type", "@id", "@value", "@language"].indexOf(uri) === -1;
-            Class.addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
+            JSONLDProcessor.addValue(expandedElement, uri, expandedValue, { propertyIsArray: useArray });
         }
         if ("@value" in expandedElement) {
             if (expandedElement["@value"] === null)
@@ -366,18 +366,18 @@ var Class = (function () {
         }
         return expandedElement;
     };
-    Class.addValue = function (element, propertyName, value, options) {
+    JSONLDProcessor.addValue = function (element, propertyName, value, options) {
         if (Utils.isArray(value)) {
             var values = value;
             if (values.length === 0 && options.propertyIsArray && !Utils.hasProperty(element, propertyName))
                 element[propertyName] = [];
             for (var _i = 0, values_2 = values; _i < values_2.length; _i++) {
                 var item = values_2[_i];
-                Class.addValue(element, propertyName, item, options);
+                JSONLDProcessor.addValue(element, propertyName, item, options);
             }
         }
         else if (propertyName in element) {
-            if (!Class.hasValue(element, propertyName, value)) {
+            if (!JSONLDProcessor.hasValue(element, propertyName, value)) {
                 var items = element[propertyName];
                 if (!Utils.isArray(items))
                     items = element[propertyName] = [items];
@@ -388,14 +388,14 @@ var Class = (function () {
             element[propertyName] = options.propertyIsArray ? [value] : value;
         }
     };
-    Class.hasProperty = function (element, propertyName) {
+    JSONLDProcessor.hasProperty = function (element, propertyName) {
         if (propertyName in element) {
             var item = element[propertyName];
             return !Utils.isArray(item) || item.length > 0;
         }
         return false;
     };
-    Class.compareValues = function (value1, value2) {
+    JSONLDProcessor.compareValues = function (value1, value2) {
         if (value1 === value2)
             return true;
         if (Utils.isObject(value1) && Utils.isObject(value2)) {
@@ -410,33 +410,33 @@ var Class = (function () {
         }
         return false;
     };
-    Class.hasValue = function (element, propertyName, value) {
-        if (Class.hasProperty(element, propertyName)) {
+    JSONLDProcessor.hasValue = function (element, propertyName, value) {
+        if (JSONLDProcessor.hasProperty(element, propertyName)) {
             var item = element[propertyName];
             var isList = RDF.List.Factory.is(item);
             if (isList || Utils.isArray(item)) {
                 var items = isList ? item["@list"] : item;
                 for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
                     var entry = items_1[_i];
-                    if (Class.compareValues(entry, value))
+                    if (JSONLDProcessor.compareValues(entry, value))
                         return true;
                 }
             }
             else if (!Utils.isArray(value)) {
-                return Class.compareValues(item, value);
+                return JSONLDProcessor.compareValues(item, value);
             }
         }
         return false;
     };
-    return Class;
+    return JSONLDProcessor;
 }());
-exports.Class = Class;
+exports.JSONLDProcessor = JSONLDProcessor;
 var Util = (function () {
     function Util() {
     }
     return Util;
 }());
 exports.Util = Util;
-exports.default = Class;
+exports.default = JSONLDProcessor;
 
 //# sourceMappingURL=Processor.js.map

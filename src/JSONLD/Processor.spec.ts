@@ -7,23 +7,17 @@ import {
 	module,
 	STATIC,
 } from "../test/JasmineExtender";
-
 import * as Utils from "./../Utils";
-import * as Processor from "./Processor";
-import DefaultExport from "./Processor";
+
+import DefaultExport, { JSONLDProcessor } from "./Processor";
 
 describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( Processor ).toBeDefined();
-		expect( Utils.isObject( Processor ) ).toBe( true );
-	} );
-
-	describe( clazz( "Carbon.JSONLD.Processor.Class", "Class that contains methods that can process JSON-LD objects." ), ():void => {
+	describe( clazz( "Carbon.JSONLD.Processor.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( Processor.Class ).toBeDefined();
-			expect( Utils.isFunction( Processor.Class ) ).toBe( true );
+			expect( JSONLDProcessor ).toBeDefined();
+			expect( Utils.isFunction( JSONLDProcessor ) ).toBe( true );
 		} );
 
 		beforeEach( () => {
@@ -451,8 +445,8 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 			],
 			{ type: "Promise<object[]>" }
 		), ( done:DoneFn ):void => {
-			expect( Processor.Class.expand ).toBeDefined();
-			expect( Utils.isFunction( Processor.Class.expand ) ).toBe( true );
+			expect( JSONLDProcessor.expand ).toBeDefined();
+			expect( Utils.isFunction( JSONLDProcessor.expand ) ).toBe( true );
 
 			function jsonldExpand( object:Object ):Promise<Object> {
 				return new Promise<Object>( ( resolve:Function, reject:Function ) => {
@@ -468,7 +462,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 
 			function evaluateExpand( object:Object ):Promise<void> {
 				let libExpandPromise:Promise<Object> = jsonldExpand( object );
-				let myExpandPromise:Promise<Object> = Processor.Class.expand( object );
+				let myExpandPromise:Promise<Object> = JSONLDProcessor.expand( object );
 
 				return Promise.all( [ libExpandPromise, myExpandPromise ] ).then( ( [ libExpand, myExpand ]:Object[] ) => {
 					expect( object ).not.toBe( libExpand );
@@ -697,9 +691,9 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLD.Processor.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.JSONLD.Processor.JSONLDProcessor" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Processor.Class );
+		expect( DefaultExport ).toBe( JSONLDProcessor );
 	} );
 
 } );
