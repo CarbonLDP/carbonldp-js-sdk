@@ -6,14 +6,14 @@ import {
 	ObjectSchemaDigester,
 	ObjectSchemaUtils as SchemaUtils,
 } from "../../ObjectSchema";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
 import {
 	getLevelRegExp,
 	getParentPath,
 } from "./Utils";
 
-export class Class extends QueryContext.Class {
+export class Class extends QueryContext {
 
 	private _propertiesMap:Map<string, QueryProperty.Class>;
 	private _schemas:DigestedObjectSchema[];

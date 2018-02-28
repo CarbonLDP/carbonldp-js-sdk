@@ -80,7 +80,6 @@ import {
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
 import {
-	QueryContext,
 	QueryContextBuilder,
 	QueryContextPartial,
 	QueryDocumentBuilder,
@@ -89,6 +88,7 @@ import {
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
+import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import {
 	areDifferentType,
 	createAllPattern,
@@ -1054,7 +1054,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			;
 	}
 
-	private executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext.Class, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	private executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
 		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
@@ -1131,7 +1131,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	private executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext.Class, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], Response ]> {
+	private executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], Response ]> {
 		const targetVar:VariableToken = queryContext.getVariable( targetName );
 		const select:SelectToken = new SelectToken()
 			.addVariable( targetVar )

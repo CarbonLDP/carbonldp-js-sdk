@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
 var ObjectSchema_1 = require("../../ObjectSchema");
-var QueryContext = __importStar(require("./QueryContext"));
+var QueryContext_1 = require("./QueryContext");
 var QueryProperty = __importStar(require("./QueryProperty"));
 var Utils_1 = require("./Utils");
 var Class = (function (_super) {
@@ -113,7 +113,7 @@ var Class = (function (_super) {
         return this._schemas;
     };
     return Class;
-}(QueryContext.Class));
+}(QueryContext_1.QueryContext));
 exports.Class = Class;
 exports.default = Class;
 

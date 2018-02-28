@@ -3,7 +3,8 @@ import {
 	LiteralToken
 } from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
+import { AbstractContext } from "../../AbstractContext";
+import { IllegalArgumentError } from "../../Errors";
 import {
 	clazz,
 	constructor,
@@ -14,8 +15,8 @@ import {
 	module,
 } from "../../test/JasmineExtender";
 import { XSD } from "../../Vocabularies/XSD";
-import { IllegalArgumentError } from "../../Errors";
-import QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
+
 import * as Module from "./QueryValue";
 import { Class as QueryValue } from "./QueryValue";
 
@@ -52,7 +53,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Creates a value wrapper for the specified value.",
 				[
-					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the value is been used." },
+					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the value is been used." },
 					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
 				]
 			), ():void => {

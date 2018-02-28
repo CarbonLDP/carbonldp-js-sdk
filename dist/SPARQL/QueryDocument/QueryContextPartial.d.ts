@@ -1,8 +1,8 @@
 import { Context } from "../../Context";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as PersistedDocument from "../../PersistedDocument";
-import * as QueryContext from "./QueryContext";
-export declare class Class extends QueryContext.Class {
+import { QueryContext } from "./QueryContext";
+export declare class Class extends QueryContext {
     private _document;
     constructor(document: PersistedDocument.Class, context?: Context);
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;

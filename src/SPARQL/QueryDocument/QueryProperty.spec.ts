@@ -4,7 +4,7 @@ import {
 	VariableToken,
 } from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
+import { AbstractContext } from "../../AbstractContext";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
@@ -20,7 +20,8 @@ import {
 	method,
 	module,
 } from "../../test/JasmineExtender";
-import QueryContext from "./QueryContext";
+
+import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryProperty";
 import { Class as QueryProperty } from "./QueryProperty";
 
@@ -60,7 +61,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				"Creates a query property for the specified name.\n" +
 				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
 				[
-					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the property is been used." },
+					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the property is been used." },
 					{ name: "name", type: "string", description: "The name of the property." },
 				]
 			), ():void => {

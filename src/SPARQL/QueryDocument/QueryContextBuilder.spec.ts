@@ -1,4 +1,5 @@
-import AbstractContext from "../../AbstractContext";
+import { AbstractContext } from "../../AbstractContext";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -15,12 +16,12 @@ import {
 	method,
 	module
 } from "../../test/JasmineExtender";
-import * as URI from "./../../RDF/URI";
-import QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
+
 import * as Module from "./QueryContextBuilder";
 import { Class as QueryContextBuilder } from "./QueryContextBuilder";
+
 import QueryProperty, { PropertyType } from "./QueryProperty";
-import { IllegalArgumentError } from "../../Errors";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
@@ -70,7 +71,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 		} );
 
-		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.Class" ), ():void => {
+		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
 			const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );

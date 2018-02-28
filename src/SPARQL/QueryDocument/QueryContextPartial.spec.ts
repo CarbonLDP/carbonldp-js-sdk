@@ -4,7 +4,7 @@ import * as PersistedDocument from "../../PersistedDocument";
 import * as PersistedFragment from "../../PersistedFragment";
 import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import { PartialMetadata } from "./PartialMetadata";
-import QueryContext from "./QueryContext";
+import { QueryContext }  from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
 import { Class as QueryContextPartial } from "./QueryContextPartial";
@@ -70,7 +70,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 		} );
 
-		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.Class" ), ():void => {
+		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );

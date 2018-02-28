@@ -9,15 +9,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var QueryContext = __importStar(require("./QueryContext"));
+var QueryContext_1 = require("./QueryContext");
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(document, context) {
@@ -41,7 +34,7 @@ var Class = (function (_super) {
         return schemaLibrary._partialMetadata.schema;
     };
     return Class;
-}(QueryContext.Class));
+}(QueryContext_1.QueryContext));
 exports.Class = Class;
 exports.default = Class;
 

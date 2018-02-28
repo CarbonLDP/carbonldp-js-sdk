@@ -1,8 +1,8 @@
 import { Context } from "../../Context";
 import { DigestedObjectSchema, DigestedObjectSchemaProperty } from "../../ObjectSchema";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
-export declare class Class extends QueryContext.Class {
+export declare class Class extends QueryContext {
     private _propertiesMap;
     private _schemas;
     constructor(context?: Context);

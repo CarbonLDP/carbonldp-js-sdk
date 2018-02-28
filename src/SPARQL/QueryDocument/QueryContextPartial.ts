@@ -2,9 +2,9 @@ import { Context } from "../../Context";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import * as PersistedDocument from "../../PersistedDocument";
 import * as PersistedResource from "../../PersistedResource";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 
-export class Class extends QueryContext.Class {
+export class Class extends QueryContext {
 
 	private _document:PersistedDocument.Class;
 

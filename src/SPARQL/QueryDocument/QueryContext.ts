@@ -6,14 +6,14 @@ import {
 } from "sparqler/tokens";
 
 import { Context } from "../../Context";
-import { IllegalArgumentError } from "../../Errors";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
 } from "../../ObjectSchema";
 import * as QueryVariable from "./QueryVariable";
 
-export class Class implements ObjectSchemaResolver {
+export class QueryContext implements ObjectSchemaResolver {
 	readonly context?:Context;
 
 	private _variablesCounter:number;
@@ -96,4 +96,4 @@ export class Class implements ObjectSchemaResolver {
 
 }
 
-export default Class;
+export default QueryContext;

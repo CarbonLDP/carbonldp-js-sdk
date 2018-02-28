@@ -12,7 +12,7 @@ import {
 
 import { DigestedObjectSchemaProperty } from "../../ObjectSchema";
 import { isObject } from "../../Utils";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 
 export function getLevelRegExp( property:string ):RegExp {
 	if( property ) property += ".";
@@ -21,7 +21,7 @@ export function getLevelRegExp( property:string ):RegExp {
 	return new RegExp( `^${ parsedName }[^.]+$` );
 }
 
-export function createPropertyPatterns( context:QueryContext.Class, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
+export function createPropertyPatterns( context:QueryContext, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
 	const propertyIRI:IRIToken | PrefixedNameToken = context.compactIRI( uri );
@@ -42,7 +42,7 @@ export function createPropertyPatterns( context:QueryContext.Class, resourcePath
 	return propertyPatterns;
 }
 
-export function createTypesPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
+export function createTypesPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new OptionalToken()
 		.addPattern( new SubjectToken( context.getVariable( resourcePath ) )
 			.addPredicate( new PredicateToken( "a" )
@@ -51,7 +51,7 @@ export function createTypesPattern( context:QueryContext.Class, resourcePath:str
 		);
 }
 
-export function createGraphPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
+export function createGraphPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new GraphToken( context.getVariable( resourcePath ) )
 		.addPattern( new SubjectToken( context.getVariable( `${ resourcePath }._subject` ) )
 			.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
@@ -60,7 +60,7 @@ export function createGraphPattern( context:QueryContext.Class, resourcePath:str
 		;
 }
 
-export function createAllPattern( context:QueryContext.Class, resourcePath:string ):PatternToken {
+export function createAllPattern( context:QueryContext, resourcePath:string ):PatternToken {
 	return new SubjectToken( context.getVariable( resourcePath ) )
 		.addPredicate( new PredicateToken( context.getVariable( `${ resourcePath }._predicate` ) )
 			.addObject( context.getVariable( `${ resourcePath }._object` ) )

@@ -1,6 +1,6 @@
 import { PatternToken, SubjectToken } from "sparqler/tokens";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryVariable from "./QueryVariable";
 export declare enum PropertyType {
@@ -17,7 +17,7 @@ export declare class Class {
     private _type?;
     private _patterns;
     private _schema;
-    constructor(context: QueryContext.Class, name: string);
+    constructor(context: QueryContext, name: string);
     addPattern(...patterns: PatternToken[]): this;
     getPatterns(): PatternToken[];
     getSchema(): DigestedObjectSchema;

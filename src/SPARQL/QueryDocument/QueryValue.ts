@@ -1,18 +1,18 @@
 import { isAbsolute } from "sparqler/iri";
 import { LiteralToken } from "sparqler/tokens";
 
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { isDate } from "../../Utils";
-import { IllegalArgumentError } from "../../Errors";
 import { XSD } from "../../Vocabularies/XSD";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 
 export class Class {
 	private _value:string | number | boolean | Date;
 
 	private _literal:LiteralToken;
-	private _context:QueryContext.Class;
+	private _context:QueryContext;
 
-	constructor( context:QueryContext.Class, value:string | number | boolean | Date ) {
+	constructor( context:QueryContext, value:string | number | boolean | Date ) {
 		this._value = value;
 		this._context = context;
 

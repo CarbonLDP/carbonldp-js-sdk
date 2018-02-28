@@ -1,9 +1,17 @@
 import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
-import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import { Pointer } from "./../../Pointer";
-import QueryContext from "./QueryContext";
+import { AbstractContext } from "../../AbstractContext";
+import { Pointer } from "../../Pointer";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryObject";
 import { Class as QueryObject } from "./QueryObject";
 
@@ -43,7 +51,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Creates an object for the specified object resource.",
 				[
-					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the object is been used." },
+					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the object is been used." },
 					{ name: "object", type: "Carbon.Pointer.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
 				]
 			), ():void => {

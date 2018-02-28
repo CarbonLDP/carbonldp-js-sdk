@@ -5,7 +5,7 @@ import {
 } from "sparqler/tokens";
 
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import * as QueryContext from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
 import * as QueryVariable from "./QueryVariable";
 import {
@@ -26,7 +26,7 @@ export class Class {
 
 	_builder:QueryDocumentBuilder.Class;
 
-	private _context:QueryContext.Class;
+	private _context:QueryContext;
 
 	private _optional:boolean;
 	private _type?:PropertyType;
@@ -34,7 +34,7 @@ export class Class {
 	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
-	constructor( context:QueryContext.Class, name:string ) {
+	constructor( context:QueryContext, name:string ) {
 		this.name = name;
 		this.variable = context.getVariable( name );
 
@@ -53,7 +53,7 @@ export class Class {
 		let patterns:PatternToken[] = this._patterns.slice();
 
 		if( this._type !== void 0 ) {
-			const fn:( context:QueryContext.Class, resourcePath:string ) => PatternToken =
+			const fn:( context:QueryContext, resourcePath:string ) => PatternToken =
 				this._type === PropertyType.PARTIAL ? createTypesPattern :
 					this._type === PropertyType.FULL ? createGraphPattern : createAllPattern;
 
