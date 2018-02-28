@@ -673,8 +673,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	sparql( documentURI:string ):QueryClause<SPARQL.Builder.ExecuteSelect> {
-		let builder:QueryClause<SPARQL.Builder.ExecuteSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
+	sparql( documentURI:string ):QueryClause<SPARQL.Builder.FinishSPARQLSelect> {
+		let builder:QueryClause<SPARQL.Builder.FinishSPARQLSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
 
 		if( this.context ) {
 			const schema:DigestedObjectSchema = this.getProcessedSchema();

@@ -71,7 +71,7 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     executeRawCONSTRUCTQuery(documentURI: string, constructQuery: string, requestOptions?: RequestOptions): Promise<[string, Response]>;
     executeRawDESCRIBEQuery(documentURI: string, describeQuery: string, requestOptions?: RequestOptions): Promise<[string, Response]>;
     executeUPDATE(documentURI: string, update: string, requestOptions?: RequestOptions): Promise<Response>;
-    sparql(documentURI: string): QueryClause<SPARQL.Builder.ExecuteSelect>;
+    sparql(documentURI: string): QueryClause<SPARQL.Builder.FinishSPARQLSelect>;
     on(event: Messaging.Event.CHILD_CREATED, uriPattern: string, onEvent: (message: Messaging.ChildCreated.Class) => void, onError: (error: Error) => void): void;
     on(event: Messaging.Event.ACCESS_POINT_CREATED, uriPattern: string, onEvent: (message: Messaging.AccessPointCreated.Class) => void, onError: (error: Error) => void): void;
     on(event: Messaging.Event.DOCUMENT_CREATED, uriPattern: string, onEvent: (message: Messaging.DocumentCreated.Class) => void, onError: (error: Error) => void): void;

@@ -13651,7 +13651,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Method that creates an instance of SPARQLER for the provided document end-point.", [
 				{ name: "documentURI", type: "string", description: "URI of the document where to execute the SPARQL query." },
 			],
-			{ type: "SPARQLER/Clauses/QueryClause" }
+			{ type: "SPARQLER/Clauses/QueryClause<Carbon.SPARQL.Builder.FinishSPARQLSelect>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -13687,7 +13687,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					"ex": "http://example.com/",
 				} );
 
-				let queryBuilder:SPARQL.Builder.ExecuteSelect = documents
+				let queryBuilder:SPARQL.Builder.FinishSPARQLSelect = documents
 					.sparql( "http://example.com/resource/" )
 					.select( "a" )
 					.where( _ =>

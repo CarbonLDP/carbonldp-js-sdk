@@ -16,12 +16,17 @@ describe( module( "Carbon/SPARQL/Builder", "Module that reexports the customized
 		expect( Builder ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.Builder.Class", "Customized SPARQLER class to be used by the SDK" ), ():void => {
+	describe( clazz( "Carbon.SPARQL.Builder.SPARQLBuilder", "Customized SPARQLER class to be used by the SDK" ), ():void => {
+
+		// TODO: Test `SPARQLBuilder.constructor`
+
+		// TODO: Test `SPARQLBuilder => FinishSPARQLSelect`
+
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.Builder.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.SPARQL.Builder.SPARQLBuilder" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Builder.Class );
+		expect( DefaultExport ).toBe( Builder.SPARQLBuilder );
 	} );
 
 } );

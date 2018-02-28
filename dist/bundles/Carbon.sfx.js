@@ -12695,9 +12695,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var sparqler_1 = __webpack_require__(282);
 var decorators_1 = __webpack_require__(20);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(documents, entryPoint) {
+var SPARQLBuilder = (function (_super) {
+    __extends(SPARQLBuilder, _super);
+    function SPARQLBuilder(documents, entryPoint) {
         return _super.call(this, function (container, object) {
             var finishObject = decorators_1.finishDecorator(container, object);
             return Object.assign(finishObject, {
@@ -12710,10 +12710,10 @@ var Class = (function (_super) {
             });
         }) || this;
     }
-    return Class;
+    return SPARQLBuilder;
 }(sparqler_1.SPARQLER));
-exports.Class = Class;
-exports.default = Class;
+exports.SPARQLBuilder = SPARQLBuilder;
+exports.default = SPARQLBuilder;
 
 
 /***/ }),
