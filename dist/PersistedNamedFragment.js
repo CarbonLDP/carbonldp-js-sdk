@@ -1,15 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var NamedFragment_1 = require("./NamedFragment");
 var PersistedFragment_1 = require("./PersistedFragment");
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.decorate = function (fragment) {
-        PersistedFragment_1.PersistedFragment.decorate(fragment);
-        return fragment;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+exports.PersistedNamedFragment = {
+    isDecorated: function (object) {
+        return PersistedFragment_1.PersistedFragment.isDecorated(object);
+    },
+    decorate: function (object) {
+        if (exports.PersistedNamedFragment.isDecorated(object))
+            return object;
+        var fragment = NamedFragment_1.NamedFragment.decorate(object);
+        return PersistedFragment_1.PersistedFragment.decorate(fragment);
+    },
+};
+exports.default = exports.PersistedNamedFragment;
 
 //# sourceMappingURL=PersistedNamedFragment.js.map

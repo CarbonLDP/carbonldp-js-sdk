@@ -14,7 +14,7 @@ import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import { PersistedFragment } from "./PersistedFragment";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
@@ -44,7 +44,7 @@ export interface Class extends Document, PersistedResource, ServiceAwareDocument
 
 	getFragment<T extends object>( slug:string ):T & PersistedFragment;
 
-	getNamedFragment<T extends object>( slug:string ):T & PersistedNamedFragment.Class;
+	getNamedFragment<T extends object>( slug:string ):T & PersistedNamedFragment;
 
 	getFragments():PersistedFragment[];
 
@@ -56,9 +56,9 @@ export interface Class extends Document, PersistedResource, ServiceAwareDocument
 
 	createFragment<T extends object>( object:T, slug:string ):PersistedFragment & T;
 
-	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
+	createNamedFragment( slug:string ):PersistedNamedFragment;
 
-	createNamedFragment<T extends object>( object:T, slug:string ):PersistedNamedFragment.Class & T;
+	createNamedFragment<T extends object>( object:T, slug:string ):PersistedNamedFragment & T;
 
 	refresh<T extends object>():Promise<[ T & Class, Response ]>;
 
@@ -180,7 +180,7 @@ function extendRevert( superFunction:() => void ):() => void {
 		let persistedDocument:Class = this;
 		persistedDocument._fragmentsIndex.clear();
 		for( let fragment of persistedDocument._savedFragments ) {
-			let slug:string = "slug" in fragment ? (fragment as PersistedNamedFragment.Class).slug : fragment.id;
+			let slug:string = "slug" in fragment ? (fragment as PersistedNamedFragment).slug : fragment.id;
 
 			fragment.revert();
 			persistedDocument._fragmentsIndex.set( slug, fragment );
@@ -236,12 +236,12 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 	};
 }
 
-function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment ):( slug:string ) => PersistedNamedFragment.Class;
-function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => NamedFragment ):( slug:string, object:object ) => PersistedNamedFragment.Class;
+function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment ):( slug:string ) => PersistedNamedFragment;
+function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => NamedFragment ):( slug:string, object:object ) => PersistedNamedFragment;
 function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment ):any {
-	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment.Class {
+	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment {
 		let fragment:NamedFragment = superFunction.call( this, slugOrObject, slug );
-		return PersistedNamedFragment.Factory.decorate( fragment );
+		return PersistedNamedFragment.decorate( fragment );
 	};
 }
 

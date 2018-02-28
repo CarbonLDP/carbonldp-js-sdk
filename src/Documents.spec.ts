@@ -44,7 +44,7 @@ import * as MessagingUtils from "./Messaging/Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { ContextSettings } from "./Settings";
@@ -10568,7 +10568,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					);
 					document._normalize();
 
-					const fragment:PersistedNamedFragment.Class = document.getFragment( "#1" );
+					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.refresh( document )
 						.then( ( [ returnedDocument, response ] ) => {
@@ -11996,7 +11996,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						documents
 					);
 
-					const fragment:PersistedNamedFragment.Class = document.getFragment( "#1" );
+					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.saveAndRefresh( document )
 						.then( ( [ returnedDocument, responses ] ) => {

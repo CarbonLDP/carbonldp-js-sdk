@@ -11,7 +11,7 @@ import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
 
 import { PersistedFragment } from "./PersistedFragment";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { Pointer } from "./Pointer";
 import * as URI from "./RDF/URI";
 import {
@@ -177,7 +177,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Creates a PersistedNamedFragment with the slug provided", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "Carbon.PersistedNamedFragment.Class" }
+				{ type: "Carbon.PersistedNamedFragment.PersistedNamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -186,7 +186,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & Carbon.PersistedNamedFragment.Class" }
+				{ type: "T & Carbon.PersistedNamedFragment.PersistedNamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -1526,12 +1526,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Creates a PersistedNamedFragment with the slug provided", [
 						{ name: "slug", type: "string" },
 					],
-					{ type: "Carbon.PersistedNamedFragment.Class" }
+					{ type: "Carbon.PersistedNamedFragment.PersistedNamedFragment" }
 				), ():void => {
 					expect( document.createNamedFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
 
-					let fragment:PersistedNamedFragment.Class;
+					let fragment:PersistedNamedFragment;
 
 					fragment = document.createNamedFragment( "my-fragment" );
 					expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
@@ -1554,7 +1554,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "object", type: "T" },
 						{ name: "slug", type: "string" },
 					],
-					{ type: "T & Carbon.PersistedNamedFragment.Class" }
+					{ type: "T & Carbon.PersistedNamedFragment.PersistedNamedFragment" }
 				), ():void => {
 
 					expect( document.createNamedFragment ).toBeDefined();

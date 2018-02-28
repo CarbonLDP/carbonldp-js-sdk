@@ -1,10 +1,9 @@
 import { NamedFragment } from "./NamedFragment";
 import { PersistedFragment } from "./PersistedFragment";
 
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
-import DefaultExport from "./PersistedNamedFragment";
+import DefaultExport, { PersistedNamedFragment } from "./PersistedNamedFragment";
+
 import {
-	clazz,
 	extendsClass,
 	hasDefaultExport,
 	hasMethod,
@@ -13,19 +12,15 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
 describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( PersistedNamedFragment ).toBeDefined();
-		expect( Utils.isObject( PersistedNamedFragment ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.PersistedNamedFragment.Class",
+		"Carbon.PersistedNamedFragment.PersistedNamedFragment",
 		"Interface that represents a persisted named fragment of a persisted document."
 	), ():void => {
 
@@ -34,43 +29,66 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"document",
+			"_document",
 			"Carbon.PersistedDocument.Class",
 			"A reference to the persisted document the current named fragment belongs to."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedNamedFragment.Class" ), ():void => {
+	describe( interfaze(
+		"Carbon.PersistedNamedFragment.PersistedNamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `Carbon.PersistedNamedFragment.PersistedNamedFragment` object."
+	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			[
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.PersistedNamedFragment.PersistedNamedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.PersistedNamedFragment` object.",
+			[
+				{ name: "object", type: "T", description: "The object to convert into a persisted named fragment." },
+			]
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.PersistedNamedFragment.PersistedNamedFragment" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedNamedFragment.Class;
+		let defaultTarget:PersistedNamedFragment;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 
-	describe( clazz( "Carbon.PersistedNamedFragment.Factory", "Factory class for `Carbon.PersistedNamedFragment.Class` objects." ), ():void => {
+	describe( property( STATIC, "PersistedNamedFragment", "Carbon.PersistedNamedFragment.PersistedNamedFragmentFactory", "Constant that implements the `Carbon.PersistedNamedFragment.PersistedNamedFragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedNamedFragment.Factory ).toBeDefined();
-			expect( Utils.isFunction( PersistedNamedFragment.Factory ) ).toBe( true );
+			expect( PersistedNamedFragment ).toBeDefined();
+			expect( PersistedNamedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			"Decorates the object provided with the properties and methods of a `Carbon.PersistedNamedFragment.Class` object.", [
-				{ name: "fragment", type: "T extends Carbon.NamedFragment.NamedFragment", description: "The NamedFragment object to convert into a persisted one." },
-			]
-		), ():void => {
-			expect( PersistedNamedFragment.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedNamedFragment.Factory.decorate ) ).toBe( true );
+		// TODO: Test `PersistedNamedFragment.isDecorated`
 
-			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedFragment, "decorate" );
+		// TODO: Separate in different tests
+		it( "PersistedNamedFragment.decorate", ():void => {
+			expect( PersistedNamedFragment.decorate ).toBeDefined();
+			expect( Utils.isFunction( PersistedNamedFragment.decorate ) ).toBe( true );
+
+			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedFragment, "decorate" ).and.callThrough();
 
 			let fragment:NamedFragment = NamedFragment.create( <any> { id: "http://example.com/resoruce/" }, "fragment-slug" );
-			let persistedFragment:PersistedNamedFragment.Class = PersistedNamedFragment.Factory.decorate( fragment );
+			let persistedFragment:PersistedNamedFragment = PersistedNamedFragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
 			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );

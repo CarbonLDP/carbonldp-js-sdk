@@ -12,7 +12,7 @@ var Request_1 = require("./HTTP/Request");
 var MessagingDocument = __importStar(require("./Messaging/Document"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedFragment_1 = require("./PersistedFragment");
-var PersistedNamedFragment = __importStar(require("./PersistedNamedFragment"));
+var PersistedNamedFragment_1 = require("./PersistedNamedFragment");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
 var RDF = __importStar(require("./RDF"));
@@ -94,7 +94,7 @@ function extendCreateFragment(superFunction) {
 function extendCreateNamedFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
-        return PersistedNamedFragment.Factory.decorate(fragment);
+        return PersistedNamedFragment_1.PersistedNamedFragment.decorate(fragment);
     };
 }
 function refresh() {
