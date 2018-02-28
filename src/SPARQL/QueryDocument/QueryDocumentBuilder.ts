@@ -22,9 +22,9 @@ import { Pointer } from "../../Pointer";
 import { isObject } from "../../Utils";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryObject } from "./QueryObject";
-import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
-import * as QueryPropertySchema from "./QueryPropertySchema";
+import { QuerySchema } from "./QuerySchema";
+import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import * as QueryValue from "./QueryValue";
 import {
 	createPropertyPatterns,
@@ -112,15 +112,15 @@ export class QueryDocumentBuilder {
 		return this;
 	}
 
-	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
+	properties( propertiesSchema:QuerySchema ):this {
 		if( propertiesSchema === QueryDocumentBuilder.ALL ) {
 			this._document.setType( QueryProperty.PropertyType.ALL );
 			return this;
 		}
 
 		for( const propertyName in propertiesSchema ) {
-			const queryPropertySchema:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
-			const propertyDefinition:QueryPropertySchema.Class = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
+			const queryPropertySchema:QuerySchemaProperty | string = propertiesSchema[ propertyName ];
+			const propertyDefinition:QuerySchemaProperty = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
 
 			this._addProperty( propertyName, propertyDefinition );
 		}
@@ -159,7 +159,7 @@ export class QueryDocumentBuilder {
 		return this;
 	}
 
-	_addProperty( propertyName:string, propertyDefinition:QueryPropertySchema.Class ):QueryProperty.Class {
+	_addProperty( propertyName:string, propertyDefinition:QuerySchemaProperty ):QueryProperty.Class {
 		const digestedDefinition:DigestedObjectSchemaProperty = this.addPropertyDefinition( propertyName, propertyDefinition );
 		const name:string = `${ this._document.name }.${ propertyName }`;
 

@@ -7,24 +7,19 @@ import {
 } from "../../test/JasmineExtender";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
-import * as QueryPropertySchema from "./QueryPropertySchema";
+import DefaultExport, { QuerySchemaProperty } from "./QuerySchemaProperty";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void => {
 
-	it( "should exists", ():void => {
-		expect( QueryPropertySchema ).toBeDefined();
-		expect( QueryPropertySchema ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryPropertySchema.Class" ), ():void => {
-		const target:QueryPropertySchema.default = {} as QueryPropertySchema.Class;
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty" ), ():void => {
+		const target:DefaultExport = {} as QuerySchemaProperty;
 		expect( target ).toBeDefined();
 	} );
 
-	describe( interfaze( "Carbon.SPARQL.QueryDocument.QueryPropertySchema.Class", "Interface that describes an property to retrieve in a partial query creation." ), ():void => {
+	describe( interfaze( "Carbon.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty", "Interface that describes an property to retrieve in a partial query creation." ), ():void => {
 
 		it( "should exists", ():void => {
-			const target:QueryPropertySchema.Class = {} as any;
+			const target:QuerySchemaProperty = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
@@ -34,7 +29,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void =
 			"string",
 			"The URI that the actual property has in the platform."
 		), ():void => {
-			const target:QueryPropertySchema.Class[ "@id" ] = "string";
+			const target:QuerySchemaProperty[ "@id" ] = "string";
 			expect( target ).toBeDefined();
 		} );
 
@@ -46,7 +41,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void =
 			"If `@id` is used, it will represent a Pointer.\n" +
 			"For an literal it will generally expect the absolute XSD type URI, but a relative one can also be assigned. e.g. `string` will be interpreted as `http://www.w3.org/2001/XMLSchema#string`."
 		), ():void => {
-			const target:QueryPropertySchema.Class[ "@type" ] = "@id" || "string" as string;
+			const target:QuerySchemaProperty[ "@type" ] = "@id" || "string" as string;
 			expect( target ).toBeDefined();
 		} );
 
@@ -56,7 +51,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void =
 			"string",
 			"The only specific language of a string primitive to be retrieved."
 		), ():void => {
-			const target:QueryPropertySchema.Class[ "@language" ] = "string" as string;
+			const target:QuerySchemaProperty[ "@language" ] = "string" as string;
 			expect( target ).toBeDefined();
 		} );
 
@@ -69,7 +64,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void =
 			"- `@list`: An ordered array of elements." +
 			"- `@language`: An object map with the language as key and the string content as the value."
 		), ():void => {
-			const target:QueryPropertySchema.Class[ "@container" ] = "@set" || "@list" || "@language";
+			const target:QuerySchemaProperty[ "@container" ] = "@set" || "@list" || "@language";
 			expect( target ).toBeDefined();
 		} );
 
@@ -79,7 +74,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void =
 			"( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder",
 			"Function to build a query to specify sub-properties or when retrieving multiple resources to filter the resources."
 		), ():void => {
-			const target:QueryPropertySchema.Class[ "query" ] = ( queryBuilder:QueryDocumentBuilder ) => queryBuilder;
+			const target:QuerySchemaProperty[ "query" ] = ( queryBuilder:QueryDocumentBuilder ) => queryBuilder;
 			expect( target ).toBeDefined();
 		} );
 

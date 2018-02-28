@@ -1,4 +1,4 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 
-//# sourceMappingURL=QueryPropertiesSchema.js.map
+//# sourceMappingURL=QuerySchemaProperty.js.map

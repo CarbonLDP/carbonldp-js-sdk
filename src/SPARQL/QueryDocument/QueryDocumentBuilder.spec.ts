@@ -412,7 +412,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( hasSignature(
 				"Method that allows to specify the property to be retrieved the the target document",
 				[
-					{ name: "propertiesSchema", type: "Carbon.SPARQL.QueryDocument.QueryPropertiesSchema.Class", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
+					{ name: "propertiesSchema", type: "Carbon.SPARQL.QueryDocument.QuerySchema.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
 				],
 				{ type: "this" }
 			), ():void => {

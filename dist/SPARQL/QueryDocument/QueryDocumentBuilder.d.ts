@@ -1,9 +1,9 @@
 import { Pointer } from "../../Pointer";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryObject } from "./QueryObject";
-import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
-import * as QueryPropertySchema from "./QueryPropertySchema";
+import { QuerySchema } from "./QuerySchema";
+import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import * as QueryValue from "./QueryValue";
 export declare class QueryDocumentBuilder {
     static readonly ALL: Readonly<{}>;
@@ -19,10 +19,10 @@ export declare class QueryDocumentBuilder {
     value(value: string | number | boolean | Date): QueryValue.Class;
     object(object: Pointer | string): QueryObject;
     withType(type: string): this;
-    properties(propertiesSchema: QueryPropertiesSchema.Class): this;
+    properties(propertiesSchema: QuerySchema): this;
     filter(constraint: string): this;
     values(...values: (QueryValue.Class | QueryObject)[]): this;
-    _addProperty(propertyName: string, propertyDefinition: QueryPropertySchema.Class): QueryProperty.Class;
+    _addProperty(propertyName: string, propertyDefinition: QuerySchemaProperty): QueryProperty.Class;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }
 export default QueryDocumentBuilder;

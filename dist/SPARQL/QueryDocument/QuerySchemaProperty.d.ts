@@ -1,9 +1,9 @@
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-export interface Class {
+export interface QuerySchemaProperty {
     "@id"?: string;
     "@type"?: "@id" | string;
     "@language"?: string;
     "@container"?: "@set" | "@list" | "@language";
     query?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder;
 }
-export default Class;
+export default QuerySchemaProperty;
