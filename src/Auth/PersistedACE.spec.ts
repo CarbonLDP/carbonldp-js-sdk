@@ -28,7 +28,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "Carbon.Auth.ACE.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedFragment.PersistedFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

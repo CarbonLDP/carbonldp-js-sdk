@@ -27,7 +27,7 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedFragment.PersistedFragment" ), ():void => {} );
 
 	} );
 

@@ -10,7 +10,7 @@ import { NamedFragment } from "./NamedFragment";
 import * as PersistedDocument from "./PersistedDocument";
 import DefaultExport from "./PersistedDocument";
 
-import * as PersistedFragment from "./PersistedFragment";
+import { PersistedFragment } from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import { Pointer } from "./Pointer";
 import * as URI from "./RDF/URI";
@@ -109,14 +109,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, Carbon.PersistedFragment.Class>",
+			"Map<string, Carbon.PersistedFragment.PersistedFragment>",
 			"Map that stores the persisted fragments (named fragments and blank nodes) of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_savedFragments",
-			"Carbon.PersistedFragment.Class[]",
+			"Carbon.PersistedFragment.PersistedFragment[]",
 			"Array with a copy of every fragment that that is currently persisted in the server."
 		), ():void => {} );
 
@@ -143,7 +143,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & Carbon.PersistedFragment.Class" }
+				{ type: "T & Carbon.PersistedFragment.PersistedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -151,19 +151,19 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
 					{ name: "object", type: "T" },
 				],
-				{ type: "T & Carbon.PersistedFragment.Class" }
+				{ type: "T & Carbon.PersistedFragment.PersistedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates a PersistedFragment with the slug provided.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "Carbon.PersistedFragment.Class" }
+				{ type: "Carbon.PersistedFragment.PersistedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates a PersistedBlankNode, since no slug is provided",
-				{ type: "Carbon.PersistedFragment.Class" }
+				{ type: "Carbon.PersistedFragment.PersistedFragment" }
 			), ():void => {} );
 
 		} );
@@ -1362,7 +1362,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "object", type: "T" },
 						{ name: "slug", type: "string" },
 					],
-					{ type: "T & Carbon.PersistedFragment.Class" }
+					{ type: "T & Carbon.PersistedFragment.PersistedFragment" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -1373,7 +1373,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					}
 
 					let object:MyInterface;
-					let fragment:PersistedFragment.Class & MyInterface;
+					let fragment:PersistedFragment & MyInterface;
 
 					object = {};
 					fragment = document.createFragment<MyInterface>( object, "my-fragment" );
@@ -1426,7 +1426,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
 						{ name: "object", type: "T" },
 					],
-					{ type: "T & Carbon.PersistedFragment.Class" }
+					{ type: "T & Carbon.PersistedFragment.PersistedFragment" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
@@ -1437,7 +1437,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					}
 
 					let object:MyInterface;
-					let fragment:PersistedFragment.Class & MyInterface;
+					let fragment:PersistedFragment & MyInterface;
 
 					object = {};
 					fragment = document.createFragment<MyInterface>( object );
@@ -1468,12 +1468,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Creates a PersistedFragment with the slug provided.", [
 						{ name: "slug", type: "string" },
 					],
-					{ type: "Carbon.PersistedFragment.Class" }
+					{ type: "Carbon.PersistedFragment.PersistedFragment" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					let fragment:PersistedFragment.Class;
+					let fragment:PersistedFragment;
 
 					fragment = document.createFragment( "my-fragment" );
 					expect( Fragment.isDecorated( fragment ) ).toBe( true );
@@ -1494,13 +1494,13 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 
 				it( hasSignature(
 					"Creates a PersistedBlankNode, since no slug is provided",
-					{ type: "Carbon.PersistedFragment.Class" }
+					{ type: "Carbon.PersistedFragment.PersistedFragment" }
 				), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					let fragment1:PersistedFragment.Class;
-					let fragment2:PersistedFragment.Class;
+					let fragment1:PersistedFragment;
+					let fragment2:PersistedFragment;
 
 					fragment1 = document.createFragment();
 					expect( Fragment.isDecorated( fragment1 ) ).toBe( true );
@@ -1566,7 +1566,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					}
 
 					let object:MyInterface;
-					let fragment:PersistedFragment.Class & MyInterface;
+					let fragment:PersistedFragment & MyInterface;
 
 					object = {};
 					fragment = document.createNamedFragment<MyInterface>( object, "my-fragment" );

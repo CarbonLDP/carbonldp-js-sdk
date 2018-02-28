@@ -1,8 +1,8 @@
 import * as ACE from "./ACE";
 import * as PersistedACL from "./PersistedACL";
-import * as PersistedFragment from "./../PersistedFragment";
+import { PersistedFragment } from "../PersistedFragment";
 
-export interface Class extends ACE.Class, PersistedFragment.Class {
+export interface Class extends ACE.Class, PersistedFragment {
 	_document:PersistedACL.Class;
 }
 

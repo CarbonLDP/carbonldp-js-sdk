@@ -64,7 +64,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 		"Interface that represents a persisted NonRDFDocument."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedFragment.PersistedFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

@@ -11,7 +11,7 @@ var Document_1 = require("./Document");
 var Request_1 = require("./HTTP/Request");
 var MessagingDocument = __importStar(require("./Messaging/Document"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
-var PersistedFragment = __importStar(require("./PersistedFragment"));
+var PersistedFragment_1 = require("./PersistedFragment");
 var PersistedNamedFragment = __importStar(require("./PersistedNamedFragment"));
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
@@ -87,7 +87,7 @@ function extendCreateFragment(superFunction) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
         if (RDF.URI.Util.isBNodeID(id))
-            PersistedFragment.Factory.decorate(fragment);
+            PersistedFragment_1.PersistedFragment.decorate(fragment);
         return fragment;
     };
 }

@@ -1,7 +1,7 @@
 import { NamedFragment } from "./NamedFragment";
 import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
-export interface Class extends PersistedFragment.Class, NamedFragment {
+import { PersistedFragment } from "./PersistedFragment";
+export interface Class extends PersistedFragment, NamedFragment {
     _document: PersistedDocument.Class;
 }
 export declare class Factory {

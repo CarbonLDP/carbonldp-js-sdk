@@ -27,7 +27,7 @@ var Messaging = __importStar(require("./Messaging"));
 var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedDocument = __importStar(require("./PersistedDocument"));
-var PersistedFragment = __importStar(require("./PersistedFragment"));
+var PersistedFragment_1 = require("./PersistedFragment");
 var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
@@ -762,7 +762,7 @@ var Documents = (function () {
                 parentAdder.addPattern(propertyPattern);
                 var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
                 var propertyFragment = propertyValues
-                    .filter(PersistedFragment.Factory.is)
+                    .filter(PersistedFragment_1.PersistedFragment.is)
                     .find(function (fragment) { return fragment.isPartial(); });
                 if (!propertyFragment)
                     return;
@@ -967,7 +967,7 @@ var Documents = (function () {
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this.createPointerFrom(document, localID));
             var persistedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
-            persistedDocument.getFragments().forEach(PersistedFragment.Factory.decorate);
+            persistedDocument.getFragments().forEach(PersistedFragment_1.PersistedFragment.decorate);
             return _this.applyResponseData(persistedDocument, response);
         }, this._parseErrorResponse.bind(this)).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];

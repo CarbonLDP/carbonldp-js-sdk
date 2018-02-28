@@ -1,35 +1,28 @@
-import AbstractContext from "./AbstractContext";
+import { AbstractContext } from "./AbstractContext";
 import { Fragment } from "./Fragment";
 import * as PersistedDocument from "./PersistedDocument";
 
-import * as PersistedFragment from "./PersistedFragment";
-import DefaultExport from "./PersistedFragment";
+import DefaultExport, { PersistedFragment } from "./PersistedFragment";
+
 import { PersistedResource } from "./PersistedResource";
 import {
-	clazz,
-	decoratedObject,
 	extendsClass,
 	hasDefaultExport,
 	hasMethod,
 	hasProperty,
-	INSTANCE,
 	interfaze,
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
 describe( module( "Carbon/PersistedFragment" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( PersistedFragment ).toBeDefined();
-		expect( Utils.isObject( PersistedFragment ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.PersistedFragment.Class",
+		"Carbon.PersistedFragment.PersistedFragment",
 		"Interface that represents a persisted fragment of a persisted document."
 	), ():void => {
 
@@ -45,47 +38,101 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedFragment.Class" ), ():void => {
+	describe( interfaze(
+		"Carbon.PersistedFragment.PersistedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `Carbon.PersistedFragment.PersistedFragment` object."
+	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.PersistedFragment.PersistedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"is", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is Carbon.PersistedFragment.PersistedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.PersistedFragment` object.",
+			[
+				{ name: "object", type: "object", description: "The object to convert into a persisted fragment." },
+			]
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			[
+				{ name: "document", type: "Carbon.PersistedDocument.Class" },
+				{ name: "id", type: "string", optional: true },
+			],
+			{ type: "Carbon.PersistedFragment.PersistedFragment" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends object" ],
+			[
+				{ name: "object", type: "object" },
+				{ name: "document", type: "Carbon.PersistedDocument.Class" },
+				{ name: "id", type: "string", optional: true },
+			],
+			{ type: "T & Carbon.PersistedFragment.PersistedFragment" }
+		), ():void => {} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.PersistedFragment.PersistedFragment" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedFragment.Class;
+		let defaultTarget:PersistedFragment;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "Carbon.PersistedFragment.Factory", "Factory class for `Carbon.PersistedFragment.Class` objects." ), ():void => {
+	describe( property( STATIC, "PersistedFragment", "Carbon.PersistedFragment.PersistedFragmentFactory", "Constant that implements the `Carbon.PersistedFragment.PersistedFragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedFragment.Factory ).toBeDefined();
-			expect( Utils.isFunction( PersistedFragment.Factory ) ).toBe( true );
+			expect( PersistedFragment ).toBeDefined();
+			expect( PersistedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			"Decorates the object provided with the properties and methods of a `Carbon.PersistedFragment.Class` object.", [
-				{ name: "fragment", type: "T extends Carbon.Fragment.Fragment", description: "The Fragment object to convert into a persisted one." },
-			]
-		), ():void => {
-			expect( PersistedFragment.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedFragment.Factory.decorate ) ).toBe( true );
+		// TODO: Test `PersistedFragment.isDecorated`
+
+		// TODO: Test `PersistedFragment.is`
+
+		// TODO: Separate in different tests
+		it( "PersistedFragment.decorate", ():void => {
+			expect( PersistedFragment.decorate ).toBeDefined();
+			expect( Utils.isFunction( PersistedFragment.decorate ) ).toBe( true );
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
 
 			let fragment:Fragment = Fragment.create( null, "_:01" );
-			let persistedFragment:PersistedFragment.Class = PersistedFragment.Factory.decorate( fragment );
+			let persistedFragment:PersistedFragment = PersistedFragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
 			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
 		} );
 
-		describe( decoratedObject(
-			"Object decorated by the `Carbon.PersistedFragment.Factory.decorate()` function.", [
-				"Carbon.PersistedFragment.Class",
-			]
-		), ():void => {
-			let persistedFragment:PersistedFragment.Class;
+		// TODO: Test `PersistedFragment.create`
 
+		// TODO: Test `PersistedFragment.createFrom`
+
+		describe( "PersistedFragment instance", ():void => {
+
+			let persistedFragment:PersistedFragment;
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -111,16 +158,11 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
 
 				let fragment:Fragment = Fragment.create( document );
-				persistedFragment = PersistedFragment.Factory.decorate( fragment );
+				persistedFragment = PersistedFragment.decorate( fragment );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"addType",
-				"Adds a type to the PersistedFragment. Relative and prefixed types are resolved before the operation.", [
-					{ name: "type", type: "string", description: "The type to be added." },
-				]
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "PersistedFragment.addType", ():void => {
 				expect( persistedFragment.addType ).toBeDefined();
 				expect( Utils.isFunction( persistedFragment.addType ) ).toBe( true );
 
@@ -157,13 +199,8 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 				expect( persistedFragment.types ).toContain( "http://example.com/vocab#Current-Type" );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"hasType",
-				"Returns true if the PersistedFragment contains the type specified. Relative and prefixed types are resolved before the operation.", [
-					{ name: "type", type: "string", description: "The type to look for." },
-				]
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "PersistedFragment.hasType", ():void => {
 				expect( persistedFragment.hasType ).toBeDefined();
 				expect( Utils.isFunction( persistedFragment.hasType ) ).toBe( true );
 
@@ -204,13 +241,8 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 				expect( persistedFragment.hasType( "Current-Type" ) ).toBe( true );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"removeType",
-				"Remove the type specified from the PersistedFragment. Relative and prefixed types are resolved before the operation.", [
-					{ name: "type", type: "string", description: "The type to be removed." },
-				]
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "PersistedFragment.removeType", ():void => {
 				expect( persistedFragment.removeType ).toBeDefined();
 				expect( Utils.isFunction( persistedFragment.removeType ) ).toBe( true );
 

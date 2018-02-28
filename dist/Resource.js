@@ -9,17 +9,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Pointer_1 = require("./Pointer");
 var Utils = __importStar(require("./Utils"));
-function addType(type) {
+function addTypeInResource(type) {
     this.types.push(type);
 }
-function hasType(type) {
+exports.addTypeInResource = addTypeInResource;
+function hasTypeInResource(type) {
     return this.types.indexOf(type) !== -1;
 }
-function removeType(type) {
+exports.hasTypeInResource = hasTypeInResource;
+function removeTypeInResource(type) {
     var index = this.types.indexOf(type);
     if (index !== -1)
         this.types.splice(index, 1);
 }
+exports.removeTypeInResource = removeTypeInResource;
 exports.Resource = {
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "types")
@@ -58,19 +61,19 @@ exports.Resource = {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: addType,
+                value: addTypeInResource,
             },
             "hasType": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: hasType,
+                value: hasTypeInResource,
             },
             "removeType": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
-                value: removeType,
+                value: removeTypeInResource,
             },
         });
         return resource;

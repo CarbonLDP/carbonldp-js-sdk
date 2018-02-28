@@ -14,5 +14,8 @@ export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<
     createFrom<T extends object>(object: T, id?: string, types?: string[]): T & Resource;
     decorate<T extends object>(object: T): T & Resource;
 }
+export declare function addTypeInResource(this: Resource, type: string): void;
+export declare function hasTypeInResource(this: Resource, type: string): boolean;
+export declare function removeTypeInResource(this: Resource, type: string): void;
 export declare const Resource: ResourceFactory;
 export default Resource;

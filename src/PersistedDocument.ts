@@ -13,7 +13,7 @@ import * as MessagingDocument from "./Messaging/Document";
 import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedFragment from "./PersistedFragment";
+import { PersistedFragment } from "./PersistedFragment";
 import * as PersistedNamedFragment from "./PersistedNamedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
@@ -35,26 +35,26 @@ export interface Class extends Document, PersistedResource, ServiceAwareDocument
 	contains?:Pointer[];
 
 	_etag:string;
-	_fragmentsIndex:Map<string, PersistedFragment.Class>;
-	_savedFragments:PersistedFragment.Class[];
+	_fragmentsIndex:Map<string, PersistedFragment>;
+	_savedFragments:PersistedFragment[];
 
 	_syncSavedFragments():void;
 
 	isLocallyOutDated():boolean;
 
-	getFragment<T extends object>( slug:string ):T & PersistedFragment.Class;
+	getFragment<T extends object>( slug:string ):T & PersistedFragment;
 
 	getNamedFragment<T extends object>( slug:string ):T & PersistedNamedFragment.Class;
 
-	getFragments():PersistedFragment.Class[];
+	getFragments():PersistedFragment[];
 
-	createFragment():PersistedFragment.Class;
+	createFragment():PersistedFragment;
 
-	createFragment( slug:string ):PersistedFragment.Class;
+	createFragment( slug:string ):PersistedFragment;
 
-	createFragment<T extends object>( object:T ):PersistedFragment.Class & T;
+	createFragment<T extends object>( object:T ):PersistedFragment & T;
 
-	createFragment<T extends object>( object:T, slug:string ):PersistedFragment.Class & T;
+	createFragment<T extends object>( object:T, slug:string ):PersistedFragment & T;
 
 	createNamedFragment( slug:string ):PersistedNamedFragment.Class;
 
@@ -222,16 +222,16 @@ function extendRemoveType( superFunction:( type:string ) => void ):( type:string
 	};
 }
 
-function extendCreateFragment( superFunction:() => Fragment ):() => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( slug:string ) => Fragment ):( slug:string ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( object:object, slug:string ) => Fragment ):( slug:string, object:object ) => PersistedFragment.Class;
-function extendCreateFragment( superFunction:( object:object ) => Fragment ):( object:object ) => PersistedFragment.Class;
+function extendCreateFragment( superFunction:() => Fragment ):() => PersistedFragment;
+function extendCreateFragment( superFunction:( slug:string ) => Fragment ):( slug:string ) => PersistedFragment;
+function extendCreateFragment( superFunction:( object:object, slug:string ) => Fragment ):( slug:string, object:object ) => PersistedFragment;
+function extendCreateFragment( superFunction:( object:object ) => Fragment ):( object:object ) => PersistedFragment;
 function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => Fragment ):any {
 	return function( slugOrObject?:any, slug?:string ):any {
 		let fragment:Fragment = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
-		if( RDF.URI.Util.isBNodeID( id ) ) PersistedFragment.Factory.decorate( fragment );
+		if( RDF.URI.Util.isBNodeID( id ) ) PersistedFragment.decorate( fragment );
 		return fragment;
 	};
 }

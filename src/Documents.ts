@@ -63,7 +63,7 @@ import {
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
+import { PersistedFragment } from "./PersistedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import {
@@ -970,8 +970,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				parentAdder.addPattern( propertyPattern );
 
 				const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
-				const propertyFragment:PersistedFragment.Class = propertyValues
-					.filter( PersistedFragment.Factory.is )
+				const propertyFragment:PersistedFragment = propertyValues
+					.filter( PersistedFragment.is )
 					.find( fragment => fragment.isPartial() );
 				if( ! propertyFragment ) return;
 
@@ -1205,7 +1205,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			this.pointers.set( localID, this.createPointerFrom( document, localID ) );
 
 			const persistedDocument:T & W = <T & W> PersistedProtectedDocument.Factory.decorate<T>( document, this );
-			persistedDocument.getFragments().forEach( PersistedFragment.Factory.decorate );
+			persistedDocument.getFragments().forEach( PersistedFragment.decorate );
 
 			return this.applyResponseData( persistedDocument, response );
 		}, this._parseErrorResponse.bind( this ) ).catch( ( error ) => {

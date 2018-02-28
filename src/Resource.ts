@@ -29,16 +29,16 @@ export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<
 }
 
 
-function addType( type:string ):void {
+export function addTypeInResource( this:Resource, type:string ):void {
 	this.types.push( type );
 }
 
-function hasType( type:string ):boolean {
+export function hasTypeInResource( this:Resource, type:string ):boolean {
 	return this.types.indexOf( type ) !== - 1;
 }
 
-function removeType( type:string ):void {
-	let index:number = this.types.indexOf( type );
+export function removeTypeInResource( this:Resource, type:string ):void {
+	const index:number = this.types.indexOf( type );
 	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
@@ -89,19 +89,19 @@ export const Resource:ResourceFactory = {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: addType,
+				value: addTypeInResource,
 			},
 			"hasType": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: hasType,
+				value: hasTypeInResource,
 			},
 			"removeType": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: removeType,
+				value: removeTypeInResource,
 			},
 		} );
 
