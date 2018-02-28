@@ -9,20 +9,18 @@ import {
 	ValuesToken,
 } from "sparqler/tokens";
 
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../../Errors/IllegalStateError";
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
 	ObjectSchemaDigester,
 	ObjectSchemaProperty,
-	ObjectSchemaUtils as SchemaUtils,
+	ObjectSchemaUtils,
 } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
 import { isObject } from "../../Utils";
-import {
-	IllegalArgumentError,
-	IllegalStateError,
-} from "../../Errors";
-import { Pointer } from "./../../Pointer";
-import * as QueryContextBuilder from "./QueryContextBuilder";
+import { QueryContextBuilder } from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
@@ -41,7 +39,7 @@ export class Class {
 	inherit:Readonly<{}> = INHERIT;
 	all:Readonly<{}> = ALL;
 
-	readonly _context:QueryContextBuilder.Class;
+	readonly _context:QueryContextBuilder;
 
 	protected _document:QueryProperty.Class;
 
@@ -50,7 +48,7 @@ export class Class {
 
 	private _schema:DigestedObjectSchema;
 
-	constructor( queryContext:QueryContextBuilder.Class, property:QueryProperty.Class ) {
+	constructor( queryContext:QueryContextBuilder, property:QueryProperty.Class ) {
 		this._context = queryContext;
 
 		property._builder = this;
@@ -98,7 +96,7 @@ export class Class {
 	withType( type:string ):this {
 		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
-		type = SchemaUtils.resolveURI( type, this._schema, { vocab: true, base: true } );
+		type = ObjectSchemaUtils.resolveURI( type, this._schema, { vocab: true, base: true } );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
 			this._document.addPattern( this._typesTriple );
 

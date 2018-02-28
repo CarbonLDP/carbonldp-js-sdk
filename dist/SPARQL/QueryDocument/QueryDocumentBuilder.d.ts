@@ -1,5 +1,5 @@
-import { Pointer } from "./../../Pointer";
-import * as QueryContextBuilder from "./QueryContextBuilder";
+import { Pointer } from "../../Pointer";
+import { QueryContextBuilder } from "./QueryContextBuilder";
 import * as QueryObject from "./QueryObject";
 import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
@@ -9,12 +9,12 @@ export declare const ALL: Readonly<{}>;
 export declare class Class {
     inherit: Readonly<{}>;
     all: Readonly<{}>;
-    readonly _context: QueryContextBuilder.Class;
+    readonly _context: QueryContextBuilder;
     protected _document: QueryProperty.Class;
     private _typesTriple;
     private _values;
     private _schema;
-    constructor(queryContext: QueryContextBuilder.Class, property: QueryProperty.Class);
+    constructor(queryContext: QueryContextBuilder, property: QueryProperty.Class);
     property(name?: string): QueryProperty.Class;
     value(value: string | number | boolean | Date): QueryValue.Class;
     object(object: Pointer | string): QueryObject.Class;

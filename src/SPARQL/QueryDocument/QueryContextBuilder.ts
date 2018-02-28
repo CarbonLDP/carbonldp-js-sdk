@@ -4,7 +4,7 @@ import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
 	ObjectSchemaDigester,
-	ObjectSchemaUtils as SchemaUtils,
+	ObjectSchemaUtils,
 } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
@@ -13,7 +13,7 @@ import {
 	getParentPath,
 } from "./Utils";
 
-export class Class extends QueryContext {
+export class QueryContextBuilder extends QueryContext {
 
 	private _propertiesMap:Map<string, QueryProperty.Class>;
 	private _schemas:DigestedObjectSchema[];
@@ -57,7 +57,7 @@ export class Class extends QueryContext {
 			if( ! schema.properties.has( propertyName ) ) continue;
 
 			const mergeSchema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [ existingSchema, schema ] );
-			const digestedProperty:DigestedObjectSchemaProperty = SchemaUtils.resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
+			const digestedProperty:DigestedObjectSchemaProperty = ObjectSchemaUtils.resolveProperty( mergeSchema, schema.properties.get( propertyName ) );
 
 			if( ! propertyURI || propertyURI === digestedProperty.uri ) return digestedProperty;
 		}
@@ -113,4 +113,4 @@ export class Class extends QueryContext {
 
 }
 
-export default Class;
+export default QueryContextBuilder;

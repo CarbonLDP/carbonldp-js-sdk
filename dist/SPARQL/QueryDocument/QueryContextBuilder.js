@@ -22,30 +22,30 @@ var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryContext_1 = require("./QueryContext");
 var QueryProperty = __importStar(require("./QueryProperty"));
 var Utils_1 = require("./Utils");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(context) {
+var QueryContextBuilder = (function (_super) {
+    __extends(QueryContextBuilder, _super);
+    function QueryContextBuilder(context) {
         var _this = _super.call(this, context) || this;
         _this._propertiesMap = new Map();
         return _this;
     }
-    Class.prototype.hasProperty = function (name) {
+    QueryContextBuilder.prototype.hasProperty = function (name) {
         return this._propertiesMap.has(name);
     };
-    Class.prototype.hasProperties = function (name) {
+    QueryContextBuilder.prototype.hasProperties = function (name) {
         var levelRegex = Utils_1.getLevelRegExp(name);
         return Array.from(this._propertiesMap.keys())
             .some(function (propertyName) { return levelRegex.test(propertyName); });
     };
-    Class.prototype.addProperty = function (name) {
+    QueryContextBuilder.prototype.addProperty = function (name) {
         var property = new QueryProperty.Class(this, name);
         this._propertiesMap.set(name, property);
         return property;
     };
-    Class.prototype.getProperty = function (name) {
+    QueryContextBuilder.prototype.getProperty = function (name) {
         return this._propertiesMap.get(name);
     };
-    Class.prototype.getProperties = function (name) {
+    QueryContextBuilder.prototype.getProperties = function (name) {
         var levelRegex = Utils_1.getLevelRegExp(name);
         return Array.from(this._propertiesMap.entries())
             .filter(function (_a) {
@@ -57,7 +57,7 @@ var Class = (function (_super) {
             return property;
         });
     };
-    Class.prototype.getInheritTypeDefinition = function (existingSchema, propertyName, propertyURI) {
+    QueryContextBuilder.prototype.getInheritTypeDefinition = function (existingSchema, propertyName, propertyURI) {
         var schemas = [existingSchema].concat(this._getTypeSchemas());
         for (var _i = 0, schemas_1 = schemas; _i < schemas_1.length; _i++) {
             var schema = schemas_1[_i];
@@ -69,7 +69,7 @@ var Class = (function (_super) {
                 return digestedProperty;
         }
     };
-    Class.prototype.hasSchemaFor = function (object, path) {
+    QueryContextBuilder.prototype.hasSchemaFor = function (object, path) {
         if (path === void 0)
             return _super.prototype.hasSchemaFor.call(this, object);
         if (!this.hasProperty(path))
@@ -77,7 +77,7 @@ var Class = (function (_super) {
         var property = this.getProperty(path);
         return property.getType() !== void 0;
     };
-    Class.prototype.getSchemaFor = function (object, path) {
+    QueryContextBuilder.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
             return _super.prototype.getSchemaFor.call(this, object);
         var property = this.getProperty(path);
@@ -97,7 +97,7 @@ var Class = (function (_super) {
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return _super.prototype.getSchemaFor.call(this, object);
     };
-    Class.prototype._getTypeSchemas = function () {
+    QueryContextBuilder.prototype._getTypeSchemas = function () {
         var _this = this;
         if (this._schemas)
             return this._schemas;
@@ -112,9 +112,9 @@ var Class = (function (_super) {
         schemasTypes.forEach(function (type) { return _this._schemas.push(_this.context.getObjectSchema(type)); });
         return this._schemas;
     };
-    return Class;
+    return QueryContextBuilder;
 }(QueryContext_1.QueryContext));
-exports.Class = Class;
-exports.default = Class;
+exports.QueryContextBuilder = QueryContextBuilder;
+exports.default = QueryContextBuilder;
 
 //# sourceMappingURL=QueryContextBuilder.js.map

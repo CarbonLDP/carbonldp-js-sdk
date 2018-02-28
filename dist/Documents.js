@@ -36,6 +36,7 @@ var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
 var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
+var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
@@ -212,7 +213,7 @@ var Documents = (function () {
         var _this = this;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
             var childrenVar = queryContext.getVariable("child");
             var pattens = [
                 new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
@@ -228,7 +229,7 @@ var Documents = (function () {
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             parentURI = _this.getRequestURI(parentURI);
-            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
             var childrenProperty = queryContext
                 .addProperty("child")
                 .setOptional(false);
@@ -270,7 +271,7 @@ var Documents = (function () {
         var _this = this;
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
-            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
             var memberVar = queryContext.getVariable("member");
             var membershipResource = queryContext.getVariable("membershipResource");
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
@@ -293,7 +294,7 @@ var Documents = (function () {
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
         return Utils_3.promiseMethod(function () {
             uri = _this.getRequestURI(uri);
-            var queryContext = new QueryDocument_1.QueryContextBuilder.Class(_this.context);
+            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
             var membersProperty = queryContext
                 .addProperty("member")
                 .setOptional(false);
@@ -680,7 +681,7 @@ var Documents = (function () {
         return promise;
     };
     Documents.prototype.getPartialDocument = function (uri, requestOptions, queryBuilderFn) {
-        var queryContext = new QueryDocument_1.QueryContextBuilder.Class(this.context);
+        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(this.context);
         var documentProperty = queryContext
             .addProperty("document")
             .setOptional(false);

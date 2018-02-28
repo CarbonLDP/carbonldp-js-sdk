@@ -2,7 +2,7 @@ import { Context } from "../../Context";
 import { DigestedObjectSchema, DigestedObjectSchemaProperty } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
 import * as QueryProperty from "./QueryProperty";
-export declare class Class extends QueryContext {
+export declare class QueryContextBuilder extends QueryContext {
     private _propertiesMap;
     private _schemas;
     constructor(context?: Context);
@@ -16,4 +16,4 @@ export declare class Class extends QueryContext {
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
     private _getTypeSchemas();
 }
-export default Class;
+export default QueryContextBuilder;

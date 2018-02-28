@@ -13,6 +13,7 @@ var RDFDocument = __importStar(require("../RDF/Document"));
 var URI_1 = require("../RDF/URI");
 var QueryDocument_1 = require("../SPARQL/QueryDocument");
 var PartialMetadata_1 = require("../SPARQL/QueryDocument/PartialMetadata");
+var QueryContextBuilder_1 = require("../SPARQL/QueryDocument/QueryContextBuilder");
 function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
@@ -78,7 +79,7 @@ var JSONLDCompacter = (function () {
     };
     JSONLDCompacter.prototype.compactNode = function (node, resource, containerLibrary, path) {
         var schema = this.resolver.getSchemaFor(node, path);
-        if (this.resolver instanceof QueryDocument_1.QueryContextBuilder.Class) {
+        if (this.resolver instanceof QueryContextBuilder_1.QueryContextBuilder) {
             var type = this.resolver.hasProperty(path) ?
                 this.resolver.getProperty(path).getType() : void 0;
             if (type === QueryDocument_1.QueryProperty.PropertyType.PARTIAL || type === QueryDocument_1.QueryProperty.PropertyType.ALL) {

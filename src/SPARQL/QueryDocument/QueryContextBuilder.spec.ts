@@ -19,7 +19,7 @@ import {
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextBuilder";
-import { Class as QueryContextBuilder } from "./QueryContextBuilder";
+import DefaultExport, { QueryContextBuilder } from "./QueryContextBuilder";
 
 import QueryProperty, { PropertyType } from "./QueryProperty";
 
@@ -30,12 +30,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryContextBuilder );
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( QueryContextBuilder );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.Class", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextBuilder ).toBeDefined();

@@ -80,13 +80,13 @@ import {
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
 import {
-	QueryContextBuilder,
 	QueryContextPartial,
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
 	QueryMetadata,
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
+import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import {
@@ -306,7 +306,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
 
-			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 			const childrenVar:VariableToken = queryContext.getVariable( "child" );
 
 			const pattens:PatternToken[] = [
@@ -329,7 +329,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
 
-			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 			const childrenProperty:QueryProperty.Class = queryContext
 				.addProperty( "child" )
 				.setOptional( false );
@@ -383,7 +383,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
 
-			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 			const memberVar:VariableToken = queryContext.getVariable( "member" );
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
@@ -417,7 +417,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
 
-			const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 			const membersProperty:QueryProperty.Class = queryContext
 				.addProperty( "member" )
 				.setOptional( false );
@@ -872,7 +872,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private getPartialDocument<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]> {
-		const queryContext:QueryContextBuilder.Class = new QueryContextBuilder.Class( this.context );
+		const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 
 		const documentProperty:QueryProperty.Class = queryContext
 			.addProperty( "document" )
@@ -983,7 +983,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder.Class, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
 		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
 		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?

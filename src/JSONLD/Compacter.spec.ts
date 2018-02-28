@@ -2,7 +2,7 @@ import { Documents } from "../Documents";
 import { ObjectSchemaDigester } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as RDFNode from "../RDF/Node";
-import * as QueryContextBuilder from "../SPARQL/QueryDocument/QueryContextBuilder";
+import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
 import * as QueryProperty from "../SPARQL/QueryDocument/QueryProperty";
 import {
 	clazz,
@@ -533,7 +533,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
 			it( "should send path of only fist level when related to each other when query resolver", ():void => {
 				const documents:Documents = new Documents();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
 					.setType( QueryProperty.PropertyType.PARTIAL )
@@ -595,7 +595,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
 			it( "should send path of only second level when related to each other by partial property when query resolver", ():void => {
 				const documents:Documents = new Documents();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
 					.setType( QueryProperty.PropertyType.PARTIAL )
@@ -669,7 +669,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
 				const documents:Documents = new Documents();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
 					.setType( QueryProperty.PropertyType.PARTIAL )
@@ -744,7 +744,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
 				const documents:Documents = new Documents();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
 					.setType( QueryProperty.PropertyType.PARTIAL )
@@ -819,7 +819,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
 			it( "should merge every level schema from related to each other by partial property when query resolver", ():void => {
 				const documents:Documents = new Documents();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
 					.setType( QueryProperty.PropertyType.PARTIAL )
@@ -901,7 +901,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 
 			it( "should compact same related document by partial property when query resolver", ():void => {
 				const documents:Documents = new Documents();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
 					.setType( QueryProperty.PropertyType.PARTIAL )

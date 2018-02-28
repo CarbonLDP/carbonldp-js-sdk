@@ -12,11 +12,9 @@ import {
 import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
-import {
-	QueryContextBuilder,
-	QueryProperty,
-} from "../SPARQL/QueryDocument";
+import { QueryProperty } from "../SPARQL/QueryDocument";
 import { PartialMetadata } from "../SPARQL/QueryDocument/PartialMetadata";
+import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
 import { JSONLDConverter } from "./Converter";
 
 function getRelativeID( node:RDFNode.Class ):string {
@@ -111,7 +109,7 @@ export class JSONLDCompacter {
 	private compactNode( node:RDFNode.Class, resource:PersistedResource.Class, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
-		if( this.resolver instanceof QueryContextBuilder.Class ) {
+		if( this.resolver instanceof QueryContextBuilder ) {
 			const type:QueryProperty.PropertyType = this.resolver.hasProperty( path ) ?
 				this.resolver.getProperty( path ).getType() : void 0;
 

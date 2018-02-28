@@ -8,9 +8,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
+var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
+var IllegalStateError_1 = require("../../Errors/IllegalStateError");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
-var Errors_1 = require("../../Errors");
 var QueryObject = __importStar(require("./QueryObject"));
 var QueryProperty = __importStar(require("./QueryProperty"));
 var QueryValue = __importStar(require("./QueryValue"));
@@ -47,7 +48,7 @@ var Class = (function () {
             }
             parent = Utils_2.getParentPath(parent);
         }
-        throw new Errors_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
+        throw new IllegalArgumentError_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
     Class.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
@@ -57,7 +58,7 @@ var Class = (function () {
     };
     Class.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
-            throw new Errors_1.IllegalStateError("Types must be specified before the properties.");
+            throw new IllegalStateError_1.IllegalStateError("Types must be specified before the properties.");
         type = ObjectSchema_1.ObjectSchemaUtils.resolveURI(type, this._schema, { vocab: true, base: true });
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addPattern(this._typesTriple);
@@ -97,7 +98,7 @@ var Class = (function () {
         var termTokens = values.map(function (value) {
             var token = value.getToken();
             if (token.token === "blankNode")
-                throw new Errors_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
             return token;
         });
         if (!this._values.values[0].length)
@@ -123,7 +124,7 @@ var Class = (function () {
             }
             var builder = new Class(this._context, property);
             if (builder !== propertyDefinition["query"].call(void 0, builder))
-                throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The provided query builder was not returned");
         }
         (_b = this._document).addPattern.apply(_b, property.getPatterns());
         return property;
@@ -141,7 +142,7 @@ var Class = (function () {
             }
         }
         if (!digestedDefinition.uri)
-            throw new Errors_1.IllegalArgumentError("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
         this._document.getSchema()
             .properties.set(propertyName, digestedDefinition);
         return digestedDefinition;
