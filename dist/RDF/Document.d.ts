@@ -1,5 +1,5 @@
 import { Parser } from "../HTTP/Parser";
-import * as JSONLD from "./../JSONLD";
+import { JSONLDParser } from "../JSONLD/Parser";
 import * as Node from "./Node";
 export interface Class {
     "@id"?: string;
@@ -24,7 +24,7 @@ export declare class Util {
     static getNodes(rdfDocument: Class): [Node.Class[], Node.Class[]];
     private static isNodeFragment(node);
 }
-export declare class RDFDocumentParser extends JSONLD.Parser.Class implements Parser<Class[]> {
+export declare class RDFDocumentParser extends JSONLDParser implements Parser<Class[]> {
     parse(input: string): Promise<Class[]>;
 }
 export default Class;

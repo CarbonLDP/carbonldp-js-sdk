@@ -48,7 +48,7 @@ var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
 var Errors_1 = require("./HTTP/Errors");
 var Request_1 = require("./HTTP/Request");
-var JSONLD = __importStar(require("./JSONLD"));
+var Parser_1 = require("./JSONLD/Parser");
 var RDF = __importStar(require("./RDF"));
 var Resource_1 = require("./Resource");
 var Utils = __importStar(require("./Utils"));
@@ -129,7 +129,7 @@ var Class = (function () {
         return Promise.resolve().then(function () {
             var containerURI = _this.context._resolvePath("system") + Ticket.TICKETS_CONTAINER;
             var body = JSON.stringify(freeResources);
-            return Request_1.RequestService.post(containerURI, body, requestOptions, new JSONLD.Parser.Class())
+            return Request_1.RequestService.post(containerURI, body, requestOptions, new Parser_1.JSONLDParser())
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];

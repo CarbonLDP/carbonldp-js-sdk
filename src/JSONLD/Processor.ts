@@ -21,7 +21,7 @@ export class Class {
 
 	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
-		return this.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
+		return Class.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
 			let expanded:any = Class.process( new ObjectSchema.DigestedObjectSchema(), input );
 

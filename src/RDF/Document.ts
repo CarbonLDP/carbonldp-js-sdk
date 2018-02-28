@@ -1,5 +1,5 @@
 import { Parser } from "../HTTP/Parser";
-import * as JSONLD from "./../JSONLD";
+import { JSONLDParser } from "../JSONLD/Parser";
 import * as Utils from "./../Utils";
 import * as Node from "./Node";
 import * as URI from "./URI";
@@ -130,7 +130,7 @@ export class Util {
 	}
 }
 
-export class RDFDocumentParser extends JSONLD.Parser.Class implements Parser<Class[]> {
+export class RDFDocumentParser extends JSONLDParser implements Parser<Class[]> {
 	parse( input:string ):Promise<Class[]> {
 		return super.parse( input ).then( Util.getDocuments );
 	}

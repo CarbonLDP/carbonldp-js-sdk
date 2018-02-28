@@ -1205,7 +1205,7 @@ describe( module( "Carbon/Auth" ), ():void => {
 				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.Ticket.Class, Carbon.HTTP.Response.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;

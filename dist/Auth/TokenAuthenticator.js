@@ -68,7 +68,7 @@ var Class = (function () {
         Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
-            return Request_1.RequestService.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
+            return Request_1.RequestService.post(tokensURI, null, requestOptions, new JSONLD.Parser.JSONLDParser());
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);

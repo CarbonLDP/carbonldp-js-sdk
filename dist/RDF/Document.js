@@ -17,7 +17,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var JSONLD = __importStar(require("./../JSONLD"));
+var Parser_1 = require("../JSONLD/Parser");
 var Utils = __importStar(require("./../Utils"));
 var Node = __importStar(require("./Node"));
 var URI = __importStar(require("./URI"));
@@ -136,7 +136,7 @@ var RDFDocumentParser = (function (_super) {
         return _super.prototype.parse.call(this, input).then(Util.getDocuments);
     };
     return RDFDocumentParser;
-}(JSONLD.Parser.Class));
+}(Parser_1.JSONLDParser));
 exports.RDFDocumentParser = RDFDocumentParser;
 
 //# sourceMappingURL=Document.js.map

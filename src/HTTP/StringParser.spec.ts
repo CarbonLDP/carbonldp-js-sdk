@@ -20,7 +20,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 
 	describe( clazz(
 		"Carbon.HTTP.StringParser.StringParser",
-		"Parses a `Carbon.HTTP.Response.Class` and returns a string.", [
+		"Parses a `Carbon.HTTP.Response.Response` and returns a string.", [
 			"Carbon.HTTP.Parser.Parser<string>",
 		]
 	), ():void => {
@@ -30,7 +30,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 			INSTANCE,
 			"parse",
 			"Gets a string and returns a Promise with the same string.", [
-				{ name: "body", type: "Carbon.HTTP.Response.Class" },
+				{ name: "body", type: "Carbon.HTTP.Response.Response" },
 			],
 			{ type: "Promise<string>" }
 		), ( done:DoneFn ):void => {

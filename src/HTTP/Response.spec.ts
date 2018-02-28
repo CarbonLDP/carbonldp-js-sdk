@@ -17,8 +17,7 @@ import {
 import * as Utils from "./../Utils";
 import { Header } from "./Header";
 
-import { Response } from "./Response";
-import DefaultExport from "./Response";
+import DefaultExport, { Response } from "./Response";
 
 describe( module( "Carbon/HTTP/Response" ), ():void => {
 
@@ -34,7 +33,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 	let inXMLHttpRequest:boolean = ( typeof XMLHttpRequest !== "undefined" );
 
 	describe( clazz(
-		"Carbon.HTTP.Response.Class",
+		"Carbon.HTTP.Response.Response",
 		"Class that represents an HTTP Response."
 	), ():void => {
 
@@ -196,7 +195,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getETag",
-			"Return the ETag header of a `Carbon.HTTP.Response.Class` object. Returns null if no ETag exists.",
+			"Return the ETag header of a `Carbon.HTTP.Response.Response` object. Returns null if no ETag exists.",
 			{ type: "string" }
 		), ( done:DoneFn ):void => {
 			createResponse()
@@ -255,7 +254,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 	}
 
 	it( hasDefaultExport(
-		"Carbon.HTTP.Response.Class"
+		"Carbon.HTTP.Response.Response"
 	), ():void => {
 		expect( DefaultExport ).toBe( Response );
 	} );

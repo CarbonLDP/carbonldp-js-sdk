@@ -50,7 +50,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawASKQuery" in Service.Class ).toEqual( true );
@@ -101,7 +101,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeASKQuery" in Service.Class ).toEqual( true );
@@ -150,7 +150,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Response ]>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -326,7 +326,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawSELECTQuery" in Service.Class ).toEqual( true );
@@ -474,7 +474,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "constructQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawCONSTRUCTQuery" in Service.Class ).toEqual( true );
@@ -571,7 +571,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "describeQuery", type: "string" },
 			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawDESCRIBEQuery" in Service.Class ).toEqual( true );
@@ -671,7 +671,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 				{ name: "update", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {

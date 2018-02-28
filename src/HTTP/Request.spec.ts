@@ -14,7 +14,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import { Header } from "./Header";
-import Parser from "./JSONParser";
+import { JSONParser } from "./JSONParser";
 
 import {
 	RequestOptions,
@@ -142,7 +142,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			timeout: 5000,
 			sendCredentialsOnCORS: false,
 		};
-		let parser:Parser = new Parser();
+		let parser:JSONParser = new JSONParser();
 
 		beforeEach( ():void => {
 			jasmine.Ajax.install();
@@ -161,6 +161,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			jasmine.Ajax.uninstall();
 		} );
 
+		// TODO: Test `Request.send`
 		describe( method(
 			STATIC,
 			"send"
@@ -173,7 +174,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -183,13 +184,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"head", [
 				{ name: "url", type: "string" },
 				{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 			],
-			{ type: "Promise<Carbon.HTTP.Response>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( RequestService.head ).toBeDefined();
 			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
@@ -238,13 +240,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"options", [
 				{ name: "url", type: "string" },
 				{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 			],
-			{ type: "Promise<Carbon.HTTP.Response>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( RequestService.head ).toBeDefined();
 			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
@@ -298,12 +301,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"get"
 		), ():void => {
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Simple get request.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.get ).toBeDefined();
 				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
@@ -353,13 +357,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Get request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true },
+					{ name: "parser", type: "Carbon.HTTP.Parser.Parser<T>", optional: true },
 				],
-				{ type: "Promise<[Object, Carbon.HTTP.Response]>" }
+				{ type: "Promise<[Object, Carbon.HTTP.Response.Response]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.get ).toBeDefined();
 				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
@@ -422,13 +427,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"post"
 		), ():void => {
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Simple post request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.post ).toBeDefined();
 				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
@@ -478,13 +484,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Post request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true },
+					{ name: "parser", type: "Carbon.HTTP.Parser.Parser<T>", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.post ).toBeDefined();
 				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
@@ -547,13 +554,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"put"
 		), ():void => {
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Simple put request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.put ).toBeDefined();
 				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
@@ -603,13 +611,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Put request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true },
+					{ name: "parser", type: "Carbon.HTTP.Parser.Parser<T>", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.put ).toBeDefined();
 				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
@@ -672,13 +681,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"patch"
 		), ():void => {
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Simple patch request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.patch ).toBeDefined();
 				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
@@ -728,13 +738,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Patch request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true },
+					{ name: "parser", type: "Carbon.HTTP.Parser.Parser<T>", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.patch ).toBeDefined();
 				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
@@ -797,13 +808,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			"delete"
 		), ():void => {
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Simple delete request.", [
 					{ name: "url", type: "string" },
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -853,13 +865,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Delete request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true },
+					{ name: "parser", type: "Carbon.HTTP.Parser.Parser<T>", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -915,13 +928,13 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
-
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Simple delete request.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -971,13 +984,14 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 				Promise.all( promises ).then( done ).catch( done.fail );
 			} );
 
+			// TODO: Separate in different tests
 			it( hasSignature(
 				"Delete request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "Carbon.HTTP.Parser<T>", optional: true },
+					{ name: "parser", type: "Carbon.HTTP.Parser.Parser<T>", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -1089,6 +1103,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( Utils.isFunction( RequestUtils ) ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"getHeader",
@@ -1113,6 +1128,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Authorization", optionsWithHeaders, true ) ).toEqual( new Header( "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setAcceptHeader",
@@ -1133,6 +1149,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setContentTypeHeader",
@@ -1153,6 +1170,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setIfMatchHeader",
@@ -1173,6 +1191,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setIfNoneMatchHeader",
@@ -1193,6 +1212,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setPreferredInteractionModel",
@@ -1213,6 +1233,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setPreferredRetrieval",
@@ -1246,6 +1267,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			);
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setSlug",
@@ -1266,6 +1288,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			expect( RequestUtils.getHeader( "Location", optionsWithHeaders ) ).toEqual( new Header( "http://example.com/resource/" ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"setRetrievalPreferences",
@@ -1346,6 +1369,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			STATIC,
 			"isOptions",
@@ -1394,6 +1418,5 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 		}
 
 	} );
-
 
 } );

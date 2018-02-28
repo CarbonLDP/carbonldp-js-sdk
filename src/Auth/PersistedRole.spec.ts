@@ -84,7 +84,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -93,7 +93,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "role", type: "T", description: "The role to be persisted." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -107,7 +107,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				"Retrieves an array of resolved pointers for all the users of the role.", [
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -115,7 +115,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -127,7 +127,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -137,7 +137,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -147,7 +147,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to be removed from the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -157,7 +157,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 	} );
@@ -352,7 +352,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 						{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "createChild" );
 
@@ -381,7 +381,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 						{ name: "role", type: "T", description: "The role to be persisted." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "createChild" );
 
@@ -419,7 +419,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					"Retrieves an array of resolved pointers for all the users of the role.", [
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 					],
-					{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "getUsers" );
 
@@ -442,7 +442,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to add to the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( role.addUser ).toBeDefined();
 				expect( Utils.isFunction( role.addUser ) ).toBe( true );
@@ -469,7 +469,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( role.addUsers ).toBeDefined();
 				expect( Utils.isFunction( role.addUsers ) ).toBe( true );
@@ -497,7 +497,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The users that wants to be removed from the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( role.removeUser ).toBeDefined();
 				expect( Utils.isFunction( role.removeUser ) ).toBe( true );
@@ -524,7 +524,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( role.removeUsers ).toBeDefined();
 				expect( Utils.isFunction( role.removeUsers ) ).toBe( true );

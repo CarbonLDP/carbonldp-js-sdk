@@ -27,7 +27,7 @@ import {
 	RequestUtils,
 } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as JSONLD from "./JSONLD";
+import { JSONLDParser } from "./JSONLD/Parser";
 import * as ObjectSchema from "./ObjectSchema";
 import * as RDF from "./RDF";
 import { Resource } from "./Resource";
@@ -147,7 +147,7 @@ export class Class {
 			const containerURI:string = this.context._resolvePath( "system" ) + Ticket.TICKETS_CONTAINER;
 			const body:string = JSON.stringify( freeResources );
 
-			return RequestService.post( containerURI, body, requestOptions, new JSONLD.Parser.Class() )
+			return RequestService.post( containerURI, body, requestOptions, new JSONLDParser() )
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
 
 		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {

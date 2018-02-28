@@ -196,7 +196,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"refresh",
 			[ "T extends object" ],
 			"Sync the persisted document with the data in the server.",
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -206,7 +206,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Save the persisted document to the server.", [
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -214,21 +214,21 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"saveAndRefresh",
 			[ "T extends object" ],
 			"Save and refresh the persisted document.",
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response[] ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"delete",
 			"Remove the data in the server referred by the id of the persisted document.",
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getDownloadURL",
 			"Returns the URI of the current document with the properties necessarily for a single download request.",
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		describe( method(
@@ -240,14 +240,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Adds the specified resource Pointer as a member of the document.", [
 					{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Adds the specified resource URI as a member of the document.", [
 					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {} );
 
 		} );
@@ -258,7 +258,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Adds the specified resources as members of the document.", [
 				{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		describe( method(
@@ -273,7 +273,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -282,7 +282,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it's transformed into one." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -290,14 +290,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates and persists an empty child fot he current document.", [
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -314,7 +314,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -323,7 +323,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 		} );
@@ -340,7 +340,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -348,20 +348,20 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it is transformed into one." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature( [
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature( [
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -378,7 +378,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -387,7 +387,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 		} );
@@ -430,7 +430,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -439,7 +439,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "accessPoints", type: "(T & Carbon.AccessPoint.AccessPointBase)[]", description: "The access points to persist." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ():void => {} );
 
 		} );
@@ -519,14 +519,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Remove the specified resource Pointer as a member of the current document.", [
 					{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Remove the specified resource URI as a member of the current document.", [
 					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {} );
 
 		} );
@@ -537,14 +537,14 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			"Remove the specified resources URI or Pointers as members of the current document.", [
 				{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"removeAllMembers",
 			"Remove the specified resources URI or Pointers as members of the current document.",
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -554,7 +554,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "askQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -564,7 +564,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "askQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ boolean, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -574,7 +574,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -585,7 +585,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -595,7 +595,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "constructQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -605,7 +605,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "constructQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -615,7 +615,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "updateQuery", type: "string", description: "UPDATE query to execute in the selected endpoint." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<Carbon.HTTP.Response.Response>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -1600,7 +1600,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"refresh",
 				[ "T extends object" ],
 				"Sync the persisted document with the data in the server.",
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response]>" }
 			), ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
@@ -1617,7 +1617,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Save the persisted document to the server.", [
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );
@@ -1636,7 +1636,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"saveAndRefresh",
 				[ "T extends object" ],
 				"Save and refresh the persisted document.",
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response[] ]>" }
 			), ():void => {
 				expect( document.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
@@ -1650,7 +1650,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"delete",
 				"Remove the data in the server referred by the id of the persisted document.",
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( document.delete ).toBeDefined();
 				expect( Utils.isFunction( document.delete ) ).toBe( true );
@@ -1664,7 +1664,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"getDownloadURL",
 				"Returns the URI of the current document with the properties necessarily for a single download request.",
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( document.getDownloadURL ).toBeDefined();
 				expect( Utils.isFunction( document.getDownloadURL ) ).toBe( true );
@@ -1683,7 +1683,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Adds the specified resource Pointer as a member of the document.", [
 						{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{ type: "Promise<Carbon.HTTP.Response.Response>" }
 				), ():void => {
 					expect( document.addMember ).toBeDefined();
 					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
@@ -1700,7 +1700,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Adds the specified resource URI as a member of the document.", [
 						{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{ type: "Promise<Carbon.HTTP.Response.Response>" }
 				), ():void => {
 					expect( document.addMember ).toBeDefined();
 					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
@@ -1720,7 +1720,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Adds the specified resources as members of the document.", [
 					{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( document.addMembers ).toBeDefined();
 				expect( Utils.isFunction( document.addMembers ) ).toBeDefined();
@@ -1746,7 +1746,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1779,7 +1779,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it's transformed into one." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1808,7 +1808,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1828,7 +1828,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Creates and persists an empty child fot he current document.", [
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					expect( document.createChild ).toBeDefined();
 					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
@@ -1863,7 +1863,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildren" );
 
@@ -1890,7 +1890,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildren" );
 
@@ -1927,7 +1927,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slug", type: "string", description: "The slug name for the children URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
@@ -1956,7 +1956,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "object", type: "T", description: "The object from where create the child. If it's a non `Carbon.Document.Document` object, it is transformed into one." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
@@ -1981,7 +1981,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slug", type: "string", description: "The slug name for the children URI." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
@@ -1997,7 +1997,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				it( hasSignature( [
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<[ Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
@@ -2029,7 +2029,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
+					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildrenAndRetrieve" );
 
@@ -2056,7 +2056,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
+					{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildrenAndRetrieve" );
 
@@ -2135,7 +2135,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customisable options for the request." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+					{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoints" );
 
@@ -2160,7 +2160,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 						{ name: "accessPoints", type: "(T & Carbon.AccessPoint.AccessPointBase)[]", description: "The access points to persist." },
 						{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+					{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoints" );
 
@@ -2291,7 +2291,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Remove the specified resource Pointer as a member of the current document.", [
 						{ name: "member", type: "Carbon.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{ type: "Promise<Carbon.HTTP.Response.Response>" }
 				), ():void => {
 					expect( document.removeMember ).toBeDefined();
 					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
@@ -2308,7 +2308,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					"Remove the specified resource URI as a member of the current document.", [
 						{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
 					],
-					{ type: "Promise<Carbon.HTTP.Response.Class>" }
+					{ type: "Promise<Carbon.HTTP.Response.Response>" }
 				), ():void => {
 					expect( document.removeMember ).toBeDefined();
 					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
@@ -2328,7 +2328,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				"Remove the specified resources URI or Pointers as members of the current document.", [
 					{ name: "members", type: "(Carbon.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( document.removeMembers ).toBeDefined();
 				expect( Utils.isFunction( document.removeMembers ) ).toBeDefined();
@@ -2346,7 +2346,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				INSTANCE,
 				"removeAllMembers",
 				"Remove the specified resources URI or Pointers as members of the current document.",
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( document.removeAllMembers ).toBeDefined();
 				expect( Utils.isFunction( document.removeAllMembers ) ).toBeDefined();
@@ -2365,7 +2365,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "askQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
@@ -2382,7 +2382,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "askQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ boolean, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
@@ -2399,7 +2399,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
@@ -2416,7 +2416,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
@@ -2433,7 +2433,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "constructQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
@@ -2450,7 +2450,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "constructQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
@@ -2467,7 +2467,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "updateQuery", type: "string", description: "UPDATE query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<Carbon.HTTP.Response.Response>" }
 			), ():void => {
 				expect( document.executeUPDATE ).toBeDefined();
 				expect( Utils.isFunction( document.executeUPDATE ) ).toBe( true );

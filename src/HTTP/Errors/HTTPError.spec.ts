@@ -67,7 +67,7 @@ describe( module(
 
 		it( hasConstructor( [
 			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response.Class" },
+			{ name: "response", type: "Carbon.HTTP.Response.Response" },
 		] ), ():void => {
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 

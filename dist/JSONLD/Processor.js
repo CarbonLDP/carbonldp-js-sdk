@@ -19,7 +19,7 @@ var Class = (function () {
     function Class() {
     }
     Class.expand = function (input) {
-        return this.retrieveContexts(input, Object.create(null), "").then(function () {
+        return Class.retrieveContexts(input, Object.create(null), "").then(function () {
             var expanded = Class.process(new ObjectSchema.DigestedObjectSchema(), input);
             if (Utils.isObject(expanded) && "@graph" in expanded && Object.keys(expanded).length === 1) {
                 expanded = expanded["@graph"];

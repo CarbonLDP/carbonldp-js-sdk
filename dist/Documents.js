@@ -23,6 +23,7 @@ var HTTPMethod_1 = require("./HTTP/HTTPMethod");
 var Request_1 = require("./HTTP/Request");
 var JSONLD = __importStar(require("./JSONLD"));
 var Converter_1 = require("./JSONLD/Converter");
+var Parser_1 = require("./JSONLD/Parser");
 var LDP_1 = require("./LDP");
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
@@ -621,7 +622,7 @@ var Documents = (function () {
         var error = new (Errors_1.statusCodeMap.get(response.status))(response.data, response);
         if (!response.data || !this.context)
             return Promise.reject(error);
-        return new JSONLD.Parser.Class().parse(response.data).then(function (freeNodes) {
+        return new Parser_1.JSONLDParser().parse(response.data).then(function (freeNodes) {
             var freeResources = _this._getFreeResources(freeNodes);
             var errorResponses = freeResources
                 .getResources()
@@ -860,7 +861,7 @@ var Documents = (function () {
         return this.executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions).then(function (_a) {
             var jsonldString = _a[0], _response = _a[1];
             response = _response;
-            return new JSONLD.Parser.Class().parse(jsonldString);
+            return new Parser_1.JSONLDParser().parse(jsonldString);
         }).then(function (rdfNodes) {
             var freeResources = _this._getFreeResources(rdfNodes
                 .filter(function (node) { return !RDF.Document.Factory.is(node); }));
@@ -1121,7 +1122,7 @@ var Documents = (function () {
         var _this = this;
         if (response.status === 204 || !response.data)
             return [persistedProtectedDocument, response];
-        return new JSONLD.Parser.Class().parse(response.data).then(function (expandedResult) {
+        return new Parser_1.JSONLDParser().parse(response.data).then(function (expandedResult) {
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
             _this.applyNodeMap(freeNodes);
             var preferenceHeader = response.getHeader("Preference-Applied");

@@ -80,7 +80,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
-			return RequestService.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
+			return RequestService.post( tokensURI, null, requestOptions, new JSONLD.Parser.JSONLDParser() );
 		} ).then<[ Token.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 

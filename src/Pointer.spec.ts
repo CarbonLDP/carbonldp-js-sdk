@@ -67,7 +67,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"resolve",
 			[ "T" ],
 			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 	} );
@@ -204,7 +204,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
 				{ name: "pointers", type: "Carbon.Pointer.Pointer[]", description: "The array of Pointers to resolve." },
 			],
-			{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>" }
+			{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Response[] ]>" }
 		), ():void => {} );
 
 	} );

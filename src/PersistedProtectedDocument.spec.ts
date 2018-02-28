@@ -54,7 +54,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			"Obtains and resolve the ACL of the actual document.", [
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 	} );
@@ -210,7 +210,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				"Obtains and resolve the ACL of the actual document.", [
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( protectedDocument.getACL ).toBeDefined();
 				expect( Utils.isFunction( protectedDocument.getACL ) ).toBe( true );

@@ -22,6 +22,7 @@ describe( module( "Carbon/HTTP/Parser" ), ():void => {
 
 	describe( interfaze(
 		"Carbon.HTTP.Parser.Parser",
+		[ "T" ],
 		"Interface that represents a what a parser must contains to be used when converting the response of a request."
 	), ():void => {
 

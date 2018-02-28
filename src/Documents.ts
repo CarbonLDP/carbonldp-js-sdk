@@ -40,6 +40,7 @@ import {
 import { Response } from "./HTTP/Response";
 import * as JSONLD from "./JSONLD";
 import { JSONLDConverter } from "./JSONLD/Converter";
+import { JSONLDParser } from "./JSONLD/Parser";
 import {
 	AddMemberAction,
 	DocumentMetadata,
@@ -799,7 +800,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const error:HTTPError = new (statusCodeMap.get( response.status ))( response.data, response );
 		if( ! response.data || ! this.context ) return Promise.reject( error );
 
-		return new JSONLD.Parser.Class().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
+		return new JSONLDParser().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
 			const freeResources:FreeResources = this._getFreeResources( freeNodes );
 			const errorResponses:ErrorResponse.Class[] = freeResources
 				.getResources()
@@ -1073,7 +1074,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		let response:Response;
 		return this.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions ).then( ( [ jsonldString, _response ]:[ string, Response ] ) => {
 			response = _response;
-			return new JSONLD.Parser.Class().parse( jsonldString );
+			return new JSONLDParser().parse( jsonldString );
 
 		} ).then<[ (T & PersistedDocument.Class)[], Response ]>( ( rdfNodes:RDF.Node.Class[] ) => {
 			const freeResources:FreeResources = this._getFreeResources( rdfNodes
@@ -1377,7 +1378,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	private applyResponseData<T extends PersistedDocument.Class>( persistedProtectedDocument:T, response:Response ):[ T, Response ] | Promise<[ T, Response ]> {
 		if( response.status === 204 || ! response.data ) return [ persistedProtectedDocument, response ];
 
-		return new JSONLD.Parser.Class().parse( response.data ).then<[ T, Response ]>( ( expandedResult:object[] ) => {
+		return new JSONLDParser().parse( response.data ).then<[ T, Response ]>( ( expandedResult:object[] ) => {
 			const freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 			this.applyNodeMap( freeNodes );
 

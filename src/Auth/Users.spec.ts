@@ -60,7 +60,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					{ name: "email", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -184,7 +184,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
@@ -337,7 +337,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				{ name: "userURI", type: "string", description: "The URI of the user to deactivate its credentials." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response[] ]>" }
 		), () => {} );
 
 		describe( "disableCredentials", ():void => {
@@ -439,7 +439,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				{ name: "userURI", type: "string", description: "The URI of the user to activate its credentials." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Response, Carbon.HTTP.Response.Response ] ]>" }
 		), () => {} );
 
 		it( hasMethod(
@@ -449,7 +449,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;

@@ -101,14 +101,14 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 			OBLIGATORY,
 			"enable",
 			"Activate the persisted user's credentials.",
-			{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"disable",
 			"Deactivate the persisted user's credentials.",
-			{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 	} );
@@ -245,7 +245,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				INSTANCE,
 				"enable",
 				"Activate user's credentials.",
-				{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Response[] ]>" }
 			), ( done:DoneFn ):void => {
 				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				let spy:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, mockedResponse ] ) );
@@ -317,7 +317,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 				INSTANCE,
 				"disable",
 				"Deactivate the user's credentials.",
-				{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedCredentials.Class, Carbon.HTTP.Response.Response[] ]>" }
 			), ( done:DoneFn ):void => {
 				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				let spy:jasmine.Spy = spyOn( context.documents, "save" ).and.returnValue( Promise.resolve( [ null, mockedResponse ] ) );
