@@ -1,6 +1,6 @@
 import { LiteralToken } from "sparqler/tokens";
 import { QueryContext } from "./QueryContext";
-export declare class Class {
+export declare class QueryValue {
     private _value;
     private _literal;
     private _context;
@@ -10,4 +10,4 @@ export declare class Class {
     getToken(): LiteralToken;
     toString(): string;
 }
-export default Class;
+export default QueryValue;

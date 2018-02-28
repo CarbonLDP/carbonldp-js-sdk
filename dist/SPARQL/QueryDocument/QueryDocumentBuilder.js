@@ -1,11 +1,4 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
@@ -14,7 +7,7 @@ var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
 var QueryObject_1 = require("./QueryObject");
 var QueryProperty_1 = require("./QueryProperty");
-var QueryValue = __importStar(require("./QueryValue"));
+var QueryValue_1 = require("./QueryValue");
 var Utils_2 = require("./Utils");
 var INHERIT = Object.freeze({});
 var QueryDocumentBuilder = (function () {
@@ -50,7 +43,7 @@ var QueryDocumentBuilder = (function () {
         throw new IllegalArgumentError_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
     QueryDocumentBuilder.prototype.value = function (value) {
-        return new QueryValue.Class(this._context, value);
+        return new QueryValue_1.QueryValue(this._context, value);
     };
     QueryDocumentBuilder.prototype.object = function (object) {
         return new QueryObject_1.QueryObject(this._context, object);

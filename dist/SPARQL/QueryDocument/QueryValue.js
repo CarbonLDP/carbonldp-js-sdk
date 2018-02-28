@@ -5,8 +5,8 @@ var tokens_1 = require("sparqler/tokens");
 var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
 var Utils_1 = require("../../Utils");
 var XSD_1 = require("../../Vocabularies/XSD");
-var Class = (function () {
-    function Class(context, value) {
+var QueryValue = (function () {
+    function QueryValue(context, value) {
         this._value = value;
         this._context = context;
         if (Utils_1.isDate(value)) {
@@ -17,7 +17,7 @@ var Class = (function () {
             this._literal = new tokens_1.LiteralToken(value);
         }
     }
-    Class.prototype.withType = function (type) {
+    QueryValue.prototype.withType = function (type) {
         if (!iri_1.isAbsolute(type)) {
             if (!XSD_1.XSD.hasOwnProperty(type))
                 throw new IllegalArgumentError_1.IllegalArgumentError("Invalid type provided.");
@@ -28,19 +28,19 @@ var Class = (function () {
         this._literal.setType(this._context.compactIRI(type));
         return this;
     };
-    Class.prototype.withLanguage = function (language) {
+    QueryValue.prototype.withLanguage = function (language) {
         this._literal.setLanguage(language);
         return this;
     };
-    Class.prototype.getToken = function () {
+    QueryValue.prototype.getToken = function () {
         return this._literal;
     };
-    Class.prototype.toString = function () {
+    QueryValue.prototype.toString = function () {
         return "" + this._literal;
     };
-    return Class;
+    return QueryValue;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.QueryValue = QueryValue;
+exports.default = QueryValue;
 
 //# sourceMappingURL=QueryValue.js.map

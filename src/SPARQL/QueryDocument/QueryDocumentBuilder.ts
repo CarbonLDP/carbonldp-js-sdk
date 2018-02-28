@@ -28,7 +28,7 @@ import {
 } from "./QueryProperty";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
-import * as QueryValue from "./QueryValue";
+import { QueryValue } from "./QueryValue";
 import {
 	createPropertyPatterns,
 	getParentPath,
@@ -88,8 +88,8 @@ export class QueryDocumentBuilder {
 		throw new IllegalArgumentError( `The "${ name }" property was not declared.` );
 	}
 
-	value( value:string | number | boolean | Date ):QueryValue.Class {
-		return new QueryValue.Class( this._context, value );
+	value( value:string | number | boolean | Date ):QueryValue {
+		return new QueryValue( this._context, value );
 	}
 
 	object( object:Pointer | string ):QueryObject {
@@ -140,7 +140,7 @@ export class QueryDocumentBuilder {
 		return this;
 	}
 
-	values( ...values:( QueryValue.Class | QueryObject )[] ):this {
+	values( ...values:( QueryValue | QueryObject )[] ):this {
 		const termTokens:( LiteralToken | IRIToken | PrefixedNameToken )[] = values.map( value => {
 			const token:TermToken = value.getToken();
 			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );

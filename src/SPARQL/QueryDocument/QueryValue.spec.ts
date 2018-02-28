@@ -18,7 +18,7 @@ import { XSD } from "../../Vocabularies/XSD";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryValue";
-import { Class as QueryValue } from "./QueryValue";
+import DefaultValue, { QueryValue } from "./QueryValue";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
@@ -27,12 +27,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryValue" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryValue.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryValue );
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryValue.QueryValue" ), ():void => {
+		expect( DefaultValue ).toBeDefined();
+		expect( DefaultValue ).toBe( QueryValue );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryValue.Class", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryValue.QueryValue", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryValue ).toBeDefined();

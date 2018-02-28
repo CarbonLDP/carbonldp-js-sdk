@@ -38,7 +38,8 @@ import DefaultExport, { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import * as QueryObjectModule from "./QueryObject";
 import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
-import * as QueryValue from "./QueryValue";
+import * as QueryValueModule from "./QueryValue";
+import { QueryValue } from "./QueryValue";
 import * as QueryVariable from "./QueryVariable";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
@@ -226,7 +227,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "value", type: "string | number | boolean | Date", description: "Value to be converted in a safe to use in query object." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryValue.Class" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryValue.QueryValue" }
 			), ():void => {
 			} );
 
@@ -236,7 +237,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			} );
 
 			it( "should create a QueryValue with the name provided", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryValue, "Class" );
+				const spy:jasmine.Spy = spyOn( QueryValueModule, "QueryValue" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
 				builder.value( "name" );
@@ -255,10 +256,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 			it( "should return a QueryValue", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder.value( "value" ) ).toEqual( jasmine.any( QueryValue.Class ) );
-				expect( builder.value( 10.01 ) ).toEqual( jasmine.any( QueryValue.Class ) );
-				expect( builder.value( true ) ).toEqual( jasmine.any( QueryValue.Class ) );
-				expect( builder.value( new Date() ) ).toEqual( jasmine.any( QueryValue.Class ) );
+				expect( builder.value( "value" ) ).toEqual( jasmine.any( QueryValue ) );
+				expect( builder.value( 10.01 ) ).toEqual( jasmine.any( QueryValue ) );
+				expect( builder.value( true ) ).toEqual( jasmine.any( QueryValue ) );
+				expect( builder.value( new Date() ) ).toEqual( jasmine.any( QueryValue ) );
 			} );
 
 		} );
@@ -585,7 +586,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				"Adds a filter to the specific values of the property where the query is been applied.\n" +
 				"NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.",
 				[
-					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.Class | Carbon.SPARQL.QueryDocument.QueryObject.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
+					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.QueryValue | Carbon.SPARQL.QueryDocument.QueryObject.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
 				],
 				{ type: "this" }
 			), ():void => {

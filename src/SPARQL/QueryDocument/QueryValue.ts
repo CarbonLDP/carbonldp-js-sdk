@@ -6,7 +6,7 @@ import { isDate } from "../../Utils";
 import { XSD } from "../../Vocabularies/XSD";
 import { QueryContext } from "./QueryContext";
 
-export class Class {
+export class QueryValue {
 	private _value:string | number | boolean | Date;
 
 	private _literal:LiteralToken;
@@ -51,7 +51,7 @@ export class Class {
 	}
 }
 
-export default Class;
+export default QueryValue;
 
 
 
