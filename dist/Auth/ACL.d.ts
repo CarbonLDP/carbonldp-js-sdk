@@ -1,13 +1,13 @@
 import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
-import * as ACE from "./ACE";
+import { ACE } from "./ACE";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.ObjectSchema;
 export interface Class extends Document {
     accessTo: Pointer;
-    entries?: ACE.Class[];
-    inheritableEntries?: ACE.Class[];
+    entries?: ACE[];
+    inheritableEntries?: ACE[];
     _parsePointer(element: string | Pointer): Pointer;
     grant(subject: string | Pointer, subjectClass: string | Pointer, permission: string | Pointer): void;
     grant(subject: string | Pointer, subjectClass: string | Pointer, permissions: (string | Pointer)[]): void;

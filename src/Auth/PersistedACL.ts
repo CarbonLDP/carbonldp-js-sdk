@@ -1,13 +1,13 @@
 import * as ACL from "./ACL";
-import * as PersistedACE from "./PersistedACE";
+import { PersistedACE } from "./PersistedACE";
 import * as PersistedDocument from "./../PersistedDocument";
 import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
 export interface Class extends PersistedDocument.Class {
 	accessTo:Pointer;
-	entries?:PersistedACE.Class[];
-	inheritableEntries?:PersistedACE.Class[];
+	entries?:PersistedACE[];
+	inheritableEntries?:PersistedACE[];
 
 	_parsePointer( element:string | Pointer ):Pointer;
 
@@ -71,7 +71,7 @@ export class Factory {
 
 		// Check consistency in ACE
 		// TODO: Possible removal when resolved: CarbonLDP/public-carbonldp-platform#2
-		let removeInvalidACE:( ace:PersistedACE.Class ) => void = ( ace ) => {
+		let removeInvalidACE:( ace:PersistedACE ) => void = ( ace ) => {
 			if( ! ace.subjects ) acl._removeFragment( ace );
 			return ! ! ace.subjects;
 		};

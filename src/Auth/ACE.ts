@@ -1,13 +1,32 @@
+import { Fragment } from "../Fragment";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { Fragment } from "./../Fragment";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = CS.AccessControlEntry;
+export interface ACE extends Fragment {
+	granting:boolean;
+	permissions:Pointer[];
+	subjects:Pointer[];
+	subjectsClass:Pointer;
+}
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+
+export interface ACEFactory extends ModelFactory<ACE> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is ACE;
+
+
+	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):ACE;
+
+	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE;
+}
+
+
+const SCHEMA:ObjectSchema = {
 	"granting": {
 		"@id": CS.granting,
 		"@type": XSD.boolean,
@@ -28,37 +47,37 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Fragment {
-	granting:boolean;
-	permissions:Pointer[];
-	subjects:Pointer[];
-	subjectsClass:Pointer;
-}
+export const ACE:ACEFactory = {
+	TYPE: CS.AccessControlEntry,
+	SCHEMA,
 
-export class Factory {
-
-	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "granting" )
-			&& Utils.hasPropertyDefined( object, "permissions" )
-			&& Utils.hasPropertyDefined( object, "subjects" )
-			&& Utils.hasPropertyDefined( object, "subjectsClass" )
+	is( object:object ):object is ACE {
+		return Fragment.is( object )
+			&& object.hasOwnProperty( "granting" )
+			&& object.hasOwnProperty( "permissions" )
+			&& object.hasOwnProperty( "subjects" )
+			&& object.hasOwnProperty( "subjectsClass" )
 			;
-	}
+	},
 
-	static createFrom<T extends Object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & Class {
-		let ace:T & Class = <any> object;
+	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):ACE {
+		return ACE.createFrom( {}, granting, subjects, subjectClass, permissions );
+	},
 
-		if( ! ace.types ) ace.types = [];
-		ace.types.push( RDF_CLASS );
+	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE {
+		const ace:T & ACE = object as T & ACE;
 
+		Fragment.decorate( ace );
+
+		ace.addType( ACE.TYPE );
 		ace.granting = granting;
 		ace.subjects = subjects;
 		ace.subjectsClass = subjectClass;
 		ace.permissions = permissions;
 
 		return ace;
-	}
+	},
 
-}
+};
 
-export default Class;
+export default ACE;

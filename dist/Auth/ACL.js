@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
 var Pointer_1 = require("./../Pointer");
 var Utils = __importStar(require("./../Utils"));
-var ACE = __importStar(require("./ACE"));
+var ACE_1 = require("./ACE");
 exports.RDF_CLASS = CS_1.CS.AccessControlList;
 exports.SCHEMA = {
     "entries": {
@@ -120,7 +120,7 @@ function configACE(granting, subject, subjectClass, permissions, aces) {
     var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer_1.Pointer.areEqual(ace.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
+        ace = ACE_1.ACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
         aces.push(ace);
     }
     else {

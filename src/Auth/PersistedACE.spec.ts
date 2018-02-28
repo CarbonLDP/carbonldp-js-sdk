@@ -1,33 +1,22 @@
 import {
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
 	extendsClass,
-	hasProperty,
 	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
 } from "../test/JasmineExtender";
 
-import * as Utils from "./../Utils";
-
-import * as PersistedACE from "./PersistedACE";
-import DefaultExport from "./PersistedACE";
+import DefaultExport, { PersistedACE } from "./PersistedACE";
 
 describe( module( "Carbon/Auth/ACE" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( PersistedACE ).toBeDefined();
-		expect( Utils.isObject( PersistedACE ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.Auth.PersistedACE.Class",
+		"Carbon.Auth.PersistedACE.PersistedACE",
 		"Interface that represents a persisted Access Control Entry (ACE) of a persisted Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Auth.ACE.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Auth.ACE.ACE" ), ():void => {} );
 		it( extendsClass( "Carbon.PersistedFragment.PersistedFragment" ), ():void => {} );
 
 		it( hasProperty(
@@ -39,9 +28,9 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.PersistedACE.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Auth.PersistedACE.PersistedACE" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let persistedACE:PersistedACE.Class;
+		let persistedACE:PersistedACE;
 
 		persistedACE = defaultExport;
 		expect( persistedACE ).toEqual( jasmine.any( Object ) );

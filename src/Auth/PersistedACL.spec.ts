@@ -49,14 +49,14 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"entries",
-			"Carbon.Auth.PersistedACE.Class[]",
+			"Carbon.Auth.PersistedACE.PersistedACE[]",
 			"Array of persisted ACEs that only grants or denies permissions of the document the ACL belongs."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"inheritableEntries",
-			"Carbon.Auth.PersistedACE.Class[]",
+			"Carbon.Auth.PersistedACE.PersistedACE[]",
 			"Array of persisted ACEs that grants or denies permissions of the document's children the ACL belongs."
 		), ():void => {} );
 

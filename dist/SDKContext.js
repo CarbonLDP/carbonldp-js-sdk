@@ -8,6 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(require("./Auth"));
+var ACE_1 = require("./Auth/ACE");
 var Document_1 = require("./Document");
 var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
@@ -161,7 +162,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(LDP.Map.RDF_CLASS, LDP.Map.SCHEMA);
         this.extendObjectSchema(LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
-        this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
+        this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
         this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);

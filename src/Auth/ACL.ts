@@ -3,7 +3,7 @@ import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
-import * as ACE from "./ACE";
+import { ACE } from "./ACE";
 
 export const RDF_CLASS:string = CS.AccessControlList;
 
@@ -26,8 +26,8 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 
 export interface Class extends Document {
 	accessTo:Pointer;
-	entries?:ACE.Class[];
-	inheritableEntries?:ACE.Class[];
+	entries?:ACE[];
+	inheritableEntries?:ACE[];
 
 	_parsePointer( element:string | Pointer ):Pointer;
 
@@ -161,12 +161,12 @@ function parsePointers( elements:string | Pointer | (string | Pointer)[] ):Point
 	return elementsArray.map( ( element:string | Pointer ) => (this as Class)._parsePointer( element ) );
 }
 
-function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, permissions:Pointer[], aces:ACE.Class[] ):ACE.Class {
-	let subjectACEs:ACE.Class[] = aces.filter( ace => ace.subjects.length === 1 && ace.granting === granting && Pointer.areEqual( ace.subjects[ 0 ], subject ) );
+function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, permissions:Pointer[], aces:ACE[] ):ACE {
+	let subjectACEs:ACE[] = aces.filter( ace => ace.subjects.length === 1 && ace.granting === granting && Pointer.areEqual( ace.subjects[ 0 ], subject ) );
 
-	let ace:ACE.Class;
+	let ace:ACE;
 	if( subjectACEs.length === 0 ) {
-		ace = ACE.Factory.createFrom( (<Class> this).createFragment(), granting, [ subject ], subjectClass, [] );
+		ace = ACE.createFrom( (<Class> this).createFragment(), granting, [ subject ], subjectClass, [] );
 		aces.push( ace );
 	} else {
 		ace = subjectACEs[ 0 ];
@@ -176,7 +176,7 @@ function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, per
 	return ace;
 }
 
-function configACEs( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE.Class[] ):void {
+function configACEs( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE[] ):void {
 	let subjectPointers:Pointer[] = parsePointers.call( this, subjects );
 	let subjectClassPointer:Pointer = (this as Class)._parsePointer( subjectsClass );
 	let permissionPointers:Pointer[] = parsePointers.call( this, permissions );
@@ -217,8 +217,8 @@ function configureChildInheritance( granting:boolean, subjects:string | Pointer 
 	configACEs.call( this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries );
 }
 
-function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE.Class[] ):boolean {
-	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
+function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE[] ):boolean {
+	let subjectACEs:ACE[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 
 	for( let ace of subjectACEs ) {
 		if( Utils.ArrayUtils.indexOf( ace.permissions, permission, Pointer.areEqual ) !== - 1 )
@@ -227,7 +227,7 @@ function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE.Class[] ):b
 	return null;
 }
 
-function getGranting( subject:string | Pointer, permission:string | Pointer, aces:ACE.Class[] ):boolean {
+function getGranting( subject:string | Pointer, permission:string | Pointer, aces:ACE[] ):boolean {
 	if( ! aces ) return null;
 
 	let subjectPointer:Pointer = (this as Class)._parsePointer( subject );
@@ -252,18 +252,18 @@ function getChildInheritance( subject:string | Pointer, permission:string | Poin
 	return getGranting.call( this, subject, permission, acl.inheritableEntries );
 }
 
-function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE.Class[] ):void {
+function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE[] ):void {
 	if( ! aces ) return;
 
 	let acl:Class = <Class> this;
-	let opposedAces:ACE.Class[] = acl.entries === aces ? acl.inheritableEntries : acl.entries;
+	let opposedAces:ACE[] = acl.entries === aces ? acl.inheritableEntries : acl.entries;
 
-	let subjectACEs:ACE.Class[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
+	let subjectACEs:ACE[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 	for( let ace of subjectACEs ) {
 		if( opposedAces && Utils.ArrayUtils.indexOf( opposedAces, ace, Pointer.areEqual ) !== - 1 ) {
 			aces.splice( Utils.ArrayUtils.indexOf( aces, ace, Pointer.areEqual ), 1 );
 
-			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
+			let newACE:ACE = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
 			continue;
 		}
@@ -271,7 +271,7 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 		if( ace.subjects.length > 1 ) {
 			ace.subjects.splice( Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ), 1 );
 
-			let newACE:ACE.Class = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
+			let newACE:ACE = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
 			continue;
 		}
@@ -290,7 +290,7 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 	}
 }
 
-function removePermissions( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE.Class[] ):void {
+function removePermissions( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE[] ):void {
 	let subjectPointer:Pointer = (this as Class)._parsePointer( subject );
 	let permissionPointers:Pointer[] = parsePointers.call( this, permissions );
 	removePermissionsFrom.call( this, subjectPointer, permissionPointers, aces );
