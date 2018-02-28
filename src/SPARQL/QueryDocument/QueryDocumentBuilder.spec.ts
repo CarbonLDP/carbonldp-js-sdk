@@ -40,7 +40,7 @@ import { QueryObject } from "./QueryObject";
 import { QueryProperty } from "./QueryProperty";
 import * as QueryValueModule from "./QueryValue";
 import { QueryValue } from "./QueryValue";
-import * as QueryVariable from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
 
@@ -503,9 +503,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( defaultProperty ).toBeDefined();
 				expect( defaultProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new IRIToken( "http://example.com/vocab#defaultProperty" ) )
-								.addObject( new QueryVariable.Class( "document.defaultProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.defaultProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
 
@@ -513,9 +513,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( inheritProperty ).toBeDefined();
 				expect( inheritProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inheritProperty" ) )
-								.addObject( new QueryVariable.Class( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
 
@@ -523,9 +523,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( extendedProperty ).toBeDefined();
 				expect( extendedProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:extendedProperty" ) )
-								.addObject( new QueryVariable.Class( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
 						.addPattern( new FilterToken( "datatype( ?document__extendedProperty ) = xsd:string" ) )
 					,
 				] );
@@ -534,9 +534,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				expect( inlineProperty ).toBeDefined();
 				expect( inlineProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inlineProperty" ) )
-								.addObject( new QueryVariable.Class( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
 			} );

@@ -6994,19 +6994,12 @@ exports.default = QueryContextBuilder;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(29);
 var tokens_1 = __webpack_require__(4);
 var IllegalArgumentError_1 = __webpack_require__(23);
 var ObjectSchema_1 = __webpack_require__(11);
-var QueryVariable = __importStar(__webpack_require__(117));
+var QueryVariable_1 = __webpack_require__(117);
 var QueryContext = (function () {
     function QueryContext(context) {
         this.context = context;
@@ -7017,7 +7010,7 @@ var QueryContext = (function () {
     QueryContext.prototype.getVariable = function (name) {
         if (this._variablesMap.has(name))
             return this._variablesMap.get(name);
-        var variable = new QueryVariable.Class(name, this._variablesCounter++);
+        var variable = new QueryVariable_1.QueryVariable(name, this._variablesCounter++);
         this._variablesMap.set(name, variable);
         return variable;
     };
@@ -11197,24 +11190,24 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(name, index) {
+var QueryVariable = (function (_super) {
+    __extends(QueryVariable, _super);
+    function QueryVariable(name, index) {
         var _this = _super.call(this, name
             .replace(/[.]/g, "__")
             .replace(/[^0-9A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/g, "_")) || this;
         _this.index = index;
         return _this;
     }
-    Class.prototype.toString = function () {
+    QueryVariable.prototype.toString = function () {
         if (true)
             return "?_" + this.index;
         return _super.prototype.toString.call(this);
     };
-    return Class;
+    return QueryVariable;
 }(tokens_1.VariableToken));
-exports.Class = Class;
-exports.default = Class;
+exports.QueryVariable = QueryVariable;
+exports.default = QueryVariable;
 
 
 /***/ }),

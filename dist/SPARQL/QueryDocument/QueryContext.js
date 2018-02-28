@@ -1,17 +1,10 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
 var ObjectSchema_1 = require("../../ObjectSchema");
-var QueryVariable = __importStar(require("./QueryVariable"));
+var QueryVariable_1 = require("./QueryVariable");
 var QueryContext = (function () {
     function QueryContext(context) {
         this.context = context;
@@ -22,7 +15,7 @@ var QueryContext = (function () {
     QueryContext.prototype.getVariable = function (name) {
         if (this._variablesMap.has(name))
             return this._variablesMap.get(name);
-        var variable = new QueryVariable.Class(name, this._variablesCounter++);
+        var variable = new QueryVariable_1.QueryVariable(name, this._variablesCounter++);
         this._variablesMap.set(name, variable);
         return variable;
     };

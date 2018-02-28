@@ -97,7 +97,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"variable",
-			"Carbon.SPARQL.QueryDocument.QueryVariable.Class",
+			"Carbon.SPARQL.QueryDocument.QueryVariable.QueryVariable",
 			"The variable that represents the property in the query."
 		), ():void => {
 		} );

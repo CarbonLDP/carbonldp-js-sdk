@@ -11,13 +11,13 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
 } from "../../ObjectSchema";
-import * as QueryVariable from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
 
 export class QueryContext implements ObjectSchemaResolver {
 	readonly context?:Context;
 
 	private _variablesCounter:number;
-	private _variablesMap:Map<string, QueryVariable.Class>;
+	private _variablesMap:Map<string, QueryVariable>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
@@ -30,10 +30,10 @@ export class QueryContext implements ObjectSchemaResolver {
 		this._prefixesMap = new Map();
 	}
 
-	getVariable( name:string ):QueryVariable.Class {
+	getVariable( name:string ):QueryVariable {
 		if( this._variablesMap.has( name ) ) return this._variablesMap.get( name );
 
-		const variable:QueryVariable.Class = new QueryVariable.Class( name, this._variablesCounter ++ );
+		const variable:QueryVariable = new QueryVariable( name, this._variablesCounter ++ );
 		this._variablesMap.set( name, variable );
 		return variable;
 	}

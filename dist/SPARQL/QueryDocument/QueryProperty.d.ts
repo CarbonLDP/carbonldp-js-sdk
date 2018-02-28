@@ -2,7 +2,7 @@ import { PatternToken, SubjectToken } from "sparqler/tokens";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import * as QueryVariable from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
 export declare enum QueryPropertyType {
     FULL = 0,
     PARTIAL = 1,
@@ -10,7 +10,7 @@ export declare enum QueryPropertyType {
 }
 export declare class QueryProperty {
     readonly name: string;
-    readonly variable: QueryVariable.Class;
+    readonly variable: QueryVariable;
     _builder: QueryDocumentBuilder;
     private _context;
     private _optional;

@@ -7,7 +7,7 @@ import {
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import * as QueryVariable from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
 import {
 	createAllPattern,
 	createGraphPattern,
@@ -22,7 +22,7 @@ export enum QueryPropertyType {
 
 export class QueryProperty {
 	readonly name:string;
-	readonly variable:QueryVariable.Class;
+	readonly variable:QueryVariable;
 
 	_builder:QueryDocumentBuilder;
 

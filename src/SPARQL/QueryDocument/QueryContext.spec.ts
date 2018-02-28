@@ -1,4 +1,8 @@
-import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import {
+	IRIToken,
+	PrefixedNameToken,
+	PrefixToken
+} from "sparqler/tokens";
 
 import { AbstractContext } from "../../AbstractContext";
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
@@ -15,7 +19,7 @@ import {
 import * as Module from "./QueryContext";
 import DefaultExport, { QueryContext } from "./QueryContext";
 
-import QueryVariable from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
@@ -78,7 +82,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "name", type: "string" },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryVariable.Class" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryVariable.QueryVariable" }
 			), ():void => {
 			} );
 
