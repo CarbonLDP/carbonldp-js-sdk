@@ -1,7 +1,7 @@
 import * as Errors from "../../../Errors";
 import * as Utils from "./../../../Utils";
 
-import Serializer from "./../Serializer";
+import { Serializer } from "./../Serializer";
 
 function pad( value:number ):string {
 	let paddedValue:string = String( value );

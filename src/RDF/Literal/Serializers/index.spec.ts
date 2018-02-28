@@ -1,16 +1,14 @@
 import {
-	STATIC,
-
-	module,
-
 	isDefined,
+	module,
 	reexports,
-} from "./../../test/JasmineExtender";
-import * as Utils from "./../../Utils";
+	STATIC,
+} from "../../../test/JasmineExtender";
+import * as Utils from "../../../Utils";
 
-import * as XSD from "./Serializers/XSD";
+import * as Serializers from "./";
 
-import * as Serializers from "./Serializers";
+import * as XSD from "./XSD";
 
 describe( module(
 	"Carbon/RDF/Literal/Serializers"

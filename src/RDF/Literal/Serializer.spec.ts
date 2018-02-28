@@ -24,7 +24,7 @@ describe( module(
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.Literal.Serializer.Class",
+		"Carbon.RDF.Literal.Serializer.Serializer",
 		"Interface that serializer classes must implement."
 	), ():void => {
 
@@ -40,9 +40,9 @@ describe( module(
 		), ():void => {} );
 	} );
 
-	it( hasDefaultExport( "Carbon.RDF.Literal.Serializer.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.RDF.Literal.Serializer.Serializer" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Serializer.Class;
+		let defaultTarget:Serializer.Serializer;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

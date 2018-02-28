@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD = __importStar(require("./Serializers/XSD"));
+var XSD = __importStar(require("./XSD"));
 exports.XSD = XSD;
 
-//# sourceMappingURL=Serializers.js.map
+//# sourceMappingURL=index.js.map
