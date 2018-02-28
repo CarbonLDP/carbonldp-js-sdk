@@ -13,7 +13,7 @@ import * as PersistedResource from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
-import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
+import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument, MessagingDocument.Class {
     created?: Date;
     modified?: Date;
@@ -61,11 +61,11 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
     createAccessPoints<T extends object>(accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: RequestOptions): Promise<[(T & PersistedAccessPoint.Class)[], Response[]]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPointBase)[], requestOptions?: RequestOptions): Promise<[(T & PersistedAccessPoint.Class)[], Response[]]>;
     listChildren(requestOptions?: RequestOptions): Promise<[Class[], Response]>;
-    getChildren<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], Response]>;
-    getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], Response]>;
+    getChildren<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<[(T & Class)[], Response]>;
+    getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<[(T & Class)[], Response]>;
     listMembers(requestOptions?: RequestOptions): Promise<[Class[], Response]>;
-    getMembers<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], Response]>;
-    getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder.Class) => QueryDocumentsBuilder.Class): Promise<[(T & Class)[], Response]>;
+    getMembers<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<[(T & Class)[], Response]>;
+    getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<[(T & Class)[], Response]>;
     removeMember(member: Pointer): Promise<Response>;
     removeMember(memberURI: string): Promise<Response>;
     removeMembers(members: (Pointer | string)[]): Promise<Response>;

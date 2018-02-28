@@ -22,7 +22,7 @@ import * as RDF from "./RDF";
 import * as URI from "./RDF/URI";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
-import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
+import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import * as Utils from "./Utils";
 
 export interface Class extends Document, PersistedResource.Class, ServiceAwareDocument, MessagingDocument.Class {
@@ -112,17 +112,17 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 	listChildren( requestOptions?:RequestOptions ):Promise<[ Class[], Response ]>;
 
 
-	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
 
-	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
 
 
 	listMembers( requestOptions?:RequestOptions ):Promise<[ Class[], Response ]>;
 
 
-	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
 
-	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
+	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
 
 
 	removeMember( member:Pointer ):Promise<Response>;
@@ -328,9 +328,9 @@ function listChildren( this:Class, requestOptions?:RequestOptions ):Promise<[ Cl
 	return this._documents.listChildren( this.id, requestOptions );
 }
 
-function getChildren<T extends object>( this:Class, requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
-function getChildren<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
-function getChildren<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]> {
+function getChildren<T extends object>( this:Class, requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
+function getChildren<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
+function getChildren<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]> {
 	return this._documents.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
 }
 
@@ -339,9 +339,9 @@ function listMembers( this:Class, requestOptions?:RequestOptions ):Promise<[ Cla
 	return this._documents.listMembers( this.id, requestOptions );
 }
 
-function getMembers<T extends object>( this:Class, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
-function getMembers<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]>;
-function getMembers<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & Class)[], Response ]> {
+function getMembers<T extends object>( this:Class, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
+function getMembers<T extends object>( this:Class, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]>;
+function getMembers<T extends object>( this:Class, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & Class)[], Response ]> {
 	return this._documents.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery );
 }
 

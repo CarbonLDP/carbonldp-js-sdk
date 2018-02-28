@@ -80,7 +80,6 @@ import {
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
 import {
-	QueryDocumentsBuilder,
 	QueryMetadata,
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
@@ -89,6 +88,7 @@ import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
 import { QueryContextPartial } from "./SPARQL/QueryDocument/QueryContextPartial";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import {
 	areDifferentType,
 	createAllPattern,
@@ -320,9 +320,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
+	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
+	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
@@ -408,9 +408,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getMembers<T extends object>( uri:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
+	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
+	getMembers<T extends object>( uri:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
@@ -987,7 +987,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		type Builder = QueryDocumentBuilder | QueryDocumentBuilder;
 		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder = targetProperty.name === "document" ?
-			QueryDocumentBuilder : QueryDocumentsBuilder.Class;
+			QueryDocumentBuilder : QueryDocumentsBuilder;
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 
@@ -1003,7 +1003,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this
 			.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetProperty.name, constructPatterns )
 			.then( ( returned ) => {
-				if( queryBuilder instanceof QueryDocumentsBuilder.Class && queryBuilder._orderData ) {
+				if( queryBuilder instanceof QueryDocumentsBuilder && queryBuilder._orderData ) {
 					const { path, flow } = queryBuilder._orderData;
 					const inverter:number = flow === "DESC" ? - 1 : 1;
 

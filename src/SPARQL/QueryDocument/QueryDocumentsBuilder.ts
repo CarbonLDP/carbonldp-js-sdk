@@ -4,25 +4,23 @@ import {
 	OptionalToken,
 	OrderToken,
 	SelectToken,
-	SubjectToken
+	SubjectToken,
 } from "sparqler/tokens";
 
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../../Errors";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../../Errors/IllegalStateError";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import * as QueryProperty from "./QueryProperty";
 import { getParentPath } from "./Utils";
 
-export interface OrderData {
+export interface QueryDocumentsBuilderOrderData {
 	path:string;
 	flow?:"ASC" | "DESC";
 }
 
-export class Class extends QueryDocumentBuilder {
+export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 
-	_orderData?:OrderData;
+	_orderData?:QueryDocumentsBuilderOrderData;
 
 	orderBy( property:string, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
 		let propertyObj:QueryProperty.Class = this.property( property );
@@ -43,7 +41,7 @@ export class Class extends QueryDocumentBuilder {
 		const validatedFlow:"ASC" | "DESC" = parseFlowString( flow );
 		select.modifiers.unshift( new OrderToken( propertyObj.variable, validatedFlow ) );
 
-		const orderData:OrderData = {
+		const orderData:QueryDocumentsBuilderOrderData = {
 			path: propertyObj.name
 				.split( "." )
 				.slice( 1 )
@@ -117,5 +115,5 @@ function parseFlowString( flow?:"ASC" | "DESC" | "ascending" | "descending" ):"A
 	}
 }
 
-export default Class;
+export default QueryDocumentsBuilder;
 

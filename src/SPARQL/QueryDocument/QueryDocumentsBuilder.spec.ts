@@ -25,10 +25,12 @@ import {
 	method,
 	module
 } from "../../test/JasmineExtender";
-import QueryContextBuilder from "./QueryContextBuilder";
+import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+
 import * as Module from "./QueryDocumentsBuilder";
-import { Class as QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import DefaultExport, { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+
 import * as QueryProperty from "./QueryProperty";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
@@ -38,12 +40,14 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryDocumentsBuilder );
+	// TODO: To document `QueryDocumentsBuilderOrderData`
+
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( QueryDocumentsBuilder );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentsBuilder ).toBeDefined();

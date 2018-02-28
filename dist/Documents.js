@@ -40,6 +40,7 @@ var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
 var QueryContextPartial_1 = require("./SPARQL/QueryDocument/QueryContextPartial");
 var QueryDocumentBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentBuilder");
+var QueryDocumentsBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentsBuilder");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
 var Utils = __importStar(require("./Utils"));
@@ -776,7 +777,7 @@ var Documents = (function () {
     };
     Documents.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
         var Builder = targetProperty.name === "document" ?
-            QueryDocumentBuilder_1.QueryDocumentBuilder : QueryDocument_1.QueryDocumentsBuilder.Class;
+            QueryDocumentBuilder_1.QueryDocumentBuilder : QueryDocumentsBuilder_1.QueryDocumentsBuilder;
         var queryBuilder = new Builder(queryContext, targetProperty);
         targetProperty.setType(queryBuilderFn ?
             QueryDocument_1.QueryProperty.PropertyType.PARTIAL :
@@ -787,7 +788,7 @@ var Documents = (function () {
         return this
             .executeConstructPatterns(uri, requestOptions, queryContext, targetProperty.name, constructPatterns)
             .then(function (returned) {
-            if (queryBuilder instanceof QueryDocument_1.QueryDocumentsBuilder.Class && queryBuilder._orderData) {
+            if (queryBuilder instanceof QueryDocumentsBuilder_1.QueryDocumentsBuilder && queryBuilder._orderData) {
                 var _a = queryBuilder._orderData, path_1 = _a.path, flow = _a.flow;
                 var inverter_1 = flow === "DESC" ? -1 : 1;
                 returned[0].sort(function (a, b) {
