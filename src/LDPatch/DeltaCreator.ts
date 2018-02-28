@@ -14,7 +14,7 @@ import {
 	VariableOrIRI,
 } from "sparqler/tokens";
 
-import { Converter } from "../JSONLD";
+import { Converter } from "../JSONLD/index";
 import { guessXSDType } from "../JSONLD/Utils";
 import { XSD } from "../Vocabularies/XSD";
 import {

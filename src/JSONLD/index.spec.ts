@@ -1,18 +1,16 @@
 import {
-	STATIC,
-
-	module,
-
 	isDefined,
+	module,
 	reexports,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+	STATIC,
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
-import * as Converter from "./JSONLD/Converter";
-import * as Parser from "./JSONLD/Parser";
-import * as Processor from "./JSONLD/Processor";
+import * as JSONLD from "./";
 
-import * as JSONLD from "./JSONLD";
+import * as Converter from "./Converter";
+import * as Parser from "./Parser";
+import * as Processor from "./Processor";
 
 describe( module( "Carbon/JSONLD" ), ():void => {
 

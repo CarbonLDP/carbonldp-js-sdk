@@ -7,13 +7,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Compacter = __importStar(require("./JSONLD/Compacter"));
+var Compacter = __importStar(require("./Compacter"));
 exports.Compacter = Compacter;
-var Converter = __importStar(require("./JSONLD/Converter"));
+var Converter = __importStar(require("./Converter"));
 exports.Converter = Converter;
-var Parser = __importStar(require("./JSONLD/Parser"));
+var Parser = __importStar(require("./Parser"));
 exports.Parser = Parser;
-var Processor = __importStar(require("./JSONLD/Processor"));
+var Processor = __importStar(require("./Processor"));
 exports.Processor = Processor;
 
-//# sourceMappingURL=JSONLD.js.map
+//# sourceMappingURL=index.js.map

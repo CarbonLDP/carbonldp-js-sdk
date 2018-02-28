@@ -36,7 +36,7 @@ import { HTTPError } from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as JSONLD from "./JSONLD";
+import { JSONLDConverter } from "./JSONLD/Converter";
 import MessagingEvent from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
 import * as ObjectSchema from "./ObjectSchema";
@@ -139,7 +139,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			let documents:Documents = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
-			expect( documents.jsonldConverter instanceof JSONLD.Converter.JSONLDConverter ).toBe( true );
+			expect( documents.jsonldConverter instanceof JSONLDConverter ).toBe( true );
 		} );
 
 		it( hasProperty(

@@ -38,7 +38,7 @@ import {
 	RetrievalPreferences,
 } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as JSONLD from "./JSONLD";
+import { JSONLDCompacter } from "./JSONLD/Compacter";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { JSONLDParser } from "./JSONLD/Parser";
 import {
@@ -779,7 +779,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
-		return new JSONLD.Compacter.JSONLDCompacter( this ).compactDocument( rdfDocument );
+		return new JSONLDCompacter( this ).compactDocument( rdfDocument );
 	}
 
 	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources {
@@ -1117,8 +1117,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			const targetDocuments:RDF.Document.Class[] = rdfDocuments
 				.filter( x => targetSet.has( x[ "@id" ] ) );
 
-			const documents:(T & PersistedDocument.Class)[] = new JSONLD.Compacter
-				.JSONLDCompacter( this, targetName, queryContext )
+			const documents:(T & PersistedDocument.Class)[] = new JSONLDCompacter( this, targetName, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
 
 			return [ documents, response ];

@@ -21,7 +21,7 @@ var BadResponseError_1 = require("./HTTP/Errors/ServerErrors/BadResponseError");
 var UnknownError_1 = require("./HTTP/Errors/UnknownError");
 var HTTPMethod_1 = require("./HTTP/HTTPMethod");
 var Request_1 = require("./HTTP/Request");
-var JSONLD = __importStar(require("./JSONLD"));
+var Compacter_1 = require("./JSONLD/Compacter");
 var Converter_1 = require("./JSONLD/Converter");
 var Parser_1 = require("./JSONLD/Parser");
 var LDP_1 = require("./LDP");
@@ -605,7 +605,7 @@ var Documents = (function () {
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
-        return new JSONLD.Compacter.JSONLDCompacter(this).compactDocument(rdfDocument);
+        return new Compacter_1.JSONLDCompacter(this).compactDocument(rdfDocument);
     };
     Documents.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources_1.FreeResources.create(this);
@@ -895,8 +895,7 @@ var Documents = (function () {
                 .filter(RDF.Document.Factory.is);
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
-            var documents = new JSONLD.Compacter
-                .JSONLDCompacter(_this, targetName, queryContext)
+            var documents = new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
             return [documents, response];
         });

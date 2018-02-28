@@ -1,4 +1,4 @@
-import { Converter } from "../JSONLD";
+import { Converter } from "../JSONLD/index";
 import { DigestedObjectSchema } from "../ObjectSchema";
 import { Resource } from "../Resource";
 export declare class Class {

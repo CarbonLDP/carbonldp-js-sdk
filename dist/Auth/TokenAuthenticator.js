@@ -14,8 +14,8 @@ var Errors = __importStar(require("../Errors"));
 var Errors_1 = require("../HTTP/Errors");
 var Header_1 = require("../HTTP/Header");
 var Request_1 = require("../HTTP/Request");
+var Parser_1 = require("../JSONLD/Parser");
 var LDP_1 = require("../Vocabularies/LDP");
-var JSONLD = __importStar(require("./../JSONLD"));
 var LDP_2 = require("./../LDP");
 var RDF = __importStar(require("./../RDF"));
 var Utils = __importStar(require("./../Utils"));
@@ -68,7 +68,7 @@ var Class = (function () {
         Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
         return Promise.resolve().then(function () {
             var tokensURI = _this.context._resolvePath("system") + exports.TOKEN_CONTAINER;
-            return Request_1.RequestService.post(tokensURI, null, requestOptions, new JSONLD.Parser.JSONLDParser());
+            return Request_1.RequestService.post(tokensURI, null, requestOptions, new Parser_1.JSONLDParser());
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
             var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);

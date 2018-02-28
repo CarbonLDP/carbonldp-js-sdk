@@ -8,7 +8,7 @@ import {
 	SubjectToken,
 } from "sparqler/tokens";
 
-import { Converter } from "../JSONLD";
+import { Converter } from "../JSONLD/index";
 import { XSD } from "../Vocabularies/XSD";
 import {
 	DigestedObjectSchema,

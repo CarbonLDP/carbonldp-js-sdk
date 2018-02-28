@@ -8,9 +8,9 @@ import {
 	RequestUtils,
 } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { JSONLDParser } from "../JSONLD/Parser";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
-import * as JSONLD from "./../JSONLD";
 import { ResponseMetadata } from "./../LDP";
 import * as PersistedDocument from "./../PersistedDocument";
 import * as RDF from "./../RDF";
@@ -80,7 +80,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
-			return RequestService.post( tokensURI, null, requestOptions, new JSONLD.Parser.JSONLDParser() );
+			return RequestService.post( tokensURI, null, requestOptions, new JSONLDParser() );
 		} ).then<[ Token.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
 
