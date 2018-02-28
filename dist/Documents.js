@@ -6,9 +6,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var AccessPoint_1 = require("./AccessPoint");
@@ -37,10 +34,10 @@ var Pointer_1 = require("./Pointer");
 var ProtectedDocument = __importStar(require("./ProtectedDocument"));
 var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
-var SPARQL = __importStar(require("./SPARQL"));
-var Builder_1 = __importDefault(require("./SPARQL/Builder"));
+var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
+var Service_1 = require("./SPARQL/Service");
 var Utils = __importStar(require("./Utils"));
 var Utils_3 = require("./Utils");
 var C_1 = require("./Vocabularies/C");
@@ -464,7 +461,7 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeRawASKQuery(documentURI, askQuery, requestOptions)
+            return Service_1.SPARQLService.executeRawASKQuery(documentURI, askQuery, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
@@ -475,7 +472,7 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeASKQuery(documentURI, askQuery, requestOptions)
+            return Service_1.SPARQLService.executeASKQuery(documentURI, askQuery, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
@@ -486,7 +483,7 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeRawSELECTQuery(documentURI, selectQuery, requestOptions)
+            return Service_1.SPARQLService.executeRawSELECTQuery(documentURI, selectQuery, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
@@ -497,7 +494,7 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeSELECTQuery(documentURI, selectQuery, _this, requestOptions)
+            return Service_1.SPARQLService.executeSELECTQuery(documentURI, selectQuery, _this, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
@@ -508,7 +505,7 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions)
+            return Service_1.SPARQLService.executeRawCONSTRUCTQuery(documentURI, constructQuery, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
@@ -519,7 +516,7 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions)
+            return Service_1.SPARQLService.executeRawDESCRIBEQuery(documentURI, describeQuery, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
@@ -530,12 +527,12 @@ var Documents = (function () {
             documentURI = _this.getRequestURI(documentURI);
             if (_this.context && _this.context.auth.isAuthenticated())
                 _this.context.auth.addAuthentication(requestOptions);
-            return SPARQL.Service.executeUPDATE(documentURI, update, requestOptions)
+            return Service_1.SPARQLService.executeUPDATE(documentURI, update, requestOptions)
                 .catch(_this._parseErrorResponse.bind(_this));
         });
     };
     Documents.prototype.sparql = function (documentURI) {
-        var builder = new Builder_1.default(this, this.getRequestURI(documentURI));
+        var builder = new Builder_1.SPARQLBuilder(this, this.getRequestURI(documentURI));
         if (this.context) {
             var schema = this.getProcessedSchema();
             builder = builder
@@ -748,7 +745,7 @@ var Documents = (function () {
             .addPattern(new tokens_1.ValuesToken()
             .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(uri)));
         (function createRefreshQuery(parentAdder, resource, parentName) {
-            if (resource._partialMetadata.schema === SPARQL.QueryDocument.PartialMetadata.ALL) {
+            if (resource._partialMetadata.schema === QueryDocument_1.PartialMetadata.ALL) {
                 parentAdder.addPattern(Utils_2.createAllPattern(queryContext, parentName));
                 return;
             }
@@ -867,7 +864,7 @@ var Documents = (function () {
                 .filter(function (node) { return !RDF.Document.Factory.is(node); }));
             var targetSet = new Set(freeResources
                 .getResources()
-                .filter(SPARQL.QueryDocument.QueryMetadata.Factory.is)
+                .filter(QueryDocument_1.QueryMetadata.Factory.is)
                 .map(function (x) { return _this.context ? x.target : x[C_1.C.target]; })
                 .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
                 .map(function (x) { return x.id; }));

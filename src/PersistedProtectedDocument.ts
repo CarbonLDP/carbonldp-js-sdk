@@ -5,7 +5,7 @@ import { RequestOptions } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import * as PersistedDocument from "./PersistedDocument";
 import { Pointer } from "./Pointer";
-import SELECTResults from "./SPARQL/SELECTResults";
+import SELECTResults from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
 import { CS } from "./Vocabularies/CS";
 

@@ -554,7 +554,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "askQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -574,18 +574,18 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"executeSELECTQuery",
 			[ "T extends object" ],
-			"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
+			"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SelectResults.SPARQLSelectResults` object.", [
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ Carbon.SPARQL.SelectResults.SPARQLSelectResults<T>, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -2365,7 +2365,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "askQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
@@ -2399,7 +2399,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
@@ -2412,11 +2412,11 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 			it( hasMethod(
 				INSTANCE,
 				"executeSELECTQuery",
-				"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SELECTResults.Class` object.", [
+				"Executes a SELECT query in the document and returns the results as a `Carbon.SPARQL.SelectResults.SPARQLSelectResults` object.", [
 					{ name: "selectQuery", type: "string" },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.SPARQL.SELECTResults.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ Carbon.SPARQL.SelectResults.SPARQLSelectResults, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {
 				expect( document.executeSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );

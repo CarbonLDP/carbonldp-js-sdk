@@ -75,14 +75,18 @@ import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import { RDFDocumentParser } from "./RDF/Document";
 import { Resource } from "./Resource";
-import * as SPARQL from "./SPARQL";
-import SparqlBuilder from "./SPARQL/Builder";
 import {
+	FinishSPARQLSelect,
+	SPARQLBuilder,
+} from "./SPARQL/Builder";
+import {
+	PartialMetadata,
 	QueryContext,
 	QueryContextBuilder,
 	QueryContextPartial,
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
+	QueryMetadata,
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
 import {
@@ -93,6 +97,9 @@ import {
 	getAllTriples,
 	getPathProperty,
 } from "./SPARQL/QueryDocument/Utils";
+import { SPARQLRawResults } from "./SPARQL/RawResults";
+import { SPARQLSelectResults } from "./SPARQL/SELECTResults";
+import { SPARQLService } from "./SPARQL/Service";
 import * as Utils from "./Utils";
 import {
 	mapTupleArray,
@@ -595,13 +602,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+	executeRawASKQuery( documentURI:string, askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLRawResults, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawASKQuery( documentURI, askQuery, requestOptions )
+			return SPARQLService.executeRawASKQuery( documentURI, askQuery, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
@@ -612,29 +619,29 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeASKQuery( documentURI, askQuery, requestOptions )
+			return SPARQLService.executeASKQuery( documentURI, askQuery, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
-	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+	executeRawSELECTQuery( documentURI:string, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLRawResults, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawSELECTQuery( documentURI, selectQuery, requestOptions )
+			return SPARQLService.executeRawSELECTQuery( documentURI, selectQuery, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
-	executeSELECTQuery<T extends object>( documentURI:string, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]> {
+	executeSELECTQuery<T extends object>( documentURI:string, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLSelectResults<T>, Response ]> {
 		return promiseMethod( () => {
 			documentURI = this.getRequestURI( documentURI );
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeSELECTQuery<T>( documentURI, selectQuery, this, requestOptions )
+			return SPARQLService.executeSELECTQuery<T>( documentURI, selectQuery, this, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
@@ -645,7 +652,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions )
+			return SPARQLService.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
@@ -656,7 +663,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions )
+			return SPARQLService.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
@@ -667,14 +674,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
-			return SPARQL.Service.executeUPDATE( documentURI, update, requestOptions )
+			return SPARQLService.executeUPDATE( documentURI, update, requestOptions )
 				.catch( this._parseErrorResponse.bind( this ) );
 		} );
 	}
 
 
-	sparql( documentURI:string ):QueryClause<SPARQL.Builder.FinishSPARQLSelect> {
-		let builder:QueryClause<SPARQL.Builder.FinishSPARQLSelect> = new SparqlBuilder( this, this.getRequestURI( documentURI ) );
+	sparql( documentURI:string ):QueryClause<FinishSPARQLSelect> {
+		let builder:QueryClause<FinishSPARQLSelect> = new SPARQLBuilder( this, this.getRequestURI( documentURI ) );
 
 		if( this.context ) {
 			const schema:DigestedObjectSchema = this.getProcessedSchema();
@@ -942,7 +949,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		;
 
 		(function createRefreshQuery( parentAdder:OptionalToken, resource:PersistedResource.Class, parentName:string ):void {
-			if( resource._partialMetadata.schema === SPARQL.QueryDocument.PartialMetadata.ALL ) {
+			if( resource._partialMetadata.schema === PartialMetadata.ALL ) {
 				parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 				return;
 			}
@@ -1083,7 +1090,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
-				.filter( SPARQL.QueryDocument.QueryMetadata.Factory.is )
+				.filter( QueryMetadata.Factory.is )
 				.map( x => this.context ? x.target : x[ C.target ] )
 				// Alternative to flatMap
 				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )

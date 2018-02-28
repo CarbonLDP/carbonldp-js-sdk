@@ -134,13 +134,13 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 	removeAllMembers():Promise<Response>;
 
 
-	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.Class, Response ]>;
+	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]>;
 
 	executeASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ boolean, Response ]>;
 
-	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.Class, Response ]>;
+	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]>;
 
-	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]>;
+	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.SELECTResults.SPARQLSelectResults<T>, Response ]>;
 
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:RequestOptions ):Promise<[ string, Response ]>;
 
@@ -359,7 +359,7 @@ function removeAllMembers():Promise<Response> {
 	return this._documents.removeAllMembers( this.id );
 }
 
-function executeRawASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+function executeRawASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
 
@@ -367,11 +367,11 @@ function executeASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):
 	return this._documents.executeASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeRawSELECTQuery( selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.Class, Response ]> {
+function executeRawSELECTQuery( selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]> {
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 
-function executeSELECTQuery<T extends object>( this:Class, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SELECTResults.Class<T>, Response ]> {
+function executeSELECTQuery<T extends object>( this:Class, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SELECTResults.SPARQLSelectResults<T>, Response ]> {
 	return this._documents.executeSELECTQuery<T>( this.id, selectQuery, requestOptions );
 }
 

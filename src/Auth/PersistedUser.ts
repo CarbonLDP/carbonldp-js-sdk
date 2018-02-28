@@ -4,7 +4,7 @@ import { Response } from "../HTTP/Response";
 import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as SELECTResults from "./../SPARQL/SELECTResults";
+import * as SELECTResults from "../SPARQL/SelectResults";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 
@@ -78,7 +78,7 @@ function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:
 function obtainCredentials( user:Class ):Promise<Response> {
 	return user
 		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ CS.credentials }>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer }>, Response ] ) => {
+		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.SPARQLSelectResults<{ credentials:Pointer }>, Response ] ) => {
 			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
 			return response;
 		} );

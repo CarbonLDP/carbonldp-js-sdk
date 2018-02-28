@@ -5,7 +5,7 @@ import { finishDecorator } from "sparqler/clauses/decorators";
 import { Documents } from "../Documents";
 import { Response } from "../HTTP/Response";
 import RawResults from "./RawResults";
-import SELECTResults from "./SELECTResults";
+import SELECTResults from "./SelectResults";
 
 export interface FinishSPARQLSelect extends FinishClause {
 	execute<T extends object>():Promise<[ SELECTResults<T>, Response ]>;

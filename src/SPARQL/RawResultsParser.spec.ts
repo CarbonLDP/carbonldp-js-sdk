@@ -1,15 +1,13 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
-	hasMethod,
 	hasDefaultExport,
+	hasMethod,
+	INSTANCE,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
-import * as RawResults from "./RawResults";
+import { SPARQLRawResults } from "./RawResults";
 
 import * as RawResultsParser from "./RawResultsParser";
 import DefaultExport from "./RawResultsParser";
@@ -23,29 +21,31 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 
 	describe( clazz(
 		"Carbon.SPARQL.RawResultsParser",
-		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResult.Class` object.", [
-			"Carbon.HTTP.Parser.Parser<Carbon.SPARQL.RawResults.Class>",
+		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResults.SPARQLRawResults` object.", [
+			"Carbon.HTTP.Parser.Parser<Carbon.SPARQL.RawResults.SPARQLRawResults>",
 		]
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
-			expect( RawResultsParser.Class ).toBeDefined();
-			expect( Utils.isFunction( RawResultsParser.Class ) ).toBe( true );
+			expect( RawResultsParser.SPARQLRawResultsParser ).toBeDefined();
+			expect( Utils.isFunction( RawResultsParser.SPARQLRawResultsParser ) ).toBe( true );
 
-			let parser:RawResultsParser.Class = new RawResultsParser.Class();
+			let parser:RawResultsParser.SPARQLRawResultsParser = new RawResultsParser.SPARQLRawResultsParser();
 			expect( parser ).toBeTruthy();
-			expect( parser instanceof RawResultsParser.Class ).toBe( true );
+			expect( parser instanceof RawResultsParser.SPARQLRawResultsParser ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResult.Class` object.", [
+			"Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResults.SPARQLRawResults` object.", [
 				{ name: "input", type: "string" },
 			],
-			{ type: "Promise<Carbon.SPARQL.RawResult.Class>" }
+			{ type: "Promise<Carbon.SPARQL.RawResults.SPARQLRawResults>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
-			let parser:RawResultsParser.Class = new RawResultsParser.Class();
+			let parser:RawResultsParser.SPARQLRawResultsParser = new RawResultsParser.SPARQLRawResultsParser();
 
 			expect( parser.parse ).toBeDefined();
 			expect( Utils.isFunction( parser.parse ) ).toBe( true );
@@ -108,11 +108,9 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 
 			let spies:any = {
 				successSelect: ( result ) => {
-					expect( RawResults.Factory.is( result ) ).toBe( true );
 					expect( result ).toEqual( querySelectObject );
 				},
 				successAsk: ( result ) => {
-					expect( RawResults.Factory.is( result ) ).toBe( true );
 					expect( result ).toEqual( queryAskObject );
 				},
 				fail: ( error ) => {
@@ -125,7 +123,7 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 			let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
 
 			let promises:Promise<any>[] = [];
-			let promise:Promise<RawResults.Class>;
+			let promise:Promise<SPARQLRawResults>;
 
 			promise = parser.parse( querySelectString );
 			expect( promise instanceof Promise );
@@ -151,7 +149,7 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 
 	it( hasDefaultExport( "Carbon.SPARQL.RawResultParser.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( RawResultsParser.Class );
+		expect( DefaultExport ).toBe( RawResultsParser.SPARQLRawResultsParser );
 	} );
 
 } );

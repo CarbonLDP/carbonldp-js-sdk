@@ -1,19 +1,17 @@
 import {
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
 	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import * as SELECTResults from "./SELECTResults";
-import DefaultExport from "./SELECTResults";
+import * as SELECTResults from "./SelectResults";
+import DefaultExport from "./SelectResults";
 
-describe( module( "Carbon/SPARQL/SELECTResults" ), ():void => {
+describe( module( "Carbon/SPARQL/SelectResults" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( SELECTResults ).toBeDefined();
@@ -21,8 +19,8 @@ describe( module( "Carbon/SPARQL/SELECTResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.SELECTResults.Class",
-		[ "T = Carbon.SPARQL.SELECTResult.BindingObject" ],
+		"Carbon.SPARQL.SelectResults.SPARQLSelectResults",
+		[ "T = Carbon.SPARQL.SelectResults.SPARQLBindingObject" ],
 		"Interface that represents a parsed response of a SELECT SPARQL query."
 	), ():void => {
 
@@ -43,22 +41,22 @@ describe( module( "Carbon/SPARQL/SELECTResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.SELECTResults.BindingObject",
+		"Carbon.SPARQL.SelectResults.SPARQLBindingObject",
 		"Interface that represents an entry of a element asked for in the SELECT query."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"[ binding:string ]",
-			"any",
+			"string | number | boolean | Date | Carbon.Pointer.Pointer",
 			"An entry peer every `vars` selected for, which contains the parsed value requested. This elements can be from every literal type (`String`, `Number`, `Date`, etc.), to a `Carbon.Pointer.Pointer` if it is an URI."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.SELECTResults.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.SPARQL.SelectResults.SPARQLSelectResults" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:SELECTResults.Class;
+		let defaultTarget:SELECTResults.SPARQLSelectResults;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

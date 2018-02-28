@@ -12562,7 +12562,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
+				], { type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12587,7 +12587,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12596,7 +12596,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12655,7 +12655,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12743,7 +12743,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12752,7 +12752,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12811,7 +12811,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12874,7 +12874,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Response ]>" }
+				], { type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12899,7 +12899,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -12908,7 +12908,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -12967,7 +12967,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13031,7 +13031,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Response ]>" }
+				], { type: "Promise<[ Carbon.SPARQL.SelectResults.SPARQLSelectResults<T>, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13056,7 +13056,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13065,7 +13065,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13124,7 +13124,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13212,7 +13212,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13221,7 +13221,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13280,7 +13280,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13368,7 +13368,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13377,7 +13377,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13436,7 +13436,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13524,7 +13524,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13533,7 +13533,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13592,7 +13592,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
