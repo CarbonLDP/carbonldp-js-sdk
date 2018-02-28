@@ -2,16 +2,16 @@ import SockJS from "sockjs-client";
 import * as webstomp from "webstomp-client";
 import { Client, Frame } from "webstomp-client";
 
-import Carbon from "../Carbon";
+import { Carbon } from "../Carbon";
 import { IllegalStateError } from "../Errors";
-import JSONLDParser from "../JSONLD/Parser";
+import { FreeResources } from "../FreeResources";
+import { JSONLDParser } from "../JSONLD/Parser";
 import RDFNode from "../RDF/Node";
 import { UUIDUtils } from "../Utils";
-import { FreeResources } from "./../FreeResources";
 import * as Message from "./Message";
-import Options from "./Options";
+import { MessagingOptions } from "./Options";
 
-export const DEFAULT_OPTIONS:Options = {
+const DEFAULT_OPTIONS:Readonly<MessagingOptions> = {
 	maxReconnectAttempts: 10,
 	reconnectDelay: 1000,
 };
@@ -21,11 +21,10 @@ interface Subscription {
 	errorCallback:( error:Error ) => void;
 }
 
-export class Class {
-
+export class MessagingService {
 	private context:Carbon;
 
-	private _options:Options;
+	private _options:MessagingOptions;
 	private _attempts:number;
 	private _client?:Client;
 	private _subscriptionsMap:Map<string, Map<( data:Message.Class ) => void, Subscription>>;
@@ -37,7 +36,7 @@ export class Class {
 		this._options = DEFAULT_OPTIONS;
 	}
 
-	setOptions( options:Options ):void {
+	setOptions( options:MessagingOptions ):void {
 		this._options = {
 			...DEFAULT_OPTIONS,
 			...options,
@@ -75,7 +74,7 @@ export class Class {
 		}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
 			const canReconnect:boolean = this._options.maxReconnectAttempts === null || this._options.maxReconnectAttempts >= this._attempts;
 			let errorMessage:string;
-			if( isCloseError( errorFrameOrEvent ) ) {
+			if( "reason" in errorFrameOrEvent ) {
 				if( canReconnect ) {
 					if( ++ this._attempts === 1 ) this.storeSubscriptions();
 					setTimeout( () => this.reconnect( onConnect, onError ), this._options.reconnectDelay );
@@ -84,7 +83,7 @@ export class Class {
 				this._client = null;
 				this._subscriptionsQueue.length = 0;
 				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
-			} else if( isFrameError( errorFrameOrEvent ) ) {
+			} else if( "body" in errorFrameOrEvent ) {
 				if( ! this._client.connected && canReconnect ) return;
 				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
 			} else {
@@ -155,12 +154,4 @@ export class Class {
 
 }
 
-function isCloseError( object:any ):object is CloseEvent {
-	return "reason" in object;
-}
-
-function isFrameError( object:any ):object is Frame {
-	return "body" in object;
-}
-
-export default Class;
+export default MessagingService;

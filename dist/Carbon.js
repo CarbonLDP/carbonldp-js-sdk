@@ -89,7 +89,7 @@ var Carbon = (function (_super) {
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
-        _this.messaging = new Messaging.Service.Class(_this);
+        _this.messaging = new Messaging.Service.MessagingService(_this);
         return _this;
     }
     Object.defineProperty(Carbon, "version", {

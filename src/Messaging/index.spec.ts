@@ -15,7 +15,7 @@ import * as MemberDetails from "./MemberDetails";
 import * as MemberRemoved from "./MemberRemoved";
 import * as MemberRemovedDetails from "./MemberRemovedDetails";
 import * as Message from "./Message";
-import { Options } from "./Options";
+import { MessagingOptions } from "./Options";
 import * as Service from "./Service";
 import * as Utils from "./Utils";
 
@@ -156,9 +156,9 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Options",
-		"Carbon.Messaging.Options"
+		"Carbon.Messaging.MessagingOptions"
 	), ():void => {
-		const target:Messaging.Options = {} as Options;
+		const target:Messaging.MessagingOptions = {} as MessagingOptions;
 		expect( target ).toBeDefined();
 	} );
 

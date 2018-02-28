@@ -88,7 +88,7 @@ export class Carbon extends AbstractContext.AbstractContext {
 		},
 	};
 
-	messaging:Messaging.Service.Class;
+	messaging:Messaging.Service.MessagingService;
 
 	constructor( url:string );
 	constructor( settings:Settings.CarbonSettings );
@@ -117,7 +117,7 @@ export class Carbon extends AbstractContext.AbstractContext {
 
 		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";
 
-		this.messaging = new Messaging.Service.Class( this );
+		this.messaging = new Messaging.Service.MessagingService( this );
 	}
 
 	/**

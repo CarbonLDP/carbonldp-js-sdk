@@ -542,7 +542,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( "should instantiate the messaging service when url", ():void => {
 				const carbon:Carbon.Carbon = new Carbon.Carbon( "https://example.com" );
-				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.Service.Class ) );
+				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.Service.MessagingService ) );
 			} );
 
 		} );
@@ -564,7 +564,7 @@ describe( module( "Carbon" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"messaging",
-			"Carbon.Messaging.Service.Class",
+			"Carbon.Messaging.Service.MessagingService",
 			"Service that contains the RAW methods to manage the messaging/real-time features."
 		), ():void => {} );
 

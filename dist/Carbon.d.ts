@@ -63,7 +63,7 @@ export declare class Carbon extends AbstractContext.AbstractContext {
     readonly version: string;
     protected _baseURI: string;
     protected settings: Settings.ContextSettings;
-    messaging: Messaging.Service.Class;
+    messaging: Messaging.Service.MessagingService;
     constructor(url: string);
     constructor(settings: Settings.CarbonSettings);
     getPlatformMetadata(): Promise<[System.PlatformMetadata.Class, HTTP.Response.Response]>;

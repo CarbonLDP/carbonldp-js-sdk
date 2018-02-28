@@ -1,7 +1,7 @@
-export interface Options {
+export interface MessagingOptions {
 	maxReconnectAttempts?:number;
 	reconnectDelay?:number;
 }
 
-export default Options;
+export default MessagingOptions;
 

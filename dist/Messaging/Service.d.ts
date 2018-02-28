@@ -1,8 +1,7 @@
-import Carbon from "../Carbon";
+import { Carbon } from "../Carbon";
 import * as Message from "./Message";
-import Options from "./Options";
-export declare const DEFAULT_OPTIONS: Options;
-export declare class Class {
+import { MessagingOptions } from "./Options";
+export declare class MessagingService {
     private context;
     private _options;
     private _attempts;
@@ -10,7 +9,7 @@ export declare class Class {
     private _subscriptionsMap;
     private _subscriptionsQueue;
     constructor(context: Carbon);
-    setOptions(options: Options): void;
+    setOptions(options: MessagingOptions): void;
     connect(onConnect?: () => void, onError?: (error: Error) => void): void;
     reconnect(onConnect?: () => void, onError?: (error: Error) => void): void;
     subscribe(destination: string, onEvent: (data: Message.Class) => void, onError: (error: Error) => void): void;
@@ -19,4 +18,4 @@ export declare class Class {
     private makeSubscription(id, destination, eventCallback, errorCallback);
     private storeSubscriptions();
 }
-export default Class;
+export default MessagingService;

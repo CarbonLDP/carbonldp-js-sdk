@@ -12,7 +12,7 @@ import * as MemberDetails from "./MemberDetails";
 import * as MemberRemoved from "./MemberRemoved";
 import * as MemberRemovedDetails from "./MemberRemovedDetails";
 import * as Message from "./Message";
-import { Options } from "./Options";
+import { MessagingOptions } from "./Options";
 import * as Service from "./Service";
 import * as Utils from "./Utils";
 
@@ -31,7 +31,7 @@ export {
 	MemberRemoved,
 	MemberRemovedDetails,
 	Message,
-	Options,
+	MessagingOptions,
 	Service,
 	Utils,
 };
