@@ -1,19 +1,19 @@
-import * as SPARQL from "./SPARQL";
-import * as Builder from "./SPARQL/Builder";
-import * as QueryDocument from "./SPARQL/QueryDocument";
-import * as RawResults from "./SPARQL/RawResults";
-import * as RawResultsParser from "./SPARQL/RawResultsParser";
-import * as SELECTResults from "./SPARQL/SelectResults";
-
-import * as Service from "./SPARQL/Service";
-
 import {
 	isDefined,
 	module,
 	reexports,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+
+import * as SPARQL from "./";
+
+import * as Builder from "./Builder";
+import * as QueryDocument from "./QueryDocument";
+import * as RawResults from "./RawResults";
+import * as RawResultsParser from "./RawResultsParser";
+import * as SELECTResults from "./SelectResults";
+import * as Service from "./Service";
 
 describe( module( "Carbon/SPARQL" ), ():void => {
 
@@ -61,11 +61,11 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"SELECTResults",
+		"SelectResults",
 		"Carbon/SPARQL/SelectResults"
 	), ():void => {
-		expect( SPARQL.SELECTResults ).toBeDefined();
-		expect( SPARQL.SELECTResults ).toBe( SELECTResults );
+		expect( SPARQL.SelectResults ).toBeDefined();
+		expect( SPARQL.SelectResults ).toBe( SELECTResults );
 	} );
 
 	it( reexports(

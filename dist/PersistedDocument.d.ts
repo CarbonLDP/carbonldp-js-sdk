@@ -73,7 +73,7 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
     executeRawASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<[SPARQL.RawResults.SPARQLRawResults, Response]>;
     executeASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<[boolean, Response]>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<[SPARQL.RawResults.SPARQLRawResults, Response]>;
-    executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<[SPARQL.SELECTResults.SPARQLSelectResults<T>, Response]>;
+    executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<[SPARQL.SelectResults.SPARQLSelectResults<T>, Response]>;
     executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: RequestOptions): Promise<[string, Response]>;
     executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: RequestOptions): Promise<[string, Response]>;
     executeUPDATE(updateQuery: string, requestOptions?: RequestOptions): Promise<Response>;

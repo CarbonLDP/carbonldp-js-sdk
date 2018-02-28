@@ -140,7 +140,7 @@ export interface Class extends Document, PersistedResource.Class, ServiceAwareDo
 
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]>;
 
-	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.SELECTResults.SPARQLSelectResults<T>, Response ]>;
+	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.SelectResults.SPARQLSelectResults<T>, Response ]>;
 
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:RequestOptions ):Promise<[ string, Response ]>;
 
@@ -371,7 +371,7 @@ function executeRawSELECTQuery( selectQuery:string, requestOptions:RequestOption
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 
-function executeSELECTQuery<T extends object>( this:Class, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SELECTResults.SPARQLSelectResults<T>, Response ]> {
+function executeSELECTQuery<T extends object>( this:Class, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SelectResults.SPARQLSelectResults<T>, Response ]> {
 	return this._documents.executeSELECTQuery<T>( this.id, selectQuery, requestOptions );
 }
 

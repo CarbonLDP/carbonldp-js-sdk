@@ -7,17 +7,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Builder = __importStar(require("./SPARQL/Builder"));
+var Builder = __importStar(require("./Builder"));
 exports.Builder = Builder;
-var QueryDocument = __importStar(require("./SPARQL/QueryDocument"));
+var QueryDocument = __importStar(require("./QueryDocument"));
 exports.QueryDocument = QueryDocument;
-var RawResults = __importStar(require("./SPARQL/RawResults"));
+var RawResults = __importStar(require("./RawResults"));
 exports.RawResults = RawResults;
-var RawResultsParser = __importStar(require("./SPARQL/RawResultsParser"));
+var RawResultsParser = __importStar(require("./RawResultsParser"));
 exports.RawResultsParser = RawResultsParser;
-var SELECTResults = __importStar(require("./SPARQL/SelectResults"));
-exports.SELECTResults = SELECTResults;
-var Service = __importStar(require("./SPARQL/Service"));
+var SelectResults = __importStar(require("./SelectResults"));
+exports.SelectResults = SelectResults;
+var Service = __importStar(require("./Service"));
 exports.Service = Service;
 
-//# sourceMappingURL=SPARQL.js.map
+//# sourceMappingURL=index.js.map

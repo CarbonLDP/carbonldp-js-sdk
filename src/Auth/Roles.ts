@@ -100,7 +100,7 @@ export class Class {
 		return Utils.promiseMethod( () => {
 			const uri:string = this.resolveURI( roleURI );
 			return this.context.documents.executeSELECTQuery( uri, `PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<${ uri }>:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}` );
-		} ).then( ( [ selectResults, response ]:[ SPARQL.SELECTResults.SPARQLSelectResults<AccessPointResult>, Response ] ) => {
+		} ).then( ( [ selectResults, response ]:[ SPARQL.SelectResults.SPARQLSelectResults<AccessPointResult>, Response ] ) => {
 			return selectResults.bindings[ 0 ].accessPoint;
 		} );
 	}

@@ -13631,8 +13631,8 @@ var RawResults = __importStar(__webpack_require__(299));
 exports.RawResults = RawResults;
 var RawResultsParser = __importStar(__webpack_require__(153));
 exports.RawResultsParser = RawResultsParser;
-var SELECTResults = __importStar(__webpack_require__(300));
-exports.SELECTResults = SELECTResults;
+var SelectResults = __importStar(__webpack_require__(300));
+exports.SelectResults = SelectResults;
 var Service = __importStar(__webpack_require__(151));
 exports.Service = Service;
 
