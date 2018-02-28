@@ -13,10 +13,10 @@ import * as RDFDocument from "../RDF/Document";
 import * as RDFNode from "../RDF/Node";
 import { Util as URIUtils } from "../RDF/URI";
 import {
-	PartialMetadata,
 	QueryContextBuilder,
 	QueryProperty,
 } from "../SPARQL/QueryDocument";
+import { PartialMetadata } from "../SPARQL/QueryDocument/PartialMetadata";
 import { JSONLDConverter } from "./Converter";
 
 function getRelativeID( node:RDFNode.Class ):string {
@@ -116,7 +116,7 @@ export class JSONLDCompacter {
 				this.resolver.getProperty( path ).getType() : void 0;
 
 			if( type === QueryProperty.PropertyType.PARTIAL || type === QueryProperty.PropertyType.ALL ) {
-				resource._partialMetadata = new PartialMetadata.Class(
+				resource._partialMetadata = new PartialMetadata(
 					type === QueryProperty.PropertyType.ALL ? PartialMetadata.ALL : schema,
 					resource._partialMetadata
 				);

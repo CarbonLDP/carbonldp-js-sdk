@@ -80,7 +80,6 @@ import {
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
 import {
-	PartialMetadata,
 	QueryContext,
 	QueryContextBuilder,
 	QueryContextPartial,
@@ -89,6 +88,7 @@ import {
 	QueryMetadata,
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
+import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import {
 	areDifferentType,
 	createAllPattern,

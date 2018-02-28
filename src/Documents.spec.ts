@@ -47,6 +47,7 @@ import * as PersistedResource from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
+import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import {
 	clazz,
 	hasConstructor,
@@ -65,10 +66,10 @@ import { CS } from "./Vocabularies/CS";
 import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
 
-function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):SPARQL.QueryDocument.PartialMetadata.Class {
+function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetadata {
 	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
 	digestedSchema.properties.forEach( definition => ObjectSchema.ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
-	return new SPARQL.QueryDocument.PartialMetadata.Class( digestedSchema );
+	return new PartialMetadata( digestedSchema );
 }
 
 describe( module( "Carbon/Documents" ), ():void => {
@@ -1445,7 +1446,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ document ] ) => {
-						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
@@ -1457,7 +1458,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} ) );
 
-						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
@@ -1613,7 +1614,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} )
 						);
 					} ).then( ( [ document ] ) => {
-						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -1629,7 +1630,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} ) );
 
-						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
+						expect( document.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property3": {
 								"@id": "https://schema.org/property-3",
@@ -10880,7 +10881,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@type": XSD.string,
 						},
 					} );
-					persistedDocument.property2[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( SPARQL.QueryDocument.PartialMetadata.ALL );
+					persistedDocument.property2[ "_partialMetadata" ] = new PartialMetadata( PartialMetadata.ALL );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;

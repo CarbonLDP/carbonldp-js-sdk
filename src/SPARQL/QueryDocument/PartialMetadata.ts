@@ -1,24 +1,26 @@
-import { IllegalArgumentError } from "../../Errors";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
-	ObjectSchemaUtils as SchemaUtils,
+	ObjectSchemaUtils,
 } from "../../ObjectSchema";
 
-export const ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
 
-export class Class {
+export class PartialMetadata {
+
+	static readonly ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
+
 	readonly schema:DigestedObjectSchema;
 
-	constructor( schema:DigestedObjectSchema, previousPartial?:Class ) {
+	constructor( schema:DigestedObjectSchema, previousPartial?:PartialMetadata ) {
 		this.schema = this.mergeSchemas( previousPartial ? previousPartial.schema : new DigestedObjectSchema(), schema );
 	}
 
 	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
-		if( newSchema === ALL || oldSchema === ALL ) return ALL;
+		if( newSchema === PartialMetadata.ALL || oldSchema === PartialMetadata.ALL ) return PartialMetadata.ALL;
 
 		newSchema.prefixes.forEach( ( newURI, namespace ) => {
-			newURI = SchemaUtils.resolveURI( newURI, newSchema );
+			newURI = ObjectSchemaUtils.resolveURI( newURI, newSchema );
 			if( ! oldSchema.prefixes.has( namespace ) ) return oldSchema.prefixes.set( namespace, newURI );
 
 			const oldURI:string = oldSchema.prefixes.get( namespace );
@@ -42,4 +44,4 @@ export class Class {
 
 }
 
-export default Class;
+export default PartialMetadata;

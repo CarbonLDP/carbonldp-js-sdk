@@ -34,6 +34,13 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 			"Updates the snapshot with the data of the resource."
 		), ():void => {} );
 
+		it( hasProperty(
+			OBLIGATORY,
+			"_partialMetadata",
+			"Carbon.SPARQL.QueryDocument.PartialMetadata.PartialMetadata",
+			"Metadata for documents that are partial documents."
+		), ():void => {} );
+
 		it( hasMethod(
 			OBLIGATORY,
 			"isDirty",

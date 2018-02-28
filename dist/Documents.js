@@ -36,6 +36,7 @@ var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
 var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
+var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
 var Utils = __importStar(require("./Utils"));
@@ -745,7 +746,7 @@ var Documents = (function () {
             .addPattern(new tokens_1.ValuesToken()
             .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(uri)));
         (function createRefreshQuery(parentAdder, resource, parentName) {
-            if (resource._partialMetadata.schema === QueryDocument_1.PartialMetadata.ALL) {
+            if (resource._partialMetadata.schema === PartialMetadata_1.PartialMetadata.ALL) {
                 parentAdder.addPattern(Utils_2.createAllPattern(queryContext, parentName));
                 return;
             }
