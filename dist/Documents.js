@@ -41,6 +41,7 @@ var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder"
 var QueryContextPartial_1 = require("./SPARQL/QueryDocument/QueryContextPartial");
 var QueryDocumentBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentBuilder");
 var QueryDocumentsBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentsBuilder");
+var QueryProperty_1 = require("./SPARQL/QueryDocument/QueryProperty");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
 var Utils = __importStar(require("./Utils"));
@@ -780,8 +781,8 @@ var Documents = (function () {
             QueryDocumentBuilder_1.QueryDocumentBuilder : QueryDocumentsBuilder_1.QueryDocumentsBuilder;
         var queryBuilder = new Builder(queryContext, targetProperty);
         targetProperty.setType(queryBuilderFn ?
-            QueryDocument_1.QueryProperty.PropertyType.PARTIAL :
-            QueryDocument_1.QueryProperty.PropertyType.FULL);
+            QueryProperty_1.QueryPropertyType.PARTIAL :
+            QueryProperty_1.QueryPropertyType.FULL);
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
         var constructPatterns = targetProperty.getPatterns();

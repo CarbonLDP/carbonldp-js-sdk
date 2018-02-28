@@ -21,7 +21,10 @@ import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryContextBuilder";
 import DefaultExport, { QueryContextBuilder } from "./QueryContextBuilder";
 
-import QueryProperty, { PropertyType } from "./QueryProperty";
+import {
+	QueryProperty,
+	QueryPropertyType,
+} from "./QueryProperty";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
@@ -154,7 +157,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -187,7 +190,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for its children properties." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class[]" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty[]" }
 			), ():void => {
 			} );
 
@@ -235,7 +238,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name that the property will have." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -408,7 +411,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const helper:( name:string ) => void = name => {
 					const property:QueryProperty = queryContext
 						.addProperty( name )
-						.setType( PropertyType.PARTIAL );
+						.setType( QueryPropertyType.PARTIAL );
 					const spy:jasmine.Spy = spyOn( property, "getSchema" ).and.returnValue( null );
 
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
@@ -427,7 +430,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const helper:( name:string ) => void = name => {
 					queryContext
 						.addProperty( name )
-						.setType( PropertyType.FULL );
+						.setType( QueryPropertyType.FULL );
 
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
 					expect( spy ).toHaveBeenCalled();
@@ -471,7 +474,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				const helper:( parent:string, name:string ) => void = ( parent, child ) => {
 					queryContext
 						.addProperty( parent )
-						.setType( PropertyType.FULL );
+						.setType( QueryPropertyType.FULL );
 
 					const returnedValue:any = queryContext.getSchemaFor( {}, `${ parent }.${ child }` );
 					expect( spy ).toHaveBeenCalled();

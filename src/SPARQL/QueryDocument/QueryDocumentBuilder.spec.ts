@@ -37,7 +37,7 @@ import DefaultExport, { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
 import * as QueryObjectModule from "./QueryObject";
 import { QueryObject } from "./QueryObject";
-import * as QueryProperty from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
 import * as QueryVariable from "./QueryVariable";
 
@@ -62,7 +62,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		let context:AbstractContext;
 		let queryContext:QueryContextBuilder;
-		let baseProperty:QueryProperty.Class;
+		let baseProperty:QueryProperty;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "http://example.com";
@@ -165,7 +165,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "name", type: "string", optional: true, description: "Optional name of the property to look for." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
+				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -189,7 +189,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				spyOn( queryContext, "getProperty" );
 				const spy:jasmine.Spy = spyOn( queryContext, "hasProperty" ).and.returnValue( false );
 
-				baseProperty = new QueryProperty.Class( queryContext, "document.path1.path2.path3" );
+				baseProperty = new QueryProperty( queryContext, "document.path1.path2.path3" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
 				try {
@@ -206,7 +206,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				spyOn( queryContext, "getProperty" );
 				spyOn( queryContext, "hasProperty" ).and.callFake( name => name === "document.path1.name" );
 
-				baseProperty = new QueryProperty.Class( queryContext, "document.path1.path2.path3" );
+				baseProperty = new QueryProperty( queryContext, "document.path1.path2.path3" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = ( name:string ) => () => builder.property( name );
 
@@ -498,7 +498,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					"inlineProperty": "ex:inlineProperty",
 				} );
 
-				const defaultProperty:QueryProperty.Class = builder.property( "defaultProperty" );
+				const defaultProperty:QueryProperty = builder.property( "defaultProperty" );
 				expect( defaultProperty ).toBeDefined();
 				expect( defaultProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
@@ -508,7 +508,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					,
 				] );
 
-				const inheritProperty:QueryProperty.Class = builder.property( "inheritProperty" );
+				const inheritProperty:QueryProperty = builder.property( "inheritProperty" );
 				expect( inheritProperty ).toBeDefined();
 				expect( inheritProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
@@ -518,7 +518,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					,
 				] );
 
-				const extendedProperty:QueryProperty.Class = builder.property( "extendedProperty" );
+				const extendedProperty:QueryProperty = builder.property( "extendedProperty" );
 				expect( extendedProperty ).toBeDefined();
 				expect( extendedProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
@@ -529,7 +529,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					,
 				] );
 
-				const inlineProperty:QueryProperty.Class = builder.property( "inlineProperty" );
+				const inlineProperty:QueryProperty = builder.property( "inlineProperty" );
 				expect( inlineProperty ).toBeDefined();
 				expect( inlineProperty.getPatterns() ).toEqual( [
 					new OptionalToken()

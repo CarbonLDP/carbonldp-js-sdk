@@ -7,7 +7,10 @@ import {
 	ObjectSchemaUtils,
 } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
-import * as QueryProperty from "./QueryProperty";
+import {
+	QueryProperty,
+	QueryPropertyType,
+} from "./QueryProperty";
 import {
 	getLevelRegExp,
 	getParentPath,
@@ -15,7 +18,7 @@ import {
 
 export class QueryContextBuilder extends QueryContext {
 
-	private _propertiesMap:Map<string, QueryProperty.Class>;
+	private _propertiesMap:Map<string, QueryProperty>;
 	private _schemas:DigestedObjectSchema[];
 
 	constructor( context?:Context ) {
@@ -33,17 +36,17 @@ export class QueryContextBuilder extends QueryContext {
 			.some( propertyName => levelRegex.test( propertyName ) );
 	}
 
-	addProperty( name:string ):QueryProperty.Class {
-		const property:QueryProperty.Class = new QueryProperty.Class( this, name, );
+	addProperty( name:string ):QueryProperty {
+		const property:QueryProperty = new QueryProperty( this, name, );
 		this._propertiesMap.set( name, property );
 		return property;
 	}
 
-	getProperty( name:string ):QueryProperty.Class {
+	getProperty( name:string ):QueryProperty {
 		return this._propertiesMap.get( name );
 	}
 
-	getProperties( name:string ):QueryProperty.Class[] {
+	getProperties( name:string ):QueryProperty[] {
 		const levelRegex:RegExp = getLevelRegExp( name );
 		return Array.from( this._propertiesMap.entries() )
 			.filter( ( [ propertyName ] ) => levelRegex.test( propertyName ) )
@@ -67,21 +70,21 @@ export class QueryContextBuilder extends QueryContext {
 		if( path === void 0 ) return super.hasSchemaFor( object );
 		if( ! this.hasProperty( path ) ) return false;
 
-		const property:QueryProperty.Class = this.getProperty( path );
+		const property:QueryProperty = this.getProperty( path );
 		return property.getType() !== void 0;
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
-		const property:QueryProperty.Class = this.getProperty( path );
+		const property:QueryProperty = this.getProperty( path );
 		if( property ) {
 			switch( property.getType() ) {
-				case QueryProperty.PropertyType.PARTIAL:
+				case QueryPropertyType.PARTIAL:
 					return this.getProperty( path ).getSchema();
 
-				case QueryProperty.PropertyType.FULL:
-				case QueryProperty.PropertyType.ALL:
+				case QueryPropertyType.FULL:
+				case QueryPropertyType.ALL:
 					return super.getSchemaFor( object );
 
 				default:
@@ -89,8 +92,8 @@ export class QueryContextBuilder extends QueryContext {
 			}
 		}
 
-		const parent:QueryProperty.Class = this.getProperty( getParentPath( path ) );
-		if( ! parent || parent.getType() !== QueryProperty.PropertyType.FULL )
+		const parent:QueryProperty = this.getProperty( getParentPath( path ) );
+		if( ! parent || parent.getType() !== QueryPropertyType.FULL )
 			throw new IllegalArgumentError( `Schema path "${ path }" does not exists.` );
 
 		return super.getSchemaFor( object );

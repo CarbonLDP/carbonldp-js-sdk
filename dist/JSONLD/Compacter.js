@@ -11,9 +11,9 @@ var PersistedDocument = __importStar(require("../PersistedDocument"));
 var Pointer_1 = require("../Pointer");
 var RDFDocument = __importStar(require("../RDF/Document"));
 var URI_1 = require("../RDF/URI");
-var QueryDocument_1 = require("../SPARQL/QueryDocument");
 var PartialMetadata_1 = require("../SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("../SPARQL/QueryDocument/QueryContextBuilder");
+var QueryProperty_1 = require("../SPARQL/QueryDocument/QueryProperty");
 function getRelativeID(node) {
     var id = node["@id"];
     return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
@@ -82,8 +82,8 @@ var JSONLDCompacter = (function () {
         if (this.resolver instanceof QueryContextBuilder_1.QueryContextBuilder) {
             var type = this.resolver.hasProperty(path) ?
                 this.resolver.getProperty(path).getType() : void 0;
-            if (type === QueryDocument_1.QueryProperty.PropertyType.PARTIAL || type === QueryDocument_1.QueryProperty.PropertyType.ALL) {
-                resource._partialMetadata = new PartialMetadata_1.PartialMetadata(type === QueryDocument_1.QueryProperty.PropertyType.ALL ? PartialMetadata_1.PartialMetadata.ALL : schema, resource._partialMetadata);
+            if (type === QueryProperty_1.QueryPropertyType.PARTIAL || type === QueryProperty_1.QueryPropertyType.ALL) {
+                resource._partialMetadata = new PartialMetadata_1.PartialMetadata(type === QueryProperty_1.QueryPropertyType.ALL ? PartialMetadata_1.PartialMetadata.ALL : schema, resource._partialMetadata);
             }
         }
         var compactedData = this.converter.compact(node, {}, schema, containerLibrary, resource.isPartial());

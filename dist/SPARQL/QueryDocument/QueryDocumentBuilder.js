@@ -13,7 +13,7 @@ var IllegalStateError_1 = require("../../Errors/IllegalStateError");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
 var QueryObject_1 = require("./QueryObject");
-var QueryProperty = __importStar(require("./QueryProperty"));
+var QueryProperty_1 = require("./QueryProperty");
 var QueryValue = __importStar(require("./QueryValue"));
 var Utils_2 = require("./Utils");
 var INHERIT = Object.freeze({});
@@ -40,7 +40,7 @@ var QueryDocumentBuilder = (function () {
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
                 var directType = direct.getType();
-                if (directType === QueryProperty.PropertyType.FULL || directType === QueryProperty.PropertyType.ALL) {
+                if (directType === QueryProperty_1.QueryPropertyType.FULL || directType === QueryProperty_1.QueryPropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
                     return direct._builder._addProperty(propertyName, INHERIT);
                 }
@@ -72,7 +72,7 @@ var QueryDocumentBuilder = (function () {
     };
     QueryDocumentBuilder.prototype.properties = function (propertiesSchema) {
         if (propertiesSchema === QueryDocumentBuilder.ALL) {
-            this._document.setType(QueryProperty.PropertyType.ALL);
+            this._document.setType(QueryProperty_1.QueryPropertyType.ALL);
             return this;
         }
         for (var propertyName in propertiesSchema) {
@@ -119,7 +119,7 @@ var QueryDocumentBuilder = (function () {
             .addProperty(name)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
         if ("query" in propertyDefinition) {
             if (digestedDefinition.literal === false) {
-                property.setType(QueryProperty.PropertyType.PARTIAL);
+                property.setType(QueryProperty_1.QueryPropertyType.PARTIAL);
             }
             var builder = new QueryDocumentBuilder(this._context, property);
             if (builder !== propertyDefinition["query"].call(void 0, builder))

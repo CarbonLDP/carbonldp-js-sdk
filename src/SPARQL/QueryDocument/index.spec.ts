@@ -1,6 +1,7 @@
 import { INSTANCE, module, reexports } from "../../test/JasmineExtender";
 
-import * as QueryDocument from "../QueryDocument";
+import * as QueryDocument from "./";
+
 import * as PartialMetadata from "./PartialMetadata";
 import * as QueryContext from "./QueryContext";
 import * as QueryContextBuilder from "./QueryContextBuilder";

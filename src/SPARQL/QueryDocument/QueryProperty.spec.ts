@@ -20,10 +20,10 @@ import {
 	method,
 	module,
 } from "../../test/JasmineExtender";
-
 import { QueryContext } from "./QueryContext";
+
 import * as Module from "./QueryProperty";
-import { Class as QueryProperty } from "./QueryProperty";
+import DefaultExports, { QueryProperty } from "./QueryProperty";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
@@ -32,12 +32,14 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryProperty.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryProperty );
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" ), ():void => {
+		expect( DefaultExports ).toBeDefined();
+		expect( DefaultExports ).toBe( QueryProperty );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryProperty.Class", "Class that represents a property in the query" ), ():void => {
+	// TODO: To document `QueryPropertyType`
+
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryProperty ).toBeDefined();

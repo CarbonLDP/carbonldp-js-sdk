@@ -9,18 +9,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryContext_1 = require("./QueryContext");
-var QueryProperty = __importStar(require("./QueryProperty"));
+var QueryProperty_1 = require("./QueryProperty");
 var Utils_1 = require("./Utils");
 var QueryContextBuilder = (function (_super) {
     __extends(QueryContextBuilder, _super);
@@ -38,7 +31,7 @@ var QueryContextBuilder = (function (_super) {
             .some(function (propertyName) { return levelRegex.test(propertyName); });
     };
     QueryContextBuilder.prototype.addProperty = function (name) {
-        var property = new QueryProperty.Class(this, name);
+        var property = new QueryProperty_1.QueryProperty(this, name);
         this._propertiesMap.set(name, property);
         return property;
     };
@@ -83,17 +76,17 @@ var QueryContextBuilder = (function (_super) {
         var property = this.getProperty(path);
         if (property) {
             switch (property.getType()) {
-                case QueryProperty.PropertyType.PARTIAL:
+                case QueryProperty_1.QueryPropertyType.PARTIAL:
                     return this.getProperty(path).getSchema();
-                case QueryProperty.PropertyType.FULL:
-                case QueryProperty.PropertyType.ALL:
+                case QueryProperty_1.QueryPropertyType.FULL:
+                case QueryProperty_1.QueryPropertyType.ALL:
                     return _super.prototype.getSchemaFor.call(this, object);
                 default:
                     throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
             }
         }
         var parent = this.getProperty(Utils_1.getParentPath(path));
-        if (!parent || parent.getType() !== QueryProperty.PropertyType.FULL)
+        if (!parent || parent.getType() !== QueryProperty_1.QueryPropertyType.FULL)
             throw new Errors_1.IllegalArgumentError("Schema path \"" + path + "\" does not exists.");
         return _super.prototype.getSchemaFor.call(this, object);
     };

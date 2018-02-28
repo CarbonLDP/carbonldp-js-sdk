@@ -10,7 +10,7 @@ import {
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { IllegalStateError } from "../../Errors/IllegalStateError";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import * as QueryProperty from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
 import { getParentPath } from "./Utils";
 
 export interface QueryDocumentsBuilderOrderData {
@@ -23,7 +23,7 @@ export class QueryDocumentsBuilder extends QueryDocumentBuilder {
 	_orderData?:QueryDocumentsBuilderOrderData;
 
 	orderBy( property:string, flow?:"ASC" | "DESC" | "ascending" | "descending" ):this {
-		let propertyObj:QueryProperty.Class = this.property( property );
+		let propertyObj:QueryProperty = this.property( property );
 
 		const select:SelectToken = this._document.getPatterns().find( pattern => pattern.token === "select" ) as SelectToken;
 		if( ! select ) throw new IllegalStateError( `A sub-select token has not been defined.` );

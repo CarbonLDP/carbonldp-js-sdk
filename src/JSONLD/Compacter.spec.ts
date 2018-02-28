@@ -3,7 +3,7 @@ import { ObjectSchemaDigester } from "../ObjectSchema";
 import * as PersistedDocument from "../PersistedDocument";
 import * as RDFNode from "../RDF/Node";
 import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
-import * as QueryProperty from "../SPARQL/QueryDocument/QueryProperty";
+import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
 import {
 	clazz,
 	hasDefaultExport,
@@ -536,7 +536,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				const spy:jasmine.Spy = spyOn( queryResolver, "getSchemaFor" ).and
@@ -598,11 +598,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				const spy:jasmine.Spy = spyOn( queryResolver, "getSchemaFor" ).and
@@ -672,11 +672,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
@@ -747,11 +747,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
@@ -822,11 +822,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
@@ -904,11 +904,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and

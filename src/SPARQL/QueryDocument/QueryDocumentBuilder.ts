@@ -22,7 +22,10 @@ import { Pointer } from "../../Pointer";
 import { isObject } from "../../Utils";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryObject } from "./QueryObject";
-import * as QueryProperty from "./QueryProperty";
+import {
+	QueryProperty,
+	QueryPropertyType,
+} from "./QueryProperty";
 import { QuerySchema } from "./QuerySchema";
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import * as QueryValue from "./QueryValue";
@@ -41,14 +44,14 @@ export class QueryDocumentBuilder {
 
 	readonly _context:QueryContextBuilder;
 
-	protected _document:QueryProperty.Class;
+	protected _document:QueryProperty;
 
 	private _typesTriple:SubjectToken;
 	private _values:ValuesToken;
 
 	private _schema:DigestedObjectSchema;
 
-	constructor( queryContext:QueryContextBuilder, property:QueryProperty.Class ) {
+	constructor( queryContext:QueryContextBuilder, property:QueryProperty ) {
 		this._context = queryContext;
 
 		property._builder = this;
@@ -60,7 +63,7 @@ export class QueryDocumentBuilder {
 		this._schema = this._context.getSchemaFor( { id: "" } );
 	}
 
-	property( name?:string ):QueryProperty.Class {
+	property( name?:string ):QueryProperty {
 		if( name === void 0 ) return this._document;
 
 		let parent:string = this._document.name;
@@ -71,9 +74,9 @@ export class QueryDocumentBuilder {
 
 			const directPath:string = getParentPath( fullPath );
 			if( this._context.hasProperty( directPath ) ) {
-				const direct:QueryProperty.Class = this._context.getProperty( directPath );
-				const directType:QueryProperty.PropertyType = direct.getType();
-				if( directType === QueryProperty.PropertyType.FULL || directType === QueryProperty.PropertyType.ALL ) {
+				const direct:QueryProperty = this._context.getProperty( directPath );
+				const directType:QueryPropertyType = direct.getType();
+				if( directType === QueryPropertyType.FULL || directType === QueryPropertyType.ALL ) {
 					const propertyName:string = fullPath.substr( directPath.length + 1 );
 					return direct._builder._addProperty( propertyName, INHERIT );
 				}
@@ -114,7 +117,7 @@ export class QueryDocumentBuilder {
 
 	properties( propertiesSchema:QuerySchema ):this {
 		if( propertiesSchema === QueryDocumentBuilder.ALL ) {
-			this._document.setType( QueryProperty.PropertyType.ALL );
+			this._document.setType( QueryPropertyType.ALL );
 			return this;
 		}
 
@@ -148,7 +151,7 @@ export class QueryDocumentBuilder {
 		if( ! this._values.values[ 0 ].length ) this._document.addPattern( this._values );
 		this._values.values[ 0 ].push( ...termTokens );
 
-		let property:QueryProperty.Class = this._document;
+		let property:QueryProperty = this._document;
 		while( property.isOptional() ) {
 			property.setOptional( false );
 
@@ -159,11 +162,11 @@ export class QueryDocumentBuilder {
 		return this;
 	}
 
-	_addProperty( propertyName:string, propertyDefinition:QuerySchemaProperty ):QueryProperty.Class {
+	_addProperty( propertyName:string, propertyDefinition:QuerySchemaProperty ):QueryProperty {
 		const digestedDefinition:DigestedObjectSchemaProperty = this.addPropertyDefinition( propertyName, propertyDefinition );
 		const name:string = `${ this._document.name }.${ propertyName }`;
 
-		const property:QueryProperty.Class = this._context
+		const property:QueryProperty = this._context
 			.addProperty( name )
 			.addPattern( ...createPropertyPatterns(
 				this._context,
@@ -174,7 +177,7 @@ export class QueryDocumentBuilder {
 
 		if( "query" in propertyDefinition ) {
 			if( digestedDefinition.literal === false ) {
-				property.setType( QueryProperty.PropertyType.PARTIAL );
+				property.setType( QueryPropertyType.PARTIAL );
 			}
 
 			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( this._context, property );
