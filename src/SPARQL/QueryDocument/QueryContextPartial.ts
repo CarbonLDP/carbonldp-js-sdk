@@ -4,7 +4,7 @@ import * as PersistedDocument from "../../PersistedDocument";
 import * as PersistedResource from "../../PersistedResource";
 import { QueryContext } from "./QueryContext";
 
-export class Class extends QueryContext {
+export class QueryContextPartial extends QueryContext {
 
 	private _document:PersistedDocument.Class;
 
@@ -31,4 +31,4 @@ export class Class extends QueryContext {
 	}
 }
 
-export default Class;
+export default QueryContextPartial;

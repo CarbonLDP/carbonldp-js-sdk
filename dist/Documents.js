@@ -36,8 +36,9 @@ var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
 var Builder_1 = require("./SPARQL/Builder");
 var QueryDocument_1 = require("./SPARQL/QueryDocument");
-var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
+var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
+var QueryContextPartial_1 = require("./SPARQL/QueryDocument/QueryContextPartial");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
 var Utils = __importStar(require("./Utils"));
@@ -741,7 +742,7 @@ var Documents = (function () {
     };
     Documents.prototype.refreshPartialDocument = function (persistedDocument, requestOptions) {
         var uri = this.getRequestURI(persistedDocument.id);
-        var queryContext = new QueryDocument_1.QueryContextPartial.Class(persistedDocument, this.context);
+        var queryContext = new QueryContextPartial_1.QueryContextPartial(persistedDocument, this.context);
         var targetName = "document";
         var constructPatterns = new tokens_1.OptionalToken()
             .addPattern(new tokens_1.ValuesToken()

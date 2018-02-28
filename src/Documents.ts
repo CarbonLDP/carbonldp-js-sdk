@@ -80,15 +80,15 @@ import {
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
 import {
-	QueryContextPartial,
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
 	QueryMetadata,
 	QueryProperty,
 } from "./SPARQL/QueryDocument";
-import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
+import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
+import { QueryContextPartial } from "./SPARQL/QueryDocument/QueryContextPartial";
 import {
 	areDifferentType,
 	createAllPattern,
@@ -939,7 +939,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	private refreshPartialDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
-		const queryContext:QueryContextPartial.Class = new QueryContextPartial.Class( persistedDocument, this.context );
+		const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, this.context );
 
 		const targetName:string = "document";
 		const constructPatterns:OptionalToken = new OptionalToken()

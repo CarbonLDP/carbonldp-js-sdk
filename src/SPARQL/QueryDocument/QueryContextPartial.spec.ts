@@ -7,7 +7,7 @@ import { PartialMetadata } from "./PartialMetadata";
 import { QueryContext }  from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
-import { Class as QueryContextPartial } from "./QueryContextPartial";
+import DefaultExport, { QueryContextPartial } from "./QueryContextPartial";
 
 describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
 
@@ -16,12 +16,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextPartial.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryContextPartial );
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( QueryContextPartial );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextPartial.Class", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
