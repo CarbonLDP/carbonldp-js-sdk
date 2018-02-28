@@ -11,7 +11,7 @@ import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "../../Errors";
-import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import * as QueryProperty from "./QueryProperty";
 import { getParentPath } from "./Utils";
 
@@ -20,7 +20,7 @@ export interface OrderData {
 	flow?:"ASC" | "DESC";
 }
 
-export class Class extends QueryDocumentBuilder.Class {
+export class Class extends QueryDocumentBuilder {
 
 	_orderData?:OrderData;
 

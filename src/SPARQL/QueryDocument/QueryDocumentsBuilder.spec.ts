@@ -11,6 +11,10 @@ import {
 } from "sparqler/tokens";
 
 import AbstractContext from "../../AbstractContext";
+import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "../../Errors";
 import { ContextSettings } from "../../Settings";
 import {
 	clazz,
@@ -21,12 +25,8 @@ import {
 	method,
 	module
 } from "../../test/JasmineExtender";
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../../Errors";
 import QueryContextBuilder from "./QueryContextBuilder";
-import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import * as Module from "./QueryDocumentsBuilder";
 import { Class as QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import * as QueryProperty from "./QueryProperty";
@@ -100,7 +100,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void
 
 		it( extendsClass( "Carbon.QueryDocuments.QueryDocumentBuilder.Class" ), ():void => {
 			const builder:QueryDocumentsBuilder = new QueryDocumentsBuilder( queryContext, baseProperty );
-			expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder.Class ) );
+			expect( builder ).toEqual( jasmine.any( QueryDocumentBuilder ) );
 		} );
 
 		describe( method( INSTANCE, "orderBy" ), ():void => {

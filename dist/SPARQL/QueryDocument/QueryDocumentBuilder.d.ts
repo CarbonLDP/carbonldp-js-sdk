@@ -5,8 +5,8 @@ import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryPropertySchema from "./QueryPropertySchema";
 import * as QueryValue from "./QueryValue";
-export declare const ALL: Readonly<{}>;
-export declare class Class {
+export declare class QueryDocumentBuilder {
+    static readonly ALL: Readonly<{}>;
     inherit: Readonly<{}>;
     all: Readonly<{}>;
     readonly _context: QueryContextBuilder;
@@ -25,4 +25,4 @@ export declare class Class {
     _addProperty(propertyName: string, propertyDefinition: QueryPropertySchema.Class): QueryProperty.Class;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }
-export default Class;
+export default QueryDocumentBuilder;

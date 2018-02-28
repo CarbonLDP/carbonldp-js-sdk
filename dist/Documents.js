@@ -39,6 +39,7 @@ var QueryDocument_1 = require("./SPARQL/QueryDocument");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
 var QueryContextPartial_1 = require("./SPARQL/QueryDocument/QueryContextPartial");
+var QueryDocumentBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentBuilder");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
 var Utils = __importStar(require("./Utils"));
@@ -775,7 +776,7 @@ var Documents = (function () {
     };
     Documents.prototype.executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
         var Builder = targetProperty.name === "document" ?
-            QueryDocument_1.QueryDocumentBuilder.Class : QueryDocument_1.QueryDocumentsBuilder.Class;
+            QueryDocumentBuilder_1.QueryDocumentBuilder : QueryDocument_1.QueryDocumentsBuilder.Class;
         var queryBuilder = new Builder(queryContext, targetProperty);
         targetProperty.setType(queryBuilderFn ?
             QueryDocument_1.QueryProperty.PropertyType.PARTIAL :

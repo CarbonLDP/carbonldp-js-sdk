@@ -80,7 +80,6 @@ import {
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
 import {
-	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
 	QueryMetadata,
 	QueryProperty,
@@ -89,6 +88,7 @@ import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
 import { QueryContextPartial } from "./SPARQL/QueryDocument/QueryContextPartial";
+import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import {
 	areDifferentType,
 	createAllPattern,
@@ -210,9 +210,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
-	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]>;
-	get<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]>;
-	get<T extends object>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]>;
+	get<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]>;
+	get<T extends object>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const requestOptions:RequestOptions = RequestUtils.isOptions( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
 		if( Utils.isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
 
@@ -871,7 +871,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promise;
 	}
 
-	private getPartialDocument<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private getPartialDocument<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]> {
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 
 		const documentProperty:QueryProperty.Class = queryContext
@@ -983,11 +983,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
-		type Builder = QueryDocumentBuilder.Class | QueryDocumentBuilder.Class;
+	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty.Class, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+		type Builder = QueryDocumentBuilder | QueryDocumentBuilder;
 		// tslint:disable: variable-name
-		const Builder:typeof QueryDocumentBuilder.Class = targetProperty.name === "document" ?
-			QueryDocumentBuilder.Class : QueryDocumentsBuilder.Class;
+		const Builder:typeof QueryDocumentBuilder = targetProperty.name === "document" ?
+			QueryDocumentBuilder : QueryDocumentsBuilder.Class;
 		// tslint:enable: variable-name
 		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
 

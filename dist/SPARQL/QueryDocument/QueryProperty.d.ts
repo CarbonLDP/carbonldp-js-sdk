@@ -1,7 +1,7 @@
 import { PatternToken, SubjectToken } from "sparqler/tokens";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
-import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import * as QueryVariable from "./QueryVariable";
 export declare enum PropertyType {
     FULL = 0,
@@ -11,7 +11,7 @@ export declare enum PropertyType {
 export declare class Class {
     readonly name: string;
     readonly variable: QueryVariable.Class;
-    _builder: QueryDocumentBuilder.Class;
+    _builder: QueryDocumentBuilder;
     private _context;
     private _optional;
     private _type?;

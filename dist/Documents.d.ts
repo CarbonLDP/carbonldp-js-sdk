@@ -13,7 +13,8 @@ import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import * as RDF from "./RDF";
 import { FinishSPARQLSelect } from "./SPARQL/Builder";
-import { QueryDocumentBuilder, QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
+import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument";
+import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SELECTResults";
 export declare class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
@@ -30,8 +31,8 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer;
     removePointer(idOrPointer: string | Pointer): boolean;
-    get<T extends object>(uri: string, requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, Response]>;
-    get<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder.Class) => QueryDocumentBuilder.Class): Promise<[T & PersistedDocument.Class, Response]>;
+    get<T extends object>(uri: string, requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<[T & PersistedDocument.Class, Response]>;
+    get<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<[T & PersistedDocument.Class, Response]>;
     exists(documentURI: string, requestOptions?: RequestOptions): Promise<[boolean, Response]>;
     createChild<T extends object>(parentURI: string, childObject: T, slug?: string, requestOptions?: RequestOptions): Promise<[T & PersistedProtectedDocument.Class, Response]>;
     createChild<T extends object>(parentURI: string, childObject: T, requestOptions?: RequestOptions): Promise<[T & PersistedProtectedDocument.Class, Response]>;

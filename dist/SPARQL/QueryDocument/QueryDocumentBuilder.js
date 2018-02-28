@@ -17,11 +17,10 @@ var QueryProperty = __importStar(require("./QueryProperty"));
 var QueryValue = __importStar(require("./QueryValue"));
 var Utils_2 = require("./Utils");
 var INHERIT = Object.freeze({});
-exports.ALL = Object.freeze({});
-var Class = (function () {
-    function Class(queryContext, property) {
+var QueryDocumentBuilder = (function () {
+    function QueryDocumentBuilder(queryContext, property) {
         this.inherit = INHERIT;
-        this.all = exports.ALL;
+        this.all = QueryDocumentBuilder.ALL;
         this._context = queryContext;
         property._builder = this;
         this._document = property;
@@ -29,7 +28,7 @@ var Class = (function () {
         this._values = new tokens_1.ValuesToken().addValues(property.variable);
         this._schema = this._context.getSchemaFor({ id: "" });
     }
-    Class.prototype.property = function (name) {
+    QueryDocumentBuilder.prototype.property = function (name) {
         if (name === void 0)
             return this._document;
         var parent = this._document.name;
@@ -50,13 +49,13 @@ var Class = (function () {
         }
         throw new IllegalArgumentError_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
-    Class.prototype.value = function (value) {
+    QueryDocumentBuilder.prototype.value = function (value) {
         return new QueryValue.Class(this._context, value);
     };
-    Class.prototype.object = function (object) {
+    QueryDocumentBuilder.prototype.object = function (object) {
         return new QueryObject.Class(this._context, object);
     };
-    Class.prototype.withType = function (type) {
+    QueryDocumentBuilder.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
             throw new IllegalStateError_1.IllegalStateError("Types must be specified before the properties.");
         type = ObjectSchema_1.ObjectSchemaUtils.resolveURI(type, this._schema, { vocab: true, base: true });
@@ -71,8 +70,8 @@ var Class = (function () {
         }
         return this;
     };
-    Class.prototype.properties = function (propertiesSchema) {
-        if (propertiesSchema === exports.ALL) {
+    QueryDocumentBuilder.prototype.properties = function (propertiesSchema) {
+        if (propertiesSchema === QueryDocumentBuilder.ALL) {
             this._document.setType(QueryProperty.PropertyType.ALL);
             return this;
         }
@@ -83,14 +82,14 @@ var Class = (function () {
         }
         return this;
     };
-    Class.prototype.filter = function (constraint) {
+    QueryDocumentBuilder.prototype.filter = function (constraint) {
         var baseName = this._document.name.split(".")[0];
         this._context
             .getProperty(baseName)
             .addPattern(new tokens_1.FilterToken(constraint));
         return this;
     };
-    Class.prototype.values = function () {
+    QueryDocumentBuilder.prototype.values = function () {
         var values = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             values[_i] = arguments[_i];
@@ -113,7 +112,7 @@ var Class = (function () {
         return this;
         var _a;
     };
-    Class.prototype._addProperty = function (propertyName, propertyDefinition) {
+    QueryDocumentBuilder.prototype._addProperty = function (propertyName, propertyDefinition) {
         var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
         var name = this._document.name + "." + propertyName;
         var property = (_a = this._context
@@ -122,7 +121,7 @@ var Class = (function () {
             if (digestedDefinition.literal === false) {
                 property.setType(QueryProperty.PropertyType.PARTIAL);
             }
-            var builder = new Class(this._context, property);
+            var builder = new QueryDocumentBuilder(this._context, property);
             if (builder !== propertyDefinition["query"].call(void 0, builder))
                 throw new IllegalArgumentError_1.IllegalArgumentError("The provided query builder was not returned");
         }
@@ -130,7 +129,7 @@ var Class = (function () {
         return property;
         var _a, _b;
     };
-    Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
+    QueryDocumentBuilder.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
         var digestedDefinition = ObjectSchema_1.ObjectSchemaDigester.digestProperty(propertyName, propertyDefinition, this._schema);
         var uri = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
         var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);
@@ -147,9 +146,10 @@ var Class = (function () {
             .properties.set(propertyName, digestedDefinition);
         return digestedDefinition;
     };
-    return Class;
+    QueryDocumentBuilder.ALL = Object.freeze({});
+    return QueryDocumentBuilder;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.QueryDocumentBuilder = QueryDocumentBuilder;
+exports.default = QueryDocumentBuilder;
 
 //# sourceMappingURL=QueryDocumentBuilder.js.map

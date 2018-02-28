@@ -33,11 +33,11 @@ import {
 
 const INHERIT:Readonly<{}> = Object.freeze( {} );
 
-export const ALL:Readonly<{}> = Object.freeze( {} );
+export class QueryDocumentBuilder {
+	static readonly ALL:Readonly<{}> = Object.freeze( {} );
 
-export class Class {
 	inherit:Readonly<{}> = INHERIT;
-	all:Readonly<{}> = ALL;
+	all:Readonly<{}> = QueryDocumentBuilder.ALL;
 
 	readonly _context:QueryContextBuilder;
 
@@ -113,7 +113,7 @@ export class Class {
 	}
 
 	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
-		if( propertiesSchema === ALL ) {
+		if( propertiesSchema === QueryDocumentBuilder.ALL ) {
 			this._document.setType( QueryProperty.PropertyType.ALL );
 			return this;
 		}
@@ -177,7 +177,7 @@ export class Class {
 				property.setType( QueryProperty.PropertyType.PARTIAL );
 			}
 
-			const builder:Class = new Class( this._context, property );
+			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( this._context, property );
 			if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
 				throw new IllegalArgumentError( "The provided query builder was not returned" );
 		}
@@ -208,4 +208,4 @@ export class Class {
 
 }
 
-export default Class;
+export default QueryDocumentBuilder;

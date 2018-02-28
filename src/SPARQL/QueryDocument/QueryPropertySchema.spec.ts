@@ -1,5 +1,11 @@
-import { hasDefaultExport, hasProperty, interfaze, module, OPTIONAL } from "../../test/JasmineExtender";
-import * as QueryDocumentBuilder from "../QueryDocument/QueryDocumentBuilder";
+import {
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OPTIONAL
+} from "../../test/JasmineExtender";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
 import * as QueryPropertySchema from "./QueryPropertySchema";
 
@@ -70,10 +76,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryPropertySchema" ), ():void =
 		it( hasProperty(
 			OPTIONAL,
 			"query",
-			"( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class",
+			"( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder",
 			"Function to build a query to specify sub-properties or when retrieving multiple resources to filter the resources."
 		), ():void => {
-			const target:QueryPropertySchema.Class[ "query" ] = ( queryBuilder:QueryDocumentBuilder.Class ) => queryBuilder;
+			const target:QueryPropertySchema.Class[ "query" ] = ( queryBuilder:QueryDocumentBuilder ) => queryBuilder;
 			expect( target ).toBeDefined();
 		} );
 

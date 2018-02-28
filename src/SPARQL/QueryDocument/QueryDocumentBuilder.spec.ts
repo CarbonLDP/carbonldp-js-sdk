@@ -11,6 +11,10 @@ import {
 
 import AbstractContext from "../../AbstractContext";
 import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "../../Errors";
+import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
 } from "../../ObjectSchema";
@@ -25,14 +29,12 @@ import {
 	property,
 } from "../../test/JasmineExtender";
 import { Document } from "./../../Document";
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "../../Errors";
 import { Pointer } from "./../../Pointer";
 import QueryContextBuilder from "./QueryContextBuilder";
+
 import * as Module from "./QueryDocumentBuilder";
-import { Class as QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import DefaultExpot, { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+
 import * as QueryObject from "./QueryObject";
 import * as QueryProperty from "./QueryProperty";
 import * as QueryValue from "./QueryValue";
@@ -45,12 +47,12 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryDocumentBuilder );
+	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder" ), ():void => {
+		expect( DefaultExpot ).toBeDefined();
+		expect( DefaultExpot ).toBe( QueryDocumentBuilder );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentBuilder ).toBeDefined();
