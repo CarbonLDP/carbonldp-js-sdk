@@ -1,7 +1,7 @@
 import { Converter } from "../JSONLD/index";
 import { DigestedObjectSchema } from "../ObjectSchema";
 import { Resource } from "../Resource";
-export declare class Class {
+export declare class DeltaCreator {
     private prefixesMap;
     private jsonldConverter;
     private addToken;
@@ -19,4 +19,4 @@ export declare class Class {
     private compactIRI(schema, iri);
     private addPrefixFrom(object, schema);
 }
-export default Class;
+export default DeltaCreator;

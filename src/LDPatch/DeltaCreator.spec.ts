@@ -8,8 +8,7 @@ import {
 	SubjectToken,
 } from "sparqler/tokens";
 
-import { Converter } from "../JSONLD/index";
-import { XSD } from "../Vocabularies/XSD";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
@@ -25,9 +24,11 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
+import { XSD } from "../Vocabularies/XSD";
 
 import * as Module from "./DeltaCreator";
-import { Class as DeltaCreator } from "./DeltaCreator";
+import { DeltaCreator } from "./DeltaCreator";
+
 import {
 	AddToken,
 	DeleteToken,
@@ -43,21 +44,21 @@ describe( module( "Carbon/LDPatch/DeltaCreator" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.LDPatch.DeltaCreator.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.LDPatch.DeltaCreator.DeltaCreator" ), ():void => {
 		expect( Module.default ).toBeDefined();
 		expect( Module.default ).toBe( DeltaCreator );
 	} );
 
-	describe( clazz( "Carbon.LDPatch.DeltaCreator.Class", "Creator of LDPatch deltas" ), ():void => {
+	describe( clazz( "Carbon.LDPatch.DeltaCreator.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( DeltaCreator ).toBeDefined();
 			expect( DeltaCreator ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let jsonldConverter:Converter.JSONLDConverter;
+		let jsonldConverter:JSONLDConverter;
 		beforeEach( () => {
-			jsonldConverter = new Converter.JSONLDConverter();
+			jsonldConverter = new JSONLDConverter();
 		} );
 
 		describe( constructor(), ():void => {

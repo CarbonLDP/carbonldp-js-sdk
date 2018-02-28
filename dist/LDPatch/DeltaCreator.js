@@ -20,15 +20,15 @@ var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
 typesDefinition.pointerType = ObjectSchema_1.PointerType.ID;
 typesDefinition.containerType = ObjectSchema_1.ContainerType.SET;
-var Class = (function () {
-    function Class(jsonldConverter) {
+var DeltaCreator = (function () {
+    function DeltaCreator(jsonldConverter) {
         this.prefixesMap = new Map();
         this.jsonldConverter = jsonldConverter;
         this.addToken = new Tokens_1.AddToken();
         this.deleteToken = new Tokens_1.DeleteToken();
         this.updateLists = [];
     }
-    Class.prototype.getPatch = function () {
+    DeltaCreator.prototype.getPatch = function () {
         var patch = new Tokens_1.LDPatchToken();
         this.prefixesMap.forEach(function (prefix) { return patch.prologues.push(prefix); });
         (_a = patch.statements).push.apply(_a, this.updateLists);
@@ -39,7 +39,7 @@ var Class = (function () {
         return "" + patch;
         var _a;
     };
-    Class.prototype.addResource = function (schema, oldResource, newResource) {
+    DeltaCreator.prototype.addResource = function (schema, oldResource, newResource) {
         var _this = this;
         var id = newResource.id;
         var resource = iri_1.isBNodeLabel(id) ?
@@ -111,14 +111,14 @@ var Class = (function () {
         predicates.forEach(function (x) { return _this.addPrefixFrom(x.predicate, schema); });
         var _a;
     };
-    Class.prototype.getPropertyIRI = function (schema, propertyName) {
+    DeltaCreator.prototype.getPropertyIRI = function (schema, propertyName) {
         var propertyDefinition = schema.properties.get(propertyName);
         var uri = propertyDefinition && propertyDefinition.uri ?
             propertyDefinition.uri :
             propertyName;
         return this.compactIRI(schema, uri);
     };
-    Class.prototype.getObjects = function (value, schema, definition) {
+    DeltaCreator.prototype.getObjects = function (value, schema, definition) {
         var values = (Array.isArray(value) ?
             !definition || definition.containerType !== null ? value : value.slice(0, 1) :
             [value]).filter(isValidValue);
@@ -135,7 +135,7 @@ var Class = (function () {
         return this.expandValues(values, schema, definition);
         var _a;
     };
-    Class.prototype.expandValues = function (values, schema, definition) {
+    DeltaCreator.prototype.expandValues = function (values, schema, definition) {
         var _this = this;
         var areDefinedLiteral = definition && definition.literal !== null ? definition.literal : null;
         return values.map(function (value) {
@@ -145,7 +145,7 @@ var Class = (function () {
             return _this.expandPointer(value, schema);
         }).filter(isValidValue);
     };
-    Class.prototype.expandLanguageMap = function (values, schema) {
+    DeltaCreator.prototype.expandLanguageMap = function (values, schema) {
         var _this = this;
         if (!values.length)
             return [];
@@ -158,7 +158,7 @@ var Class = (function () {
             return _this.expandLiteral(value, schema, tempDefinition);
         }).filter(isValidValue);
     };
-    Class.prototype.expandPointer = function (value, schema) {
+    DeltaCreator.prototype.expandPointer = function (value, schema) {
         var id = Pointer_1.Pointer.is(value) ? value.id : value;
         if (!Utils_2.isString(id))
             return null;
@@ -166,7 +166,7 @@ var Class = (function () {
             new tokens_1.BlankNodeToken(id) :
             this.compactIRI(schema, id);
     };
-    Class.prototype.expandLiteral = function (value, schema, definition) {
+    DeltaCreator.prototype.expandLiteral = function (value, schema, definition) {
         var type = definition && definition.literalType ?
             definition.literalType :
             Utils_1.guessXSDType(value);
@@ -180,7 +180,7 @@ var Class = (function () {
             literal.setLanguage(definition.language);
         return literal;
     };
-    Class.prototype.compactIRI = function (schema, iri) {
+    DeltaCreator.prototype.compactIRI = function (schema, iri) {
         if (iri_1.isRelative(iri) && schema.vocab)
             iri = schema.vocab + iri;
         var matchPrefix = Array.from(schema.prefixes.entries())
@@ -192,7 +192,7 @@ var Class = (function () {
             return new tokens_1.IRIToken(iri);
         return new tokens_1.PrefixedNameToken(matchPrefix[0], iri.substr(matchPrefix[1].length));
     };
-    Class.prototype.addPrefixFrom = function (object, schema) {
+    DeltaCreator.prototype.addPrefixFrom = function (object, schema) {
         var _this = this;
         if (object instanceof tokens_1.CollectionToken)
             return object.objects.forEach(function (collectionObject) {
@@ -208,9 +208,9 @@ var Class = (function () {
         var iri = schema.prefixes.get(namespace);
         this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(iri)));
     };
-    return Class;
+    return DeltaCreator;
 }());
-exports.Class = Class;
+exports.DeltaCreator = DeltaCreator;
 function getArrayDelta(oldValues, newValues) {
     var objectMapper = function (object) { return ["" + object, object]; };
     var toAdd = new Map(newValues.map(objectMapper));
@@ -278,6 +278,6 @@ function getListDelta(oldValues, newValues) {
 function isValidValue(value) {
     return value !== null && value !== void 0;
 }
-exports.default = Class;
+exports.default = DeltaCreator;
 
 //# sourceMappingURL=DeltaCreator.js.map

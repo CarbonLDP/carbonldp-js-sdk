@@ -705,7 +705,7 @@ var Documents = (function () {
         Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
         Request_1.RequestUtils.setIfMatchHeader(persistedDocument._etag, requestOptions);
         persistedDocument._normalize();
-        var deltaCreator = new LDPatch.DeltaCreator.Class(this.jsonldConverter);
+        var deltaCreator = new LDPatch.DeltaCreator.DeltaCreator(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
             var schema = _this.getSchemaFor(resource);
             deltaCreator.addResource(schema, resource._snapshot, resource);

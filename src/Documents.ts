@@ -890,7 +890,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		RequestUtils.setIfMatchHeader( persistedDocument._etag, requestOptions );
 
 		persistedDocument._normalize();
-		const deltaCreator:LDPatch.DeltaCreator.Class = new LDPatch.DeltaCreator.Class( this.jsonldConverter );
+		const deltaCreator:LDPatch.DeltaCreator.DeltaCreator = new LDPatch.DeltaCreator.DeltaCreator( this.jsonldConverter );
 		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource.Class ) => {
 			const schema:DigestedObjectSchema = this.getSchemaFor( resource );
 			deltaCreator.addResource( schema, resource._snapshot, resource );

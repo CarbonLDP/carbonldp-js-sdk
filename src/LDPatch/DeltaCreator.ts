@@ -51,7 +51,7 @@ typesDefinition.literal = false;
 typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
 
-export class Class {
+export class DeltaCreator {
 
 	private prefixesMap:Map<string, PrefixToken>;
 	private jsonldConverter:Converter.JSONLDConverter;
@@ -381,4 +381,4 @@ function isValidValue( value:any ):boolean {
 }
 
 
-export default Class;
+export default DeltaCreator;
