@@ -1,38 +1,38 @@
-import * as ACE from "./Auth/ACE";
-import * as ACL from "./Auth/ACL";
-import Authenticator from "./Auth/Authenticator";
-import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as Credentials from "./Auth/Credentials";
-import * as PersistedACE from "./Auth/PersistedACE";
-import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedCredentials from "./Auth/PersistedCredentials";
-import * as PersistedRole from "./Auth/PersistedRole";
-import * as PersistedUser from "./Auth/PersistedUser";
-import * as Role from "./Auth/Role";
-import * as Roles from "./Auth/Roles";
-import * as Ticket from "./Auth/Ticket";
-import * as Token from "./Auth/Token";
-import TokenAuthenticator from "./Auth/TokenAuthenticator";
-import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
-import * as Users from "./Auth/Users";
-import Context from "./Context";
-import * as Errors from "./Errors";
-import { FreeResources } from "./FreeResources";
-import { BadResponseError } from "./HTTP/Errors";
+import * as ACE from "./ACE";
+import * as ACL from "./ACL";
+import Authenticator from "./Authenticator";
+import BasicAuthenticator from "./BasicAuthenticator";
+import * as Credentials from "./Credentials";
+import * as PersistedACE from "./PersistedACE";
+import * as PersistedACL from "./PersistedACL";
+import * as PersistedCredentials from "./PersistedCredentials";
+import * as PersistedRole from "./PersistedRole";
+import * as PersistedUser from "./PersistedUser";
+import * as Role from "./Role";
+import * as Roles from "./Roles";
+import * as Ticket from "./Ticket";
+import * as Token from "./Token";
+import TokenAuthenticator from "./TokenAuthenticator";
+import * as User from "./User";
+import UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as Users from "./Users";
+import Context from "../Context";
+import * as Errors from "../Errors";
+import { FreeResources } from "../FreeResources";
+import { BadResponseError } from "../HTTP/Errors";
 import {
 	RequestOptions,
 	RequestService,
 	RequestUtils,
-} from "./HTTP/Request";
-import { Response } from "./HTTP/Response";
-import { JSONLDParser } from "./JSONLD/Parser";
-import * as ObjectSchema from "./ObjectSchema";
-import * as RDF from "./RDF";
-import { Resource } from "./Resource";
-import * as Utils from "./Utils";
-import { LDP } from "./Vocabularies/LDP";
+} from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import { JSONLDParser } from "../JSONLD/Parser";
+import * as ObjectSchema from "../ObjectSchema";
+import * as RDF from "../RDF";
+import { Resource } from "../Resource";
+import * as Utils from "../Utils";
+import { LDP } from "../Vocabularies/LDP";
 
 export {
 	ACE,

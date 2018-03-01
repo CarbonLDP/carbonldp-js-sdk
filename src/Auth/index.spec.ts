@@ -1,34 +1,9 @@
-import AbstractContext from "./AbstractContext";
-
-
-import * as Auth from "./Auth";
-import DefaultExport from "./Auth";
-
-import * as ACE from "./Auth/ACE";
-import * as ACL from "./Auth/ACL";
-import Authenticator from "./Auth/Authenticator";
-import BasicAuthenticator from "./Auth/BasicAuthenticator";
-import * as Credentials from "./Auth/Credentials";
-import * as PersistedACE from "./Auth/PersistedACE";
-import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedCredentials from "./Auth/PersistedCredentials";
-import * as PersistedRole from "./Auth/PersistedRole";
-import * as PersistedUser from "./Auth/PersistedUser";
-import * as Role from "./Auth/Role";
-import * as Roles from "./Auth/Roles";
-import * as Ticket from "./Auth/Ticket";
-import * as Token from "./Auth/Token";
-import TokenAuthenticator from "./Auth/TokenAuthenticator";
-import * as User from "./Auth/User";
-import UsernameAndPasswordCredentials from "./Auth/UsernameAndPasswordCredentials";
-import UsernameAndPasswordToken from "./Auth/UsernameAndPasswordToken";
-import * as Users from "./Auth/Users";
-
-import * as Errors from "./Errors";
-import { BadResponseError } from "./HTTP/Errors";
-import { RequestOptions } from "./HTTP/Request";
-import { Response } from "./HTTP/Response";
-import * as URI from "./RDF/URI";
+import { AbstractContext } from "../AbstractContext";
+import * as Errors from "../Errors";
+import { BadResponseError } from "../HTTP/Errors";
+import { RequestOptions } from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import * as URI from "../RDF/URI";
 import {
 	clazz,
 	enumeration,
@@ -44,11 +19,34 @@ import {
 	module,
 	reexports,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import { C } from "./Vocabularies/C";
-import { CS } from "./Vocabularies/CS";
-import { XSD } from "./Vocabularies/XSD";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import * as ACE from "./ACE";
+import * as ACL from "./ACL";
+import Authenticator from "./Authenticator";
+import BasicAuthenticator from "./BasicAuthenticator";
+import * as Credentials from "./Credentials";
+
+import * as Auth from "./";
+import DefaultExport from "./";
+
+import * as PersistedACE from "./PersistedACE";
+import * as PersistedACL from "./PersistedACL";
+import * as PersistedCredentials from "./PersistedCredentials";
+import * as PersistedRole from "./PersistedRole";
+import * as PersistedUser from "./PersistedUser";
+import * as Role from "./Role";
+import * as Roles from "./Roles";
+import * as Ticket from "./Ticket";
+import * as Token from "./Token";
+import TokenAuthenticator from "./TokenAuthenticator";
+import * as User from "./User";
+import UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import * as Users from "./Users";
 
 describe( module( "Carbon/Auth" ), ():void => {
 
