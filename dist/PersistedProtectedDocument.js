@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __importStar(require("./Auth"));
+var ACL_1 = require("./Auth/ACL");
 var Errors_1 = require("./HTTP/Errors");
 var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
@@ -57,8 +57,8 @@ function getACL(requestOptions) {
         return protectedDocument._documents.get(acl.id, requestOptions);
     }).then(function (_a) {
         var acl = _a[0], response = _a[1];
-        if (!acl.hasType(Auth.ACL.RDF_CLASS))
-            throw new Errors_1.BadResponseError("The response does not contains a " + Auth.ACL.RDF_CLASS + " object.", response);
+        if (!acl.hasType(ACL_1.ACL.TYPE))
+            throw new Errors_1.BadResponseError("The response does not contains a " + ACL_1.ACL.TYPE + " object.", response);
         return [acl, response];
     });
 }

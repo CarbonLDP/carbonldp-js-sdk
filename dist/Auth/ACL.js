@@ -7,12 +7,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Pointer_1 = require("../Pointer");
+var Utils = __importStar(require("../Utils"));
 var CS_1 = require("../Vocabularies/CS");
-var Pointer_1 = require("./../Pointer");
-var Utils = __importStar(require("./../Utils"));
+var Document_1 = require("./../Document");
 var ACE_1 = require("./ACE");
-exports.RDF_CLASS = CS_1.CS.AccessControlList;
-exports.SCHEMA = {
+var SCHEMA = {
     "entries": {
         "@id": CS_1.CS.accessControlEntry,
         "@type": "@id",
@@ -28,10 +28,10 @@ exports.SCHEMA = {
         "@container": "@set",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.ACL = {
+    TYPE: CS_1.CS.AccessControlList,
+    SCHEMA: SCHEMA,
+    isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
             && Utils.hasFunction(object, "_parsePointer")
             && Utils.hasFunction(object, "grant")
@@ -42,11 +42,12 @@ var Factory = (function () {
             && Utils.hasFunction(object, "getChildInheritance")
             && Utils.hasFunction(object, "remove")
             && Utils.hasFunction(object, "removeChildInheritance");
-    };
-    Factory.decorate = function (object) {
+    },
+    decorate: function (object) {
+        if (exports.ACL.isDecorated(object))
+            return object;
+        Document_1.Document.decorate(object);
         var acl = object;
-        if (Factory.hasClassProperties(acl))
-            return acl;
         Object.defineProperties(acl, {
             "_parsePointer": {
                 writable: true,
@@ -104,10 +105,8 @@ var Factory = (function () {
             },
         });
         return acl;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 function parsePointer(element) {
     return Utils.isObject(element) ? element : Pointer_1.Pointer.create(element);
 }
@@ -117,7 +116,7 @@ function parsePointers(elements) {
     return elementsArray.map(function (element) { return _this._parsePointer(element); });
 }
 function configACE(granting, subject, subjectClass, permissions, aces) {
-    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer_1.Pointer.areEqual(ace.subjects[0], subject); });
+    var subjectACEs = aces.filter(function (_) { return _.subjects.length === 1 && _.granting === granting && Pointer_1.Pointer.areEqual(_.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
         ace = ACE_1.ACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
@@ -229,5 +228,6 @@ function removeChildInheritance(subject, permissions) {
     var acl = this;
     removePermissions.call(this, subject, permissions, acl.inheritableEntries);
 }
+exports.default = exports.ACL;
 
 //# sourceMappingURL=ACL.js.map

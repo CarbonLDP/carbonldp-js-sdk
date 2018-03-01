@@ -1,39 +1,28 @@
+import { Documents } from "../Documents";
 import {
-	STATIC,
-
-	OBLIGATORY,
-	OPTIONAL,
-
-	module,
 	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
 	extendsClass,
+	hasDefaultExport,
+	hasMethod,
 	hasProperty,
 	hasSignature,
-	hasDefaultExport,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
 } from "../test/JasmineExtender";
-
-import * as ACL from "./ACL";
-import Documents from "../Documents";
-import { PersistedDocument } from "./../PersistedDocument";
 import * as Utils from "./../Utils";
 
-import * as PersistedACL from "./PersistedACL";
-import DefaultExport from "./PersistedACL";
+import { ACL } from "./ACL";
+
+import DefaultExport, { PersistedACL } from "./PersistedACL";
 
 describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( PersistedACL ).toBeDefined();
-		expect( Utils.isObject( PersistedACL ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.Auth.PersistedACL.Class",
+		"Carbon.Auth.PersistedACL.PersistedACL",
 		"Interface that represents a persisted Access Control List (ACL)."
 	), ():void => {
 
@@ -248,72 +237,69 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Auth.PersistedACL.Factory", "Factory class for `Carbon.Auth.PersistedACL.Class` objects." ), ():void => {
+	describe( interfaze(
+		"Carbon.Auth.PersistedACL.PersistedACLFactory",
+		"Interface with factory, decorate and utils methods for `Carbon.Auth.PersistedACL.PersistedACL` objects."
+	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Return true if the object provided has the properties and methods of a `Carbon.Auth.PersistedACL.PersistedACL` object.", [
+				{ name: "object", type: "object", description: "The object to analise." },
+			],
+			{ type: "object is Carbon.Auth.PersistedACL.PersistedACL" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.PersistedACL` object.", [
+				{ name: "object", type: "T", description: "The object to decorate." },
+			],
+			{ type: "T & Carbon.Auth.PersistedACL.PersistedACL" }
+		), ():void => {} );
+
+	} );
+
+	describe( clazz( "Carbon.Auth.PersistedACL.Factory", "Factory class for `Carbon.Auth.PersistedACL.PersistedACL` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedACL.Factory ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.Factory ) ).toBe( true );
+			expect( PersistedACL ).toBeDefined();
+			expect( PersistedACL ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Return true if the object provided has the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
-				{ name: "object", type: "Object", description: "The object to analise." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( PersistedACL.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.Factory.hasClassProperties ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "PersistedACL.isDecorated", ():void => {
+			expect( PersistedACL.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( PersistedACL.isDecorated ) ).toBe( true );
 
-			let object:any = void 0;
-			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( false );
+			// TODO: Figure out how to test assertion of internal function
+		} );
 
-			object = {
-				entries: null,
-				accessTo: null,
-				inheritableEntries: null,
+		// TODO: Separate in different tests
+		it( "PersistedACL.decorate", ():void => {
+			expect( PersistedACL.decorate ).toBeDefined();
+			expect( Utils.isFunction( PersistedACL.decorate ) ).toBe( true );
+
+			const spy:jasmine.Spy = spyOn( ACL, "decorate" ).and.callThrough();
+
+			const documents:Documents = new Documents();
+			const object:object = {
+				id: "http://example.com/some/acl/",
+				accessTo: documents.getPointer( "http://example.com/some/" ),
 			};
-			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( true );
 
-			delete object.accessTo;
-			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( false );
-			object.accessTo = null;
-
-			delete object.entries;
-			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( true );
-			object.entries = null;
-
-			delete object.inheritableEntries;
-			expect( PersistedACL.Factory.hasClassProperties( object ) ).toBe( true );
-			object.inheritableEntries = null;
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			[ "T extends Carbon.PersistedDocument.PersistedDocument" ],
-			"Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
-				{ name: "document", type: "T", description: "The persisted document to decorate." },
-			],
-			{ type: "T & Carbon.Auth.PersistedACL.Class" }
-		), ():void => {
-			expect( PersistedACL.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
-
-			let spy:jasmine.Spy = spyOn( ACL.Factory, "decorate" ).and.callThrough();
-			let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/some/acl/" );
-			document[ "accessTo" ] = document.getPointer( "http://example.com/some/" );
-
-			let acl:PersistedACL.Class = PersistedACL.Factory.decorate( document );
+			PersistedACL.decorate( object, documents );
 			expect( spy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.PersistedACL.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.Auth.PersistedACL.PersistedACL" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedACL.Class;
+		let defaultTarget:PersistedACL;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

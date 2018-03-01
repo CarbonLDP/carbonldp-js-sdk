@@ -22,7 +22,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"document",
-			"Carbon.Auth.PersistedACL.Class",
+			"Carbon.Auth.PersistedACL.PersistedACL",
 			"Reference to the persisted ACL where the current ACE belongs."
 		), ():void => {} );
 

@@ -1,10 +1,9 @@
+import { ModelDecorator } from "../ModelDecorator";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
 import { Document } from "./../Document";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
 import { ACE } from "./ACE";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Document {
+export interface ACL extends Document {
     accessTo: Pointer;
     entries?: ACE[];
     inheritableEntries?: ACE[];
@@ -29,8 +28,11 @@ export interface Class extends Document {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static decorate<T extends Object>(object: T): T & Class;
+export interface ACLFactory extends ModelDecorator<ACL> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    isDecorated(object: object): object is ACL;
+    decorate<T extends object>(object: T): T & ACL;
 }
-export default Class;
+export declare const ACL: ACLFactory;
+export default ACL;

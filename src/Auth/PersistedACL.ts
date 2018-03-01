@@ -1,10 +1,12 @@
-import * as ACL from "./ACL";
+import { PersistedDocument } from "../PersistedDocument";
+import { Pointer } from "../Pointer";
+import * as Utils from "../Utils";
+import { ACL } from "./ACL";
 import { PersistedACE } from "./PersistedACE";
-import { PersistedDocument } from "./../PersistedDocument";
-import { Pointer } from "./../Pointer";
-import * as Utils from "./../Utils";
+import { ModelDecorator } from "../ModelDecorator";
+import { Documents } from "../Documents";
 
-export interface Class extends PersistedDocument {
+export interface PersistedACL extends PersistedDocument {
 	accessTo:Pointer;
 	entries?:PersistedACE[];
 	inheritableEntries?:PersistedACE[];
@@ -50,16 +52,29 @@ export interface Class extends PersistedDocument {
 	removeChildInheritance( subject:string | Pointer, permissions:(string | Pointer)[] ):void;
 }
 
-export class Factory {
 
-	static hasClassProperties( object:Object ):boolean {
+export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
+	isDecorated( object:object ):object is PersistedACL;
+
+
+	decorate<T extends object>( object:T, documents:Documents ):T & PersistedACL;
+}
+
+
+export const PersistedACL:PersistedACLFactory = {
+	isDecorated( object:object ):object is PersistedACL {
 		return Utils.hasPropertyDefined( object, "accessTo" )
+			&& object[ "_parsePointer" ] === parsePointer
 			;
-	}
+	},
 
-	static decorate<T extends PersistedDocument>( document:T ):T & Class {
-		let acl:T & Class = <any> ACL.Factory.decorate( document );
+	decorate<T extends object>( object:T, documents:Documents ):T & PersistedACL {
+		if( PersistedACL.isDecorated( object ) ) return object;
 
+		ACL.decorate( object );
+		PersistedDocument.decorate( object, documents );
+
+		const acl:T & PersistedACL = object as T & PersistedACL;
 		Object.defineProperties( acl, {
 			"_parsePointer": {
 				writable: true,
@@ -80,12 +95,11 @@ export class Factory {
 
 
 		return acl;
-	}
+	},
+};
 
-}
-
-function parsePointer( this:Class, element:string | Pointer ):Pointer {
+function parsePointer( this:PersistedACL, element:string | Pointer ):Pointer {
 	return Utils.isObject( element ) ? element : this.getPointer( element );
 }
 
-export default Class;
+export default PersistedACL;

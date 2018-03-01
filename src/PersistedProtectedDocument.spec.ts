@@ -20,7 +20,7 @@ import AbstractContext from "./AbstractContext";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { Response } from "./HTTP/Response";
-import * as PersistedACL from "./Auth/PersistedACL";
+import { PersistedACL } from "./Auth/PersistedACL";
 import { PersistedDocument } from "./PersistedDocument";
 import * as Utils from "./Utils";
 
@@ -54,7 +54,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			"Obtains and resolve the ACL of the actual document.", [
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ Carbon.Auth.PersistedACL.PersistedACL, Carbon.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 	} );
@@ -139,8 +139,8 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			],
 			{ type: "T & Carbon.PersistedProtectedDocument.Class" }
 		), ():void => {
-			expect( PersistedACL.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
+			expect( PersistedACL.decorate ).toBeDefined();
+			expect( Utils.isFunction( PersistedACL.decorate ) ).toBe( true );
 
 			const persistedDocumentSpy:jasmine.Spy = spyOn( PersistedDocument, "decorate" ).and.callThrough();
 
@@ -210,7 +210,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				"Obtains and resolve the ACL of the actual document.", [
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedACL.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ Carbon.Auth.PersistedACL.PersistedACL, Carbon.HTTP.Response.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( protectedDocument.getACL ).toBeDefined();
 				expect( Utils.isFunction( protectedDocument.getACL ) ).toBe( true );
@@ -338,11 +338,11 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 
-				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, Response ] ) => {
+				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL, Response ] ) => {
 					expect( acl ).toBeDefined();
 					expect( response ).toBeDefined();
 
-					expect( PersistedACL.Factory.hasClassProperties( acl ) ).toBe( true );
+					expect( PersistedACL.isDecorated( acl ) ).toBe( true );
 					expect( acl.entries ).toBeDefined();
 					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();
@@ -351,11 +351,11 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 				} ) );
 
 				const unresolvedProtectedDocument:PersistedProtectedDocument.Class = PersistedProtectedDocument.Factory.decorate( { id: "http://example.com/resource/" }, documents );
-				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL.Class, Response ] ) => {
+				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL, Response ] ) => {
 					expect( acl ).toBeDefined();
 					expect( response ).toBeDefined();
 
-					expect( PersistedACL.Factory.hasClassProperties( acl ) ).toBe( true );
+					expect( PersistedACL.isDecorated( acl ) ).toBe( true );
 					expect( acl.entries ).toBeDefined();
 					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();

@@ -18,6 +18,8 @@ import {
 	AccessPointBase,
 } from "./AccessPoint";
 import * as Auth from "./Auth";
+import { ACL } from "./Auth/ACL";
+import { PersistedACL } from "./Auth/PersistedACL";
 import { Carbon } from "./Carbon";
 import { Context } from "./Context";
 import { Document } from "./Document";
@@ -142,7 +144,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.MapUtils.extend( decorators, parentDecorators );
 		} else {
 			decorators.set( ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate );
-			decorators.set( Auth.ACL.RDF_CLASS, Auth.PersistedACL.Factory.decorate );
+			decorators.set( ACL.TYPE, PersistedACL.decorate );
 			decorators.set( Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate );
 			decorators.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate );
 			decorators.set( Auth.Credentials.RDF_CLASS, Auth.PersistedCredentials.Factory.decorate );

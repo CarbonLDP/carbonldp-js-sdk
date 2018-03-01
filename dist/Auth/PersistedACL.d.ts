@@ -1,7 +1,9 @@
+import { PersistedDocument } from "../PersistedDocument";
+import { Pointer } from "../Pointer";
 import { PersistedACE } from "./PersistedACE";
-import { PersistedDocument } from "./../PersistedDocument";
-import { Pointer } from "./../Pointer";
-export interface Class extends PersistedDocument {
+import { ModelDecorator } from "../ModelDecorator";
+import { Documents } from "../Documents";
+export interface PersistedACL extends PersistedDocument {
     accessTo: Pointer;
     entries?: PersistedACE[];
     inheritableEntries?: PersistedACE[];
@@ -26,8 +28,9 @@ export interface Class extends PersistedDocument {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static decorate<T extends PersistedDocument>(document: T): T & Class;
+export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
+    isDecorated(object: object): object is PersistedACL;
+    decorate<T extends object>(object: T, documents: Documents): T & PersistedACL;
 }
-export default Class;
+export declare const PersistedACL: PersistedACLFactory;
+export default PersistedACL;

@@ -1,5 +1,6 @@
 import * as Auth from "./Auth";
 import { ACE } from "./Auth/ACE";
+import { ACL } from "./Auth/ACL";
 import { Context } from "./Context";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
@@ -203,7 +204,7 @@ export class SDKContext implements Context {
 
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( ACE.TYPE, ACE.SCHEMA );
-		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
+		this.extendObjectSchema( ACL.TYPE, ACL.SCHEMA );
 		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );

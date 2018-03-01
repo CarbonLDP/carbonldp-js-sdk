@@ -10,6 +10,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var AccessPoint_1 = require("./AccessPoint");
 var Auth = __importStar(require("./Auth"));
+var ACL_1 = require("./Auth/ACL");
+var PersistedACL_1 = require("./Auth/PersistedACL");
 var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
@@ -68,7 +70,7 @@ var Documents = (function () {
         }
         else {
             decorators.set(ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate);
-            decorators.set(Auth.ACL.RDF_CLASS, Auth.PersistedACL.Factory.decorate);
+            decorators.set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate);
             decorators.set(Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate);
             decorators.set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
             decorators.set(Auth.Credentials.RDF_CLASS, Auth.PersistedCredentials.Factory.decorate);

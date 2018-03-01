@@ -1,4 +1,5 @@
-import * as Auth from "./Auth";
+import { ACL } from "./Auth/ACL";
+import { PersistedACL } from "./Auth/PersistedACL";
 import { Documents } from "./Documents";
 import { BadResponseError } from "./HTTP/Errors";
 import { RequestOptions } from "./HTTP/Request";
@@ -12,7 +13,7 @@ import { CS } from "./Vocabularies/CS";
 export interface Class extends PersistedDocument {
 	accessControlList?:Pointer;
 
-	getACL( requestOptions?:RequestOptions ):Promise<[ Auth.PersistedACL.Class, Response ]>;
+	getACL( requestOptions?:RequestOptions ):Promise<[ PersistedACL, Response ]>;
 }
 
 export class Factory {
@@ -53,7 +54,7 @@ interface ACLResult {
 	acl:Pointer;
 }
 
-function getACL( requestOptions?:RequestOptions ):Promise<[ Auth.PersistedACL.Class, Response ]> {
+function getACL( requestOptions?:RequestOptions ):Promise<[ PersistedACL, Response ]> {
 	let protectedDocument:Class = <Class> this;
 
 	let aclPromise:Promise<Pointer>;
@@ -70,8 +71,8 @@ function getACL( requestOptions?:RequestOptions ):Promise<[ Auth.PersistedACL.Cl
 
 	return aclPromise.then( ( acl:Pointer ) => {
 		return protectedDocument._documents.get( acl.id, requestOptions );
-	} ).then<[ Auth.PersistedACL.Class, Response ]>( ( [ acl, response ]:[ Auth.PersistedACL.Class, Response ] ) => {
-		if( ! acl.hasType( Auth.ACL.RDF_CLASS ) ) throw new BadResponseError( `The response does not contains a ${ Auth.ACL.RDF_CLASS } object.`, response );
+	} ).then<[ PersistedACL, Response ]>( ( [ acl, response ]:[ PersistedACL, Response ] ) => {
+		if( ! acl.hasType( ACL.TYPE ) ) throw new BadResponseError( `The response does not contains a ${ ACL.TYPE } object.`, response );
 		return [ acl, response ];
 	} );
 }
