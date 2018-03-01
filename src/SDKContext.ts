@@ -10,7 +10,6 @@ import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
 import * as ProtectedDocument from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import * as RDFRepresentation from "./RDFRepresentation";
 import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
@@ -189,8 +188,6 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
-
-		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
 
 		this.extendObjectSchema( LDP.Entry.SCHEMA );
 		this.extendObjectSchema( LDP.Error.RDF_CLASS, LDP.Error.SCHEMA );

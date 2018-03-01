@@ -16,7 +16,7 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 61 );
+			expect( Object.keys( C ).length ).toBe( 60 );
 		} );
 
 		it( hasProperty(
@@ -269,15 +269,6 @@ describe( module( "Carbon/Vocabularies/C" ), ():void => {
 		), ():void => {
 			expect( C.QueryMetadata ).toEqual( jasmine.any( String ) );
 			expect( C.QueryMetadata ).toBe( "https://carbonldp.com/ns/v1/platform#QueryMetadata" );
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"RDFRepresentation",
-			"string"
-		), ():void => {
-			expect( C.RDFRepresentation ).toEqual( jasmine.any( String ) );
-			expect( C.RDFRepresentation ).toBe( "https://carbonldp.com/ns/v1/platform#RDFRepresentation" );
 		} );
 
 		it( hasProperty(

@@ -31,7 +31,6 @@ var C;
     C.PreferResultsContext = C.namespace + "PreferResultsContext";
     C.PreferSelectedMembershipTriples = C.namespace + "PreferSelectedMembershipTriples";
     C.QueryMetadata = C.namespace + "QueryMetadata";
-    C.RDFRepresentation = C.namespace + "RDFRepresentation";
     C.RemoveMemberAction = C.namespace + "RemoveMemberAction";
     C.ResponseMetadata = C.namespace + "ResponseMetadata";
     C.ValidationError = C.namespace + "ValidationError";

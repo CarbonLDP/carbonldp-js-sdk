@@ -28,7 +28,6 @@ export declare namespace C {
     const PreferResultsContext: string;
     const PreferSelectedMembershipTriples: string;
     const QueryMetadata: string;
-    const RDFRepresentation: string;
     const RemoveMemberAction: string;
     const ResponseMetadata: string;
     const ValidationError: string;

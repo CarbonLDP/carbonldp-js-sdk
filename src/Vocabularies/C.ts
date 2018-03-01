@@ -29,7 +29,6 @@ export namespace C {
 	export const PreferResultsContext:string = namespace + "PreferResultsContext";
 	export const PreferSelectedMembershipTriples:string = namespace + "PreferSelectedMembershipTriples";
 	export const QueryMetadata:string = namespace + "QueryMetadata";
-	export const RDFRepresentation:string = namespace + "RDFRepresentation";
 	export const RemoveMemberAction:string = namespace + "RemoveMemberAction";
 	export const ResponseMetadata:string = namespace + "ResponseMetadata";
 	export const ValidationError:string = namespace + "ValidationError";
