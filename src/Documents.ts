@@ -62,7 +62,7 @@ import {
 	ObjectSchemaResolver,
 	ObjectSchemaUtils,
 } from "./ObjectSchema";
-import * as PersistedAccessPoint from "./PersistedAccessPoint";
+import { PersistedAccessPoint } from "./PersistedAccessPoint";
 import { PersistedBlankNode } from "./PersistedBlankNode";
 import { PersistedDocument } from "./PersistedDocument";
 import { PersistedFragment } from "./PersistedFragment";
@@ -351,9 +351,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slugOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint, Response ]>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint, Response ]>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slugOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedAccessPoint, Response ]> {
 		const slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -365,9 +365,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]> {
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]> {
 		const slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : [];
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
@@ -375,7 +375,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			documentURI = this.getRequestURI( documentURI );
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 
-			return Promise.all<[ T & PersistedAccessPoint.Class, Response ]>( accessPoints.map( ( accessPoint:T & AccessPointBase, index:number ) => {
+			return Promise.all<[ T & PersistedAccessPoint, Response ]>( accessPoints.map( ( accessPoint:T & AccessPointBase, index:number ) => {
 				const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 				return this.persistAccessPoint<T>( documentURI, accessPoint, slugs[ index ], cloneOptions );
 			} ) );
@@ -1166,7 +1166,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.persistDocument<T & Document, PersistedProtectedDocument>( parentURI, slug, childDocument, requestOptions );
 	}
 
-	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
+	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<[ T & PersistedAccessPoint, Response ]> {
 		if( PersistedDocument.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
 
 		const accessPointDocument:T & AccessPoint = AccessPoint.is( accessPoint ) ?
@@ -1175,7 +1175,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
 
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
-		return this.persistDocument<T & AccessPoint, PersistedAccessPoint.Class>( documentURI, slug, accessPointDocument, requestOptions );
+		return this.persistDocument<T & AccessPoint, PersistedAccessPoint>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
 	private persistDocument<T extends Document, W extends PersistedProtectedDocument>( parentURI:string, slug:string, document:T, requestOptions:RequestOptions ):Promise<[ T & W, Response ]> {

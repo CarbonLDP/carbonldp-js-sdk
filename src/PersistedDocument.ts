@@ -12,7 +12,7 @@ import { Response } from "./HTTP/Response";
 import * as MessagingDocument from "./Messaging/Document";
 import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedAccessPoint from "./PersistedAccessPoint";
+import { PersistedAccessPoint } from "./PersistedAccessPoint";
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
@@ -114,14 +114,14 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument)[], Response[] ]>;
 
 
-	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
+	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint, Response ]>;
 
-	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]>;
+	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ T & PersistedAccessPoint, Response ]>;
 
 
-	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]>;
 
-	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
+	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]>;
 
 
 	listChildren( requestOptions?:RequestOptions ):Promise<[ PersistedDocument[], Response ]>;
@@ -704,15 +704,15 @@ function createChildrenAndRetrieve<T extends object>( this:PersistedDocument, ob
 	return this._documents.createChildrenAndRetrieve<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
-function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint.Class, Response ]>;
-function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint.Class, Response ]>;
-function createAccessPoint<T extends object>( this:PersistedDocument, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint.Class, Response ]> {
+function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint, Response ]>;
+function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint, Response ]>;
+function createAccessPoint<T extends object>( this:PersistedDocument, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ PersistedAccessPoint, Response ]> {
 	return this._documents.createAccessPoint<T>( this.id, accessPoint, slugOrRequestOptions, requestOptions );
 }
 
-function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]>;
-function createAccessPoints<T extends object>( this:PersistedDocument, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint.Class)[], Response[] ]> {
+function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]>;
+function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]>;
+function createAccessPoints<T extends object>( this:PersistedDocument, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ (T & PersistedAccessPoint)[], Response[] ]> {
 	return this._documents.createAccessPoints<T>( this.id, accessPoints, slugsOrRequestOptions, requestOptions );
 }
 

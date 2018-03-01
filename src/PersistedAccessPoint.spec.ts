@@ -1,27 +1,18 @@
+import DefaultExport, { PersistedAccessPoint } from "./PersistedAccessPoint";
+
 import {
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
+	extendsClass,
+	hasDefaultExport,
 	hasProperty,
-	hasDefaultExport, extendsClass,
+	interfaze,
+	module,
+	OBLIGATORY,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-
-import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import DefaultExport from "./PersistedAccessPoint";
 
 describe( module( "Carbon/PersistedAccessPoint" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( PersistedAccessPoint ).toBeDefined();
-		expect( Utils.isObject( PersistedAccessPoint ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.PersistedAccessPoint.Class",
+		"Carbon.PersistedAccessPoint.PersistedAccessPoint",
 		"Interface that represents a persisted Carbon LDP AccessPoint."
 	), ():void => {
 
@@ -58,9 +49,9 @@ describe( module( "Carbon/PersistedAccessPoint" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedAccessPoint.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.PersistedAccessPoint.PersistedAccessPoint" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedAccessPoint.Class;
+		let defaultTarget:PersistedAccessPoint;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
